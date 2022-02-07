@@ -292,38 +292,5 @@
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
         });
-        
-        function getInterfaz(mikrotik) {
-            cargando(true);
-            var inter = $("#interfaz_user").val();console.log(inter);
-            $.ajax({
-                url: '/software/api/getInterfaces/'+mikrotik,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                method: 'get',
-                success: function (data) {
-                    cargando(false);
-                    data=JSON.parse(data);
-                    
-                    $("#interfaz").empty();
-                    var $select = $('#interfaz');
-                    $.each(data,function(key, value){
-                        if(inter == value.name){
-                            $select.append('<option value=' + value.name + ' selected>' + value.name + '</option>');
-                        }else{
-                            $select.append('<option value=' + value.name + '>' + value.name + '</option>');
-                        }
-                    });
-                    
-                    //$('#interfaz').val(inter).selectpicker('refresh');
-                    $('#interfaz').val(inter);
-                    $('#interfaz').selectpicker('refresh');
-                    /*$select.val(inter);
-                    $select.selectpicker('refresh');*/
-                },
-                error: function(data){
-                    cargando(false);
-                }
-            })
-        }
     </script>
 @endsection

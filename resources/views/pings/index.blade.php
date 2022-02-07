@@ -35,56 +35,21 @@
         </script>
     @endif
 
-{{--<div class="container-fluid d-none" id="form-filter">
-	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
-		<div class="card-body py-0">
-			<div class="row">
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-				    <select id="nodo" class="form-control rounded selectpicker" title="Modo de Red" data-live-search="true" data-size="5">
-                        <option value="1">Bridgre</option>
-						<option value="2">Enrutador</option>
-                    </select>
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-				    <select id="nodo" class="form-control rounded selectpicker" title="Nodo" data-live-search="true" data-size="5">
-                        @foreach($nodos as $nodo)
-                            <option value="{{$nodo->id}}">{{$nodo->nombre}}</option>
-                        @endforeach
-                    </select>
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-				    <select title="Estado" class="form-control rounded selectpicker" id="status">
-				        <option value="1">Habilitado</option>
-						<option value="0">Deshabilitado</option>
-					</select>
-				</div>
-				<div class="col-md-1 pl-1 pt-1 text-left">
-					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
-				</div>
-			</div>
+	<div class="row card-description">
+		<div class="col-md-12">
+			<table class="table table-striped table-hover w-100" id="tabla-pings">
+				<thead class="thead-dark">
+					<tr>
+					    <th>Contrato</th>
+					    <th>IP</th>
+					    <th>Estado</th>
+					    <th>Fecha/Hora</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+			</table>
 		</div>
 	</div>
-</div>--}}
-
-<div class="row card-description">
-	<div class="col-md-12">
-		<table class="table table-striped table-hover w-100" id="tabla-pings">
-			<thead class="thead-dark">
-				<tr>
-				    <th>Contrato</th>
-				    <th>IP</th>
-				    <th>Estado</th>
-				    <th>Fecha/Hora</th>
-					<th>Acciones</th>
-				</tr>
-			</thead>
-		</table>
-	</div>
-</div>
 @endsection
 
 @section('scripts')

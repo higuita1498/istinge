@@ -43,88 +43,88 @@
                 border-color: #f9fafd #f9f9f9 #eaedf7 #eaedf7;
             }
             .sidebar {
-                background: #b00606;
+                background: {{ env('APP_COLOR') }};
             }
             .configuracion > div {
-                border: 4px solid #b00606;
+                border: 4px solid {{ env('APP_COLOR') }};
             }
             .configuracion h4 {
                 color: #000;
             }
             .text-primary {
-                color: #b00606 !important;
+                color: {{ env('APP_COLOR') }} !important;
             }
             .configuracion > div > a {
-                color: #b00606;
+                color: {{ env('APP_COLOR') }};
             }
             .form-radio label input + .input-helper:after {
-                background: #b00606;
+                background: {{ env('APP_COLOR') }};
             }
             .notice-info {
-                border-color: #b00606 !important;
+                border-color: {{ env('APP_COLOR') }} !important;
             }
             .btn-link {
-                color: #b00606 !important;
+                color: {{ env('APP_COLOR') }} !important;
             }
             .sidebar .nav .sub-menu .nav-item .nav-link:hover, #sidebar > ul > li > a:hover {
                 color: #c7c7c7;
             }
             .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
                 color: #fff;
-                background-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
             }
             .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
                 color: #fff;
-                background-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
                 border-color: #dee2e6 #dee2e6 #fff;
             }
             .card-notificacion {
                 border-radius: 20px;
                 background: #fff!important;
-                border: solid 2px #b00606!important;
+                border: solid 2px {{ env('APP_COLOR') }}!important;
             }
             .card-notificacion:hover {
                 border-radius: 20px;
-                background: #b00606!important;
+                background: {{ env('APP_COLOR') }}!important;
                 border: solid 2px #fff;
             }
             .bg-th {
-                background: #b00606 !important;
-                border-color: #b00606 !important;
+                background: {{ env('APP_COLOR') }} !important;
+                border-color: {{ env('APP_COLOR') }} !important;
                 color: #fff !important;
             }
             .table-bordered {
-                border: 2px solid #b00606!important;
+                border: 2px solid {{ env('APP_COLOR') }}!important;
             }
             .table.table-bordered th {
                 color: #fff;
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .table .thead-dark th {
                 color: #fff;
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_desc:after {
                 display: block !important;
                 color: #ffffff;
             }
             .page-item.active .page-link {
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .page-item.active .page-link {
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .page-item.disabled .page-link {
-                color: #b00606;
-                border-color: #b00606;
+                color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .page-link {
-                color: #b00606;
-                border: 1px solid #b00606;
+                color: {{ env('APP_COLOR') }};
+                border: 1px solid {{ env('APP_COLOR') }};
             }
             .card-counter.primary:hover, .card-counter.success:hover, .card-counter.danger:hover {
                 background-color: #4f4f4f; 
@@ -132,20 +132,20 @@
             .page-link:hover {
                 color: #ffffff;
                 text-decoration: none;
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .stretch-card { border: 1px solid #a6b6bd52 !important;border-radius: 3px; }
             .content-wrapper { background: #fff; }
             .card { background: #c2c2c21a !important; }
             .img-gafica{
-                border: solid 1px #b00606;
+                border: solid 1px {{ env('APP_COLOR') }};
                 border-radius: 10px;
             }
             .btn-system {
                 color: #fff;
-                background-color: #b00606;
-                border-color: #b00606;
+                background-color: {{ env('APP_COLOR') }};
+                border-color: {{ env('APP_COLOR') }};
             }
             .btn-system:hover, .btn-system:active  {
                 color: #fff;

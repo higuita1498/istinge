@@ -247,43 +247,6 @@
 	                <strong>{{ $errors->first('grupo_corte') }}</strong>
 	            </span>
 	        </div>
-	        
-            {{--<div class="col-md-4 form-group d-none">
-                <label class="control-label">Fecha Corte <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" id="fecha_corte" name="fecha_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
-                    <option value="15">15 de cada mes</option>
-                    <option value="30">30 de cada mes</option>
-                    <option value="50">Plan Gratis</option>
-                </select>
-                <span class="help-block error">
-                    <strong>{{ $errors->first('fecha_corte') }}</strong>
-                </span>
-            </div>
-            
-            <div class="col-md-4 form-group d-none">
-                <label class="control-label">Días para suspender <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" id="fecha_suspension" name="fecha_suspension" required="" title="Seleccione" data-live-search="true" data-size="5">
-                    <option value="0">No Suspender</option>
-                    <option value="1">1 día después de la fecha de corte</option>
-                    <option value="2">2 días después de la fecha de corte</option>
-                    <option value="3">3 días después de la fecha de corte</option>
-                    <option value="4">4 días después de la fecha de corte</option>
-                    <option value="5">5 días después de la fecha de corte</option>
-                    <option value="6">6 días después de la fecha de corte</option>
-                    <option value="7">7 días después de la fecha de corte</option>
-                    <option value="8">8 días después de la fecha de corte</option>
-                    <option value="9">9 días después de la fecha de corte</option>
-                    <option value="10">10 días después de la fecha de corte</option>
-                    <option value="11">11 días después de la fecha de corte</option>
-                    <option value="12">12 días después de la fecha de corte</option>
-                    <option value="13">13 días después de la fecha de corte</option>
-                    <option value="14">14 días después de la fecha de corte</option>
-                    <option value="15">15 días después de la fecha de corte</option>
-                </select>
-                <span class="help-block error">
-                    <strong>{{ $errors->first('fecha_suspension') }}</strong>
-                </span>
-            </div>--}}
               
             <div class="col-md-12 d-none">
                 <hr>
