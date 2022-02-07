@@ -29,6 +29,9 @@
                     @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                    @if(isset($_SESSION['permisos']['220']))
+                        <a class="dropdown-item mt-2"  href="{{route('miusuario')}}">Mi perfil</a>
+                    @endif
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
                     <a class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Cerrar sesión

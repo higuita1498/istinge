@@ -448,14 +448,14 @@
         </li>
     @endif--}}
     
-    @if(isset($_SESSION['permisos']['220']))
+    {{-- @if(isset($_SESSION['permisos']['220']))
         <li class="nav-item" id="perfil">
             <a  class="nav-link" href="{{route('miusuario')}}">
                 <i class="menu-icon fas fa-user-cog"></i>
                 <span class="menu-title">Mi Configuración</span>
             </a>
         </li>
-    @endif
+    @endif--}}
     
     @if(isset($_SESSION['permisos']['291']))
         <li class="nav-item" id="reportes">
