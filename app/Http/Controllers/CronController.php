@@ -16,6 +16,10 @@ use App\Contacto;
 use App\TerminosPago;
 use App\Empresa;
 use App\GrupoCorte;
+use App\Mikrotik;
+
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
 
 class CronController extends Controller
 {
@@ -88,124 +92,39 @@ class CronController extends Controller
 
     public static function CortarFacturas(){
         $i=0;
-        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.UID')->select('contactos.UID','contactos.nombre','contactos.nit')->where('f.estatus',1)->where('f.suspension','=',date('Y-m-d'))->where('cs.state','enabled')->get();
-        
+        $fecha = date('Y-m-d');
+
+        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.estatus', 'f.suspension', 'cs.state')->where('f.estatus',1)->where('f.tipo', 1)->where('f.vencimiento', $fecha)->where('contactos.status',1)->where('cs.state','enabled')->get();
+
         //dd($contactos);
-        
+
         $empresa = Empresa::find(1);
         foreach ($contactos as $contacto) {
-            $contrato = Contrato::where('client_id', $contacto->UID)->first();
+            $contrato = Contrato::where('client_id', $contacto->id)->first();
+            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
             if ($contrato) {
-                $res = DB::table('contracts')->where('client_id',$contacto->UID)->update(["state" => 'disabled']);
-                $path = $contrato->contrato_id.'?state=disabled';
-
-                /* * * API WISPRO * * */
-                $curl = curl_init();
-
-                curl_setopt_array($curl, array(
-                    CURLOPT_URL => "https://www.cloud.wispro.co/api/v1/contracts/".$path,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => "",
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => "PUT",
-                    CURLOPT_HTTPHEADER => array(
-                        "Authorization: ".$empresa->wispro
-                    ),
-                ));
-
-                $response = curl_exec($curl);
-                $err = curl_error($curl);
-                curl_close($curl);
-                if ($err) {
-                    return "cURL Error #:" . $err;
-                } else {
-                    $i++;
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
+                    if($contrato->state == 'enabled'){
+                        $API->comm("/ip/firewall/address-list/add", array(
+                            "address" => $contrato->ip,
+                            "comment" => $contrato->servicio,
+                            "list" => 'morosos'
+                            )
+                        );
+                        $contrato->state = 'disabled';
+                        $i++;
+                    }
+                    $API->disconnect();
+                    $contrato->save();
                 }
-                /* * * API WISPRO * * */
             }
         }
         echo "Se han suspendido ".$i." contratos";
-    }
-    
-    public static function EnviarSMS(){
-        $facturas = Factura::where('fecha', '2021-08-30')->where('mensaje', 0)->take(50)->get();
-        //dd($facturas);
-        $errores=0;
-        $enviados=0;
-        
-        foreach($facturas as $factura){
-            $mensaje = "Top Link le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total).". Ingrese a https://bit.ly/TopLinkPay y realice su pago";
-            $numero = str_replace('+','',$factura->cliente()->celular);
-            $numero = str_replace(' ','',$numero);
-            $post['to'] = array($numero);
-            $post['text'] = $mensaje;
-            $post['from'] = "TopLink";
-            $login ="jjtuiran2021";
-            $password = '';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-            curl_setopt($ch, CURLOPT_HTTPHEADER,
-            array(
-                "Accept: application/json",
-                "Authorization: Basic ".base64_encode($login.":".$password)));
-            $result = curl_exec ($ch);
-            $err  = curl_error($ch);
-            curl_close($ch);
-            
-            if ($err) {
-                //return back()->with('danger', $err);
-                $errores++;
-            }else{
-                $response = json_decode($result, true);
-                if(isset($response['error'])){
-                    if($response['error']['code'] == 102){
-                        $msj = "No hay destinatarios v��lidos (Cumpla con el formato de nro +5700000000000)";
-                    }else if($response['error']['code'] == 103){
-                        $msj = "Nombre de usuario o contrase�0�9a desconocidos";
-                    }else if($response['error']['code'] == 104){
-                        $msj = "Falta el mensaje de texto";
-                    }else if($response['error']['code'] == 105){
-                        $msj = "Mensaje de texto demasiado largo";
-                    }else if($response['error']['code'] == 106){
-                        $msj = "Falta el remitente";
-                    }else if($response['error']['code'] == 107){
-                        $msj = "Remitente demasiado largo";
-                    }else if($response['error']['code'] == 108){
-                        $msj = "No hay fecha y hora v��lida para enviar";
-                    }else if($response['error']['code'] == 109){
-                        $msj = "URL de notificaci��n incorrecta";
-                    }else if($response['error']['code'] == 110){
-                        $msj = "Se super�� el n��mero m��ximo de piezas permitido o n��mero incorrecto de piezas";
-                    }else if($response['error']['code'] == 111){
-                        $msj = "Cr��dito/Saldo insuficiente";
-                    }else if($response['error']['code'] == 112){
-                        $msj = "Direcci��n IP no permitida";
-                    }else if($response['error']['code'] == 113){
-                        $msj = "Codificaci��n no v��lida";
-                    }else{
-                        $msj = $response['error']['description'];
-                    }
-    				$factura->response = $msj;
-                    $factura->save();
-                    $errores++;
-                    //return back()->with('danger', 'Env��o Fallido: '.$msj);
-                }else{
-                    $factura->mensaje = 1;
-    				$factura->response = 'Mensaje enviado correctamente.';
-                    $factura->save();
-                    $enviados++;
-                    //return back()->with('success', 'Mensaje enviado correctamente.');
-                }
-            }
-            
-        }
-        
-        return 'SMS Enviados: '.$enviados.' | SMS No Enviados: '.$errores;
     }
 }
