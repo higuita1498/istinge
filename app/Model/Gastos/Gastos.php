@@ -15,6 +15,7 @@ use App\Model\Gastos\GastosRecurrentesCategoria;
 use App\Model\Ingresos\NotaCredito; 
 use App\Model\Ingresos\Devoluciones;
 use Auth; use DB;
+use App\User;
 class Gastos extends Model
 {
     protected $table = "gastos";
@@ -25,7 +26,7 @@ class Gastos extends Model
      * @var array
      */
     protected $fillable = [
-        'nro', 'empresa', 'beneficiario', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'estatus', 'created_at', 'updated_at', 'nota_credito', 'total_credito', 'nro_devolucion'
+        'nro', 'empresa', 'beneficiario', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'estatus', 'created_at', 'updated_at', 'nota_credito', 'total_credito', 'nro_devolucion', 'created_by', 'updated_by'
     ];
 
     public function estatus($class=false){
@@ -227,4 +228,11 @@ class Gastos extends Model
         return $retenciones;
     }
 
+    public function created_by(){
+        return User::find($this->created_by);
+    }
+
+    public function updated_by(){
+        return User::find($this->updated_by);
+    }
 }
