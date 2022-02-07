@@ -114,6 +114,18 @@
 						<th>Total</th>
 						<td>{{number_format($ingreso->pago(), 2)}}</td>
 					</tr>
+					@if($ingreso->created_by)
+					<tr>
+						<th><strong>Realizado por</strong></th>
+						<td>{{$ingreso->created_by()->nombres}}</td>
+					</tr>
+					@endif
+					@if($ingreso->updated_by)
+					<tr>
+						<th><strong>Actualizado por</strong></th>
+						<td>{{$ingreso->updated_by()->nombres}}</td>
+					</tr>
+					@endif
 				</tbody>				
 			</table>
 		</div>

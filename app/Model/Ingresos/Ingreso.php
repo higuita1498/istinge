@@ -13,6 +13,7 @@ use App\Retencion;
 use App\Impuesto; 
 use App\Movimiento; 
 use DB; use Auth;
+use App\User;
 class Ingreso extends Model
 {
     protected $table = "ingresos";
@@ -23,7 +24,7 @@ class Ingreso extends Model
      * @var array
      */
     protected $fillable = [
-        'nro', 'empresa', 'cliente', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'estatus', 'created_at', 'updated_at', 'nota_debito', 'total_debito', 'nro_devolucion'
+        'nro', 'empresa', 'cliente', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'estatus', 'created_at', 'updated_at', 'nota_debito', 'total_debito', 'nro_devolucion', 'created_by', 'updated_by'
     ];
     
     public function parsear($valor)
@@ -215,8 +216,11 @@ class Ingreso extends Model
 
     }
 
-  
+    public function created_by(){
+        return User::find($this->created_by);
+    }
 
-
-
+    public function updated_by(){
+        return User::find($this->updated_by);
+    }
 }
