@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\PromesaPago;
+use App\User;
+use App\Funcion;
+use Validator;
+use Auth;
+use DB;
+use Carbon\Carbon;
+use Session;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
+use App\Funciones;
+
+class PromesasPagoController extends Controller
+{
+    public function __construct(){
+        $this->middleware('auth');
+        set_time_limit(300);
+        view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones de Contratos', 'icon' =>'fas fa-file-contract']);
+    }
+    
+    public function json(Request $request, $id){
+        $requestData =  $request;
+        $columns = array(
+            0 => 'nro',
+            1 => 'factura',
+            2 => 'fecha',
+            3 => 'vencimiento',
+            4 => 'created_by',
+            5 => 'created_at'
+        );
+        
+        $promesas=PromesaPago::join('factura', 'factura.id', '=', 'promesa_pago.factura')->
+        join('contactos', 'contactos.id', '=', 'promesa_pago.cliente')->
+        select('promesa_pago.*')->
+        where('promesa_pago.cliente', $id);
+        
+        if ($requestData->search['value']) {
+            // if there is a search parameter, $requestData['search']['value'] contains search parameter
+            $promesas=$promesas->where(function ($query) use ($requestData) {
+                $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%');
+            });
+        }
+        
+        $totalFiltered=$totalData=$promesas->count();
+        
+        $promesas=$promesas->OrderBy('factura.codigo', 'desc')->get();
+        
+        $data = array();
+        foreach ($promesas as $promesa) {
+            $nestedData = array();
+            $nestedData[] = $promesa->nro;
+            $nestedData[] = '<a href="'.route('facturas.show',$promesa->factura).'">'.$promesa->factura()->codigo.'</a>';
+            $nestedData[] = date('d-m-Y', strtotime($promesa->fecha));
+            if(date('Y-m-d') > $promesa->vencimiento){
+                $nestedData[] = '<spam class="text-danger">'.date('d-m-Y', strtotime($promesa->vencimiento)).'</spam>';
+            }else{
+                $nestedData[] = date('d-m-Y', strtotime($promesa->vencimiento));
+            }
+            $nestedData[] = $promesa->usuario()->nombres;
+            $nestedData[] = '<a href="'.route('promesas.imprimir',['id' => $promesa->id, 'name'=> 'Promesa No. '.$promesa->nro.'.pdf']).'" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a>';
+            $data[] = $nestedData;
+        }
+        
+        $json_data = array(
+            "draw" => intval($requestData->draw),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data
+        );
+        
+        return json_encode($json_data);
+    }
+    
+    public function imprimir($id){
+        $promesa = PromesaPago::find($id);
+        
+        if($promesa) {
+            view()->share(['title' => 'Promesa de Pago Nro. '.$promesa->nro]);
+            $pdf = PDF::loadView('pdf.promesa_pago', compact('promesa'));
+            return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
+        }
+    }
+}

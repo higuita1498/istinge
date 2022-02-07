@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Empresa; use App\Retencion; use Carbon\Carbon; 
+use Validator; use Illuminate\Validation\Rule;  use Auth;
+use Session;
+
+class RetencionesController extends Controller
+{
+  /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    $this->middleware('auth');
+    view()->share(['seccion' => 'configuracion', 'title' => 'Retenciones', 'icon' =>'']);
+  }
+
+  public function index(){
+      $this->getAllPermissions(Auth::user()->id);
+ 		$retenciones = Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->get();
+
+ 		return view('configuracion.retenciones.index')->with(compact('retenciones'));   		
+ 	}
+
+  /**
+  * Formulario para crear un nuevo retención
+  * @return view
+  */
+  public function create(){
+      $this->getAllPermissions(Auth::user()->id);
+    view()->share(['title' => 'Nuevo Tipo de Retención']);
+    return view('configuracion.retenciones.create'); 
+  }
+
+  /**
+  * Registrar un nuevo retención
+  * @param Request $request
+  * @return redirect
+  */
+  public function store(Request $request){
+      
+      
+      if( Retencion::where('empresa',auth()->user()->empresa)->count() > 0){
+      //Tomamos el tiempo en el que se crea el registro
+    Session::put('posttimer', Retencion::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+    $sw = 1;
+
+    //Recorremos la sesion para obtener la fecha
+    foreach (Session::get('posttimer') as $key) {
+      if ($sw == 1) {
+        $ultimoingreso = $key;
+        $sw=0;
+      }
+    }
+
+//Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+
+//Si el tiempo es de menos de 30 segundos mandamos al listado general
+    if ($diasDiferencia <= 10) {
+      $mensaje = "El formulario ya ha sido enviado.";
+    return redirect('empresa/configuracion/retenciones')->with('success', $mensaje);
+    }
+      }
+      
+    $request->validate([
+      'nombre' => 'required|max:250',
+      'porcentaje' => 'required|numeric',
+      'tipo' => 'required|numeric'
+    ]); 
+    $retencion = new Retencion;
+    $retencion->empresa=Auth::user()->empresa;
+    $retencion->nombre=$request->nombre;
+    $retencion->porcentaje=$request->porcentaje;
+    $retencion->tipo=$request->tipo;
+    $retencion->descripcion=$request->descripcion;
+    $retencion->save();
+
+    $mensaje='Se ha creado satisfactoriamente el tipo de retención';
+    return redirect('empresa/configuracion/retenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
+  }
+
+  /**
+  * Formulario para modificar los datos de un retención
+  * @param int $id
+  * @return view
+  */
+  public function edit($id){
+      $this->getAllPermissions(Auth::user()->id);
+    $retencion = Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($retencion) {        
+      view()->share(['title' => 'Modificar Tipo de Retención']);
+      return view('configuracion.retenciones.edit')->with(compact('retencion'));
+    }
+    return redirect('empresa/configuracion/retenciones')->with('success', 'No existe un registro con ese id');
+  }
+
+  /**
+  * Modificar los datos del banco
+  * @param Request $request
+  * @return redirect
+  */
+  public function update(Request $request, $id){
+    $retencion =Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($retencion) {
+      $request->validate([
+        'nombre' => 'required|max:250',
+        'porcentaje' => 'required|numeric',
+        'tipo' => 'required|numeric'
+      ]);
+      $retencion->nombre=$request->nombre;
+      $retencion->porcentaje=$request->porcentaje;
+      $retencion->tipo=$request->tipo;
+      $retencion->descripcion=$request->descripcion;
+      $retencion->save();
+      $mensaje='Se ha modificado satisfactoriamente el tipo de retención';
+      return redirect('empresa/configuracion/retenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
+
+    }
+    return redirect('empresa/configuracion/retenciones')->with('success', 'No existe un registro con ese id');
+  }
+
+  /**
+  * Funcion para eliminar un retención
+  * @param int $id
+  * @return redirect
+  */
+  public function destroy($id){      
+    $retencion=Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first(); 
+    if ($retencion->usado()==0) {
+      $retencion->delete();
+    }  
+    return redirect('empresa/configuracion/retenciones')->with('success', 'Se ha eliminado el tipo de retención');
+  }
+
+  /**
+  * Funcion para cambiar el estatus de la numeracion
+  * @param int $id
+  * @return redirect
+  */
+  public function act_desc($id){
+    $retencion = Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($retencion) {        
+        if ($retencion->estado==1) {
+          $mensaje='Se ha desactivado el tipo de retención';
+          $retencion->estado=0;
+          $retencion->save();
+        }
+        else{
+          $mensaje='Se ha activado el tipo de retención';
+          $retencion->estado=1;
+          $retencion->save();
+        }
+      return redirect('empresa/configuracion/retenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
+    }
+    return redirect('empresa/configuracion/retenciones')->with('success', 'No existe un registro con ese id');
+  }
+
+
+
+ 
+
+}

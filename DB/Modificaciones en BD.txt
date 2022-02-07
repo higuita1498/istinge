@@ -1,0 +1,12 @@
+ALTER TABLE `bancos` CHANGE `updated_at` `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `bancos` ADD `nro` INT(8) NULL DEFAULT NULL AFTER `empresa`;
+ALTER TABLE `bancos` ADD `estatus` INT(1) NOT NULL DEFAULT '1' AFTER `descripcion`;
+ALTER TABLE `factura` CHANGE `nro` `nro` INT(10) NULL DEFAULT NULL;
+ALTER TABLE `factura` CHANGE `cot_nro` `cot_nro` INT(10) NULL DEFAULT NULL;
+ALTER TABLE `notas_credito` CHANGE `nro` `nro` INT(10) NULL DEFAULT NULL;
+ALTER TABLE `factura_contacto` CHANGE `telefono` `telefono` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;
+ALTER TABLE `remisiones` CHANGE `nro` `nro` INT(10) NULL DEFAULT NULL;
+
+
+
+

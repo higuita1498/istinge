@@ -1,0 +1,980 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Empresa;
+use App\Banco; use App\Contacto;
+use App\Categoria; use App\Retencion;
+use App\Movimiento; use App\Impuesto;
+use App\Numeracion;
+use App\Model\Inventario\Inventario;
+use App\Model\Ingresos\Factura;
+use App\Model\Ingresos\ItemsFactura;
+use App\Model\Ingresos\Ingreso;
+use App\Model\Ingresos\IngresosFactura;
+use App\Model\Ingresos\IngresosCategoria;
+use App\Model\Ingresos\IngresosRetenciones;
+use App\Model\Gastos\Gastos;
+use App\Model\Gastos\GastosCategoria;
+use Carbon\Carbon;  use Mail; use Auth;
+use Validator; use Illuminate\Validation\Rule;
+use bcrypt; use DB;
+use Session;
+use Barryvdh\DomPDF\Facade as PDF;
+use App\Contrato;
+use App\Mikrotik;
+use App\User;
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
+
+class IngresosController extends Controller
+{
+  /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    $this->middleware('auth');
+    view()->share(['seccion' => 'facturas', 'subseccion' => 'ingresos', 'title' => 'Pagos / Ingresos', 'icon' =>'fas fa-plus']);
+  }
+
+  /**
+  * Index para ver los ingresos
+  * @return view
+  */
+  public function indexOLD(Request $request){
+      $this->getAllPermissions(Auth::user()->id);
+    $busqueda=false;
+    $campos=array('', 'ingresos.nro', 'nombrecliente', 'detalle', 'ingresos.fecha', 'banco', 'ingresos.estatus', 'monto');
+
+    if (!$request->orderby) {
+      $request->orderby=1; $request->order=1;
+    }
+    $orderby=$campos[$request->orderby];
+    $order=$request->order==1?'DESC':'ASC';
+    $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
+    $ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
+    ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
+    ->join('bancos as b', 'b.id', '=', 'ingresos.cuenta')
+    ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "")
+       as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',
+      DB::raw('
+        (if(ingresos.tipo=1, 
+        (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)), 
+        if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))
+      ) as monto'))
+    ->where('ingresos.empresa',Auth::user()->empresa)->groupBy( 'ingresos.id');
+
+
+    $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
+    if ($request->name_1) {
+      $busqueda=true; $appends['name_1']=$request->name_1; $ingresos=$ingresos->where('ingresos.nro', 'like', '%' .$request->name_1.'%');
+    }
+    if ($request->name_2) {
+      $busqueda=true; $appends['name_2']=$request->name_2; $ingresos=$ingresos->where('c.nombre', 'like', '%' .$request->name_2.'%');
+    }
+    if ($request->name_3) {
+      $busqueda=true; $appends['name_3']=$request->name_3; $ingresos=$ingresos->where('ingresos.fecha', date('Y-m-d', strtotime($request->name_3)));
+    }
+    if ($request->name_4) {
+      $busqueda=true; $appends['name_4']=$request->name_4; $ingresos=$ingresos->where('ingresos.cuenta', $request->name_4);
+    }
+    if ($request->name_5) {
+      $busqueda=true; $appends['name_5']=$request->name_5; $ingresos=$ingresos->where('ingresos.metodo_pago', $request->name_5);
+    }
+
+    $ingresos=$ingresos->OrderBy($orderby, $order)->paginate(25)->appends($appends);
+    $metodos_pago = DB::table('metodos_pago')->get();
+    return view('ingresos.index')->with(compact('ingresos', 'request', 'busqueda','bancos','metodos_pago'));
+ 	}
+ 	
+ 	public function index(Request $request)
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
+        $clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
+        $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
+
+        return view('ingresos.indexnew', compact('bancos','clientes','metodos'));
+    }
+    
+    public function ingresos(Request $request)
+    {
+        $empresa = auth()->user()->empresa;
+        $modoLectura = auth()->user()->modo_lectura();
+        $ingresos = Ingreso::query()
+        ->select('ingresos.*','contactos.nombre','bancos.nombre as banco')
+        ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
+        ->leftjoin('contactos', 'contactos.id', '=', 'ingresos.cliente')
+        ->join('bancos', 'bancos.id', '=', 'ingresos.cuenta');
+
+        if ($request->filtro == true) {
+            switch ($request) {
+                case !empty($request->numero):
+                    $ingresos->where('ingresos.nro', 'like', "%{$request->numero}%");
+                    break;
+                case !empty($request->cliente):
+                    $ingresos->orWhere('ingresos.cliente', $request->cliente);
+                    break;
+                case !empty($request->banco):
+                    $ingresos->orWhere('ingresos.cuenta', $request->banco);
+                    break;
+                case !empty($request->metodo):
+                    $ingresos->orWhere('ingresos.metodo_pago', $request->metodo);
+                    break;
+                case !empty($request->fecha):
+                    $ingresos->whereDate('ingresos.fecha', $request->fecha);
+                    break;
+                case !empty($request->estado):
+                    $ingresos->orWhere('ingresos.estatus', $request->estado);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        $ingresos->where('ingresos.empresa', $empresa);
+
+        return datatables()->eloquent($ingresos)
+
+            ->editColumn('nro', function (Ingreso $ingreso) {
+                return isset($ingreso->nro) ? "<a href=" . route('ingresos.show', $ingreso->id) . ">{$ingreso->nro}</div></a>" : '';
+            })
+            ->editColumn('cliente', function (Ingreso $ingreso) {
+                return isset($ingreso->nombre) ? "<a href=" . route('contactos.show', $ingreso->cliente) . ">{$ingreso->nombre}</div></a>" : auth()->user()->empresa()->nombre;
+            })
+            ->addColumn('detalle', function (Ingreso $ingreso) {
+                return $ingreso->detalle();
+            })
+            ->editColumn('fecha', function (Ingreso $ingreso) {
+                return date('d-m-Y', strtotime($ingreso->fecha));
+            })
+            ->editColumn('cuenta', function (Ingreso $ingreso) {
+                return  $ingreso->banco ?? '';
+            })
+            ->addColumn('estado', function (Ingreso $ingreso) {
+                return $ingreso->estatus();
+            })
+            ->addColumn('monto', function (Ingreso $ingreso) {
+                return auth()->user()->empresa()->moneda . " {$ingreso->parsear($ingreso->pago())}";
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "ingresos.acciones-ingresos")
+            ->rawColumns(['nro', 'cliente', 'acciones'])
+            ->toJson();
+    }
+
+  /**
+  * Formulario para crear un nuevo ingreso
+  * @return view
+  */
+  public function create($cliente=false, $factura=false, $banco=false){
+      $this->getAllPermissions(Auth::user()->id);
+      $pers = $cliente;
+      $bank = $banco;
+
+    view()->share(['icon' =>'', 'title' => 'Nuevo Ingreso', 'subseccion' => 'ingresos']);
+
+    if ($cliente && !$factura) {
+      $banco=$cliente; $cliente=false;
+    }
+    $numero = (Ingreso::where('empresa', Auth::user()->empresa)->get());
+    if (count($numero)>0){
+        $numero = ($numero->last())->nro+1;
+    }else{
+        $numero = 1;
+    }
+    //$bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
+    (Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
+    /*$banco = Banco::join('usuarios as u','u.cuenta','=','bancos.id')->where('u.id', Auth::user()->id)->where('bancos.empresa',Auth::user()->empresa)->where('bancos.estatus', 1)->count();
+    
+    if($banco > 0){
+        $bancos = Banco::join('usuarios as u','u.cuenta','=','bancos.id')->select('bancos.*')->where('u.id', Auth::user()->id)->where('bancos.empresa',Auth::user()->empresa)->where('bancos.estatus', 1)->get();
+    }else{
+        $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
+    }*/
+    $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status', 1)->get();
+    $metodos_pago =DB::table('metodos_pago')->whereIn('id',[1,2,3,4,5,6,9])->orderby('orden','asc')->get();
+    $inventario = Inventario::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+    $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+    $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
+    $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+
+    return view('ingresos.create')->with(compact('clientes', 'inventario', 'categorias', 'cliente', 'factura',
+    'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank'));
+  }
+
+  public function saldoContacto($id){
+      $cliente = Contacto::find($id);
+      if($cliente->saldo_favor == null){
+          $saldo = 0;
+      }else{
+          $saldo = $cliente->saldo_favor;
+      }
+      return json_encode($saldo);
+  }
+
+  /**
+  * Parte del Formulario de ver las facturas de venta de los
+  * clientes
+  * @return view
+  */
+  public function pendiente($cliente, $id=false){
+    $this->getAllPermissions(Auth::user()->id);
+
+    $facturas=Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1);
+    /*if($id){
+        $facturas = $facturas->where('nro',$id);
+    }*/
+    //$facturas = $facturas->get();
+    /*if(Auth::user()->id==29){
+        $facturas = $facturas->orderBy('created_at', 'asc')->take(1)->get();
+    }else{
+        $facturas = $facturas->orderBy('created_at', 'asc')->take(2)->get();
+    }*/
+    
+    $facturas = $facturas->orderBy('created_at', 'desc')->take(1)->get();
+
+    $total=Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
+    
+    return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total'));
+  }
+
+  /**
+  * Parte del Formulario de editar las facturas de venta de los
+  * clientes
+  * @return view
+  */
+  public function ingpendiente($cliente, $id=false){
+      $this->getAllPermissions(Auth::user()->id);
+    $facturas=Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo',1)->where('estatus', 1)->get();
+    $entro=false;
+    $retencioness = Retencion::where('empresa',Auth::user()->empresa)->get();
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+    $new=$facturas;
+    foreach ($items as $item) {
+      foreach ($facturas as $factura) {
+        if ($factura->id==$item->factura) {
+          $entro=true;
+        }
+      }
+      if (!$entro) {
+        $new[]=Factura::where('id', $item->factura)->first();
+      }
+      $entro=false;
+    }
+
+    return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 'ingreso', 'retencioness'));
+  }
+
+  /**
+  * Registrar un nuevo ingreso
+  * @param Request $request
+  * @return redirect
+  */
+    public function store(Request $request){
+        if(auth()->user()->rol == 8){
+            $monto_pagar = 0;
+            foreach ($request->factura_pendiente as $key => $value) {
+                if ($request->precio[$key]) {
+                    $monto_pagar += $request->precio[$key];
+                }
+            }
+            
+            if($monto_pagar > auth()->user()->saldo){
+                $mensaje='UD. NO POSEE SALDO DISPONIBLE PARA CANCELAR LA FACTURA, LO INVITAMOS A REALIZAR UNA RECARGA';
+                return back()->with('danger', $mensaje)->withInput();
+            }
+        }
+        
+        if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
+            Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
+            $sw = 1;
+            
+            foreach (Session::get('posttimer') as $key) {
+                if ($sw == 1) {
+                    $ultimoingreso = $key;
+                    $sw = 0;
+                }
+            }
+            
+            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+            
+            if ($diasDiferencia <= 10) {
+                $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
+                return back()->with('danger', $mensaje)->withInput();
+                //return redirect('empresa/ingresos')->with('danger', $mensaje);
+            }
+        }
+        
+        $request->validate([
+            'cuenta' => 'required|numeric'
+        ]);
+        
+        $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+        $caja = $nro->caja;
+        
+        while (true) {
+            $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+            if ($numero == 0) {
+                break;
+            }
+            $caja++;
+        }
+        
+        $ingreso = new Ingreso;
+        $ingreso->nro = $caja;
+        $ingreso->empresa = Auth::user()->empresa;
+        $ingreso->cliente = $request->cliente;
+        $ingreso->cuenta = $request->cuenta;
+        $ingreso->metodo_pago = $request->metodo_pago;
+        $ingreso->notas = $request->notas;
+        $ingreso->tipo = $request->tipo;
+        $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+        $ingreso->observaciones = mb_strtolower($request->observaciones);
+        $ingreso->save();
+        
+        //Si el tipo de ingreso es de facturas
+        if ($ingreso->tipo == 1) {
+            foreach ($request->factura_pendiente as $key => $value) {
+                if ($request->precio[$key]) {
+                    $precio = $this->precision($request->precio[$key]);
+                    $factura = Factura::find($request->factura_pendiente[$key]);
+                    $retencion = 'fact' . $factura->id . '_retencion';
+                    $precio_reten = 'fact' . $factura->id . '_precio_reten';
+                    if ($request->$retencion) {
+                        foreach ($request->$retencion as $key2 => $value2) {
+                            if ($request->$precio_reten[$key2]) {
+                                $retencion = Retencion::where('id', $value2)->first();
+                                $items = new IngresosRetenciones;
+                                $items->ingreso = $ingreso->id;
+                                $items->factura = $factura->id;
+                                $items->valor = $this->precision($request->$precio_reten[$key2]);
+                                $precio += $this->precision($request->$precio_reten[$key2]);
+                                $items->retencion = $retencion->porcentaje;
+                                $items->id_retencion = $retencion->id;
+                                $items->save();
+                            }
+                        }
+                    }
+                    
+                    $items = new IngresosFactura;
+                    $items->ingreso = $ingreso->id;
+                    $items->factura = $factura->id;
+                    $items->pagado = $factura->pagado();
+                    $items->pago = $this->precision($request->precio[$key]);
+                    if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                        $factura->estatus = 0;
+                        $factura->save();
+                    }
+                    $items->save();
+                }
+            }
+        } else { //Si el tipo de ingreso es de categorias
+            foreach ($request->categoria as $key => $value) {
+                if ($request->precio_categoria[$key]) {
+                    $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                    if (!$impuesto) {
+                        $impuesto = Impuesto::where('id', 0)->first();
+                    }
+                    
+                    $items = new IngresosCategoria;
+                    $items->valor = $this->precision($request->precio_categoria[$key]);
+                    $items->id_impuesto = $request->impuesto_categoria[$key];
+                    $items->ingreso = $ingreso->id;
+                    $items->categoria = $request->categoria[$key];
+                    $items->cant = $request->cant_categoria[$key];
+                    $items->descripcion = $request->descripcion_categoria[$key];
+                    $items->impuesto = $impuesto->porcentaje;
+                    $items->save();
+                }
+            }
+            if ($request->retencion) {
+                foreach ($request->retencion as $key => $value) {
+                    if ($request->precio_reten[$key]) {
+                        $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                        $items = new IngresosRetenciones;
+                        $items->ingreso = $ingreso->id;
+                        $items->valor = $this->precision($request->precio_reten[$key]);
+                        $items->retencion = $retencion->porcentaje;
+                        $items->id_retencion = $retencion->id;
+                        $items->save();
+                    }
+                }
+            }
+        }
+        
+        //sumo a las numeraciones el recibo
+        $nro->caja = $caja + 1;
+        $nro->save();
+        
+        //Registro el Movimiento
+        $ingreso = Ingreso::find($ingreso->id);
+        //ingresos
+        $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+        
+        if ($ingreso->tipo == 1) {
+            $cliente = Contacto::where('id', $request->cliente)->first();
+            $contrato = Contrato::where('client_id', $cliente->id)->first();
+            $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+            
+            /* * * API MK * * */
+            
+            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+            
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+            
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $API->write('/ip/firewall/address-list/print', TRUE);
+                $ARRAYS = $API->read();
+                
+                //BUSCAMOS EL ID POR LA IP DEL CONTRATO
+                $API->write('/ip/firewall/address-list/print', false);
+                $API->write('?address='.$contrato->ip, false);
+                $API->write('=.proplist=.id');
+                $ARRAYS = $API->read();
+                
+                //REMOVEMOS EL ID DE LA ADDRESS LIST                    
+                if(count($ARRAYS)>0){
+                    $API->write('/ip/firewall/address-list/remove', false);
+                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                    $READ = $API->read();
+                }
+                
+                $API->disconnect();
+                
+                $contrato->state = 'enabled';
+                $contrato->save();
+            }
+            
+            /* * * API MK * * */
+            
+            /* * * ENVÍO SMS * * */
+            if($precio){
+                $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. Somos IST SAS.";
+                $numero = str_replace('+','',$cliente->celular);
+                $numero = str_replace(' ','',$numero);
+                
+                $post['to'] = array('57'.$numero);
+                $post['text'] = $mensaje;
+                $post['from'] = "IST S.A.S.";
+                $login ="jjtuiran2021";
+                $password = 'Bstc2710';
+                
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                array(
+                    "Accept: application/json",
+                    "Authorization: Basic ".base64_encode($login.":".$password))
+                );
+                
+                $result = curl_exec ($ch);
+                $err  = curl_error($ch);
+                curl_close($ch);
+            }
+            /* * * ENVÍO SMS * * */
+        }
+        
+        /*$usuario = User::find(auth()->user()->id);
+        
+        $usuario->saldo -= $ingreso->pago();
+        $usuario->save();*/
+        
+        if(auth()->user()->rol == 8){
+            $user = User::find(auth()->user()->id);
+            $user->ganancia += 900;
+            $user->saldo -= $monto_pagar;
+            $user->save();
+        }
+        
+        if($request->cant_facturas > 1){
+            $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+            $caja = $nro->caja;
+            
+            while (true) {
+                $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                if ($numero == 0) {
+                    break;
+                }
+                $caja++;
+            }
+            
+            $ingreso = new Ingreso;
+            $ingreso->nro = $caja;
+            $ingreso->empresa = Auth::user()->empresa;
+            $ingreso->cliente = $request->cliente;
+            $ingreso->cuenta = $request->cuenta;
+            $ingreso->metodo_pago = $request->metodo_pago;
+            $ingreso->notas = $request->notas;
+            $ingreso->tipo = 2;
+            $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+            $ingreso->observaciones = 'Ingreso por concepto de reconexión';
+            $ingreso->save();
+            
+            $items = new IngresosCategoria;
+            $items->valor = $this->precision(10000);
+            $items->id_impuesto = 2;
+            $items->ingreso = $ingreso->id;
+            $items->categoria = 56;
+            $items->cant = 1;
+            $items->descripcion = 'Ingreso por concepto de reconexión';
+            $items->impuesto = 0;
+            $items->save();
+            
+            //sumo a las numeraciones el recibo
+            $nro->caja = $caja + 1;
+            $nro->save();
+            
+            //Registro el Movimiento
+            $ingreso = Ingreso::find($ingreso->id);
+            //ingresos
+            $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+            
+            $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
+            if ($facturas) {
+                foreach ($facturas as $factura) {
+                    $factura->estatus = 0;
+                    $factura->save();
+                }
+            }
+        }
+        
+        $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+        return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
+        //return redirect('empresa/ingresos')->with('success', $mensaje)->with('ingreso_id', $ingreso->id);
+    }
+
+  /**
+  * Ver un ingreso
+  * @param int $id
+  * @return view
+  */
+  public function show($id){
+      $this->getAllPermissions(Auth::user()->id);
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($ingreso) {
+      if ($ingreso->tipo==1) {
+        $titulo='Pago a facturas de venta';
+        $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+      }
+      else if($ingreso->tipo==3){
+        $titulo=$ingreso->detalle(true);
+      }
+      else{
+        $titulo='Ingreso';
+        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+      }
+      view()->share(['icon' =>'', 'title' => $titulo, 'middel'=>true]);
+
+      $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+      return view('ingresos.show')->with(compact('ingreso', 'items', 'retenciones'));
+    }
+    return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
+  }
+
+  /**
+  * Formulario para modificar el ingreso
+  * @param int $id
+  * @return view
+  */
+  public function edit($id){
+      $this->getAllPermissions(Auth::user()->id);
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    if ($ingreso) {
+      view()->share(['icon' =>'', 'title' => 'Modificar Ingreso (Recibo de Caja) #'.$ingreso->nro]);
+      if ($ingreso->tipo==3) {
+        return redirect('empresa/ingresos')->with('error', 'No puede editar un pago de nota de débito');
+      }
+      if ($ingreso->tipo==4) {
+        return redirect('empresa/ingresos')->with('error', 'No puede editar una transferencia');
+      }
+      $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
+      $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->get();
+      $metodos_pago =DB::table('metodos_pago')->get();
+      $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+      $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
+      $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+      $items= $retencionesIngreso=array();
+      $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+
+      if($ingreso->tipo==2){
+        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+        $retencionesIngreso = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+      }
+      return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso', 'categorias', 'bancos', 'metodos_pago', 'impuestos','items', 'retenciones'));
+    }
+    return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
+  }
+
+  /**
+  * Modificar los datos del ingreso
+  * @param Request $request
+  * @return redirect
+  */
+  public function update(Request $request, $id){
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    if ($ingreso) {
+
+      if ($ingreso->tipo==3) {
+        return redirect('empresa/ingresos')->with('error', 'No puede editar un pago de nota de débito');
+      }
+      $request->validate([
+        'cuenta' => 'required|numeric'
+      ]);
+
+      //Si se cambia de tipo se elimina todos
+      if ($ingreso->tipo!=$request->tipo) {
+        if ($ingreso->tipo==1) {
+          DB::table('factura')->where('empresa',Auth::user()->empresa)->whereRaw('id in (Select id from ingresos_factura where ingreso=?)', [$ingreso->id])->update(['estatus'=>1]);
+          IngresosFactura::where('ingreso',$ingreso->id)->delete();
+        }
+        else{
+          IngresosCategoria::where('ingreso',$ingreso->id)->delete();
+        }
+
+        IngresosRetenciones::where('ingreso',$ingreso->id)->delete();
+      }
+
+
+      $ingreso->cliente=$request->cliente;
+      $ingreso->cuenta=$request->cuenta;
+      $ingreso->metodo_pago=$request->metodo_pago;
+      $ingreso->notas=$request->notas;
+      $ingreso->tipo=$request->tipo;
+      $ingreso->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
+      $ingreso->observaciones=mb_strtolower($request->observaciones);
+      $ingreso->save();
+
+      //Si el tipo de ingreso es de facturas de venta
+      if ($ingreso->tipo==1) {
+        foreach ($request->factura_pendiente as $key => $value) {
+          $factura = Factura::find($request->factura_pendiente[$key]);
+          $items = IngresosFactura::where('ingreso',$ingreso->id)->where('factura', $factura->id)->first();
+          $porpagar=$factura->porpagar();
+          if ($request->precio[$key]) {
+            if (!$items) {
+              $items = new IngresosFactura;
+              $items->factura=$request->factura_pendiente[$key];
+              $items->pagado=$factura->pagado();
+              $items->ingreso=$ingreso->id;
+            }
+            else{
+              $porpagar+=$this->precision($items->pago);
+            }
+            $items->pago=$this->precision($request->precio[$key]);
+            $items->save();
+            $precio=$this->precision($request->precio[$key]);
+            $retencion='fact'.$factura->id.'_retencion';
+            $precio_reten='fact'.$factura->id.'_precio_reten';
+            $cont=0; $fact=0;
+            if ($request->$retencion) {
+              $inner=array();
+              foreach ($request->$retencion as $key2 => $value2) {
+                if ($request->$precio_reten[$key2]) {
+                  $retencion = Retencion::where('id', $value2)->first();
+                  $cont+=1;
+                  $id='fact'.$factura->id.'_nro_'.$cont;
+                  if ($request->$id) {
+                    $items = IngresosRetenciones::where('id', $request->$id)->first();
+                  }
+                  else{
+                    $items = new IngresosRetenciones;
+                  }
+                  $inner[]=$items->id;
+                  $items->ingreso=$ingreso->id;
+                  $items->factura=$factura->id;
+                  $items->valor=$this->precision($request->$precio_reten[$key2]);
+                  $precio+=$this->precision( $request->$precio_reten[$key2]);
+                  $items->retencion=$retencion->porcentaje;
+                  $items->id_retencion=$retencion->id;
+                  $items->save();
+                }
+              }
+
+
+              if (count($inner)>0) {
+                DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->where('factura', $factura->id)->whereNotIn('id', $inner)->delete();
+              }
+
+            }
+            else{
+              DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->where('factura', $factura->id)->delete();
+            }
+            if ($this->precision($factura->pagado())==$this->precision($factura->total()->total)) {
+              $factura->estatus=0;
+            }
+            else{
+              $factura->estatus=1;
+            }
+            $factura->save();
+          }
+          else{
+            if($items){
+              $items->delete();
+              $factura->estatus=1;
+              $factura->save();
+            }
+          }
+        }
+      }
+      else{ //Ingresos por categorias
+        $retencionesIngreso = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+        $inner=array();
+        foreach ($request->categoria as $key => $value) {
+          if ($request->precio_categoria[$key]) {
+            $cat='id_cate'.($key+1);
+            if($request->$cat){
+              $items = IngresosCategoria::where('id', $request->$cat)->first();
+            }
+            else{
+              $items = new IngresosCategoria;
+            }
+            $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+            if (!$impuesto) {
+              $impuesto = Impuesto::where('id', 0)->first();
+            }
+            $items->valor=$request->precio_categoria[$key];
+            $items->id_impuesto=$request->impuesto_categoria[$key];
+            $items->ingreso=$ingreso->id;
+            $items->categoria=$request->categoria[$key];
+            $items->cant=$request->cant_categoria[$key];
+            $items->descripcion=$request->descripcion_categoria[$key];
+            $items->impuesto=$impuesto->porcentaje;
+            $items->save();
+            $inner[]=$items->id;
+          }
+        }
+        if (count($inner)>0) {
+            DB::table('ingresos_categoria')->where('ingreso', $ingreso->id)->whereNotIn('id', $inner)->delete();
+
+        }
+        $inner=array();
+        if ($request->retencion) {
+          foreach ($request->retencion as $key => $value) {
+            if ($request->precio_reten[$key]) {
+              $cat='reten'.($key+1);
+              if($request->$cat){
+                $items = IngresosRetenciones::where('id', $request->$cat)->first();
+              }
+              else{$items = new IngresosRetenciones;}
+              $retencion = Retencion::where('id', $request->retencion[$key])->first();
+              $items->ingreso=$ingreso->id;
+              $items->valor=$request->precio_reten[$key];
+              $items->retencion=$retencion->porcentaje;
+              $items->id_retencion=$retencion->id;
+              $items->save();
+              $inner[]=$items->id;
+            }
+          }
+          if (count($inner)>0) {
+            DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->whereNotIn('id', $inner)->delete();
+          }
+        }
+        else{
+            DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->delete();
+
+        }
+      }
+
+      //ingresos
+      $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+      $mensaje='Se ha modificado satisfactoriamente el ingreso';
+      return redirect('empresa/ingresos')->with('success', $mensaje)->with('ingreso_id', $ingreso->id);
+
+
+    }
+    return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
+
+  }
+
+
+  //Sacar un PDF
+  public function Imprimir($id){
+    /**
+     * toma en cuenta que para ver los mismos
+     * datos debemos hacer la misma consulta
+    **/
+    view()->share(['title' => 'Imprimir Ingreso']);
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    if ($ingreso) {
+      if ($ingreso->tipo==1) {
+
+        $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
+        $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+      }
+      else if ($ingreso->tipo==2){
+
+        $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
+        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+      }
+      else{
+        $itemscount=1;
+        $items = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->get();
+      }
+
+      $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+      $pdf = PDF::loadView('pdf.ingreso', compact('ingreso', 'items', 'retenciones', 'itemscount'));
+      return  response ($pdf->stream())->withHeaders([
+                'Content-Type' =>'application/pdf',]);
+    }
+
+
+  }
+
+  //Enviar el PDF POR CORREO
+  public function enviar($id, $emails=null, $redireccionar=true){
+    /**
+     * toma en cuenta que para ver los mismos
+     * datos debemos hacer la misma consulta
+    **/
+    view()->share(['title' => 'Enviando Recibo de Caja']);
+
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    if ($ingreso) {
+      if (!$emails) {
+        $emails[]=$ingreso->cliente()->email;
+        if ($ingreso->cliente()->asociados('number')>0) {
+          $email=$emails;
+          foreach ($ingreso->cliente()->asociados() as $asociado) {
+            if ($asociado->notificacion==1 && $asociado->email) {
+              $emails[]=$asociado->email;
+            }
+          }
+        }
+      }
+      if (!$emails || count($emails)==0) {
+        return redirect('empresa/ingresos/'.$ingreso->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
+      }
+      if ($ingreso->tipo==1) {
+        $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
+        $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+      }
+      else{
+        $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
+        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+      }
+
+        $pdf = PDF::loadView('pdf.ingreso', compact('ingreso', 'items', 'retenciones', 'itemscount'))->stream();
+        $asunto = "Recibo de Caja # $ingreso->nro";
+        Mail::send('emails.ingreso', compact('ingreso'), function($message) use ($pdf, $emails, $ingreso, $asunto)
+        {
+          $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
+          $message->to($emails)->subject($asunto);
+          $message->attachData($pdf, 'recibo.pdf', ['mime' => 'application/pdf']);
+        });
+
+
+    }
+    if ($redireccionar) {
+
+      return redirect('empresa/ingresos/'.$ingreso->id)->with('success', 'Se ha enviado el correo');
+    }
+  }
+
+  //Anular o Convertir a abierta
+  public function anular($id){
+    $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    if ($ingreso) {
+      if ($ingreso->tipo==3) {
+        return redirect('empresa/pagos')->with('error', 'No puede editar un ingreso de nota de débito');
+      }
+
+      if ($ingreso->tipo==4) {
+        return redirect('empresa/pagos')->with('error', 'No puede editar una transferencia');
+      }
+
+      if ($ingreso->estatus==1) {
+        $ingreso->estatus=2;
+        $mensaje='Se ha anulado satisfactoriamente el pago';
+      }
+      else{
+        if ($ingreso->tipo==1) {
+            $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+            foreach ($items as $item) {
+              $factura= $item->factura();
+              if ($factura->porpagar()<$item->pago) {
+                return back()->with('error', 'El monto es mayor que lo que falta por pagar en la venta')->with('ingreso_id', $ingreso->id);
+              }
+            }
+        }
+        $ingreso->estatus=1;
+        $mensaje='Se ha abierto satisfactoriamente el pago';
+      }
+      $ingreso->save();
+
+      if ($ingreso->tipo==1) {
+        $items=ingresosFactura::where('ingreso',$ingreso->id)->get();
+        foreach ($items as $item) {
+            $factura= $item->factura();
+            if ($this->precision($factura->porpagar())<=0) {
+                $factura->estatus=0;
+            }else{ 
+                $factura->estatus=1; 
+            }
+            $factura->save();
+        }
+      }
+
+      $this->chage_status_transaccion(1, $ingreso->id, $ingreso->estatus);
+      return back()->with('success', $mensaje)->with('ingreso_id', $ingreso->id);
+    }
+    return back()->with('error', 'No existe un registro con ese id');
+
+  }
+
+  //Eliminar el ingreso
+    public function destroy($id){
+        $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        if ($ingreso) {
+            if ($ingreso->tipo==3) {
+                return redirect('empresa/pagos')->with('error', 'No puede editar un pago de nota de débito');
+            }else if ($ingreso->tipo==1) {
+                if ($ingreso->estatus!=2) {
+                    $ids=DB::table('ingresos_factura')->where('ingreso', $ingreso->id)->select('factura', 'pago')->get();
+                    $factura=array();
+                    foreach ($ids as $id) {
+                        $factura[]=$id->factura;
+                    }
+                    DB::table('factura')->where('empresa',Auth::user()->empresa)->whereIn('id', $factura)->update(['estatus'=>1]);
+                }
+                IngresosFactura::where('ingreso', $ingreso->id)->delete();
+                //ingresos
+                $this->destroy_transaccion(1, $ingreso->id);
+            }else if ($ingreso->tipo==2){
+                IngresosCategoria::where('ingreso', $ingreso->id)->delete();
+                //ingresos
+                $this->destroy_transaccion(1, $ingreso->id);
+            }else if($ingreso->tipo==4){
+                IngresosCategoria::where('ingreso', $ingreso->id)->delete();
+                $mov1=Movimiento::where('modulo', 1)->where('id_modulo', $ingreso->id)->first();
+                if ($mov1) {
+                    $gasto=Gastos::where('id', $mov1->id_modulo)->first();
+                    if ($gasto) {
+                        GastosCategoria::where('gasto', $gasto->id)->delete();
+                        $gasto->delete();
+                    }
+                    Movimiento::where('transferencia', $mov1->id)->delete();
+                    $mov1->delete();
+                }
+            }
+            
+            DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->delete();
+            $ingreso->delete();
+            
+            $mensaje='Se ha eliminado satisfactoriamente el ingreso';
+            //return redirect('empresa/ingresos')->with('success', $mensaje);
+            return back()->with('success', $mensaje);
+        }
+        return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
+    }
+
+
+}

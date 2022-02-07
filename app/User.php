@@ -1,0 +1,204 @@
+<?php
+
+namespace App;
+
+use App\Model\Ingresos\Factura;
+use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable; use App\Empresa;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Auth; use DB;
+class User extends Authenticatable
+{
+    use Notifiable;
+    protected $table = "usuarios";
+    protected $primaryKey = 'id';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'nombres', 'nro',  'cedula', 'image', 'email', 'telefono', 'empresa', 'username', 'password', 'user_status','rol','saldo','created_at', 'updated_at'
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    public function roles(){
+         return $this->belongsTo('App\Roles', 'rol');
+
+    }
+
+    public function empresa(){
+        return Empresa::where('id',$this->empresa)->first();
+
+    }
+
+    public function tipo_fac(){
+        return Empresa::where('id',$this->empresa)->first()->tipo_fac;
+    }
+
+    public function estatus($clase=false){
+        if ($clase) {
+           return $this->user_status==1?'text-success':'text-danger';
+        }
+        else{
+           return $this->user_status==1?'Activo':'Inactivo';
+
+        }
+    }
+
+    public function suscripcion()
+    {
+        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
+        return $suscripcion->ilimitado;
+    }
+
+    public function modo_lectura(){
+        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
+        if($suscripcion->ilimitado){
+            return false;
+        }
+
+        if (Auth::user()->rol >= 2){
+            return ($suscripcion->fec_corte < date('Y-m-d')) || ($this->facturasHechas()) || ($this->ingresosMaximos() || ($this->rechazado())) ;
+        }
+
+    }
+
+    public function contador_responsabilidades(){
+        return DB::table('empresa_responsabilidad')->where('id_empresa',Auth::user()->empresa)->count();
+    }
+
+    public function facturasHechas(){
+
+        $suscripcion    = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
+
+        if (!$suscripcion){
+            return (Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last())->facturasHechas();
+        }
+
+        return $suscripcion->facturasHechas();
+
+    }
+
+    public function ingresosMaximos(){
+
+        $suscripcion        = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
+        $tmpSuscripcion     = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last();
+        if ($tmpSuscripcion->ilimitado){
+            return false;
+        }
+
+        if (!$suscripcion){
+            $ingresos   = (Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last())->ingresos()['ingresos'];
+            if ($this->unlimited()){
+                return false;
+            }
+
+            if(is_array($this->checkPlan()))
+                return !$this->verifyLimitsPersonalPlan($ingresos, 'ingresos');
+
+            return ($ingresos > 5000000) ? true : false;
+        }
+
+        return $suscripcion->ingresosLimit();
+
+    }
+
+    public function unlimited(){
+
+        $suscripcionFree    = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last();
+        $suscripcionFree    = Carbon::parse($suscripcionFree->created_at);
+
+        return Carbon::now()->diffInMonths($suscripcionFree) >= 1 ? false : true;
+    }
+
+    public function rechazado(){
+
+        $suscripcion        = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
+        if(!$suscripcion){
+            return false;
+        }
+
+        return $suscripcion->rechazado();
+    }
+
+
+    /**
+     * @param String $action
+     * @return bool|null
+     */
+    public function canDo(String $action)
+    {
+        $action         = DB::table('permisos_botones')->where('nombre_permiso', 'like', "%$action%")
+                            ->get();
+        if (count($action) == 0)
+            return null;
+
+        $action         = $action->last()->id;
+        $can            = DB::table('permisos_usuarios')->where('id_usuario', $this->id)
+                                ->where('id_permiso', $action)->get()->last();
+        return $can != null;
+    }
+
+    /**
+     * Verifica los limites del plan personalizado
+     * -field: es el campo a comprobar (ej: facturas o ingresos)
+     * -indexAssoc: es el campo a consultar dentro del plan personalizado, debe ser String (ej: 'facturas')
+     * @param $field
+     * @param String $indexAssoc
+     * @return bool
+     */
+    public function verifyLimitsPersonalPlan($field, String $indexAssoc)
+    {
+        $checkPlan = $this->checkPlan();
+        if(is_array($checkPlan)){
+            return ($checkPlan['pago']) ? (($field > $checkPlan[$indexAssoc]) ? false : true) : false;
+        }
+    }
+
+    /**
+     * Verifica si la empresa posee un plan personalizado.
+     * En caso de que sea asi, devuelve los datos relacionados al mismo.
+     * @return array|bool
+     */
+    private function checkPlan()
+    {
+        $empresa = Empresa::find(Auth::user()->empresa);
+        $plan = ($empresa->p_personalizado != 0) ? DB::table('planes_personalizados')->find($empresa->p_personalizado) : '' ;
+        return ($empresa->p_personalizado == 0) ? true : array(
+            'nombre' => $plan->nombre,
+            'facturas' => $plan->facturas,
+            'ingresos' => $plan->ingresos,
+            'pago' => $this->payPersonalPlan()
+        );
+
+    }
+
+    /**
+     * Verificaci¨®n del pago de la suscripcion personalizada
+     * @return bool
+     */
+    private function payPersonalPlan()
+    {
+        $empresa = Empresa::find(Auth::user()->empresa);
+        $suscripcion = SuscripcionPago::where('id_empresa', $empresa)
+            ->where('personalizado', 1)
+            ->get();
+        return count($suscripcion) > 0 ? true : false;
+    }
+    
+    public function usado()
+    {
+        return Radicado::where('tecnico',$this->id)->orWhere('responsable',$this->id)->count();
+    }
+
+}
