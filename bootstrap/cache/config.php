@@ -178,7 +178,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\framework/cache/data',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -336,18 +336,18 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\storage\\app',
+        'root' => 'C:\\laragon\\www\\istingen\\storage\\app',
       ),
       'documentos' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\public\\../../public_html/adjuntos/documentos',
+        'root' => 'C:\\laragon\\www\\istingen\\public\\../../public_html/adjuntos/documentos',
         'visibility' => 'public',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\storage\\app/public',
+        'root' => 'C:\\laragon\\www\\istingen\\storage\\app/public',
         'url' => 'https://istingenieria.online/software/storage',
         'visibility' => 'public',
       ),
@@ -378,7 +378,7 @@
   ),
   'log-viewer' => 
   array (
-    'storage-path' => 'C:\\laragon\\www\\istinge\\storage\\logs',
+    'storage-path' => 'C:\\laragon\\www\\istingen\\storage\\logs',
     'pattern' => 
     array (
       'prefix' => 'laravel-',
@@ -458,13 +458,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\logs/laravel.log',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\logs/laravel.log',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 7,
       ),
@@ -516,7 +516,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\laragon\\www\\istinge\\resources\\views/vendor/mail',
+        0 => 'C:\\laragon\\www\\istingen\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -603,7 +603,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\laragon\\www\\istinge\\storage\\framework/sessions',
+    'files' => 'C:\\laragon\\www\\istingen\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -623,9 +623,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\laragon\\www\\istinge\\resources\\views',
+      0 => 'C:\\laragon\\www\\istingen\\resources\\views',
     ),
-    'compiled' => 'C:\\laragon\\www\\istinge\\storage\\framework\\views',
+    'compiled' => 'C:\\laragon\\www\\istingen\\storage\\framework\\views',
   ),
   'dompdf' => 
   array (
@@ -633,10 +633,10 @@
     'orientation' => 'portrait',
     'defines' => 
     array (
-      'font_dir' => 'C:\\laragon\\www\\istinge\\storage\\fonts/',
-      'font_cache' => 'C:\\laragon\\www\\istinge\\storage\\fonts/',
+      'font_dir' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
+      'font_cache' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
       'temp_dir' => 'C:\\Users\\57300\\AppData\\Local\\Temp',
-      'chroot' => 'C:\\laragon\\www\\istinge',
+      'chroot' => 'C:\\laragon\\www\\istingen',
       'enable_font_subsetting' => false,
       'pdf_backend' => 'CPDF',
       'default_media_type' => 'screen',
