@@ -4,7 +4,7 @@
     'name' => 'IST INGENIERIA Y SOLUCIONES TECNOLOGICAS S.A.S.',
     'api_key' => NULL,
     'env' => 'production',
-    'debug' => false,
+    'debug' => true,
     'url' => 'https://istingenieria.online/software',
     'timezone' => 'America/Bogota',
     'locale' => 'es',

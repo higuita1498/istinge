@@ -282,6 +282,10 @@ class FacturasController extends Controller
         return view('facturas.indexnew', compact('clientes'));
     }
 
+    public function index_electronica(){
+      return "ok";
+    }
+
     public function facturas(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
