@@ -78,7 +78,7 @@
     	function requestDatta(interface,type_interface) {
     	    var id = $("#id").val();
     		$.ajax({
-    			url: '/software/empresa/mikrotik/'+id+'/graficajson',
+    			url: 'graficajson',
     			datatype: "json",
     			success: function(data) {
     				var midata = JSON.parse(data);

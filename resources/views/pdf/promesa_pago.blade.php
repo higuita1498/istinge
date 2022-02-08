@@ -160,8 +160,8 @@
                 <th class="center" style="font-size: 8px"><b>FECHA DE PROMESA DE PAGO (DD/MM/AA)</b></th>
             </tr>
             <tr>
-                <th class="right smalltd">TELÉFONO</th>
-                <td style="border-bottom: 2px solid #ccc;">{{$promesa->cliente()->telefono1}}</td>
+                <th class="right smalltd">CELULAR</th>
+                <td style="border-bottom: 2px solid #ccc;">{{$promesa->cliente()->celular}}</td>
                 <th class="right smalltd" style="padding-right: 2px;">EMAIL</th>
                 <td style="border-bottom: 2px solid #ccc;" >{{$promesa->cliente()->email}}</td>
                 <td class="center" style="border-right: 2px solid #ccc; border-bottom: 2px solid #ccc;">{{date('d/m/Y', strtotime($promesa->vencimiento))}}</td>
@@ -171,6 +171,41 @@
 
 
     <div style="margin-top: 2%;">
+        <table border="0" class="desgloce" >
+            <thead>
+                <tr>
+                    <th width="70%" colspan="2" style="padding: 3px;" class="center smalltd">Concepto</th>
+                    <th style="padding: 3px;" width="15%" class="center smalltd">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $cont=0; @endphp
+                @if($factura)
+                @php $cont++; @endphp
+                    <tr>
+                        <td colspan="2" class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">
+                            Promesa de pago a factura N° {{$factura->codigo}}
+                        </td>
+                        <td class="center padding-right border_right  @if($cont==$itemscount && $cont>6) border_bottom @endif">
+                            {{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}
+                        </td>
+                    </tr>
+                @endif
+
+                @if($cont<7)
+                @php $cont=7-$cont; @endphp
+                    @for($i=1; $i<=$cont; $i++)
+                        <tr>
+                            <td colspan="2" class="border_left @if($cont==$i) border_bottom @endif" style="height: 15px;"></td>
+                            <td class="border_right @if($cont==$i) border_bottom @endif" style="height: 15px;"></td>
+                        </tr>
+
+                    @endfor
+
+                @endif
+
+            </tbody>
+        </table>
     </div>
     
     <div style="width: 70%; margin-top: 1%">

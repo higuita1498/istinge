@@ -220,7 +220,7 @@
     @if(Auth::user()->rol == 8)
         <div class="row card-description">
     	    <form action="https://checkout.wompi.co/p/" method="GET" id="form-wompi" class="d-none">
-    	        <input type="hidden" name="public-key" value="" />
+    	        <input type="hidden" name="public-key" value="{{env('WOMPI_KEY')}}" />
     	        <input type="hidden" name="currency" value="COP" />
     	        <input type="hidden" name="amount-in-cents" id="amount-in-cents" />
     	        <input type="hidden" name="reference" value="{{str_replace(' ', '_', Auth::user()->nombres)}}<?php echo '_IST_'.rand();?>" />

@@ -94,6 +94,18 @@
     						<th>Total</th>
     						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($gasto->pago())}}</td>
     					</tr>
+                        @if($gasto->created_by)
+                        <tr>
+                            <th><strong>Realizado por</strong></th>
+                            <td>{{$gasto->created_by()->nombres}}</td>
+                        </tr>
+                        @endif
+                        @if($gasto->updated_by)
+                        <tr>
+                            <th><strong>Actualizado por</strong></th>
+                            <td>{{$gasto->updated_by()->nombres}}</td>
+                        </tr>
+                        @endif
     				</tbody>
     			</table>
     		</div>

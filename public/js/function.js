@@ -5,15 +5,6 @@ function abrirEnPestana(url) {
     a.click();
 }
 
-
-/*$("*:not(#sidebar").on("click", function(){
- if ($(".sidebar_offcanvas").hasClass("active")){
- $("#sidebar").removeClass("active");
- //$("#sidebar").slideUp();
- console.log("cerrnadi");
- }
- });*/
-
 function vaciar_fitro(vaciar=false){
     $('#filtro_tabla input').val('');
     $('#filtro_tabla .selectpicker').val('');
@@ -22,9 +13,7 @@ function vaciar_fitro(vaciar=false){
         form=$('#form').val();
         $('#'+form).submit();
     }
-
 }
-
 
 function toggediv(element){
     if ($("#"+element+":visible").length > 0) {
@@ -35,25 +24,14 @@ function toggediv(element){
     }
 }
 
-/*
- *Muestra un elemento oculto
- */
 function showdiv(element){
     $('#'+element).show();
 }
 
-
-/*
-*Muestra dos elementos oculto
-*/
 function showdivtwo(element){
   $('.'+element).show();
    document.getElementById('saldo123').style.display = "none";
 }
-
-/*
-* Oculta dos elementos
-*/
 
 function hidedivtwo(element)
 {
@@ -62,10 +40,6 @@ function hidedivtwo(element)
     document.getElementById('saldo123').style.display = "block";
 }
 
-
-/*
- * Oculta un elemento y si tiene formulario lo reinicia
- */
 function hidediv(element, form=null){
     $('#'+element).hide();
     if (form) {
@@ -89,10 +63,7 @@ function nodisabled(form, remove=true, validate=false){
                     $('#pass').show();
                 }
             }
-
         }
-
-
     }
     else{
         $("#"+form+" input").attr("disabled", 'disabled');
@@ -100,12 +71,8 @@ function nodisabled(form, remove=true, validate=false){
         hidediv('modificar');
         if (validate) {
             $("#"+form).validate('destroy');
-
-
         }
-
     }
-
 }
 
 function number_format(number, seccion=true) {
@@ -120,7 +87,6 @@ function number_format(number, seccion=true) {
         splitNum[0] = splitNum[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_sep);
         number = splitNum.join(dec_point);
     }
-
     return number;
 }
 
@@ -129,18 +95,10 @@ function modal_show(url, modal){
     $.ajax({
         url: url,
         success: function(data){
-            /*
-             * Se ejecuta cuando termina la petición y esta ha sido
-             * correcta
-             * */
             $('#modal-'+modal+'-div').html(data);
             $('#modal-'+modal).modal('show');
-
         },
         error: function(data){
-            /*
-             * Se ejecuta si la peticón ha sido erronea
-             * */
             alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
         }
     });
@@ -149,7 +107,6 @@ function modal_show(url, modal){
 function enviarForm(form, e){
     e.preventDefault();
 }
-
 
 /* Funciones del modulo de inventario*/
 
@@ -2770,9 +2727,7 @@ function formulario(id)
     setTimeout(function() { btn.setAttribute('disabled', 'disabled'); }, 1);
     setTimeout(function() { btn.removeAttribute('disabled'); }, 5000);
     asociarCampo(null,null,null);
-
 }
-
 
 function asociarCampo(nombre,id,modal)
 {
@@ -2924,89 +2879,75 @@ function proveedoresxproducto(idproducto)
     });
 }
 
-function searchDV(id)
-{
+function searchDV(id){
     option = id;
     if (option == 6) {
-
         document.getElementById("dvnit").style.display = "block";
-       valor = $("#dv").val(calculateDV($("#nit").val()));
+        valor = $("#dv").val(calculateDV($("#nit").val()));
         $("#dvoriginal").val(valor.val());
-
         $("#nit").keyup(function(){
-        valor = $("#dv").val(calculateDV($(this).val()));
-        $("#dvoriginal").val(valor.val());
-    });
+            valor = $("#dv").val(calculateDV($(this).val()));
+            $("#dvoriginal").val(valor.val());
+        });
     }else{
         document.getElementById("dvnit").style.display = "none";
     }
 }
 
-function calculateDV(myNit)
-{
-        var vpri,
-        x,
-        y,
-        z;
+function calculateDV(myNit){
+    var vpri,
+    x,
+    y,
+    z;
 
-  // Se limpia el Nit
-  myNit = myNit.replace ( /\s/g, "" ) ; // Espacios
-  myNit = myNit.replace ( /,/g,  "" ) ; // Comas
-  myNit = myNit.replace ( /\./g, "" ) ; // Puntos
-  myNit = myNit.replace ( /-/g,  "" ) ; // Guiones
+    // Se limpia el Nit
+    myNit = myNit.replace ( /\s/g, "" ) ; // Espacios
+    myNit = myNit.replace ( /,/g,  "" ) ; // Comas
+    myNit = myNit.replace ( /\./g, "" ) ; // Puntos
+    myNit = myNit.replace ( /-/g,  "" ) ; // Guiones
 
-  // Se valida el nit
-  if  ( isNaN ( myNit ) )  {
-    console.log ("El nit/cédula '" + myNit + "' no es válido(a).") ;
-    return "" ;
-};
+    //Se valida el nit
+    if  ( isNaN ( myNit ) )  {
+        console.log ("El nit/cédula '" + myNit + "' no es válido(a).") ;
+        return "" ;
+    };
+    // Procedimiento
+    vpri = new Array(16) ;
+    z = myNit.length ;
+    vpri[1]  =  3 ;
+    vpri[2]  =  7 ;
+    vpri[3]  = 13 ;
+    vpri[4]  = 17 ;
+    vpri[5]  = 19 ;
+    vpri[6]  = 23 ;
+    vpri[7]  = 29 ;
+    vpri[8]  = 37 ;
+    vpri[9]  = 41 ;
+    vpri[10] = 43 ;
+    vpri[11] = 47 ;
+    vpri[12] = 53 ;
+    vpri[13] = 59 ;
+    vpri[14] = 67 ;
+    vpri[15] = 71 ;
 
-  // Procedimiento
-  vpri = new Array(16) ;
-  z = myNit.length ;
-
-  vpri[1]  =  3 ;
-  vpri[2]  =  7 ;
-  vpri[3]  = 13 ;
-  vpri[4]  = 17 ;
-  vpri[5]  = 19 ;
-  vpri[6]  = 23 ;
-  vpri[7]  = 29 ;
-  vpri[8]  = 37 ;
-  vpri[9]  = 41 ;
-  vpri[10] = 43 ;
-  vpri[11] = 47 ;
-  vpri[12] = 53 ;
-  vpri[13] = 59 ;
-  vpri[14] = 67 ;
-  vpri[15] = 71 ;
-
-  x = 0 ;
-  y = 0 ;
-  for  ( var i = 0; i < z; i++ )  {
-    y = ( myNit.substr (i, 1 ) ) ;
-    // console.log ( y + "x" + vpri[z-i] + ":" ) ;
-
-    x += ( y * vpri [z-i] ) ;
-    // console.log ( x ) ;
+    x = 0 ;
+    y = 0 ;
+    for  ( var i = 0; i < z; i++ )  {
+        y = ( myNit.substr (i, 1 ) ) ;
+        // console.log ( y + "x" + vpri[z-i] + ":" ) ;
+        x += ( y * vpri [z-i] ) ;
+        // console.log ( x ) ;
+    }
+    y = x % 11 ;
+    return ( y > 1 ) ? 11 - y : y ;
 }
 
-y = x % 11 ;
-  // console.log ( y ) ;
-
-  return ( y > 1 ) ? 11 - y : y ;
-}
-
-
-function validateCountry(id)
-{
+function validateCountry(id){
     if (id == 'CO') {
         document.getElementById("validatec1").style.display = "block";
         document.getElementById("validatec2").style.display = "block";
         document.getElementById("validatec3").style.display = "block";
-    }
-    else
-    {
+    }else{
         document.getElementById("validatec1").style.display = "none";
         document.getElementById("validatec2").style.display = "none";
         document.getElementById("validatec3").style.display = "none";
@@ -3014,8 +2955,13 @@ function validateCountry(id)
 }
 
 function searchMunicipality(id){
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/searchMunicipality';
+    }else{
+        var url='/searchMunicipality';
+    }
     $.ajax({
-        url: '/software/searchMunicipality',
+        url: url,
         headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         method:'post',
         data:{departamento_id:id},
@@ -3030,10 +2976,7 @@ function searchMunicipality(id){
     })
 }
 
-function updateDirectionClient(id)
-{
-    //alert($("#pais").val());
-    //alert(id);
+function updateDirectionClient(id){
     $.ajax({
         url: '/updatedirection/client',
         headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -3061,13 +3004,10 @@ function updateDirectionClient(id)
    })
 }
 
-function updateDirectionClient(id)
-{
+function updateDirectionClient(id){
     if (isNaN($("#nit_2").val())==true) {
         $("#vldnit_2").html("solo números sin digito de verificación ni letras");
-    }
-    else
-    {
+    }else{
         $.ajax({
             url: '/updatedirection/client',
             headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -3086,10 +3026,8 @@ function updateDirectionClient(id)
             tipo_persona:$("#tipo_persona2").val(),
             responsable : $("#responsable2").val(),
             email :      $("#email_2").val(),
-
         },
-        success: function(cliente)
-        {
+        success: function(cliente){
             $("#modaleditDirection").modal('hide');
             Swal.fire({
               position: 'top-center',
@@ -3104,169 +3042,119 @@ function updateDirectionClient(id)
     }
 }
 
-function validateDianByCorreo(id,rutasuccess)
-{
-   $titleswal = "¿Enviar correo al cliente + el xml sin firmar?";
-   $textswal  = "No podrás retroceder esta acción";
-   $confirmswal = "Si, Enviar";
-
-   Swal.fire({
-    title: $titleswal,
-    text: $textswal,
-    type: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    cancelButtonText: 'Cancelar',
-    confirmButtonText: $confirmswal,
-}).then((result) => {
-  if (result.value) {
-
-    $.ajax({
-        url: '/validatedian/invoice',
-        headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        method:'post',
-        data:{id:id,},
-        success: function(validate)
-        {
-
-            //-- Validaciones por numeración --//
-            /*if (validate.numeracion.prefijo == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un prefijo en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "prefijo.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }else */if (validate.numeracion.inicioverdadero == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un inicio en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "inicioverdadero.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.final == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un final en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "final.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.desde == null) {
-                $mensaje = "Para emitir a la Dian se debe tener una fecha de inicio en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "desde.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.hasta == null) {
-                $mensaje = "Para emitir a la Dian se debe tener una fecha de fin en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "hasta.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.nroresolucion == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un número de resolución en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "nroresolucion.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            //-- /Validaciones por numeración -- //
-
-            //-- Validaciones por la empresa  --//
-            else if (validate.responsabilidades == 0) {
-                $mensaje = "Para emitir a la Dian se deben tener configuradas las responsabilidades de la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "responsabilidades.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if(validate.empresa.fk_idpais == null)
-            {
-                $mensaje = "Para emitir a la Dian se debe tener un país asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "pais.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.fk_iddepartamento == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "departamento.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.fk_idmunicipio == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un municipio asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "municipio.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.dv == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un dígito de verificacion asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "dv.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            //-- /Validaciones por la empresa  --//
-
-             //-- Validaciones para el cliente  --//
-
-             else if(validate.cliente.fk_idpais == null)
-             {
-                $mensaje = "Para emitir a la Dian se debe tener un país asociado al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "pais.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.cliente.fk_iddepartamento == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "departamento.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.cliente.fk_idmunicipio == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un municipio asociado al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "municipio.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if(validate.cliente.email == null || validate.cliente.email == "")
-            {
-             $mensaje = "Para emitir a la Dian se debe tener un correo asociado al cliente.";
-             $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-             $img     = "correo.png";
-             messageValidateDian($mensaje, $footer, $img);
-         }
-
-         else if (validate.cliente.tip_iden == 6 && validate.cliente.tipo_persona == null) {
-            $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es tipo natural o jurídico, además se debe elegir si es responsable de iva o no responsable de iva.";
-            $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-            $img     = "tipo_persona.png";
-            messageValidateDian($mensaje, $footer, $img);
-        }
-        else if (validate.cliente.tip_iden == 6 && validate.cliente.responsableiva == null) {
-            $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es responsable de iva o no responsable de iva.";
-            $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-            $img     = "responsableiva.png";
-            messageValidateDian($mensaje, $footer, $img);
-        }
-            //-- /Validaciones para el cliente  --//
-
-            //-- Validaciones para la factura --//
-            else if (validate.total <= 0) {
-                $mensaje = "El total de la factura debe ser mayor a $0 pesos.";
-                $footer  = "";
-                $img     = "total.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            //-- /Validaciones para la factura --//
-            else { window.location.href = rutasuccess; }
-
+function validateDianByCorreo(id,rutasuccess){
+    $titleswal = "¿Enviar correo al cliente + el xml sin firmar?";
+    $textswal  = "No podrás retroceder esta acción";
+    $confirmswal = "Si, Enviar";
+    Swal.fire({
+        title: $titleswal,
+        text: $textswal,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: $confirmswal,
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url: '/validatedian/invoice',
+                headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                method:'post',
+                data:{id:id,},
+                success: function(validate){
+                    if (validate.numeracion.inicioverdadero == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un inicio en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "inicioverdadero.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.numeracion.final == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un final en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "final.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.numeracion.desde == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener una fecha de inicio en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "desde.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.numeracion.hasta == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener una fecha de fin en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "hasta.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.numeracion.nroresolucion == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un número de resolución en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "nroresolucion.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.responsabilidades == 0) {
+                        $mensaje = "Para emitir a la Dian se deben tener configuradas las responsabilidades de la empresa.";
+                        $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img     = "responsabilidades.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if(validate.empresa.fk_idpais == null){
+                        $mensaje = "Para emitir a la Dian se debe tener un país asociado a la empresa.";
+                        $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img     = "pais.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.empresa.fk_iddepartamento == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados a la empresa.";
+                        $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img     = "departamento.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.empresa.fk_idmunicipio == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un municipio asociado a la empresa.";
+                        $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img     = "municipio.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.empresa.dv == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un dígito de verificacion asociado a la empresa.";
+                        $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img     = "dv.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if(validate.cliente.fk_idpais == null){
+                        $mensaje = "Para emitir a la Dian se debe tener un país asociado al cliente.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "pais.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.cliente.fk_iddepartamento == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados al cliente.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "departamento.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.cliente.fk_idmunicipio == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un municipio asociado al cliente.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "municipio.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if(validate.cliente.email == null || validate.cliente.email == ""){
+                        $mensaje = "Para emitir a la Dian se debe tener un correo asociado al cliente.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "correo.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.cliente.tip_iden == 6 && validate.cliente.tipo_persona == null) {
+                        $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es tipo natural o jurídico, además se debe elegir si es responsable de iva o no responsable de iva.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "tipo_persona.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.cliente.tip_iden == 6 && validate.cliente.responsableiva == null) {
+                        $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es responsable de iva o no responsable de iva.";
+                        $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                        $img     = "responsableiva.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (validate.total <= 0) {
+                        $mensaje = "El total de la factura debe ser mayor a $0 pesos.";
+                        $footer  = "";
+                        $img     = "total.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else {
+                        window.location.href = rutasuccess;
+                    }
+                }
+            })
         }
     })
-}
-})
 }
 
 function validateDian(id,rutasuccess,codigo)
@@ -3513,8 +3401,7 @@ function messageValidateDian($mensaje, $footer, $img)
   })
 }
 
-function tipopersona(value)
-{
+function tipopersona(value){
     if (value==2) {
         $("#responsable").empty();
         $("#responsable").append("<option  value='1'>Responsable de IVA</option>")
@@ -3528,8 +3415,7 @@ function tipopersona(value)
     }
 }
 
-function tipopersonaModal(value)
-{
+function tipopersonaModal(value){
     if (value==2) {
         $("#responsable2").empty();
         $("#responsable2").append("<option  value='1'>Responsable de IVA</option>")
@@ -3542,8 +3428,6 @@ function tipopersonaModal(value)
         $("#responsable2").selectpicker("refresh");
     }
 }
-
-
 
 function saldo_favor(element){
     if (element != 'no') {
@@ -3565,32 +3449,12 @@ function saldo_favor(element){
             }
         }
         $('#cuenta,#metodo_pago').selectpicker('refresh');
-
-        /*$('#table-facturas  tbody tr').each(function() {
-            var id=$(this).attr('id');
-            var totalfact=$('#totalfact'+id).val();
-
-            if (parseFloat(saldo_fa) >= parseFloat(totalfact)) {
-                $('#precio'+id).val(totalfact);
-                saldo_fa = parseFloat(saldo_fa)-parseFloat(totalfact);
-                totales_ingreso();
-            }else{
-                $('#precio'+id).val(saldo_fa).prop('readonly', false);
-                totales_ingreso();
-            }
-        });
-        return x;*/
     }else{
         $("#msj_saldo").attr('style','display:none;');
         $('#metodo_pago,#cuenta').val('');
         $("#saldo,#saldo1").prop('checked', false);
         $('#cuenta').prop('disabled', false);
         $('#metodo_pago,#cuenta').selectpicker('refresh');
-        /*$('#table-facturas  tbody tr').each(function() {
-            id=$(this).attr('id');
-            $('#precio'+id).val('').prop('disabled', false).prop('readonly', false);
-            totales_ingreso();
-        });*/
     }
 }
 
@@ -3890,8 +3754,13 @@ function notificacionWifi(){
 
 function getInterfaces(mikrotik) {
     cargando(true);
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getInterfaces/'+mikrotik;
+    }else{
+        var url = '/api/getInterfaces/'+mikrotik;
+    }
     $.ajax({
-        url: '/software/api/getInterfaces/'+mikrotik,
+        url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function (data) {
@@ -3915,8 +3784,14 @@ function getInterfaces(mikrotik) {
 
 function getPlanes(mikrotik) {
     cargando(true);
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getPlanes/'+mikrotik;
+    }else{
+        var url = '/api/getPlanes/'+mikrotik;
+    }
+
     $.ajax({
-        url: '/software/api/getPlanes/'+mikrotik,
+        url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function (data) {
@@ -3946,7 +3821,6 @@ function getPlanes(mikrotik) {
 }
 
 function interfazChange(){
-    
     if(document.getElementById("conexion").value == 3){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_mac").classList.add('d-none');
@@ -4004,264 +3878,295 @@ function interfazChange(){
     document.getElementById("id_vlan").value = '';
 }
 
-    function modificarPromesa(id) {
-        cargando(true);
-        var observaciones;
-        $.ajax({
-            url: `/software/empresa/facturas/${id}/promesa_pago`,
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                cargando(false);
-                if (response) {
-                    console.log(response);
-                    promesa_pago = response.promesa_pago;
-                    id = parseInt(id);
-                    $('#div_promesa').html('');
-                    $('#div_promesa').append(`
-                        <div class="modal-body">
-                            <div class="row">
-                                <label class="col-sm-6 col-form-label text-right">Promesa de Pago</label>
-                                <div class="col-sm-6">
-                                    <input type="date" class="form-control datepickerinput" id="promesa_pago-${id}" name="promesa_pago" required="" value="`+promesa_pago+`">
-                                </div>
+function modificarPromesa(id) {
+    cargando(true);
+    var observaciones;
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = `/software/empresa/facturas/${id}/promesa_pago`;
+    }else{
+        var url = `/empresa/facturas/${id}/promesa_pago`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            cargando(false);
+            if (response) {
+                console.log(response);
+                promesa_pago = response.promesa_pago;
+                id = parseInt(id);
+                $('#div_promesa').html('');
+                $('#div_promesa').append(`
+                    <div class="modal-body">
+                        <div class="row">
+                            <label class="col-sm-6 col-form-label text-right">Promesa de Pago</label>
+                            <div class="col-sm-6">
+                                <input type="date" class="form-control datepickerinput" id="promesa_pago-${id}" name="promesa_pago" required="" value="`+promesa_pago+`">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-success" onclick="storePromesa(${id})">Guardar</button>
-                        </div>`);
-                    $('#promesaPago').modal('show');
-                }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" onclick="storePromesa(${id})">Guardar</button>
+                    </div>`);
+                $('#promesaPago').modal('show');
             }
-        });
+        }
+    });
+}
+
+function storePromesa(id) {
+    cargando(true);
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = `/software/empresa/facturas/store_promesa`;
+    }else{
+        var url = `/empresa/facturas/store_promesa`;
+    }
+    $.ajax({
+        url: url,
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            id: id,
+            promesa_pago: $('#promesa_pago-' + id).val()
+        },
+        success: function(response) {
+            cargando(false);
+            var URLactual = window.location.pathname;
+            if (response.success == true) {
+                console.log(URLactual);
+                if(URLactual == '/software/empresa/facturas'){
+                    getDataTable();
+                }else{
+                    $(".promesa").hide();
+                    $("#div_vencimieto").text('').text(response.promesa_pago);
+                }
+                $('#promesaPago').modal('hide');
+            }
+            swal({
+                title: 'PROMESA DE PAGO',
+                text: response.message,
+                type: response.type,
+                showConfirmButton: true,
+                confirmButtonColor: '#1A59A1',
+                confirmButtonText: 'ACEPTAR',
+            });
+        }
+    });
+}
+
+$('#rehuso').change(function() {
+    var rehuso = $('#rehuso').val();
+    if(rehuso == 'SI'){
+        $('#div_rehuso_aplicar').removeClass('d-none');
+        $('#rehuso_aplicar').val('2');
+        $('#rehuso_aplicar').attr('required','');
+    }else{
+        $('#div_rehuso_aplicar').addClass('d-none');
+        $('#rehuso_aplicar').val('');
+        $('#rehuso_aplicar').removeAttr('required');
+    }
+});
+
+$('#searchIP').click(function() {
+    $('#row_ip').html('');
+    let prefijo = $("#local_address").val().split('/');
+    let ip = $("#local_address").val().split('.');
+    let mk = $("#server_configuration_id").val();
+
+    switch (prefijo['1']) {
+        case '22':
+        var nro = 1023;
+        break;
+        case '23':
+        var nro = 511;
+        break;
+        case '24':
+        var nro = 255;
+        break;
+        case '25':
+        var nro = 127;
+        break;
+        case '26':
+        var nro = 63;
+        break;
+        case '27':
+        var nro = 31;
+        break;
+        case '28':
+        var nro = 15;
+        break;
+        case '29':
+        var nro = 7;
+        break;
+        case '30':
+        var nro = 3;
+        break;
+        case '>22':
+        console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
+        break;
     }
 
-    function storePromesa(id) {
-        cargando(true);
-        $.ajax({
-            url: `/software/empresa/facturas/store_promesa`,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                id: id,
-                promesa_pago: $('#promesa_pago-' + id).val()
-            },
-            success: function(response) {
-                cargando(false);
-                var URLactual = window.location.pathname;
-                if (response.success == true) {
-                    console.log(URLactual);
-                    if(URLactual == '/software/empresa/facturas'){
-                        getDataTable();
-                    }else{
-                        $(".promesa").hide();
-                        $("#div_vencimieto").text('').text(response.promesa_pago);
-                    }
-                    $('#promesaPago').modal('hide');
-                }
-                swal({
-                    title: 'PROMESA DE PAGO',
-                    text: response.message,
-                    type: response.type,
-                    showConfirmButton: true,
-                    confirmButtonColor: '#1A59A1',
-                    confirmButtonText: 'ACEPTAR',
-                });
-            }
-        });
+    for (i = 1; i < nro; i++) {
+        var div =`
+        <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
+            <a href="javascript:selectIP('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
+        </div>
+        `;
+        $('#row_ip').append(div);
     }
 
-    $('#rehuso').change(function() {
-        var rehuso = $('#rehuso').val();
-        if(rehuso == 'SI'){
-            $('#div_rehuso_aplicar').removeClass('d-none');
-            $('#rehuso_aplicar').val('2');
-            $('#rehuso_aplicar').attr('required','');
-        }else{
-            $('#div_rehuso_aplicar').addClass('d-none');
-            $('#rehuso_aplicar').val('');
-            $('#rehuso_aplicar').removeAttr('required');
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = `/software/api/getIps/${mk}`;
+    }else{
+        var url = `/api/getIps/${mk}`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(data) {
+            cargando(false);
+            if (data) {
+                for (i = 0; i < data.length; i++){
+                    let ip = data[i].ip.replace(/\./g, '');
+                    $("#"+ip).remove();
+                }
+            }
         }
     });
 
-    $('#searchIP').click(function() {
-        $('#row_ip').html('');
-        let prefijo = $("#local_address").val().split('/');
-        let ip = $("#local_address").val().split('.');
-        let mk = $("#server_configuration_id").val();
+    $('#modal-ips').modal('show');
+});
 
-        switch (prefijo['1']) {
-            case '22':
-            var nro = 1023;
-            break;
-            case '23':
-            var nro = 511;
-            break;
-            case '24':
-            var nro = 255;
-            break;
-            case '25':
-            var nro = 127;
-            break;
-            case '26':
-            var nro = 63;
-            break;
-            case '27':
-            var nro = 31;
-            break;
-            case '28':
-            var nro = 15;
-            break;
-            case '29':
-            var nro = 7;
-            break;
-            case '30':
-            var nro = 3;
-            break;
-            case '>22':
-            console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
-            break;
-        }
+function selectIP(ip){
+    $('#ip').val(ip);
+    console.log($('#ip').val());
+    $('#modal-ips').modal('hide');
+}
 
-        for (i = 1; i < nro; i++) {
-            var div =`
-            <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
-                <a href="javascript:selectIP('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
-            </div>
-            `;
-            $('#row_ip').append(div);
-        }
-        
-        $.ajax({
-            url: `/software/api/getIps/${mk}`,
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                cargando(false);
-                if (data) {
-                    for (i = 0; i < data.length; i++){
-                        let ip = data[i].ip.replace(/\./g, '');
-                        $("#"+ip).remove();
-                    }
+$('#searchIP2').click(function() {
+    $('#row_ip').html('');
+    let prefijo = $("#local_address_new").val().split('/');
+    let ip = $("#local_address_new").val().split('.');
+    let mk = $("#server_configuration_id").val();
+
+    switch (prefijo['1']) {
+        case '22':
+        var nro = 1023;
+        break;
+        case '23':
+        var nro = 511;
+        break;
+        case '24':
+        var nro = 255;
+        break;
+        case '25':
+        var nro = 127;
+        break;
+        case '26':
+        var nro = 63;
+        break;
+        case '27':
+        var nro = 31;
+        break;
+        case '28':
+        var nro = 15;
+        break;
+        case '29':
+        var nro = 7;
+        break;
+        case '30':
+        var nro = 3;
+        break;
+        case '>22':
+        console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
+        break;
+    }
+
+    for (i = 1; i < nro; i++) {
+        var div =`
+        <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
+            <a href="javascript:selectIP2('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
+        </div>
+        `;
+        $('#row_ip').append(div);
+    }
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = `/software/api/getIps/${mk}`;
+    }else{
+        var url = `/api/getIps/${mk}`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(data) {
+            cargando(false);
+            if (data) {
+                for (i = 0; i < data.length; i++){
+                    let ip = data[i].ip.replace(/\./g, '');
+                    $("#"+ip).remove();
                 }
             }
-        });
-
-        $('#modal-ips').modal('show');
+        }
     });
 
-    function selectIP(ip){
-        $('#ip').val(ip);
-        console.log($('#ip').val());
-        $('#modal-ips').modal('hide');
-    }
+    $('#modal-ips').modal('show');
+});
 
-    $('#searchIP2').click(function() {
-        $('#row_ip').html('');
-        let prefijo = $("#local_address_new").val().split('/');
-        let ip = $("#local_address_new").val().split('.');
-        let mk = $("#server_configuration_id").val();
+function selectIP2(ip){
+    $('#ip_new').val(ip);
+    $('#modal-ips').modal('hide');
+}
 
-        switch (prefijo['1']) {
-            case '22':
-            var nro = 1023;
-            break;
-            case '23':
-            var nro = 511;
-            break;
-            case '24':
-            var nro = 255;
-            break;
-            case '25':
-            var nro = 127;
-            break;
-            case '26':
-            var nro = 63;
-            break;
-            case '27':
-            var nro = 31;
-            break;
-            case '28':
-            var nro = 15;
-            break;
-            case '29':
-            var nro = 7;
-            break;
-            case '30':
-            var nro = 3;
-            break;
-            case '>22':
-            console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
-            break;
-        }
+function addSegmento(){
+    $('#div_addSegmento').addClass('d-none');
+    $('#new_segmento').removeClass('d-none');
+    $('#new_ip').removeClass('d-none');
 
-        for (i = 1; i < nro; i++) {
-            var div =`
-            <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
-                <a href="javascript:selectIP2('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
-            </div>
-            `;
-            $('#row_ip').append(div);
-        }
-        
-        $.ajax({
-            url: `/software/api/getIps/${mk}`,
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                cargando(false);
-                if (data) {
-                    for (i = 0; i < data.length; i++){
-                        let ip = data[i].ip.replace(/\./g, '');
-                        $("#"+ip).remove();
-                    }
-                }
-            }
-        });
+    $("#ip_new").val('');
+    $("#local_address_new").val('');
 
-        $('#modal-ips').modal('show');
-    });
+    $("#option_segmento").html('').html('<a href="javascript:deleteSegmento();" class="btn btn-outline-danger btn-sm"><i class="fas fa-minus" style="margin: 2px;"></i></a>');
+}
 
-    function selectIP2(ip){
-        $('#ip_new').val(ip);
-        $('#modal-ips').modal('hide');
-    }
+function deleteSegmento(){
+    $('#div_addSegmento').removeClass('d-none');
+    $('#new_segmento').addClass('d-none');
+    $('#new_ip').addClass('d-none');
 
-    function addSegmento(){
-        $('#div_addSegmento').addClass('d-none');
-        $('#new_segmento').removeClass('d-none');
-        $('#new_ip').removeClass('d-none');
+    $("#ip_new").val('');
+    $("#local_address_new").val('');
 
-        $("#ip_new").val('');
-        $("#local_address_new").val('');
-
-        $("#option_segmento").html('').html('<a href="javascript:deleteSegmento();" class="btn btn-outline-danger btn-sm"><i class="fas fa-minus" style="margin: 2px;"></i></a>');
-    }
-
-    function deleteSegmento(){
-        $('#div_addSegmento').removeClass('d-none');
-        $('#new_segmento').addClass('d-none');
-        $('#new_ip').addClass('d-none');
-
-        $("#ip_new").val('');
-        $("#local_address_new").val('');
-
-        $("#option_segmento").html('').html('<a href="javascript:addSegmento();" class="btn btn-outline-success btn-sm"><i class="fas fa-plus" style="margin: 2px;"></i></a>');
-    }
+    $("#option_segmento").html('').html('<a href="javascript:addSegmento();" class="btn btn-outline-success btn-sm"><i class="fas fa-plus" style="margin: 2px;"></i></a>');
+}
     
 function getSegmentos(mikrotik) {
     cargando(true);
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getSegmentos/'+mikrotik;
+    }else{
+        var url = '/api/getSegmentos/'+mikrotik;
+    }
+
     $.ajax({
-        url: '/software/api/getSegmentos/'+mikrotik,
+        url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function (data) {
@@ -4275,6 +4180,42 @@ function getSegmentos(mikrotik) {
             });
 
             $select.selectpicker('refresh');
+        },
+        error: function(data){
+            cargando(false);
+        }
+    })
+}
+
+function getInterfaz(mikrotik) {
+    cargando(true);
+    var inter = $("#interfaz_user").val();
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getInterfaces/'+mikrotik;
+    }else{
+        var url = '/api/getInterfaces/'+mikrotik;
+    }
+
+    $.ajax({
+        url: url,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'get',
+        success: function (data) {
+            cargando(false);
+            data=JSON.parse(data);
+
+            $("#interfaz").empty();
+            var $select = $('#interfaz');
+            $.each(data,function(key, value){
+                if(inter == value.name){
+                    $select.append('<option value=' + value.name + ' selected>' + value.name + '</option>');
+                }else{
+                    $select.append('<option value=' + value.name + '>' + value.name + '</option>');
+                }
+            });
+            $('#interfaz').val(inter);
+            $('#interfaz').selectpicker('refresh');
         },
         error: function(data){
             cargando(false);

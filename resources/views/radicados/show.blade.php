@@ -20,12 +20,6 @@
         @endif
     @endif
 
-    {{-- @if($radicado->estatus==0)
-        @if(isset($_SESSION['permisos']['205']))
-            <a href="#" onclick="confirmar('escalar{{$radicado->id}}', '¿Está seguro de que desea escalar el caso?');" class="btn btn-outline-warning btn-sm "title="Escalar Caso">Escalar Caso</a>
-        @endif
-	@endif --}}
-
     @if($radicado->estatus == 1 || $radicado->estatus == 3)
     
     @else

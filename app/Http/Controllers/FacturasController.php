@@ -42,6 +42,12 @@ use App\TipoEmpresa; use App\Categoria;
 use App\Retencion;
 use Auth; use Mail; use bcrypt; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
+
+use App\Contrato;
+use App\Mikrotik;
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
+
 class FacturasController extends Controller
 {
 
@@ -2285,6 +2291,37 @@ public function xmlFacturaVentabyCorreo($id)
         $factura->observaciones = 'Añadiendo Promesa de Pago';
         $factura->observaciones = $factura->observaciones.' | Factura Editada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A'). ' para añadir Promesa de Pago Nro. '.$promesa_pago->nro;
         $factura->save();
+
+        /* VERIFICAR SI EL CONTRATO ESTÁ DESHABILITADO PARA HABILITARLO */
+
+        $contrato = $factura->cliente()->contrato();
+        if ($contrato) {
+            $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $API->write('/ip/firewall/address-list/print', TRUE);
+                $ARRAYS = $API->read();
+
+                //BUSCAMOS EL ID POR LA IP DEL CONTRATO
+                $API->write('/ip/firewall/address-list/print', false);
+                $API->write('?address='.$contrato->ip, false);
+                $API->write('=.proplist=.id');
+                $ARRAYS = $API->read();
+
+                if(count($ARRAYS)>0){
+                    //REMOVEMOS EL ID DE LA ADDRESS LIST
+                    $API->write('/ip/firewall/address-list/remove', false);
+                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                    $READ = $API->read();
+                    $API->disconnect();
+
+                    $contrato->state = 'enabled';
+                    $contrato->save();
+                }
+            }
+        }
         
         return response()->json([
             'success' => true,

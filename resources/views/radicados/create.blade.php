@@ -155,8 +155,14 @@
 @section('scripts')
     <script type="text/javascript">
         function busqueda_detalles(cliente){
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url='/software/api/getDetails/'+cliente;
+            }else{
+                var url = '/api/getDetails/'+cliente;
+            }
+
             $.ajax({
-                url: '/software/api/getDetails/'+cliente,
+                url: url,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 method: 'get',
                 beforeSend: function(){

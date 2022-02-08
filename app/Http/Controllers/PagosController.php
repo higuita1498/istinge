@@ -102,17 +102,14 @@ class PagosController extends Controller
     
     public function store(Request $request){
         if( Gastos::where('empresa',auth()->user()->empresa)->count() > 0){
-            //Tomamos el tiempo en el que se crea el registro
             Session::put('posttimer', Gastos::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
             $sw = 1;
-            //Recorremos la sesion para obtener la fecha
             foreach (Session::get('posttimer') as $key) {
                 if ($sw == 1) {
                     $ultimoingreso = $key;
                     $sw=0;
                 }
             }
-            
             //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
             $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
             //Si el tiempo es de menos de 30 segundos mandamos al listado general
@@ -142,85 +139,84 @@ class PagosController extends Controller
         $gasto->tipo          = $request->tipo;
         $gasto->fecha         = Carbon::parse($request->fecha)->format('Y-m-d');
         $gasto->observaciones = mb_strtolower($request->observaciones);
+        $gasto->created_by    = Auth::user()->id;
         $gasto->save();
         
         //Registrar los pagos por factura
         if ($gasto->tipo==1) {
             foreach ($request->factura_pendiente as $key => $value) {
-        if ($request->precio[$key]) {
-          $precio=$this->precision($request->precio[$key]);
-          $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
-          if (!$factura) { continue; }
-          $retencion='fact'.$factura->id.'_retencion';
-          $precio_reten='fact'.$factura->id.'_precio_reten';
+                if ($request->precio[$key]) {
+                    $precio=$this->precision($request->precio[$key]);
+                    $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
+                    if (!$factura) { continue; }
+                    $retencion='fact'.$factura->id.'_retencion';
+                    $precio_reten='fact'.$factura->id.'_precio_reten';
+                    //Retenciones
+                    if ($request->$retencion) {
+                        foreach ($request->$retencion as $key2 => $value2) {
+                            if ($request->$precio_reten[$key2]) {
+                                $retencion = Retencion::where('id', $value2)->first();
+                                $items = new FacturaProveedoresRetenciones;
+                                $items->factura=$factura->id;
+                                $items->valor=$this->precision($request->$precio_reten[$key2]);
+                                $items->retencion=$retencion->porcentaje;
+                                $items->id_retencion=$retencion->id;
+                                $items->save();
+                            }
+                        }
+                    }
 
-          //Retenciones
-          if ($request->$retencion) {
-            foreach ($request->$retencion as $key2 => $value2) {
-              if ($request->$precio_reten[$key2]) {
-                $retencion = Retencion::where('id', $value2)->first();
-                $items = new FacturaProveedoresRetenciones;
-                $items->factura=$factura->id;
-                $items->valor=$this->precision($request->$precio_reten[$key2]);
-                $items->retencion=$retencion->porcentaje;
-                $items->id_retencion=$retencion->id;
-                $items->save();
-              }
+                    $items = new GastosFactura;
+                    $items->gasto=$gasto->id;
+                    $items->factura=$factura->id;
+                    $items->pagado=$factura->pagado();
+                    $items->pago=$this->precision($request->precio[$key]);
+                    $items->save();
+
+                    if ($this->precision($factura->porpagar())<=0) {
+                        $factura->estatus=0;
+                        $factura->save();
+                    }
+                }
             }
-          }
-          $items = new GastosFactura;
-          $items->gasto=$gasto->id;
-          $items->factura=$factura->id;
-          $items->pagado=$factura->pagado();
-          $items->pago=$this->precision($request->precio[$key]);
-          $items->save();
-          
-          if ($this->precision($factura->porpagar())<=0) {
-            $factura->estatus=0;
-            $factura->save();
-          }
+        }else{
+            foreach ($request->categoria as $key => $value) {
+                if ($request->precio_categoria[$key]) {
+                    $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                    if (!$impuesto) {
+                        $impuesto = Impuesto::where('id', 0)->first();
+                    }
+                    $items = new GastosCategoria;
+                    $items->valor=$this->precision($request->precio_categoria[$key]);
+                    $items->id_impuesto=$request->impuesto_categoria[$key];
+                    $items->gasto=$gasto->id;
+                    $items->categoria=$request->categoria[$key];
+                    $items->cant=$request->cant_categoria[$key];
+                    $items->descripcion=$request->descripcion_categoria[$key];
+                    $items->impuesto=$impuesto->porcentaje;
+                    $items->save();
+                }
+            }
+            if ($request->retencion) {
+                foreach ($request->retencion as $key => $value) {
+                    if ($request->precio_reten[$key]) {
+                        $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                        $items = new GastosRetenciones;
+                        $items->gasto=$gasto->id;
+                        $items->valor=$this->precision($request->precio_reten[$key]);
+                        $items->retencion=$retencion->porcentaje;
+                        $items->id_retencion=$retencion->id;
+                        $items->save();
+                    }
+                }
+            }
         }
-      }
+        $gasto=Gastos::find($gasto->id);
+        //ingresos
+        $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
+        $mensaje='Se ha creado satisfactoriamente el pago';
+        return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
     }
-    else{
-      foreach ($request->categoria as $key => $value) {
-        if ($request->precio_categoria[$key]) {
-          $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
-          if (!$impuesto) {
-            $impuesto = Impuesto::where('id', 0)->first();
-          }
-          $items = new GastosCategoria;
-          $items->valor=$this->precision($request->precio_categoria[$key]);
-          $items->id_impuesto=$request->impuesto_categoria[$key];
-          $items->gasto=$gasto->id;
-          $items->categoria=$request->categoria[$key];
-          $items->cant=$request->cant_categoria[$key];
-          $items->descripcion=$request->descripcion_categoria[$key];
-          $items->impuesto=$impuesto->porcentaje;
-          $items->save();
-        }
-      }
-      if ($request->retencion) {
-        foreach ($request->retencion as $key => $value) {
-          if ($request->precio_reten[$key]) {
-            $retencion = Retencion::where('id', $request->retencion[$key])->first();
-            $items = new GastosRetenciones;
-            $items->gasto=$gasto->id;
-            $items->valor=$this->precision($request->precio_reten[$key]);
-            $items->retencion=$retencion->porcentaje;
-            $items->id_retencion=$retencion->id;
-            $items->save();
-          }
-        }
-      }
-    }
-
-    $gasto=Gastos::find($gasto->id);
-    //ingresos
-    $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
-    $mensaje='Se ha creado satisfactoriamente el pago';
-    return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
-  }
   
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
@@ -303,6 +299,7 @@ class PagosController extends Controller
             $gasto->tipo=$request->tipo;
             $gasto->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
             $gasto->observaciones=mb_strtolower($request->observaciones);
+            $gasto->updated_by = Auth::user()->id;
             $gasto->save();
             
             if ($gasto->tipo!=$request->tipo) {
@@ -377,68 +374,64 @@ class PagosController extends Controller
             }
         }else{
             $inner=array();
-        foreach ($request->categoria as $key => $value) {
-          if ($request->precio_categoria[$key]) {
-            $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
-            if (!$impuesto) { $impuesto = Impuesto::where('id', 0)->first(); }
-             $cat='id_cate'.($key+1);
+            foreach ($request->categoria as $key => $value) {
+                if ($request->precio_categoria[$key]) {
+                    $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                    if (!$impuesto) { $impuesto = Impuesto::where('id', 0)->first(); }
+                    $cat='id_cate'.($key+1);
 
-            $items = new GastosCategoria;
-            $items->gasto=$gasto->id;
-            if($request->$cat){ //Consultar que exista el id de ese item
-              $item = GastosCategoria::where('id', $request->$cat)->where('gasto', $gasto->id)->first();
-              if ($item) { $items = $item; }
+                    $items = new GastosCategoria;
+                    $items->gasto=$gasto->id;
+                    if($request->$cat){ //Consultar que exista el id de ese item
+                        $item = GastosCategoria::where('id', $request->$cat)->where('gasto', $gasto->id)->first();
+                        if ($item) { $items = $item; }
+                    }
+                    $items->valor=$this->precision($request->precio_categoria[$key]);
+                    $items->id_impuesto=$request->impuesto_categoria[$key];
+                    $items->categoria=$request->categoria[$key];
+                    $items->cant=$request->cant_categoria[$key];
+                    $items->descripcion=$request->descripcion_categoria[$key];
+                    $items->impuesto=$impuesto->porcentaje;
+                    $items->save();
+                    $inner[]=$items->id;
+                }
             }
-            $items->valor=$this->precision($request->precio_categoria[$key]);
-            $items->id_impuesto=$request->impuesto_categoria[$key];
-            $items->categoria=$request->categoria[$key];
-            $items->cant=$request->cant_categoria[$key];
-            $items->descripcion=$request->descripcion_categoria[$key];
-            $items->impuesto=$impuesto->porcentaje;
-            $items->save();
-            $inner[]=$items->id;
-          }
-        }
-        //Eliminar los items que no se hayan modificado
-        if (count($inner)>0) {
-          DB::table('gastos_categoria')->where('gasto', $gasto->id)->whereNotIn('id', $inner)->delete();
-        }
-
-        //Registro de retenciones
-        if ($request->retencion) {
-          $inner=array();
-          foreach ($request->retencion as $key => $value) {
-            if ($request->precio_reten[$key]) {
-              $retencion = Retencion::where('id', $request->retencion[$key])->first();
-              $items = new GastosRetenciones;
-              $items->gasto=$gasto->id;
-
-              $cat='reten'.($key+1);
-              if($request->$cat){ //Consultar que exista el id de ese item
-                $item = GastosRetenciones::where('id', $request->$cat)->where('gasto', $gasto->id)->first();
-                if ($item) { $items = $item; }
-              }
-              $items->valor=$this->precision($request->precio_reten[$key]);
-              $items->retencion=$retencion->porcentaje;
-              $items->id_retencion=$retencion->id;
-              $items->save();
-              $inner[]=$items->id;
+            //Eliminar los items que no se hayan modificado
+            if (count($inner)>0) {
+                DB::table('gastos_categoria')->where('gasto', $gasto->id)->whereNotIn('id', $inner)->delete();
             }
-          }
-          if (count($inner)>0) {
-            DB::table('gastos_retenciones')->where('gasto', $gasto->id)->whereNotIn('id', $inner)->delete();
-          }
+            //Registro de retenciones
+            if ($request->retencion) {
+                $inner=array();
+                foreach ($request->retencion as $key => $value) {
+                    if ($request->precio_reten[$key]) {
+                        $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                        $items = new GastosRetenciones;
+                        $items->gasto=$gasto->id;
+                        $cat='reten'.($key+1);
+                        if($request->$cat){ //Consultar que exista el id de ese item
+                            $item = GastosRetenciones::where('id', $request->$cat)->where('gasto', $gasto->id)->first();
+                            if ($item) { $items = $item; }
+                        }
+                        $items->valor=$this->precision($request->precio_reten[$key]);
+                        $items->retencion=$retencion->porcentaje;
+                        $items->id_retencion=$retencion->id;
+                        $items->save();
+                        $inner[]=$items->id;
+                    }
+                }
+                if (count($inner)>0) {
+                    DB::table('gastos_retenciones')->where('gasto', $gasto->id)->whereNotIn('id', $inner)->delete();
+                }
+            } else {
+                DB::table('gastos_retenciones')->where('gasto', $gasto->id)->delete();
+            }
         }
-        else {
-          DB::table('gastos_retenciones')->where('gasto', $gasto->id)->delete();
+
+        $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
+        $mensaje='Se ha modificado satisfactoriamente el pago';
+        return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
         }
-      }
-
-      $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
-      $mensaje='Se ha modificado satisfactoriamente el pago';
-      return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
-
-    }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
     
@@ -511,6 +504,7 @@ class PagosController extends Controller
     public function anular($id){
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($gasto) {
+            $gasto->updated_by = Auth::user()->id;
             if ($gasto->tipo==3) {
                 return redirect('empresa/pagos')->with('success', 'No puede editar un pago de nota de crédito');
             }

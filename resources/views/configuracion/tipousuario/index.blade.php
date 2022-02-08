@@ -63,7 +63,7 @@ $(document).ready(function(){
            confirmButtonColor: "#DD6B55",
            confirmButtonText: $(this).attr('boton'),
         }).then((value)=>{
-            var url = '/empresa/configuracion/roles/eliminar';
+            var url = 'roles/eliminar';
             $.post(url,{ idRol:  $(this).attr('idRol') ,_token: $('meta[name="csrf-token"]').attr('content')},function(dato){
                if(dato['status'] == 'ok'){
                    swal("Registro Eliminado","El tipo de usuario fue eliminado satisfactoriamente","success")

@@ -110,7 +110,7 @@
             padding-left: 1%;
         }
         .divheader-pr{
-            width: 100%;height:auto;border: 1px solid #b00606; background-color:#fff; border-radius:5px; justify-content:center;padding-top: 15px;
+            width: 100%;height:auto;border: 1px solid {{ env('APP_COLOR') }}; background-color:#fff; border-radius:5px; justify-content:center;padding-top: 15px;
             margin-bottom: 2px;color:#fff;
         }
         
@@ -120,8 +120,8 @@
         
         .divheader-datoscli{
             width: 18%;
-            border: 1px solid #b00606;
-            background-color: #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
+            background-color: {{ env('APP_COLOR') }};
             border-radius: 5px;
             justify-content: center;
             margin-bottom: 7px;
@@ -144,8 +144,8 @@
         
         .divheader-datosfact{
             width: 18%;
-            border: 1px solid #b00606;
-            background-color: #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
+            background-color: {{ env('APP_COLOR') }};
             border-radius: 5px;
             justify-content: center;
             margin-top:1px;
@@ -162,8 +162,8 @@
         
         .divheader-nota{
             width: 9%;
-            border: 1px solid #b00606;
-            background-color: #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
+            background-color: {{ env('APP_COLOR') }};
             border-radius: 5px;
             justify-content: center;
             margin-bottom: 2px;
@@ -173,7 +173,7 @@
         }
         
         .nota-content, .div-content-border{
-            border:1px solid #b00606; border-radius:5px;margin-top:5px;
+            border:1px solid {{ env('APP_COLOR') }}; border-radius:5px;margin-top:5px;
         }
         .nota-content p{
             text-align:justify;
@@ -181,8 +181,8 @@
         }
         .divheader-estadocuenta{
             width: 20%;
-            border: 1px solid #b00606;
-            background-color: #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
+            background-color: {{ env('APP_COLOR') }};
             border-radius: 5px;
             /*margin-bottom: 7px;*/
             /*margin-top: 7px;*/
@@ -217,7 +217,7 @@
         }
         
         .tr-mainvalorreconexion > td li{
-            background-color:#b00606;
+            background-color:{{ env('APP_COLOR') }};
             border-radius:5px;
             padding: 10px;
             text-align: center;
@@ -232,7 +232,7 @@
         }
         
         .border-tdblue{
-            border: 1px solid #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
             border-radius:5px;
         }
         
@@ -241,7 +241,7 @@
         }
         
         .qr-table td:first-child{
-            border: 1px solid #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
             border-radius:5px;
         }
         
@@ -250,7 +250,7 @@
         }
         
         .td-qrback{
-            background-color:#b00606;
+            background-color:{{ env('APP_COLOR') }};
             text-align:center;
             border-radius:5px;
         }
@@ -266,7 +266,7 @@
         
         .miclausula-li > td li{
             border-radius: 5px;
-            border: 1px solid #b00606;
+            border: 1px solid {{ env('APP_COLOR') }};
         }
         
         .tr-meses{
@@ -286,7 +286,7 @@
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
             <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
-        <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%; color:#b00606;">
+        <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%; color:{{ env('APP_COLOR') }};">
             <br><br>
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
             <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
@@ -337,16 +337,16 @@
             <tbody>
                 <tr>
                 <td style="width:14%;border:none;">
-                    <div style="background-color:#b00606;text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{ env('APP_COLOR') }};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         DATOS FACTURA
                     </div>
                 </td>
                 <td style="width:25%;border:none;padding-left:30%;">
-                    <div style="background-color:#b00606;text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{ env('APP_COLOR') }};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         FACTURA DE VENTA
                     </div>
                 </td>
-                <td style="border:1px solid #b00606;text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
+                <td style="border:1px solid {{ env('APP_COLOR') }};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
                 </tr>
             </tbody>
         </table>
@@ -524,13 +524,13 @@
                  <table class="tableinterna" width="100%" >
                     <tbody>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px; padding:4px;">INTERESES DE MORA</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px; padding:4px;">INTERESES DE MORA</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px; padding:4px;">IVA</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px; padding:4px;">IVA</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px; padding:4px;">TOTAL MES</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px; padding:4px;">TOTAL MES</td>
                     </tr>
                     </tbody>
                 </table>
@@ -539,13 +539,13 @@
                <table class="tableinterna" width="100%">
                     <tbody>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid #b00606; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
+                    <td style="border:1px solid {{ env('APP_COLOR') }}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -591,10 +591,10 @@
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta mi-clausula">
-                <td><li style="background-color:#b00606;">VALOR TOTAL DEL CARGO POR CONEXION</li></td>
-                <td><li style="background-color:#b00606;">SUMA QUE LE FUE DESCONTADA O DIFERIDA DEL VALOR TOTAL DEL CARGO POR CONEXION</li></td>
-                <td><li style="background-color:#b00606;">FECHA DE INICIO DE LA PERMANENCIA MINIMA</li></td>
-                <td><li style="background-color:#b00606;">FECHA DE FIN DE LA PERMANENCIA MINIMA</li></td>
+                <td><li style="background-color:{{ env('APP_COLOR') }};">VALOR TOTAL DEL CARGO POR CONEXION</li></td>
+                <td><li style="background-color:{{ env('APP_COLOR') }};">SUMA QUE LE FUE DESCONTADA O DIFERIDA DEL VALOR TOTAL DEL CARGO POR CONEXION</li></td>
+                <td><li style="background-color:{{ env('APP_COLOR') }};">FECHA DE INICIO DE LA PERMANENCIA MINIMA</li></td>
+                <td><li style="background-color:{{ env('APP_COLOR') }};">FECHA DE FIN DE LA PERMANENCIA MINIMA</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
                 <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
@@ -658,11 +658,11 @@
             <tbody>
                 <tr>
                 <td style="width:55%;border:none;">
-                    <div style="background-color:#b00606;text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{ env('APP_COLOR') }};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         TOTAL MES
                     </div>
                 </td>
-                <td style="border:1px solid #b00606;text-align:center;border-radius:5px;width:30%;">
+                <td style="border:1px solid {{ env('APP_COLOR') }};text-align:center;border-radius:5px;width:30%;">
                     {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
                 </td>
                 </tr>
@@ -717,9 +717,9 @@
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta">
-                    <td><li style="background-color:#b00606;height:auto;">VENTAS:</li></td>
-                    <td><li style="background-color:#b00606;height:auto;">SOPORTE:</li></td>
-                    <td><li style="background-color:#b00606;height:auto;">FINANZAS:</li></td>
+                    <td><li style="background-color:{{ env('APP_COLOR') }};height:auto;">VENTAS:</li></td>
+                    <td><li style="background-color:{{ env('APP_COLOR') }};height:auto;">SOPORTE:</li></td>
+                    <td><li style="background-color:{{ env('APP_COLOR') }};height:auto;">FINANZAS:</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
                 <td><li style="padding:4px;">{{Auth::user()->empresa()->telefono}}</li></td>
@@ -737,11 +737,11 @@
             <tbody>
                 <tr>
                 <td style="width:55%;border:none;">
-                    <div style="background-color:#b00606;text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{ env('APP_COLOR') }};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         TOTAL MES
                     </div>
                 </td>
-                <td style="border:1px solid #b00606;text-align:center;border-radius:5px;width:30%;">
+                <td style="border:1px solid {{ env('APP_COLOR') }};text-align:center;border-radius:5px;width:30%;">
                     {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
                 </td>
                 </tr>

@@ -129,7 +129,7 @@
 <script>
 	$(document).ready(function () {
         $('.permisos').click(function(){
-            var url = '/software/empresa/configuracion/permisosUsuario';
+            var url = 'permisosUsuario';
             var _token =   $('meta[name="csrf-token"]').attr('content');
             $("#modal-title").html($(this).attr('title'));
             $.post(url,{ idUsuario : $(this).attr('idUsuario'), _token : _token },function(resul){
@@ -140,7 +140,7 @@
         
         $('.saldo').click(function(){
             $('#form-recarga').trigger("reset");
-            var url = '/software/empresa/configuracion/saldoUsuario';
+            var url = 'saldoUsuario';
             var _token =   $('meta[name="csrf-token"]').attr('content');
             $("#modal-title").html($(this).attr('title'));
             $.post(url,{ id : $(this).attr('idUser'), _token : _token },function(resul){

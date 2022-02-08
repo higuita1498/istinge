@@ -14,6 +14,7 @@ use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use App\Funciones;
+use App\Model\Ingresos\Factura;
 
 class PromesasPagoController extends Controller
 {
@@ -80,8 +81,10 @@ class PromesasPagoController extends Controller
         $promesa = PromesaPago::find($id);
         
         if($promesa) {
+            $factura = Factura::find($promesa->factura);
             view()->share(['title' => 'Promesa de Pago Nro. '.$promesa->nro]);
-            $pdf = PDF::loadView('pdf.promesa_pago', compact('promesa'));
+            $itemscount = 1;
+            $pdf = PDF::loadView('pdf.promesa_pago', compact('promesa', 'factura','itemscount'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
     }
