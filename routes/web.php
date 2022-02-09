@@ -50,6 +50,7 @@ Route::get('logs/{contrato}', 'ContratosController@logs');
 Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
+Route::get('radicados/{tipo?}', 'RadicadosController@radicados');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -348,9 +349,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('/{id}/promesa_pago', 'FacturasController@promesa_pago')->name('factura.promesa_pago');
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
-
-
-
+        Route::get('/{tipo}', 'FacturasController@indexNew')->name('facturas.tipo');
 	});
 	Route::resource('facturas', 'FacturasController');
 
@@ -665,20 +664,19 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.index');
 
     //RADICADOS
+        Route::group(['prefix' => 'radicados'], function() {
+        	Route::post('/escalar/{id}', 'RadicadosController@escalar')->name('radicados.escalar');
+        	Route::post('/solventar/{id}', 'RadicadosController@solventar')->name('radicados.solventar');
+        	Route::get('/{id}/imprimir', 'RadicadosController@imprimir')->name('radicados.imprimir');
+        	Route::get('/{id}/firmar', 'RadicadosController@firmar')->name('radicados.firmar');
+        	Route::post('/{id}/storefirma', 'RadicadosController@storefirma')->name('radicados.storefirma');
+        	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
+        	Route::get('/notificacion', 'RadicadosController@notificacion')->name('radicados.notificacion');
+        	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
+        	Route::get('/lista/{tipo?}', 'RadicadosController@indexNew')->name('radicados.tipo');
+        });
 		Route::resource('radicados', 'RadicadosController');
-		Route::post('/radicados/escalar/{id}', 'RadicadosController@escalar')->name('radicados.escalar');
-		Route::post('/radicados/solventar/{id}', 'RadicadosController@solventar')->name('radicados.solventar');
-		Route::get('/radicados/{id}/imprimir', 'RadicadosController@imprimir')->name('radicados.imprimir');
-		Route::get('/radicados/{id}/firmar', 'RadicadosController@firmar')->name('radicados.firmar');
-		Route::post('/radicados/{id}/storefirma', 'RadicadosController@storefirma')->name('radicados.storefirma');
-		Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
-		Route::get('/clientesApi/{clienteApi}', 'RadicadosController@contacts_wispro')->name('radicados.clientes');
-		Route::get('/clienteApi/{clienteApi}', 'RadicadosController@contact_wispro')->name('radicados.cliente');
-		Route::get('/contratoApi/{id}', 'RadicadosController@contract_wispro')->name('radicados.contrato');
-		Route::get('/planApi/{id}', 'RadicadosController@plan_wispro')->name('radicados.plan');
-		Route::get('/notificacion', 'RadicadosController@notificacion')->name('radicados.notificacion');
-		Route::post('/radicados/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
-		
+
 	//SOLICITUDES
 
     	Route::group(['prefix' => 'solicitudes'], function() {
@@ -700,8 +698,10 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/log', 'ContratosController@log')->name('contratos.log');
 		Route::get('{id}/pings', 'ContratosController@conexion')->name('contratos.ping');
 		Route::get('{id}/ping_nuevo', 'ContratosController@ping_nuevo')->name('contratos.ping_nuevo');
-		
 		Route::get('{id}/grafica-consumo', 'ContratosController@grafica_consumo')->name('contratos.grafica_consumo');
+
+		Route::get('deshabilitados', 'ContratosController@disabled')->name('contratos.disabled');
+		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
 	});
 	Route::resource('contratos', 'ContratosController');
 	

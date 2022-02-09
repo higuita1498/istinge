@@ -11,7 +11,7 @@
         </div>
     @else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-        <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
+        <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
     @endif
 @endsection
 
@@ -97,7 +97,7 @@
 					
 
 					<div class="col-md-1 pl-1 pt-1">
-						<a href="javascript:limpiarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
 						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
 					</div>
 				</div>
@@ -107,17 +107,15 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-facturas">
+			<table class="table table-striped table-hover w-100" id="tabla-radicados">
 				<thead class="thead-dark">
 					<tr>
-						<th>Número</th>
+						<th>Nro Radicado</th>
+						<th>Fecha</th>
+						<th>Contrato</th>
 						<th>Cliente</th>
-						<th>Creación</th>
-						<th>Vencimiento</th>
-						<th>Total</th>
-						<th>IVA</th>
-						<th>Pagado</th>
-						<th>Por Pagar</th>
+						<th>Nro Celular</th>
+						<th>Servicio</th>
 						<th>Estado</th>
 						<th>Acciones</th>
 					</tr>
@@ -125,27 +123,13 @@
 			</table>
 		</div>
 	</div>
-	
-	<div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">GENERAR PROMESA DE PAGO</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div id="div_promesa"></div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
 <script>
 	var tabla = null;
 	window.addEventListener('load', function() {
-		$('#tabla-facturas').DataTable({
+		$('#tabla-radicados').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -154,40 +138,38 @@
 				'url': '/vendors/DataTables/es.json'
 			},
 			order: [
-				[2, "DESC"],[0, "DESC"]
+				[1, "DESC"]
 			],
 			"pageLength": 25,
-			ajax: '{{url("/facturas")}}',
+			ajax: '{{url("/radicados/$tipo")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
 				{data: 'codigo'},
-				{data: 'cliente'},
 				{data: 'fecha'},
-				{data: 'vencimiento'},
-				{data: 'total'},
-				{data: 'impuesto'},
-				{data: 'pagado'},
-				{data: 'pendiente'},
-				{data: 'estado'},
-				{data: 'acciones'},
+				{data: 'contrato'},
+				{data: 'cliente'},
+				{data: 'telefono'},
+				{data: 'servicio'},
+				//{data: 'direccion'},
+				{data: 'estatus'},
+				{data: 'acciones'}
 			]
 		});
 
-		tabla = $('#tabla-facturas');
+		tabla = $('#tabla-radicados');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
-			data.codigo = $('#codigo').val();
-			data.corte = $('#corte').val();
-			data.cliente = $('#cliente').val();
-			data.vendedor = $('#vendedor').val();
-			data.creacion = $('#creacion').val();
-			data.vencimiento = $('#vencimiento').val();
-			data.comparador = $('#comparador').val();
-			data.total = $('#total').val();
-			data.estado = $('#estado').val();
-			data.filtro = true;
+			data.codigo    = $('#codigo').val();
+			data.fecha     = $('#fecha').val();
+			data.contrato  = $('#contrato').val();
+			data.cliente   = $('#cliente').val();
+			data.telefono  = $('#telefono').val();
+			data.servicio  = $('#servicio').val();
+			data.direccion = $('#direccion').val();
+			data.estatus   = $('#estatus').val();
+			data.filtro    = true;
 		});
 
 		$('#filtrar').on('click', function(e) {
@@ -202,13 +184,7 @@
 			}
 		});
 
-		$('.vencimiento').datepicker({
-			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
-		});
-
-		$('.creacion').datepicker({
+		$('.fecha').datepicker({
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',
 			format: 'yyyy-mm-dd' ,
@@ -231,22 +207,21 @@
 
 	function cerrarFiltrador() {
 		$('#codigo').val('');
-		$('#corte').val('').selectpicker('refresh');
+		$('#fecha').val('');
+		$('#contrato').val('');
 		$('#cliente').val('').selectpicker('refresh');
-		$('#vendedor').val('').selectpicker('refresh');
-		$('#creacion').val('');
-		$('#vencimiento').val('');
-		$('#comparador').val('').selectpicker('refresh');
-		$('#total').val('');
-		$('#estado').val('').selectpicker('refresh');
+		$('#telefono').val('');
+		$('#servicio').val('').selectpicker('refresh');
+		$('#direccion').val('');
+		$('#estatus').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
 
-	@if($tipo)
-	    $('#estado').val('{{ $tipo }}').selectpicker('refresh');
-	    abrirFiltrador();
+	@if(is_numeric($tipo))
+	    $('#estatus').val('{{ $tipo }}').selectpicker('refresh');
+	    //abrirFiltrador();
 	    getDataTable();
 	@endif
 </script>

@@ -231,5 +231,11 @@
 	function exportar() {
 	    window.location.href = '{{config('app.url')}}/empresa/contratos/exportar?client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val();
 	}
+
+	@if($tipo>=0)
+	    $('#state').val('{{ $tipo }}').selectpicker('refresh');
+	    abrirFiltrador();
+	    getDataTable();
+	@endif
 </script>
 @endsection

@@ -271,19 +271,29 @@ class FacturasController extends Controller
     return view('facturas.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
   }
   
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
-        return view('facturas.indexnew', compact('clientes'));
+        $tipo = '';
+        return view('facturas.indexnew', compact('clientes','tipo'));
     }
 
-    public function facturas(Request $request)
-    {
+    public function indexNew(Request $request, $tipo){
+        $this->getAllPermissions(Auth::user()->id);
+        $empresaActual = auth()->user()->empresa;
+
+        $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        $tipo = ($tipo == 'cerradas') ? 'A' : 1;
+        return view('facturas.indexnew', compact('clientes','tipo'));
+    }
+
+    public function facturas(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;

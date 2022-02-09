@@ -61,11 +61,34 @@ class ContratosController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
-		$planes = PlanesVelocidad::where('status', 1)->get();
-		$servidores = Mikrotik::where('status',1)->get();
-		$grupos = GrupoCorte::where('status',1)->get();
+        $planes = PlanesVelocidad::where('status', 1)->get();
+        $servidores = Mikrotik::where('status',1)->get();
+        $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos de Servicio']);
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos'));
+        $tipo = '';
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+    }
+
+    public function disabled(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
+        $planes = PlanesVelocidad::where('status', 1)->get();
+        $servidores = Mikrotik::where('status',1)->get();
+        $grupos = GrupoCorte::where('status',1)->get();
+        view()->share(['title' => 'Contratos de Servicio']);
+        $tipo = 'disabled';
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+    }
+
+    public function enabled(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
+        $planes = PlanesVelocidad::where('status', 1)->get();
+        $servidores = Mikrotik::where('status',1)->get();
+        $grupos = GrupoCorte::where('status',1)->get();
+        view()->share(['title' => 'Contratos de Servicio']);
+        $tipo = 'enabled';
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
     }
 
     public function contratos(Request $request, $nodo){

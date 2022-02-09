@@ -50,11 +50,11 @@ class Radicado extends Model
         if($this->estatus == 0){
             $status = 'Pendiente';
         }elseif($this->estatus == 1){
-            $status = 'Resuelto';
+            $status = 'Solventado';
         }elseif($this->estatus == 2){
             $status = 'Escalado / Pendiente';
         }elseif($this->estatus == 3){
-            $status = 'Escalado / Resuelto';
+            $status = 'Escalado / Solventado';
         }
         return $status;
     }

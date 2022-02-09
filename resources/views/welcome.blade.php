@@ -118,7 +118,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('contratos.index')}}">
+                		    <a href="{{route('contratos.enabled')}}">
                 			<div class="card-counter success">
                                 <i class="fas fa-file-contract"></i>
                                 <span class="count-numbers">{{ $contra_ena }}</span>
@@ -127,7 +127,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('contratos.index')}}">
+                		    <a href="{{route('contratos.disabled')}}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-file-contract"></i>
                                 <span class="count-numbers">{{ $contra_disa }}</span>
@@ -156,7 +156,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('facturas.index')}}">
+                		    <a href="{{ route('facturas.tipo', 'cerradas') }}">
                 			<div class="card-counter success">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="count-numbers">{{ $factura_cerrada }}</span>
@@ -165,7 +165,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('facturas.index')}}">
+                		    <a href="{{ route('facturas.tipo', 'abiertas') }}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="count-numbers">{{ $factura_abierta }}</span>
@@ -185,7 +185,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 offset-md-1">
-                			<a href="{{route('radicados.index')}}">
+                			<a href="{{route('radicados.tipo', 'todos')}}">
                 			<div class="card-counter primary">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados }}</span>
@@ -194,7 +194,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                			<a href="{{route('radicados.index')}}">
+                			<a href="{{route('radicados.tipo', 'solventados')}}">
                 			<div class="card-counter success">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados_solventado }}</span>
@@ -203,7 +203,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                			<a href="{{route('radicados.index')}}">
+                			<a href="{{route('radicados.tipo', 'pendientes')}}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados_pendiente }}</span>
