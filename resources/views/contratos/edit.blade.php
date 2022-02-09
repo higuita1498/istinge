@@ -177,6 +177,19 @@
 	                <strong>{{ $errors->first('grupo_corte') }}</strong>
 	            </span>
 	        </div>
+
+            <div class="col-md-4 form-group">
+	            <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>
+	            <div class="input-group">
+	                <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
+	                        <option value="1" {{$contrato->facturacion == 1 ? 'selected' : ''}}>Facturación Estándar</option>
+	                        <option value="3" {{$contrato->facturacion == 3 ? 'selected' : ''}} >Facturación Electrónica</option>
+	                </select>
+	            </div>
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('grupo_corte') }}</strong>
+	            </span>
+	        </div>
             {{--<div class="col-md-4 form-group d-none">
                 <label class="control-label">Fecha Corte <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" id="fecha_corte" name="fecha_corte" required="" value="{{ $contrato->fecha_corte }}" title="Seleccione">

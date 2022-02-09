@@ -220,6 +220,7 @@ class ContratosController extends Controller
             /*'fecha_corte' => 'required',
             'fecha_suspension' => 'required',*/
             'conexion' => 'required',
+            'tipo_factura' => 'required',
             /*'costo_instalacion' => 'required',
             'caja' => 'required'*/
         ]);
@@ -389,6 +390,7 @@ class ContratosController extends Controller
                 $contrato->marca_antena            = $request->marca_antena;
                 $contrato->modelo_antena           = $request->modelo_antena;
                 $contrato->grupo_corte             = $request->grupo_corte;
+                $contrato->facturacion             = $request->facturacion;
                 
                 if($request->ap){
                     $ap = AP::find($request->ap);
@@ -412,7 +414,7 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte')->where('contracts.id', $id)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion')->where('contracts.id', $id)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
         $nodos = Nodo::where('status', 1)->get();
         $aps = AP::where('status', 1)->get();
@@ -601,6 +603,7 @@ class ContratosController extends Controller
                     $descripcion .= ($contrato->grupo_corte == $request->grupo_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Grupo de Corte</b> a '.$grupo->nombre.'<br>';
                 }
                 $contrato->grupo_corte = $request->grupo_corte;
+                $contrato->facturacion = $request->facturacion;
                 
                 /*$descripcion .= ($contrato->fecha_corte == $request->fecha_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Corte</b> de '.$contrato->fecha_corte.' a '.$request->fecha_corte.'<br>';
                 $contrato->fecha_corte = $request->fecha_corte;

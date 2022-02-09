@@ -282,18 +282,12 @@ class FacturasController extends Controller
         return view('facturas.indexnew', compact('clientes','tipo'));
     }
 
-    public function indexNew(Request $request, $tipo){
-        $this->getAllPermissions(Auth::user()->id);
-        $empresaActual = auth()->user()->empresa;
-
-        $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
-
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
-        $tipo = ($tipo == 'cerradas') ? 'A' : 1;
-        return view('facturas.indexnew', compact('clientes','tipo'));
+    public function index_electronica(){
+      return "ok";
     }
 
-    public function facturas(Request $request){
+    public function facturas(Request $request)
+    {
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;

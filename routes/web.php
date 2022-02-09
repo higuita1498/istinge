@@ -349,7 +349,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('/{id}/promesa_pago', 'FacturasController@promesa_pago')->name('factura.promesa_pago');
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
-        Route::get('/{tipo}', 'FacturasController@indexNew')->name('facturas.tipo');
+		Route::get('facturas_electronica', 'FacturasController@index_electronica')->name('facturas.index-electronica');
+
 	});
 	Route::resource('facturas', 'FacturasController');
 
