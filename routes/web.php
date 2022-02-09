@@ -350,6 +350,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
 		Route::get('facturas_electronica', 'FacturasController@index_electronica')->name('facturas.index-electronica');
+		Route::get('/{tipo}', 'FacturasController@indexNew')->name('facturas.tipo');
 
 	});
 	Route::resource('facturas', 'FacturasController');
