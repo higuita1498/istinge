@@ -185,7 +185,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 offset-md-1">
-                			<a href="{{route('radicados.tipo', 'todos')}}">
+                			<a href="{{route('radicados.index')}}">
                 			<div class="card-counter primary">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados }}</span>
@@ -194,7 +194,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                			<a href="{{route('radicados.tipo', 'solventados')}}">
+                			<a href="{{route('radicados.index')}}">
                 			<div class="card-counter success">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados_solventado }}</span>
@@ -203,7 +203,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                			<a href="{{route('radicados.tipo', 'pendientes')}}">
+                			<a href="{{route('radicados.index')}}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-ticket-alt"></i>
                                 <span class="count-numbers">{{ $radicados_pendiente }}</span>

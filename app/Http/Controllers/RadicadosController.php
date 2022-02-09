@@ -52,7 +52,7 @@ class RadicadosController extends Controller{
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 
-    public function radicados(Request $request, $tipo){
+    public function radicados(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
@@ -65,8 +65,9 @@ class RadicadosController extends Controller{
                 });
             }
             if($request->fecha){
-                $radicados->where(function ($query) use ($request) {
-                    $query->orWhere('radicados.fecha', $request->fecha);
+                $fecha = date('Y-m-d', strtotime($request->fecha));
+                $radicados->where(function ($query) use ($request, $fecha) {
+                    $query->orWhere('radicados.fecha', $fecha);
                 });
             }
             if($request->contrato){
@@ -95,7 +96,8 @@ class RadicadosController extends Controller{
                 });
             }
             if($request->estatus){
-                $radicados->where(function ($query) use ($request) {
+                $estatus = ($request->estatus == 'A') ? 0 : $request->estatus;
+                $radicados->where(function ($query) use ($request, $estatus) {
                     $query->orWhere('radicados.estatus', $request->estatus);
                 });
             }
@@ -105,7 +107,7 @@ class RadicadosController extends Controller{
             $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.direccion','ASC');
         }
 
-        if($tipo == 0){
+        /*if($tipo == 0){
             $radicados->where(function ($query) use ($tipo) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
@@ -117,7 +119,7 @@ class RadicadosController extends Controller{
             $radicados->where(function ($query) {
                 $query->whereIn('radicados.estatus', [0,1,2,3]);
             });
-        }
+        }*/
 
         return datatables()->eloquent($radicados)
         ->editColumn('codigo', function (Radicado $radicado) {

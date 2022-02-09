@@ -50,7 +50,7 @@ Route::get('logs/{contrato}', 'ContratosController@logs');
 Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
-Route::get('radicados/{tipo?}', 'RadicadosController@radicados');
+Route::get('radicados', 'RadicadosController@radicados');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -675,7 +675,6 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
         	Route::get('/notificacion', 'RadicadosController@notificacion')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
-        	Route::get('/lista/{tipo?}', 'RadicadosController@indexNew')->name('radicados.tipo');
         });
 		Route::resource('radicados', 'RadicadosController');
 

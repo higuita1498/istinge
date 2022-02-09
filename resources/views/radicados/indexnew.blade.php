@@ -63,38 +63,36 @@
 						<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
+						<input type="text" placeholder="Fecha" id="fecha" name="fecha" class="form-control rounded creacion" autocomplete="off">
+					</div>
+					<div class="col-md-2 pl-1 pt-1">
+						<input type="text" placeholder="Contrato" id="contrato" class="form-control rounded">
+					</div>
+					<div class="col-md-2 pl-1 pt-1">
 						<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
 							@foreach ($clientes as $cliente)
-								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+								<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
-						<select title="Fecha Corte" class="form-control rounded selectpicker" id="corte" data-size="5" data-live-search="true">
-							<option value="15" >Día 15</option>
-							<option value="30" >Día 30</option>
+						<input type="text" placeholder="Celular" id="telefono" class="form-control rounded">
+					</div>
+					<div class="col-md-2 pl-1 pt-1">
+						<select title="Servicio" class="form-control rounded selectpicker" id="servicio" data-size="5" data-live-search="true">
+							@foreach ($servicios as $servicio)
+								<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
+							@endforeach
 						</select>
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Estado" class="form-control rounded selectpicker" id="estado">
-							<option value="1">Abiertas</option>
-							<option value="A">Cerradas</option>
-							<option value="2">Anuladas</option>
+						<select title="Estado" class="form-control rounded selectpicker" id="estatus">
+							<option value="A">Pendiente</option>
+							<option value="1">Solventado</option>
+							<option value="2">Escalado / Pendiente</option>
+							<option value="3">Escalado / Solventado</option>
 						</select>
 					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
-							<option value="1">Si</option>
-							<option value="A">No</option>
-						</select>
-					</div>
-					
 
 					<div class="col-md-1 pl-1 pt-1">
 						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -141,7 +139,7 @@
 				[1, "DESC"]
 			],
 			"pageLength": 25,
-			ajax: '{{url("/radicados/$tipo")}}',
+			ajax: '{{url("/radicados")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
@@ -218,11 +216,5 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
-
-	@if(is_numeric($tipo))
-	    $('#estatus').val('{{ $tipo }}').selectpicker('refresh');
-	    //abrirFiltrador();
-	    getDataTable();
-	@endif
 </script>
 @endsection
