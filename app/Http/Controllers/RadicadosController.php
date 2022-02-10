@@ -103,7 +103,7 @@ class RadicadosController extends Controller{
             }
         }
 
-        if(auth()->user()->rol > 3){
+        if(auth()->user()->rol == 4){
             $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
         }
 
