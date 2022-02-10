@@ -104,7 +104,7 @@ class RadicadosController extends Controller{
         }
 
         if(auth()->user()->rol > 3){
-            $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.direccion','ASC');
+            $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
         }
 
         /*if($tipo == 0){

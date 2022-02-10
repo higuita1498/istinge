@@ -136,7 +136,7 @@
 				'url': '/vendors/DataTables/es.json'
 			},
 			order: [
-				[1, "DESC"]
+				[1, "desc"]
 			],
 			"pageLength": 25,
 			ajax: '{{url("/radicados")}}',
