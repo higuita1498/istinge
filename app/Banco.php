@@ -53,4 +53,16 @@ class Banco extends Model
     public function banco(){
         return Banco::find($this->banco);
     }
+
+    public function tipo(){
+        if($this->tipo_cta==1){
+            return 'Banco';
+        }else if($this->tipo_cta==2){
+            return 'Tarjeta de crédito';
+        }else if($this->tipo_cta==3){
+            return 'Efectivo';
+        }else if($this->tipo_cta==4){
+            return 'Punto de Venta';
+        }
+    }
 }
