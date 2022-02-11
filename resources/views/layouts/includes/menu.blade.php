@@ -145,7 +145,12 @@
                             <a class="nav-link" href="{{route('facturas.index')}}" >Facturas de Venta</a>
                         </li>
                     <?php } ?>
-                     <?php if(isset($_SESSION['permisos']['40'])){ ?>
+                    <?php if(isset($_SESSION['permisos']['735'])){ ?>
+                        <li class="nav-item" id="descuento">
+                            <a class="nav-link" href="{{route('descuentos.index')}}" >Descuentos</a>
+                        </li>
+                    <?php } ?>
+                    <?php if(isset($_SESSION['permisos']['40'])){ ?>
                         <li class="nav-item" id="venta">
                             <a class="nav-link" href="{{route('facturas.index-electronica')}}" >Facturación Electrónica</a>
                         </li>

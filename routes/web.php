@@ -51,6 +51,7 @@ Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
 Route::get('radicados', 'RadicadosController@radicados');
+Route::get('descuentos', 'DescuentosController@descuentos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -819,4 +820,11 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 	    
 	    Route::resource('grupos-corte', 'GruposCorteController');
+
+	// DESCUENTOS
+	    Route::group(['prefix' => 'descuentos'], function (){
+	        Route::post('/aprobar', 'DescuentosController@aprobar')->name('descuentos.aprobar');
+	    });
+
+	    Route::resource('descuentos', 'DescuentosController');
 });
