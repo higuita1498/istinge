@@ -12,8 +12,8 @@
     		border-radius: 0%;
     	}
     	.bg-th{
-            background: #b00606 !important;
-            border-color: #b00606 !important;
+            background: {{ env('APP_COLOR') }} !important;
+            border-color: {{ env('APP_COLOR') }} !important;
             color: #fff !important;
             text-align: center;
         }
@@ -50,7 +50,7 @@
     	
     	<div class="col-md-8 offset-md-2 text center">
     	    <input type="hidden" value="0" id="nro">
-    	    <div class="card mt-4" style="border-radius: 20px;background: #b00606 !important;color: #fff;">
+    	    <div class="card mt-4" style="border-radius: 20px;background: {{ env('APP_COLOR') }} !important;color: #fff;">
     	        <div class="card-body text-center">
     	            <h4 class="card-title font-weight-bold" style="color: #fff;">INFORMACIÓN</h4>
     	            <p class="card-text">El proceso de PING se ejecuta hasta <strong>30</strong> veces de manera automática</p>
