@@ -10,8 +10,18 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('phpinfo', function(){phpinfo();});
+
+Route::get('clear', function () {
+    $exitCode = Artisan::call('config:clear');
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('route:cache');
+    $exitCode = Artisan::call('view:clear');
+
+    return redirect()->back();
+});
 
 /* IMPORTAR API*/
 
