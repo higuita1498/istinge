@@ -301,7 +301,7 @@ class FacturasController extends Controller
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta']);
-        return view('facturas.indexnew', compact('clientes'));
+        return view('facturas-electornica.index', compact('clientes'));
     }
 
     public function facturas(Request $request)
