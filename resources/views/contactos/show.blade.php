@@ -3,46 +3,46 @@
 @section('style')
 <style>
     .bg-th{
-        background: #b00606 !important;
-        border-color: #b00606 !important;
+        background: {{ env('APP_COLOR') }} !important;
+        border-color: {{ env('APP_COLOR') }} !important;
         color: #fff !important;
     }
     .nav-tabs .nav-link {
         font-size: 1em;
     }
     .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-        background-color: #b00606;
+        background-color: {{ env('APP_COLOR') }};
         color: #fff!important;
     }
     .table .thead-light th {
         color: #fff!important;
-        background-color: #b00606!important;
-        border-color: #b00606!important;
+        background-color: {{ env('APP_COLOR') }}!important;
+        border-color: {{ env('APP_COLOR') }}!important;
     }
     .nav-tabs .nav-link {
         font-size: 1em;
     }
     .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-        background-color: #b00606;
+        background-color: {{ env('APP_COLOR') }};
         color: #fff!important;
     }
     .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
         color: #fff!important;
-        background-color: #b00606!important;
+        background-color: {{ env('APP_COLOR') }}!important;
     }
     .nav-pills .nav-link {
         font-weight: 700!important;
     }
     .nav-pills .nav-link{
-        color: #b00606!important;
+        color: {{ env('APP_COLOR') }}!important;
         background-color: #f9f9f9!important;
         margin: 2px;
-        border: 1px solid #b00606;
+        border: 1px solid {{ env('APP_COLOR') }};
         transition: 0.4s;
     }
     .nav-pills .nav-link:hover {
         color: #fff!important;
-        background-color: #b00606!important;
+        background-color: {{ env('APP_COLOR') }}!important;
     }
     table.dataTable td.dataTables_empty, table.dataTable th.dataTables_empty {
         text-align: center;
@@ -248,7 +248,7 @@
 				<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 			</li>
 		</ul>
-		<hr style="border-top: 1px solid #b00606; margin: .5rem 0rem;">
+		<hr style="border-top: 1px solid {{ env('APP_COLOR') }}; margin: .5rem 0rem;">
 		<div class="tab-content fact-table" id="myTabContent">
 			<div class="tab-pane fade" id="transacciones" role="tabpanel" aria-labelledby="transacciones-tab">
 				<input type="hidden" id="url-show-movimientos" value="{{route('bancos.cliente.movimientos.cuenta', $contacto->id)}}">

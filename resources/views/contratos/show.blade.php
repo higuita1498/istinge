@@ -48,8 +48,8 @@
 		border-radius: 0%;
 	}
 	.bg-th{
-        background: #b00606 !important;
-        border-color: #b00606 !important;
+        background: {{ env('APP_COLOR') }} !important;
+        border-color: {{ env('APP_COLOR') }} !important;
         color: #fff !important;
     }
 </style>

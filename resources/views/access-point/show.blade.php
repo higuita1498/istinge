@@ -8,8 +8,8 @@
 @section('style')
 <style>
     .card-header {
-        background-color: rgb(49 126 191);
-        border-bottom: 1px solid rgb(49 126 191);
+        background-color: {{ env('APP_COLOR') }};
+        border-bottom: 1px solid {{ env('APP_COLOR') }};
     }
 </style>
 @endsection
