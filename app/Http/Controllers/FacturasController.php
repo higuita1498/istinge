@@ -47,6 +47,7 @@ use App\Contrato;
 use App\Mikrotik;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
+use App\Descuento;
 
 class FacturasController extends Controller
 {
@@ -271,15 +272,26 @@ class FacturasController extends Controller
     return view('facturas.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
   }
   
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
-        return view('facturas.indexnew', compact('clientes'));
+        $tipo = '';
+        return view('facturas.indexnew', compact('clientes','tipo'));
+    }
+
+    public function indexNew(Request $request, $tipo){
+        $this->getAllPermissions(Auth::user()->id);
+        $empresaActual = auth()->user()->empresa;
+
+        $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        $tipo = ($tipo == 'cerradas') ? 'A' : 1;
+        return view('facturas.indexnew', compact('clientes','tipo'));
     }
 
     public function index_electronica(){
@@ -785,6 +797,7 @@ public function edit($id){
   * @return redirect
   */
     public function update(Request $request, $id){
+        $desc=0;
 
     $factura =Factura::find($id);
     if ($factura) {
@@ -851,7 +864,8 @@ public function edit($id){
           $items->id_impuesto=$request->impuesto[$i];
           $items->impuesto=$impuesto->porcentaje;
           $items->cant=$request->cant[$i];
-          $items->desc=$request->desc[$i];
+          //$items->desc=$request->desc[$i];
+          $desc=$request->desc[$i];
           $items->save();
           $inner[]=$items->id;
         }
@@ -875,6 +889,14 @@ public function edit($id){
 
         if (count($inner)>0) {
           DB::table('items_factura')->where('factura', $factura->id)->whereNotIn('id', $inner)->delete();
+        }
+
+        if($desc > 0){
+            $descuento = new Descuento;
+            $descuento->factura    = $items->factura;
+            $descuento->descuento  = $desc;
+            $descuento->created_by = Auth::user()->id;
+            $descuento->save();
         }
 
         $mensaje='Se ha modificado satisfactoriamente la factura';

@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Auth;
 use App\User;
+use DB;
+
 class Radicado extends Model
 {
     protected $table = "radicados";
@@ -17,6 +19,25 @@ class Radicado extends Model
     protected $fillable = [
         'cliente','fecha','nombre', 'telefono', 'correo', 'direccion', 'contrato', 'desconocido', 'estatus', 'codigo','empresa','firma'
     ];
+
+    protected $appends = ['session'];
+
+    public function getSessionAttribute(){
+        return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public function getAllPermissions($id){
+        if(Auth::user()->rol>=2){
+            if (DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->count() > 0 ) {
+                $permisos = DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->get();
+                foreach ($permisos as $key => $value) {
+                    $_SESSION['permisos'][$permisos[$key]->id_permiso] = '1';
+                }
+                return $_SESSION['permisos'];
+            }
+            else return null;
+        }
+    }
 
     public function tecnico(){
         return User::where('id',$this->tecnico)->first();
@@ -50,11 +71,11 @@ class Radicado extends Model
         if($this->estatus == 0){
             $status = 'Pendiente';
         }elseif($this->estatus == 1){
-            $status = 'Resuelto';
+            $status = 'Solventado';
         }elseif($this->estatus == 2){
             $status = 'Escalado / Pendiente';
         }elseif($this->estatus == 3){
-            $status = 'Escalado / Resuelto';
+            $status = 'Escalado / Solventado';
         }
         return $status;
     }

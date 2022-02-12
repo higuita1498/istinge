@@ -118,7 +118,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('contratos.index')}}">
+                		    <a href="{{route('contratos.enabled')}}">
                 			<div class="card-counter success">
                                 <i class="fas fa-file-contract"></i>
                                 <span class="count-numbers">{{ $contra_ena }}</span>
@@ -127,7 +127,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('contratos.index')}}">
+                		    <a href="{{route('contratos.disabled')}}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-file-contract"></i>
                                 <span class="count-numbers">{{ $contra_disa }}</span>
@@ -156,7 +156,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('facturas.index')}}">
+                		    <a href="{{ route('facturas.tipo', 'cerradas') }}">
                 			<div class="card-counter success">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="count-numbers">{{ $factura_cerrada }}</span>
@@ -165,7 +165,7 @@
                 			</a>
                 		</div>
                 		<div class="col-md-3">
-                		    <a href="{{route('facturas.index')}}">
+                		    <a href="{{ route('facturas.tipo', 'abiertas') }}">
                 			<div class="card-counter danger">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="count-numbers">{{ $factura_abierta }}</span>

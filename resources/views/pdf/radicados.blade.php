@@ -113,7 +113,7 @@
     </style>
 
     <div style="width: 100%;height:auto;">
-        <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden;  text-align:left;">
+        <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden;">
             <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto">
@@ -129,8 +129,8 @@
             </p>
         </div>
         <div style="width: 28%; display: inline-block; text-align: left; vertical-align: top; margin-top: 2%;">
-            <p class="medium"> Radicado</p>
-            <h4 style="text-align: left; ">No. #{{$radicado->codigo}}</h4>
+            <p class="medium" style="text-align: center;"> Radicado</p>
+            <h4 style="text-align: center;">No. #{{$radicado->codigo}}</h4>
         </div>
     </div>
 
@@ -144,7 +144,7 @@
                             <th></th>
                         </tr>
                         <tr>
-                            <th style="text-align: left; padding-left: 9px;">Nro. adicado</th>
+                            <th style="text-align: left; padding-left: 9px;">Nro. Radicado</th>
                             <td style="padding-left: 9px;">{{$radicado->codigo}}</td>
                         </tr>
                         <tr>
@@ -160,7 +160,7 @@
                             <td style="padding-left: 9px;">{{$radicado->nombre}}</td>
                         </tr>
                         <tr>
-                            <th style="text-align: left; padding-left: 9px;">Nro. elefónico</th>
+                            <th style="text-align: left; padding-left: 9px;">Nro. Telefónico</th>
                             <td style="padding-left: 9px;">{{$radicado->telefono}}</td>
                         </tr>
                         <tr>
@@ -192,13 +192,25 @@
                             <th style="text-align: left; padding-left: 9px;">Observaciones</th>
                             <td style="padding: 0px 9px; text-align: justify;">{{$radicado->desconocido}}</td>
                         </tr>
+                        @if ($radicado->tecnico)
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">Técnico Asociado</th>
+                            <td style="padding: 0px 9px; text-align: justify;">{{$radicado->tecnico_reporte()}}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->reporte)
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">Reporte Técnico</th>
+                            <td style="padding: 0px 9px; text-align: justify;">{{$radicado->reporte}}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <div style="width: 70%; margin-top: 1%;">
+    <div style="width: 70%; margin-top: 3%;">
         <div style="padding-top: 8%; text-align: center;">
             <div style="display: inline-block; width: 45%;">
                 <p class="small"></p>

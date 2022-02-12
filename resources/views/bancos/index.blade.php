@@ -27,6 +27,7 @@
 	              <th>Nombre de la Cuenta</th>
 	              <th>Número de la Cuenta</th>
 	              <th>Descripción</th>
+	              <th>Tipo</th>
 	              <th>Saldo</th>
 	              <th>Acciones</th>
 	          </tr>
@@ -37,6 +38,7 @@
 						<td><a href="{{route('bancos.show',$banco->nro)}}">{{$banco->nombre}}</a></td>
 						<td>{{$banco->nro_cta}}</td>
 						<td>{{$banco->descripcion}} </td>
+						<td>{{$banco->tipo()}} </td>
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($banco->saldo())}}</td>
 						<td>
 						    <form action="{{ route('bancos.destroy',$banco->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-banco-{{$banco->id}}">

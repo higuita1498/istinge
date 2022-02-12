@@ -20,8 +20,14 @@
         @endif
     @endif
 
+    {{-- @if($radicado->estatus==0)
+        @if(isset($_SESSION['permisos']['205']))
+            <a href="#" onclick="confirmar('escalar{{$radicado->id}}', '¿Está seguro de que desea escalar el caso?');" class="btn btn-outline-warning btn-sm "title="Escalar Caso">Escalar Caso</a>
+        @endif
+	@endif --}}
+
     @if($radicado->estatus == 1 || $radicado->estatus == 3)
-    
+
     @else
         @if($radicado->firma || $radicado->estatus==0)
             @if(isset($_SESSION['permisos']['207']))
@@ -52,7 +58,7 @@
 			}, 5000);
 		</script>
 	@endif
-	
+
 	@if(Session::has('danger'))
 		<div class="alert alert-danger" >
 			{{Session::get('danger')}}
@@ -155,7 +161,7 @@
     					@endif
     					<tr>
     						<th>Observaciones del Radicado</th>
-    						<td>{{$radicado->desconocido}}</td>
+    						<td>@php echo $radicado->desconocido @endphp</td>
     					</tr>
     					<tr>
     						<th>Estatus</th>
