@@ -55,9 +55,9 @@ class TiposGastos extends Model
     }
 
     public function uso(){
-        $cont=0;
+        //$cont=0;
         //$cont+=Contrato::where('grupo_corte', $this->id)->count();
-        return $cont;
+        return 0;
     }
     
     public function created_by(){
