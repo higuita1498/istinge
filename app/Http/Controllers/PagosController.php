@@ -451,6 +451,9 @@ class PagosController extends Controller
             }else if ($gasto->tipo==2){
                 $itemscount=GastosCategoria::where('gasto',$gasto->id)->count();
                 $items = GastosCategoria::where('gasto',$gasto->id)->get();
+            }else if ($gasto->tipo==5){
+                $itemscount=GastosCategoria::where('gasto',$gasto->id)->count();
+                $items = GastosCategoria::where('gasto',$gasto->id)->get();
             }
             
             $retenciones = GastosRetenciones::where('gasto',$gasto->id)->get();

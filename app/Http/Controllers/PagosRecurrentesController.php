@@ -318,6 +318,7 @@ class PagosRecurrentesController extends Controller {
         $gasto->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $gasto->observaciones=mb_strtolower($request->observaciones);
         $gasto->created_by = Auth::user()->id;
+        $gasto->recurrente = $gastoRecurrente->id;
         $gasto->save();
 
         $recurrentes = GastosRecurrentesCategoria::where('gasto_recurrente', $gastoRecurrente->id)->get();
