@@ -135,5 +135,11 @@ class GastosRecurrentes extends Model
         return ($this->estado == 0) ? 'SIN APROBAR' : 'APROBADO';
     }
 
+    public function uso(){
+        $cont=0;
+        $cont+=GastosRecurrentesCategoria::where('gasto_recurrente', $this->id)->count();
+        return $cont;
+    }
+
 
 }

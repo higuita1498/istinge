@@ -523,6 +523,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
     Route::post('pagosrecurrentes/anular/{gasto}', 'PagosRecurrentesController@anular')->name('pagosR.anular');
     Route::post('pagosrecurrentes/destroy_p/{gasto}', 'PagosRecurrentesController@destroy_pago')->name('pagosR.destroyP');
 	Route::post('pagosrecurrentes/ingreso/', 'PagosRecurrentesController@pagar')->name('pagosRecu.pagar');
+	Route::get('pagosrecurrentes/{id}/act_des', 'PagosRecurrentesController@act_des')->name('pagosrecurrentes.act_des');
 
 	Route::group(['prefix' => 'categorias'], function() {
 		Route::get('/create/{id}', 'CategoriasController@create')->name('categorias.create_id');

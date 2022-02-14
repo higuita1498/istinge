@@ -341,7 +341,7 @@ class PagosRecurrentesController extends Controller {
         $gastoRecurrente->save();
 
         $this->up_transaccion(5, $gastoRecurrente->id, $gastoRecurrente->cuenta, $gastoRecurrente->beneficiario, 2, $gastoRecurrente->total()->total, $gasto->fecha, 0);
-        return redirect('empresa/pagosrecurrentes')->with('success', 'Pago realizado correctamente');
+        return redirect('empresa/pagos/'.$gasto->id)->with('success', 'Pago realizado correctamente');
     }
 
     public function imprimir($id){
@@ -412,5 +412,23 @@ class PagosRecurrentesController extends Controller {
             return redirect('empresa/pagos')->with('success', $mensaje);
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
+    }
+
+    public function act_des($id){
+        $gasto = GastosRecurrentes::find($id);
+
+        if($gasto){
+            if($gasto->estado == 0){
+                $gasto->estado = 1;
+                $mensaje = 'SE HA APROBADO/ACTIVADO EL PAGO RECURRENTE';
+            }else{
+                $gasto->estado = 0;
+                $mensaje = 'SE HA DESACTIVADO EL PAGO RECURRENTE';
+            }
+            $gasto->save();
+            return redirect('empresa/pagosrecurrentes')->with('success', $mensaje);
+        }else{
+            return redirect('empresa/pagosrecurrentes')->with('danger', 'PAG RECURRENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
+        }
     }
 }

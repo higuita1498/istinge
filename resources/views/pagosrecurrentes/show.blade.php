@@ -2,7 +2,16 @@
 
 @section('boton') 
     <a href="{{route('pagosrecurrentes.edit',$gasto->nro)}}" class="btn btn-outline-primary btn-sm " title="Editar" target="_blank"><i class="fas fa-edit"></i> Editar</a>
+    @if($gasto->estado==1)
     <a  href="{{route('pagosR.ingreso', $gasto->id)}}" class="btn btn-outline-primary btn-sm" title="Agregar pago"><i class="fas fa-money-bill"></i> Agregar pago</a>
+    @else
+      @if(isset($_SESSION['permisos']['743']) && $gasto->estado == 0)
+        <form action="{{ route('pagosrecurrentes.act_des',$gasto->id) }}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="aprobar-gasto{{$gasto->id}}">
+          {{ csrf_field() }}
+        </form>
+        <button class="btn btn-outline-success btn-sm negative_paging" type="submit" title="Aprobar" onclick="confirmar('aprobar-gasto{{$gasto->id}}', '¿Está seguro que deseas aprobar el pago pago recurrente?', '');"><i class="fas fa-check"></i> Aprobar</button>
+              @endif
+    @endif
 @endsection
 
 @section('content')
