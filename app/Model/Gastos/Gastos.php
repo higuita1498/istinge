@@ -64,7 +64,7 @@ class Gastos extends Model
             }
             return 'Facturas de Proveedor:'.substr($Factura, 0, -1);
         }
-        else if($this->tipo==2 || $this->tipo==4){
+        else if($this->tipo==2 || $this->tipo==4 || $this->tipo==5){
             $gastos=GastosCategoria::where('gasto', $this->id)->select('categoria')->distinct()->get();
             $Factura='';
             foreach ($gastos as $gasto) {
@@ -108,7 +108,7 @@ class Gastos extends Model
                 $total+=$gasto->pago+(float)$gasto->retencion();
             }
             return $total;
-        }else if($this->tipo==2 || $this->tipo==4){
+        }else if($this->tipo==2 || $this->tipo==4 || $this->tipo==5){
             return $this->total()->total;
         }else if($this->tipo == 5){
             $gastosrecurrentes = GastosRecurrentes::where('empresa',Auth::user()->empresa)->where('id',$this->nro)->first();
@@ -194,13 +194,11 @@ class Gastos extends Model
             }
         }        
         return (object) $totales;
-
     }
 
     public function notas(){
         return NotaCredito::where('empresa',Auth::user()->empresa)->where('id', $this->nota_credito)->first();
     }
-
 
     public function retenciones_facturas($cont=false){
         $facturas=GastosFactura::where('gasto', $this->id)->get();

@@ -16,6 +16,8 @@ use function GuzzleHttp\Psr7\str;
 use Illuminate\Database\Eloquent\Model;
 
 use Auth; use DB;
+use App\TiposGastos;
+
 class GastosRecurrentes extends Model
 {
     protected $table = "gastos_recurrentes";
@@ -26,11 +28,15 @@ class GastosRecurrentes extends Model
      * @var array
      */
     protected $fillable = [
-        'nro', 'empresa', 'beneficiario', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'created_at', 'updated_at', 'frecuencia', 'proxima','estado_pago'
+        'nro', 'empresa', 'beneficiario', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'created_at', 'updated_at', 'frecuencia', 'proxima','estado_pago', 'estado'
     ];
 
     public function beneficiario(){
          return Contacto::where('id',$this->beneficiario)->first();
+    }
+
+    public function tipo(){
+         return TiposGastos::find($this->tipo_gasto);
     }
 
     public function metodo_pago($id=false){
@@ -121,6 +127,12 @@ class GastosRecurrentes extends Model
 
         return $actual->diff($proxima)->days <= 3;
 
+    }
+    public function estado($class=false){
+        if ($class) {
+            return ($this->estado == 0) ? 'danger' : 'success';
+        }
+        return ($this->estado == 0) ? 'SIN APROBAR' : 'APROBADO';
     }
 
 

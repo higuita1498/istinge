@@ -1,132 +1,114 @@
 @extends('layouts.app')
 
 @section('boton') 
-  <a href="{{route('pagosrecurrentes.edit',$gasto->nro)}}" class="btn btn-outline-primary btn-sm " title="Editar" target="_blank"><i class="fas fa-edit"></i> Editar</a> 
-@endsection  
-
+    <a href="{{route('pagosrecurrentes.edit',$gasto->nro)}}" class="btn btn-outline-primary btn-sm " title="Editar" target="_blank"><i class="fas fa-edit"></i> Editar</a>
+    <a  href="{{route('pagosR.ingreso', $gasto->id)}}" class="btn btn-outline-primary btn-sm" title="Agregar pago"><i class="fas fa-money-bill"></i> Agregar pago</a>
+@endsection
 
 @section('content')
-<div class="row card-description">
-  <div class="col-md-{{ $gasto->beneficiario()?6:12}}">
-    <div class="table-responsive">
-      	<table class="table table-striped table-bordered table-sm info">
-        	<tbody>
-	          <tr>
-	            <th colspan="2"></th>
-	          </tr>
-	          <tr>
-	            <th width="20%">Código</th>
-	            <td>{{$gasto->nro}}</td>
-	          </tr>
-	          <tr>
-	            <th>Cuenta</th>
-	            <td>{{$gasto->cuenta()->nombre}}</td>
-	          </tr>
-	          <tr>
-	            <th>Método de pago</th>
-	            <td>{{$gasto->metodo_pago()}}</td>
-	          </tr>
-	          <tr>
-	            <th>Monto</th>
-	            <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($gasto->total()->total)}}</td>
-	          </tr>
-	          <tr>
-	            <th>Fecha de Pago</th>
-	            <td>{{date('d-m-Y', strtotime($gasto->fecha))}}</td>
-	          </tr>
-	          <tr>
-	            <th>Proxima emisión</th>
-	            <td>{{date('d-m-Y', strtotime($gasto->proxima))}}</td>
-	          </tr>
-	          <tr>
-	            <th>Frecuencia (meses)</th>
-	            <td>{{$gasto->frecuencia}}</td>
-	          </tr>
-	          <tr>
-	            <th>Observaciones</th>
-	            <td>{{$gasto->observaciones}}</td>
-	          </tr>
+    <div class="row card-description">
+    	<div class="col-md-6">
+    		<div class="table-responsive">
+    			<table class="table table-striped table-bordered table-sm info">
+    				<tbody>
+    					<tr>
+    						<th colspan="2" class="text-center">Datos del Pago</th>
+    					</tr>
+    					<tr>
+    						<th width="20%">Código</th>
+    						<td>{{$gasto->nro}}</td>
+    					</tr>
+    					<tr>
+    						<th>Cuenta</th>
+    						<td>{{$gasto->cuenta()->nombre}}</td>
+    					</tr>
+    					<tr>
+    						<th>Método de pago</th>
+    						<td>{{$gasto->metodo_pago()}}</td>
+    					</tr>
+    					<tr>
+    						<th>Monto</th>
+    						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($gasto->total()->total)}}</td>
+    					</tr>
+    					<tr>
+    						<th>Estado</th>
+    						<td class="text-{{$gasto->estado('true')}}">{{ $gasto->estado() }}</td>
+    					</tr>
+    					<tr>
+    						<th>Fecha de Pago</th>
+    						<td>{{date('d-m-Y', strtotime($gasto->fecha))}}</td>
+    					</tr>
+    					<tr>
+    						<th>Proxima emisión</th>
+    						<td>{{date('d-m-Y', strtotime($gasto->proxima))}}</td>
+    					</tr>
+    					<tr>
+    						<th>Frecuencia (meses)</th>
+    						<td>{{$gasto->frecuencia}}</td>
+    					</tr>
+    					<tr>
+    						<th>Observaciones</th>
+    						<td>{{$gasto->observaciones}}</td>
+    					</tr>
+    				</tfoot>
+    			</table>
+    		</div>
+    	</div>
 
-         	</tfoot>
-        </table>
+    	@if($gasto->tipo())
+    	<div class="col-md-6">
+    		<div class="table-responsive">
+    			<table class="table table-striped table-bordered table-sm info">
+    				<tbody>
+    					<tr>
+    						<th colspan="2" class="text-center">Datos del Beneficiario (Tipo de Gasto)</th>
+    					</tr>
+    					<tr>
+    						<th width="20%">Nombre</th>
+    						<td><a href="{{route('tipos-gastos.show',$gasto->tipo()->id)}}" target="_blanck">{{$gasto->tipo()->nombre}}</a ></td>
+    					</tr>
+    					<tr>
+    						<th>Descripción</th>
+    						<td>{{$gasto->tipo()->descripcion}}</td>
+    					</tr>
+    				</tfoot>
+    			</table>
+    		</div>
+    	</div>
+    	@endif
     </div>
-  </div>
 
-  @if($gasto->beneficiario())
-  <div class="col-md-6">
-    <div class="table-responsive">
-      	<table class="table table-striped table-bordered table-sm info">
-        	<tbody>
-	          <tr>
-	            <th colspan="2" class="text-center">Datos del Beneficiario</th>
-	          </tr>
-	          <tr>
-	            <th width="20%">Nombre</th>
-	            <td><a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blanck">{{$gasto->beneficiario()->nombre}}</a ></td>
-	          </tr>
-	          <tr>
-	            <th>Identificación</th>
-	            <td>{{$gasto->beneficiario()->nit}}</td>
-	          </tr>
-	          <tr>
-	            <th>Teléfono 1	</th>
-	            <td>{{$gasto->beneficiario()->telefono1}}</td>
-	          </tr>
-	          <tr>
-	            <th>Teléfono 2</th>
-	            <td>{{$gasto->beneficiario()->telefono2}}</td>
-	          </tr>
-	          <tr>
-	            <th>Fax</th>
-	            <td>{{$gasto->beneficiario()->fax}}</td>
-	          </tr>
-	          <tr>
-	            <th>Celular</th>
-	            <td>{{$gasto->beneficiario()->celular}}</td>
-	          </tr>
-	          <tr>
-	            <th>Dirección</th>
-	            <td>{{$gasto->beneficiario()->direccion}}</td>
-	          </tr>
-	          
-         	</tfoot>
-        </table>
+    <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
+    	<button type="button" class="close" data-dismiss="alert">×</button>
+    	<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
     </div>
-  </div>
-  @endif
-</div>
 
-	<div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
-				<button type="button" class="close" data-dismiss="alert">×</button>
-				<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
-			</div>
-<div class="row card-description">
-	<div class="col-md-12">
-		<div class="table-responsive">
-			<table class="table table-striped table-bordered table-sm pagos">
-				<thead>
-					<tr>
-						<th>Cuenta</th>
-						<th>Valor</th>
-						<th>Impuesto</th>
-						<th>Cantidad</th>
-						<th>Observaciones</th>
-						<th>Total</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach($items as $item)
+    <div class="row card-description">
+    	<div class="col-md-12">
+    		<div class="table-responsive">
+    			<table class="table table-striped table-bordered table-sm pagos">
+    				<thead>
+    					<tr>
+    						<th>Cuenta</th>
+    						<th>Valor</th>
+    						<th>Impuesto</th>
+    						<th>Cantidad</th>
+    						<th>Observaciones</th>
+    						<th>Total</th>
+    					</tr>
+    				</thead>
+    				<tbody>
+    					@foreach($items as $item)
 						<tr>
 							<td>{{$item->categoria()}}</td>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->valor)}}</td>
 							<td>{{$item->impuesto()}}</td>
-							<td>{{$item->cant}}</td>
+							<td>{{round($item->cant,0)}}</td>
 							<td>{{$item->descripcion}}</td>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->valor)}}</td>
 						</tr>
 					@endforeach
 				</tbody>
-							
 			</table>
 		</div>
 	</div> 

@@ -213,7 +213,7 @@
                         <a class="nav-link" href="{{route('pagos.index')}}" >Pagos / Egresos</a>
                     </li>
                     <?php } ?>
-                    <?php if(isset($_SESSION['permisos']['80'])){ ?>
+                    <?php if(isset($_SESSION['permisos']['261'])){ ?>
                     <li class="nav-item" id="pagosrecurrentes">
                         <a class="nav-link" href="{{route('pagosrecurrentes.index')}}" >Pagos Recurrentes</a>
                     </li>

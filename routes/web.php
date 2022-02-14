@@ -492,6 +492,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::resource('notasdebito', 'NotasdebitoController');
 
 
+	//ÓRDENES
+
 	Route::group(['prefix' => 'ordenes'], function() {
 		Route::get('{id}/imprimir', 'OrdenesController@Imprimir')->name('ordenes.imprimir');
 		Route::get('pdf/{id}/{name}', 'OrdenesController@Imprimir')->name('ordenes.imprimir.nombre');
@@ -501,27 +503,26 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/datatable/producto/{producto}', 'OrdenesController@datatable_producto')->name('ordenes.datatable.producto');
 		Route::get('/datatable/cliente/{cliente}', 'OrdenesController@datatable_cliente')->name('ordenes.datatable.cliente');
 	});
-
-
-
 	Route::resource('ordenes', 'OrdenesController');
+
+	//BANCOS
+
 	Route::get('/bancos/datatable/{id}', 'BancosController@datatable_movimientos')->name('bancos.movimientos.cuenta');
 	Route::get('/bancos/datatable/cliente/{cliente}', 'BancosController@datatable_movimientos_cliente')->name('bancos.cliente.movimientos.cuenta');
-
 	Route::get('/bancos/transferencia/{id}', 'BancosController@create_transferencia')->name('bancos.transferencia');
 	Route::post('/bancos/transferencia/{id}', 'BancosController@store_transferencia')->name('bancos.transferencia');
 	Route::post('/bancos/act_desac/{id}', 'CategoriasController@default')->name('bancos.act_desac');
-
 	Route::resource('bancos', 'BancosController');
+
+    //PAGOS RECURRENTES
+
 	Route::resource('pagosrecurrentes', 'PagosRecurrentesController');
 	Route::get('pagosrecurrentes/pagar/{gasto}', 'PagosRecurrentesController@ingreso')->name('pagosR.ingreso');
-		Route::post('pagosrecurrentes/ingreso/', 'PagosRecurrentesController@pagar')->name('pagosRecu.pagar');
+	Route::post('pagosrecurrentes/ingreso/', 'PagosRecurrentesController@pagar')->name('pagosRecu.pagar');
     Route::get('pagosrecurrentes/imprimir/{gasto}', 'PagosRecurrentesController@imprimir')->name('pagosR.imprimir');
     Route::post('pagosrecurrentes/anular/{gasto}', 'PagosRecurrentesController@anular')->name('pagosR.anular');
     Route::post('pagosrecurrentes/destroy_p/{gasto}', 'PagosRecurrentesController@destroy_pago')->name('pagosR.destroyP');
 	Route::post('pagosrecurrentes/ingreso/', 'PagosRecurrentesController@pagar')->name('pagosRecu.pagar');
-
-
 
 	Route::group(['prefix' => 'categorias'], function() {
 		Route::get('/create/{id}', 'CategoriasController@create')->name('categorias.create_id');

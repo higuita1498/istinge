@@ -41,6 +41,26 @@
 	</div>
 @endsection
 
+@section('style')
+    <style>
+        .elipsis-short {
+            width: 500px !important;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        @media all and (max-width: 768px){
+            .elipsis-short {
+                width: 250px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+    </style>
+@endsection
+
+
 @section('content')
     <div class="row card-description">
     	<div class="col-md-12">
@@ -49,7 +69,7 @@
     				{{Session::get('success')}}
     			</div>
     			<script type="text/javascript">
-    				setTimeout(function(){ 
+    				setTimeout(function(){
     				    $('.alert').hide();
     				    $('.active_table').attr('class', ' ');
     				}, 5000);
@@ -57,7 +77,7 @@
     		@endif
     		<div class="table-responsive">
     			<table class="table table-striped table-bordered table-sm info">
-    				<tbody> 
+    				<tbody>
     					<tr>
     						<th width="20%">Comprobante de egreso</th>
     						<td>{{$gasto->nro}}</td>
@@ -67,7 +87,7 @@
     						<td>{{$gasto->estatus()}}</td>
     					</tr>
     					<tr>
-    						<th>Beneficiario</th> 
+    						<th>Beneficiario</th>
     						<td>@if($gasto->beneficiario())<a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blank"> {{$gasto->beneficiario()->nombre}}</a>@else {{Auth::user()->empresa()->nombre}} @endif</td>
     					</tr>
     					<tr>
@@ -111,12 +131,12 @@
     		</div>
     	</div>
     </div>
-    
+
 	<div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
 	</div>
-	
+
     @if($gasto->tipo==1)
     <div class="row card-description">
     	<div class="col-md-12">
@@ -136,7 +156,7 @@
     					</tr>
     				</thead>
     				<tbody>
-    					@foreach($items as $item) 
+    					@foreach($items as $item)
     						<tr>
     							<td><a href="{{route('facturasp.showid', $item->factura)}}" target="_blank">{{$item->factura()->codigo}}</a></td>
     							<td>{{date('d-m-Y', strtotime($item->factura()->fecha_factura))}}</td>
@@ -162,7 +182,7 @@
     						</tr>
     					@endforeach
     				</tbody>
-    							
+
     			</table>
     		</div>
     	</div>
@@ -185,7 +205,7 @@
     				<tbody>
     					@foreach($items as $item)
     						<tr>
-    							<td class="text-left">{{$item->categoria()}}</td>
+    							<td class="text-left"><div class='elipsis-short'>{{$item->categoria()}}</div></td>
     							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->valor)}}</td>
     							<td>{{$item->impuesto()}}</td>
     							<td>{{round($item->cant,3)}}</td>
@@ -203,7 +223,7 @@
     					@php $cont=0; @endphp
     			        @if($gasto->total()->imp)
     			        @foreach($gasto->total()->imp as $imp)
-    			            @if(isset($imp->total))                
+    			            @if(isset($imp->total))
     			              @php $cont+=1; @endphp
     			              <tr id="imp{{$cont}}">
     							<td colspan="4"></td>
@@ -213,31 +233,31 @@
     			            @endif
     			        @endforeach
     			        @endif
-    
+
     			        @php $cont=0; @endphp
     			          @if($gasto->total()->reten)
     			          @foreach($gasto->total()->reten as $reten)
-    			              @if(isset($reten->total))  
+    			              @if(isset($reten->total))
     			                 <tr>
     								<td colspan="4"></td>
     			                 	<th  class="text-right" style="font-size: 0.8em;">{{$reten->nombre}} ({{$reten->porcentaje}}%)</td>
-    			                 	<td class="text-right">-{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($reten->total)}} </td></tr>               
+    			                 	<td class="text-right">-{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($reten->total)}} </td></tr>
     			                @php $cont+=1; @endphp
     			              @endif
     			          @endforeach
     			          @endif
-    
+
     			          <tr>
     						<td colspan="4"></td>
     			          	<th class="text-right">TOTAL</td>
               				<td class="text-right">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($gasto->total()->total)}}</td>
     			          </tr>
     				</tfoot>
-    							
+
     			</table>
     		</div>
-    	</div> 
-    </div>	
+    	</div>
+    </div>
     @else
     <div class="row card-description">
     	<div class="col-md-8">

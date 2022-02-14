@@ -152,6 +152,10 @@
                 background-color: #333;
                 border-color: #333;
             }
+            .min_max_70 {
+                min-height: 70px;
+                max-height: 145px;
+            }
         </style>
         @yield('style')
     </head>

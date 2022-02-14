@@ -224,12 +224,14 @@ class PagosController extends Controller
         if ($gasto) {
             $titulo='Pago a factura de proveedor';
             $items=GastosFactura::where('gasto',$gasto->id)->get();
-            if($gasto->tipo==2 || $gasto->tipo==4){
+            if($gasto->tipo==2 || $gasto->tipo==4 || $gasto->tipo==5){
                 $titulo='Egreso';
                 $items=GastosCategoria::where('gasto',$gasto->id)->get();
-            }else if($gasto->tipo==3){
+            }
+            if($gasto->tipo==3){
                 $titulo=$gasto->detalle(true);
-            }else if($gasto->tipo == 5){
+            }
+            if($gasto->tipo == 5){
                 $titulo = 'Pago Recurrente';
             }
             view()->share(['icon' =>'', 'title' => $titulo, 'invert'=>true ]);
