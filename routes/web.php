@@ -62,6 +62,7 @@ Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
 Route::get('radicados', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
+Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -837,4 +838,11 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 
 	    Route::resource('descuentos', 'DescuentosController');
+
+	// TIPOS DE GASTOS
+	    Route::group(['prefix' => 'tipos-gastos'], function (){
+	        Route::get('{id}/act_des', 'TiposGastosController@act_des')->name('tipos-gastos.act_des');
+	    });
+
+	    Route::resource('tipos-gastos', 'TiposGastosController');
 });

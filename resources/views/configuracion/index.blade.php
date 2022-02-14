@@ -70,24 +70,16 @@
 			@endif
 		</div>
 		@endif
-		
-		{{-- @if(isset($_SESSION['permisos']['428']))
+
+		@if(isset($_SESSION['permisos']['737']))
 		<div class="col-sm-3">
-			<h4 class="card-title">Auditoría</h4>
-			<p>Observe detalladamente los movimientos de los contratos.</p>
-			<a href="{{route('auditorias.index')}}">Auditoría</a> <br>
+			<h4 class="card-title">Tipos de Gastos</h4>
+			<p>Organice los tipos de gastos que utilizará su empresa.</p>
+			@if(isset($_SESSION['permisos']['737']))
+			<a href="{{route('tipos-gastos.index')}}">Tipos de Gastos</a> <br>
+			@endif
 		</div>
-		@endif --}}
-		
-		{{-- @if(isset($_SESSION['permisos']['400']) || isset($_SESSION['permisos']['401']) || isset($_SESSION['permisos']['402']))
-			<div class="col-sm-3">
-				<h4 class="card-title">WISPRO</h4>
-				<p>Sincronice los datos con la plataforma WISPRO.</p>
-				<a href="#" onclick="import_plans()">Sincronizar Planes</a> <br>
-				<a href="#" onclick="import_clients()">Sincronizar Clientes</a> <br>
-				<a href="#" onclick="import_contracts()">Sincronizar Contratos</a> <br>
-			</div>
-		@endif --}}
+		@endif
 	</div>
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">
