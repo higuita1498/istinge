@@ -3770,7 +3770,7 @@ function getInterfaces(mikrotik) {
             $("#interfaz").empty();
             var $select = $('#interfaz');
             $.each(data,function(key, value){
-                $select.append('<option value=' + value.name + '>' + value.name + '</option>');
+                $select.append("<option value='" + value.name + "'>" + value.name + "</option>");
             });
 
             $select.selectpicker('refresh');
@@ -4209,9 +4209,9 @@ function getInterfaz(mikrotik) {
             var $select = $('#interfaz');
             $.each(data,function(key, value){
                 if(inter == value.name){
-                    $select.append('<option value=' + value.name + ' selected>' + value.name + '</option>');
+                    $select.append("<option value='" + value.name + "' selected>" + value.name + "</option>");
                 }else{
-                    $select.append('<option value=' + value.name + '>' + value.name + '</option>');
+                    $select.append("<option value='" + value.name + "'>" + value.name + "</option>");
                 }
             });
             $('#interfaz').val(inter);

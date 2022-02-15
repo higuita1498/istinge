@@ -222,7 +222,7 @@ class ContratosController extends Controller
             /*'fecha_corte' => 'required',
             'fecha_suspension' => 'required',*/
             'conexion' => 'required',
-            'tipo_factura' => 'required',
+            'facturacion' => 'required',
             /*'costo_instalacion' => 'required',
             'caja' => 'required'*/
         ]);
@@ -300,10 +300,10 @@ class ContratosController extends Controller
                 /*IP ESTÁTICA*/
                 if($request->conexion == 3){
                     $API->comm("/ip/arp/add", array(
-                        "comment"     => $this->normaliza($cliente->nombre),                                  // NOMBRE CLIENTE
-                        "address"     => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                        "interface"   => $request->interfaz,                                                  // INTERFACE DEL CLIENTE
-                        "mac-address" => $request->mac_address                                                // DIRECCION MAC
+                        "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        "address"     => $request->ip,                        // IP DEL CLIENTE
+                        "interface"   => $request->interfaz,                  // INTERFACE DEL CLIENTE
+                        "mac-address" => $request->mac_address                // DIRECCION MAC
                         )
                     );
                     
