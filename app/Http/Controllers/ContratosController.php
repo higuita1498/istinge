@@ -138,6 +138,8 @@ class ContratosController extends Controller
             $contratos->where('contracts.ap', $nodo[1]);
         }elseif ($nodo[0] == 'g') {
             $contratos->where('contracts.grupo_corte', $nodo[1]);
+        }elseif ($nodo[0] == 'm') {
+            $contratos->where('contracts.server_configuration_id', $nodo[1]);
         }
 
         return datatables()->eloquent($contratos)
@@ -781,6 +783,7 @@ class ContratosController extends Controller
                 }
                 
                 $API->disconnect();
+                Ping::where('contrato', $contrato->id)->delete();
                 $contrato->delete();
                 
                 $mensaje='SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
