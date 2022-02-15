@@ -143,23 +143,24 @@
         Recibo de Caja: No. {{ $ingreso->ingreso()->nro }}<br>
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
         Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
-        Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br><br>
+        Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
+        Creado por: {{ $ingreso->ingreso()->created_by()->nombres }}<br><br>
     </div>
     
     <br>
 
-    <div  style="width: 100%; text-align: center; display: inline-block;">
-        <table  style="width: 110%;">
+    <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; padding-top: 5px;">
+        <table style="width: 100%;text-align: center;">
             <thead>
-            <tr>
-                <th >Ítem</th>
-                <th >Total</th>
-            </tr>
+                <tr>
+                    <th style="width: 70%;">Ítem</th>
+                    <th style="width: 30%;">Total</th>
+                </tr>
             </thead>
             <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td >{{$item->producto()}} - (x{{App\Funcion::Parsear($item->cant)}})</td>
+                    <td >{{$item->producto()}}</td>
                     <td >{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
                 </tr>
             @endforeach
@@ -167,23 +168,21 @@
         </table>
     </div>
     <br>
-    <br>
 
-<div  style="width: 100%; text-align: center; display: inline-block;">
-    <table  style="width: 140%;">
-        <tbody>
-
-        <tr>
-            <td>Subtotal:</td>
-            <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>
-        </tr>
-        <tr>
-            <td>Total:</td>
-            <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div  style="width: 100%; text-align: center; display: inline-block;  border-bottom: solid 1px #000; padding: 5px 0 5px 5px; margin-bottom: 5px;">
+        <table style="width: 100%;">
+            <tbody>
+                <tr>
+                    <td style="width: 70%;">Subtotal:</td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>
+                </tr>
+                <tr>
+                    <td style="width: 70%;">Total:</td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     
     <br>
 
