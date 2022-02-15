@@ -46,7 +46,7 @@ class GastosRecurrentes extends Model
        }
     }
 
-    public function detalle($pdf=false){dd
+    public function detalle($pdf=false){
             $gastos=GastosRecurrentesCategoria::where('gasto_recurrente', $this->id)->select('categoria')->distinct()->get();
             $Factura='';
             foreach ($gastos as $gasto) {
