@@ -101,32 +101,32 @@ class IngresosController extends Controller
 
         if ($request->filtro == true) {
             if($request->numero){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.nro', 'like', "%{$request->numero}%");
                 });
             }
             if($request->cliente){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.cliente', $request->cliente);
                 });
             }
             if($request->banco){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.cuenta', $request->banco);
                 });
             }
             if($request->metodo){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.metodo_pago', $request->metodo);
                 });
             }
             if($request->fecha){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.fecha', $request->fecha);
                 });
             }
             if($request->estado){
-                $facturas->where(function ($query) use ($request) {
+                $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.estatus', $request->estado);
                 });
             }
