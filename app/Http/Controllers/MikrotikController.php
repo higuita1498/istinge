@@ -431,4 +431,44 @@ class MikrotikController extends Controller
 			$API->disconnect();
         }
     }
+
+    public function ips_autorizadas($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $mikrotik = Mikrotik::find($id);
+        if ($mikrotik) {
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+            view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
+            return view('mikrotik.ips-autorizadas')->with(compact('contratos', 'mikrotik'));
+        }
+        return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function autorizar_ips($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $mikrotik = Mikrotik::find($id);
+        if ($mikrotik) {
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('status', 1)->get();
+
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+            $API->debug = true;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                foreach($contratos as $contrato){
+                    $API->comm("/ip/firewall\n=address\n=add\n=list=ips_autorizadas\n=address=".$contrato->ip);
+                    $API->disconnect();
+
+                    $contrato->ip_autorizada = 1;
+                    $contrato->save();
+                }
+                $mensaje='Reglas aplicadas satisfactoriamente a la Mikrotik '.$mikrotik->nombre;
+                $type = 'success';
+            } else {
+                $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
+                $type = 'danger';
+            }
+            return redirect('empresa/mikrotik')->with($type, $mensaje);
+        }
+        return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
+    }
 }

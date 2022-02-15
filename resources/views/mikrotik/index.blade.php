@@ -84,6 +84,7 @@
 						    @if($mikrotik->status == 0)
 						        <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
 						    @endif
+						    <a title="IP's Autorizadas" href="{{ route('mikrotik.ips-autorizadas',$mikrotik->id )}}" class="btn btn-outline-warning btn-icons"><i class="fas fa-project-diagram"></i></a>
 						</td>
 					</tr>
 				@endforeach

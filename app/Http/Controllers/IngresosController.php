@@ -471,6 +471,7 @@ class IngresosController extends Controller
             $ingreso->tipo = 2;
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
             $ingreso->observaciones = 'Ingreso por concepto de reconexión';
+            $ingreso->created_by = Auth::user()->id;
             $ingreso->save();
             
             $items = new IngresosCategoria;
