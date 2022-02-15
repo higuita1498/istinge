@@ -449,7 +449,7 @@ class MikrotikController extends Controller
         if ($mikrotik) {
             $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('status', 1)->get();
 
-            $API = new RouterosAPI();
+            /*$API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             $API->debug = true;
 
@@ -466,7 +466,9 @@ class MikrotikController extends Controller
             } else {
                 $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
                 $type = 'danger';
-            }
+            }*/
+            $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
+            $type = 'danger';
             return redirect('empresa/mikrotik')->with($type, $mensaje);
         }
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
