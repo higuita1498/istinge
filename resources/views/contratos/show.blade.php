@@ -48,8 +48,8 @@
 		border-radius: 0%;
 	}
 	.bg-th{
-        background: {{ env('APP_COLOR') }} !important;
-        border-color: {{ env('APP_COLOR') }} !important;
+        background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+        border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
         color: #fff !important;
     }
 </style>

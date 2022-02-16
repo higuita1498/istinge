@@ -8,8 +8,8 @@
 @section('style')
 <style>
     .card-header {
-        background-color: {{ env('APP_COLOR') }};
-        border-bottom: 1px solid {{ env('APP_COLOR') }};
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-bottom: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
     }
 </style>
 @endsection

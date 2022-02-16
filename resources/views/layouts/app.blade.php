@@ -43,88 +43,88 @@
                 border-color: #f9fafd #f9f9f9 #eaedf7 #eaedf7;
             }
             .sidebar {
-                background: {{ env('APP_COLOR') }};
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .configuracion > div {
-                border: 4px solid {{ env('APP_COLOR') }};
+                border: 4px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .configuracion h4 {
                 color: #000;
             }
             .text-primary {
-                color: {{ env('APP_COLOR') }} !important;
+                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
             }
             .configuracion > div > a {
-                color: {{ env('APP_COLOR') }};
+                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .form-radio label input + .input-helper:after {
-                background: {{ env('APP_COLOR') }};
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .notice-info {
-                border-color: {{ env('APP_COLOR') }} !important;
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
             }
             .btn-link {
-                color: {{ env('APP_COLOR') }} !important;
+                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
             }
             .sidebar .nav .sub-menu .nav-item .nav-link:hover, #sidebar > ul > li > a:hover {
                 color: #c7c7c7;
             }
             .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
                 color: #fff;
-                background-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
                 color: #fff;
-                background-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
                 border-color: #dee2e6 #dee2e6 #fff;
             }
             .card-notificacion {
                 border-radius: 20px;
                 background: #fff!important;
-                border: solid 2px {{ env('APP_COLOR') }}!important;
+                border: solid 2px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
             }
             .card-notificacion:hover {
                 border-radius: 20px;
-                background: {{ env('APP_COLOR') }}!important;
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
                 border: solid 2px #fff;
             }
             .bg-th {
-                background: {{ env('APP_COLOR') }} !important;
-                border-color: {{ env('APP_COLOR') }} !important;
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
                 color: #fff !important;
             }
             .table-bordered {
-                border: 2px solid {{ env('APP_COLOR') }}!important;
+                border: 2px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
             }
             .table.table-bordered th {
                 color: #fff;
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .table .thead-dark th {
                 color: #fff;
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_desc:after {
                 display: block !important;
                 color: #ffffff;
             }
             .page-item.active .page-link {
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .page-item.active .page-link {
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .page-item.disabled .page-link {
-                color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .page-link {
-                color: {{ env('APP_COLOR') }};
-                border: 1px solid {{ env('APP_COLOR') }};
+                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .card-counter.primary:hover, .card-counter.success:hover, .card-counter.danger:hover {
                 background-color: #4f4f4f; 
@@ -132,20 +132,20 @@
             .page-link:hover {
                 color: #ffffff;
                 text-decoration: none;
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .stretch-card { border: 1px solid #a6b6bd52 !important;border-radius: 3px; }
             .content-wrapper { background: #fff; }
             .card { background: #c2c2c21a !important; }
             .img-gafica{
-                border: solid 1px {{ env('APP_COLOR') }};
+                border: solid 1px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
                 border-radius: 10px;
             }
             .btn-system {
                 color: #fff;
-                background-color: {{ env('APP_COLOR') }};
-                border-color: {{ env('APP_COLOR') }};
+                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .btn-system:hover, .btn-system:active  {
                 color: #fff;

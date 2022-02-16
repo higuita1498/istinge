@@ -25,7 +25,7 @@ class Empresa extends Model
          'edo_cuenta_fact','moneda', 'created_at', 'updated_at' , 'web', 
          'precision' , 'sep_dec', 'carrito', 'img_default','rol','dv',
          'fk_idpais','fk_iddepartamento','fk_idmunicipio','cod_postal',
-         'json_test_creditnote','json_test_debitnote','json_test', 'tipo_fac'
+         'json_test_creditnote','json_test_debitnote','json_test', 'tipo_fac','color'
     ];
 
     public function usuario(){
