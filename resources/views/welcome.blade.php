@@ -93,7 +93,7 @@
             margin-top: 1rem;
             margin-bottom: 1rem;
             border: 0;
-            border-top: 1px solid rgb(176 6 6);
+            border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         }
     </style>
 @endsection
