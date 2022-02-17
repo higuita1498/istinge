@@ -578,7 +578,14 @@ class PagosController extends Controller
                 GastosCategoria::where('gasto', $gasto->id)->delete();
                 $mov1=Movimiento::where('modulo', 3)->where('id_modulo', $gasto->id)->first();
                 if ($mov1) {
-                    $ingreso=Ingreso::where('id', $mov1->id_modulo)->first();
+                    $mov2 = Movimiento::where('transferencia', $mov1->transferencia+1)->first();
+
+                    if($mov2){
+                        $ingreso=Ingreso::where('id', $mov2->transferencia+1)->first();
+                    }else{
+                        $ingreso=Ingreso::where('id', $mov1->id_modulo)->first();
+                    }
+
                     if ($ingreso) {
                         IngresosCategoria::where('ingreso', $ingreso->id)->delete();
                         $ingreso->delete();
