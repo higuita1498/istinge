@@ -319,7 +319,7 @@ class BancosController extends Controller
             $ingreso->cuenta=$request->cuenta_destino;
             $ingreso->tipo=4;
             $ingreso->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-            $ingreso->observaciones=$request->observaciones
+            $ingreso->observaciones=$request->observaciones;
             $ingreso->save();
 
             $impuesto = Impuesto::where('id', 2)->first();
@@ -351,7 +351,7 @@ class BancosController extends Controller
             $gasto->cuenta=$banco->id;
             $gasto->tipo=4;
             $gasto->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-            $gasto->observaciones=$request->observaciones
+            $gasto->observaciones=$request->observaciones;
             $gasto->save();
             
             $items = new GastosCategoria;
