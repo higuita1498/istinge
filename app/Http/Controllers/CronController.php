@@ -17,6 +17,7 @@ use App\TerminosPago;
 use App\Empresa;
 use App\GrupoCorte;
 use App\Mikrotik;
+use App\CRM;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -94,13 +95,22 @@ class CronController extends Controller
         $i=0;
         $fecha = date('Y-m-d');
 
-        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.estatus', 'f.suspension', 'cs.state')->where('f.estatus',1)->where('f.tipo', 1)->where('f.vencimiento', $fecha)->where('contactos.status',1)->where('cs.state','enabled')->get();
+        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->where('f.estatus',1)->where('f.tipo', 1)->where('f.vencimiento', $fecha)->where('contactos.status',1)->where('cs.state','enabled')->get();
 
         //dd($contactos);
 
         $empresa = Empresa::find(1);
         foreach ($contactos as $contacto) {
             $contrato = Contrato::where('client_id', $contacto->id)->first();
+
+            $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+            $crm = new CRM();
+            $crm->cliente = $contacto->id;
+            $crm->factura = $contacto->factura;
+            $crm->servidor = $contrato->server_configuration_id;
+            $crm->grupo_corte = $contrato->grupo_corte;
+            $crm->save();
+
             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
             $API = new RouterosAPI();
@@ -126,5 +136,19 @@ class CronController extends Controller
             }
         }
         echo "Se han suspendido ".$i." contratos";
+    }
+
+    public static function migrarCRM(){
+        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id as cliente', 'f.id as factura', 'cs.grupo_corte', 'cs.server_configuration_id')->where('f.estatus',1)->where('f.fecha','>=',('2022-01-01'))->where('cs.state','disabled')->where('cs.status',1)->where('contactos.status',1)->groupBy('contactos.id')->get();
+        //dd($contactos);
+        foreach ($contactos as $contacto) {
+            CRM::where('cliente', $contacto->cliente)->where('factura', $contacto->factura)->whereIn('estado', [0,3])->delete();
+            $crm = new CRM();
+            $crm->cliente = $contacto->cliente;
+            $crm->factura = $contacto->factura;
+            $crm->grupo_corte = $contacto->grupo_corte;
+            $crm->servidor = $contacto->server_configuration_id;
+            $crm->save();
+        }
     }
 }

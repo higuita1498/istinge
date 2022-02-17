@@ -25,6 +25,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
 use App\Mikrotik;
 use App\User;
+use App\CRM;
+
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 
@@ -323,6 +325,13 @@ class IngresosController extends Controller
                     if ($this->precision($precio) == $this->precision($factura->porpagar())) {
                         $factura->estatus = 0;
                         $factura->save();
+
+                        CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                        $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                        foreach ($crms as $crm) {
+                            $crm->delete();
+                        }
                     }
                     $items->save();
                 }
