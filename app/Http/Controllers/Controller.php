@@ -1417,8 +1417,11 @@ class Controller extends BaseController
     }
     
     public function getNotificaciones(){
-        $notificaciones = Ping::where('fecha', date('Y-m-d'))->get();
-        return response()->json($notificaciones);
+        if(isset($_SESSION['permisos']['749'])){
+            $notificaciones = Ping::where('fecha', date('Y-m-d'))->get();
+            return response()->json($notificaciones);
+        }
+        return;
     }
     
     public function getIps($mikrotik){
