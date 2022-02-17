@@ -694,7 +694,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/{id}/firmar', 'RadicadosController@firmar')->name('radicados.firmar');
         	Route::post('/{id}/storefirma', 'RadicadosController@storefirma')->name('radicados.storefirma');
         	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
-        	Route::get('/notificacion', 'RadicadosController@notificacion')->name('radicados.notificacion');
+        	Route::get('/notificacionRadicado', 'RadicadosController@notificacion')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
         });
 		Route::resource('radicados', 'RadicadosController');
