@@ -23,6 +23,7 @@ use App\Model\Gastos\FacturaProveedoresRetenciones;
 use App\Model\Gastos\GastosRetenciones;
 use App\Model\Gastos\GastosRecurrentesCategoria;
 use App\Model\Inventario\Inventario;
+use App\Model\Ingresos\IngresosCategoria;
 use Session;
 use Auth; use DB; use Carbon\Carbon;
 use Mail;
