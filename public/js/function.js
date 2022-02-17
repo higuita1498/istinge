@@ -3636,10 +3636,10 @@ function check_regla(){
 
 function notificacion(){
     if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/empresa/notificacion';
+        var url = '/software/empresa/radicados/notificacion';
         var route = '/software/empresa/radicados';
     }else{
-        var url = '/empresa/notificacion';
+        var url = '/empresa/radicados/notificacion';
         var route = '/empresa/radicados';
     }
 
