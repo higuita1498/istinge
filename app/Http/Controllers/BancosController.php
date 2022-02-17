@@ -319,7 +319,9 @@ class BancosController extends Controller
             $ingreso->cuenta=$request->cuenta_destino;
             $ingreso->tipo=4;
             $ingreso->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
+            $ingreso->observaciones=$request->observaciones
             $ingreso->save();
+
             $impuesto = Impuesto::where('id', 2)->first();
             $categoria = Categoria::where('empresa',Auth::user()->empresa)->where('nro', 6)->first();
             $items = new IngresosCategoria;
@@ -330,6 +332,7 @@ class BancosController extends Controller
             $items->categoria=$categoria->id;
             $items->cant=1;
             $items->save();
+
             //ingresos
             $movimiento1=new Movimiento;
             $movimiento1->empresa=Auth::user()->empresa;
@@ -348,6 +351,7 @@ class BancosController extends Controller
             $gasto->cuenta=$banco->id;
             $gasto->tipo=4;
             $gasto->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
+            $gasto->observaciones=$request->observaciones
             $gasto->save();
             
             $items = new GastosCategoria;
@@ -358,6 +362,7 @@ class BancosController extends Controller
             $items->categoria=$categoria->id;
             $items->cant=1;
             $items->save();
+
             //ingresos
             $movimiento2=new Movimiento;
             $movimiento2->empresa=Auth::user()->empresa;
