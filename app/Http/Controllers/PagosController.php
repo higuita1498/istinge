@@ -27,6 +27,7 @@ use Session;
 use Auth; use DB; use Carbon\Carbon;
 use Mail;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Model\Ingresos\Ingreso;
 class PagosController extends Controller
 {
     public function __construct(){
