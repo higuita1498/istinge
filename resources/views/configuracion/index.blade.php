@@ -80,6 +80,7 @@
 			@endif
 		</div>
 		@endif
+		@if(isset($_SESSION['permisos']['750']))
 		<div class="col-sm-3">
 			<h4 class="card-title">Organización de Tablas</h4>
 			<p>Configura y organiza los campos de las tablas.</p>
@@ -93,6 +94,7 @@
 			<a href="{{route('campos.organizar', 7)}}">Pagos / Egresos</a><br>
 			<a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
 		</div>
+		@endif
 	</div>
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">
