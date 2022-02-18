@@ -101,6 +101,10 @@
     						<th>PROMESA DE PAGO</th>
     						<td>{{$crm->promesa_pago == 0 ? 'No':'Si'}}</td>
     					</tr>
+                        <tr>
+                            <th>FACTURA</th>
+                            <td><a href="{{route('facturas.show', $crm->factura_detalle()->nro)}}" target="_blank">{{$crm->factura_detalle()->codigo}}</a></td>
+                        </tr>
     					@if($crm->fecha_pago)
     					<tr>
     						<th>FECHA DE PAGO</th>

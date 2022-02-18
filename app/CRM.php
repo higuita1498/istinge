@@ -12,6 +12,7 @@ use App\Mikrotik;
 use Auth;
 use DB;
 use App\GrupoCorte;
+use App\Model\Ingresos\Factura;
 
 class CRM extends Model
 {
@@ -122,5 +123,11 @@ class CRM extends Model
             return $grupo_corte->nombre;
         }
         return '';
+    }
+
+    public function factura_detalle(){
+        if($this->factura){
+            return Factura::find($this->factura);
+        }
     }
 }
