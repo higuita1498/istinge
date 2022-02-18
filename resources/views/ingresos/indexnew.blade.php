@@ -78,13 +78,16 @@
 			<table class="table table-striped table-hover nowrap w-100" id="tabla-ingresos">
 				<thead class="thead-dark">
 					<tr>
-						<th>Número</th>
+						{{-- <th>Número</th>
 						<th>Cliente</th>
 						<th>Detalle</th>
 						<th>Fecha</th>
 						<th>Cuenta</th>
 						<th>Estado</th>
-						<th>Monto</th>
+						<th>Monto</th> --}}
+						@foreach($tabla as $campo)
+    					    <th>{{$campo->nombre}}</th>
+    					@endforeach
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -116,13 +119,16 @@
 						'X-CSRF-TOKEN': '{{csrf_token()}}'
 					},
 					columns: [
-						{data: 'nro'},
+						/*{data: 'nro'},
 						{data: 'cliente'},
 						{data: 'detalle'},
 						{data: 'fecha'},
 						{data: 'cuenta'},
 						{data: 'estado'},
-						{data: 'monto'},
+						{data: 'monto'},*/
+						@foreach($tabla as $campo)
+						{data: '{{$campo->campo}}'},
+						@endforeach
 						{data: 'acciones'},
 					]
 				});

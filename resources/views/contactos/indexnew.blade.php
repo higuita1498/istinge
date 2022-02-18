@@ -70,11 +70,13 @@
 		<table class="table table-striped table-hover w-100" id="tabla-contactos">
 			<thead class="thead-dark">
 				<tr>
-					{{--<th>Serial ONU</th>--}}
-					<th>Nombre</th>
+					{{--<th>Nombre</th>
 					<th>Identificación</th>
 					<th>Teléfono</th>
-					<th>Email</th>
+					<th>Email</th>--}}
+					@foreach($tabla as $campo)
+					    <th>{{$campo->nombre}}</th>
+                    @endforeach
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -106,11 +108,9 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-			    //{data: 'serial_onu'},
-			    {data: 'nombre'},
-				{data: 'nit'},
-				{data: 'telefono1'},
-				{data: 'email'},
+			    @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
 				{data: 'acciones'},
 			]
 		});

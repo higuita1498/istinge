@@ -49,6 +49,7 @@ use RouterosAPI;
 use App\Nodo;
 use App\GrupoCorte;
 use App\Segmento;
+use App\Campos;
 
 class ContratosController extends Controller
 {
@@ -65,8 +66,9 @@ class ContratosController extends Controller
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos de Servicio']);
-        $tipo = '';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        $tipo = false;
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function disabled(Request $request){
@@ -77,7 +79,8 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos de Servicio']);
         $tipo = 'disabled';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function enabled(Request $request){
@@ -88,7 +91,8 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos de Servicio']);
         $tipo = 'enabled';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function contratos(Request $request, $nodo){

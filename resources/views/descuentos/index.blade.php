@@ -81,13 +81,16 @@
 			<table class="table table-striped table-hover w-100" id="tabla-descuento">
 				<thead class="thead-dark">
 					<tr>
-					    <th>Nro</th>
+					    {{-- <th>Nro</th>
 					    <th>Cliente</th>
 					    <th>Factura</th>
 					    <th>Descuento</th>
 					    <th>Estado</th>
 					    <th>Creado por</th>
-					    <th>Aprobado por</th>
+					    <th>Aprobado por</th> --}}
+					    @foreach($tabla as $campo)
+    					    <th>{{$campo->nombre}}</th>
+    					@endforeach
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -118,13 +121,16 @@
 					'X-CSRF-TOKEN': '{{csrf_token()}}'
 				},
 				columns: [
-				    {data: 'id'},
+				    /*{data: 'id'},
 				    {data: 'cliente'},
 				    {data: 'factura'},
 				    {data: 'descuento'},
 				    {data: 'estado'},
 				    {data: 'created_by'},
-				    {data: 'updated_by'},
+				    {data: 'updated_by'},*/
+				    @foreach($tabla as $campo)
+					{data: '{{$campo->campo}}'},
+					@endforeach
 					{data: 'acciones'},
 				]
 			});

@@ -26,6 +26,7 @@ use App\Contrato;
 use App\Mikrotik;
 use App\User;
 use App\CRM;
+use App\Campos;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -88,8 +89,9 @@ class IngresosController extends Controller
         $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
         $clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
+        $tabla = Campos::where('modulo', 5)->orderBy('orden', 'asc')->get();
 
-        return view('ingresos.indexnew', compact('bancos','clientes','metodos'));
+        return view('ingresos.indexnew', compact('bancos','clientes','metodos','tabla'));
     }
     
     public function ingresos(Request $request){
