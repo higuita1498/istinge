@@ -33,6 +33,10 @@ use Barryvdh\DomPDF\Facade as PDF;
 use PHPExcel_Shared_ZipArchive; use Session;
 use App\Campos;
 
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
+use App\Mikrotik;
+
 class ContactosController extends Controller
 {
     /**
@@ -453,6 +457,55 @@ class ContactosController extends Controller
             $contacto->vendedor = $request->vendedor;
             
             $contacto->save();
+
+            $contrato = Contrato::where('client_id', $contacto->id)->where('status', 1)->first();
+
+            if($contrato){
+                $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+                $servicio = $this->normaliza($contacto->nombre);
+
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
+                //$API->debug = true;
+
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    /*PPPOE*/
+                    if($contrato->conexion == 1){
+                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
+                    }
+
+                    /*DHCP*/
+                    if($request->conexion == 2){
+
+                    }
+
+                    /*IP ESTÁTICA*/
+                    if($request->conexion == 3){
+                        $name = $API->comm("/queue/simple/getall", array(
+                            "?comment" => $contrato->servicio,
+                            )
+                        );
+
+                        if($name){
+                            $API->comm("/queue/simple/set", array(
+                                ".id"       => $name[0][".id"],
+                                "name"      => $servicio,       // NOMBRE CLIENTE
+                                "comment"   => $servicio,       // NOMBRE CLIENTE
+                                )
+                            );
+                        }
+                    }
+
+                    /*VLAN*/
+                    if($request->conexion == 4){
+
+                    }
+                }
+
+                $contrato->servicio = $servicio;
+                $contrato->save();
+                $API->disconnect();
+            }
             
             if($contacto->tipo_contacto==0){
                 $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL CLIENTE';
