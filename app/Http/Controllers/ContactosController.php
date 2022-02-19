@@ -475,12 +475,12 @@ class ContactosController extends Controller
                     }
 
                     /*DHCP*/
-                    if($request->conexion == 2){
+                    if($contrato->conexion == 2){
 
                     }
 
                     /*IP ESTÁTICA*/
-                    if($request->conexion == 3){
+                    if($contrato->conexion == 3){
                         $name = $API->comm("/queue/simple/getall", array(
                             "?comment" => $contrato->servicio,
                             )
@@ -497,7 +497,7 @@ class ContactosController extends Controller
                     }
 
                     /*VLAN*/
-                    if($request->conexion == 4){
+                    if($contrato->conexion == 4){
 
                     }
                 }
