@@ -164,8 +164,8 @@
 				{ data: 'plan' },
 				{ data: 'ip' },
 				{ data: 'state' },
-				{ data: 'grupo_corte' },
-				{ data: 'acciones' },*/
+				{ data: 'grupo_corte' },*/
+				{ data: 'acciones' },
 			]
 		});
 		
