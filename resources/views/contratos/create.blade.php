@@ -45,7 +45,7 @@
 	            <div class="input-group">
 	                <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
 	                    @foreach($servidores as $servidor)
-	                        <option value="{{$servidor->id}}" selected>{{$servidor->nombre}} - {{$servidor->ip}}</option>
+	                        <option value="{{$servidor->id}}">{{$servidor->nombre}} - {{$servidor->ip}}</option>
 	                    @endforeach
 	                </select>
 	            </div>
