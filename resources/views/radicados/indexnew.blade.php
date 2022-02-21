@@ -11,7 +11,9 @@
         </div>
     @else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+        @if(isset($_SESSION['permisos']['201']))
         <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+        @endif
     @endif
 @endsection
 

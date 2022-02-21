@@ -121,22 +121,10 @@
 						<th>Dirección IP</th>
 						<td>{{ $contrato->ip }}</td>
 					</tr>
-					@if($contrato->local_address)
-					<tr>
-						<th>@if($contrato->conexion==4 || $contrato->conexion==3)Segmento de IP @else Dirección IP @endif</th>
-						<td>{{ $contrato->local_address }}</td>
-					</tr>
-					@endif
 					@if($contrato->ip_new)
 					<tr>
 						<th>Dirección IP</th>
 						<td>{{ $contrato->ip_new }}</td>
-					</tr>
-					@endif
-					@if($contrato->local_address_new)
-					<tr>
-						<th>@if($contrato->conexion==4 || $contrato->conexion==3)Segmento de IP @else Dirección IP @endif</th>
-						<td>{{ $contrato->local_address_new }}</td>
 					</tr>
 					@endif
 					@if($contrato->mac_address)

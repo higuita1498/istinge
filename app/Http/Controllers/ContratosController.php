@@ -196,7 +196,7 @@ class ContratosController extends Controller
             ->toJson();
     }
     
-    public function create(){
+    public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 ORDER BY c.nombre ASC";
         $clientes = DB::select($sql);
@@ -213,7 +213,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status', 1)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente'));
     }
     
     public function store(Request $request){

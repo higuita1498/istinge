@@ -696,6 +696,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
         	Route::get('/notificacionRadicado', 'RadicadosController@notificacion')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
+        	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
         });
 		Route::resource('radicados', 'RadicadosController');
 
@@ -721,7 +722,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/pings', 'ContratosController@conexion')->name('contratos.ping');
 		Route::get('{id}/ping_nuevo', 'ContratosController@ping_nuevo')->name('contratos.ping_nuevo');
 		Route::get('{id}/grafica-consumo', 'ContratosController@grafica_consumo')->name('contratos.grafica_consumo');
-
+		Route::get('{cliente}/create', 'ContratosController@create')->name('contratos.create_cliente');
 		Route::get('deshabilitados', 'ContratosController@disabled')->name('contratos.disabled');
 		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
 	});

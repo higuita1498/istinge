@@ -203,13 +203,7 @@ class ContactosController extends Controller
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
 
-        (strlen($id) > 20) ? $contacto = DB::select("SELECT C.*, CS.state, CS.public_id as contrato, CS.fecha_corte, P.name AS plan, P.price, I.identificacion, CS.status as contrato_status FROM contactos AS C INNER JOIN contracts AS CS ON (C.UID = CS.client_id) INNER JOIN planes AS P ON (P.id = CS.plan_id) INNER JOIN tipos_identificacion AS I ON (I.id = C.tip_iden) WHERE C.UID = '".$id."'") : $contacto = DB::select("SELECT C.*, CS.state, CS.public_id as contrato, CS.fecha_corte, P.name AS plan, P.price, I.identificacion, CS.status as contrato_status FROM contactos AS C INNER JOIN contracts AS CS ON (C.UID = CS.client_id) INNER JOIN planes AS P ON (P.id = CS.plan_id) INNER JOIN tipos_identificacion AS I ON (I.id = C.tip_iden) WHERE C.id = '".$id."'");
-
-        if ($contacto) {
-            $contacto = $contacto[0];
-        }else{
-            $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
-        }
+        $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
 
         if ($contacto) {
             if($contacto->tipo_contacto==0){
@@ -217,22 +211,22 @@ class ContactosController extends Controller
             }else{
                 view()->share(['title' => $contacto->nombre, 'subseccion' => 'proveedores', 'middel'=>true]);
             }
-            $asociados=AsociadosContacto::where('contacto', $contacto->id)->get();
-            $notasDebito = NotaDedito::where('empresa', Auth::user()->empresa)->where('proveedor', $id)->get();
 
-            $facturas = Factura::join('items_factura as if','if.factura','=','factura.id')->select('factura.correo', 'factura.cliente','factura.id','factura.fecha','factura.nro','factura.codigo','factura.estatus','if.precio',DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->where('factura.cliente', $contacto->id)->groupBy('if.factura')->OrderBy('factura.fecha', 'desc')->get();
-            $ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
+            //$asociados=AsociadosContacto::where('contacto', $contacto->id)->get();
+            //$notasDebito = NotaDedito::where('empresa', Auth::user()->empresa)->where('proveedor', $id)->get();
+
+            //$facturas = Factura::join('items_factura as if','if.factura','=','factura.id')->select('factura.correo', 'factura.cliente','factura.id','factura.fecha','factura.nro','factura.codigo','factura.estatus','if.precio',DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->where('factura.cliente', $contacto->id)->groupBy('if.factura')->OrderBy('factura.fecha', 'desc')->get();
+            /*$ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
                         ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
                         ->join('bancos as b', 'b.id', '=', 'ingresos.cuenta')
                         ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "") as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',DB::raw('(if(ingresos.tipo=1, (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)), if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))) as monto'))
                         ->where('ingresos.cliente',$contacto->id)->groupBy( 'ingresos.id')
                         ->OrderBy('ingresos.fecha', 'desc')
-                        ->get();
+                        ->get();*/
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
             $contrato = Contrato::where('client_id', $contacto->id)->where('status', 1)->first();
-            
-            return view('contactos.show')->with(compact('contacto', 'asociados', 'notasDebito', 'facturas', 'id', 'user_app', 'contrato', 'ingresos'));
+            return view('contactos.show')->with(compact('contacto', 'id', 'user_app', 'contrato'));
         }
         return redirect('empresa/contactos')->with('danger', 'CLIENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
