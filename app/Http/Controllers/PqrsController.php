@@ -27,7 +27,7 @@ class PqrsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        view()->share(['subseccion' => 'pqrs', 'title' => 'PQRS', 'icon' =>'far fa-life-ring', 'seccion' => 'atencion_cliente']);
+        view()->share(['subseccion' => 'pqrs', 'title' => 'PQRS', 'icon' =>'far fa-life-ring', 'seccion' => 'atencion_cliente', 'invert' => true]);
     }
   
     public function index(Request $request)

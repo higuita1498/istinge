@@ -21,7 +21,7 @@ class WifiController extends Controller
     {
         $this->middleware('auth');
         set_time_limit(0);
-        view()->share(['subseccion' => 'wifi', 'title' => 'Cambios de contraseña WIFI', 'icon' =>'fas fa-wifi', 'seccion' => 'atencion_cliente']);
+        view()->share(['subseccion' => 'wifi', 'title' => 'Cambios WIFI', 'icon' =>'fas fa-wifi', 'seccion' => 'atencion_cliente', 'invert' => true]);
     }
     
     public function index(){

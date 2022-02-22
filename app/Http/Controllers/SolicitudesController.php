@@ -34,7 +34,7 @@ class SolicitudesController extends Controller
   {
     $this->middleware('auth');
     set_time_limit(300);
-    view()->share(['subseccion' => 'solicitudes', 'title' => 'Solicitudes de Servicio', 'icon' =>'fas fa-file-invoice', 'seccion' => 'atencion_cliente']);
+    view()->share(['subseccion' => 'solicitudes', 'title' => 'Solicitudes', 'icon' =>'fas fa-file-invoice', 'seccion' => 'atencion_cliente', 'invert' => true]);
   }
 
   /**

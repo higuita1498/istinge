@@ -104,6 +104,53 @@
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
+                        <h4>ATAJOS</h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{{route('contactos.create')}}">
+                            <div class="card-counter success">
+                                <i class="fas fa-users"></i>
+                                <span class="count-numbers">Crear</span>
+                                <span class="count-name">Cliente</span>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{route('contratos.create')}}">
+                            <div class="card-counter success">
+                                <i class="fas fa-file-contract"></i>
+                                <span class="count-numbers">Crear</span>
+                                <span class="count-name">Contrato</span>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{route('radicados.create')}}">
+                            <div class="card-counter success">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span class="count-numbers">Crear</span>
+                                <span class="count-name">Radicado</span>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{route('facturas.create')}}">
+                            <div class="card-counter success">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span class="count-numbers">Crear</span>
+                                <span class="count-name">Factura</span>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="notice notice-info">
                         <h4>CONTRATOS</h4>
                         <hr>
                     </div>

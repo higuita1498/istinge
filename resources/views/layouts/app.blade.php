@@ -227,6 +227,8 @@
                                             if(isset($middel)){ $col_md1=6; $col_md2=6; }
                                             if(isset($precice)){ $col_md1=5; $col_md2=7; }
                                             if(isset($minus_dere)){ $col_md1=2; $col_md2=10; }
+                                            if(isset($minus_izq)){ $col_md1=10; $col_md2=2; }
+                                            if(isset($full)){ $col_md1=12; $col_md2=0; }
                                         @endphp
                                         <div class="col-md-{{$col_md1}}" style="text-align: left;">
                                             <h1 id="titulo"><i class="{{$icon}}"></i> {{isset($title_sub)?$title_sub:$title}}</h1>

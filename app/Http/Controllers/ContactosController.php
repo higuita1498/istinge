@@ -55,6 +55,7 @@ class ContactosController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
         return view('contactos.indexnew');
     }
 
@@ -113,7 +114,7 @@ class ContactosController extends Controller
 
     public function clientes(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Clientes', 'subseccion' => 'clientes', 'middel'=>true]);
+        view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda=false;
         if ($request->name_1 || $request->name_2 || $request->name_3|| isset($request->name_4) || $request->name_5) {
             $busqueda='contactos.clientes';
@@ -125,6 +126,7 @@ class ContactosController extends Controller
         $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
         $tipo_usuario = 0;
         $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario','tabla'));
     }
 
@@ -135,12 +137,13 @@ class ContactosController extends Controller
             $busqueda='contactos.proveedores';
         }
         $tipo='/1';
-        view()->share(['title' => 'Proveedores', 'subseccion' => 'proveedores', 'middel'=>true]);
+        view()->share(['title' => 'Proveedores', 'subseccion' => 'proveedores']);
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $contactos=$this->busqueda($request, [1,2]);
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $tipo_usuario = 1;
         $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario','tabla'));
     }
     

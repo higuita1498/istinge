@@ -34,6 +34,7 @@ class RadicadosController extends Controller{
         $clientes = Contacto::where('status', 1)->orderBy('nombre','asc')->get();
         $servicios = Servicio::where('estatus', 1)->orderBy('nombre','asc')->get();
         $tipo = '';
+        view()->share(['invert' => true]);
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 
@@ -49,6 +50,8 @@ class RadicadosController extends Controller{
         }else{
             $tipo = 'all';
         }
+
+        view()->share(['invert' => true]);
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 

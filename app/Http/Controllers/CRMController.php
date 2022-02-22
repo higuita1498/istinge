@@ -41,7 +41,7 @@ class CRMController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['subseccion' => 'crm_cartera', 'title' => 'CRM: Cartera']);
+        view()->share(['subseccion' => 'crm_cartera', 'title' => 'CRM: Cartera', 'invert' => true]);
         
         $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->get();
@@ -53,7 +53,7 @@ class CRMController extends Controller
     
     public function informe(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['subseccion' => 'crm_informe', 'title' => 'CRM: Informe']);
+        view()->share(['subseccion' => 'crm_informe', 'title' => 'CRM: Informe', 'invert' => true]);
         $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->where('rol', 44)->get();
         $servidores   = DB::table('servidores')->where('state','linked')->get();

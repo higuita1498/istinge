@@ -65,7 +65,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
@@ -77,7 +77,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
@@ -89,7 +89,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
