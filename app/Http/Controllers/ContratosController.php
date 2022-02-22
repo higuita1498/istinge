@@ -239,6 +239,7 @@ class ContratosController extends Controller
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
+            $registro = false;
             //$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
@@ -311,6 +312,14 @@ class ContratosController extends Controller
                         "mac-address" => $request->mac_address                // DIRECCION MAC
                         )
                     );
+
+                    $mk_id = $API->comm("/ip/arp/getall", array(
+                        "?comment" => $this->normaliza($cliente->nombre),
+                        )
+                    );
+                    if($mk_id){
+                        $registro = true;
+                    }
                     
                     $API->comm("/queue/simple/add", array(
                         "name"        => $this->normaliza($cliente->nombre), // NOMBRE CLIENTE
@@ -410,7 +419,13 @@ class ContratosController extends Controller
                 
                 $nro->contrato = $nro_contrato + 1;
                 $nro->save();
-                $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS';
+
+                if($registro){
+                    $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS EN EL SISTEMA Y LA MIKROTIK';
+                }else{
+                    $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS';
+                }
+
                 return redirect('empresa/contratos/'.$contrato->id)->with('success', $mensaje);
             } else {
                 $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS';
