@@ -29,7 +29,7 @@ class HomeController extends Controller
     public function __construct()
     {
 
-        view()->share(['inicio' => 'empresa', 'seccion' => 'inicio', 'title' => 'Inicio', 'icon' =>'fa fa-building']);
+        view()->share(['inicio' => 'empresa', 'seccion' => 'inicio', 'title' => 'Inicio', 'icon' =>'fa fa-building', 'full' => true]);
 
     }
 

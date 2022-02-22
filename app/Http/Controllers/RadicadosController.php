@@ -34,6 +34,7 @@ class RadicadosController extends Controller{
         $clientes = Contacto::where('status', 1)->orderBy('nombre','asc')->get();
         $servicios = Servicio::where('estatus', 1)->orderBy('nombre','asc')->get();
         $tipo = '';
+        view()->share(['invert' => true]);
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 
@@ -49,6 +50,8 @@ class RadicadosController extends Controller{
         }else{
             $tipo = 'all';
         }
+
+        view()->share(['invert' => true]);
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 
@@ -161,7 +164,7 @@ class RadicadosController extends Controller{
         return view('radicados.index')->with(compact('radicados'));
     }*/
 
-    public function create(){
+    public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $clientes = Contacto::where('status',1)->orderBy('nombre','asc')->get();
         $identificaciones = TipoIdentificacion::all();
@@ -175,7 +178,7 @@ class RadicadosController extends Controller{
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Nuevo Caso']);
-        return view('radicados.create')->with(compact('clientes','identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','planes','servicios','tecnicos'));
+        return view('radicados.create')->with(compact('clientes','identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','planes','servicios','tecnicos', 'cliente'));
     }
 
     public function store(Request $request){

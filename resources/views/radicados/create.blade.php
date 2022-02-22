@@ -24,8 +24,8 @@
                 <label class="control-label">Nombre del Cliente</label>
                 <div class="input-group" id="selectApi">
                     <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="busqueda_detalles(this.value);">
-                        @foreach($clientes as $cliente)
-                        <option value="{{$cliente->id}}">{{$cliente->nombre}} - {{$cliente->nit}}</option>
+                        @foreach($clientes as $client)
+                        <option value="{{$client->id}}" {{$cliente== $client->id?'selected':''}}>{{$client->nombre}} - {{$client->nit}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -154,6 +154,10 @@
 
 @section('scripts')
     <script type="text/javascript">
+        @if($cliente)
+            busqueda_detalles({{$cliente}});
+        @endif
+
         function busqueda_detalles(cliente){
             if (window.location.pathname.split("/")[1] === "software") {
                 var url='/software/api/getDetails/'+cliente;
@@ -231,7 +235,6 @@
                 $("#valor").val('').prop('required', false);
             }
         }
-
     </script>
 @endsection
 

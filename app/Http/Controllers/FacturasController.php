@@ -24,253 +24,234 @@ use Response;
 use Carbon\Carbon;
 use Validator; use Illuminate\Validation\Rule; use QrCode; use File;
 use App\PromesaPago;
-
 include_once(app_path() . '/../public/PHPExcel/Classes/PHPExcel.php');
-
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
 use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
-
-
 use DOMDocument;
-
-/*Modelos para funcion del modal create product */
 use App\TipoEmpresa; use App\Categoria;
-/*/Modelos para funcion del modal create product */
 use App\Retencion;
 use Auth; use Mail; use bcrypt; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
-
 use App\Contrato;
 use App\Mikrotik;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 use App\Descuento;
+use App\Campos;
 
-class FacturasController extends Controller
-{
+class FacturasController extends Controller{
 
     protected $url;
-  /**
-   * Create a new controller instance.
-   *
-   * @return void
-   */
-  public function __construct()
-  {
-    $this->middleware('auth');
-    view()->share(['seccion' => 'facturas', 'title' => 'Factura de Venta', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
-  }
 
-  /**
-  * Vista Principal de las facturas
-  * La consulta es tan grande para hacer funcionar las flechas, ya que hay valores qe no estan en la tabla
-  */
-  public function indexold(Request $request){
-
-
-    $this->getAllPermissions(Auth::user()->id);
-
-    $busqueda=false;
-    $campos=array('factura.nro', 'factura.id', 'nombrecliente', 'factura.fecha', 'factura.vencimiento', 'total', 'pagado', 'porpagar', 'factura.estatus','contrato.fecha_corte', 'factura.correo');
-    if (!$request->orderby) {
-      $request->orderby=1; $request->order=1;
+    public function __construct(){
+        $this->middleware('auth');
+        view()->share(['seccion' => 'facturas', 'title' => 'Factura de Venta', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
     }
-    $orderby=$campos[$request->orderby];
-    $order=$request->order==1?'DESC':'ASC';
-    $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
-    ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-    ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
-    ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-    ->select('factura.id', 'factura.correo', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),
-      DB::raw('SUM(
-      (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-      DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-      DB::raw('(SUM(
-          (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
-          (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -
-          ((Select SUM(pago) from ingresos_factura where factura=factura.id) +
-          (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) -
-          (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) )    as porpagar'))
-    ->where('factura.empresa',Auth::user()->empresa)->where('tipo','!=',2)->
-    where('tipo','!=',5)->
-    //where('factura.fecha','>=', '2021-03-01')->
-    where('lectura',1);
 
-    $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
+    public function indexold(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
 
-    /*
-     * Codigo buscador total, en desarrollo
-     */
-    if($request->has('search')){
-        $busqueda              = true;
-        $search                = mb_strtolower($request->input('search'));
-        $filter                = '';
-        switch ($request->input('search')){
-            case (preg_match('/-fven/', $search) ? true : false):
-                $filter        = "ven";
-                break;
-            case (preg_match('/-fvto/', $search) ? true : false):
-                $filter        = "vto";
-                break;
-            case (preg_match('/-fiva/', $search) ? true : false):
-                $filter        = "iva";
-                break;
-            case (preg_match('/-fpgo/', $search) ? true : false):
-                $filter        = "pgo";
-                break;
-            case (preg_match('/-fppr/', $search) ? true : false):
-                $filter        = "ppr";
-                break;
+        $busqueda=false;
+        $campos=array('factura.nro', 'factura.id', 'nombrecliente', 'factura.fecha', 'factura.vencimiento', 'total', 'pagado', 'porpagar', 'factura.estatus','contrato.fecha_corte', 'factura.correo');
+        if (!$request->orderby) {
+          $request->orderby=1; $request->order=1;
         }
+        $orderby=$campos[$request->orderby];
+        $order=$request->order==1?'DESC':'ASC';
+        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+        ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+        ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
+        ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+        ->select('factura.id', 'factura.correo', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),
+          DB::raw('SUM(
+          (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
+          DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
+          DB::raw('(SUM(
+              (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
+              (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -
+              ((Select SUM(pago) from ingresos_factura where factura=factura.id) +
+              (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) -
+              (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) )    as porpagar'))
+        ->where('factura.empresa',Auth::user()->empresa)->where('tipo','!=',2)->
+        where('tipo','!=',5)->
+        //where('factura.fecha','>=', '2021-03-01')->
+        where('lectura',1);
 
-        if($filter)
-            $search            = str_replace(' -f'.$filter, '', $search);
-        if(is_numeric($request->input('search'))){
-            if($filter != ''){
+        $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
 
-                // En construcción
-
-            }else{
-                $facturas          = $facturas->havingRaw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
-                (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) > ?',
-                    [$search]);
+        /*
+         * Codigo buscador total, en desarrollo
+         */
+        if($request->has('search')){
+            $busqueda              = true;
+            $search                = mb_strtolower($request->input('search'));
+            $filter                = '';
+            switch ($request->input('search')){
+                case (preg_match('/-fven/', $search) ? true : false):
+                    $filter        = "ven";
+                    break;
+                case (preg_match('/-fvto/', $search) ? true : false):
+                    $filter        = "vto";
+                    break;
+                case (preg_match('/-fiva/', $search) ? true : false):
+                    $filter        = "iva";
+                    break;
+                case (preg_match('/-fpgo/', $search) ? true : false):
+                    $filter        = "pgo";
+                    break;
+                case (preg_match('/-fppr/', $search) ? true : false):
+                    $filter        = "ppr";
+                    break;
             }
 
-        }else{
+            if($filter)
+                $search            = str_replace(' -f'.$filter, '', $search);
+            if(is_numeric($request->input('search'))){
+                if($filter != ''){
 
-            if (preg_match('/[A-Za-z]/', $search) && preg_match('/[0-9]/', $search)){
-                $facturas      = $facturas->where('factura.codigo', 'like', '%' .$search.'%');
+                    // En construcción
+
+                }else{
+                    $facturas          = $facturas->havingRaw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
+                    (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) > ?',
+                        [$search]);
+                }
+
             }else{
-                if (strcmp($search, 'abierta') == 0 || strcmp($search, 'cerrada') == 0 || strcmp($search, 'anulada') == 0){
-                    $facturas  = $facturas->whereIn('factura.estatus', $search);
-                }elseif (date('d-m-Y', strtotime($search)) == $search){
 
-                    if(preg_match('/-vto/i', $search)){
-                        dd("d");
-                        $facturas  = $facturas->where('factura.vencimiento', date('Y-m-d', strtotime($search)));
-                    }else{
-                        $facturas  = $facturas->where('factura.fecha', date('Y-m-d', strtotime($search)));
+                if (preg_match('/[A-Za-z]/', $search) && preg_match('/[0-9]/', $search)){
+                    $facturas      = $facturas->where('factura.codigo', 'like', '%' .$search.'%');
+                }else{
+                    if (strcmp($search, 'abierta') == 0 || strcmp($search, 'cerrada') == 0 || strcmp($search, 'anulada') == 0){
+                        $facturas  = $facturas->whereIn('factura.estatus', $search);
+                    }elseif (date('d-m-Y', strtotime($search)) == $search){
+
+                        if(preg_match('/-vto/i', $search)){
+                            dd("d");
+                            $facturas  = $facturas->where('factura.vencimiento', date('Y-m-d', strtotime($search)));
+                        }else{
+                            $facturas  = $facturas->where('factura.fecha', date('Y-m-d', strtotime($search)));
+                        }
+
                     }
+                    else{
+                        $facturas  = $facturas->where('c.nombre', 'like', '%' .$search.'%');
+                    }
+                }
 
-                }
-                else{
-                    $facturas  = $facturas->where('c.nombre', 'like', '%' .$search.'%');
-                }
             }
-
         }
-    }
-    /*
-     *
-     */
+        /*
+         *
+         */
 
-    if ($request->name_1) {
-      $busqueda=true; $appends['name_1']=$request->name_1; $facturas=$facturas->where('factura.codigo', 'like', '%' .$request->name_1.'%');
-    }
-    if ($request->name_2) {
-      $busqueda=true; $appends['name_2']=$request->name_2; $facturas=$facturas->where('c.nombre', 'like', '%' .$request->name_2.'%');
-    }
-    if ($request->name_3) {
-      $busqueda=true; $appends['name_3']=$request->name_3; $facturas=$facturas->where('factura.fecha', date('Y-m-d', strtotime($request->name_3)));
-    }
-    if ($request->name_4) {
-      $busqueda=true; $appends['name_4']=$request->name_4; $facturas=$facturas->where('factura.vencimiento', date('Y-m-d', strtotime($request->name_4)));
-    }
-    if ($request->name_8) {
-      $busqueda=true; $appends['name_8']=$request->name_8; $facturas=$facturas->whereIn('factura.estatus', $request->name_8);
-    }
+        if ($request->name_1) {
+          $busqueda=true; $appends['name_1']=$request->name_1; $facturas=$facturas->where('factura.codigo', 'like', '%' .$request->name_1.'%');
+        }
+        if ($request->name_2) {
+          $busqueda=true; $appends['name_2']=$request->name_2; $facturas=$facturas->where('c.nombre', 'like', '%' .$request->name_2.'%');
+        }
+        if ($request->name_3) {
+          $busqueda=true; $appends['name_3']=$request->name_3; $facturas=$facturas->where('factura.fecha', date('Y-m-d', strtotime($request->name_3)));
+        }
+        if ($request->name_4) {
+          $busqueda=true; $appends['name_4']=$request->name_4; $facturas=$facturas->where('factura.vencimiento', date('Y-m-d', strtotime($request->name_4)));
+        }
+        if ($request->name_8) {
+          $busqueda=true; $appends['name_8']=$request->name_8; $facturas=$facturas->whereIn('factura.estatus', $request->name_8);
+        }
 
-    if ($request->name_6) {
-      $busqueda=true; $appends['name_6']=$request->name_6; $appends['name_6_simb']=$request->name_6_simb; $facturas=$facturas->whereRaw(DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) '.$request->name_6_simb.' ?'), [$request->name_6]);
-    }
-
-
-    if ($request->name_9) {
-      $busqueda=true; $appends['name_9']=$request->name_9; $facturas=$facturas->where('v.nombre', 'like', '%' .$request->name_9.'%');
-    }
+        if ($request->name_6) {
+          $busqueda=true; $appends['name_6']=$request->name_6; $appends['name_6_simb']=$request->name_6_simb; $facturas=$facturas->whereRaw(DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) '.$request->name_6_simb.' ?'), [$request->name_6]);
+        }
 
 
-      if ($request->name_7) {
-          $tmpFacturas = $facturas->groupBy('if.factura');
-          $tmpFacturas = $tmpFacturas->get();
-          foreach ($tmpFacturas as $tmpFactura){
-              if ($request->name_7_simb == '>'){
-                  if($tmpFactura->porpagar() > $request->name_7){
-                      $tmpArry[] = $tmpFactura->id;
-                  }
-              }elseif($request->name_7_simb == '<'){
-                  if($tmpFactura->porpagar() < $request->name_7){
-                      $tmpArry[] = $tmpFactura->id;
-                  }
-              }else{
-                  if($tmpFactura->porpagar() == $request->name_7){
-                      $tmpArry[] = $tmpFactura->id;
+        if ($request->name_9) {
+          $busqueda=true; $appends['name_9']=$request->name_9; $facturas=$facturas->where('v.nombre', 'like', '%' .$request->name_9.'%');
+        }
+
+
+          if ($request->name_7) {
+              $tmpFacturas = $facturas->groupBy('if.factura');
+              $tmpFacturas = $tmpFacturas->get();
+              foreach ($tmpFacturas as $tmpFactura){
+                  if ($request->name_7_simb == '>'){
+                      if($tmpFactura->porpagar() > $request->name_7){
+                          $tmpArry[] = $tmpFactura->id;
+                      }
+                  }elseif($request->name_7_simb == '<'){
+                      if($tmpFactura->porpagar() < $request->name_7){
+                          $tmpArry[] = $tmpFactura->id;
+                      }
+                  }else{
+                      if($tmpFactura->porpagar() == $request->name_7){
+                          $tmpArry[] = $tmpFactura->id;
+                      }
                   }
               }
+              $facturas = $facturas->whereIn('factura.id', $tmpArry);
+
+              $appends['name_7']=$request->name_7;
+              $appends['name_7_simb']=$request->name_7_simb;
+
+              $busqueda=true;
           }
-          $facturas = $facturas->whereIn('factura.id', $tmpArry);
 
-          $appends['name_7']=$request->name_7;
-          $appends['name_7_simb']=$request->name_7_simb;
+        if ($request->name_10) {
+          $busqueda = true; $appends['name_10'] = $request->name_10; $facturas = $facturas->where('cs.fecha_corte', $request->name_10);
+        }
 
+        if ($request->name_11) {
+          $busqueda=true; $appends['name_11']=$request->name_11; $facturas=$facturas->where('c.nit', 'like', '%' .$request->name_11.'%');
+        }
+
+        if ($request->name_12) {
+          $busqueda=true; $appends['name_12']=$request->name_12; $facturas=$facturas->where('c.direccion', 'like', '%' .$request->name_12.'%');
+        }
+
+        if ($request->name_13) {
+          $busqueda = true; $appends['name_13'] = $request->name_13; $facturas = $facturas->where('cs.server_configuration_id', $request->name_13);
+        }
+
+        if ($request->name_14) {
+          $busqueda = true; $appends['name_14'] = $request->name_14; $facturas = $facturas->where('cs.ip', $request->name_14);
+        }
+
+        if ($request->name_15) {
+          $busqueda = true; $appends['name_15'] = $request->name_15; $facturas = $facturas->where('cs.mac_address', $request->name_15);
+        }
+
+        $facturas=$facturas->groupBy('if.factura');
+
+
+        if ($request->name_5) {
           $busqueda=true;
-      }
+          $appends['name_5']=$request->name_5;
+          $appends['name_5_simb']=$request->name_5_simb;
+          $facturas=$facturas->havingRaw('(SUM(
+          (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
+          (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) )'
+              .$request->name_5_simb.' ?', [$request->name_5]);
+        }
 
-    if ($request->name_10) {
-      $busqueda = true; $appends['name_10'] = $request->name_10; $facturas = $facturas->where('cs.fecha_corte', $request->name_10);
+        if ($busqueda==false) {
+          $facturas=$facturas->where('factura.estatus', 1);
+        }
+
+        if(Auth::user()->id == 29){
+            $facturas=$facturas->where('factura.estatus', 1);
+        }
+
+        $facturas=$facturas->OrderBy($orderby, $order)->paginate(15)->appends($appends);
+
+        $clientes = Contacto::join('factura AS F','F.cliente','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit')->groupBy('F.cliente')->orderBy('contactos.nombre','ASC')->get();
+
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        return view('facturas.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
     }
-
-    if ($request->name_11) {
-      $busqueda=true; $appends['name_11']=$request->name_11; $facturas=$facturas->where('c.nit', 'like', '%' .$request->name_11.'%');
-    }
-
-    if ($request->name_12) {
-      $busqueda=true; $appends['name_12']=$request->name_12; $facturas=$facturas->where('c.direccion', 'like', '%' .$request->name_12.'%');
-    }
-
-    if ($request->name_13) {
-      $busqueda = true; $appends['name_13'] = $request->name_13; $facturas = $facturas->where('cs.server_configuration_id', $request->name_13);
-    }
-
-    if ($request->name_14) {
-      $busqueda = true; $appends['name_14'] = $request->name_14; $facturas = $facturas->where('cs.ip', $request->name_14);
-    }
-
-    if ($request->name_15) {
-      $busqueda = true; $appends['name_15'] = $request->name_15; $facturas = $facturas->where('cs.mac_address', $request->name_15);
-    }
-
-    $facturas=$facturas->groupBy('if.factura');
-
-
-    if ($request->name_5) {
-      $busqueda=true;
-      $appends['name_5']=$request->name_5;
-      $appends['name_5_simb']=$request->name_5_simb;
-      $facturas=$facturas->havingRaw('(SUM(
-      (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
-      (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) )'
-          .$request->name_5_simb.' ?', [$request->name_5]);
-    }
-
-    if ($busqueda==false) {
-      $facturas=$facturas->where('factura.estatus', 1);
-    }
-    
-    if(Auth::user()->id == 29){
-        $facturas=$facturas->where('factura.estatus', 1);
-    }
-
-    $facturas=$facturas->OrderBy($orderby, $order)->paginate(15)->appends($appends);
-
-    $clientes = Contacto::join('factura AS F','F.cliente','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit')->groupBy('F.cliente')->orderBy('contactos.nombre','ASC')->get();
-
-    view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
-    return view('facturas.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
-  }
   
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
@@ -279,8 +260,10 @@ class FacturasController extends Controller
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
-        $tipo = '';
-        return view('facturas.indexnew', compact('clientes','tipo'));
+        $tipo = false;
+        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+
+        return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -291,7 +274,9 @@ class FacturasController extends Controller
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
-        return view('facturas.indexnew', compact('clientes','tipo'));
+        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+
+        return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
 
     public function index_electronica(){

@@ -32,7 +32,7 @@ class AsignacionesController extends Controller
   {
     $this->middleware('auth');
     set_time_limit(300);
-    view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones de Contratos', 'icon' =>'fas fa-file-contract']);
+    view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract', 'invert' => true]);
   }
 
   public function index(){

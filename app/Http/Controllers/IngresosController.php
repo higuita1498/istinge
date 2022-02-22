@@ -25,6 +25,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
 use App\Mikrotik;
 use App\User;
+use App\CRM;
+use App\Campos;
+
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 
@@ -86,8 +89,9 @@ class IngresosController extends Controller
         $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
         $clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
+        $tabla = Campos::where('modulo', 5)->orderBy('orden', 'asc')->get();
 
-        return view('ingresos.indexnew', compact('bancos','clientes','metodos'));
+        return view('ingresos.indexnew', compact('bancos','clientes','metodos','tabla'));
     }
     
     public function ingresos(Request $request){
@@ -323,6 +327,13 @@ class IngresosController extends Controller
                     if ($this->precision($precio) == $this->precision($factura->porpagar())) {
                         $factura->estatus = 0;
                         $factura->save();
+
+                        CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                        $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                        foreach ($crms as $crm) {
+                            $crm->delete();
+                        }
                     }
                     $items->save();
                 }

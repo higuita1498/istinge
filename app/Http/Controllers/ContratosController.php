@@ -49,6 +49,7 @@ use RouterosAPI;
 use App\Nodo;
 use App\GrupoCorte;
 use App\Segmento;
+use App\Campos;
 
 class ContratosController extends Controller
 {
@@ -64,9 +65,10 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
-        $tipo = '';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        view()->share(['title' => 'Contratos', 'invert' => true]);
+        $tipo = false;
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function disabled(Request $request){
@@ -75,9 +77,10 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function enabled(Request $request){
@@ -86,9 +89,10 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
-        view()->share(['title' => 'Contratos de Servicio']);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo'));
+        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
     }
 
     public function contratos(Request $request, $nodo){
@@ -192,7 +196,7 @@ class ContratosController extends Controller
             ->toJson();
     }
     
-    public function create(){
+    public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 ORDER BY c.nombre ASC";
         $clientes = DB::select($sql);
@@ -209,7 +213,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status', 1)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente'));
     }
     
     public function store(Request $request){
@@ -227,6 +231,12 @@ class ContratosController extends Controller
             /*'costo_instalacion' => 'required',
             'caja' => 'required'*/
         ]);
+
+        if($request->interfaz == 3){
+            $request->validate([
+                'mac_address' => 'required'
+            ]);
+        }
         
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
@@ -235,6 +245,7 @@ class ContratosController extends Controller
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
+            $registro = false;
             //$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
@@ -262,7 +273,7 @@ class ContratosController extends Controller
                 }else{
                     $prefijo = '';
                 }
-                
+
                 /*PPPOE*/
                 if($request->conexion == 1){
                     $API->comm("/ppp/secret/add", array(
@@ -277,9 +288,12 @@ class ContratosController extends Controller
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "target"    => $request->ip,                     //IP
-                        "name"      => $plan->name,                      // NOMBRE PLAN
-                        "max-limit" => $plan->upload.'/'.$plan->download // VELOCIDAD PLAN
+                        "target"      => $request->ip,                                            // IP
+                        "name"        => $plan->name,                                             // NOMBRE PLAN
+                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
+                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
+                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
                         )
                     );
                     
@@ -307,15 +321,27 @@ class ContratosController extends Controller
                         "mac-address" => $request->mac_address                // DIRECCION MAC
                         )
                     );
-                    
-                    $API->comm("/queue/simple/add", array(
-                        "name"        => $this->normaliza($cliente->nombre), // NOMBRE CLIENTE
-                        "target"      => $request->ip,                       // IP DEL CLIENTE
-                        "max-limit"   => $plan->upload.'/'.$plan->download,  // VELOCIDAD PLAN
-                        "comment"     => $this->normaliza($cliente->nombre)  // NRO DEL CONTRATO
+
+                    $name = $API->comm("/queue/simple/getall", array(
+                        "?comment" => $this->normaliza($cliente->nombre)
                         )
                     );
+
+                    if($name){
+                        $registro = true;
+                    }
                     
+                    $API->comm("/queue/simple/add", array(
+                        "name"        => $this->normaliza($cliente->nombre),                      // NOMBRE CLIENTE
+                        "target"      => $request->ip,                                            // IP DEL CLIENTE
+                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
+                        "comment"     => $this->normaliza($cliente->nombre),                       // NRO DEL CONTRATO
+                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
+                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        )
+                    );
+
                     if($request->ip_new){
                         $API->comm("/ip/arp/add", array(
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,                            // NOMBRE MAS ID DEL CONTRATO
@@ -329,7 +355,10 @@ class ContratosController extends Controller
                             "name"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
                             "target"      => $request->ip_new,                                     // IP DEL CLIENTE
                             "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
-                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato  // NRO DEL CONTRATO
+                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
+                            "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
+                            "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                            "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
                             )
                         );
                     }
@@ -351,9 +380,12 @@ class ContratosController extends Controller
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "target"    => $request->ip,                     //IP
-                        "name"      => $plan->name,                      // NOMBRE PLAN
-                        "max-limit" => $plan->upload.'/'.$plan->download // VELOCIDAD PLAN
+                        "target"      => $request->ip,                          //IP
+                        "name"        => $plan->name,                           // NOMBRE PLAN
+                        "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                        "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
+                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
                         )
                     );
                     
@@ -406,7 +438,13 @@ class ContratosController extends Controller
                 
                 $nro->contrato = $nro_contrato + 1;
                 $nro->save();
-                $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS';
+
+                if($registro){
+                    $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS EN EL SISTEMA Y LA MIKROTIK';
+                }else{
+                    $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS';
+                }
+
                 return redirect('empresa/contratos/'.$contrato->id)->with('success', $mensaje);
             } else {
                 $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS';

@@ -17,6 +17,7 @@ use App\Model\Ingresos\Factura;
 use App\Model\Ingresos\ItemsFactura;
 use App\User;
 use App\Contacto;
+use App\Campos;
 
 class DescuentosController extends Controller
 {
@@ -30,7 +31,9 @@ class DescuentosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $clientes = Contacto::where('tipo_contacto', 0)->get();
         $usuarios = User::where('user_status', 1)->get();
-        return view('descuentos.index')->with(compact('clientes', 'usuarios'));
+        $tabla = Campos::where('modulo', 9)->orderBy('orden', 'asc')->get();
+
+        return view('descuentos.index')->with(compact('clientes', 'usuarios', 'tabla'));
     }
 
     public function descuentos(Request $request){

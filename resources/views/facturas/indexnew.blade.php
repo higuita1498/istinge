@@ -111,7 +111,7 @@
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						<th>Número</th>
+						{{-- <th>Número</th>
 						<th>Cliente</th>
 						<th>Creación</th>
 						<th>Vencimiento</th>
@@ -119,7 +119,10 @@
 						<th>IVA</th>
 						<th>Pagado</th>
 						<th>Por Pagar</th>
-						<th>Estado</th>
+						<th>Estado</th> --}}
+						@foreach($tabla as $campo)
+    					    <th>{{$campo->nombre}}</th>
+    					@endforeach
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -163,7 +166,10 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-				{data: 'codigo'},
+			    @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
+				/*{data: 'codigo'},
 				{data: 'cliente'},
 				{data: 'fecha'},
 				{data: 'vencimiento'},
@@ -171,7 +177,7 @@
 				{data: 'impuesto'},
 				{data: 'pagado'},
 				{data: 'pendiente'},
-				{data: 'estado'},
+				{data: 'estado'},*/
 				{data: 'acciones'},
 			]
 		});

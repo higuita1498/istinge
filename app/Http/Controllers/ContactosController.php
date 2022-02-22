@@ -31,6 +31,11 @@ use PHPExcel_Style_NumberFormat;
 use ZipArchive;
 use Barryvdh\DomPDF\Facade as PDF;
 use PHPExcel_Shared_ZipArchive; use Session;
+use App\Campos;
+
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
+use App\Mikrotik;
 
 class ContactosController extends Controller
 {
@@ -49,6 +54,8 @@ class ContactosController extends Controller
     public function index(Request $request)
     {
         $this->getAllPermissions(Auth::user()->id);
+        $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
         return view('contactos.indexnew');
     }
 
@@ -107,7 +114,7 @@ class ContactosController extends Controller
 
     public function clientes(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Clientes', 'subseccion' => 'clientes', 'middel'=>true]);
+        view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda=false;
         if ($request->name_1 || $request->name_2 || $request->name_3|| isset($request->name_4) || $request->name_5) {
             $busqueda='contactos.clientes';
@@ -118,7 +125,9 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
         $tipo_usuario = 0;
-        return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario'));
+        $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
+        return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario','tabla'));
     }
 
     public function proveedores(Request $request){
@@ -128,12 +137,14 @@ class ContactosController extends Controller
             $busqueda='contactos.proveedores';
         }
         $tipo='/1';
-        view()->share(['title' => 'Proveedores', 'subseccion' => 'proveedores', 'middel'=>true]);
+        view()->share(['title' => 'Proveedores', 'subseccion' => 'proveedores']);
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $contactos=$this->busqueda($request, [1,2]);
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $tipo_usuario = 1;
-        return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario'));
+        $tabla = Campos::where('modulo', 1)->orderBy('orden', 'asc')->get();
+        view()->share(['invert' => true]);
+        return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario','tabla'));
     }
     
     public function busqueda($request, $tipo = false){
@@ -195,13 +206,7 @@ class ContactosController extends Controller
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
 
-        (strlen($id) > 20) ? $contacto = DB::select("SELECT C.*, CS.state, CS.public_id as contrato, CS.fecha_corte, P.name AS plan, P.price, I.identificacion, CS.status as contrato_status FROM contactos AS C INNER JOIN contracts AS CS ON (C.UID = CS.client_id) INNER JOIN planes AS P ON (P.id = CS.plan_id) INNER JOIN tipos_identificacion AS I ON (I.id = C.tip_iden) WHERE C.UID = '".$id."'") : $contacto = DB::select("SELECT C.*, CS.state, CS.public_id as contrato, CS.fecha_corte, P.name AS plan, P.price, I.identificacion, CS.status as contrato_status FROM contactos AS C INNER JOIN contracts AS CS ON (C.UID = CS.client_id) INNER JOIN planes AS P ON (P.id = CS.plan_id) INNER JOIN tipos_identificacion AS I ON (I.id = C.tip_iden) WHERE C.id = '".$id."'");
-
-        if ($contacto) {
-            $contacto = $contacto[0];
-        }else{
-            $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
-        }
+        $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
 
         if ($contacto) {
             if($contacto->tipo_contacto==0){
@@ -209,22 +214,22 @@ class ContactosController extends Controller
             }else{
                 view()->share(['title' => $contacto->nombre, 'subseccion' => 'proveedores', 'middel'=>true]);
             }
-            $asociados=AsociadosContacto::where('contacto', $contacto->id)->get();
-            $notasDebito = NotaDedito::where('empresa', Auth::user()->empresa)->where('proveedor', $id)->get();
 
-            $facturas = Factura::join('items_factura as if','if.factura','=','factura.id')->select('factura.correo', 'factura.cliente','factura.id','factura.fecha','factura.nro','factura.codigo','factura.estatus','if.precio',DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->where('factura.cliente', $contacto->id)->groupBy('if.factura')->OrderBy('factura.fecha', 'desc')->get();
-            $ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
+            //$asociados=AsociadosContacto::where('contacto', $contacto->id)->get();
+            //$notasDebito = NotaDedito::where('empresa', Auth::user()->empresa)->where('proveedor', $id)->get();
+
+            //$facturas = Factura::join('items_factura as if','if.factura','=','factura.id')->select('factura.correo', 'factura.cliente','factura.id','factura.fecha','factura.nro','factura.codigo','factura.estatus','if.precio',DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->where('factura.cliente', $contacto->id)->groupBy('if.factura')->OrderBy('factura.fecha', 'desc')->get();
+            /*$ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
                         ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
                         ->join('bancos as b', 'b.id', '=', 'ingresos.cuenta')
                         ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "") as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',DB::raw('(if(ingresos.tipo=1, (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)), if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))) as monto'))
                         ->where('ingresos.cliente',$contacto->id)->groupBy( 'ingresos.id')
                         ->OrderBy('ingresos.fecha', 'desc')
-                        ->get();
+                        ->get();*/
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
             $contrato = Contrato::where('client_id', $contacto->id)->where('status', 1)->first();
-            
-            return view('contactos.show')->with(compact('contacto', 'asociados', 'notasDebito', 'facturas', 'id', 'user_app', 'contrato', 'ingresos'));
+            return view('contactos.show')->with(compact('contacto', 'id', 'user_app', 'contrato'));
         }
         return redirect('empresa/contactos')->with('danger', 'CLIENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
@@ -449,6 +454,55 @@ class ContactosController extends Controller
             $contacto->vendedor = $request->vendedor;
             
             $contacto->save();
+
+            $contrato = Contrato::where('client_id', $contacto->id)->where('status', 1)->first();
+
+            if($contrato){
+                $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+                $servicio = $this->normaliza($contacto->nombre);
+
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
+                //$API->debug = true;
+
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    /*PPPOE*/
+                    if($contrato->conexion == 1){
+                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
+                    }
+
+                    /*DHCP*/
+                    if($contrato->conexion == 2){
+
+                    }
+
+                    /*IP ESTÁTICA*/
+                    if($contrato->conexion == 3){
+                        $name = $API->comm("/queue/simple/getall", array(
+                            "?comment" => $contrato->servicio,
+                            )
+                        );
+
+                        if($name){
+                            $API->comm("/queue/simple/set", array(
+                                ".id"       => $name[0][".id"],
+                                "name"      => $servicio,       // NOMBRE CLIENTE
+                                "comment"   => $servicio,       // NOMBRE CLIENTE
+                                )
+                            );
+                        }
+                    }
+
+                    /*VLAN*/
+                    if($contrato->conexion == 4){
+
+                    }
+                }
+
+                $contrato->servicio = $servicio;
+                $contrato->save();
+                $API->disconnect();
+            }
             
             if($contacto->tipo_contacto==0){
                 $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL CLIENTE';

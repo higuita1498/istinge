@@ -53,32 +53,54 @@
 @endsection
 
 @section('boton')
-@if($contacto->status==1)
-    @if($contacto->contrato)
-        <?php if(isset($_SESSION['permisos']['407'])){ ?>
-            <form action="{{ route('contratos.state',$contacto->contrato) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contacto->contrato}}">
-                {{ csrf_field() }}
-            </form>
-    		<button @if($contacto->state == 'enabled') class="btn btn-outline-danger" title="Deshabilitar" @else class="btn btn-outline-success" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$contacto->contrato}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i>@if($contacto->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
-    	<?php } ?>
-    @endif
-    @if(isset($_SESSION['permisos']['6']))
-        <a href="{{route('contactos.edit',$id)}}" class="btn btn-outline-info mr-1"><i class="fas fa-edit"></i>Editar</a>
-    @endif
-    @if(isset($_SESSION['permisos']['7']) && $contacto->usado()==0)
-        <form action="{{ route('contactos.destroy', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contacto{{$contacto->id}}">
-			{{ csrf_field() }}
-		    <input name="_method" type="hidden" value="DELETE">
-		</form>
-		<button class="btn btn-outline-danger mr-1" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Estas seguro que deseas eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar</button>
-	@endif
-@endif
-@if($user_app && isset($_SESSION['permisos']['730']))
-    <form action="{{ route('contactos.desasociar', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="desasociar-contacto{{$contacto->id}}">
-		{{ csrf_field() }}
-	</form>
-	<button class="btn btn-outline-danger mr-1" type="submit" title="Desasociar de APP" onclick="confirmar('desasociar-contacto{{$contacto->id}}', '¿Está seguro que desea desasociar el cliente de la APP?', 'Se borrara de forma permanente');"><i class="fas fa-mobile-alt"></i> Desasociar de APP</button>
-@endif
+    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Acciones del Contacto {{ $contacto->contrato }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            	@if($contrato)
+            	<form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
+            		{{ csrf_field() }}
+            	</form>
+
+            	<form action="{{ route('contactos.desasociar', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="desasociar-contacto{{$contacto->id}}">
+            		{{ csrf_field() }}
+                </form>
+                @endif
+
+                <form action="{{ route('contactos.destroy', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contacto{{$contacto->id}}">
+                	{{ csrf_field() }}
+                	<input name="_method" type="hidden" value="DELETE">
+                </form>
+
+            	@if($contacto->status==1)
+            	    @if(isset($_SESSION['permisos']['6']))
+            	        <a href="{{route('contactos.edit',$id)}}" class="dropdown-item"><i class="fas fa-edit"></i> Editar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</a>
+            	    @endif
+            	    @if(!$contrato && $contacto->tipo_contacto !=1)
+            	    <a href="{{route('contratos.create_cliente',$id)}}" class="dropdown-item"><i class="fas fa-file-contract"></i> Crear Contrato</a>
+            	    @endif
+            	    @if(isset($_SESSION['permisos']['201']) && $contacto->tipo_contacto !=1)
+            	        <a href="{{route('radicados.create_cliente', $id)}}" class="dropdown-item"><i class="far fa-life-ring"></i> Crear Radicado</a>
+            	    @endif
+
+            	    @if($contrato)
+            	        @if(isset($_SESSION['permisos']['407']))
+            	            <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar" @else class="btn btn-outline-success" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
+            	        @endif
+            	        @if($user_app && isset($_SESSION['permisos']['730']))
+            	            <button class="dropdown-item" type="submit" title="Desasociar de APP" onclick="confirmar('desasociar-contacto{{$contacto->id}}', '¿Está seguro que desea desasociar el cliente de la APP?', 'Se borrara de forma permanente');"><i class="fas fa-mobile-alt"></i> Desasociar de APP</button>
+            	        @endif
+            	    @endif
+
+            	    @if(isset($_SESSION['permisos']['7']))
+            	        <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que desea eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</button>
+            	    @endif
+            	@endif
+            </div>
+        </div>
+    </div>
 	<div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
@@ -211,6 +233,14 @@
 						<th>Estado del Contrato</th>
 						<td>
 						    <strong class="text-{{$contrato->status('true')}}">{{$contrato->status()}}</strong>
+						</td>
+					</tr>
+					@endif
+					@if($contrato->ip)
+					<tr>
+						<th>Dirección IP</th>
+						<td>
+						    {{$contrato->ip}}
 						</td>
 					</tr>
 					@endif

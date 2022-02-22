@@ -112,7 +112,7 @@
 					</tr>
 					<tr>
 						<th>Total</th>
-						<td>{{number_format($ingreso->pago(), 2)}}</td>
+						<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($ingreso->pago())}}</td>
 					</tr>
 					@if($ingreso->created_by)
 					<tr>

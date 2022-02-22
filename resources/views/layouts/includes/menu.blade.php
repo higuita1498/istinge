@@ -227,6 +227,30 @@
             </div>
         </li>
     @endif
+
+    @if(isset($_SESSION['permisos']['744']) || isset($_SESSION['permisos']['745']))
+        <li class="nav-item" id="crm">
+            <a class="nav-link" data-toggle="collapse" href="#ui-crm" aria-expanded="false" aria-controls="ui-crm">
+                <i class="menu-icon fas fa-receipt"></i>
+                <span class="menu-title">CRM</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-crm">
+                <ul class="nav flex-column sub-menu">
+                    @if(isset($_SESSION['permisos']['744']))
+                        <li class="nav-item" id="crm_cartera">
+                            <a class="nav-link" href="{{route('crm.index')}}">Cartera</a>
+                        </li>
+                    @endif
+                    @if(isset($_SESSION['permisos']['745']))
+                        <li class="nav-item" id="crm_informe">
+                            <a class="nav-link" href="{{route('crm.informe')}}">Informe</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </li>
+    @endif
     
     @if(isset($_SESSION['permisos']['427']) || isset($_SESSION['permisos']['200']) || isset($_SESSION['permisos']['300']) || isset($_SESSION['permisos']['425']))
         <li class="nav-item" id="atencion_cliente">

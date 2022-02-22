@@ -116,7 +116,7 @@
 
     <div style="width: 100%;">
         <div style="width: 20%; display: inline-block; vertical-align: top; text-align: center; ">
-            {{-- <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100%;"> --}}
+            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100%;">
         </div>
         <div style="width: 57%; text-align: center; display: inline-block;">
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
@@ -181,7 +181,7 @@
                 @foreach($items as $item)
                 @php $cont++; @endphp
                     <tr>
-                        <td colspan="2" class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->detalle(true)}} - {{$item->categoria()}}</td>
+                        <td colspan="2" class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">@if($gasto->tipo==1){{$item->detalle(true)}}@else{{$item->categoria()}} @endif</td>
                         <td class="right padding-right border_right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->pago())}}</td>
                     </tr>
                 @endforeach
@@ -227,7 +227,7 @@
         <p style="text-align: justify;" class="small"></p>
         <div style="padding-top: 8%; text-align: center;">
             <div style="display: inline-block; width: 45%; border-top: 1px solid #000;     margin-right: 10%;">
-                <p class="small"> ELABORADO POR: {{ $gasto->created_by()->nombres }}</p>
+                <p class="small"> ELABORADO POR: @if($gasto->tipo==1){{ $gasto->created_by()->nombres }}@endif</p>
             </div>
             <div style="display: inline-block; width: 44%; border-top: 1px solid #000;">
                 <p class="small"> ACEPTADA, FIRMA Y/O SELLO Y FECHA</p>

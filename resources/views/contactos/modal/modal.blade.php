@@ -173,7 +173,6 @@
         });
 
         $(document).ready(function () {
-            console.log('qwerty');
             $('#mac_address').mask('AA:AA:AA:AA:AA:AA', {
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
@@ -181,8 +180,8 @@
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
             searchMunicipality(2);
-            getPlanes(1);
-            getSegmentos(1);
+            //getPlanes(1);
+            //getSegmentos(1);
             $('#conexion').val(3).selectpicker('refresh');
             interfazChange(3);
             $('#departamento').val(2).selectpicker('refresh');

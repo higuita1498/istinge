@@ -33,6 +33,7 @@ Route::get('/import_mikrotiks','Controller@import_mikrotiks')->name('import_mikr
 Route::get('/generarfactura','CronController@CrearFactura')->name('CrearFactura');
 Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFacturas');
 Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
+Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 
 /*PAYU*/
 
@@ -63,6 +64,8 @@ Route::get('grupos', 'GruposCorteController@grupos');
 Route::get('radicados', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
+Route::get('cartera/{tipo}', 'CRMController@cartera');
+Route::get('reporte', 'CRMController@reporte');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -585,10 +588,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::resource('usuarios', 'UsuariosController');
 		Route::resource('tiposempresa', 'TiposEmpresaController');
 		Route::post('Typestoreback','TiposEmpresaController@storeback')->name('tiposempresa.storeback');
+
 		Route::get('/personalizar_inventario/organizar', 'CamposPersonalizadosInventarioController@organizar')->name('personalizar_inventario.organizar');
-
 		Route::post('/personalizar_inventario/organizar_store', 'CamposPersonalizadosInventarioController@organizar_store')->name('personalizar_inventario.organizar_store');
-
 		Route::post('/personalizar_inventario/{id}/act_desc', 'CamposPersonalizadosInventarioController@act_desc')->name('personalizar_inventario.act_desc');
 		Route::resource('personalizar_inventario', 'CamposPersonalizadosInventarioController');
 		
@@ -601,6 +603,11 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::delete('/servicio/{id}', 'ConfiguracionController@servicios_destroy')->name('servicio.destroy');
 		
 		Route::get('usuarios/ingresar/{email}','UsuariosController@ingresar')->name('usuario.ingresarR');
+
+		/*ORGANIZAR CAMPO TABLAS*/
+		Route::get('/campos/{modulo}/organizar', 'CamposController@organizar')->name('campos.organizar');
+		Route::post('/campos/organizar_store', 'CamposController@organizar_store')->name('campos.organizar_store');
+		Route::resource('campos', 'CamposController');
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
@@ -688,8 +695,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/{id}/firmar', 'RadicadosController@firmar')->name('radicados.firmar');
         	Route::post('/{id}/storefirma', 'RadicadosController@storefirma')->name('radicados.storefirma');
         	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
-        	Route::get('/notificacion', 'RadicadosController@notificacion')->name('radicados.notificacion');
+        	Route::get('/notificacionRadicado', 'RadicadosController@notificacion')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
+        	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
         });
 		Route::resource('radicados', 'RadicadosController');
 
@@ -715,7 +723,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/pings', 'ContratosController@conexion')->name('contratos.ping');
 		Route::get('{id}/ping_nuevo', 'ContratosController@ping_nuevo')->name('contratos.ping_nuevo');
 		Route::get('{id}/grafica-consumo', 'ContratosController@grafica_consumo')->name('contratos.grafica_consumo');
-
+		Route::get('{cliente}/create', 'ContratosController@create')->name('contratos.create_cliente');
 		Route::get('deshabilitados', 'ContratosController@disabled')->name('contratos.disabled');
 		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
 	});
@@ -850,4 +858,15 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 
 	    Route::resource('tipos-gastos', 'TiposGastosController');
+
+	//CRM
+	    Route::group(['prefix' => 'crm'], function() {
+	        Route::get('/cartera', 'CRMController@cartera')->name('crm.cartera');
+	        Route::get('{id}/contacto', 'CRMController@contacto')->name('crm.contacto');
+	        Route::get('/informe', 'CRMController@informe')->name('crm.informe');
+	        Route::get('exportar', 'CRMController@exportar')->name('crm.exportar');
+	        Route::get('/notificacion','CRMController@notificacion')->name('crm.notificacion');
+	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
+	    });
+		Route::resource('crm', 'CRMController');
 });

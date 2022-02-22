@@ -94,7 +94,7 @@
         </div>
 
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Notas del Egreso</label>
+          <label class="col-sm-4 col-form-label">Notas del Egreso <small>Visibles al imprimir</small></label>
           <div class="col-sm-8">
             <textarea  class="form-control min_max_100" name="notas">{{$gasto->notas}}</textarea>
           </div>

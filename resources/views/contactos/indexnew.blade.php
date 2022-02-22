@@ -5,12 +5,23 @@
 @endsection
 
 @section('boton')
-    <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+    @if($tipo_usuario == 0)
+    @if(isset($_SESSION['permisos']['411']))
+    <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+    @endif
+    @if(isset($_SESSION['permisos']['201']))
+    <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+    @endif
+    @endif
+
+    @if(isset($_SESSION['permisos']['5']))
     @if($tipo_usuario == 0)
     <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
     @else
     <a href="{{route('contactos.createp')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Proveedor</a>
     @endif
+    @endif
+    <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
 @endsection
 
 @section('content')
@@ -70,11 +81,13 @@
 		<table class="table table-striped table-hover w-100" id="tabla-contactos">
 			<thead class="thead-dark">
 				<tr>
-					{{--<th>Serial ONU</th>--}}
-					<th>Nombre</th>
+					{{--<th>Nombre</th>
 					<th>Identificación</th>
 					<th>Teléfono</th>
-					<th>Email</th>
+					<th>Email</th>--}}
+					@foreach($tabla as $campo)
+					    <th>{{$campo->nombre}}</th>
+                    @endforeach
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -106,11 +119,9 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-			    //{data: 'serial_onu'},
-			    {data: 'nombre'},
-				{data: 'nit'},
-				{data: 'telefono1'},
-				{data: 'email'},
+			    @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
 				{data: 'acciones'},
 			]
 		});

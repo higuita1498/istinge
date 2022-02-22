@@ -216,7 +216,7 @@ class MikrotikController extends Controller
     
     public function reglas($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::find($id);
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -232,6 +232,8 @@ class MikrotikController extends Controller
                 
                 $mensaje='Reglas aplicadas satisfactoriamente a la Mikrotik '.$mikrotik->nombre;
                 $type = 'success';
+                $mikrotik->reglas = 1;
+                $mikrotik->save();
             } else {
                 $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
                 $type = 'danger';

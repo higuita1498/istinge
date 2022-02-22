@@ -61,7 +61,7 @@
 			                    <input name="_method" type="hidden" value="DELETE">
 			                </form>
 			                @endif
-						    @if($mikrotik->status == 1)
+						    @if($mikrotik->status == 1 && $mikrotik->reglas == 0)
 						    <form action="{{route('mikrotik.reglas',$mikrotik->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="regla-{{$mikrotik->id}}">
 			                    @csrf
 			                </form>
@@ -78,8 +78,10 @@
 						    @endif
 						    @if($mikrotik->status == 1)
 						    <a href="{{ route('mikrotik.grafica',$mikrotik->id )}}" class="btn btn-outline-danger btn-icons" title="Gráfica de Consumo"><i class="fas fa-chart-area"></i></a>
-						    <button title="Aplicar Reglas" class="btn btn-outline-dark btn-icons" type="submit" onclick="confirmar('regla-{{$mikrotik->id}}', '¿Está seguro que desea aplicar las reglas a esta Mikrotik?', '');"><i class="fas fa-plus"></i></button>
-						    <button title="Importar Contratos" class="btn btn-outline-info btn-icons d-none" type="submit" onclick="confirmar('importar-{{$mikrotik->id}}', '¿Está seguro que desea importar todos los contratos desde {{$mikrotik->nombre}}?', '');"><i class="fas fa-sync"></i></button>
+						    @if($mikrotik->status == 1 && $mikrotik->reglas == 0)
+						    <button title="Aplicar Reglas de Corte" class="btn btn-outline-dark btn-icons" type="submit" onclick="confirmar('regla-{{$mikrotik->id}}', '¿Está seguro que desea aplicar las reglas de corte a esta Mikrotik?', '');"><i class="fas fa-plus"></i></button>
+						    @endif
+						    {{-- <button title="Importar Contratos" class="btn btn-outline-info btn-icons d-none" type="submit" onclick="confirmar('importar-{{$mikrotik->id}}', '¿Está seguro que desea importar todos los contratos desde {{$mikrotik->nombre}}?', '');"><i class="fas fa-sync"></i></button> --}}
 						    @endif
 						    @if($mikrotik->status == 0)
 						        <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>

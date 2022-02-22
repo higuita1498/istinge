@@ -29,11 +29,18 @@
             </button>
         </div>
     @else
+        @if(isset($_SESSION['permisos']['5']))
+        <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+        @endif
+        @if(isset($_SESSION['permisos']['201']))
+        <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+        @endif
+
         @if(Auth::user()->id == 3)
             <a href="{{route('contratos.exportar')}}" class="btn btn-success btn-sm d-none" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
         @endif
-        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
         <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
 @endsection
 
@@ -117,19 +124,15 @@
     		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
     				<tr>
-    					<th>Nro</th>
+    					{{-- <th>Nro</th>
     					<th>Cliente</th>
-    					{{--<th>Identificación</th>
-    					<th>Teléfono</th>
-    					<th>Correo</th>
-    					<th>Barrio</th>--}}
     					<th>Plan</th>
-    					{{--<th>MAC</th>--}}
     					<th class="text-center">IP</th>
     					<th class="text-center">Estado</th>
-    					<th class="text-center">Grupo de Corte</th>
-    					{{--<th>Último Pago</th>
-    					<th>Cancelación del Servicio</th>--}}
+    					<th class="text-center">Grupo de Corte</th> --}}
+    					@foreach($tabla as $campo)
+    					    <th>{{$campo->nombre}}</th>
+    					@endforeach
     					<th>Acciones</th>
     				</tr>
     			</thead>
@@ -160,19 +163,15 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-			    { data: 'nro' },
+			    @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
+			    /*{ data: 'nro' },
 				{ data: 'client_id' },
-				//{ data: 'nit' },
-				//{ data: 'telefono' },
-				//{ data: 'email' },
-				//{ data: 'barrio' },
 				{ data: 'plan' },
-				//{ data: 'mac' },
 				{ data: 'ip' },
 				{ data: 'state' },
-				{ data: 'grupo_corte' },
-				//{ data: 'pago' },
-				//{ data: 'servicio' },
+				{ data: 'grupo_corte' },*/
 				{ data: 'acciones' },
 			]
 		});
@@ -232,7 +231,7 @@
 	    window.location.href = '{{config('app.url')}}/empresa/contratos/exportar?client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val();
 	}
 
-	@if($tipo>=0)
+	@if($tipo)
 	    $('#state').val('{{ $tipo }}').selectpicker('refresh');
 	    abrirFiltrador();
 	    getDataTable();

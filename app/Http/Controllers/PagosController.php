@@ -23,10 +23,12 @@ use App\Model\Gastos\FacturaProveedoresRetenciones;
 use App\Model\Gastos\GastosRetenciones;
 use App\Model\Gastos\GastosRecurrentesCategoria;
 use App\Model\Inventario\Inventario;
+use App\Model\Ingresos\IngresosCategoria;
 use Session;
 use Auth; use DB; use Carbon\Carbon;
 use Mail;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Model\Ingresos\Ingreso;
 class PagosController extends Controller
 {
     public function __construct(){
@@ -576,7 +578,14 @@ class PagosController extends Controller
                 GastosCategoria::where('gasto', $gasto->id)->delete();
                 $mov1=Movimiento::where('modulo', 3)->where('id_modulo', $gasto->id)->first();
                 if ($mov1) {
-                    $ingreso=Ingreso::where('id', $mov1->id_modulo)->first();
+                    $mov2 = Movimiento::where('transferencia', $mov1->transferencia+1)->first();
+
+                    if($mov2){
+                        $ingreso=Ingreso::where('id', $mov2->transferencia+1)->first();
+                    }else{
+                        $ingreso=Ingreso::where('id', $mov1->id_modulo)->first();
+                    }
+
                     if ($ingreso) {
                         IngresosCategoria::where('ingreso', $ingreso->id)->delete();
                         $ingreso->delete();
