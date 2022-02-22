@@ -157,7 +157,7 @@
 				[2, "DESC"],[0, "DESC"]
 			],
 			"pageLength": 25,
-			ajax: '{{url("/facturas")}}',
+			ajax: '{{url("/facturas-electronicas")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},

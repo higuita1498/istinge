@@ -335,6 +335,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('tirilla/{id}/{name}', 'FacturasController@imprimirTirilla')->name('facturas.tirilla');
 
 		Route::get('/{id}/xml','FacturasController@xml')->name('facturas.xml');
+		Route::post('/facturas-electronicas','FacturasController@facturas_electronica');
 		//Route::get('pdfele/{id}/{name}', 'FacturasController@ImprimirElec')->name('facturas.imprimir');
 
 

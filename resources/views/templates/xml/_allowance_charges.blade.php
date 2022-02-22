@@ -1,6 +1,6 @@
 @if(isset($discountxproduct))
-        <cac:AllowanceCharge>
-        <cbc:ID>1</cbc:ID>
+    <cac:AllowanceCharge>
+        <cbc:ID>{{($key + 1)}}</cbc:ID>
         <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
         <cbc:AllowanceChargeReasonCode>2</cbc:AllowanceChargeReasonCode>
         <cbc:AllowanceChargeReason>Descuento a producto por buen cliente</cbc:AllowanceChargeReason>

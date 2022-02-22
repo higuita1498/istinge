@@ -14,8 +14,8 @@
                 </cac:AlternativeConditionPrice>
             </cac:PricingReference>
         @endif--}}
-        {{-- AllowanceCharges line  --}}@if($item->desc > 0) @include('templates.xml._allowance_charges', ['discountxproduct' => true]) @endif
         {{-- TaxTotals line --}}@include('templates.xml._tax_totals', ['impuestoItem' => true])
+         {{-- AllowanceCharges line  --}}@if($item->desc > 0) @include('templates.xml._allowance_charges', ['discountxproduct' => true]) @endif
         <cac:Item>
             <cbc:Description>{{$item->producto()}}</cbc:Description>
             <cac:StandardItemIdentification>

@@ -1,7 +1,10 @@
 <cac:{{$node}}>
     <cbc:LineExtensionAmount currencyID="COP">{{number_format($FacturaVenta->total()->subtotal - $FacturaVenta->total()->descuento, 2, '.', '')}}</cbc:LineExtensionAmount>
-    <cbc:TaxExclusiveAmount currencyID="COP">{{number_format($FacturaVenta->total()->subtotal - $FacturaVenta->total()->descuento, 2, '.', '')}}</cbc:TaxExclusiveAmount>
-
+    @if(isset($nc))
+        <cbc:TaxExclusiveAmount currencyID="COP">{{number_format($FacturaVenta->total()->subtotal - $FacturaVenta->total()->descuento, 2, '.', '')}}</cbc:TaxExclusiveAmount>
+    @else
+        <cbc:TaxExclusiveAmount currencyID="COP">{{number_format($FacturaVenta->total()->TaxExclusiveAmount, 2, '.', '')}}</cbc:TaxExclusiveAmount>
+    @endif
     <cbc:TaxInclusiveAmount currencyID="COP">{{number_format($FacturaVenta->total()->subtotal + $FacturaVenta->impuestos_totales() - $FacturaVenta->total()->descuento, 2, '.', '')}}</cbc:TaxInclusiveAmount>
 
     @if($FacturaVenta->total()->descuento > 0) 

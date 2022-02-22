@@ -1,8 +1,9 @@
 @foreach ($items as $key => $item)
     <cac:InvoiceLine>
         <cbc:ID>{{($key + 1)}}</cbc:ID>
-        @if($item->descripcion != null)
-        <cbc:Note>@if($FacturaVenta->tipo_operacion == 2){{"Contrato de servicios AIU por concepto de: "}}@endif {{$item->descripcion}}</cbc:Note>@endif
+        @if($item->descripcion != null || $item->productoIva() == 1)
+        <cbc:Note>@if($item->productoIva() == 1){{'Bienes Cubiertos'}} @else @if($FacturaVenta->tipo_operacion == 2){{"Contrato de servicios AIU por concepto de: "}}@endif {{$item->descripcion}} @endif</cbc:Note>
+        @endif
 
         <cbc:InvoicedQuantity unitCode="94">{{number_format($item->cant, 2, '.', '')}}</cbc:InvoicedQuantity>
         <cbc:LineExtensionAmount currencyID="COP">{{number_format($item->total(), 2, '.', '')}}</cbc:LineExtensionAmount>

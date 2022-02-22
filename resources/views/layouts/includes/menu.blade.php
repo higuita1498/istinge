@@ -150,11 +150,6 @@
                             <a class="nav-link" href="{{route('descuentos.index')}}" >Descuentos</a>
                         </li>
                     <?php } ?>
-                    <?php if(isset($_SESSION['permisos']['40'])){ ?>
-                        <li class="nav-item" id="venta">
-                            <a class="nav-link" href="{{route('facturas.index-electronica')}}" >Facturación Electrónica</a>
-                        </li>
-                    <?php } ?>
                     <?php if(isset($_SESSION['permisos']['45'])){ ?>
                         <li class="nav-item" id="ingresos">
                             <a class="nav-link" href="{{route('ingresos.index')}}" >Pagos / Ingresos</a>

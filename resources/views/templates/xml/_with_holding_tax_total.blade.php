@@ -21,7 +21,7 @@ if ($retencion->retencion()->tipo == 1) {
 	}
 }
 //-- Si existe una retencion en la fuente (tipo = 2) debo de obtener el total del subtotal asociado a esa retefuente para el xml --//
-else if($retencion->retencion()->tipo == 2)
+else if($retencion->retencion()->tipo == 2 || $retencion->retencion()->tipo == 3)
 {
 	if ($FacturaVenta->total()->descuento > 0) {
 		echo number_format($FacturaVenta->total()->subtotal - $FacturaVenta->total()->descuento, 2, '.','');
