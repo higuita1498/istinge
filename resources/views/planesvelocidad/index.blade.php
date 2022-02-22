@@ -47,7 +47,7 @@
 			</thead>
 			<tbody>
 				@foreach($planes as $plan)
-					<tr @if($plan->id==Session::get('mikrotik_id')) class="active" @endif>
+					<tr @if($plan->id==Session::get('plan_id')) class="active" @endif>
 						<td><a href="{{route('planes-velocidad.show',$plan->id)}}">{{$plan->name}}</a></td>
 						<td class="text-center">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($plan->price)}}</td>
 						<td class="text-center">{{$plan->download}}</td>
@@ -72,6 +72,7 @@
 						    <button title="Aplicar Reglas" class="btn btn-outline-dark btn-icons" type="submit" onclick="confirmar('regla-{{$plan->id}}', '¿Está seguro que desea aplicar las reglas de este plan a la Mikrotik?', '');"><i class="fas fa-plus"></i></button>
 						    @endif
 						    <button @if($plan->status == 1) class="btn btn-outline-danger btn-icons" title="Deshabilitar" @else class="btn btn-outline-success btn-icons" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$plan->id}}', '¿Está seguro que desea @if($plan->status == 1) deshabilitar @else habilitar @endif el plan?', '');"><i class="fas fa-power-off"></i></button>
+						    <a href="{{route('planes-velocidad.aplicar-cambios',$plan->id)}}" class="btn btn-outline-success btn-icons" title="Aplicar Cambios"><i class="fas fa-check"></i></a>
 						    @if($plan->uso()==0)
 						    <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-plan{{$plan->id}}', '¿Está seguro que desea eliminar el Plan?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
 						   @endif

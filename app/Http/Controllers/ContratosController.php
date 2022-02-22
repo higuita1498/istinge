@@ -145,6 +145,8 @@ class ContratosController extends Controller
         }elseif ($nodo[0] == 'm') {
             $contratos->where('contracts.server_configuration_id', $nodo[1]);
             $contratos->where('contracts.ip_autorizada', 0);
+        }elseif ($nodo[0] == 'p') {
+            $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
         return datatables()->eloquent($contratos)

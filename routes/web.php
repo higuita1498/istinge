@@ -775,6 +775,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::group(['prefix' => 'planes-velocidad'], function (){
 	        Route::get('/plan-velocidad/{id}/status', 'PlanesVelocidadController@status')->name('planes-velocidad.status');
 	        Route::get('/plan-velocidad/{id}/reglas', 'PlanesVelocidadController@reglas')->name('planes-velocidad.reglas');
+	        Route::get('{id}/aplicar-cambios', 'PlanesVelocidadController@aplicar_cambios')->name('planes-velocidad.aplicar-cambios');
+	        Route::get('{id}/aplicando-cambios', 'PlanesVelocidadController@aplicando_cambios')->name('planes-velocidad.aplicando-cambios');
 	    });
 	    
 	    Route::resource('planes-velocidad', 'PlanesVelocidadController');

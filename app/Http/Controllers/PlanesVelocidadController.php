@@ -22,6 +22,7 @@ use App\PlanesVelocidad;
 
 use App\Impuesto;  
 use App\Model\Inventario\Inventario; 
+use App\Contrato;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 include_once(app_path() .'/../public/api_mt_include2.php');
@@ -126,7 +127,6 @@ class PlanesVelocidadController extends Controller
                 'mikrotik' => 'required|max:200',
             ]);
             
-            
             $plan->mikrotik = $request->mikrotik;
             $plan->name = $request->name;
             $plan->price = $request->price;
@@ -153,8 +153,8 @@ class PlanesVelocidadController extends Controller
             $inventario->precio   = $this->precision($request->price);
             $inventario->save();
             
-            $mensaje='Se ha modificado satisfactoriamente el Plan';
-            return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);
+            $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
+            return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
       }
       return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
@@ -288,6 +288,60 @@ class PlanesVelocidadController extends Controller
                 $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
                 $type = 'danger';
             }
+            return redirect('empresa/planes-velocidad')->with($type, $mensaje);
+        }
+        return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function aplicar_cambios($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $plan = PlanesVelocidad::find($id);
+        if ($plan) {
+            $contratos = Contrato::where('plan_id', $plan->id)->where('status', 1)->get();
+            view()->share(['title' => "Contratos con Plan", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
+            return view('planesvelocidad.aplicar_cambios')->with(compact('contratos', 'plan'));
+        }
+        return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function aplicando_cambios($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $plan = PlanesVelocidad::find($id);
+        if ($plan) {
+            $contratos = Contrato::where('plan_id', $plan->id)->where('status', 1)->get();
+            $mikrotik = Mikrotik::find($plan->mikrotik);
+
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+            $API->debug = true;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                foreach($contratos as $contrato){
+                    $name = $API->comm("/queue/simple/getall", array(
+                        "?name" => $contrato->servicio,
+                        )
+                    );
+
+                    if($name){
+                        $API->comm("/queue/simple/set", array(
+                            ".id"       => $name[0][".id"],
+                            "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                            "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
+                            "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                            "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                            )
+                        );
+                    }
+                    $API->disconnect();
+                }
+                $mensaje='Cambios aplicados satisfactoriamente en la Mikrotik '.$mikrotik->nombre;
+                $type = 'success';
+            } else {
+                $mensaje='Cambios no aplicados en la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
+                $type = 'danger';
+            }
+            $mensaje='Cambios no aplicados en la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
+            $type = 'danger';
             return redirect('empresa/planes-velocidad')->with($type, $mensaje);
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
