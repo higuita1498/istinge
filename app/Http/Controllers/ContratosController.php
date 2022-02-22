@@ -231,6 +231,12 @@ class ContratosController extends Controller
             /*'costo_instalacion' => 'required',
             'caja' => 'required'*/
         ]);
+
+        if($request->interfaz == 3){
+            $request->validate([
+                'mac_address' => 'required'
+            ]);
+        }
         
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
@@ -314,7 +320,7 @@ class ContratosController extends Controller
                     );
 
                     $name = $API->comm("/queue/simple/getall", array(
-                        "?address" => $request->ip,
+                        "?comment" => $this->normaliza($cliente->nombre)
                         )
                     );
 

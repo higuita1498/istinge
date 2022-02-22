@@ -14,7 +14,7 @@
 			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
-			}, 10000);
+			}, 100000);
 		</script>
 	@endif
 	
