@@ -111,7 +111,7 @@
             <div class="col-md-4 form-group d-none" id="div_mac">
                 <label class="control-label">Dirección MAC de Conexión</label>
                 <div class="input-group">
-                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address">
+                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" required>
                     <span class="help-block error">
                         <strong>{{ $errors->first('mac_address') }}</strong>
                     </span>

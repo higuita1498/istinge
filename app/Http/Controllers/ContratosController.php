@@ -312,6 +312,15 @@ class ContratosController extends Controller
                         "mac-address" => $request->mac_address                // DIRECCION MAC
                         )
                     );
+
+                    $name = $API->comm("/queue/simple/getall", array(
+                        "?address" => $request->ip,
+                        )
+                    );
+
+                    if($name){
+                        $registro = true;
+                    }
                     
                     $API->comm("/queue/simple/add", array(
                         "name"        => $this->normaliza($cliente->nombre), // NOMBRE CLIENTE
@@ -321,15 +330,6 @@ class ContratosController extends Controller
                         )
                     );
 
-                    $name = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $this->normaliza($cliente->nombre),
-                        )
-                    );
-
-                    if($name){
-                        $registro = true;
-                    }
-                    
                     if($request->ip_new){
                         $API->comm("/ip/arp/add", array(
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,                            // NOMBRE MAS ID DEL CONTRATO
