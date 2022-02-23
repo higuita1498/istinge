@@ -80,35 +80,65 @@
 	            <div class="row">
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit subida</label>
-        	            <input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{$plan->burst_limit_subida}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{$plan->burst_limit_subida}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_limit_subida') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit bajada</label>
-        	            <input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{$plan->burst_limit_bajada}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{$plan->burst_limit_bajada}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_limit_bajada') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold subida</label>
-        	            <input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{$plan->burst_threshold_subida}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{$plan->burst_threshold_subida}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_threshold_subida') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold bajada</label>
-        	            <input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{$plan->burst_threshold_bajada}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{$plan->burst_threshold_bajada}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_threshold_bajada') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time subida</label>
-        	            <input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{$plan->burst_time_subida}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{$plan->burst_time_subida}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_time_subida') }}</strong>
         	            </span>
@@ -116,6 +146,8 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time bajada</label>
         	            <input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{$plan->burst_time_bajada}}" maxlength="200" min="0">
+        	            </div>
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_time_bajada') }}</strong>
         	            </span>
@@ -123,6 +155,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Queue Type de subida</label>
         	            <input type="number" class="form-control"  id="queue_type_subida" name="queue_type_subida"  value="{{$plan->queue_type_subida}}" maxlength="200" min="0">
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('queue_type_subida') }}</strong>
         	            </span>
@@ -130,6 +163,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Queue Type de bajada</label>
         	            <input type="number" class="form-control"  id="queue_type_bajada" name="queue_type_bajada"  value="{{$plan->queue_type_bajada}}" maxlength="200" min="0">
+
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('queue_type_bajada') }}</strong>
         	            </span>

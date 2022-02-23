@@ -329,8 +329,8 @@ class PlanesVelocidadController extends Controller
                 if($name){
                     $API->comm("/queue/simple/set", array(
                         ".id"             => $name[0][".id"],
-                        "max-limit"       => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
-                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "max-limit"       => $plan->upload.'/'.$plan->download,
+                        "priority"        => $priority,
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold
                         )

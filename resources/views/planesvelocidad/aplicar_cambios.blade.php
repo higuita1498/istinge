@@ -5,8 +5,8 @@
     	@csrf
     </form>
 
-    <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar"><i class="fas fa-times"></i></i> Cancelar</a>
-    <a href="javascript:aplicar_cambios()" class="btn btn-success btn-sm" title="Aplicar Cambios"><i class="fas fa-check"></i></i> Aplicar Cambios</a>
+    <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-times"></i> Cancelar</a>
+    <a href="javascript:aplicar_cambios()" class="btn btn-success btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
 @endsection
 
 @section('style')
@@ -156,6 +156,8 @@
 				showConfirmButton: false
 			});
 			cargando(false);
+			$("#btn_cambios").addClass('d-none');
+			$("#btn_salir").text('Volver al listado');
 		}
 	}
 </script>
