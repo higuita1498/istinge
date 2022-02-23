@@ -1619,6 +1619,10 @@ public function edit($id){
           <a href="'.route('facturas.edit',$factura->nro).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>';
         }
 
+        if($factura->estatus==1 && $factura->promesa_pago==null){
+            $boton .= '<a href="javascript:modificarPromesa('.$factura->nro.')" class="btn btn-outline-danger btn-icons promesa ml-1" idfactura="'.$factura->nro.'" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>';
+        }
+
         $boton.=' <form action="'.route('factura.anular',$factura->nro).'" method="POST" class="delete_form" style="display: none;" id="anular-factura'.$factura->id.'">'.csrf_field().'</form>';
           if($factura->estatus==1){
             $boton .= '<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar('."'anular-factura".$factura->id."', '¿Está seguro de que desea anular la factura de venta?', ' ');".'"><i class="fas fa-minus"></i></button> ';
