@@ -115,13 +115,13 @@
 				var contador_t = $("#contador_t").val($('#tabla-contratos').DataTable().data().count());
 
 				$('#tabla-contratos tbody tr td.sorting_1 a strong').each(function() {
+					var nro = $(this).text();
+
 					if (window.location.pathname.split("/")[1] === "software") {
 						var url='/software/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
 					}else{
 						var url = '/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
 					}
-
-					var nro = $(this).text();
 
 					$.ajax({
 	                    url: url,
