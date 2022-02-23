@@ -6,7 +6,7 @@
     </form>
 
     <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar"><i class="fas fa-times"></i></i> Cancelar</a>
-    <button class="btn btn-success btn-sm disabled" disabled type="button" title="Aplicar Cambios" onclick="confirmar('aplicar_cambios-{{$plan->id}}', '¿Está seguro que desea aplicar los cambios a los contratos en la Mikrotik?', '');"><i class="fas fa-check"></i> Aplicar Cambios</button>
+    <a href="javascript:aplicar_cambios()" class="btn btn-success btn-sm" title="Aplicar Cambios"><i class="fas fa-check"></i></i> Aplicar Cambios</a>
 @endsection
 
 @section('style')
@@ -57,6 +57,10 @@
     		</table>
     	</div>
     </div>
+
+    <input type="hidden" value="0" id="contador_s">
+    <input type="hidden" value="0" id="contador_f">
+    <input type="hidden" value="0" id="contador_t">
 @endsection
 
 @section('scripts')
@@ -64,7 +68,6 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-
 		$('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: false,
@@ -94,6 +97,60 @@
 
 	function getDataTable() {
 		tabla.DataTable().ajax.reload();
+	}
+
+	function aplicar_cambios() {
+		swal({
+			title: '¿Desea aplicar los cambios a todos los contratos en la mikrotik que poseen este plan?',
+			text: 'ESTE PROCESO PUEDE DEMORAR UNOS MINUTOS',
+			type: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#00ce68',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Aceptar',
+			cancelButtonText: 'Cancelar',
+		}).then((result) => {
+			if (result.value) {
+				cargando(true);
+				var contador_t = $("#contador_t").val($('#tabla-contratos').DataTable().data().count());
+
+				$('#tabla-contratos tbody tr td.sorting_1 a strong').each(function() {
+					var nro = $(this).text();
+
+					$.ajax({
+	                    url: '/empresa/planes-velocidad/'+nro+'/aplicando-cambios',
+	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+	                    method: 'get',
+	                    success: function(data){
+	                        if(data.success){
+	                        	var opt = parseInt($("#contador_s").val())+parseInt(1);
+	                        	$("#contador_s").val(opt);
+	                        }else{
+	                        	var opt = parseInt($("#contador_f").val())+parseInt(1);
+	                        	$("#contador_f").val(opt);
+	                        }
+	                        verificar();
+	                    },
+	                    error: function(data){
+
+	                    }
+	                });
+				});
+			}
+		})
+	}
+
+	function verificar() {
+		var total = parseInt($("#contador_s").val()) + parseInt($("#contador_f").val());
+		var opt   = parseInt($("#contador_t").val());
+		if(total == opt){
+			Swal.fire({
+				type: 'success',
+				title: 'PROCESO DE ACTUALIZACIÓN FINALIZADO',
+				showConfirmButton: false
+			});
+			cargando(false);
+		}
 	}
 </script>
 @endsection

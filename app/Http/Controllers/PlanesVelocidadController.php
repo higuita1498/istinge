@@ -304,46 +304,47 @@ class PlanesVelocidadController extends Controller
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function aplicando_cambios($id){
+    public function aplicando_cambios($nro){
         $this->getAllPermissions(Auth::user()->id);
-        $plan = PlanesVelocidad::find($id);
+
+        $contrato = Contrato::where('nro', $nro)->where('status', 1)->first();
+        $plan = PlanesVelocidad::find($contrato->plan_id);
         if ($plan) {
-            $contratos = Contrato::where('plan_id', $plan->id)->where('status', 1)->get();
             $mikrotik = Mikrotik::find($plan->mikrotik);
 
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            $API->debug = true;
+            //$API->debug = true;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                foreach($contratos as $contrato){
-                    $name = $API->comm("/queue/simple/getall", array(
-                        "?name" => $contrato->servicio,
+                $name = $API->comm("/queue/simple/getall", array(
+                    "?name" => $contrato->servicio,
+                    )
+                );
+
+                if($name){
+                    $API->comm("/queue/simple/set", array(
+                        ".id"       => $name[0][".id"],
+                        "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                        "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
+                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
+                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
                         )
                     );
-
-                    if($name){
-                        $API->comm("/queue/simple/set", array(
-                            ".id"       => $name[0][".id"],
-                            "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
-                            "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
-                            "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                            "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
-                            )
-                        );
-                    }
-                    $API->disconnect();
                 }
-                $mensaje='Cambios aplicados satisfactoriamente en la Mikrotik '.$mikrotik->nombre;
-                $type = 'success';
+
+                $API->disconnect();
+
+                return response()->json([
+                    'success'  => true,
+                    'servicio' => $contrato->servicio,
+                ]);
             } else {
-                $mensaje='Cambios no aplicados en la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-                $type = 'danger';
+                return response()->json([
+                    'success'  => false,
+                    'servicio' => $contrato->servicio,
+                ]);
             }
-            $mensaje='Cambios no aplicados en la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-            $type = 'danger';
-            return redirect('empresa/planes-velocidad')->with($type, $mensaje);
         }
-        return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
 }
