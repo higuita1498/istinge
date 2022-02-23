@@ -34,7 +34,7 @@ class MikrotikController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik', 'title' => 'Gestión de Mikrotik', 'icon' =>'fas fa-server']);
+        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik', 'title' => 'Mikrotik', 'icon' =>'fas fa-server']);
     }
     
     public function index(){

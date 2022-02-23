@@ -36,7 +36,7 @@ class PlanesVelocidadController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Gestión de Planes de Velocidad', 'icon' =>'fas fa-server']);
+        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Planes de Velocidad', 'icon' =>'fas fa-server']);
     }
     
     public function index(){
