@@ -276,6 +276,10 @@ class ContratosController extends Controller
                     $prefijo = '';
                 }
 
+                $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+                $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+
                 /*PPPOE*/
                 if($request->conexion == 1){
                     $API->comm("/ppp/secret/add", array(
@@ -290,12 +294,12 @@ class ContratosController extends Controller
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "target"      => $request->ip,                                            // IP
-                        "name"        => $plan->name,                                             // NOMBRE PLAN
-                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "target"          => $request->ip,                        // IP
+                        "name"            => $plan->name,                         // NOMBRE PLAN
+                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
                     
@@ -324,8 +328,8 @@ class ContratosController extends Controller
                         )
                     );
 
-                    $name = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $this->normaliza($cliente->nombre)
+                    $name = $API->comm("/ip/arp/getall", array(
+                        "?address" => $request->ip
                         )
                     );
 
@@ -334,13 +338,13 @@ class ContratosController extends Controller
                     }
                     
                     $API->comm("/queue/simple/add", array(
-                        "name"        => $this->normaliza($cliente->nombre),                      // NOMBRE CLIENTE
-                        "target"      => $request->ip,                                            // IP DEL CLIENTE
-                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
-                        "comment"     => $this->normaliza($cliente->nombre),                       // NRO DEL CONTRATO
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        "target"          => $request->ip,                        // IP DEL CLIENTE
+                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
 
@@ -358,9 +362,9 @@ class ContratosController extends Controller
                             "target"      => $request->ip_new,                                     // IP DEL CLIENTE
                             "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
-                            "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                            "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                            "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                            "priority"        => $priority,                           // PRIORIDAD PLAN
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
                             )
                         );
                     }
@@ -385,9 +389,9 @@ class ContratosController extends Controller
                         "target"      => $request->ip,                          //IP
                         "name"        => $plan->name,                           // NOMBRE PLAN
                         "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
                     
