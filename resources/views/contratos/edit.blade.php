@@ -304,7 +304,7 @@
             $('#mac_address').mask('AA:AA:AA:AA:AA:AA', {
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
-            getInterfaces($("#server_configuration_id")val());
+            getInterfaces($("#server_configuration_id").val());
         });
     </script>
 @endsection
