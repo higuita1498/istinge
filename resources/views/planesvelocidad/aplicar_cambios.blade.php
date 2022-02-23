@@ -115,10 +115,16 @@
 				var contador_t = $("#contador_t").val($('#tabla-contratos').DataTable().data().count());
 
 				$('#tabla-contratos tbody tr td.sorting_1 a strong').each(function() {
+					if (window.location.pathname.split("/")[1] === "software") {
+						var url='/software/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
+					}else{
+						var url = '/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
+					}
+
 					var nro = $(this).text();
 
 					$.ajax({
-	                    url: '/empresa/planes-velocidad/'+nro+'/aplicando-cambios',
+	                    url: url,
 	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 	                    method: 'get',
 	                    success: function(data){
