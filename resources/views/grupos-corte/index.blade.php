@@ -73,6 +73,8 @@
 				<tr>
 				    <th>Nro</th>
 				    <th>Nombre</th>
+				    <th>Fecha Factura</th>
+				    <th>Fecha Pago</th>
 				    <th>Fecha Corte</th>
 				    <th>Fecha Suspensión</th>
 					<th>Estado</th>
@@ -108,6 +110,8 @@
 			columns: [
 			    {data: 'id'},
 			    {data: 'nombre'},
+			    {data: 'fecha_factura'},
+			    {data: 'fecha_pago'},
 			    {data: 'fecha_corte'},
 			    {data: 'fecha_suspension'},
 				{data: 'status'},

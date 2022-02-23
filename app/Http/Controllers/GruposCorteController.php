@@ -41,6 +41,16 @@ class GruposCorteController extends Controller
                         $query->orWhere('nombre', 'like', "%{$request->nombre}%");
                     });
                     break;
+                case !empty($request->fecha_factura):
+                    $grupos->where(function ($query) use ($request) {
+                        $query->orWhere('fecha_factura', 'like', "%{$request->fecha_factura}%");
+                    });
+                    break;
+                case !empty($request->fecha_pago):
+                    $grupos->where(function ($query) use ($request) {
+                        $query->orWhere('fecha_pago', 'like', "%{$request->fecha_pago}%");
+                    });
+                    break;
                 case !empty($request->fecha_corte):
                     $grupos->where(function ($query) use ($request) {
                         $query->orWhere('fecha_corte', 'like', "%{$request->fecha_corte}%");
@@ -68,6 +78,12 @@ class GruposCorteController extends Controller
             ->editColumn('nombre', function (GrupoCorte $grupo) {
                 return "<a href=" . route('grupos-corte.show', $grupo->id) . ">{$grupo->nombre}</div></a>";
             })
+            ->editColumn('fecha_factura', function (GrupoCorte $grupo) {
+                return $grupo->fecha_factura;
+            })
+            ->editColumn('fecha_pago', function (GrupoCorte $grupo) {
+                return $grupo->fecha_pago;
+            })
             ->editColumn('fecha_corte', function (GrupoCorte $grupo) {
                 return $grupo->fecha_corte;
             })
@@ -92,11 +108,15 @@ class GruposCorteController extends Controller
         $request->validate([
             'nombre' => 'required|max:250',
             'fecha_corte' => 'required|numeric',
-            'fecha_suspension' => 'required|numeric'
+            'fecha_suspension' => 'required|numeric',
+            'fecha_factura' => 'required|numeric',
+            'fecha_pago' => 'required|numeric',
         ]);
         
         $grupo = new GrupoCorte;
         $grupo->nombre = $request->nombre;
+        $grupo->fecha_factura = $request->fecha_factura;
+        $grupo->fecha_pago = $request->fecha_pago;
         $grupo->fecha_corte = $request->fecha_corte;
         $grupo->fecha_suspension = $request->fecha_suspension;
         $grupo->status = $request->status;
@@ -134,13 +154,17 @@ class GruposCorteController extends Controller
         $request->validate([
             'nombre' => 'required|max:250',
             'fecha_corte' => 'required|numeric',
-            'fecha_suspension' => 'required|numeric'
+            'fecha_suspension' => 'required|numeric',
+            'fecha_factura' => 'required|numeric',
+            'fecha_pago' => 'required|numeric',
         ]);
         
         $grupo = GrupoCorte::find($id);
         
         if ($grupo) {
             $grupo->nombre = $request->nombre;
+            $grupo->fecha_factura = $request->fecha_factura;
+            $grupo->fecha_pago = $request->fecha_pago;
             $grupo->fecha_corte = $request->fecha_corte;
             $grupo->fecha_suspension = $request->fecha_suspension;
             $grupo->status = $request->status;

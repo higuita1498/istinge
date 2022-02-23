@@ -22,6 +22,8 @@
                     <tbody>
                         <tr class="text-center">
                             <th class="bg-th text-center">Nombre</th>
+                            <th class="bg-th text-center">Fecha factura</th>
+                            <th class="bg-th text-center">Fecha pago</th>
                             <th class="bg-th text-center">Fecha Corte</th>
                             <th class="bg-th text-center">Fecha Suspensión</th>
                             <th class="bg-th text-center">Estado</th>
@@ -29,6 +31,8 @@
                         </tr>
                         <tr>
                             <td class="text-center">{{$grupo->nombre}}</td>
+                            <td class="text-center">{{$grupo->fecha_factura}}</td>
+                            <td class="text-center">{{$grupo->fecha_pago}}</td>
                             <td class="text-center">{{$grupo->fecha_corte}}</td>
                             <td class="text-center">{{$grupo->fecha_suspension}}</td>
                             <td class="text-center"><span class="text-{{$grupo->status('true')}}"><b>{{$grupo->status()}}</b></span></td>
