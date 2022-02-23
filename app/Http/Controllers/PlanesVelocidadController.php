@@ -315,6 +315,10 @@ class PlanesVelocidadController extends Controller
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             //$API->debug = true;
+            //
+            $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+            $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+            $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $name = $API->comm("/queue/simple/getall", array(
@@ -324,11 +328,11 @@ class PlanesVelocidadController extends Controller
 
                 if($name){
                     $API->comm("/queue/simple/set", array(
-                        ".id"       => $name[0][".id"],
-                        "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        ".id"             => $name[0][".id"],
+                        "max-limit"       => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
                 }
