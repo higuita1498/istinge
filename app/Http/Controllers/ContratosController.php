@@ -791,10 +791,12 @@ class ContratosController extends Controller
                             )
                         );
                         // REMOVEMOS LA COLA SIMPLE
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $id_simple[0][".id"],
-                            )
-                        );
+                        if($id_simple){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
+                                )
+                            );
+                        }
                     }
                     
                     if($contrato->ip_new){
@@ -815,10 +817,12 @@ class ContratosController extends Controller
                                 )
                             );
                             // REMOVEMOS LA COLA SIMPLE
-                            $API->comm("/queue/simple/remove", array(
-                                ".id" => $id_simple[0][".id"],
-                                )
-                            );
+                            if($id_simple){
+                                $API->comm("/queue/simple/remove", array(
+                                    ".id" => $id_simple[0][".id"],
+                                    )
+                                );
+                            }
                         }
                     }
                 }
