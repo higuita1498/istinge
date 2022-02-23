@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('boton')
     @if(isset($_SESSION['permisos']['435']))
-        <a href="{{route('planes-velocidad.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
+        <a href="{{route('planes-velocidad.create')}}" class="btn btn-outline-info btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
     @endif
     @if(isset($_SESSION['permisos']['432']))
     <a href="{{route('mikrotik.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Mikrotik</a>
