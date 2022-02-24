@@ -99,11 +99,17 @@ class Contrato extends Model
     }
     
     public function nodo(){
-        return Nodo::find($this->nodo);
+        if($this->nodo){
+            return Nodo::find($this->nodo);
+        }
+        return '- - -';
     }
     
     public function ap(){
-        return AP::find($this->ap);
+        if($this->ap){
+            return AP::find($this->ap);
+        }
+        return '- - -';
     }
     
     public function marca_antena(){
@@ -132,5 +138,4 @@ class Contrato extends Model
         }
         return $this->state == 'enabled' ? 'Conectado' : 'Desconectado';
     }
-    
 }

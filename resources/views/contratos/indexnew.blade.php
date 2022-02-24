@@ -106,6 +106,42 @@
     						@endforeach
     					</select>
     				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Conexión" class="form-control selectpicker" id="conexion_s">
+    						<option value="1">PPPOE</option>
+    						<option value="2">DHCP</option>
+    						<option value="3">IP Estática</option>
+    						<option value="4">VLAN</option>
+    					</select>
+    				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s">
+    						@foreach ($servidores as $servidor)
+    						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
+    				{{-- <div class="col-md-3 pl-1 pt-1">
+    					<select title="Interfaz" class="form-control selectpicker" id="interfaz_s">
+    						@foreach ($interfaces as $interfaz)
+    						<option value="{{ $interfaz->id }}">{{ $interfaz->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div> --}}
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
+    						@foreach ($nodos as $nodo)
+    						<option value="{{ $nodo->id }}">{{ $nodo->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Access Point" class="form-control selectpicker" id="ap_s">
+    						@foreach ($aps as $ap)
+    						<option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -185,6 +221,11 @@
 			data.grupo_corte = $('#grupo_cort').val();
 			data.ip = $('#ip').val();
 			data.mac = $('#mac').val();
+            data.conexion = $("#conexion_s").val();
+            data.server_configuration_id = $("#server_configuration_id_s").val();
+            data.interfaz = $("#interfaz_s").val();
+            data.nodo = $("#nodo_s").val();
+            data.ap = $("#ap_s").val();
             data.filtro = true;
         });
         
@@ -222,6 +263,12 @@
 		$('#state').val('').selectpicker('refresh');
 		$('#ip').val('');
 		$('#mac').val('');
+        $("#conexion_s").val('').selectpicker('refresh');
+        $("#server_configuration_id_s").val('').selectpicker('refresh');
+        $("#interfaz_s").val('').selectpicker('refresh');
+        $("#nodo_s").val('').selectpicker('refresh');
+        $("#ap_s").val('').selectpicker('refresh');
+
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

@@ -68,7 +68,9 @@ class ContratosController extends Controller
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $nodos = Nodo::where('status',1)->get();
+        $aps = AP::where('status',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function disabled(Request $request){
@@ -80,7 +82,9 @@ class ContratosController extends Controller
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $nodos = Nodo::where('status',1)->get();
+        $aps = AP::where('status',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function enabled(Request $request){
@@ -92,7 +96,9 @@ class ContratosController extends Controller
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
         $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $nodos = Nodo::where('status',1)->get();
+        $aps = AP::where('status',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function contratos(Request $request, $nodo){
@@ -130,6 +136,26 @@ class ContratosController extends Controller
             if($request->state){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.state', $request->state);
+                });
+            }
+            if($request->conexion){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.conexion', $request->conexion);
+                });
+            }
+            if($request->server_configuration_id){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.server_configuration_id', $request->server_configuration_id);
+                });
+            }
+            if($request->nodo){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.nodo', $request->nodo);
+                });
+            }
+            if($request->ap){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.ap', $request->ap);
                 });
             }
         }
@@ -182,7 +208,7 @@ class ContratosController extends Controller
                 return $contrato->ip;
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {
-			    return $contrato->grupo_corte('true');
+                return $contrato->grupo_corte('true');
             })
             ->editColumn('state', function (Contrato $contrato) {
                 return '<span class="text-'.$contrato->status('true').' font-weight-bold">'.$contrato->status().'</span>';
@@ -192,6 +218,21 @@ class ContratosController extends Controller
             })
             ->editColumn('servicio', function (Contrato $contrato) {
                 return '- - - -';
+            })
+            ->editColumn('conexion', function (Contrato $contrato) {
+                return $contrato->conexion();
+            })
+            ->editColumn('server_configuration_id', function (Contrato $contrato) {
+                return $contrato->servidor()->nombre;
+            })
+            ->editColumn('interfaz', function (Contrato $contrato) {
+                return $contrato->interfaz;
+            })
+            ->editColumn('nodo', function (Contrato $contrato) {
+                return ($contrato->nodo)?$contrato->nodo()->nombre:$contrato->nodo();
+            })
+            ->editColumn('ap', function (Contrato $contrato) {
+                return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'acciones'])
