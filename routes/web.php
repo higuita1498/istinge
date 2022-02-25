@@ -61,7 +61,7 @@ Route::get('logs/{contrato}', 'ContratosController@logs');
 Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
-Route::get('radicados', 'RadicadosController@radicados');
+Route::get('radicados/{tipo}', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');

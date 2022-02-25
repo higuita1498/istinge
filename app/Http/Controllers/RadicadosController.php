@@ -55,7 +55,7 @@ class RadicadosController extends Controller{
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
     }
 
-    public function radicados(Request $request){
+    public function radicados(Request $request, $estado){
         $modoLectura = auth()->user()->modo_lectura();
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
@@ -110,19 +110,15 @@ class RadicadosController extends Controller{
             $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
         }
 
-        /*if($tipo == 0){
-            $radicados->where(function ($query) use ($tipo) {
+        if($estado == 0){
+            $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
-        }elseif($tipo == 1){
-            $radicados->where(function ($query) use ($tipo) {
+        }elseif($estado == 1){
+            $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [1,3]);
             });
-        }elseif($tipo == 'all'){
-            $radicados->where(function ($query) {
-                $query->whereIn('radicados.estatus', [0,1,2,3]);
-            });
-        }*/
+        }
 
         return datatables()->eloquent($radicados)
         ->editColumn('codigo', function (Radicado $radicado) {

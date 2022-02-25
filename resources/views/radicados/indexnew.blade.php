@@ -1,5 +1,68 @@
 @extends('layouts.app')
 
+@section('style')
+<style>
+    .stopwatch .controls {
+        font-size: 12px;
+    }
+    .stopwatch .controls button{
+        padding: 5px 15px;
+        background :#EEE;
+        border: 3px solid #06C;
+        border-radius: 5px
+    }
+    .stopwatch .time {
+        font-size: 2em;
+    }
+    .bg-th {
+        background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        color: #fff!important;
+    }
+    .table .thead-dark th {
+        color: #fff;
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    }
+    .btn-dark {
+	    background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+	    border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+	}
+	.btn-dark:hover, .btn-dark:active {
+	    background-color: #113951;
+	    border-color: #113951;
+	}
+    .nav-tabs .nav-link {
+        font-size: 1em;
+    }
+    .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        color: #fff!important;
+    }
+    .table .thead-light th {
+        color: #fff!important;
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    }
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        color: #fff!important;
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    }
+    .nav-pills .nav-link {
+        font-weight: 700!important;
+    }
+    .nav-pills .nav-link{
+        color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        background-color: #f9f9f9!important;
+        margin: 2px;
+        border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        transition: 0.4s;
+    }
+    .nav-pills .nav-link:hover {
+        color: #fff!important;
+        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    }
+</style>
+@endsection
 
 @section('boton')
     @if(Auth::user()->modo_lectura())
@@ -19,8 +82,6 @@
 	    @if(isset($_SESSION['permisos']['201']))
 	        <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
 	    @endif
-
-        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
 @endsection
 
@@ -37,106 +98,179 @@
         </script>
     @endif
 
-    @if(Session::has('message_denied'))
-	    <div class="alert alert-danger" role="alert">
-	    	{{Session::get('message_denied')}}
-	    	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
-	    	    @if(count(Session::get('errorReason')) > 1)
-	    	        @php $cont = 0 @endphp
-	    	        @foreach(Session::get('errorReason') as $error)
-	    	            @php $cont = $cont + 1; @endphp
-	    	            {{$cont}} - {{$error}} <br>
-	    	        @endforeach
-	    	    @endif
-	    	@endif
-	    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-	    		<span aria-hidden="true">&times;</span>
-	    	</button>
-	    </div>
-	@endif
 
-	@if(Session::has('message_success'))
-	    <div class="alert alert-success" role="alert">
-	    	{{Session::get('message_success')}}
-	    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-	    		<span aria-hidden="true">&times;</span>
-	    	</button>
-	    </div>
-	@endif
+    @if(Session::has('danger'))
+        <div class="alert alert-danger">
+        	{{Session::get('danger')}}
+        </div>
+        <script type="text/javascript">
+        	setTimeout(function() {
+        		$('.alert').hide();
+        		$('.active_table').attr('class', ' ');
+        	}, 5000);
+        </script>
+    @endif
 
-	<div class="container-fluid d-none" id="form-filter">
-		<div class="card shadow-sm border-0">
-			<div class="card-body py-0">
-				<div class="row">
-					<div class="col-md-1 pl-1 pt-1">
-						<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Fecha" id="fecha" name="fecha" class="form-control rounded creacion" autocomplete="off">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Contrato" id="contrato" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
-							@foreach ($clientes as $cliente)
-								<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Celular" id="telefono" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Servicio" class="form-control rounded selectpicker" id="servicio" data-size="5" data-live-search="true">
-							@foreach ($servicios as $servicio)
-								<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Estado" class="form-control rounded selectpicker" id="estatus">
-							<option value="A">Pendiente</option>
-							<option value="1">Solventado</option>
-							<option value="2">Escalado / Pendiente</option>
-							<option value="3">Escalado / Solventado</option>
-						</select>
+    <div class="row card-description">
+    	<div class="col-md-12">
+    		<ul class="nav nav-pills" id="myTab" role="tablist">
+    			<li class="nav-item">
+    				<a class="nav-link active" id="sin_gestionar-tab" data-toggle="tab" href="#sin_gestionar" role="tab" aria-controls="sin_gestionar" aria-selected="true">PENDIENTES</a>
+    			</li>
+    			<li class="nav-item">
+    				<a class="nav-link" id="gestionados-tab" data-toggle="tab" href="#gestionados" role="tab" aria-controls="gestionados" aria-selected="false">SOLVENTADOS</a>
+    			</li>
+    		</ul>
+    		<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
+    		<div class="tab-content fact-table" id="myTabContent">
+    			<div class="tab-pane fade show active" id="sin_gestionar" role="tabpanel" aria-labelledby="sin_gestionar-tab">
+    			    <div class="text-right">
+    			        <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
+    			        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+    			    </div>
+
+    			    <div class="container-fluid d-none" id="form-filter">
+						<div class="card shadow-sm border-0">
+							<div class="card-body py-0">
+								<div class="row">
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Fecha" id="fecha" name="fecha" class="form-control rounded creacion" autocomplete="off">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Contrato" id="contrato" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+											@foreach ($clientes as $cliente)
+												<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+											@endforeach
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Celular" id="telefono" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Servicio" class="form-control rounded selectpicker" id="servicio" data-size="5" data-live-search="true">
+											@foreach ($servicios as $servicio)
+												<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
+											@endforeach
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Estado" class="form-control rounded selectpicker" id="estatus">
+											<option value="A">Pendiente</option>
+											<option value="2">Escalado / Pendiente</option>
+										</select>
+									</div>
+
+									<div class="col-md-2 pl-1 pt-1">
+										<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+										<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 
-					<div class="col-md-1 pl-1 pt-1">
-						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+    				<div class="table-responsive mt-3">
+    				    <table class="table table-striped table-hover w-100" id="table_sin_gestionar">
+    				        <thead class="thead-dark">
+								<tr>
+									<th>Nro Radicado</th>
+									<th>Fecha</th>
+									<th>Contrato</th>
+									<th>Cliente</th>
+									<th>Nro Celular</th>
+									<th>Servicio</th>
+									<th>Estado</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+    				    </table>
+				    </div>
+    			</div>
+    			<div class="tab-pane fade" id="gestionados" role="tabpanel" aria-labelledby="gestionados-tab">
+    			    <div class="text-right">
+    			        <a href="javascript:getDataTableG()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
+    			        <a href="javascript:abrirFiltradorG()" class="btn btn-info btn-sm my-1" id="boton-filtrarG"><i class="fas fa-search"></i>Filtrar</a>
+    			    </div>
+
+    			    <div class="container-fluid d-none" id="form-filterG">
+						<div class="card shadow-sm border-0">
+							<div class="card-body py-0">
+								<div class="row">
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Nro" id="codigoG" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Fecha" id="fechaG" name="fecha" class="form-control rounded creacion" autocomplete="off">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Contrato" id="contratoG" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Cliente" class="form-control rounded selectpicker" id="clienteG" data-size="5" data-live-search="true">
+											@foreach ($clientes as $cliente)
+												<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+											@endforeach
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" placeholder="Celular" id="telefonoG" class="form-control rounded">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Servicio" class="form-control rounded selectpicker" id="servicioG" data-size="5" data-live-search="true">
+											@foreach ($servicios as $servicio)
+												<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
+											@endforeach
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Estado" class="form-control rounded selectpicker" id="estatusG">
+											<option value="1">Solventado</option>
+											<option value="3">Escalado / Solventado</option>
+										</select>
+									</div>
+
+									<div class="col-md-2 pl-1 pt-1">
+										<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+										<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
+
+    				<div class="table-responsive mt-3">
+    				    <table class="table table-striped table-hover w-100" id="table_sin_gestionarG">
+    				        <thead class="thead-dark">
+								<tr>
+									<th>Nro Radicado</th>
+									<th>Fecha</th>
+									<th>Contrato</th>
+									<th>Cliente</th>
+									<th>Nro Celular</th>
+									<th>Servicio</th>
+									<th>Estado</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+    				    </table>
+				    </div>
+    			</div>
 			</div>
-		</div>
-	</div>
-
-	<div class="row card-description">
-		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-radicados">
-				<thead class="thead-dark">
-					<tr>
-						<th>Nro Radicado</th>
-						<th>Fecha</th>
-						<th>Contrato</th>
-						<th>Cliente</th>
-						<th>Nro Celular</th>
-						<th>Servicio</th>
-						<th>Estado</th>
-						<th>Acciones</th>
-					</tr>
-				</thead>
-			</table>
-		</div>
-	</div>
+    	</div>
+    </div>
 @endsection
 
 @section('scripts')
 <script>
 	var tabla = null;
 	window.addEventListener('load', function() {
-		$('#tabla-radicados').DataTable({
+		$('#table_sin_gestionar').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -148,7 +282,7 @@
 				[1, "desc"]
 			],
 			"pageLength": 25,
-			ajax: '{{url("/radicados")}}',
+			ajax: '{{url("/radicados/0")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
@@ -165,7 +299,7 @@
 			]
 		});
 
-		tabla = $('#tabla-radicados');
+		tabla = $('#table_sin_gestionar');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
 			data.codigo    = $('#codigo').val();
@@ -187,6 +321,69 @@
 		$('#form-filter').on('keypress', function(e) {
 			if (e.which == 13) {
 				getDataTable();
+				return false;
+			}
+		});
+
+		$('.fecha').datepicker({
+			locale: 'es-es',
+      		uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd' ,
+		});
+
+		///////////////////////////////////////////
+
+		$('#table_sin_gestionarG').DataTable({
+			responsive: true,
+			serverSide: true,
+			processing: true,
+			searching: false,
+			language: {
+				'url': '/vendors/DataTables/es.json'
+			},
+			order: [
+				[1, "desc"]
+			],
+			"pageLength": 25,
+			ajax: '{{url("/radicados/1")}}',
+			headers: {
+				'X-CSRF-TOKEN': '{{csrf_token()}}'
+			},
+			columns: [
+				{data: 'codigo'},
+				{data: 'fecha'},
+				{data: 'contrato'},
+				{data: 'cliente'},
+				{data: 'telefono'},
+				{data: 'servicio'},
+				//{data: 'direccion'},
+				{data: 'estatus'},
+				{data: 'acciones'}
+			]
+		});
+
+		tablaG = $('#table_sin_gestionarG');
+
+		tablaG.on('preXhr.dt', function(e, settings, data) {
+			data.codigo    = $('#codigoG').val();
+			data.fecha     = $('#fechaG').val();
+			data.contrato  = $('#contratoG').val();
+			data.cliente   = $('#clienteG').val();
+			data.telefono  = $('#telefonoG').val();
+			data.servicio  = $('#servicioG').val();
+			data.direccion = $('#direccionG').val();
+			data.estatus   = $('#estatusG').val();
+			data.filtro    = true;
+		});
+
+		$('#filtrarG').on('click', function(e) {
+			getDataTableG();
+			return false;
+		});
+
+		$('#form-filterG').on('keypress', function(e) {
+			if (e.which == 13) {
+				getDataTableG();
 				return false;
 			}
 		});
@@ -224,6 +421,36 @@
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
+	}
+
+	///////////////////////
+
+	function getDataTableG() {
+		tablaG.DataTable().ajax.reload();
+	}
+
+	function abrirFiltradorG() {
+		if ($('#form-filterG').hasClass('d-none')) {
+			$('#boton-filtrarG').html('<i class="fas fa-times"></i> Cerrar');
+			$('#form-filterG').removeClass('d-none');
+		} else {
+			$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
+			cerrarFiltradorG();
+		}
+	}
+
+	function cerrarFiltradorG() {
+		$('#codigoG').val('');
+		$('#fechaG').val('');
+		$('#contratoG').val('');
+		$('#clienteG').val('').selectpicker('refresh');
+		$('#telefonoG').val('');
+		$('#servicioG').val('').selectpicker('refresh');
+		$('#direccionG').val('');
+		$('#estatusG').val('').selectpicker('refresh');
+		$('#form-filterG').addClass('d-none');
+		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
+		getDataTableG();
 	}
 </script>
 @endsection
