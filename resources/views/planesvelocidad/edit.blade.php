@@ -146,7 +146,6 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time bajada</label>
         	            <input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{$plan->burst_time_bajada}}" maxlength="200" min="0">
-        	            </div>
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_time_bajada') }}</strong>
