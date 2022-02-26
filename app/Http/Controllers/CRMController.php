@@ -250,7 +250,7 @@ class CRMController extends Controller
             ->editColumn('estatus', function (CRM $crm) {
                 return "<center><span class='text-{$crm->factura('true')}'><strong>{$crm->factura()}</strong></span></center>";
             })
-            ->addColumn('acciones', $modoLectura ?  "" : "crm.acciones-cartera")
+            ->addColumn('acciones', $modoLectura ?  "" : "crm.acciones-informe")
             ->rawColumns(['acciones', 'nombre', 'nit', 'celular', 'estado', 'created_by', 'updated_at', 'estatus'])
             ->toJson();
     }
