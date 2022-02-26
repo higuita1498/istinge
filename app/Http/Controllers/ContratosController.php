@@ -61,7 +61,7 @@ class ContratosController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
+        $clientes = Contacto::where('status',1)->whereIn('tipo_contacto', [0,2])->get();
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
@@ -75,7 +75,7 @@ class ContratosController extends Controller
 
     public function disabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
+        $clientes = Contacto::where('status',1)->whereIn('tipo_contacto', [0,2])->get();
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
@@ -89,7 +89,7 @@ class ContratosController extends Controller
 
     public function enabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
+        $clientes = Contacto::where('status',1)->whereIn('tipo_contacto', [0,2])->get();
         $planes = PlanesVelocidad::where('status', 1)->get();
         $servidores = Mikrotik::where('status',1)->get();
         $grupos = GrupoCorte::where('status',1)->get();
