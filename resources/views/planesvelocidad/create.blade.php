@@ -137,7 +137,12 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time subida</label>
-        	            <input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{old('burst_time_subida')}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{old('burst_time_subida')}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Seg</div>
+        	            	</div>
+        	            </div>
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_time_subida') }}</strong>
@@ -145,7 +150,12 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time bajada</label>
-        	            <input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{old('burst_time_bajada')}}" maxlength="200" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{old('burst_time_bajada')}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Seg</div>
+        	            	</div>
+        	            </div>
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_time_bajada') }}</strong>
@@ -153,7 +163,7 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Queue Type de subida</label>
-        	            <input type="number" class="form-control"  id="queue_type_subida" name="queue_type_subida"  value="{{old('queue_type_subida')}}" maxlength="200" min="0">
+        	            <input type="text" class="form-control"  id="queue_type_subida" name="queue_type_subida"  value="{{old('queue_type_subida')}}" maxlength="200">
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('queue_type_subida') }}</strong>
@@ -161,7 +171,7 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Queue Type de bajada</label>
-        	            <input type="number" class="form-control"  id="queue_type_bajada" name="queue_type_bajada"  value="{{old('queue_type_bajada')}}" maxlength="200" min="0">
+        	            <input type="text" class="form-control"  id="queue_type_bajada" name="queue_type_bajada"  value="{{old('queue_type_bajada')}}" maxlength="200">
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('queue_type_bajada') }}</strong>
@@ -169,7 +179,7 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Parent</label>
-        	            <input type="number" class="form-control"  id="parenta" name="parenta"  value="{{old('parenta')}}" maxlength="200" min="0">
+        	            <input type="text" class="form-control"  id="parenta" name="parenta"  value="{{old('parenta')}}" maxlength="200">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('parenta') }}</strong>
         	            </span>
