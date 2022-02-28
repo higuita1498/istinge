@@ -533,6 +533,13 @@ class CRMController extends Controller
     public function status($id){
         $crm = CRM::find($id);
         if($crm){
+            $cliente = Contacto::find($crm->cliente);
+            $contrato = Contrato::where('client_id', $cliente->UID)->where('status', 1)->first();
+
+            if($contrato){
+                $contrato->status = 0;
+                $contrato->save();
+            }
             $crm->estado = 5;
             $crm->save();
             
