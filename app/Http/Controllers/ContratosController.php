@@ -104,7 +104,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -263,8 +263,11 @@ class ContratosController extends Controller
             ->editColumn('email', function (Contrato $contrato) {
                 return $contrato->c_email;
             })
+            ->editColumn('factura', function (Contrato $contrato) {
+                return $contrato->factura();
+            })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'acciones'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'acciones'])
             ->toJson();
     }
     

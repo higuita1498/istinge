@@ -8,6 +8,7 @@ use DB;
 use App\Mikrotik;
 use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresosFactura;
+use App\Model\Ingresos\Factura;
 use App\Nodo;
 use App\AP;
 use App\GrupoCorte;
@@ -137,5 +138,13 @@ class Contrato extends Model
             return $this->state == 'enabled' ? 'primary' : 'danger';
         }
         return $this->state == 'enabled' ? 'Conectado' : 'Desconectado';
+    }
+
+    public function factura(){
+        $factura = Factura::where('cliente', $this->c_id)->get()->last();
+        if($factura){
+            return "<a href=".route('facturas.show', $factura->nro)." target='_blank'>$factura->codigo</a>";
+        }
+        return '- - - -';
     }
 }
