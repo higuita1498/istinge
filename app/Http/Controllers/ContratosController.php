@@ -104,7 +104,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -156,6 +156,26 @@ class ContratosController extends Controller
             if($request->ap){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.ap', $request->ap);
+                });
+            }
+            if($request->c_direccion){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
+                });
+            }
+            if($request->c_barrio){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.barrio', 'like', "%{$request->c_barrio}%");
+                });
+            }
+            if($request->c_celular){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.celular', 'like', "%{$request->c_celular}%");
+                });
+            }
+            if($request->c_email){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.email', 'like', "%{$request->c_email}%");
                 });
             }
         }
@@ -233,6 +253,15 @@ class ContratosController extends Controller
             })
             ->editColumn('ap', function (Contrato $contrato) {
                 return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
+            })
+            ->editColumn('direccion', function (Contrato $contrato) {
+                return $contrato->c_direccion;
+            })
+            ->editColumn('celular', function (Contrato $contrato) {
+                return $contrato->c_celular;
+            })
+            ->editColumn('email', function (Contrato $contrato) {
+                return $contrato->c_email;
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'acciones'])

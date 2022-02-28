@@ -262,7 +262,7 @@ class CRMController extends Controller
             'tiempo' => 'required'
         ]);
         
-        $crm = CRM::where('cliente', $request->idcliente)->whereIn('estado', [0,2,3,4,5,6])->get()->last();
+        $crm = CRM::where('cliente', $request->idcliente)/*->whereIn('estado', [0,2,3,4,5,6])*/->get()->last();
         if($crm){
             if($request->llamada == 0){
                 $estado = 3;
