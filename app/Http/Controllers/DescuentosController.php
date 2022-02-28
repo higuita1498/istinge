@@ -31,7 +31,7 @@ class DescuentosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $clientes = Contacto::where('tipo_contacto', 0)->get();
         $usuarios = User::where('user_status', 1)->get();
-        $tabla = Campos::where('modulo', 9)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 9)->where('estado', 1)->orderBy('orden', 'asc')->get();
 
         return view('descuentos.index')->with(compact('clientes', 'usuarios', 'tabla'));
     }

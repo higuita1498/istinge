@@ -31,10 +31,12 @@ class CamposController extends Controller{
     }
 
     public function organizar_store(Request $request){
+        DB::table('campos')->where('modulo', $request->id)->update(['estado' => 0]);
         foreach ($request->table as $key => $value) {
             $campo = Campos::where('id', $value)->first();
             if ($campo) {
                 $campo->orden  = ($key+1);
+                $campo->estado = 1;
                 $campo->save();
             }
         }

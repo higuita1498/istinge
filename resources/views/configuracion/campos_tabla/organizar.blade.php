@@ -15,8 +15,8 @@
     @endif
 
     <div class="row card-description">
-        <div class="col-sm-6 offset-sm-3">
-            <h4>Tabla</h4>
+        <div class="col-sm-6">
+            <h4>Campos Visibles</h4>
             <form method="POST" action="{{ route('campos.organizar_store') }}" role="form" class="forms-sample" id="organizar_table">
                 {{ csrf_field() }}
                 <input type="hidden" value="{{ $id }}" name="id">
@@ -33,6 +33,19 @@
                 </ul>
 
             </form>
+        </div>
+        <div class="col-sm-6">
+            <h4>Campos No Visibles</h4>
+            <ul class="list-group list-group-sortable-connected">
+                @foreach($campos as $campo)
+                    <li class="list-group-item list-group-item-success">{{$campo->nombre}}
+                        <input type="hidden" name="table[]" value="{{$campo->id}}">
+                    </li>
+                @endforeach
+                <ul style="padding: 0; margin: 0;"  class="list-group-flush option-disabled">
+                    <li class="list-group-item disabled text-danger">Los campos que mueva a ésta lista no serán visibles</li>
+                </ul>
+            </ul>
         </div>
         <div class="col-sm-12" style="text-align: right;">
             <hr>

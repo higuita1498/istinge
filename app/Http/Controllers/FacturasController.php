@@ -261,7 +261,7 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
         $tipo = false;
-        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 4)->where('estado', 1)->orderBy('orden', 'asc')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
@@ -274,7 +274,7 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
-        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 4)->where('estado', 1)->orderBy('orden', 'asc')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }

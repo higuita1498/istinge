@@ -67,7 +67,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->get();
         $aps = AP::where('status',1)->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
@@ -81,7 +81,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->get();
         $aps = AP::where('status',1)->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
@@ -95,7 +95,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status',1)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->get();
         $aps = AP::where('status',1)->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
