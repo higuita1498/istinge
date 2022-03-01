@@ -5,8 +5,8 @@
     	@csrf
     </form>
 
-    <a href="{{ route('mikrotik.index')}}"  class="btn btn-danger btn-sm" title="Regresar"><i class="fas fa-step-backward"></i></i> Regresar</a>
     <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync-alt"></i> Actualizar</a>
+    <a href="{{ route('mikrotik.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-step-backward"></i></i> Regresar</a>
     <a href="javascript:aplicar_cambios()" class="btn btn-warning btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
 @endsection
 
@@ -145,6 +145,7 @@
 			cargando(false);
 			$("#btn_cambios").addClass('d-none');
 			$("#btn_salir").text('Volver al listado');
+			tabla.DataTable().ajax.reload();
 		}
 	}
 </script>

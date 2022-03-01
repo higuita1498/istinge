@@ -322,7 +322,7 @@ class PlanesVelocidadController extends Controller
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $name = $API->comm("/queue/simple/getall", array(
-                    "?name" => $contrato->servicio,
+                    "?target" => $contrato->ip,
                     )
                 );
 
