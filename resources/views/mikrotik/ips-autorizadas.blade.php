@@ -7,7 +7,7 @@
 
     <a href="{{ route('mikrotik.index')}}"  class="btn btn-danger btn-sm" title="Regresar"><i class="fas fa-step-backward"></i></i> Regresar</a>
     <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync-alt"></i> Actualizar</a>
-    <button class="btn btn-warning btn-sm" type="button" title="IP's Autorizadas" onclick="confirmar('ip-autorizadas-{{$mikrotik->id}}', '¿Está seguro que desea aplicar la regla?', 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que esten registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio');"><i class="fas fa-project-diagram"></i> Aplicar Regla</button>
+    <a href="javascript:aplicar_cambios()" class="btn btn-warning btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
 @endsection
 
 @section('style')
@@ -45,6 +45,10 @@
     		</table>
     	</div>
     </div>
+
+    <input type="hidden" value="0" id="contador_s">
+    <input type="hidden" value="0" id="contador_f">
+    <input type="hidden" value="0" id="contador_t">
 @endsection
 
 @section('scripts')
@@ -81,6 +85,67 @@
 
 	function getDataTable() {
 		tabla.DataTable().ajax.reload();
+	}
+	function aplicar_cambios() {
+		swal({
+			title: '¿Está seguro que desea aplicar la regla?',
+			text: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que esten registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio',
+			type: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#00ce68',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Aceptar',
+			cancelButtonText: 'Cancelar',
+		}).then((result) => {
+			if (result.value) {
+				cargando(true);
+				var contador_t = $("#contador_t").val($('#tabla-ips').DataTable().data().count());
+
+				$('#tabla-ips tbody tr td.sorting_1 a strong').each(function() {
+					var nro = $(this).text();
+
+					if (window.location.pathname.split("/")[1] === "software") {
+						var url='/software/empresa/mikrotik/'+nro+'/autorizar-ips';
+					}else{
+						var url = '/empresa/mikrotik/'+nro+'/autorizar-ips';
+					}
+
+					$.ajax({
+	                    url: url,
+	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+	                    method: 'get',
+	                    success: function(data){
+	                        if(data.success){
+	                        	var opt = parseInt($("#contador_s").val())+parseInt(1);
+	                        	$("#contador_s").val(opt);
+	                        }else{
+	                        	var opt = parseInt($("#contador_f").val())+parseInt(1);
+	                        	$("#contador_f").val(opt);
+	                        }
+	                        verificar();
+	                    },
+	                    error: function(data){
+
+	                    }
+	                });
+				});
+			}
+		})
+	}
+
+	function verificar() {
+		var total = parseInt($("#contador_s").val()) + parseInt($("#contador_f").val());
+		var opt   = parseInt($("#contador_t").val());
+		if(total == opt){
+			Swal.fire({
+				type: 'success',
+				title: 'PROCESO DE ACTUALIZACIÓN FINALIZADO',
+				showConfirmButton: false
+			});
+			cargando(false);
+			$("#btn_cambios").addClass('d-none');
+			$("#btn_salir").text('Volver al listado');
+		}
 	}
 </script>
 @endsection

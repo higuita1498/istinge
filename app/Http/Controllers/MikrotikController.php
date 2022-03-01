@@ -445,34 +445,33 @@ class MikrotikController extends Controller
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function autorizar_ips($id){
+    public function autorizar_ips($nro){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
-        if ($mikrotik) {
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('status', 1)->get();
+        $contrato = Contrato::where('nro', $nro)->where('status', 1)->first();
 
-            /*$API = new RouterosAPI();
+        if ($contrato) {
+            $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+
+            $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            $API->debug = true;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                foreach($contratos as $contrato){
-                    $API->comm("/ip/firewall\n=address\n=add\n=list=ips_autorizadas\n=address=".$contrato->ip);
-                    $API->disconnect();
+                $API->comm("/ip/firewall\n=address\n=add\n=list=ips_autorizadas\n=address=".$contrato->ip);
+                $API->disconnect();
 
-                    $contrato->ip_autorizada = 1;
-                    $contrato->save();
-                }
-                $mensaje='Reglas aplicadas satisfactoriamente a la Mikrotik '.$mikrotik->nombre;
-                $type = 'success';
+                $contrato->ip_autorizada = 1;
+                $contrato->save();
+
+                return response()->json([
+                    'success'  => true,
+                    'servicio' => $contrato->servicio,
+                ]);
             } else {
-                $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-                $type = 'danger';
-            }*/
-            $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-            $type = 'danger';
-            return redirect('empresa/mikrotik')->with($type, $mensaje);
+                return response()->json([
+                    'success'  => false,
+                    'servicio' => $contrato->servicio,
+                ]);
+            }
         }
-        return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
 }
