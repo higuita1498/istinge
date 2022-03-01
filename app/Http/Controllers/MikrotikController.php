@@ -456,16 +456,26 @@ class MikrotikController extends Controller
             $API->port = $mikrotik->puerto_api;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                $API->comm("/ip/firewall\n=address\n=add\n=list=ips_autorizadas\n=address=".$contrato->ip);
-                $API->disconnect();
+                $existe = $API->comm("/ip/firewall/address-list/getall", array(
+                    "?address" => $contrato->ip
+                    )
+                );
 
-                $contrato->ip_autorizada = 1;
-                $contrato->save();
-
-                return response()->json([
-                    'success'  => true,
-                    'servicio' => $contrato->servicio,
-                ]);
+                if($existe){
+                    return response()->json([
+                        'success'  => true,
+                        'servicio' => $contrato->servicio,
+                    ]);
+                }else{
+                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$contrato->ip);
+                    $API->disconnect();
+                    $contrato->ip_autorizada = 1;
+                    $contrato->save();
+                    return response()->json([
+                        'success'  => true,
+                        'servicio' => $contrato->servicio,
+                    ]);
+                }
             } else {
                 return response()->json([
                     'success'  => false,
