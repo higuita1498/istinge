@@ -32,7 +32,8 @@ class NodosController extends Controller
 
     public function nodos(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
-        $nodos = Nodo::query();
+        $nodos = Nodo::query()
+            ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {
@@ -80,7 +81,7 @@ class NodosController extends Controller
     
     public function store(Request $request){
         $nro = 0;
-        $nodo = Nodo::where('id', '>', 0)->orderBy('created_at', 'desc')->first();
+        $nodo = Nodo::where('id', '>', 0)->where('empresa', Auth::user()->empresa)->orderBy('created_at', 'desc')->first();
         
         if($nodo){
             $nro = $nodo->nro + 1;
@@ -92,6 +93,7 @@ class NodosController extends Controller
         $nodo->status = $request->status;
         $nodo->descripcion = $request->descripcion;
         $nodo->created_by = Auth::user()->id;
+        $nodo->empresa = Auth::user()->empresa;
         $nodo->save();
 
         $mensaje='SE HA CREADO SATISFACTORIAMENTE EL NODO';
@@ -100,7 +102,7 @@ class NodosController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $nodo = Nodo::find($id);
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
 
         if ($nodo) {
             $contratos = Contrato::where('nodo', $nodo->id)->get();
@@ -112,7 +114,7 @@ class NodosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $nodo = Nodo::find($id);
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         
         if ($nodo) {
             view()->share(['title' => 'Editar Nodo: '.$nodo->nombre]);
@@ -123,7 +125,7 @@ class NodosController extends Controller
     }
 
     public function update(Request $request, $id){
-        $nodo = Nodo::find($id);
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         
         if ($nodo) {
             $nodo->nombre = $request->nombre;
@@ -139,7 +141,7 @@ class NodosController extends Controller
     }
     
     public function destroy($id){
-        $nodo = Nodo::find($id);
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         
         if($nodo){
             $nodo->delete();
@@ -151,7 +153,7 @@ class NodosController extends Controller
     }
     
     public function act_des($id){
-        $nodo = Nodo::find($id);
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         
         if($nodo){
             if($nodo->status == 0){
