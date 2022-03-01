@@ -37,14 +37,14 @@ class AsignacionesController extends Controller
 
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
-    $contratos = Contacto::where('firma_isp','<>',null)->OrderBy('nombre')->get();
+    $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
 
     return view('asignaciones.index')->with(compact('contratos'));
   }
 
   public function create(){
     $this->getAllPermissions(Auth::user()->id);
-    $clientes = Contacto::where('firma_isp',null)->OrderBy('nombre')->get();
+    $clientes = Contacto::where('firma_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
 
     view()->share(['title' => 'Asignación de Contrato de Internet']);
     return view('asignaciones.create')->with(compact('clientes'));
@@ -64,7 +64,7 @@ class AsignacionesController extends Controller
         return back()->with('danger', $mensaje);
     }
     
-    $contrato = Contacto::where('id',$request->id)->first();
+    $contrato = Contacto::where('id',$request->id)->where('empresa', Auth::user()->empresa)->first();
     if ($contrato) {
       $contrato->firma_isp = $request->firma_isp;
       $contrato->fecha_isp = date('Y-m-d');
@@ -81,7 +81,7 @@ class AsignacionesController extends Controller
   }
 
   public function imprimir($id){
-    $contrato = Contacto::where('id',$id)->first();
+    $contrato = Contacto::where('id',$id)->where('empresa', Auth::user()->empresa)->first();
 
     if($contrato) {
       view()->share(['title' => 'Contrato de Internet']);

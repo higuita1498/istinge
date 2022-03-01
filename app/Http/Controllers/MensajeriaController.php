@@ -32,7 +32,7 @@ class MensajeriaController extends Controller
   */
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
-    $mensajes = Mensajeria::all();
+    $mensajes = Mensajeria::where('empresa', Auth::user()->empresa)->get();
 
     return view('mensajeria.index')->with(compact('mensajes'));
   }

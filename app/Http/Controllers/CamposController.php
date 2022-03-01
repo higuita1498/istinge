@@ -23,17 +23,17 @@ class CamposController extends Controller{
 
     public function organizar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', $id)->where('estado', 1)->orderBy('orden', 'asc')->get();
-        $campos = Campos::where('modulo', $id)->where('estado', 0)->get();
+        $tabla = Campos::where('modulo', $id)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $campos = Campos::where('modulo', $id)->where('estado', 0)->where('empresa', Auth::user()->empresa)->get();
 
         view()->share(['title' => 'Organizar Tabla '.$tabla[0]->modulo()]);
         return view('configuracion.campos_tabla.organizar')->with(compact('campos', 'tabla', 'id'));
     }
 
     public function organizar_store(Request $request){
-        DB::table('campos')->where('modulo', $request->id)->update(['estado' => 0]);
+        DB::table('campos')->where('modulo', $request->id)->where('empresa', Auth::user()->empresa)->update(['estado' => 0]);
         foreach ($request->table as $key => $value) {
-            $campo = Campos::where('id', $value)->first();
+            $campo = Campos::where('id', $value)->where('empresa', Auth::user()->empresa)->first();
             if ($campo) {
                 $campo->orden  = ($key+1);
                 $campo->estado = 1;

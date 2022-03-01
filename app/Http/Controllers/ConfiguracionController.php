@@ -1733,7 +1733,7 @@ class ConfiguracionController extends Controller
       view()->share(['title' => 'Gestión de Mikrotik', 'icon' => 'fas fa-server']);
       view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik']);
 
-      $mikrotiks = Mikrotik::all();
+      $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
       return view('configuracion.mikrotik.index')->with(compact('mikrotiks'));
     }
     
@@ -1764,6 +1764,7 @@ class ConfiguracionController extends Controller
         $mikrotik->clave = $request->clave;
         $mikrotik->segmento_ip = $request->segmento_ip;
         $mikrotik->created_by = Auth::user()->id;
+        $mikrotik->empresa = Auth::user()->empresa;
         $mikrotik->save();
             
         $mensaje='Se ha creado satisfactoriamente el mikrotik';
@@ -1772,7 +1773,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($mikrotik) {
             view()->share(['title' => 'Modificar Mikrotik', 'icon' => 'fas fa-server']);
@@ -1784,7 +1785,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_update(Request $request, $id){
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik']);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $request->validate([
                 'nombre' => 'required|max:200',
@@ -1813,7 +1814,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_destroy($id){
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik']);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $mikrotik->delete();
             return redirect('empresa/configuracion/mikrotik')->with('success', 'Se ha eliminado correctamente el Mikrotik');
@@ -1823,7 +1824,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['icon' => 'fas fa-server', 'title' => 'Mikrotik: '.$mikrotik->nombre]);
             view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik']);
@@ -1834,18 +1835,13 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_conectar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
             $API->port = $mikrotik->puerto_api;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                //$API->write('/ip/route/print');
-                //$API->write('/ip/address/print');
-                //$API->write("/interface/ethernet/getall", true);
-                //$API->write("/tool/user-manager/user/getall", true);
-                //$API->write("/system/identity/getall", true);
                 
                 $API->write('/system/resource/print');
                 $READ = $API->read(false);
@@ -1889,7 +1885,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_reglas($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -1917,7 +1913,7 @@ class ConfiguracionController extends Controller
     
     public function mikrotik_importar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             

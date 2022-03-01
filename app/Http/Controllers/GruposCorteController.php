@@ -32,7 +32,8 @@ class GruposCorteController extends Controller
 
     public function grupos(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
-        $grupos = GrupoCorte::query();
+        $grupos = GrupoCorte::query()
+            ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {
@@ -121,6 +122,7 @@ class GruposCorteController extends Controller
         $grupo->fecha_suspension = $request->fecha_suspension;
         $grupo->status = $request->status;
         $grupo->created_by = Auth::user()->id;
+        $grupo->empresa = Auth::user()->empresa;
         $grupo->save();
 
         $mensaje='SE HA CREADO SATISFACTORIAMENTE EL GRUPO DE CORTE';
@@ -132,7 +134,7 @@ class GruposCorteController extends Controller
         $grupo = GrupoCorte::find($id);
 
         if ($grupo) {
-            $contratos = Contrato::where('grupo_corte', $grupo->id)->count();
+            $contratos = Contrato::where('grupo_corte', $grupo->id)->where('empresa', Auth::user()->empresa)->count();
             view()->share(['title' => $grupo->nombre]);
             return view('grupos-corte.show')->with(compact('grupo', 'contratos'));
         }

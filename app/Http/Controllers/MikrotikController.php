@@ -40,7 +40,7 @@ class MikrotikController extends Controller
     public function index(){
       $this->getAllPermissions(Auth::user()->id);
 
-      $mikrotiks = Mikrotik::all();
+      $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
       return view('mikrotik.index')->with(compact('mikrotiks'));
     }
     
@@ -70,6 +70,7 @@ class MikrotikController extends Controller
         $mikrotik->clave = $request->clave;
         $mikrotik->interfaz = $request->interfaz;
         $mikrotik->created_by = Auth::user()->id;
+        $mikrotik->empresa = Auth::user()->empresa;
         $mikrotik->save();
         
         for ($i = 0; $i < count($request->segmento_ip); $i++) {
@@ -85,7 +86,7 @@ class MikrotikController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($mikrotik) {
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -95,7 +96,7 @@ class MikrotikController extends Controller
     }
     
     public function update(Request $request, $id){
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $request->validate([
                 'nombre' => 'required',
@@ -135,7 +136,7 @@ class MikrotikController extends Controller
     }
     
     public function destroy($id){
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
             foreach($segmentos as $segmento){
@@ -150,7 +151,7 @@ class MikrotikController extends Controller
     
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server']);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -161,7 +162,7 @@ class MikrotikController extends Controller
     
     public function conectar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -246,7 +247,7 @@ class MikrotikController extends Controller
     public function importar($id){
         return back()->with('danger', 'FUNCIONALIDAD EN DESARROLLO');
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -312,7 +313,7 @@ class MikrotikController extends Controller
     
     public function log($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'LOG Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server']);
             return view('mikrotik.log')->with(compact('mikrotik'));
@@ -322,7 +323,8 @@ class MikrotikController extends Controller
     
     public function logs(Request $request, $contrato){
         $modoLectura = auth()->user()->modo_lectura();
-        $contratos = MovimientoLOG::query();
+        $contratos = MovimientoLOG::query()
+            ->where('empresa', Auth::user()->empresa);
         $contratos->where('log_movimientos.contrato', $contrato);
 
         return datatables()->eloquent($contratos)
@@ -341,7 +343,7 @@ class MikrotikController extends Controller
     
     public function reiniciar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -370,7 +372,7 @@ class MikrotikController extends Controller
     
     public function grafica($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'Gráfica de Consumo', 'icon' =>'fas fa-chart-area']);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -381,7 +383,7 @@ class MikrotikController extends Controller
     
     public function graficajson($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         $API = new RouterosAPI();
         $API->port = $mikrotik->puerto_api;
@@ -436,7 +438,7 @@ class MikrotikController extends Controller
 
     public function ips_autorizadas($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
             view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
@@ -447,7 +449,7 @@ class MikrotikController extends Controller
 
     public function autorizar_ips($nro){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::where('nro', $nro)->where('status', 1)->first();
+        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
 
         if ($contrato) {
             $mikrotik = Mikrotik::find($contrato->server_configuration_id);
