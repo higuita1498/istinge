@@ -477,6 +477,14 @@ class ContratosController extends Controller
                         )
                     );
                 }
+
+                $ip_autorizada = 0;
+
+                if($mikrotik->regla_ips_autorizadas == 1){
+                    $r_ip = ($request->local_address) ? $request->ip.''.$prefijo : $request->ip;
+                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$r_ip);
+                    $ip_autorizada = 1;
+                }
                 
                 $API->disconnect();
                 
@@ -505,6 +513,7 @@ class ContratosController extends Controller
                 $contrato->modelo_antena           = $request->modelo_antena;
                 $contrato->grupo_corte             = $request->grupo_corte;
                 $contrato->facturacion             = $request->facturacion;
+                $contrato->ip_autorizada           = $ip_autorizada;
                 
                 if($request->ap){
                     $ap = AP::find($request->ap);

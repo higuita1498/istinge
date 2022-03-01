@@ -456,6 +456,14 @@ class MikrotikController extends Controller
             $API->port = $mikrotik->puerto_api;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                if($mikrotik->regla_ips_autorizadas == 0){
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept");
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop");
+
+                    $mikrotik->regla_ips_autorizadas = 1;
+                    $mikrotik->save();
+                }
+
                 $existe = $API->comm("/ip/firewall/address-list/getall", array(
                     "?address" => $contrato->ip
                     )
