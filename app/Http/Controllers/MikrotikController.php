@@ -465,6 +465,7 @@ class MikrotikController extends Controller
                     return response()->json([
                         'success'  => true,
                         'servicio' => $contrato->servicio,
+                        'repetido' => $existe,
                     ]);
                 }else{
                     $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$contrato->ip);
