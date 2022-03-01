@@ -462,6 +462,8 @@ class MikrotikController extends Controller
                 );
 
                 if($existe){
+                    $contrato->ip_autorizada = 1;
+                    $contrato->save();
                     return response()->json([
                         'success'  => true,
                         'servicio' => $contrato->servicio,
