@@ -457,8 +457,8 @@ class MikrotikController extends Controller
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 if($mikrotik->regla_ips_autorizadas == 0){
-                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept");
-                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop");
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept\n=comment=IPS-AUTORIZADAS-NETWORK");
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop\n=comment=IPS-NO-AUTORIZADAS-NETWORK");
 
                     $mikrotik->regla_ips_autorizadas = 1;
                     $mikrotik->save();
