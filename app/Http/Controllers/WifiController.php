@@ -98,7 +98,7 @@ class WifiController extends Controller
   
     public function status($id)
     {
-        $solicitud = Wifi::find($id);
+        $solicitud = Wifi::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($solicitud) {
             if ($solicitud->status == 1) {
                 $mensaje = 'Cambio de contraseña realizado';

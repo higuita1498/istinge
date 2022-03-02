@@ -274,7 +274,8 @@ class ContratosController extends Controller
     
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
-        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 ORDER BY c.nombre ASC";
+        $empresa = Auth::user()->empresa;
+        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 AND c.empresa = $empresa ORDER BY c.nombre ASC";
         $clientes = DB::select($sql);
         $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();

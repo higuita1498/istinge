@@ -33,7 +33,7 @@ class PqrsController extends Controller
     public function index(Request $request)
     {
         $this->getAllPermissions(Auth::user()->id);
-        $usuarios = User::where('user_status', 1)->get();
+        $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         return view('pqrs.index', compact('usuarios'));
     }
@@ -42,7 +42,8 @@ class PqrsController extends Controller
     {
         $modoLectura = auth()->user()->modo_lectura();
 
-        $pqrss = PQRS::query();
+        $pqrss = PQRS::query()
+            ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {
@@ -87,7 +88,7 @@ class PqrsController extends Controller
     public function show($id)
     {
         $this->getAllPermissions(Auth::user()->id);
-        $pqrs = PQRS::find($id);
+        $pqrs = PQRS::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($pqrs) {
             view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles PQRS: '.$pqrs->id]);
             return view('pqrs.show')->with(compact('pqrs'));
@@ -101,7 +102,7 @@ class PqrsController extends Controller
             'respuesta' => 'required'
         ]);
         
-        $pqrs = PQRS::find($id);
+        $pqrs = PQRS::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($pqrs) {
             $pqrs->respuesta = $request->respuesta;

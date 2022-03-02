@@ -161,7 +161,7 @@ class RadicadosController extends Controller{
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $paises  =DB::table('pais')->get();
         $departamentos = DB::table('departamentos')->get();
-        $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->();
+        $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Nuevo Caso']);
@@ -222,7 +222,7 @@ class RadicadosController extends Controller{
     }
 
     public function update(Request $request, $id){
-        $radicado =Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if ($request->reporte) {
                 $radicado->reporte = $request->reporte;

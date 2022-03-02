@@ -351,7 +351,7 @@ class CRMController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $crm = CRM::find($id);
+        $crm = CRM::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         
         if($crm){
             view()->share(['subseccion' => 'crm_cartera', 'title' => 'Detalles CRM: '.$crm->id]);
@@ -536,7 +536,7 @@ class CRMController extends Controller
     }
     
     public function status($id){
-        $crm = CRM::find($id);
+        $crm = CRM::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if($crm){
             $cliente = Contacto::find($crm->cliente);
             $contrato = Contrato::where('client_id', $cliente->id)->where('empresa', Auth::user()->empresa)->where('status', 1)->first();

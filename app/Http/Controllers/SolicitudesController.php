@@ -44,7 +44,7 @@ class SolicitudesController extends Controller
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
 
-    $solicitudes = Solicitud::all();
+    $solicitudes = Solicitud::where('empresa', Auth::user()->empresa)->get();
 
     return view('solicitudes.index')->with(compact('solicitudes'));
   }
@@ -67,7 +67,7 @@ class SolicitudesController extends Controller
 
   public function show($id){
     $this->getAllPermissions(Auth::user()->id);
-    $solicitud=Solicitud::find($id);
+    $solicitud=Solicitud::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
 
     if ($solicitud) {
       view()->share(['icon'=>'fas fa-file-invoice', 'title' => 'Detalles Solicitud: '.$solicitud->id]);
@@ -81,7 +81,7 @@ class SolicitudesController extends Controller
   }
   
   public function status($id){
-    $solicitud = Solicitud::find($id);
+    $solicitud=Solicitud::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
     if ($solicitud) {
         $solicitud->status = ($solicitud->status == 1) ? 0 : 1;
         $solicitud->save();

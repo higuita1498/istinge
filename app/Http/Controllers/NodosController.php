@@ -102,7 +102,7 @@ class NodosController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
 
         if ($nodo) {
             $contratos = Contrato::where('nodo', $nodo->id)->get();
@@ -125,7 +125,7 @@ class NodosController extends Controller
     }
 
     public function update(Request $request, $id){
-        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($nodo) {
             $nodo->nombre = $request->nombre;
@@ -141,7 +141,7 @@ class NodosController extends Controller
     }
     
     public function destroy($id){
-        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if($nodo){
             $nodo->delete();
@@ -153,7 +153,7 @@ class NodosController extends Controller
     }
     
     public function act_des($id){
-        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if($nodo){
             if($nodo->status == 0){
