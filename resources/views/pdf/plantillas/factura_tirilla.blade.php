@@ -193,10 +193,10 @@
                     <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;"><br>Software Innova App</td>
+                    <td style="text-align: center;"><br>Network Soft</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;">Integra Colombia SAS</td>
+                    <td style="text-align: center;">Network Ingeniería S.A.S</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;"><b>TIRILLA IMPRESA EL {{ date('d/m/Y') }}</b></td>
