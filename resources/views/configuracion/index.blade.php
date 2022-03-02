@@ -82,6 +82,11 @@
 			<a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
 		</div>
 		@endif
+		<div class="col-sm-3">
+			<h4 class="card-title">Gestión de Puertos</h4>
+			<p>Configura y organiza los puertos de conexión.</p>
+			<a href="{{route('puertos-conexion.index')}}">Puertos de Conexión</a><br>
+		</div>
 	</div>
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">
