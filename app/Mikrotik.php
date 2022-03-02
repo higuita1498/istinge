@@ -15,9 +15,7 @@ class Mikrotik extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'ip', 'puerto_web', 'puerto_api', 'usuario', 'clave', 'status', 'segmento_ip', 'created_by', 'updated_by', 'created_at', 'updated_at',
-        'board', 'uptime', 'cpu', 'version', 'buildtime', 'freememory', 'totalmemory', 'cpucount', 'cpufrequency', 'cpuload', 'freehddspace', 
-        'totalhddspace', 'writesectsincereboot', 'writesecttotal', 'architecturename', 'platform', 'interfaz', 'reglas'
+        'nombre', 'ip', 'puerto_web', 'puerto_api', 'usuario', 'clave', 'status', 'segmento_ip', 'created_by', 'updated_by', 'created_at', 'updated_at', 'board', 'uptime', 'cpu', 'version', 'buildtime', 'freememory', 'totalmemory', 'cpucount', 'cpufrequency', 'cpuload', 'freehddspace', 'totalhddspace', 'writesectsincereboot', 'writesecttotal', 'architecturename', 'platform', 'interfaz', 'reglas', 'interfaz_lan', 'regla_ips_autorizadas'
     ];
 
     public function updated_by(){
