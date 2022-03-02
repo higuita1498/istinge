@@ -259,7 +259,7 @@ class FacturasController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
@@ -272,7 +272,7 @@ class FacturasController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
         $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 

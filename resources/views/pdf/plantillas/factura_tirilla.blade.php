@@ -193,7 +193,7 @@
                     <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;"><br>Network Soft</td>
+                    <td style="text-align: center;"><br>NETWORK SOFT</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">Network Ingeniería S.A.S</td>
