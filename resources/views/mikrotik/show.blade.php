@@ -74,6 +74,10 @@
 						<td>{{ $mikrotik->interfaz }}</td>
 					</tr>
 					<tr>
+						<th>Interfaz LAN</th>
+						<td>{{ $mikrotik->interfaz_lan }}</td>
+					</tr>
+					<tr>
 						<th>Estado</th>
 						<td><span class="font-weight-bold text-{{$mikrotik->status('true')}}">{{ $mikrotik->status() }}</span></td>
 					</tr>

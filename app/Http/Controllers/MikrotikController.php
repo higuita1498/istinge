@@ -58,7 +58,8 @@ class MikrotikController extends Controller
             'clave' => 'required',
             'puerto_api' => 'required',
             'segmento_ip' => 'required',
-            'interfaz' => 'required'
+            'interfaz' => 'required',
+            'interfaz_lan' => 'required'
         ]);
         
         $mikrotik = new Mikrotik;
@@ -69,6 +70,7 @@ class MikrotikController extends Controller
         $mikrotik->usuario = $request->usuario;
         $mikrotik->clave = $request->clave;
         $mikrotik->interfaz = $request->interfaz;
+        $mikrotik->interfaz_lan = $request->interfaz_lan;
         $mikrotik->created_by = Auth::user()->id;
         $mikrotik->empresa = Auth::user()->empresa;
         $mikrotik->save();
@@ -104,7 +106,8 @@ class MikrotikController extends Controller
                 'usuario' => 'required',
                 'clave' => 'required',
                 'puerto_api' => 'required',
-                'interfaz' => 'required'
+                'interfaz' => 'required',
+                'interfaz_lan' => 'required'
             ]);
             
             $mikrotik->nombre = $request->nombre;
@@ -112,6 +115,7 @@ class MikrotikController extends Controller
             $mikrotik->puerto_api = $request->puerto_api;
             $mikrotik->puerto_web = $request->puerto_web;
             $mikrotik->interfaz = $request->interfaz;
+            $mikrotik->interfaz_lan = $request->interfaz_lan;
             $mikrotik->usuario = $request->usuario;
             $mikrotik->clave = $request->clave;
             $mikrotik->updated_by = Auth::user()->id;
@@ -459,6 +463,9 @@ class MikrotikController extends Controller
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 if($mikrotik->regla_ips_autorizadas == 0){
+                    $API->comm("/interface/list/add\n=name=LAN_NETWORK_SOFT");
+                    $API->comm("/interface/list/add\n=interface=$mikrotik->interfaz_lan\n=list=LAN_NETWORK_SOFT");
+
                     $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept\n=comment=IPS-AUTORIZADAS-NETWORK");
                     $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop\n=comment=IPS-NO-AUTORIZADAS-NETWORK");
 
