@@ -150,6 +150,6 @@ class Contrato extends Model
     }
 
     public function puerto_conexion(){
-        return Puerto::find($this->puerto_conexion);
+        return Puerto::find($this->puerto_conexion)->nombre;
     }
 }
