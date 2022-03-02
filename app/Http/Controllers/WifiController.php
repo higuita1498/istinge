@@ -72,6 +72,9 @@ class WifiController extends Controller
                 return "<span style='display: inline-flex;'><div id='".$solicitud->id."'>".$solicitud->pass_nueva."</div> <a href='javascript:copiarData({$solicitud->id})'> <i class='far fa-copy'></i></a></span>";
             })
             ->editColumn('ip', function (Wifi $solicitud) {
+                if(isset($solicitud->cliente()->contrato()->puerto_conexion)){
+                    return "<a href='http://".$solicitud->ip.":".$solicitud->cliente()->contrato()->puerto_conexion."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
+                }
                 return "<a href='http://".$solicitud->ip."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
             })
             ->editColumn('mac', function (Wifi $solicitud) {
