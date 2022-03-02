@@ -2542,7 +2542,7 @@ public function edit($id){
     }
     
     public function promesa_pago($id){
-        $factura = Factura::find($id);
+        $factura = Factura::where('nro', $id)->first();
         return json_encode($factura);
     }
     
@@ -2552,7 +2552,7 @@ public function edit($id){
             'promesa_pago' => 'required'
         ]);
 
-        $factura = Factura::find($request->id);
+        $factura = Factura::where('nro', $id)->first();
         
         $numero = 0;
         $numero = PromesaPago::all()->count();
