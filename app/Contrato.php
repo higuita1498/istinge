@@ -12,6 +12,7 @@ use App\Model\Ingresos\Factura;
 use App\Nodo;
 use App\AP;
 use App\GrupoCorte;
+use App\Puerto;
 
 class Contrato extends Model
 {
@@ -146,5 +147,9 @@ class Contrato extends Model
             return "<a href=".route('facturas.show', $factura->nro)." target='_blank'>$factura->codigo</a>";
         }
         return '- - - -';
+    }
+
+    public function puerto_conexion(){
+        return Puerto::find($this->puerto_conexion);
     }
 }

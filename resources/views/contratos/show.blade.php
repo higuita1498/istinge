@@ -124,7 +124,7 @@
 					@if($contrato->puerto_conexion)
 					<tr>
 						<th>Puerto de Conexión</th>
-						<td>{{ $contrato->puerto_conexion }}</td>
+						<td>{{ $contrato->puerto_conexion() }}</td>
 					</tr>
 					@endif
 					@if($contrato->ip_new)
