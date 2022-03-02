@@ -119,6 +119,7 @@ class MikrotikController extends Controller
             $mikrotik->usuario = $request->usuario;
             $mikrotik->clave = $request->clave;
             $mikrotik->updated_by = Auth::user()->id;
+            $mikrotik->status = 0;
             $mikrotik->save();
             
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -167,7 +168,7 @@ class MikrotikController extends Controller
     public function conectar($id){
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        if ($mikrotik) {
+        if ($mikrotik->status == 0) {
             $API = new RouterosAPI();
             
             $API->port = $mikrotik->puerto_api;
@@ -214,6 +215,14 @@ class MikrotikController extends Controller
                 $mensaje='Conexión a la Mikrotik '.$mikrotik->nombre.' No Realizada';
                 $type = 'danger';
             }
+            return redirect('empresa/mikrotik')->with($type, $mensaje)->with('mikrotik_id', $mikrotik->id);
+        }else{
+            $mikrotik->status = 0;
+            $mikrotik->save();
+
+            $mensaje='La Mikrotik '.$mikrotik->nombre.' ha sido desconectada';
+            $type = 'success';
+
             return redirect('empresa/mikrotik')->with($type, $mensaje)->with('mikrotik_id', $mikrotik->id);
         }
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');

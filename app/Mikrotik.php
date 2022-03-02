@@ -43,4 +43,10 @@ class Mikrotik extends Model
         }
         return $status;
     }
+
+    public function uso(){
+        $tmp        = 0;
+        $tmp        += Contrato::where('server_configuration_id', $this->id)->where('state','enabled')->where('status',1)->count();
+        return $tmp;
+    }
 }
