@@ -26,7 +26,7 @@ class WifiController extends Controller
     
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status', 1)->get();
+        $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         //return view('wifi.index')->with(compact('solicitudes'));
         return view('wifi.indexnew')->with(compact('clientes'));
@@ -35,7 +35,8 @@ class WifiController extends Controller
     public function solicitudes(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
-        $solicitudes = Wifi::query();
+        $solicitudes = Wifi::query()
+            ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {

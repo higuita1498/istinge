@@ -44,7 +44,7 @@ class CRMController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_cartera', 'title' => 'CRM: Cartera', 'invert' => true]);
         
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -55,7 +55,7 @@ class CRMController extends Controller
     public function informe(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_informe', 'title' => 'CRM: Informe', 'invert' => true]);
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();

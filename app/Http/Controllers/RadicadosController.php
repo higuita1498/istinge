@@ -31,8 +31,8 @@ class RadicadosController extends Controller{
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = Contacto::where('status', 1)->orderBy('nombre','asc')->get();
-        $servicios = Servicio::where('estatus', 1)->orderBy('nombre','asc')->get();
+        $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tipo = '';
         view()->share(['invert' => true]);
         return view('radicados.indexnew', compact('clientes','tipo','servicios'));
@@ -41,8 +41,8 @@ class RadicadosController extends Controller{
     public function indexNew(Request $request, $tipo){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = Contacto::where('status', 1)->orderBy('nombre','asc')->get();
-        $servicios = Servicio::where('estatus', 1)->orderBy('nombre','asc')->get();
+        $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         if($tipo == 'solventados'){
             $tipo = 1;
         }elseif($tipo == 'pendientes'){
@@ -59,7 +59,8 @@ class RadicadosController extends Controller{
         $modoLectura = auth()->user()->modo_lectura();
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
-            ->select('radicados.*', 's.nombre as nombre_servicio');
+            ->select('radicados.*', 's.nombre as nombre_servicio')
+            ->where('radicados.empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             if($request->codigo){
@@ -150,19 +151,9 @@ class RadicadosController extends Controller{
         ->toJson();
     }
 
-    /*public function index(){
-        $this->getAllPermissions(Auth::user()->id);
-        $con=0;
-        foreach ($_SESSION['permisos'] as $key => $value) {
-            ($key==208) ? $con++ : $con=0;
-        }
-        $radicados = (User::where('id',Auth::user()->id)->first()->rol == 43) ? Radicado::join('servicios as s', 's.id','=','radicados.servicio')->select('radicados.*', 's.nombre as nombre_servicio')->where('tecnico',Auth::user()->id)->orderby('direccion','ASC')->get() : Radicado::join('servicios as s', 's.id','=','radicados.servicio')->select('radicados.*', 's.nombre as nombre_servicio')->get();
-        return view('radicados.index')->with(compact('radicados'));
-    }*/
-
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->orderBy('nombre','asc')->get();
+        $clientes = Contacto::where('status',1)->where('empresa',Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $identificaciones = TipoIdentificacion::all();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -170,7 +161,7 @@ class RadicadosController extends Controller{
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $paises  =DB::table('pais')->get();
         $departamentos = DB::table('departamentos')->get();
-        $planes = PlanesVelocidad::all();
+        $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Nuevo Caso']);
@@ -272,7 +263,7 @@ class RadicadosController extends Controller{
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles Radicado: '.$radicado->codigo]);
             $inicio = Carbon::parse($radicado->tiempo_ini);
@@ -284,7 +275,7 @@ class RadicadosController extends Controller{
     }
 
     public function destroy($id){
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             $radicado->delete();
         }
@@ -292,7 +283,7 @@ class RadicadosController extends Controller{
     }
 
     public function escalar($id){
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if ($radicado->estatus==0) {
                 $radicado->estatus=2;
@@ -306,7 +297,7 @@ class RadicadosController extends Controller{
 
     public function solventar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if ($radicado->estatus==0) {
                 $radicado->estatus=1;
@@ -331,13 +322,13 @@ class RadicadosController extends Controller{
 
     public function firmar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Firma Radicado: '.$radicado->codigo]);
         return view('radicados.firma')->with(compact('radicado'));
     }
 
     public function storefirma(Request $request, $id){
-        $radicado =Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             $radicado->firma = $request->dataImg;
             $radicado->save();
@@ -403,7 +394,7 @@ class RadicadosController extends Controller{
     
     public function proceder($id){
         $this->getAllPermissions(Auth::user()->id);
-        $radicado=Radicado::find($id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if ($radicado->tiempo_fin) {
                 $radicado->tiempo_ini = Carbon::now()->toDateTimeString();
