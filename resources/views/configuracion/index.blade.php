@@ -57,19 +57,6 @@
 			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
 		</div>
 		@endif
-		
-		@if(isset($_SESSION['permisos']['429']) || isset($_SESSION['permisos']['433']))
-		<div class="col-sm-3">
-			<h4 class="card-title">Mikrotik</h4>
-			<p>Organice a su medida su conexión Mikrotik.</p>
-			@if(isset($_SESSION['permisos']['429']))
-			<a href="{{route('mikrotik.index')}}">Gestionar Mikrotik</a> <br>
-			@endif
-			@if(isset($_SESSION['permisos']['433']))
-			<a href="{{route('planes-velocidad.index')}}">Gestionar Planes</a> <br>
-			@endif
-		</div>
-		@endif
 
 		@if(isset($_SESSION['permisos']['737']))
 		<div class="col-sm-3">
