@@ -5,7 +5,7 @@
 	    <div class="row">
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Puerto <span class="text-danger">*</span></label>
-	            <input type="text" class="form-control"  id="nombre" name="nombre"  required="" value="{{old('nombre')}}" maxlength="200">
+	            <input type="number" class="form-control"  id="nombre" name="nombre"  required="" value="{{old('nombre')}}" maxlength="200" min="0">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('nombre') }}</strong>
 	            </span>

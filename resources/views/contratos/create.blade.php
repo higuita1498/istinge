@@ -235,18 +235,32 @@
             </div>
             
             <div class="col-md-4 form-group">
-	            <label class="control-label">Grupo de Corte <span class="text-danger">*</span></label>
-	            <div class="input-group">
-	                <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
-	                    @foreach($grupos as $grupo)
-	                        <option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
-	                    @endforeach
-	                </select>
-	            </div>
-	            <span class="help-block error">
-	                <strong>{{ $errors->first('grupo_corte') }}</strong>
-	            </span>
-	        </div>
+                <label class="control-label">Grupo de Corte <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
+                        @foreach($grupos as $grupo)
+                            <option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('grupo_corte') }}</strong>
+                </span>
+            </div>
+
+            <div class="col-md-4 form-group">
+                <label class="control-label">Puerto de Conexión</label>
+                <div class="input-group">
+                    <select class="form-control selectpicker" name="puerto_conexion" id="puerto_conexion" required="" title="Seleccione" data-live-search="true" data-size="5">
+                        @foreach($puertos as $puerto)
+                            <option value="{{$puerto->id}}">{{$puerto->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('puerto_conexion') }}</strong>
+                </span>
+            </div>
 
             <div class="col-md-4 form-group">
 	            <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>

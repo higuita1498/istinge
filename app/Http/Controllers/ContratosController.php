@@ -50,6 +50,7 @@ use App\Nodo;
 use App\GrupoCorte;
 use App\Segmento;
 use App\Campos;
+use App\Puerto;
 
 class ContratosController extends Controller
 {
@@ -288,9 +289,10 @@ class ContratosController extends Controller
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $marcas = DB::table('marcas')->get();
         $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos'));
     }
     
     public function store(Request $request){
@@ -517,6 +519,7 @@ class ContratosController extends Controller
                 $contrato->facturacion             = $request->facturacion;
                 $contrato->ip_autorizada           = $ip_autorizada;
                 $contrato->empresa                 = Auth::user()->empresa;
+                $contrato->puerto_conexion         = $request->puerto_conexion;
                 
                 if($request->ap){
                     $ap = AP::find($request->ap);
@@ -554,10 +557,11 @@ class ContratosController extends Controller
         $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $interfaces = Interfaz::all();
         $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Editar Contrato: '.$contrato->nro]);
-            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos'));
+            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos'));
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
@@ -793,6 +797,8 @@ class ContratosController extends Controller
                     $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new->nombre.'<br>';
                     $contrato->nodo = $ap_new->nodo;
                 }
+
+                $contrato->puerto_conexion = $request->puerto_conexion;
                 
                 $contrato->save();
                 
