@@ -66,6 +66,7 @@ Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
 Route::get('reporte', 'CRMController@reporte');
+Route::get('puertos', 'PuertosController@puertos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -608,6 +609,11 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/campos/{modulo}/organizar', 'CamposController@organizar')->name('campos.organizar');
 		Route::post('/campos/organizar_store', 'CamposController@organizar_store')->name('campos.organizar_store');
 		Route::resource('campos', 'CamposController');
+
+		//PUERTOS
+
+		Route::resource('puertos-conexion', 'PuertosController');
+		Route::get('puertos-conexion/{id}/act_desc', 'PuertosController@act_desc')->name('puertos-conexion.act_des');
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
