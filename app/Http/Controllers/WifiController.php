@@ -62,16 +62,17 @@ class WifiController extends Controller
                 return "{$solicitud->red_antigua}";
             })
             ->editColumn('red_nueva', function (Wifi $solicitud) {
-                return "{$solicitud->red_nueva}";
+                return "<span style='display: inline-flex;'><div id='".$solicitud->id."'>".$solicitud->red_nueva."</div> <a href='javascript:copiarData({$solicitud->id})'> <i class='far fa-copy'></i></a></span>";
             })
             ->editColumn('pass_antigua', function (Wifi $solicitud) {
                 return "{$solicitud->pass_antigua}";
             })
             ->editColumn('pass_nueva', function (Wifi $solicitud) {
-                return "{$solicitud->pass_nueva}";
+                return $solicitud->pass_nueva;
+                return "<span style='display: inline-flex;'><div id='".$solicitud->id."'>".$solicitud->pass_nueva."</div> <a href='javascript:copiarData({$solicitud->id})'> <i class='far fa-copy'></i></a></span>";
             })
             ->editColumn('ip', function (Wifi $solicitud) {
-                return "{$solicitud->ip}";
+                return "<a href='http://".$solicitud->ip."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
             })
             ->editColumn('mac', function (Wifi $solicitud) {
                 return "{$solicitud->mac}";
@@ -92,7 +93,7 @@ class WifiController extends Controller
                 return  $solicitud->status == 0 ? date('d-m-Y h:m:s', strtotime($solicitud->updated_at)) : '';
             })
             ->addColumn('acciones', $modoLectura ?  "" : "wifi.acciones-wifi")
-            ->rawColumns(['acciones', 'id_cliente', 'status', 'oculto'])
+            ->rawColumns(['acciones', 'id_cliente', 'status', 'oculto', 'ip', 'red_nueva', 'pass_nueva'])
             ->toJson();
     }
   
