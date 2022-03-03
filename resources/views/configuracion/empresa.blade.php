@@ -194,6 +194,123 @@
 			</div>
   		</div>
 
+		  <div class="card-separator">
+			<div class="row">
+				<div class="form-check form-check-flat">
+					<label class="form-check-label">
+						<input type="checkbox" class="form-check-input checks casec" name="facturacionFe" id="facturacion" value="" {{ $empresa->form_fe == 1 ? 'checked' : '' }}>Activar Facturacion Electronica
+						<i class="input-helper"></i></label>
+				</div>
+			</div>
+	
+			<div id="form-facturacion" style="{{$empresa->form_fe == 0 ? 'display: none' : '' }};">
+	
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label class="control-label">Selecciona la versión de facturación electrónica que usarás para emitir tus comprobantes a la DIAN. <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" name="optfacturacion" id="optfacturacion" required="">
+							<option value="2">Facturación con validación previa</option>
+						</select>
+						<span class="help-block error">
+							<strong>{{ $errors->first('tip_iden') }}</strong>
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="row">
+							<table id="tableRes">
+								<thead>
+									<th>
+										<label class="control-label">Agregar Responsabilidades <span class="text-danger">*</span>
+											<button type="button" id="addRes" style="font-size: 10px;" onclick="setResponsabilidad();">
+												<i class="fas fa-plus"></i> Agregar Responsabilidad</button>
+										</label>
+									</th>
+								</thead>
+								<tbody>
+									@if(count($empresa_resp) >= 1)
+									@php $cont = 0; @endphp
+									@foreach($empresa_resp as $resp)
+	
+									<tr id="{{$cont = $cont + 1}}">
+										<td>
+											<div class="form-group col-lg-12">
+	
+												<select class="form-control selectpicker" name="tip_responsabilidad[]" id="responsabilidad{{$cont}}" required="" title="Seleccione" data-size="5" data-live-search="true" onchange="noduplicar(this.value);">
+													@foreach($responsabilidades as $responsabilidad)
+													<option value="{{$responsabilidad->id}}" {{ $resp->id_responsabilidad == $responsabilidad->id ? 'selected' : '' }}>{{$responsabilidad->responsabilidad}}- ({{$responsabilidad->codigo}})</option>
+													@endforeach
+												</select>
+												<span class="help-block error">
+													<strong>{{ $errors->first('tip_responsabilidades') }}</strong>
+												</span>
+											</div>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-secondary btn-icons" onclick="eliminarTr({{$cont}});">X</button>
+										</td>
+									</tr>
+	
+									@endforeach
+									@else
+									<tr id="1">
+										<td>
+											<div class="form-group col-lg-12">
+	
+												<select class="form-control selectpicker noduplicar" name="tip_responsabilidad[]" id="responsabilidad1" required="" title="Seleccione" data-size="5" data-live-search="true" onchange="noduplicar(this.value);">
+													@foreach($responsabilidades as $responsabilidad)
+													<option value="{{$responsabilidad->id}}">{{$responsabilidad->responsabilidad}}- ({{$responsabilidad->codigo}})</option>
+													@endforeach
+												</select>
+												<span class="help-block error">
+													<strong>{{ $errors->first('tip_responsabilidades') }}</strong>
+												</span>
+											</div>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-secondary btn-icons" onclick="eliminarTr(1);">X</button>
+										</td>
+									</tr>
+									@endif
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label class="control-label" for="test_resolucion">Configura tu resolución de pruebas para habilitación <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="test_resolucion" {{ $empresa->estado_dian==0 ? '' : 'readonly'}} name="test_resolucion" required="" data-error="estructura no valida" maxlength="100" value="{{$empresa->fe_resolucion}}">
+								<div class="help-block error with-errors"></div>
+								<span class="help-block error">
+									<strong id='msj_test_r'>{{ $errors->first('test_resolucion') }}</strong>
+								</span>
+								<p>Estado de envío de set de pruebas: <span class="text-primary">{{ $empresa->estado_dian==0 ? 'No autorizado' : 'Autorizado'}}</span></p>
+							</div>
+							@if($empresa->estado_dian==1 && $empresa->technicalkey == null)
+							<div class="alert alert-success" role="alert">
+								Has sido habilitado ahora debes de ingresar la resolución de facturación electronica vease este tutorial
+								<b><a href="">Click aca</a></b>
+								<br>
+								<br>
+	
+								<a href="/empresa/configuracion/numeraciones" target="_black">Configurar resolución de facturación</a>
+							</div>
+							@elseif($empresa->estado_dian==1 && $empresa->technicalkey != null)
+							<div class="alert alert-success col-md-12" role="alert">
+								<center>
+									<h4>Activo con facturación electrónica</h4>
+									<img style="width: 130px;" class="logo_dian" src="{{asset('images/PagInicio/logo_dian.png')}}">
+								</center>
+							</div>
+							@endif
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
   		<div class="row">
   			<small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small></p>
   		</div>
@@ -209,7 +326,7 @@
 	<input type="hidden" id="getRes" value="{{json_encode($responsabilidades)}}">
 
 
-	<div class="modal fade" id="modal"  tabindex="-1" role="dialog">
+	<div class="modal fade" id="modalFact"  tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-md-12">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -260,7 +377,7 @@
                 $.post(url,{ _token : _token},function(resul){
                     if(resul['status']=='OK'){
                         //$('#cancelar').click();
-                         $('#modal').modal("show");
+                         $('#modalFact').modal("show");
                          sw = 1;
                     }
 

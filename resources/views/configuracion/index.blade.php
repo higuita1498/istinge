@@ -34,6 +34,7 @@
 			<p>Configura la información que se mostrará en tus facturas de venta.</p>
 			<a href="{{route('configuracion.terminos')}}">Términos de pago</a> <br>
 			<a href="{{route('configuracion.numeraciones')}}">Numeraciones</a><br>
+			<a href="{{route('configuracion.numeraciones_dian')}}">Numeraciones DIAN</a><br>
 			<a href="{{route('configuracion.datos')}}">Datos generales</a><br>
 			<a href="{{route('vendedores.index')}}">Vendedores</a><br>
 		</div>
@@ -55,6 +56,7 @@
 			<h4 class="card-title">Categorias</h4>
 			<p>Organice a su medida el plan único de cuentas.</p>
 			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
+			<a href="{{route('puc.index')}}">Gestionar PUC</a> <br>
 		</div>
 		@endif
 		

@@ -2,6 +2,7 @@
 @section('content')
 	<form method="POST" action="{{ route('numeraciones.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeracion" >
    {{ csrf_field() }} 
+   <input type="hidden" name="tipo" value="1">
   <div class="row">
     <div class="col-md-3 form-group">
       <label class="control-label">Nombre <span class="text-danger">*</span></label>

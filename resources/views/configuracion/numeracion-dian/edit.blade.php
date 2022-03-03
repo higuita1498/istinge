@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-	<form method="POST" action="{{ route('numeraciones.update', $numeracion->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeracion" >
+	<form method="POST" action="{{ route('numeraciones_dian.update', $numeracion->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeracion" >
    {{ csrf_field() }} 
   <input type="hidden" name="tipo" value="1">
   <div class="row">

@@ -36,6 +36,7 @@ use App\Retencion;
 use Auth; use Mail; use bcrypt; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
+use App\GrupoCorte;
 use App\Mikrotik;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -279,6 +280,9 @@ class FacturasController extends Controller{
         return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
 
+    /*
+    * Tabla principal de facturación electrónica.
+    */
     public function index_electronica(){
        $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
@@ -289,6 +293,9 @@ class FacturasController extends Controller{
         return view('facturas-electronica.index', compact('clientes'));
     }
 
+    /*
+    * Método que obtiene una colección de facturas por medio de oracle Datatable.
+    */
     public function facturas_electronica(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
@@ -352,7 +359,7 @@ class FacturasController extends Controller{
         }
 
         $facturas->where('factura.empresa', $identificadorEmpresa);
-        $facturas->where('factura.tipo', '!=', 2)->where('factura.tipo', '!=', 5)->where('factura.tipo', '!=', 6)->where('factura.lectura',1);
+        $facturas->where('factura.tipo', 2)->where('factura.lectura',1);
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
@@ -450,7 +457,8 @@ class FacturasController extends Controller{
         }
 
         $facturas->where('factura.empresa', $identificadorEmpresa);
-        $facturas->where('factura.tipo', '!=', 2)->where('factura.tipo', '!=', 5)->where('factura.tipo', '!=', 6)->where('factura.lectura',1);
+        $facturas->where('factura.tipo', '!=', 2)->where('factura.tipo', '!=', 5)->where('factura.tipo', '!=', 6)
+                 ->where('factura.lectura',1);
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
@@ -711,6 +719,22 @@ class FacturasController extends Controller{
         $numero = $num->nro + 1;
     }else{
         $numero = 1;
+    }
+
+    $tipo = 1; //1= normal, 2=Electrónica.
+
+    $electronica = Factura::booleanFacturaElectronica($request->cliente);
+    $contrato =    Contrato::where('client_id',$request->cliente)->first();
+
+    if($contrato->facturacion == 3 && !$electronica){
+        return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+    }elseif($contrato->facturacion == 3 && $electronica){
+        $tipo = 2;
+    }
+
+    //Si el tipo de documento es cuenta de cobro sigue su proceso normal.
+    if($request->documento != 3){
+        $request->documento = $tipo;
     }
 
     $factura = new Factura;
@@ -1019,6 +1043,8 @@ public function edit($id){
     if ($factura) {
         if($factura->tipo == 1){
             view()->share(['title' => 'Facturas de Venta '.$factura->codigo]);
+        }elseif($factura->tipo == 2){
+            view()->share(['title' => 'Factura Electrónica '.$factura->codigo]);
         }else{
             view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
         }
@@ -1885,14 +1911,14 @@ public function edit($id){
 
         $isImpuesto = 1;
 
-        //   if(auth()->user()->empresa == 74)
-        //   {
-        //       return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
-        //   ->header('Content-Description', 'File Transfer')
-        //   ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
-        //   ->header('Content-Transfer-Encoding', 'binary')
-        //   ->header('Content-Type', 'text/xml');
-        //   }
+          if(auth()->user()->empresa == 1)
+          {
+              return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
+          ->header('Content-Description', 'File Transfer')
+          ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
+          ->header('Content-Transfer-Encoding', 'binary')
+          ->header('Content-Type', 'text/xml');
+          }
 
         //-- Generación del XML a enviar a la DIAN -- //
         $xml = view('templates.xml.01', compact('CUFEvr', 'ResolucionNumeracion', 'FacturaVenta', 'data', 'items', 'retenciones', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
@@ -2281,16 +2307,17 @@ public function edit($id){
 
         //Inicializamos la variable para ver si tiene las nuevas responsabilidades que no da la dian 042
         $resp = 0;
-
-        foreach (Empresa::find(auth()->user()->empresa)->responsabilidades() as $respo) {
-            if (
-                $respo->id_responsabilidad == 5 || $respo->id_responsabilidad == 7 || $respo->id_responsabilidad == 12
-                || $respo->id_responsabilidad == 20 || $respo->id_responsabilidad == 29
-            ) {
-                $resp = 1;
+        if($responsabilidades > 0){
+            foreach (Empresa::find(auth()->user()->empresa)->responsabilidades() as $respo) {
+                if (
+                    $respo->id_responsabilidad == 5 || $respo->id_responsabilidad == 7 || $respo->id_responsabilidad == 12
+                    || $respo->id_responsabilidad == 20 || $respo->id_responsabilidad == 29
+                ) {
+                    $resp = 1;
+                }
             }
         }
-
+       
 
         if ($cliente->tip_iden != 6) {
             $cliente->tipo_persona      = 1; //-- Persona Natural

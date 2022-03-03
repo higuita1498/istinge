@@ -14,7 +14,7 @@ class NumeracionFactura extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'prefijo', 'inicio', 'final', 'desde', 'hasta', 'preferida', 'nroresolucion', 'resolucion', 'empresa', 'estado','inicioverdadero'
+        'nombre', 'prefijo', 'inicio', 'final', 'desde', 'hasta', 'preferida', 'nroresolucion', 'resolucion', 'empresa', 'estado','inicioverdadero','tipo'
     ];
 
     public function preferida(){
