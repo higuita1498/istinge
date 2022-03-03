@@ -71,6 +71,7 @@ class PlantillasController extends Controller
         $plantilla->title = $request->title;
         $plantilla->contenido = $request->contenido;
         $plantilla->created_by = Auth::user()->id;
+        $plantilla->status = 0;
         $plantilla->save();
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
@@ -173,10 +174,17 @@ class PlantillasController extends Controller
             if($plantilla->status == 0){
                 $plantilla->status = 1;
                 $mensaje = 'SE HA ACTIVADO SATISFACTORIAMENTE LA PLANTILLA';
+                $search = Plantilla::where('status', 1)->where('tipo', $plantilla->tipo)->where('clasificacion', 'Bienvenida')->count();
+
+                if($search>0){
+                    $mensaje='YA EXISTE UNA PLANTILLA DE BIENVENIDA HABILITADA.';
+                    return redirect('empresa/plantillas')->with('danger', $mensaje);
+                }
             }else{
                 $plantilla->status = 0;
                 $mensaje = 'SE HA DESACTIVADO SATISFACTORIAMENTE LA PLANTILLA';
             }
+
             $plantilla->save();
             return redirect('empresa/plantillas')->with('success', $mensaje);
         }
