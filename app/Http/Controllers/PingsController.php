@@ -28,17 +28,22 @@ class PingsController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $contratos = Contrato::where('status', 1)->get();
+        $contratos = Contrato::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         return view('pings.index')->with(compact('contratos'));
     }
 
     public function pings(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $pings = Ping::query()
-        ->where('fecha', date('Y-m-d'));
+        ->where('fecha', date('Y-m-d'))
+        ->where('empresa', Auth::user()->empresa);
+
         return datatables()->eloquent($pings)
             ->editColumn('contrato', function (Ping $ping) {
                 return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato."</div></a>";
+            })
+            ->editColumn('cliente', function (Ping $ping) {
+                return "<a href=" . route('contactos.show', $ping->contrato()->cliente()->id) . " target='_blank'>".$ping->contrato()->cliente()->nombre."</div></a>";
             })
             ->editColumn('ip', function (Ping $ping) {
                 return $ping->ip;
@@ -50,102 +55,35 @@ class PingsController extends Controller
                 return $ping->updated_at;
             })
             ->addColumn('acciones', $modoLectura ?  "" : "pings.acciones")
-            ->rawColumns(['acciones', 'contrato'])
+            ->rawColumns(['acciones', 'contrato', 'cliente'])
             ->toJson();
     }
 
     public function create(){
-        $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Nuevo Access Point']);
-        $nodos = Nodo::where('status', 1)->get();
-        return view('access-point.create')->with(compact('nodos'));
+
     }
     
     public function store(Request $request){
-        $ap = new AP;
-        $ap->nombre = $request->nombre;
-        $ap->password = $request->password;
-        $ap->modo_red = $request->modo_red;
-        $ap->descripcion = $request->descripcion;
-        $ap->nodo = $request->nodo;
-        $ap->status = $request->status;
-        $ap->created_by = Auth::user()->id;
-        $ap->save();
 
-        $mensaje='SE HA CREADO SATISFACTORIAMENTE EL ACCESS POINT';
-        return redirect('empresa/access-point')->with('success', $mensaje);
     }
 
     public function show($id){
-        $this->getAllPermissions(Auth::user()->id);
-        $ap = AP::find($id);
 
-        if ($ap) {
-            $contratos = Contrato::where('ap', $ap->id)->get();
-            view()->share(['title' => $ap->nombre]);
-            return view('access-point.show')->with(compact('ap', 'contratos'));
-        }
-        return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
     
     public function edit($id){
-        $this->getAllPermissions(Auth::user()->id);
-        $ap = AP::find($id);
-        
-        if ($ap) {
-            view()->share(['title' => 'Editar AP: '.$ap->nombre]);
-            $nodos = Nodo::where('status', 1)->get();
-            return view('access-point.edit')->with(compact('ap', 'nodos'));
-        }
-        return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
+
     }
 
     public function update(Request $request, $id){
-        $ap = AP::find($id);
-        
-        if ($ap) {
-            $ap->nombre = $request->nombre;
-            $ap->password = $request->password;
-            $ap->modo_red = $request->modo_red;
-            $ap->descripcion = $request->descripcion;
-            $ap->nodo = $request->nodo;
-            $ap->status = $request->status;
-            $ap->updated_by = Auth::user()->id;
-            $ap->save();
-            
-            $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL ACCESS POINT';
-            return redirect('empresa/access-point')->with('success', $mensaje);
-        }
-        return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
+
     }
     
     public function destroy($id){
-        $ap = AP::find($id);
-        
-        if($ap){
-            $ap->delete();
-            $mensaje = 'SE HA ELIMINADO EL ACCESS POINT CORRECTAMENTE';
-            return redirect('empresa/access-point')->with('success', $mensaje);
-        }else{
-            return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
-        }
+
     }
     
     public function act_des($id){
-        $ap = AP::find($id);
-        
-        if($ap){
-            if($ap->status == 0){
-                $ap->status = 1;
-                $mensaje = 'SE HA HABILITADO EL ACCESS POINT CORRECTAMENTE';
-            }else{
-                $ap->status = 0;
-                $mensaje = 'SE HA DESHABILITADO EL ACCESS POINT CORRECTAMENTE';
-            }
-            $ap->save();
-            return redirect('empresa/access-point')->with('success', $mensaje);
-        }else{
-            return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
-        }
+
     }
 }

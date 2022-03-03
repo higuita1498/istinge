@@ -58,7 +58,7 @@
                         <td>{{$empresa->tipo_persona()}}</td>
                         <td>{{$empresa->telefono}}</td>
                         <td>{{$empresa->email}}</td>
-                        <td>{{$empresa->usuario()->username}}</td>
+                        <td>{{$empresa->usuario()?$empresa->usuario()->username:'- - -'}}</td>
 						<td>{{date('d-m-Y h:m a', strtotime($empresa->created_at))}}</td>
 						<td><a href="{{route('empresas.edit',$empresa->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
 							@if($empresa->status==1) 

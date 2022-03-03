@@ -40,6 +40,13 @@
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
+	            <label class="control-label">Interfaz LAN <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control"  id="interfaz_lan" name="interfaz_lan" required="" value="{{$mikrotik->interfaz_lan}}" maxlength="200" required="">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('interfaz_lan') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-3 form-group">
 	            <label class="control-label">Usuario <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control"  id="usuario" name="usuario"  required="" value="{{$mikrotik->usuario}}" maxlength="200">
 	            <span class="help-block error">

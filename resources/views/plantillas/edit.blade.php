@@ -26,8 +26,9 @@
         	<div class="col-md-3 form-group">
 	            <label class="control-label">Clasificación <span class="text-danger">*</span></label>
         	    <select name="clasificacion" id="clasificacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
-        	        <option value="0" {{$plantilla->clasificacion==0?'selected':''}} >CLASIFICACIÓN A</option>
-        	        <option value="1" {{$plantilla->clasificacion==1?'selected':''}} >CLASIFICACIÓN B</option>
+        	        <option value="Bienvenida" {{$plantilla->clasificacion=='Bienvenida'?'selected':''}}>Bienvenida</option>
+        	        <option value="Cobro" {{$plantilla->clasificacion=='Cobro'?'selected':''}}>Cobro</option>
+        	        <option value="Notificacion" {{$plantilla->clasificacion=='Notificacion'?'selected':''}}>Notificación</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('clasificacion') }}</strong>

@@ -22,6 +22,7 @@ class NotificacionMailable extends Mailable
      */
     public function __construct($datos)
     {
+        $subject = $datos['titulo'];
         $this->datos = $datos;
     }
 

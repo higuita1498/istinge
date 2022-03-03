@@ -28,6 +28,7 @@ class CronController extends Controller
         $i=0;
         $fecha = date('Y-m-d');
         $fecha_corte = date('d', strtotime("+5 days", strtotime($fecha)));
+        $fecha_corte = date('d') + 5;
         
         $grupos_corte = GrupoCorte::where('fecha_corte', $fecha_corte)->where('status', 1)->get();
         
@@ -52,7 +53,13 @@ class CronController extends Controller
                 }else{
                     $fecha_suspension = $grupo_corte->fecha_suspension;
                 }
-                
+
+                if($ultimo[1] == 2){
+                    $creacion = $qwerty;
+                }else{
+                    $creacion = date('Y-m-d', strtotime("+5 days", strtotime($fecha)));
+                }
+
                 $plazo=TerminosPago::where('dias',$fecha_suspension)->first();
                 
                 $inicio = $nro->inicio;
@@ -66,7 +73,7 @@ class CronController extends Controller
                 $factura->facnotas      = $contrato->notas_fact;
                 $factura->empresa       = 1;
                 $factura->cliente       = $contrato->cliente;
-                $factura->fecha         = date('Y-m-d', strtotime("+5 days", strtotime($fecha)));
+                $factura->fecha         = $creacion;
                 $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
                 $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
                 $factura->observaciones = 'Facturación Automática - Corte '.$fecha_corte;

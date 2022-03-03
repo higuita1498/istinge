@@ -30,6 +30,7 @@ use App\CRM;
 use App\Model\Ingresos\Factura;
 use App\Servidor;
 use App\GrupoCorte;
+use App\Mikrotik;
 
 class CRMController extends Controller
 {
@@ -43,10 +44,10 @@ class CRMController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_cartera', 'title' => 'CRM: Cartera', 'invert' => true]);
         
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->groupBy('crm.cliente')->get();
-        $usuarios = User::where('user_status', 1)->get();
-        $servidores   = DB::table('servidores')->where('state','linked')->get();
-        $grupos_corte = GrupoCorte::where('status', 1)->get();
+        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte'));
     }
@@ -54,10 +55,10 @@ class CRMController extends Controller
     public function informe(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_informe', 'title' => 'CRM: Informe', 'invert' => true]);
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->groupBy('crm.cliente')->get();
-        $usuarios = User::where('user_status', 1)->where('rol', 44)->get();
-        $servidores   = DB::table('servidores')->where('state','linked')->get();
-        $grupos_corte = GrupoCorte::where('status', 1)->get();
+        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         $ini = Carbon::create(date('Y'), date('m'), date('d'))->startOfMonth()->format('d-m-Y');
         $fin = Carbon::create(date('Y'), date('m'), date('d'))->endOfMonth()->format('d-m-Y');
@@ -70,7 +71,8 @@ class CRMController extends Controller
 			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
-            ->join('items_factura', 'items_factura.factura', '=', 'factura.id');
+            ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
+            ->where('crm.empresa', Auth::user()->empresa);
             
         if ($request->filtro == true) {
             if($request->cliente){
@@ -171,7 +173,8 @@ class CRMController extends Controller
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
-            ->whereIn('crm.estado', [1, 2, 3, 4, 5, 6]);
+            ->whereIn('crm.estado', [1, 2, 3, 4, 5, 6])
+            ->where('crm.empresa', Auth::user()->empresa);
             
         if ($request->filtro == true) {
             if($request->cliente){
@@ -250,7 +253,7 @@ class CRMController extends Controller
             ->editColumn('estatus', function (CRM $crm) {
                 return "<center><span class='text-{$crm->factura('true')}'><strong>{$crm->factura()}</strong></span></center>";
             })
-            ->addColumn('acciones', $modoLectura ?  "" : "crm.acciones-cartera")
+            ->addColumn('acciones', $modoLectura ?  "" : "crm.acciones-informe")
             ->rawColumns(['acciones', 'nombre', 'nit', 'celular', 'estado', 'created_by', 'updated_at', 'estatus'])
             ->toJson();
     }
@@ -262,7 +265,7 @@ class CRMController extends Controller
             'tiempo' => 'required'
         ]);
         
-        $crm = CRM::where('cliente', $request->idcliente)->whereIn('estado', [0,2,3,4,5,6])->get()->last();
+        $crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->get()->last();
         if($crm){
             if($request->llamada == 0){
                 $estado = 3;
@@ -282,6 +285,7 @@ class CRMController extends Controller
             $crm->fecha_pago = $request->fecha;
             $crm->tiempo = $request->tiempo;
             $crm->created_by = auth()->user()->id;
+            $crm->empresa = Auth::user()->empresa;
             
             if($request->promesa_pago && $request->fecha){
                 $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
@@ -347,7 +351,7 @@ class CRMController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $crm = CRM::find($id);
+        $crm = CRM::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         
         if($crm){
             view()->share(['subseccion' => 'crm_cartera', 'title' => 'Detalles CRM: '.$crm->id]);
@@ -428,7 +432,8 @@ class CRMController extends Controller
         $crms = CRM::select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
         ->join('contactos', 'crm.cliente', '=', 'contactos.id')
         ->join('factura', 'crm.factura', '=', 'factura.id')
-        ->join('items_factura', 'items_factura.factura', '=', 'factura.id');
+        ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
+        ->where('crm.empresa', Auth::user()->empresa);
 
         if(isset($request->cliente)){
             $crms->where('crm.cliente', $request->cliente);
@@ -514,7 +519,7 @@ class CRMController extends Controller
     public static function notificacion(){
         $fecha = date('d-m-Y');
         $fecha = date('d-m-Y', strtotime("-1 days", strtotime($fecha)));
-        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->where('created_by', Auth::user()->id)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
+        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->where('created_by', Auth::user()->id)->where('empresa', Auth::user()->empresa)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
         
         foreach($notificaciones as $notificacion){
             $notificacion->estado = 2;
@@ -531,8 +536,15 @@ class CRMController extends Controller
     }
     
     public function status($id){
-        $crm = CRM::find($id);
+        $crm = CRM::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if($crm){
+            $cliente = Contacto::find($crm->cliente);
+            $contrato = Contrato::where('client_id', $cliente->id)->where('empresa', Auth::user()->empresa)->where('status', 1)->first();
+
+            if($contrato){
+                $contrato->status = 0;
+                $contrato->save();
+            }
             $crm->estado = 5;
             $crm->save();
             

@@ -8,9 +8,12 @@ use DB;
 use App\Mikrotik;
 use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresosFactura;
+use App\Model\Ingresos\Factura;
 use App\Nodo;
 use App\AP;
 use App\GrupoCorte;
+use App\Puerto;
+use App\Ping;
 
 class Contrato extends Model
 {
@@ -23,7 +26,7 @@ class Contrato extends Model
      */
     public $timestamps = false;
     protected $fillable = [
-        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at'
+        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at', 'puerto_conexion'
     ];
     
     protected $appends = ['status'];
@@ -99,11 +102,17 @@ class Contrato extends Model
     }
     
     public function nodo(){
-        return Nodo::find($this->nodo);
+        if($this->nodo){
+            return Nodo::find($this->nodo);
+        }
+        return '- - -';
     }
     
     public function ap(){
-        return AP::find($this->ap);
+        if($this->ap){
+            return AP::find($this->ap);
+        }
+        return '- - -';
     }
     
     public function marca_antena(){
@@ -127,10 +136,31 @@ class Contrato extends Model
     }
     
     public function plug($class=false){
-        if($class){
-            return $this->state == 'enabled' ? 'primary' : 'danger';
+
+        $ping = Ping::where('ip', $this->ip)->first();
+
+        if($ping){
+            if($class){
+                return 'danger';
+            }
+            return 'Desconectado';
+        }else{
+            if($class){
+                return 'primary';
+            }
+            return 'Conectado';
         }
-        return $this->state == 'enabled' ? 'Conectado' : 'Desconectado';
     }
-    
+
+    public function factura(){
+        $factura = Factura::where('cliente', $this->c_id)->get()->last();
+        if($factura){
+            return "<a href=".route('facturas.show', $factura->nro)." target='_blank'>$factura->codigo</a>";
+        }
+        return '- - - -';
+    }
+
+    public function puerto_conexion(){
+        return Puerto::find($this->puerto_conexion)->nombre;
+    }
 }

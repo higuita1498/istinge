@@ -7,10 +7,10 @@
 @section('boton')
     @if($tipo_usuario == 0)
     @if(isset($_SESSION['permisos']['411']))
-    <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+    <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
     @endif
     @if(isset($_SESSION['permisos']['201']))
-    <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+    <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
     @endif
     @endif
 

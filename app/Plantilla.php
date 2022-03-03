@@ -43,9 +43,4 @@ class Plantilla extends Model
     {
         return ($this->tipo == 0) ? 'SMS' : 'EMAIL';
     }
-    
-    public function clasificacion()
-    {
-        return ($this->clasificacion == 0) ? 'Clasificación A' : 'Clasificación B';
-    }
 }

@@ -260,9 +260,9 @@ class FacturasController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = false;
-        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
@@ -273,9 +273,9 @@ class FacturasController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
-        $tabla = Campos::where('modulo', 4)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla'));
     }
@@ -1645,6 +1645,10 @@ public function edit($id){
           <a href="'.route('facturas.edit',$factura->nro).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>';
         }
 
+        if($factura->estatus==1 && $factura->promesa_pago==null){
+            $boton .= '<a href="javascript:modificarPromesa('.$factura->nro.')" class="btn btn-outline-danger btn-icons promesa ml-1" idfactura="'.$factura->nro.'" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>';
+        }
+
         $boton.=' <form action="'.route('factura.anular',$factura->nro).'" method="POST" class="delete_form" style="display: none;" id="anular-factura'.$factura->id.'">'.csrf_field().'</form>';
           if($factura->estatus==1){
             $boton .= '<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar('."'anular-factura".$factura->id."', '¿Está seguro de que desea anular la factura de venta?', ' ');".'"><i class="fas fa-minus"></i></button> ';
@@ -2565,7 +2569,7 @@ public function edit($id){
     }
     
     public function promesa_pago($id){
-        $factura = Factura::find($id);
+        $factura = Factura::where('nro', $id)->first();
         return json_encode($factura);
     }
     
@@ -2575,7 +2579,7 @@ public function edit($id){
             'promesa_pago' => 'required'
         ]);
 
-        $factura = Factura::find($request->id);
+        $factura = Factura::where('nro', $request->id)->first();
         
         $numero = 0;
         $numero = PromesaPago::all()->count();

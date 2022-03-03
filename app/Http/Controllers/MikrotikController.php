@@ -34,13 +34,13 @@ class MikrotikController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik', 'title' => 'Gestión de Mikrotik', 'icon' =>'fas fa-server']);
+        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_mikrotik', 'title' => 'Mikrotik', 'icon' =>'fas fa-server']);
     }
     
     public function index(){
       $this->getAllPermissions(Auth::user()->id);
 
-      $mikrotiks = Mikrotik::all();
+      $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
       return view('mikrotik.index')->with(compact('mikrotiks'));
     }
     
@@ -58,7 +58,8 @@ class MikrotikController extends Controller
             'clave' => 'required',
             'puerto_api' => 'required',
             'segmento_ip' => 'required',
-            'interfaz' => 'required'
+            'interfaz' => 'required',
+            'interfaz_lan' => 'required'
         ]);
         
         $mikrotik = new Mikrotik;
@@ -69,7 +70,9 @@ class MikrotikController extends Controller
         $mikrotik->usuario = $request->usuario;
         $mikrotik->clave = $request->clave;
         $mikrotik->interfaz = $request->interfaz;
+        $mikrotik->interfaz_lan = $request->interfaz_lan;
         $mikrotik->created_by = Auth::user()->id;
+        $mikrotik->empresa = Auth::user()->empresa;
         $mikrotik->save();
         
         for ($i = 0; $i < count($request->segmento_ip); $i++) {
@@ -85,7 +88,7 @@ class MikrotikController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($mikrotik) {
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -95,7 +98,7 @@ class MikrotikController extends Controller
     }
     
     public function update(Request $request, $id){
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $request->validate([
                 'nombre' => 'required',
@@ -103,7 +106,8 @@ class MikrotikController extends Controller
                 'usuario' => 'required',
                 'clave' => 'required',
                 'puerto_api' => 'required',
-                'interfaz' => 'required'
+                'interfaz' => 'required',
+                'interfaz_lan' => 'required'
             ]);
             
             $mikrotik->nombre = $request->nombre;
@@ -111,9 +115,11 @@ class MikrotikController extends Controller
             $mikrotik->puerto_api = $request->puerto_api;
             $mikrotik->puerto_web = $request->puerto_web;
             $mikrotik->interfaz = $request->interfaz;
+            $mikrotik->interfaz_lan = $request->interfaz_lan;
             $mikrotik->usuario = $request->usuario;
             $mikrotik->clave = $request->clave;
             $mikrotik->updated_by = Auth::user()->id;
+            $mikrotik->status = 0;
             $mikrotik->save();
             
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -135,7 +141,7 @@ class MikrotikController extends Controller
     }
     
     public function destroy($id){
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
             foreach($segmentos as $segmento){
@@ -150,7 +156,7 @@ class MikrotikController extends Controller
     
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server']);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -161,8 +167,8 @@ class MikrotikController extends Controller
     
     public function conectar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
-        if ($mikrotik) {
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        if ($mikrotik->status == 0) {
             $API = new RouterosAPI();
             
             $API->port = $mikrotik->puerto_api;
@@ -210,6 +216,14 @@ class MikrotikController extends Controller
                 $type = 'danger';
             }
             return redirect('empresa/mikrotik')->with($type, $mensaje)->with('mikrotik_id', $mikrotik->id);
+        }else{
+            $mikrotik->status = 0;
+            $mikrotik->save();
+
+            $mensaje='La Mikrotik '.$mikrotik->nombre.' ha sido desconectada';
+            $type = 'success';
+
+            return redirect('empresa/mikrotik')->with($type, $mensaje)->with('mikrotik_id', $mikrotik->id);
         }
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
@@ -246,7 +260,7 @@ class MikrotikController extends Controller
     public function importar($id){
         return back()->with('danger', 'FUNCIONALIDAD EN DESARROLLO');
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -312,7 +326,7 @@ class MikrotikController extends Controller
     
     public function log($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'LOG Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server']);
             return view('mikrotik.log')->with(compact('mikrotik'));
@@ -322,7 +336,8 @@ class MikrotikController extends Controller
     
     public function logs(Request $request, $contrato){
         $modoLectura = auth()->user()->modo_lectura();
-        $contratos = MovimientoLOG::query();
+        $contratos = MovimientoLOG::query()
+            ->where('empresa', Auth::user()->empresa);
         $contratos->where('log_movimientos.contrato', $contrato);
 
         return datatables()->eloquent($contratos)
@@ -341,7 +356,7 @@ class MikrotikController extends Controller
     
     public function reiniciar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::where('id', $id)->first();
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $API = new RouterosAPI();
             
@@ -370,7 +385,7 @@ class MikrotikController extends Controller
     
     public function grafica($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             view()->share(['title' => 'Gráfica de Consumo', 'icon' =>'fas fa-chart-area']);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
@@ -381,7 +396,7 @@ class MikrotikController extends Controller
     
     public function graficajson($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         $API = new RouterosAPI();
         $API->port = $mikrotik->puerto_api;
@@ -436,7 +451,7 @@ class MikrotikController extends Controller
 
     public function ips_autorizadas($id){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
             $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
             view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
@@ -445,34 +460,57 @@ class MikrotikController extends Controller
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function autorizar_ips($id){
+    public function autorizar_ips($nro){
         $this->getAllPermissions(Auth::user()->id);
-        $mikrotik = Mikrotik::find($id);
-        if ($mikrotik) {
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('status', 1)->get();
+        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
 
-            /*$API = new RouterosAPI();
+        if ($contrato) {
+            $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+
+            $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            $API->debug = true;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                foreach($contratos as $contrato){
-                    $API->comm("/ip/firewall\n=address\n=add\n=list=ips_autorizadas\n=address=".$contrato->ip);
-                    $API->disconnect();
+                if($mikrotik->regla_ips_autorizadas == 0){
+                    $API->comm("/interface/list/add\n=name=LAN_NETWORK_SOFT");
+                    $API->comm("/interface/list/add\n=interface=$mikrotik->interfaz_lan\n=list=LAN_NETWORK_SOFT");
 
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept\n=comment=IPS-AUTORIZADAS-NETWORK");
+                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop\n=comment=IPS-NO-AUTORIZADAS-NETWORK");
+
+                    $mikrotik->regla_ips_autorizadas = 1;
+                    $mikrotik->save();
+                }
+
+                $existe = $API->comm("/ip/firewall/address-list/getall", array(
+                    "?address" => $contrato->ip
+                    )
+                );
+
+                if($existe){
                     $contrato->ip_autorizada = 1;
                     $contrato->save();
+                    return response()->json([
+                        'success'  => true,
+                        'servicio' => $contrato->servicio,
+                        'repetido' => $existe,
+                    ]);
+                }else{
+                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$contrato->ip);
+                    $API->disconnect();
+                    $contrato->ip_autorizada = 1;
+                    $contrato->save();
+                    return response()->json([
+                        'success'  => true,
+                        'servicio' => $contrato->servicio,
+                    ]);
                 }
-                $mensaje='Reglas aplicadas satisfactoriamente a la Mikrotik '.$mikrotik->nombre;
-                $type = 'success';
             } else {
-                $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-                $type = 'danger';
-            }*/
-            $mensaje='Reglas no aplicadas a la Mikrotik '.$mikrotik->nombre.', intente nuevamente.';
-            $type = 'danger';
-            return redirect('empresa/mikrotik')->with($type, $mensaje);
+                return response()->json([
+                    'success'  => false,
+                    'servicio' => $contrato->servicio,
+                ]);
+            }
         }
-        return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
 }

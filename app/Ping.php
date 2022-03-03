@@ -23,4 +23,8 @@ class Ping extends Model
     protected $fillable = [
         'contrato', 'ip', 'fecha', 'estado', 'created_at', 'updated_at'
     ];
+
+    public function contrato(){
+        return Contrato::where('id', $this->contrato)->first();
+    }
 }

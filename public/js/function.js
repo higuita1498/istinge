@@ -3983,44 +3983,48 @@ $('#searchIP').click(function() {
 
     switch (prefijo['1']) {
         case '22':
-        var nro = 1023;
+        var nro = 1022;
         break;
         case '23':
-        var nro = 511;
+        var nro = 510;
         break;
         case '24':
-        var nro = 255;
+        var nro = 254;
         break;
         case '25':
-        var nro = 127;
+        var nro = 126;
         break;
         case '26':
-        var nro = 63;
+        var nro = 62;
         break;
         case '27':
-        var nro = 31;
+        var nro = 30;
         break;
         case '28':
-        var nro = 15;
+        var nro = 14;
         break;
         case '29':
-        var nro = 7;
+        var nro = 6;
         break;
         case '30':
-        var nro = 3;
+        var nro = 2;
         break;
         case '>22':
         console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
         break;
     }
 
-    for (i = 1; i < nro; i++) {
+    var ini = parseInt(ip['3'])+parseInt(1);
+    var fin = nro;
+
+    for (i = ini; i < fin; i++) {
         var div =`
         <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
             <a href="javascript:selectIP('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
         </div>
         `;
         $('#row_ip').append(div);
+        //console.log(ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i);
     }
 
     if (window.location.pathname.split("/")[1] === "software") {
@@ -4063,44 +4067,48 @@ $('#searchIP2').click(function() {
 
     switch (prefijo['1']) {
         case '22':
-        var nro = 1023;
+        var nro = 1022;
         break;
         case '23':
-        var nro = 511;
+        var nro = 510;
         break;
         case '24':
-        var nro = 255;
+        var nro = 254;
         break;
         case '25':
-        var nro = 127;
+        var nro = 126;
         break;
         case '26':
-        var nro = 63;
+        var nro = 62;
         break;
         case '27':
-        var nro = 31;
+        var nro = 30;
         break;
         case '28':
-        var nro = 15;
+        var nro = 14;
         break;
         case '29':
-        var nro = 7;
+        var nro = 6;
         break;
         case '30':
-        var nro = 3;
+        var nro = 2;
         break;
         case '>22':
         console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
         break;
     }
 
-    for (i = 1; i < nro; i++) {
+    var ini = parseInt(ip['3'])+parseInt(1);
+    var fin = nro;
+
+    for (i = ini; i < fin; i++) {
         var div =`
         <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
             <a href="javascript:selectIP2('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
         </div>
         `;
         $('#row_ip').append(div);
+        //console.log(ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i);
     }
 
     if (window.location.pathname.split("/")[1] === "software") {

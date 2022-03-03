@@ -89,7 +89,7 @@ class IngresosController extends Controller
         $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
         $clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
-        $tabla = Campos::where('modulo', 5)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::where('modulo', 5)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
         return view('ingresos.indexnew', compact('bancos','clientes','metodos','tabla'));
     }
@@ -206,8 +206,9 @@ class IngresosController extends Controller
     public function pendiente($cliente, $id=false){
         $this->getAllPermissions(Auth::user()->id);
         $facturas = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1);
-        $facturas = $facturas->orderBy('created_at', 'desc')->take(1)->get();
-        $total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
+        $facturas = $facturas->orderBy('created_at', 'desc')->take(3)->get();
+        //$total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
+        $total = 1;
         return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total'));
     }
 

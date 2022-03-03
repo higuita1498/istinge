@@ -6,13 +6,13 @@
 
 @section('boton')
     @if(isset($_SESSION['permisos']['5']))
-	    <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+	    <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
     @endif
     @if(isset($_SESSION['permisos']['411']))
-        <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
     @endif
     @if(isset($_SESSION['permisos']['201']))
-        <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+        <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
     @endif
     <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
 @endsection
@@ -31,34 +31,33 @@
         </script>
     @endif
 
-<div class="container-fluid d-none" id="form-filter">
-	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
-		<div class="card-body py-0">
-			<div class="row">
-				<div class="col-md-3 pl-1 pt-1">
-				    <select title="Cliente" class="form-control rounded selectpicker" id="id_cliente" data-size="5" data-live-search="true">
-						@foreach ($clientes as $cliente)
-							<option value="{{ $cliente->id}}">{{ $cliente->nombre}}</option>
-						@endforeach
-					</select>
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-				    <select title="Estado" class="form-control rounded selectpicker" id="status">
-				        <option value="1">Pendiente</option>
-				        <option value="0">Realizada</option>
+	<div class="container-fluid d-none" id="form-filter">
+		<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
+			<div class="card-body py-0">
+				<div class="row">
+					<div class="col-md-3 pl-1 pt-1">
+					    <select title="Cliente" class="form-control rounded selectpicker" id="id_cliente" data-size="5" data-live-search="true">
+							@foreach ($clientes as $cliente)
+								<option value="{{ $cliente->id}}">{{ $cliente->nombre}}</option>
+							@endforeach
 						</select>
 					</div>
-				<div class="col-md-1 pl-1 pt-1 text-left">
-					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					<div class="col-md-3 pl-1 pt-1">
+					    <select title="Estado" class="form-control rounded selectpicker" id="status">
+					        <option value="1">Pendiente</option>
+					        <option value="0">Realizada</option>
+							</select>
+						</div>
+					<div class="col-md-1 pl-1 pt-1 text-left">
+						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-
-<div class="row card-description">
+	<div class="row card-description">
 	<div class="col-md-12">
 		<table class="table table-striped table-hover w-100" id="tabla-wifi">
 			<thead class="thead-dark">
@@ -164,6 +163,21 @@
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
+	}
+
+	function copiarData(containerid) {
+		if (document.selection) {
+			var range = document.body.createTextRange();
+			range.moveToElementText(document.getElementById(containerid));
+			range.select().createTextRange();
+			document.execCommand("copy");
+		} else if (window.getSelection) {
+			var range = document.createRange();
+			range.selectNode(document.getElementById(containerid));
+			window.getSelection().addRange(range);
+			document.execCommand("copy");
+		}
+		alert(range);
 	}
 </script>
 @endsection

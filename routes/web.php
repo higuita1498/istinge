@@ -65,11 +65,12 @@ Route::get('logs/{contrato}', 'ContratosController@logs');
 Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
-Route::get('radicados', 'RadicadosController@radicados');
+Route::get('radicados/{tipo}', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
 Route::get('reporte', 'CRMController@reporte');
+Route::get('puertos', 'PuertosController@puertos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -618,6 +619,11 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/campos/{modulo}/organizar', 'CamposController@organizar')->name('campos.organizar');
 		Route::post('/campos/organizar_store', 'CamposController@organizar_store')->name('campos.organizar_store');
 		Route::resource('campos', 'CamposController');
+
+		//PUERTOS
+
+		Route::resource('puertos-conexion', 'PuertosController');
+		Route::get('puertos-conexion/{id}/act_desc', 'PuertosController@act_desc')->name('puertos-conexion.act_des');
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
@@ -785,6 +791,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::group(['prefix' => 'planes-velocidad'], function (){
 	        Route::get('/plan-velocidad/{id}/status', 'PlanesVelocidadController@status')->name('planes-velocidad.status');
 	        Route::get('/plan-velocidad/{id}/reglas', 'PlanesVelocidadController@reglas')->name('planes-velocidad.reglas');
+	        Route::get('{id}/aplicar-cambios', 'PlanesVelocidadController@aplicar_cambios')->name('planes-velocidad.aplicar-cambios');
+	        Route::get('{nro}/aplicando-cambios', 'PlanesVelocidadController@aplicando_cambios')->name('planes-velocidad.aplicando-cambios');
 	    });
 	    
 	    Route::resource('planes-velocidad', 'PlanesVelocidadController');
@@ -799,7 +807,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('{id}/grafica', 'MikrotikController@grafica')->name('mikrotik.grafica');
 	        Route::get('{id}/graficajson', 'MikrotikController@graficajson')->name('mikrotik.graficajson');
 	        Route::get('{id}/ips-autorizadas', 'MikrotikController@ips_autorizadas')->name('mikrotik.ips-autorizadas');
-	        Route::get('{id}/autorizar-ips', 'MikrotikController@autorizar_ips')->name('mikrotik.autorizar-ips');
+	        Route::get('{nro}/autorizar-ips', 'MikrotikController@autorizar_ips')->name('mikrotik.autorizar-ips');
 	    });
 	    
 	    Route::resource('mikrotik', 'MikrotikController');

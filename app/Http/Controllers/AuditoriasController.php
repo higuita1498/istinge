@@ -29,7 +29,7 @@ class AuditoriasController extends Controller
 
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
-    $auditorias = Auditoria::all();
+    $auditorias = Auditoria::where('empresa', Auth::user()->empresa)->get();
 
     return view('auditorias.index')->with(compact('auditorias'));
   }

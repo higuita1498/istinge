@@ -28,13 +28,13 @@ class APController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $nodos = Nodo::where('status', 1)->get();
+        $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         return view('access-point.index')->with(compact('nodos'));
     }
 
     public function ap(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
-        $aps = AP::query();
+        $aps = AP::query()->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {
@@ -79,19 +79,20 @@ class APController extends Controller
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Access Point']);
-        $nodos = Nodo::where('status', 1)->get();
+        $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         return view('access-point.create')->with(compact('nodos'));
     }
     
     public function store(Request $request){
         $ap = new AP;
-        $ap->nombre = $request->nombre;
-        $ap->password = $request->password;
-        $ap->modo_red = $request->modo_red;
+        $ap->nombre      = $request->nombre;
+        $ap->password    = $request->password;
+        $ap->modo_red    = $request->modo_red;
         $ap->descripcion = $request->descripcion;
-        $ap->nodo = $request->nodo;
-        $ap->status = $request->status;
-        $ap->created_by = Auth::user()->id;
+        $ap->nodo        = $request->nodo;
+        $ap->status      = $request->status;
+        $ap->created_by  = Auth::user()->id;
+        $ap->empresa     = Auth::user()->empresa;
         $ap->save();
 
         $mensaje='SE HA CREADO SATISFACTORIAMENTE EL ACCESS POINT';
@@ -100,7 +101,7 @@ class APController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $ap = AP::find($id);
+        $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
 
         if ($ap) {
             $contratos = Contrato::where('ap', $ap->id)->get();
@@ -112,7 +113,7 @@ class APController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $ap = AP::find($id);
+        $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($ap) {
             view()->share(['title' => 'Editar AP: '.$ap->nombre]);
@@ -123,16 +124,17 @@ class APController extends Controller
     }
 
     public function update(Request $request, $id){
-        $ap = AP::find($id);
+        $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($ap) {
-            $ap->nombre = $request->nombre;
-            $ap->password = $request->password;
-            $ap->modo_red = $request->modo_red;
+            $ap->nombre      = $request->nombre;
+            $ap->password    = $request->password;
+            $ap->modo_red    = $request->modo_red;
             $ap->descripcion = $request->descripcion;
-            $ap->nodo = $request->nodo;
-            $ap->status = $request->status;
-            $ap->updated_by = Auth::user()->id;
+            $ap->nodo        = $request->nodo;
+            $ap->status      = $request->status;
+            $ap->updated_by  = Auth::user()->id;
+            $ap->empresa     = Auth::user()->empresa;
             $ap->save();
             
             $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL ACCESS POINT';
@@ -142,7 +144,7 @@ class APController extends Controller
     }
     
     public function destroy($id){
-        $ap = AP::find($id);
+        $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if($ap){
             $ap->delete();
@@ -154,7 +156,7 @@ class APController extends Controller
     }
     
     public function act_des($id){
-        $ap = AP::find($id);
+        $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if($ap){
             if($ap->status == 0){

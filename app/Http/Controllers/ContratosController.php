@@ -50,6 +50,7 @@ use App\Nodo;
 use App\GrupoCorte;
 use App\Segmento;
 use App\Campos;
+use App\Puerto;
 
 class ContratosController extends Controller
 {
@@ -61,44 +62,50 @@ class ContratosController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
-        $planes = PlanesVelocidad::where('status', 1)->get();
-        $servidores = Mikrotik::where('status',1)->get();
-        $grupos = GrupoCorte::where('status',1)->get();
+        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function disabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
-        $planes = PlanesVelocidad::where('status', 1)->get();
-        $servidores = Mikrotik::where('status',1)->get();
-        $grupos = GrupoCorte::where('status',1)->get();
+        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function enabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('tipo_contacto', 0)->get();
-        $planes = PlanesVelocidad::where('status', 1)->get();
-        $servidores = Mikrotik::where('status',1)->get();
-        $grupos = GrupoCorte::where('status',1)->get();
+        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
-        $tabla = Campos::where('modulo', 2)->orderBy('orden', 'asc')->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla'));
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->where('empresa', Auth::user()->empresa)->get();
+        $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
     }
 
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -132,10 +139,51 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.state', $request->state);
                 });
             }
+            if($request->conexion){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.conexion', $request->conexion);
+                });
+            }
+            if($request->server_configuration_id){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.server_configuration_id', $request->server_configuration_id);
+                });
+            }
+            if($request->nodo){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.nodo', $request->nodo);
+                });
+            }
+            if($request->ap){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.ap', $request->ap);
+                });
+            }
+            if($request->c_direccion){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
+                });
+            }
+            if($request->c_barrio){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.barrio', 'like', "%{$request->c_barrio}%");
+                });
+            }
+            if($request->c_celular){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.celular', 'like', "%{$request->c_celular}%");
+                });
+            }
+            if($request->c_email){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.email', 'like', "%{$request->c_email}%");
+                });
+            }
         }
 
-        $contratos->where('contracts.status', 1);
+        $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
         $nodo = explode("-", $nodo);
+
         if ($nodo[0] == 'n') {
             $contratos->where('contracts.nodo', $nodo[1]);
         }elseif ($nodo[0] == 'a') {
@@ -145,6 +193,8 @@ class ContratosController extends Controller
         }elseif ($nodo[0] == 'm') {
             $contratos->where('contracts.server_configuration_id', $nodo[1]);
             $contratos->where('contracts.ip_autorizada', 0);
+        }elseif ($nodo[0] == 'p') {
+            $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
         return datatables()->eloquent($contratos)
@@ -180,7 +230,7 @@ class ContratosController extends Controller
                 return $contrato->ip;
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {
-			    return $contrato->grupo_corte('true');
+                return $contrato->grupo_corte('true');
             })
             ->editColumn('state', function (Contrato $contrato) {
                 return '<span class="text-'.$contrato->status('true').' font-weight-bold">'.$contrato->status().'</span>';
@@ -191,29 +241,58 @@ class ContratosController extends Controller
             ->editColumn('servicio', function (Contrato $contrato) {
                 return '- - - -';
             })
+            ->editColumn('conexion', function (Contrato $contrato) {
+                return $contrato->conexion();
+            })
+            ->editColumn('server_configuration_id', function (Contrato $contrato) {
+                return $contrato->servidor()->nombre;
+            })
+            ->editColumn('interfaz', function (Contrato $contrato) {
+                return $contrato->interfaz;
+            })
+            ->editColumn('nodo', function (Contrato $contrato) {
+                return ($contrato->nodo)?$contrato->nodo()->nombre:$contrato->nodo();
+            })
+            ->editColumn('ap', function (Contrato $contrato) {
+                return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
+            })
+            ->editColumn('direccion', function (Contrato $contrato) {
+                return $contrato->c_direccion;
+            })
+            ->editColumn('celular', function (Contrato $contrato) {
+                return $contrato->c_celular;
+            })
+            ->editColumn('email', function (Contrato $contrato) {
+                return $contrato->c_email;
+            })
+            ->editColumn('factura', function (Contrato $contrato) {
+                return $contrato->factura();
+            })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'acciones'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'acciones'])
             ->toJson();
     }
     
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
-        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 ORDER BY c.nombre ASC";
+        $empresa = Auth::user()->empresa;
+        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 AND c.empresa = $empresa ORDER BY c.nombre ASC";
         $clientes = DB::select($sql);
-        $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->get();
-        $servidores = Mikrotik::where('status', 1)->get();
-        $planes = PlanesVelocidad::where('status', 1)->get();
+        $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
-        $nodos = Nodo::where('status', 1)->get();
-        $aps = AP::where('status', 1)->get();
+        $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $marcas = DB::table('marcas')->get();
-        $grupos = GrupoCorte::where('status', 1)->get();
+        $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos'));
     }
     
     public function store(Request $request){
@@ -274,6 +353,10 @@ class ContratosController extends Controller
                     $prefijo = '';
                 }
 
+                $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+                $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+
                 /*PPPOE*/
                 if($request->conexion == 1){
                     $API->comm("/ppp/secret/add", array(
@@ -288,12 +371,12 @@ class ContratosController extends Controller
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "target"      => $request->ip,                                            // IP
-                        "name"        => $plan->name,                                             // NOMBRE PLAN
-                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "target"          => $request->ip,                        // IP
+                        "name"            => $plan->name,                         // NOMBRE PLAN
+                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
                     
@@ -322,8 +405,8 @@ class ContratosController extends Controller
                         )
                     );
 
-                    $name = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $this->normaliza($cliente->nombre)
+                    $name = $API->comm("/ip/arp/getall", array(
+                        "?address" => $request->ip
                         )
                     );
 
@@ -332,13 +415,13 @@ class ContratosController extends Controller
                     }
                     
                     $API->comm("/queue/simple/add", array(
-                        "name"        => $this->normaliza($cliente->nombre),                      // NOMBRE CLIENTE
-                        "target"      => $request->ip,                                            // IP DEL CLIENTE
-                        "max-limit"   => $plan->upload.'/'.$plan->download,                       // VELOCIDAD PLAN
-                        "comment"     => $this->normaliza($cliente->nombre),                       // NRO DEL CONTRATO
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        "target"          => $request->ip,                        // IP DEL CLIENTE
+                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
 
@@ -356,9 +439,9 @@ class ContratosController extends Controller
                             "target"      => $request->ip_new,                                     // IP DEL CLIENTE
                             "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
-                            "priority"    => $plan->prioridad.'/'.$plan->prioridad,                   // PRIORIDAD PLAN
-                            "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                            "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                            "priority"        => $priority,                           // PRIORIDAD PLAN
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
                             )
                         );
                     }
@@ -383,9 +466,9 @@ class ContratosController extends Controller
                         "target"      => $request->ip,                          //IP
                         "name"        => $plan->name,                           // NOMBRE PLAN
                         "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
-                        "priority"    => $plan->prioridad.'/'.$plan->prioridad, // PRIORIDAD PLAN
-                        "burst-limit" => $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M', //
-                        "burst-threshold" => $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M',
+                        "priority"        => $priority,                           // PRIORIDAD PLAN
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
                         )
                     );
                     
@@ -397,6 +480,14 @@ class ContratosController extends Controller
                         "comment"   => $nro_contrato                      // NRO DEL CONTRATO
                         )
                     );
+                }
+
+                $ip_autorizada = 0;
+
+                if($mikrotik->regla_ips_autorizadas == 1){
+                    $r_ip = ($request->local_address) ? $request->ip.''.$prefijo : $request->ip;
+                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$r_ip);
+                    $ip_autorizada = 1;
                 }
                 
                 $API->disconnect();
@@ -426,6 +517,9 @@ class ContratosController extends Controller
                 $contrato->modelo_antena           = $request->modelo_antena;
                 $contrato->grupo_corte             = $request->grupo_corte;
                 $contrato->facturacion             = $request->facturacion;
+                $contrato->ip_autorizada           = $ip_autorizada;
+                $contrato->empresa                 = Auth::user()->empresa;
+                $contrato->puerto_conexion         = $request->puerto_conexion;
                 
                 if($request->ap){
                     $ap = AP::find($request->ap);
@@ -455,18 +549,19 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion')->where('contracts.id', $id)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
-        $nodos = Nodo::where('status', 1)->get();
-        $aps = AP::where('status', 1)->get();
+        $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $marcas = DB::table('marcas')->get();
-        $servidores = Mikrotik::where('status', 1)->get();
+        $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $interfaces = Interfaz::all();
-        $grupos = GrupoCorte::where('status', 1)->get();
+        $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Editar Contrato: '.$contrato->nro]);
-            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos'));
+            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos'));
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
@@ -702,6 +797,8 @@ class ContratosController extends Controller
                     $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new->nombre.'<br>';
                     $contrato->nodo = $ap_new->nodo;
                 }
+
+                $contrato->puerto_conexion = $request->puerto_conexion;
                 
                 $contrato->save();
                 
@@ -712,6 +809,7 @@ class ContratosController extends Controller
                     $movimiento->modulo      = 5;
                     $movimiento->descripcion = $descripcion;
                     $movimiento->created_by  = Auth::user()->id;
+                    $movimiento->empresa     = Auth::user()->empresa;
                     $movimiento->save();
                 }
                 
@@ -789,10 +887,12 @@ class ContratosController extends Controller
                             )
                         );
                         // REMOVEMOS LA COLA SIMPLE
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $id_simple[0][".id"],
-                            )
-                        );
+                        if($id_simple){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
+                                )
+                            );
+                        }
                     }
                     
                     if($contrato->ip_new){
@@ -813,10 +913,12 @@ class ContratosController extends Controller
                                 )
                             );
                             // REMOVEMOS LA COLA SIMPLE
-                            $API->comm("/queue/simple/remove", array(
-                                ".id" => $id_simple[0][".id"],
-                                )
-                            );
+                            if($id_simple){
+                                $API->comm("/queue/simple/remove", array(
+                                    ".id" => $id_simple[0][".id"],
+                                    )
+                                );
+                            }
                         }
                     }
                 }
@@ -885,6 +987,7 @@ class ContratosController extends Controller
                 $movimiento->modulo      = 5;
                 $movimiento->descripcion = $descripcion;
                 $movimiento->created_by  = Auth::user()->id;
+                $movimiento->empresa     = Auth::user()->empresa;
                 $movimiento->save();
                 
                 $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
@@ -1095,6 +1198,7 @@ class ContratosController extends Controller
             $movimiento->modulo      = 5;
             $movimiento->descripcion = '<i class="fas fa-check text-success"></i> <b>PROCESO DE PING REALIZADO</b><br>';;
             $movimiento->created_by  = Auth::user()->id;
+            $movimiento->empresa     = Auth::user()->empresa;
             $movimiento->save();
             
             view()->share(['icon'=>'fas fa-plug', 'title' => 'Ping de Conexión: '.$contrato->nro]);

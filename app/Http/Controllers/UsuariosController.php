@@ -16,7 +16,7 @@ class UsuariosController extends Controller
     
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        $usuarios = User::where('empresa',1)->get();
+        $usuarios = User::where('empresa',Auth::user()->empresa)->get();
         $recarga = 0;
         return view('configuracion.usuarios.index')->with(compact('usuarios','recarga'));
     }

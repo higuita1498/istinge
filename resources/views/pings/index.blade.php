@@ -41,6 +41,7 @@
 				<thead class="thead-dark">
 					<tr>
 					    <th>Contrato</th>
+					    <th>Cliente</th>
 					    <th>IP</th>
 					    <th>Estado</th>
 					    <th>Fecha/Hora</th>
@@ -75,6 +76,7 @@
 			},
 			columns: [
 			    {data: 'contrato'},
+			    {data: 'cliente'},
 			    {data: 'ip'},
 			    {data: 'estado'},
 				{data: 'updated_at'},

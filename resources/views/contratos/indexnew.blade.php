@@ -30,10 +30,10 @@
         </div>
     @else
         @if(isset($_SESSION['permisos']['5']))
-        <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
         @endif
         @if(isset($_SESSION['permisos']['201']))
-        <a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+        <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
         @endif
 
         @if(Auth::user()->id == 3)
@@ -76,9 +76,21 @@
     				<div class="col-md-3 pl-1 pt-1">
     					<select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
     						@foreach ($clientes as $cliente)
-    						<option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+    						<option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->nit }}</option>
     						@endforeach
     					</select>
+    				</div>
+    				<div class="col-md-2 pl-1 pt-1">
+    					<input type="text" class="form-control" id="celular" placeholder="Celular">
+    				</div>
+    				<div class="col-md-2 pl-1 pt-1">
+    					<input type="text" class="form-control" id="email" placeholder="Email">
+    				</div>
+    				<div class="col-md-2 pl-1 pt-1">
+    					<input type="text" class="form-control" id="direccion" placeholder="Dirección">
+    				</div>
+    				<div class="col-md-2 pl-1 pt-1">
+    					<input type="text" class="form-control" id="barrio" placeholder="Barrio">
     				</div>
     				<div class="col-md-3 pl-1 pt-1">
     					<select title="Planes" class="form-control selectpicker" id="plan" data-size="5" data-live-search="true">
@@ -106,6 +118,42 @@
     						@endforeach
     					</select>
     				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Conexión" class="form-control selectpicker" id="conexion_s">
+    						<option value="1">PPPOE</option>
+    						<option value="2">DHCP</option>
+    						<option value="3">IP Estática</option>
+    						<option value="4">VLAN</option>
+    					</select>
+    				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s">
+    						@foreach ($servidores as $servidor)
+    						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
+    				{{-- <div class="col-md-3 pl-1 pt-1">
+    					<select title="Interfaz" class="form-control selectpicker" id="interfaz_s">
+    						@foreach ($interfaces as $interfaz)
+    						<option value="{{ $interfaz->id }}">{{ $interfaz->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div> --}}
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
+    						@foreach ($nodos as $nodo)
+    						<option value="{{ $nodo->id }}">{{ $nodo->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
+    				<div class="col-md-3 pl-1 pt-1">
+    					<select title="Access Point" class="form-control selectpicker" id="ap_s">
+    						@foreach ($aps as $ap)
+    						<option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
+    						@endforeach
+    					</select>
+    				</div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -120,6 +168,16 @@
     </div>
     
     <div class="row card-description">
+    	<div class="col-md-12">
+    		<div class="container-filtercolumn" >
+    			<a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
+    			<ul class="options-search-columns"  id="columnOptions">
+    				@foreach($tabla as $campo)
+    				    <li><input type="button" class="btn btn-success btn-sm boton_ocultar_mostrar" value="{{$campo->nombre}}"></li>
+    				@endforeach
+				</ul>
+			</div>
+		</div>
     	<div class="col-md-12">
     		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
@@ -146,7 +204,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-		$('#tabla-contratos').DataTable({
+		var tbl = $('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -185,6 +243,15 @@
 			data.grupo_corte = $('#grupo_cort').val();
 			data.ip = $('#ip').val();
 			data.mac = $('#mac').val();
+            data.conexion = $("#conexion_s").val();
+            data.server_configuration_id = $("#server_configuration_id_s").val();
+            data.interfaz = $("#interfaz_s").val();
+            data.nodo = $("#nodo_s").val();
+            data.ap = $("#ap_s").val();
+            data.c_barrio = $("#barrio").val();
+            data.c_direccion = $("#direccion").val();
+            data.c_celular = $("#celular").val();
+            data.c_email = $("#email").val();
             data.filtro = true;
         });
         
@@ -198,6 +265,13 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $(".boton_ocultar_mostrar").on('click', function(){
+        	var indice = $(this).index(".boton_ocultar_mostrar");
+        	$(".boton_ocultar_mostrar").eq(indice).toggleClass("btn-danger");
+        	var columna = tbl.column(indice);
+        	columna.visible(!columna.visible());
         });
     });
     
@@ -222,6 +296,16 @@
 		$('#state').val('').selectpicker('refresh');
 		$('#ip').val('');
 		$('#mac').val('');
+        $("#conexion_s").val('').selectpicker('refresh');
+        $("#server_configuration_id_s").val('').selectpicker('refresh');
+        $("#interfaz_s").val('').selectpicker('refresh');
+        $("#nodo_s").val('').selectpicker('refresh');
+        $("#ap_s").val('').selectpicker('refresh');
+        $('#barrio').val('');
+        $('#direccion').val('');
+        $('#celular').val('');
+        $('#email').val('');
+
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

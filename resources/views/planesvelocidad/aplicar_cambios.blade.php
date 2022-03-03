@@ -1,24 +1,35 @@
 @extends('layouts.app')
 
 @section('boton')
-    <form action="{{route('mikrotik.autorizar-ips',$mikrotik->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="ip-autorizadas-{{$mikrotik->id}}">
+    <form action="{{route('planes-velocidad.aplicando-cambios',$plan->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="aplicar_cambios-{{$plan->id}}">
     	@csrf
     </form>
 
-    <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync-alt"></i> Actualizar</a>
-    <a href="{{ route('mikrotik.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-step-backward"></i></i> Regresar</a>
-    <a href="javascript:aplicar_cambios()" class="btn btn-warning btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
+    <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-times"></i> Cancelar</a>
+    <a href="javascript:aplicar_cambios()" class="btn btn-success btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
 @endsection
 
 @section('style')
 <style>
-	#tabla-ips > tbody > tr > td:nth-child(1) > span{
+	#tabla-contratos > tbody > tr > td:nth-child(1) > span{
 		display: none;
 	}
 </style>
 @endsection
 
 @section('content')
+    @if(Session::has('success'))
+		<div class="alert alert-success" >
+			{{Session::get('success')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 10000);
+		</script>
+	@endif
     @if(Session::has('danger'))
 		<div class="alert alert-danger" >
 			{{Session::get('danger')}}
@@ -34,11 +45,12 @@
 	
 	<div class="row card-description">
     	<div class="col-md-12">
-    		<table class="table table-striped table-hover w-100" id="tabla-ips">
+    		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
     				<tr>
     					<th width="90px">Contrato</th>
     					<th>Cliente</th>
+    					<th>Plan</th>
     					<th>IP</th>
     				</tr>
     			</thead>
@@ -56,8 +68,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-
-		$('#tabla-ips').DataTable({
+		$('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: false,
 			processing: true,
@@ -69,27 +80,29 @@
 				[0, "desc"]
 			],
 			"pageLength": 25,
-			ajax: '{{url("contratos/m-$mikrotik->id")}}',
+			ajax: '{{url("contratos/p-$plan->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
 			    { data: 'nro' },
 			    { data: 'client_id' },
+			    { data: 'plan' },
 			    { data: 'ip' },
 			]
 		});
 
-        tabla = $('#tabla-ips');
+        tabla = $('#tabla-contratos');
     });
 
 	function getDataTable() {
 		tabla.DataTable().ajax.reload();
 	}
+
 	function aplicar_cambios() {
 		swal({
-			title: '¿Está seguro que desea aplicar la regla?',
-			text: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que esten registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio',
+			title: '¿Desea aplicar los cambios a todos los contratos en la mikrotik que poseen este plan?',
+			text: 'ESTE PROCESO PUEDE DEMORAR UNOS MINUTOS',
 			type: 'question',
 			showCancelButton: true,
 			confirmButtonColor: '#00ce68',
@@ -99,15 +112,15 @@
 		}).then((result) => {
 			if (result.value) {
 				cargando(true);
-				var contador_t = $("#contador_t").val($('#tabla-ips').DataTable().data().count());
+				var contador_t = $("#contador_t").val($('#tabla-contratos').DataTable().data().count());
 
-				$('#tabla-ips tbody tr td.sorting_1 a strong').each(function() {
+				$('#tabla-contratos tbody tr td.sorting_1 a strong').each(function() {
 					var nro = $(this).text();
 
 					if (window.location.pathname.split("/")[1] === "software") {
-						var url='/software/empresa/mikrotik/'+nro+'/autorizar-ips';
+						var url='/software/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
 					}else{
-						var url = '/empresa/mikrotik/'+nro+'/autorizar-ips';
+						var url = '/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
 					}
 
 					$.ajax({
@@ -145,7 +158,6 @@
 			cargando(false);
 			$("#btn_cambios").addClass('d-none');
 			$("#btn_salir").text('Volver al listado');
-			tabla.DataTable().ajax.reload();
 		}
 	}
 </script>

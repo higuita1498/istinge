@@ -29,9 +29,9 @@ class DescuentosController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('tipo_contacto', 0)->get();
-        $usuarios = User::where('user_status', 1)->get();
-        $tabla = Campos::where('modulo', 9)->orderBy('orden', 'asc')->get();
+        $clientes = Contacto::where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->get();
+        $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $tabla = Campos::where('modulo', 9)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
         return view('descuentos.index')->with(compact('clientes', 'usuarios', 'tabla'));
     }
@@ -40,7 +40,8 @@ class DescuentosController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $descuentos = Descuento::query()
                         ->join('factura', 'factura.id', '=', 'descuentos.factura')
-                        ->select('descuentos.*', 'factura.codigo', 'factura.cliente');
+                        ->select('descuentos.*', 'factura.codigo', 'factura.cliente')
+                        ->where('descuentos.empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             if($request->codigo){

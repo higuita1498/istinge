@@ -26,7 +26,7 @@ class WifiController extends Controller
     
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status', 1)->get();
+        $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         
         //return view('wifi.index')->with(compact('solicitudes'));
         return view('wifi.indexnew')->with(compact('clientes'));
@@ -35,7 +35,8 @@ class WifiController extends Controller
     public function solicitudes(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
-        $solicitudes = Wifi::query();
+        $solicitudes = Wifi::query()
+            ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             switch ($request) {
@@ -61,16 +62,20 @@ class WifiController extends Controller
                 return "{$solicitud->red_antigua}";
             })
             ->editColumn('red_nueva', function (Wifi $solicitud) {
-                return "{$solicitud->red_nueva}";
+                return "<span style='display: inline-flex;'><div id='".$solicitud->id."'>".$solicitud->red_nueva."</div> <a href='javascript:copiarData({$solicitud->id})'> <i class='far fa-copy'></i></a></span>";
             })
             ->editColumn('pass_antigua', function (Wifi $solicitud) {
                 return "{$solicitud->pass_antigua}";
             })
             ->editColumn('pass_nueva', function (Wifi $solicitud) {
-                return "{$solicitud->pass_nueva}";
+                return $solicitud->pass_nueva;
+                return "<span style='display: inline-flex;'><div id='".$solicitud->id."'>".$solicitud->pass_nueva."</div> <a href='javascript:copiarData({$solicitud->id})'> <i class='far fa-copy'></i></a></span>";
             })
             ->editColumn('ip', function (Wifi $solicitud) {
-                return "{$solicitud->ip}";
+                if(isset($solicitud->cliente()->contrato()->puerto_conexion)){
+                    return "<a href='http://".$solicitud->ip.":".$solicitud->cliente()->contrato()->puerto_conexion."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
+                }
+                return "<a href='http://".$solicitud->ip."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
             })
             ->editColumn('mac', function (Wifi $solicitud) {
                 return "{$solicitud->mac}";
@@ -91,13 +96,13 @@ class WifiController extends Controller
                 return  $solicitud->status == 0 ? date('d-m-Y h:m:s', strtotime($solicitud->updated_at)) : '';
             })
             ->addColumn('acciones', $modoLectura ?  "" : "wifi.acciones-wifi")
-            ->rawColumns(['acciones', 'id_cliente', 'status', 'oculto'])
+            ->rawColumns(['acciones', 'id_cliente', 'status', 'oculto', 'ip', 'red_nueva', 'pass_nueva'])
             ->toJson();
     }
   
     public function status($id)
     {
-        $solicitud = Wifi::find($id);
+        $solicitud = Wifi::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($solicitud) {
             if ($solicitud->status == 1) {
                 $mensaje = 'Cambio de contraseña realizado';

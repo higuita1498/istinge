@@ -13,9 +13,9 @@ use App\Funcion;
 use DB;
 use App\User;
 
-class GrupoCorte extends Model
+class Puerto extends Model
 {
-    protected $table = "grupos_corte";
+    protected $table = "puertos";
     protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
@@ -23,7 +23,7 @@ class GrupoCorte extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'fecha_factura', 'fecha_pago', 'fecha_corte', 'fecha_suspension', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'nombre', 'empresa', 'estado', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
     
     protected $appends = ['uso', 'session'];
@@ -52,16 +52,16 @@ class GrupoCorte extends Model
         }
     }
     
-    public function status($class=false){
+    public function estado($class=false){
         if($class){
-            return $this->status == '1' ? 'success' : 'danger';
+            return $this->estado == '1' ? 'success' : 'danger';
         }
-        return $this->status == '1' ? 'Habilitado' : 'Deshabilitado';
+        return $this->estado == '1' ? 'Habilitado' : 'Deshabilitado';
     }
 
     public function uso(){
         $cont=0;
-        $cont+=Contrato::where('grupo_corte', $this->id)->count();
+        $cont+=Contrato::where('puerto_conexion', $this->id)->count();
         return $cont;
     }
     
@@ -71,17 +71,5 @@ class GrupoCorte extends Model
     
     public function updated_by(){
         return User::find($this->updated_by);
-    }
-    
-    public function nodo(){
-        return Nodo::find($this->nodo);
-    }
-    
-    public function modo_red(){
-        return $this->modo_red == '1' ? 'BRIDGRE' : 'ENRUTADOR';
-    }
-    
-    public function contratos(){
-        return Contrato::where('grupo_corte', $grupo->id)->count();
     }
 }

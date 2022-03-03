@@ -22,6 +22,7 @@ use App\PlanesVelocidad;
 
 use App\Impuesto;  
 use App\Model\Inventario\Inventario; 
+use App\Contrato;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 include_once(app_path() .'/../public/api_mt_include2.php');
@@ -35,19 +36,19 @@ class PlanesVelocidadController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Gestión de Planes de Velocidad', 'icon' =>'fas fa-server']);
+        view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Planes de Velocidad', 'icon' =>'fas fa-server']);
     }
     
     public function index(){
       $this->getAllPermissions(Auth::user()->id);
-      $planes = PlanesVelocidad::all();
+      $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
       return view('planesvelocidad.index')->with(compact('planes'));
     }
     
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Plan', 'icon' => 'fas fa-server']);
-        $mikrotiks = Mikrotik::all();
+        $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
         
         return view('planesvelocidad.create')->with(compact('mikrotiks'));
     }
@@ -97,6 +98,7 @@ class PlanesVelocidadController extends Controller
         $plan->parenta = $request->parenta;
         $plan->prioridad = $request->prioridad;
         $plan->item = $inventario->id;
+        $plan->empresa = Auth::user()->empresa;
         $plan->save();
             
         $mensaje='Se ha creado satisfactoriamente el plan';
@@ -105,17 +107,17 @@ class PlanesVelocidadController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $plan = PlanesVelocidad::where('id', $id)->first();
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             view()->share(['title' => 'Modificar Plan', 'icon' => 'fas fa-server']);
-            $mikrotiks = Mikrotik::all();
+            $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
             return view('planesvelocidad.edit')->with(compact('plan', 'mikrotiks'));
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
     
     public function update(Request $request, $id){
-        $plan = PlanesVelocidad::where('id', $id)->first();
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             $request->validate([
                 'name' => 'required|max:200',
@@ -125,7 +127,6 @@ class PlanesVelocidadController extends Controller
                 'type' => 'required|max:200',
                 'mikrotik' => 'required|max:200',
             ]);
-            
             
             $plan->mikrotik = $request->mikrotik;
             $plan->name = $request->name;
@@ -153,14 +154,14 @@ class PlanesVelocidadController extends Controller
             $inventario->precio   = $this->precision($request->price);
             $inventario->save();
             
-            $mensaje='Se ha modificado satisfactoriamente el Plan';
-            return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);
+            $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
+            return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
       }
       return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
     
     public function destroy($id){
-        $plan = PlanesVelocidad::find($id);
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             $plan->delete();
             return redirect('empresa/planes-velocidad')->with('success', 'Se ha eliminado correctamente el Plan');
@@ -170,7 +171,7 @@ class PlanesVelocidadController extends Controller
     
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $plan = PlanesVelocidad::where('id', $id)->first();
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             view()->share(['icon' => 'fas fa-server', 'title' => 'Plan: '.$plan->name]);
             return view('planesvelocidad.show')->with(compact('plan'));
@@ -180,7 +181,7 @@ class PlanesVelocidadController extends Controller
     
     public function status($id){
         $this->getAllPermissions(Auth::user()->id);
-        $plan = PlanesVelocidad::find($id);
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             if ($plan->status == 1) {
                 $mensaje = 'SE HA DESHABILITADO DE PLAN SATISFACTORIAMENTE';
@@ -198,7 +199,7 @@ class PlanesVelocidadController extends Controller
     
     public function reglas($id){
         $this->getAllPermissions(Auth::user()->id);
-        $plan = PlanesVelocidad::find($id);
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             $mikrotik = $plan->mikrotik();
             $API = new RouterosAPI();
@@ -291,5 +292,63 @@ class PlanesVelocidadController extends Controller
             return redirect('empresa/planes-velocidad')->with($type, $mensaje);
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function aplicar_cambios($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        if ($plan) {
+            $contratos = Contrato::where('plan_id', $plan->id)->where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+            view()->share(['title' => "Contratos con Plan", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
+            return view('planesvelocidad.aplicar_cambios')->with(compact('contratos', 'plan'));
+        }
+        return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function aplicando_cambios($nro){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
+        $plan = PlanesVelocidad::find($contrato->plan_id);
+        if ($plan) {
+            $mikrotik = Mikrotik::find($plan->mikrotik);
+
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
+            $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+            $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+            $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $name = $API->comm("/queue/simple/getall", array(
+                    "?target" => $contrato->ip,
+                    )
+                );
+
+                if($name){
+                    $API->comm("/queue/simple/set", array(
+                        ".id"             => $name[0][".id"],
+                        "max-limit"       => $plan->upload.'/'.$plan->download,
+                        "priority"        => $priority,
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold
+                        )
+                    );
+                }
+
+                $API->disconnect();
+
+                return response()->json([
+                    'success'  => true,
+                    'servicio' => $contrato->servicio,
+                ]);
+            } else {
+                return response()->json([
+                    'success'  => false,
+                    'servicio' => $contrato->servicio,
+                ]);
+            }
+        }
     }
 }

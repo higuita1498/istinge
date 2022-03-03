@@ -26,7 +26,7 @@ class NotificacionesController extends Controller
 
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        $notificaciones = Notificacion::all();
+        $notificaciones = Notificacion::where('empresa', Auth::user()->empresa)->get();
  		return view('notificaciones.index')->with(compact('notificaciones'));
  	}
  	
@@ -49,6 +49,7 @@ class NotificacionesController extends Controller
         $notificacion->desde = Carbon::parse($request->desde)->format('Y-m-d');
         $notificacion->hasta = Carbon::parse($request->hasta)->format('Y-m-d');
         $notificacion->status = $request->status;
+        $notificacion->empresa = Auth::user()->empresa;
         $notificacion->save();
         $mensaje='Se ha creado satisfactoriamente la notificación';
         return redirect('empresa/notificaciones')->with('success', $mensaje);
@@ -56,7 +57,7 @@ class NotificacionesController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $notificacion = Notificacion::find($id);
+        $notificacion = Notificacion::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         if ($notificacion) {        
             return view('notificaciones.edit')->with(compact('notificacion'));
         }
@@ -64,7 +65,7 @@ class NotificacionesController extends Controller
     }
     
     public function update(Request $request, $id){
-        $notificacion = Notificacion::find($id);
+        $notificacion = Notificacion::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         if ($notificacion) {
             $request->validate([
                 'mensaje' => 'required|max:2000',
@@ -86,7 +87,7 @@ class NotificacionesController extends Controller
     }
     
     public function destroy($id){      
-        $notificacion = Notificacion::find($id);
+        $notificacion = Notificacion::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         if ($notificacion) {        
             $notificacion->delete();
         }
@@ -95,7 +96,7 @@ class NotificacionesController extends Controller
     
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $notificacion = Notificacion::find($id);
+        $notificacion = Notificacion::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         if ($notificacion) {
             return view('notificaciones.show')->with(compact('notificacion'));
         }
@@ -103,7 +104,7 @@ class NotificacionesController extends Controller
     }
     
     public function act_desc($id){
-        $notificacion = Notificacion::find($id);
+        $notificacion = Notificacion::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
         if ($notificacion) {        
             if ($notificacion->status==1) {
                 $mensaje='Se ha desactivado satisfactoriamente la notificación';

@@ -25,8 +25,9 @@
         	<div class="col-md-3 form-group">
 	            <label class="control-label">Clasificación <span class="text-danger">*</span></label>
         	    <select name="clasificacion" id="clasificacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
-        	        <option value="0">CLASIFICACIÓN A</option>
-        	        <option value="1">CLASIFICACIÓN B</option>
+        	        <option value="Bienvenida">Bienvenida</option>
+        	        <option value="Cobro">Cobro</option>
+        	        <option value="Notificacion">Notificación</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('clasificacion') }}</strong>

@@ -156,6 +156,14 @@
                 min-height: 70px;
                 max-height: 145px;
             }
+            #form-filter{
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+            }
+            #form-filter > div, #form-filterG > div{
+                border: solid 1px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                padding: 2% 1%;
+            }
         </style>
         @yield('style')
     </head>
