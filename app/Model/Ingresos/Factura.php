@@ -19,6 +19,7 @@ use App\Model\Inventario\ListaPrecios;
 use App\Model\Inventario\Bodega;
 use Carbon\Carbon;
 use DB;
+use App\GrupoCorte;
 class Factura extends Model
 {
     protected $table = "factura";
@@ -484,5 +485,57 @@ public function forma_pago()
         $estadoCuenta['saldoMesActual'] = $saldoMesActual;
         
         return (object) $estadoCuenta;
+    }
+
+    /**
+     * Retorna si un cliente puede crear factura electrónica o no.
+     *
+     * @var array
+     */
+    public static function booleanFacturaElectronica($clienteId){
+    //Validamos que la persona tenga un contrato de lo contrario no podremos crear una factura electrónica.
+    $contratoPersona = Contrato::where('client_id',$clienteId)->first();
+  
+
+    if($contratoPersona){
+
+        /* 
+        Vamos a evaluar la fecha de corte tomando el ultimo contrato y contando los dias de corte que tenga el contrato.
+        para saber si se puede generar un factura electrónica de ese cliente.
+        */
+        $diasCorte = GrupoCorte::join('contracts as c','c.grupo_corte','=','grupos_corte.id')
+        ->where('c.client_id',$clienteId)
+        ->select('grupos_corte.fecha_corte')
+        ->first();
+
+        //Obtenemos la ultima factura generada para ese cliente (si es que tiene).
+        $lastFacturaFecha = false;
+        $fechaPermitida = true;
+        if(Factura::where('cliente', $clienteId)->orderby('id','desc')->first()){
+            $lastFacturaFecha = Factura::where('cliente', $clienteId)->orderby('id','desc')->first()->fecha;
+            $lastFacturaFecha = Carbon::parse($lastFacturaFecha);
+            $fechaPermitida = $lastFacturaFecha->addDays($diasCorte->fecha_corte);
+
+            /*
+                Comparamos finalmente la fecha actual con la fecha permitida, si la fecha actual es menor
+                a la fecha permitida es por que entra en el rango de creación de la factura.
+            */
+            $fechaActual = Carbon::now();
+
+            if($fechaPermitida  < $fechaActual){
+                return response()->json(true);
+            }else{
+                return response()->json(false);
+            }
+        
+        //si no ingresa a este apartado ya que no cuenta con ninguna factura creada pero si contrato.
+        }else{
+            return response()->json(true);
+        }
+        
+        }
+        else{
+            return response()->json(false);
+        }
     }
 }

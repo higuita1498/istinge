@@ -57,9 +57,17 @@ class ConfiguracionController extends Controller
     $this->getAllPermissions(Auth::user()->id);
     view()->share(['title' => 'Numeraciones de Documentos', 'icon' =>'']);
     $numeracion = Numeracion::where('empresa',Auth::user()->empresa)->first();
-    $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
+    $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('tipo',1)->get();
     return view('configuracion.numeraciones')->with(compact('numeracion', 'numeraciones'));
 
+  }
+
+  public function numeraciones_dian(){
+    $this->getAllPermissions(Auth::user()->id);
+    view()->share(['title' => 'Numeraciones de Documentos DIAN', 'icon' =>'']);
+    $numeracion = Numeracion::where('empresa',Auth::user()->empresa)->first();
+    $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('tipo',2)->get();
+    return view('configuracion.numeraciones-dian')->with(compact('numeracion', 'numeraciones'));
   }
 
   /**
@@ -359,6 +367,7 @@ class ConfiguracionController extends Controller
         'cotizacion' => 'required|numeric',
         'orden' => 'required|numeric',
       ]);
+
       $numeracion = Numeracion::where('empresa',Auth::user()->empresa)->first();
       $numeracion->caja=$request->caja;
       $numeracion->cajar=$request->cajar;
@@ -375,11 +384,18 @@ class ConfiguracionController extends Controller
         'inicio' => 'required|numeric',
         'preferida' => 'required|numeric'
       ]);
+
+      //Tipo de numeracion_factura, 1=estandar, 2=DIAN
+      $tipo = 1;
+      if($request->tipo == 2){$tipo=2;}
+      
       if ($request->preferida==1) {
         DB::table('numeraciones_facturas')
         ->where('empresa', Auth::user()->empresa)
+        ->where('tipo',$tipo)
         ->update(['preferida' => 0]);
       }
+
 
       $numeracion=new NumeracionFactura;
       $numeracion->nombre=$request->nombre;
@@ -397,18 +413,16 @@ class ConfiguracionController extends Controller
       $numeracion->nroresolucion=$request->nroresolucion;
       $numeracion->resolucion=$request->resolucion;
       $numeracion->empresa=Auth::user()->empresa;
+      $numeracion->tipo = $tipo;
       $numeracion->save();
 
       $mensaje='Se ha creado satisfactoriamente la numeración';
       return redirect('empresa/configuracion/numeraciones')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
-
-
     }
 
     $mensaje='Se ha creado satisfactoriamente la numeración';
     return redirect('empresa/configuracion/numeraciones')->with('success', $mensaje);
   }
-
 
   /**
   * Formulario para crear un nueva numeracion
@@ -420,20 +434,20 @@ class ConfiguracionController extends Controller
     return view('configuracion.numeracion.create');
   }
 
-  /**
+    /**
   * Formulario para modificar los datos de una numeracion
   * @param int $id
   * @return view
   */
   public function numeraciones_edit($id){
-      $this->getAllPermissions(Auth::user()->id);
-    $numeracion = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-    if ($numeracion) {
-      view()->share(['title' => 'Modificar Numeración', 'icon' =>'']);
-      return view('configuracion.numeracion.edit')->with(compact('numeracion'));
-    }
-    return redirect('empresa/configuracion/numeraciones')->with('success', 'No existe un registro con ese id');
+    $this->getAllPermissions(Auth::user()->id);
+  $numeracion = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+  if ($numeracion) {
+    view()->share(['title' => 'Modificar Numeración', 'icon' =>'']);
+    return view('configuracion.numeracion.edit')->with(compact('numeracion'));
   }
+  return redirect('empresa/configuracion/numeraciones/dian')->with('success', 'No existe un registro con ese id');
+}
 
   /**
   * Modificar los datos de la numeracion
@@ -451,6 +465,7 @@ class ConfiguracionController extends Controller
       if ($request->preferida==1) {
         DB::table('numeraciones_facturas')
         ->where('empresa', Auth::user()->empresa)
+        ->where('tipo',1)
         ->where('id', '<>',$numeracion->id)
         ->update(['preferida' => 0]);
       }
@@ -474,6 +489,137 @@ class ConfiguracionController extends Controller
 
     }
     return redirect('empresa/configuracion/numeraciones')->with('success', 'No existe un registro con ese id');
+  }
+
+  public function numeraciones_dian_store(Request $request){
+    //Tomamos el tiempo en el que se crea el registro
+    Session::put('posttimer', Numeracion::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+    $sw = 1;
+
+    //Recorremos la sesion para obtener la fecha
+        foreach (Session::get('posttimer') as $key) {
+          if ($sw == 1) {
+            $ultimoingreso = $key;
+            $sw=0;
+        }
+    }
+
+    //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+
+    //Si el tiempo es de menos de 30 segundos mandamos al listado general
+    if ($diasDiferencia <= 10) {
+      $mensaje = "El formulario ya ha sido enviado.";
+      return redirect('empresa/configuracion/numeraciones')->with('success', $mensaje);
+    }
+
+    $request->validate([
+        'nombre' => 'required',
+        'inicio' => 'required|numeric',
+        'preferida' => 'required|numeric'
+    ]);
+    if ($request->preferida==1) {
+      DB::table('numeraciones_facturas')
+      ->where('empresa', Auth::user()->empresa)
+      ->where('tipo',$tipo)
+      ->update(['preferida' => 0]);
+    }
+
+      //Tipo de numeracion_factura, 1=estandar, 2=DIAN
+      $tipo = 1;
+      if($request->tipo == 2){$tipo=2;}
+
+      $numeracion=new NumeracionFactura;
+      $numeracion->nombre=$request->nombre;
+      $numeracion->prefijo=$request->prefijo;
+      $numeracion->inicio=$request->inicio;
+      $numeracion->inicioverdadero = $request->inicio;
+      $numeracion->final=$request->final;
+      if ($request->desde) {
+        $numeracion->desde=Carbon::parse($request->desde)->format('Y-m-d');
+      }
+      if ($request->hasta) {
+        $numeracion->hasta=Carbon::parse($request->hasta)->format('Y-m-d');
+      }
+      $numeracion->preferida=$request->preferida;
+      $numeracion->nroresolucion=$request->nroresolucion;
+      $numeracion->resolucion=$request->resolucion;
+      $numeracion->empresa=Auth::user()->empresa;
+      $numeracion->tipo = $tipo;
+      $numeracion->save();
+
+      $mensaje='Se ha creado satisfactoriamente la numeración';
+      return redirect('empresa/configuracion/numeraciones/dian')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+
+      $mensaje='Se ha creado satisfactoriamente la numeración';
+      return redirect('empresa/configuracion/numeraciones/dian')->with('success', $mensaje);
+  }
+
+   /**
+  * Formulario para crear un nueva numeracion dian
+  * @return view
+  */
+  public function numeraciones_dian_create(){
+    $this->getAllPermissions(Auth::user()->id);
+    view()->share(['title' => 'Nueva Numeración', 'icon' =>'']);
+    return view('configuracion.numeracion-dian.create');
+  }
+
+  /**
+  * Formulario para modificar los datos de una numeracion DIAN
+  * @param int $id
+  * @return view
+  */
+  public function numeraciones_dian_edit($id){
+    $this->getAllPermissions(Auth::user()->id);
+    $numeracion = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($numeracion) {
+      view()->share(['title' => 'Modificar Numeración', 'icon' =>'']);
+      return view('configuracion.numeracion-dian.edit')->with(compact('numeracion'));
+    }
+    return redirect('empresa/configuracion/numeraciones/dian')->with('success', 'No existe un registro con ese id');
+}
+
+  /**
+  * Modificar los datos de la numeracion DIAN
+  * @param Request $request
+  * @return redirect
+  */
+  public function numeraciones_dian_update(Request $request, $id){
+    $numeracion = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($numeracion) {
+      $request->validate([
+        'nombre' => 'required',
+        'inicio' => 'required|numeric',
+        'preferida' => 'required|numeric'
+      ]);
+      if ($request->preferida==1) {
+        DB::table('numeraciones_facturas')
+        ->where('empresa', Auth::user()->empresa)
+        ->where('tipo',2)
+        ->where('id', '<>',$numeracion->id)
+        ->update(['preferida' => 0]);
+      }
+      $numeracion->nombre=$request->nombre;
+      $numeracion->prefijo=$request->prefijo;
+      $numeracion->inicioverdadero=$request->inicioverdadero;
+      $numeracion->inicio=$request->inicio;
+      $numeracion->final=$request->final;
+
+      if ($request->desde) { $numeracion->desde=Carbon::parse($request->desde)->format('Y-m-d');  }
+      else{ $numeracion->desde=null; }
+      if ($request->hasta) { $numeracion->hasta=Carbon::parse($request->hasta)->format('Y-m-d'); }
+      else{ $numeracion->hasta=null; }
+      $numeracion->preferida=$request->preferida;
+      $numeracion->nroresolucion=$request->nroresolucion;
+      $numeracion->resolucion=$request->resolucion;
+      $numeracion->save();
+
+      $mensaje='Se ha modificado satisfactoriamente la numeración';
+      return redirect('empresa/configuracion/numeraciones/dian')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+
+    }
+    return redirect('empresa/configuracion/numeraciones/dian')->with('success', 'No existe un registro con ese id');
   }
 
   /**

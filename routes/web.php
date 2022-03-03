@@ -23,7 +23,10 @@ Route::get('clear', function () {
     return redirect()->back();
 });
 
+
+
 /* IMPORTAR API*/
+Route::post('/import_puc','PucController@import_puc')->name('puc.import_puc');
 
 Route::get('/import_plans','Controller@import_plans')->name('import_plans');
 Route::get('/import_clients','Controller@import_clients')->name('import_clients');
@@ -51,6 +54,7 @@ Route::get('/factura/{identificacion}', 'Controller@consultar_invoice')->name('i
 Route::get('contratos/{nodo?}', 'ContratosController@contratos');
 Route::get('nodos', 'NodosController@nodos');
 Route::get('facturas', 'FacturasController@facturas');
+Route::get('facturas-electronicas','FacturasController@facturas_electronica');
 Route::get('ingresos', 'IngresosController@ingresos');
 //Route::get('contactos', 'ContactosController@contactos');
 Route::get('contactos/{tipo_usuario?}', 'ContactosController@contactos');
@@ -339,7 +343,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('tirilla/{id}/{name}', 'FacturasController@imprimirTirilla')->name('facturas.tirilla');
 
 		Route::get('/{id}/xml','FacturasController@xml')->name('facturas.xml');
-		Route::post('/facturas-electronicas','FacturasController@facturas_electronica');
+		
 		//Route::get('pdfele/{id}/{name}', 'FacturasController@ImprimirElec')->name('facturas.imprimir');
 
 
@@ -540,6 +544,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	});
 
 	Route::resource('categorias', 'CategoriasController');
+	Route::resource('puc', 'PucController');
 	Route::group(['prefix' => 'configuracion'], function() {
 		Route::get('/terminos', 'ConfiguracionController@terminos')->name('configuracion.terminos');
 		Route::get('/termino/create', 'ConfiguracionController@terminos_create')->name('termino.create');
@@ -553,6 +558,11 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/numeraciones/store', 'ConfiguracionController@numeraciones_store')->name('numeraciones.store');
 		Route::get('/numeracion/{id}/edit', 'ConfiguracionController@numeraciones_edit')->name('numeraciones.edit');
 		Route::post('/numeracion/{id}/edit', 'ConfiguracionController@numeraciones_update')->name('numeraciones.update');
+		Route::get('/numeraciones/dian', 'ConfiguracionController@numeraciones_dian')->name('configuracion.numeraciones_dian');
+		Route::post('/numeracionesdian/store', 'ConfiguracionController@numeraciones_dian_store')->name('numeraciones_dian.store');
+		Route::get('/numeracionesdian/create', 'ConfiguracionController@numeraciones_dian_create')->name('numeraciones_dian.create');
+		Route::get('/numeracionesdian/{id}/edit', 'ConfiguracionController@numeraciones_dian_edit')->name('numeraciones_dian.edit');
+		Route::post('/numeracionesdian/{id}/edit', 'ConfiguracionController@numeraciones_dian_update')->name('numeraciones_dian.update');
 		Route::delete('/numeracion/{id}', 'ConfiguracionController@numeraciones_destroy')->name('numeraciones.destroy');
 		Route::post('/numeracion/{id}/act_desc', 'ConfiguracionController@numeraciones_act_desc')->name('numeraciones.act_desc');
 		Route::get('/datos', 'ConfiguracionController@datos')->name('configuracion.datos');
