@@ -13,6 +13,7 @@ use App\Nodo;
 use App\AP;
 use App\GrupoCorte;
 use App\Puerto;
+use App\Ping;
 
 class Contrato extends Model
 {
@@ -135,10 +136,20 @@ class Contrato extends Model
     }
     
     public function plug($class=false){
-        if($class){
-            return $this->state == 'enabled' ? 'primary' : 'danger';
+
+        $ping = Ping::where('ip', $this->ip)->first();
+
+        if($ping){
+            if($class){
+                return 'danger';
+            }
+            return 'Desconectado';
+        }else{
+            if($class){
+                return 'primary';
+            }
+            return 'Conectado';
         }
-        return $this->state == 'enabled' ? 'Conectado' : 'Desconectado';
     }
 
     public function factura(){
