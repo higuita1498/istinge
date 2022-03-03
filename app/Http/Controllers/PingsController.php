@@ -40,7 +40,10 @@ class PingsController extends Controller
 
         return datatables()->eloquent($pings)
             ->editColumn('contrato', function (Ping $ping) {
-                return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato()->cliente()->nombre."</div></a>";
+                return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato."</div></a>";
+            })
+            ->editColumn('cliente', function (Ping $ping) {
+                return "<a href=" . route('contactos.show', $ping->contrato()->cliente()->id) . " target='_blank'>".$ping->contrato()->cliente()->nombre."</div></a>";
             })
             ->editColumn('ip', function (Ping $ping) {
                 return $ping->ip;
@@ -52,7 +55,7 @@ class PingsController extends Controller
                 return $ping->updated_at;
             })
             ->addColumn('acciones', $modoLectura ?  "" : "pings.acciones")
-            ->rawColumns(['acciones', 'contrato'])
+            ->rawColumns(['acciones', 'contrato', 'cliente'])
             ->toJson();
     }
 
