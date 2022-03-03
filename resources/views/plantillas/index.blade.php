@@ -55,7 +55,7 @@
     	                <td class="text-center">{{ $plantilla->nro }}</td>
     	                <td class="text-center">{{ $plantilla->title }}</td>
     	                <td class="text-center">{{ $plantilla->tipo() }}</td>
-    	                <td class="text-center">{{ $plantilla->clasificacion() }}</td>
+    	                <td class="text-center">{{ $plantilla->clasificacion }}</td>
     	                <td class="text-center text-{{$plantilla->status('true')}}">{{ $plantilla->status() }}</td>
     	                <td class="text-center">
     	                    @if(isset($_SESSION['permisos']['703']))

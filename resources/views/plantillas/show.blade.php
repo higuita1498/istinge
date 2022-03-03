@@ -78,7 +78,7 @@
     					</tr>
     					<tr>
     						<th>Clasificación</th>
-    						<td>{{ $plantilla->clasificacion()}}</td>
+    						<td>{{ $plantilla->clasificacion}}</td>
     					</tr>
     					<tr>
     						<th>Creado por</th>
