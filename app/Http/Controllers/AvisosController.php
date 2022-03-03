@@ -74,7 +74,7 @@ class AvisosController extends Controller
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)
-            ->where('empresa', Auth::user()->empresa)
+            ->where('contracts.empresa', Auth::user()->empresa)
             ->get();
 			
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion'));
@@ -90,7 +90,7 @@ class AvisosController extends Controller
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)
-            ->where('empresa', Auth::user()->empresa)
+            ->where('contracts.empresa', Auth::user()->empresa)
             ->get();
 			
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion'));
