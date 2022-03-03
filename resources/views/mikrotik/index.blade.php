@@ -61,7 +61,7 @@
 			                    @csrf
 			                </form>
 			                @if($mikrotik->status == 0)
-			                <form action="{{ route('mikrotik.destroy',$mikrotik->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-mikrotik">
+			                <form action="{{ route('mikrotik.destroy',$mikrotik->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-mikrotik-{{$mikrotik->id}}">
 			                    @csrf
 			                    <input name="_method" type="hidden" value="DELETE">
 			                </form>
@@ -90,7 +90,7 @@
 						    @endif
 						    @endif
 						    @if($mikrotik->status == 0 && $mikrotik->uso() == 0)
-						        <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
+						        <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik-{{$mikrotik->id}}', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
 						    @endif
 						    <a title="IP's Autorizadas" href="{{ route('mikrotik.ips-autorizadas',$mikrotik->id )}}" class="btn btn-outline-warning btn-icons"><i class="fas fa-project-diagram"></i></a>
 						</td>

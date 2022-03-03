@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Auth;
 use App\User;
+use App\Contrato;
+use App\PlanesVelocidad;
+
 class Mikrotik extends Model
 {
     protected $table = "mikrotik";
@@ -47,6 +50,7 @@ class Mikrotik extends Model
     public function uso(){
         $tmp        = 0;
         $tmp        += Contrato::where('server_configuration_id', $this->id)->where('state','enabled')->where('status',1)->count();
+        $tmp        += PlanesVelocidad::where('mikrotik', $this->id)->where('status',1)->count();
         return $tmp;
     }
 }
