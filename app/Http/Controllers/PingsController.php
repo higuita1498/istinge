@@ -40,7 +40,7 @@ class PingsController extends Controller
 
         return datatables()->eloquent($pings)
             ->editColumn('contrato', function (Ping $ping) {
-                return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato."</div></a>";
+                return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato()->cliente()->nombre."</div></a>";
             })
             ->editColumn('ip', function (Ping $ping) {
                 return $ping->ip;
