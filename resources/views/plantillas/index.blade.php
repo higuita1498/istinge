@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('boton')
-    @if(isset($_SESSION['permisos']['706']))
-        <a href="{{route('plantillas.envio')}}" class="btn btn-success btn-sm" ><i class="fas fa-paper-plane"></i> Enviar Aviso</a>
-    @endif
     @if(isset($_SESSION['permisos']['701']))
         <a href="{{route('plantillas.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Plantilla</a>
     @endif
