@@ -61,6 +61,10 @@ class CronController extends Controller
                 }
 
                 $plazo=TerminosPago::where('dias',$fecha_suspension)->first();
+
+                if($contrato->facturacion == 3){
+                    $tipo = 2;
+                }
                 
                 $inicio = $nro->inicio;
                 $nro->inicio += 1;
@@ -74,6 +78,7 @@ class CronController extends Controller
                 $factura->empresa       = 1;
                 $factura->cliente       = $contrato->cliente;
                 $factura->fecha         = $creacion;
+                $factura->tipo         = $tipo;
                 $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
                 $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
                 $factura->observaciones = 'Facturación Automática - Corte '.$fecha_corte;
