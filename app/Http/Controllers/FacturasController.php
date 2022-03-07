@@ -1371,7 +1371,7 @@ public function edit($id){
           });
 
     }
-    $factura->correo = 1;
+    //$factura->correo = 1;
     $factura->observaciones = ' | Factura Enviada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
     $factura->save();
     if ($redireccionar) {
