@@ -16,7 +16,7 @@
         	    </span>
         	</div>
         	
-        	<div class="col-md-5 form-group">
+        	<div class="col-md-5 form-group {{ $id ? 'd-none':'' }}">
         	    <label class="control-label">Clientes <span class="text-danger">*</span></label>
         	    <div class="btn-group btn-group-toggle" data-toggle="buttons">
         	        <label class="btn btn-success">
@@ -39,7 +39,7 @@
         	        <optgroup label="{{$estado['nombre']}}">
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
-        	                    <option class="{{$contrato->state}}" value="{{$contrato->id}}">{{$contrato->c_nombre}} - {{$contrato->c_nit}}</option>
+        	                    <option class="{{$contrato->state}}" value="{{$contrato->id}}" {{$contrato->id==$id?'selected':''}}>{{$contrato->c_nombre}} - {{$contrato->c_nit}}</option>
         	                @endif
         	            @endforeach
         	        </optgroup>

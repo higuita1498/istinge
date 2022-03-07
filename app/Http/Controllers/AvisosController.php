@@ -64,7 +64,7 @@ class AvisosController extends Controller
         //
     }
     
-    public function sms()
+    public function sms($id = false)
     {
         $this->getAllPermissions(Auth::user()->id);
         $opcion = 'SMS';
@@ -74,13 +74,17 @@ class AvisosController extends Controller
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)
-            ->where('contracts.empresa', Auth::user()->empresa)
-            ->get();
+            ->where('contracts.empresa', Auth::user()->empresa);
+
+        if($id){
+            $contratos = $contratos->where('contactos.id', $id);
+        }
+        $contratos = $contratos->get();
 			
-        return view('avisos.envio')->with(compact('plantillas','contratos','opcion'));
+        return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
     }
     
-    public function email()
+    public function email($id = false)
     {
         $this->getAllPermissions(Auth::user()->id);
         $opcion = 'EMAIL';
@@ -88,12 +92,16 @@ class AvisosController extends Controller
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 1)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
-			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-			->where('contracts.status', 1)
-            ->where('contracts.empresa', Auth::user()->empresa)
-            ->get();
-			
-        return view('avisos.envio')->with(compact('plantillas','contratos','opcion'));
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->where('contracts.status', 1)
+            ->where('contracts.empresa', Auth::user()->empresa);
+
+        if($id){
+            $contratos = $contratos->where('contactos.id', $id);
+        }
+        $contratos = $contratos->get();
+
+        return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
     }
     
     public function envio_aviso(Request $request)

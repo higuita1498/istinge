@@ -236,6 +236,7 @@ class ContactosController extends Controller
     }
 
     public function show($id){
+        view()->share(['invertfalse' => true]);
         $this->getAllPermissions(Auth::user()->id);
 
         $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();

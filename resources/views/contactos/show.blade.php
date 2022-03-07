@@ -98,6 +98,9 @@
             	        <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que desea eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</button>
             	    @endif
             	@endif
+            	@if ($contacto->email && $contacto->contract != 'N/A')
+            	<a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="dropdown-item"><i class="fas fa-envelope-open-text"></i> Enviar Notificación por EMAIL</a>
+            	@endif
             </div>
         </div>
     </div>

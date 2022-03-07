@@ -31,10 +31,14 @@ class Contacto extends Model
         'tipo_persona','responsableiva','plan','contrato', 'serial_onu'
     ];
     
-    protected $appends = ['usado'];
+    protected $appends = ['usado', 'contract'];
 
     public function getUsadoAttribute(){
         return $this->usado();
+    }
+
+    public function getContractAttribute(){
+        return $this->contract();
     }
 
     public function lista_precios(){
@@ -322,5 +326,4 @@ class Contacto extends Model
         }
         return 'N/A';
     }
-
 }
