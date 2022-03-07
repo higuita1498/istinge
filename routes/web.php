@@ -757,6 +757,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 	Route::group(['prefix' => 'asignaciones'], function() {
 		Route::get('{id}/imprimir', 'AsignacionesController@imprimir')->name('asignaciones.imprimir');
+		Route::get('config_campos_asignacion', 'AsignacionesController@show_campos_asignacion')->name('asignaciones.show_campos_asignacion');
+		Route::post('campos_asignacion', 'AsignacionesController@campos_asignacion')->name('asignaciones.campos_asignacion');
 	});
 	Route::resource('asignaciones', 'AsignacionesController');
 	

@@ -227,10 +227,6 @@
 							</td>
 						</tr>
 						@endif
-
-
-
-
 						@endif
 						</tbody>
 				</table>

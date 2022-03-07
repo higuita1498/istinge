@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
+use App\Empresa;
 
 class AsignacionesController extends Controller
 {
@@ -46,9 +47,10 @@ class AsignacionesController extends Controller
   public function create(){
     $this->getAllPermissions(Auth::user()->id);
     $clientes = Contacto::where('firma_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
+    $empresa = Empresa::find(Auth::user()->empresa);
 
     view()->share(['title' => 'Asignación de Contrato de Internet']);
-    return view('asignaciones.create')->with(compact('clientes'));
+    return view('asignaciones.create')->with(compact('clientes', 'empresa'));
   }
 
   public function store(Request $request){
@@ -110,5 +112,30 @@ class AsignacionesController extends Controller
       $pdf = PDF::loadView('pdf.contrato', compact('contrato'));
       return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
     }
+  }
+
+  public function show_campos_asignacion(){
+    $empresa = Empresa::find(Auth::user()->empresa);
+    return json_encode($empresa);
+  }
+
+  public function campos_asignacion(Request $request){
+    $empresa = Empresa::find(Auth::user()->empresa);
+    if($empresa){
+      $empresa->campo_a = $request->campo_a;
+      $empresa->campo_b = $request->campo_b;
+      $empresa->campo_c = $request->campo_c;
+      $empresa->campo_d = $request->campo_d;
+      $empresa->save();
+
+      return response()->json([
+        'success' => true,
+        'campo_a' => $empresa->campo_a,
+        'campo_b' => $empresa->campo_b,
+        'campo_c' => $empresa->campo_c,
+        'campo_d' => $empresa->campo_d
+      ]);
+    }
+    return response()->json(['success' => false]);
   }
 }
