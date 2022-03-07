@@ -16,7 +16,13 @@ class UsuariosController extends Controller
     
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        $usuarios = User::where('empresa',Auth::user()->empresa)->get();
+
+        if(Auth::user()->rol == 1){
+            $usuarios = User::where('user_status', 1)->whereIn('rol', [2,3])->get();
+        }else{
+            $usuarios = User::where('empresa',Auth::user()->empresa)->get();
+        }
+
         $recarga = 0;
         return view('configuracion.usuarios.index')->with(compact('usuarios','recarga'));
     }

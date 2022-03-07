@@ -201,4 +201,12 @@ class User extends Authenticatable
         return Radicado::where('tecnico',$this->id)->orWhere('responsable',$this->id)->count();
     }
 
+    public function rol($clase=false){
+        if ($clase) {
+           return $this->rol==3?'text-primary':'text-warning';
+        }else{
+           return $this->rol==3?'Desarrollo':'Empresa';
+        }
+    }
+
 }
