@@ -28,7 +28,7 @@ class Contacto extends Model
      */
     protected $fillable = [
         'empresa', 'nombre', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
-        'tipo_persona','responsableiva','plan','contrato', 'serial_onu'
+        'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD'
     ];
     
     protected $appends = ['usado', 'contract'];

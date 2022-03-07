@@ -208,6 +208,29 @@
 							<th>Asignación de Contrato Digital</th>
 							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 						</tr>
+						@if($contacto->imgA || $contacto->imgB || $contacto->imgC || $contacto->imgD)
+						<tr>
+							<th>Archivos Adjuntos</th>
+							<td>
+								@if($contacto->imgA)
+								<a href="{{asset('adjuntos/documentos/'.$contacto->imgA)}}" target="_blank"><strong>Ver Adjunto A</strong></a>
+								@endif
+								@if($contacto->imgB)
+								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgB)}}" target="_blank"><strong>Ver Adjunto B</strong></a>
+								@endif
+								@if($contacto->imgC)
+								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgC)}}" target="_blank"><strong>Ver Adjunto C</strong></a>
+								@endif
+								@if($contacto->imgD)
+								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgD)}}" target="_blank"><strong>Ver Adjunto D</strong></a>
+								@endif
+							</td>
+						</tr>
+						@endif
+
+
+
+
 						@endif
 						</tbody>
 				</table>

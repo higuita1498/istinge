@@ -32,12 +32,13 @@ class AsignacionesController extends Controller
   {
     $this->middleware('auth');
     set_time_limit(300);
-    view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract', 'invert' => true]);
+    view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
   }
 
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
     $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
+    view()->share(['invert' => true]);
 
     return view('asignaciones.index')->with(compact('contratos'));
   }
@@ -73,6 +74,27 @@ class AsignacionesController extends Controller
       $nombre =  $file->getClientOriginalName();
       Storage::disk('documentos')->put($nombre, \File::get($file));
       $contrato->documento = $nombre;
+
+      $file = $request->file('imgA');
+      $nombre =  $file->getClientOriginalName();
+      Storage::disk('documentos')->put($nombre, \File::get($file));
+      $contrato->imgA = $nombre;
+
+      $file = $request->file('imgB');
+      $nombre =  $file->getClientOriginalName();
+      Storage::disk('documentos')->put($nombre, \File::get($file));
+      $contrato->imgB = $nombre;
+
+      $file = $request->file('imgC');
+      $nombre =  $file->getClientOriginalName();
+      Storage::disk('documentos')->put($nombre, \File::get($file));
+      $contrato->imgC = $nombre;
+
+      $file = $request->file('imgD');
+      $nombre =  $file->getClientOriginalName();
+      Storage::disk('documentos')->put($nombre, \File::get($file));
+      $contrato->imgD = $nombre;
+
       $contrato->save();
       $mensaje='Se ha registrado satisfactoriamente la asignación del contrato digital.';
       return redirect('empresa/asignaciones')->with('success', $mensaje);
