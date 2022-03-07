@@ -18,7 +18,7 @@ class UsuariosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
 
         if(Auth::user()->rol == 1){
-            $usuarios = User::where('user_status', 1)->where('rol', '>', 1)->get();
+            $usuarios = User::where('user_status', 1)->whereIn('rol', [2,3])->get();
         }else{
             $usuarios = User::where('empresa',Auth::user()->empresa)->get();
         }
