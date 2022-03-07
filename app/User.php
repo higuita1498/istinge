@@ -203,9 +203,19 @@ class User extends Authenticatable
 
     public function rol($clase=false){
         if ($clase) {
-           return $this->rol==3?'text-primary':'text-warning';
+            if($this->rol==2){
+                return 'text-warning';
+            }elseif($this->rol==3){
+                return 'text-primary';
+            }elseif($this->rol==4){
+                return 'text-success';
+            }elseif($this->rol==5){
+                return 'text-danger';
+            }elseif($this->rol>6){
+                return 'text-info';
+            }
         }else{
-           return $this->rol==3?'Desarrollo':'Empresa';
+            return Roles::find($this->rol)->rol;
         }
     }
 
