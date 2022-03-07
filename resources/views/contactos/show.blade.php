@@ -213,16 +213,16 @@
 							<th>Archivos Adjuntos</th>
 							<td>
 								@if($contacto->imgA)
-								<a href="{{asset('adjuntos/documentos/'.$contacto->imgA)}}" target="_blank"><strong>Ver Adjunto A</strong></a>
+								<a href="{{asset('../adjuntos/documentos/'.$contacto->imgA)}}" target="_blank"><strong>Ver Adjunto A</strong></a>
 								@endif
 								@if($contacto->imgB)
-								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgB)}}" target="_blank"><strong>Ver Adjunto B</strong></a>
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgB)}}" target="_blank"><strong>Ver Adjunto B</strong></a>
 								@endif
 								@if($contacto->imgC)
-								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgC)}}" target="_blank"><strong>Ver Adjunto C</strong></a>
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgC)}}" target="_blank"><strong>Ver Adjunto C</strong></a>
 								@endif
 								@if($contacto->imgD)
-								| <a href="{{asset('adjuntos/documentos/'.$contacto->imgD)}}" target="_blank"><strong>Ver Adjunto D</strong></a>
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank"><strong>Ver Adjunto D</strong></a>
 								@endif
 							</td>
 						</tr>
