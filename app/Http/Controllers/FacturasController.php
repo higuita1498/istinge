@@ -2499,16 +2499,16 @@ public function edit($id){
     public function mensaje($id){
         $factura = Factura::find($id);
         $hora = date('G');
-        $mensaje = "IST S.A.S. le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+        $mensaje = "Se le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
         
         $numero = str_replace('+','',$factura->cliente()->celular);
         $numero = str_replace(' ','',$numero);
         
         $post['to'] = array('57'.$numero);
         $post['text'] = $mensaje;
-        $post['from'] = "IST S.A.S.";
+        $post['from'] = "";
         $login ="jjtuiran2021";
-        $password = '';
+        $password = 'Bstc2710';
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");

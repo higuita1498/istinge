@@ -44,8 +44,9 @@ class LoginController extends Controller
             // Si tenemos sesión activa mostrará la página de inicio
             return Redirect::to('/');
         }
-        // Si no hay sesión activa mostramos el formulario        
-        return view('auth.login');
+        // Si no hay sesión activa mostramos el formulario
+        $empresa = Empresa::find(1);
+        return view('auth.login')->with(compact('empresa'));
     }
 
     public function showLoginFormConductor()

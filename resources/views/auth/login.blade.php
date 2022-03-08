@@ -8,9 +8,6 @@
 .login100-form-avatar img {
     width: 60%!important;
 }
-.btn-crearcuenta button {
-    background-color: #b00606!important;
-}
 .btn-crearcuenta button:hover {
     background-color: #333!important;
     border-color: #fff!important;
