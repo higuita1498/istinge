@@ -1701,137 +1701,8 @@ public function edit($id){
 
   }
 
-  public function factura_xml($id){
-
-      /*$output = View::make('site.contabilidad.adeudosXML')
-          ->with(compact(('xml_datos', 'total'))
-          ->render();*/
-
-
-
-
-      $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd"></Invoice>');
-
-      //$xml->addAttribute('version', '1.0');
-
-      $ext_UBLExtensions = $xml->addChild('xmlns:ext:UBLExtensions');
-      $ext_UBLExtension = $ext_UBLExtensions->addChild('xmlns:ext:UBLExtension');
-      $ext_ExtensionContent = $ext_UBLExtension->addChild('xmlns:ext:ExtensionContent');
-      $sts_DianExtensions = $ext_ExtensionContent->addChild('xmlns:sts:DianExtensions');
-      $sts_InvoiceControl = $sts_DianExtensions->addChild('xmlns:sts:InvoiceControl');
-      $sts_InvoiceAuthorization = $sts_InvoiceControl->addChild('xmlns:sts:InvoiceAuthorization','1234567890'); //Número autorización: Número del código de la resolución otorgada para la numeración
-      $sts_AuthorizationPeriod = $sts_InvoiceControl->addChild('xmlns:sts:AuthorizationPeriod');//Grupo de información relativas a la fechade autorización de la numeración
-      $cbc_StartDate = $sts_AuthorizationPeriod->addChild('xmlns:sts:StartDate','2019-12-01'); //Fecha de inicio de la autorización de la numeración
-      $cbc_EndDate = $sts_AuthorizationPeriod->addChild('xmlns:sts:EndDate','2019-12-01'); //Fecha final de la autorización de la numeración
-      $sts_AuthorizedInvoices = $sts_InvoiceControl->addChild('xmlns:sts:AuthorizedInvoices'); //Grupo de información del rango de numeración autorizado para este emisor
-      $sts_Prefix = $sts_AuthorizedInvoices->addChild('xmlns:sts:Prefix','SETP');//Prefijo de la autorización de numeración
-      $sts_From = $sts_AuthorizedInvoices->addChild('xmlns:sts:From','99000000'); //Valor inicial del rango de numeración otorgado
-      $sts_To = $sts_AuthorizedInvoices->addChild('xmlns:sts:To','999999999'); //Valor final del rango de numeración otorgado
-      $cbc_CustomizationID = $xml->addChild('xmlns:cbc:CustomizationID','05'); // Indicador del tipo de operación
-      $cbc_ProfileExecutionID = $xml->addChild('xmlns:cbc:ProfileExecutionID','2'); // Documentos enviados para el ambiente de pruebas:2 o produccion:1
-      $cbc_ID = $xml->addChild('xmlns:cbc:ID','2'); // Número de documento: Número de factura. Incluye prefijo + consecutivo de factura autorizados por la DIAN
-      $cbc_UUID = $xml->addChild('xmlns:cbc:UUID','f1c96d3ff4fc199817fa21ea2bc8a929b9b8c8b0fb50db6885ea48470e9ebabef994094272dbab11ddc93d8893dacb69'); // CUFE: Código Único de Facturación Electrónica codificacion SHA
-      $cbc_UUID->addAttribute('schemeID', '2'); // Codigo que describe el ambiente de pruebas:2 o produccion:1
-      $cbc_UUID->addAttribute('schemeName', 'CUFE-SHA384'); //Identificador del esquema de identificación Algoritmo utilizado para el cáculo del CUFE
-      $cbc_IssueDate = $xml->addChild('xmlns:cbc:IssueDate','2019-08-07'); // Fecha de emision de la factura
-      $cbc_IssueTime = $xml->addChild('xmlns:cbc:IssueTime','12:53:36-05:00'); // Hora de emision de la factura
-      $cbc_InvoiceTypeCode = $xml->addChild('xmlns:cbc:InvoiceTypeCode','01'); // Tipo de Factura
-      $cbc_Note = $xml->addChild('xmlns:cbc:Note','Nota de la factura'); // Información adicional: Texto libre, relativo al documento
-      $cbc_DocumentCurrencyCode = $xml->addChild('xmlns:cbc:DocumentCurrencyCode','COP'); // Divisa aplicable a la factura
-      $cbc_LineCountNumeric = $xml->addChild('xmlns:cbc:LineCountNumeric','1'); // Numero o Cantidad de elementos de la factura
-      $cac_AccountingSupplierParty = $xml->addChild('xmlns:cac:AccountingSupplierParty'); //
-      $cbc_AdditionalAccountID = $cac_AccountingSupplierParty->addChild('xmlns:cbc:AdditionalAccountID'); //Identificador de tipo de organización jurídica de la de persona
-      $cac_Party = $cac_AccountingSupplierParty->addChild('xmlns:cac:Party'); //Grupo con información generales sobre el obligado a Facturar
-      $cac_PartyName = $cac_Party->addChild('xmlns:cac:PartyName'); //Grupo con información sobre el nombre comercial del emisor
-      $cbc_Name = $cac_PartyName->addChild('xmlns:cbc:Name','Nombre C.A'); //Nombre comercial del emisor
-      $cac_PhysicalLocation = $cac_Party->addChild('xmlns:cac:PhysicalLocation'); //Grupo con informacion de localizacion fisica del emisor
-      $cac_Address = $cac_PhysicalLocation->addChild('xmlns:cac:Address'); //Grupo con informacion de localizacion fisica del emisor
-      $cbc_ID1 = $cac_Address->addChild('xmlns:cbc:ID','05380'); //Codigo del municipio
-      $cbc_CityName = $cac_Address->addChild('xmlns:cbc:CityName','LA ESTRELLA'); // NOmbre de la Ciudad
-      $cbc_PostalZone = $cac_Address->addChild('xmlns:cbc:PostalZone','055460'); //Codigo del codigo postal
-      $cbc_CountrySubentity = $cac_Address->addChild('xmlns:cbc:CountrySubentity','Antioquia'); //Nombre del departamento
-      $cac_CountrySubentityCode = $cac_Address->addChild('xmlns:cac:CountrySubentityCode','05'); //Codigo del Departamento
-      $cac_AddressLine = $cac_Address->addChild('xmlns:cac:AddressLine'); //Grupo de elemento que identifica libremente la dirección
-      $cbc_Line = $cac_AddressLine->addChild('xmlns:cbc:Line','Cra. 50 #97a Sur-180 a 97a Sur-394'); //Elemento de texto libre, que el emisor puede elegir utilizar para poner todas las información de su dirección
-      $cac_Country = $cac_Address->addChild('xmlns:cac:Country');//Grupo con información sobre el país
-      $cbc_IdentificationCode = $cac_Country->addChild('xmlns:cbc:IdentificationCode','CO');//Código dentificador del país
-      $cbc_Name1 = $cac_Country->addChild('xmlns:cbc:Name','Colombia');//Nombre del país
-      $cbc_Name1->addAttribute('languageID', 'es');//Identificador del lenguaje utilizado en el nombre del país
-      $cac_PartyTaxScheme = $cac_Party->addChild('xmlns:cac:PartyTaxScheme'); //Grupo de información tributarias del emisor
-      $cbc_RegistrationName = $cac_PartyTaxScheme->addChild('xmlns:cbc:RegistrationName','Cadena S.A'); //Nombre o Razón Social del emisor
-      $cbc_CompanyID = $cac_PartyTaxScheme->addChild('xmlns:cbc:CompanyID','890930534'); //NIT del emisor
-      $cbc_CompanyID->addAttribute('schemeID', '0');//DV del NIT del emisor
-      $cbc_CompanyID->addAttribute('schemeName', '31'); //Valida el Tipo de identificador fiscal; valor por defecto
-      $cbc_CompanyID->addAttribute('schemeAgencyID', '195'); // valor por defecto
-      $cbc_CompanyID->addAttribute('schemeAgencyName', 'CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)'); // valor por defecto
-      $cbc_TaxLevelCode = $cac_PartyTaxScheme->addChild('xmlns:cbc:TaxLevelCode','0-99'); //Obligaciones o responasbilidades del contribuyente; incluye el régimen al que pertenece el emisor
-      $cbc_TaxLevelCode->addAttribute('listName', '05');//
-      $cac_RegistrationAddress = $cac_PartyTaxScheme->addChild('xmlns:cac:RegistrationAddress');//Grupo de información para informar dirección fiscal
-      $cbc_ID2 = $cac_RegistrationAddress->addChild('xmlns:cbc:ID');//Código del municipio
-      $cbc_CityName1 = $cac_RegistrationAddress->addChild('xmlns:cbc:CityName','LA ESTRELLA');//Código del municipio
-      $cbc_PostalZone1 = $cac_RegistrationAddress->addChild('xmlns:cbc:PostalZone','055468');//Código del municipio
-      $cbc_CountrySubentity = $cac_RegistrationAddress->addChild('xmlns:cbc:CountrySubentity','Antioquia');
-      $cbc_CountrySubentityCode = $cac_RegistrationAddress->addChild('xmlns:cbc:CountrySubentityCode','05');
-      $cac_AddressLine1 = $cac_RegistrationAddress->addChild('xmlns:cac:AddressLine');
-      $cac_Line1 = $cac_AddressLine1->addChild('xmlns:cac:Line','Cra. 50 #97a Sur-180 a 97a Sur-394');
-      $cac_Country1 = $cac_RegistrationAddress->addChild('xmlns:cac:Country');//Grupo con información sobre el país
-      $cac_IdentificationCode1 = $cac_Country1->addChild('xmlns:cac:IdentificationCode','CO');//Grupo con información sobre el país
-      $cbc_Name2 = $cac_Country1->addChild('xmlns:cbc:Name','Colombia');
-      $cbc_Name2->addAttribute('languageID', 'es');
-      $cac_TaxScheme = $cac_PartyTaxScheme->addChild('xmlns:cac:TaxScheme');
-      $cbc_ID3 = $cac_TaxScheme->addChild('xmlns:cbc:ID','01');
-      $cbc_Name3 = $cac_TaxScheme->addChild('xmlns:cbc:Name','IVA');
-      $cbc_PartyLegalEntity = $cac_Party->addChild('xmlns:cac:PartyLegalEntity');
-      $cbc_RegistrationName1 = $cbc_PartyLegalEntity->addChild('xmlns:cbc:RegistrationName','Cadena S.A'); //Nombre o Razón Social del emisor
-      $cbc_CompanyID1 = $cbc_PartyLegalEntity->addChild('xmlns:cbc:CompanyID','890930534'); //NIT del emisor
-      $cbc_CompanyID1->addAttribute('schemeID', '0');//DV del NIT del emisor
-      $cbc_CompanyID1->addAttribute('schemeName', '31'); //Valida el Tipo de identificador fiscal; valor por defecto
-      $cbc_CompanyID1->addAttribute('schemeAgencyID', '195'); // valor por defecto
-      $cbc_CompanyID1->addAttribute('schemeAgencyName', 'CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)'); // valor por defecto
-      $cac_CorporateRegistrationScheme = $cbc_PartyLegalEntity->addChild('xmlns:cac:CorporateRegistrationScheme'); //Grupo de información de registro del emisor
-      $cbc_ID4 = $cac_CorporateRegistrationScheme->addChild('xmlns:cbc:ID','SETP'); //Prefijo de la facturación usada para el punto de venta
-      $cbc_Name4 = $cac_CorporateRegistrationScheme->addChild('xmlns:cbc:Name','1485596'); //Número de matrícula mercantil(identificador de sucursal: punto defacturación)
-      $cac_Contact = $cac_Party->addChild('xmlns:cac:Contact');
-      $cbc_ElectronicMail = $cac_Contact->addChild('xmlns:cbc:ElectronicMail','leandro.ocampo@cadena.com.co');
-      $cac_AccountingCustomerParty = $xml->addChild('xmlns:cac:AccountingCustomerParty');
-      $cbc_AdditionalAccountID = $cac_AccountingCustomerParty->addChild('xmlns:cbc:AdditionalAccountID','1');
-
-      //informacion del cliente que se le facturo
-
-      $cac_Party1 = $cac_AccountingCustomerParty->addChild('xmlns:cac:Party');
-      $cac_PartyName1 = $cac_Party1->addChild('xmlns:cac:PartyName'); //Grupo con información sobre el nombre comercial del emisor
-      $cbc_Name5 = $cac_PartyName1->addChild('xmlns:cbc:Name','ADQUIRIENTE DE EJEMPLO'); //Nombre comercial del emisor
-      $cac_PhysicalLocation1 = $cac_Party1->addChild('xmlns:cac:PhysicalLocation'); //Grupo con informacion de localizacion fisica del emisor
-      $cac_Address1 = $cac_PhysicalLocation1->addChild('xmlns:cac:Address'); //Grupo con informacion de localizacion fisica del emisor
-      $cbc_ID5 = $cac_Address1->addChild('xmlns:cbc:ID','66001'); //Codigo del municipio
-      $cbc_CityName1 = $cac_Address1->addChild('xmlns:cbc:CityName','PEREIRA'); // NOmbre de la Ciudad
-      $cbc_PostalZone1 = $cac_Address1->addChild('xmlns:cbc:PostalZone','055460'); //Codigo del codigo postal
-      $cbc_CountrySubentity1 = $cac_Address1->addChild('xmlns:cbc:CountrySubentity','Risaralda'); //Nombre del departamento
-      $cac_CountrySubentityCode1 = $cac_Address1->addChild('xmlns:cac:CountrySubentityCode','66'); //Codigo del Departamento
-      $cac_AddressLine1 = $cac_Address1->addChild('xmlns:cac:AddressLine'); //Grupo de elemento que identifica libremente la dirección
-      $cbc_Line1 = $cac_AddressLine1->addChild('xmlns:cbc:Line','CR 9 A N0 99 - 07 OF 802'); //Elemento de texto libre, que el emisor puede elegir utilizar para poner todas las información de su dirección
-      $cac_Country1 = $cac_Address1->addChild('xmlns:cac:Country');//Grupo con información sobre el país
-      $cbc_IdentificationCode1 = $cac_Country1->addChild('xmlns:cbc:IdentificationCode','CO');//Código dentificador del país
-      $cbc_Name5 = $cac_Country1->addChild('xmlns:cbc:Name','Colombia');//Nombre del país
-      $cbc_Name5->addAttribute('languageID', 'es');
-
-      $response = Response::make($xml->asXML(), 200);
-
-      $response->header('Cache-Control', 'public');
-      $response->header('Content-Description', 'File Transfer');
-      $response->header('Content-Disposition', 'attachment; filename=factura'.$id.'.xml');
-      $response->header('Content-Transfer-Encoding', 'binary');
-
-      $response->header('Content-Type', 'text/xml');
-
-
-      return $response;
-  }
-
   public function xmlFacturaVenta($id){
     $FacturaVenta = Factura::find($id);
-
-    return "ok";
 
     if (!$FacturaVenta) {
         return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
@@ -1863,7 +1734,7 @@ public function edit($id){
         }
     }
 
-    $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('nomina',0)->where('preferida', 1)->first();
+    $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
 
     $infoEmpresa = Auth::user()->empresaObj;
     $data['Empresa'] = $infoEmpresa->toArray();
@@ -1889,12 +1760,10 @@ public function edit($id){
         $impTotal = round($impTotal);
     }
 
-
     $CUFEvr = $FacturaVenta->info_cufe($FacturaVenta->id, $impTotal);
 
     $infoCliente = Contacto::find($FacturaVenta->cliente);
     $data['Cliente'] = $infoCliente->toArray();
-
 
     $responsabilidades_empresa = DB::table('empresa_responsabilidad as er')
         ->join('responsabilidades_facturacion as rf', 'rf.id', '=', 'er.id_responsabilidad')
@@ -1924,7 +1793,7 @@ public function edit($id){
         $tituloCorreo =  $data['Empresa']['nit'] . ";" . $data['Empresa']['nombre'] . ";" . $FacturaVenta->codigo . ";01;" . $data['Empresa']['nombre'];
 
         $isImpuesto = 1;
-
+        // return $data;
           if(auth()->user()->empresa == 1)
           {
               return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
@@ -2331,7 +2200,6 @@ public function edit($id){
                     }
             }
         }
-       
 
         if ($cliente->tip_iden != 6) {
             $cliente->tipo_persona      = 1; //-- Persona Natural

@@ -116,4 +116,51 @@ class ItemsFactura extends Model
     public function itemImpDescuento(){
        return $imp = $this->total() * $this->impuesto / 100;
     }
+
+    public function productoIva()
+    {
+        if ($this->tipo_inventario==1) {
+            return Inventario::where('id', $this->producto)->first()->diaiva;
+        } else {
+            return 0;
+        }
+    }
+
+    public function totalImpSingular()
+    {
+        $result = $this->total();
+        $imp = 0;
+        $total = array();
+
+        if ($this->impuesto > 0) {
+            array_push($total, ["imp0"=>($result*$this->impuesto)/100]);
+        }
+
+        return $total;
+    }
+
+    public function impuestoNombre($fe = false)
+    {
+        if ($fe) {
+            $impuesto= Impuesto::where('id', $this->id_impuesto)->first();
+            return $impuesto->nombre;
+        }
+
+        $text = '';
+
+        $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+        if ($impuesto) {
+            $text .= $impuesto->nombre;
+        }
+     
+        if ($impuesto) {
+            
+            if($text == "Ninguno" || $text == "NINGUNO"){
+                $text = "IVA";
+            }
+            
+            return $text;
+        }
+        return '';
+    }
 }

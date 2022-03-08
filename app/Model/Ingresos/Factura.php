@@ -86,6 +86,8 @@ class Factura extends Model
         $items=ItemsFactura::where('factura',$this->id)->get();
         $totales["reten"]=Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $result=0; $desc=0; $impuesto=0;
+        $totales["TaxExclusiveAmount"] = 0;
+
         foreach ($items as $item) {
             $result=$item->precio*$item->cant;
             $totales['subtotal']+=$result;
@@ -112,6 +114,10 @@ class Factura extends Model
                         $totales["imp"][$key]->totalprod+= $item->total();
                     }
                 }
+            }
+            //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
+            if ($item->impuesto != null) {
+                $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
             }
         }
 
@@ -531,5 +537,14 @@ public function forma_pago()
         else{
             return response()->json(false);
         }
+    }
+
+    public function redondeo($total)
+    {
+        $decimal = explode(".", $total);
+        if (isset($decimal[1]) && $decimal[1] > 50) {
+            $total = round($total);
+        }
+        return $total;
     }
 }

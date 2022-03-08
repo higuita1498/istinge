@@ -221,4 +221,13 @@ class NotaCredito extends Model
 
         return $total;
     }
+
+    public function redondeo($total)
+    {
+        $decimal = explode(".", $total);
+        if (isset($decimal[1]) && $decimal[1] > 50) {
+            $total = round($total);
+        }
+        return $total;
+    }
 }   
