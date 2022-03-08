@@ -48,7 +48,8 @@
 	        @endif
 	    @endif
 	@endif
-	{{--@if(Auth::user()->empresaObj->form_fe == 1 && $emitida == 0 && Auth::user()->empresaObj->estado_dian == 1 && Auth::user()->empresaObj->technicalkey != null)--}}
+	@if($tipo == 2)
+	{{-- @if(Auth::user()->empresaObj->form_fe == 1 && $emitida == 0 && Auth::user()->empresaObj->estado_dian == 1 && Auth::user()->empresaObj->technicalkey != null) --}}
 	<a href="#" class="btn btn-outline-primary btn-icons" title="Emitir Factura" onclick="validateDian({{ $id }}, '{{route('xml.factura',$id)}}', '{{$codigo}}')"><i class="fas fa-sitemap"></i></a>
-	{{--@endif--}}
+	@endif
 @endif

@@ -86,6 +86,8 @@ class Factura extends Model
         $items=ItemsFactura::where('factura',$this->id)->get();
         $totales["reten"]=Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $result=0; $desc=0; $impuesto=0;
+        $totales["TaxExclusiveAmount"] = 0;
+
         foreach ($items as $item) {
             $result=$item->precio*$item->cant;
             $totales['subtotal']+=$result;
@@ -112,6 +114,10 @@ class Factura extends Model
                         $totales["imp"][$key]->totalprod+= $item->total();
                     }
                 }
+            }
+            //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
+            if ($item->impuesto != null) {
+                $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
             }
         }
 
@@ -495,7 +501,6 @@ public function forma_pago()
     public static function booleanFacturaElectronica($clienteId){
     //Validamos que la persona tenga un contrato de lo contrario no podremos crear una factura electrónica.
     $contratoPersona = Contrato::where('client_id',$clienteId)->first();
-  
 
     if($contratoPersona){
 
@@ -505,24 +510,19 @@ public function forma_pago()
         */
         $diasCorte = GrupoCorte::join('contracts as c','c.grupo_corte','=','grupos_corte.id')
         ->where('c.client_id',$clienteId)
-        ->select('grupos_corte.fecha_corte')
+        ->select('grupos_corte.*')
         ->first();
 
         //Obtenemos la ultima factura generada para ese cliente (si es que tiene).
+        $fechaActual = Carbon::now()->format('Y-m');
         $lastFacturaFecha = false;
         $fechaPermitida = true;
         if(Factura::where('cliente', $clienteId)->orderby('id','desc')->first()){
+            
             $lastFacturaFecha = Factura::where('cliente', $clienteId)->orderby('id','desc')->first()->fecha;
-            $lastFacturaFecha = Carbon::parse($lastFacturaFecha);
-            $fechaPermitida = $lastFacturaFecha->addDays($diasCorte->fecha_corte);
-
-            /*
-                Comparamos finalmente la fecha actual con la fecha permitida, si la fecha actual es menor
-                a la fecha permitida es por que entra en el rango de creación de la factura.
-            */
-            $fechaActual = Carbon::now();
-
-            if($fechaPermitida  < $fechaActual){
+            $lastFacturaFecha = Carbon::parse($lastFacturaFecha)->format('Y-m');
+        
+            if($lastFacturaFecha != $fechaActual){
                 return response()->json(true);
             }else{
                 return response()->json(false);
@@ -537,5 +537,14 @@ public function forma_pago()
         else{
             return response()->json(false);
         }
+    }
+
+    public function redondeo($total)
+    {
+        $decimal = explode(".", $total);
+        if (isset($decimal[1]) && $decimal[1] > 50) {
+            $total = round($total);
+        }
+        return $total;
     }
 }

@@ -195,4 +195,9 @@ public function totalEmissions(){
         return false;
     }
 
+    public function responsabilidades()
+    {
+        return DB::table('empresa_responsabilidad')->where('id_empresa', $this->id)->get();
+    }
+
 }

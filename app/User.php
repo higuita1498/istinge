@@ -184,7 +184,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Verificaci¨®n del pago de la suscripcion personalizada
+     * Verificaciï¿½ï¿½n del pago de la suscripcion personalizada
      * @return bool
      */
     private function payPersonalPlan()
@@ -217,6 +217,11 @@ class User extends Authenticatable
         }else{
             return Roles::find($this->rol)->rol;
         }
+    }
+
+    public function empresaObj()
+    {
+        return $this->belongsTo('App\Empresa', 'empresa');
     }
 
 }

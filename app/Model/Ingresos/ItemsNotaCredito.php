@@ -60,6 +60,34 @@ class ItemsNotaCredito extends Model
        return $imp = $this->total() * $this->impuesto / 100;
     }
 
+    public function totalImpSingular()
+    {
+        $result = $this->total();
+        $imp = 0;
+        $total = array();
+
+        if ($this->impuesto > 0) {
+            array_push($total, ["imp0"=>($result*$this->impuesto)/100]);
+        }
+
+        return $total;
+    }
+
+    public function impuestoSingularNombre()
+    {
+        $text = '';
+        $ivas =  array();
+
+        $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+        if ($impuesto) {
+            array_push($ivas, ["imp0" => $impuesto->nombre]);
+        }
+      
+        if ($impuesto) {
+            return $ivas;
+        }
+        return '';
+    }
 
 
 }
