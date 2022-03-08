@@ -24,7 +24,7 @@ class DescuentosController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['inicio' => 'master', 'seccion' => 'facturas', 'subseccion' => 'descuento', 'title' => 'Descuentos', 'icon' => 'fas fa-percentage']);
+        view()->share(['inicio' => 'master', 'seccion' => 'facturas', 'subseccion' => 'descuentos', 'title' => 'Descuentos', 'icon' => 'fas fa-percentage']);
     }
     
     public function index(Request $request){

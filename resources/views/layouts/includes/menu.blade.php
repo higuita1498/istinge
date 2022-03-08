@@ -146,7 +146,7 @@
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['735'])){ ?>
-                        <li class="nav-item" id="descuento">
+                        <li class="nav-item" id="descuentos">
                             <a class="nav-link" href="{{route('descuentos.index')}}" >Descuentos</a>
                         </li>
                     <?php } ?>
