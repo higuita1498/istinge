@@ -98,6 +98,9 @@
             	        <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que desea eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</button>
             	    @endif
             	@endif
+            	@if ($contacto->email && $contacto->contract != 'N/A')
+            	<a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="dropdown-item"><i class="fas fa-envelope-open-text"></i> Enviar Notificación por EMAIL</a>
+            	@endif
             </div>
         </div>
     </div>
@@ -205,6 +208,25 @@
 							<th>Asignación de Contrato Digital</th>
 							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 						</tr>
+						@if($contacto->imgA || $contacto->imgB || $contacto->imgC || $contacto->imgD)
+						<tr>
+							<th>Archivos Adjuntos</th>
+							<td>
+								@if($contacto->imgA)
+								<a href="{{asset('../adjuntos/documentos/'.$contacto->imgA)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_a }}</strong></a>
+								@endif
+								@if($contacto->imgB)
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgB)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_b }}</strong></a>
+								@endif
+								@if($contacto->imgC)
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgC)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_c }}</strong></a>
+								@endif
+								@if($contacto->imgD)
+								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_d }}</strong></a>
+								@endif
+							</td>
+						</tr>
+						@endif
 						@endif
 						</tbody>
 				</table>

@@ -54,10 +54,7 @@
 	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
 		<div class="card-body py-0">
 			<div class="row">
-				{{--<div class="col-md-2 pl-1 pt-1">
-					<input type="text" placeholder="Serial ONU" id="serial_onu" class="form-control rounded">
-				</div>--}}
-				<div class="col-md-3 pl-1 pt-1 offset-md-1">
+				<div class="col-md-3 pl-1 pt-1">
 					<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
 				</div>
 				<div class="col-md-3 pl-1 pt-1">
@@ -66,6 +63,23 @@
 				<div class="col-md-3 pl-1 pt-1">
 					<input type="number" placeholder="Teléfono" id="telefono" class="form-control rounded">
 				</div>
+				<div class="col-md-3 pl-1 pt-1">
+					<input type="text" placeholder="Email" id="email" class="form-control rounded">
+				</div>
+				<div class="col-md-3 pl-1 pt-1">
+					<input type="text" placeholder="Dirección" id="direccion" class="form-control rounded">
+				</div>
+				@if($tipo_usuario == 0)
+				<div class="col-md-3 pl-1 pt-1">
+					<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
+				</div>
+				<div class="col-md-3 pl-1 pt-1">
+					<select title="Contratos" class="form-control rounded selectpicker" id="t_contrato" data-size="5" data-live-search="true">
+						<option value="2" >Con contratos</option>
+						<option value="1" >Sin contratos</option>
+					</select>
+				</div>
+				@endif
 				<div class="col-md-1 pl-1 pt-1 text-left">
 					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
 					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -75,18 +89,19 @@
 	</div>
 </div>
 
-
 <div class="row card-description">
 	<div class="col-md-12">
 		<table class="table table-striped table-hover w-100" id="tabla-contactos">
 			<thead class="thead-dark">
 				<tr>
-					{{--<th>Nombre</th>
-					<th>Identificación</th>
-					<th>Teléfono</th>
-					<th>Email</th>--}}
 					@foreach($tabla as $campo)
-					    <th>{{$campo->nombre}}</th>
+					    @if($tipo_usuario == 1)
+					        @if($campo->nombre != 'Contrato')
+					            <th>{{$campo->nombre}}</th>
+					        @endif
+					    @else
+					        <th>{{$campo->nombre}}</th>
+					    @endif
                     @endforeach
 					<th>Acciones</th>
 				</tr>
@@ -120,7 +135,13 @@
 			},
 			columns: [
 			    @foreach($tabla as $campo)
-                {data: '{{$campo->campo}}'},
+			        @if($tipo_usuario == 1)
+			            @if($campo->campo != 'contrato')
+			                {data: '{{$campo->campo}}'},
+			            @endif
+                    @else
+                        {data: '{{$campo->campo}}'},
+                    @endif
                 @endforeach
 				{data: 'acciones'},
 			]
@@ -134,6 +155,10 @@
             data.nombre = $('#nombre').val();
             data.identificacion = $('#identificacion').val();
             data.telefono1 = $('#telefono').val();
+            data.direccion = $('#direccion').val();
+            data.barrio = $('#barrio').val();
+            data.email = $('#email').val();
+            data.t_contrato = $('#t_contrato').val();
             data.filtro = true;
         });
 
@@ -169,6 +194,10 @@
 		$('#nombre').val('');
 		$('#identificacion').val('');
 		$('#telefono').val('');
+		$('#direccion').val('');
+		$('#barrio').val('');
+		$('#email').val('');
+		$('#t_contrato').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

@@ -574,7 +574,7 @@ label{
         z-index: 1;
     }
     .btn-crearcuenta button {
-        background-color: #70B538;
+        background-color: {{$empresa->color}};
     }
     .btn-crearcuenta button:hover, .btn-crearcuenta button:active {
         background-color: #152e53;

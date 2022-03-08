@@ -757,6 +757,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 	Route::group(['prefix' => 'asignaciones'], function() {
 		Route::get('{id}/imprimir', 'AsignacionesController@imprimir')->name('asignaciones.imprimir');
+		Route::get('config_campos_asignacion', 'AsignacionesController@show_campos_asignacion')->name('asignaciones.show_campos_asignacion');
+		Route::post('campos_asignacion', 'AsignacionesController@campos_asignacion')->name('asignaciones.campos_asignacion');
 	});
 	Route::resource('asignaciones', 'AsignacionesController');
 	
@@ -826,6 +828,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/envio/sms', 'AvisosController@sms')->name('avisos.envio.sms');
 	        Route::get('/envio/email', 'AvisosController@email')->name('avisos.envio.email');
 	        Route::post('/envio_aviso', 'AvisosController@envio_aviso')->name('avisos.envio_aviso');
+	        Route::get('/envio/{id}/email', 'AvisosController@email')->name('avisos.envio.email.cliente');
+	        Route::get('/envio/{id}/sms', 'AvisosController@sms')->name('avisos.envio.sms.cliente');
 	    });
 	    
 	    Route::resource('avisos', 'AvisosController');

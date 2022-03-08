@@ -65,30 +65,54 @@ class ContactosController extends Controller
         $contactos = Contacto::query();
 
         if ($request->filtro == true) {
-            switch ($request) {
-                case !empty($request->serial_onu):
-                    $contactos->where('serial_onu', 'like', "%{$request->serial_onu}%");
-                    break;
-                case !empty($request->identificacion):
-                    $contactos->where('nit', 'like', "%{$request->identificacion}%");
-                    break;
-                case !empty($request->nombre):
-                    $contactos->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    break;
-                case !empty($request->telefono1):
-                    $contactos->orWhere('telefono1', 'like', "%{$request->telefono1}%");
-                    break;
-                case !empty($request->telefono1):
-                    $contactos->orWhere('celular', 'like', "%{$request->telefono1}%");
-                    break;
-                default:
-                    break;
+            if($request->identificacion){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('nit', 'like', "%{$request->identificacion}%");
+                });
+            }
+            if($request->nombre){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->celular){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('celular', 'like', "%{$request->celular}%");
+                });
+            }
+            if($request->direccion){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('direccion', 'like', "%{$request->direccion}%");
+                });
+            }
+            if($request->barrio){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('barrio', 'like', "%{$request->barrio}%");
+                });
+            }
+            if($request->email){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('email', 'like', "%{$request->email}%");
+                });
+            }
+            if($request->t_contrato == 1){
+                $contactos->whereNotExists(function($query){
+                    $query->select(DB::raw(1))
+                          ->from('contracts')
+                          ->whereRaw('contactos.id = contracts.client_id');
+                });
+            }elseif($request->t_contrato == 2){
+                $contactos->whereExists(function($query){
+                    $query->select(DB::raw(1))
+                          ->from('contracts')
+                          ->whereRaw('contactos.id = contracts.client_id');
+                });
             }
         }
 
-        $contactos->where('empresa', auth()->user()->empresa);
+        $contactos->where('contactos.empresa', auth()->user()->empresa);
         $contactos->whereIn('tipo_contacto', [$tipo_usuario,2]);
-        $contactos->where('status', 1);
+        $contactos->where('contactos.status', 1);
 
         return datatables()->eloquent($contactos)
             /*->editColumn('serial_onu', function (Contacto $contacto) {
@@ -106,9 +130,17 @@ class ContactosController extends Controller
             ->editColumn('email', function (Contacto $contacto) {
                 return $contacto->email;
             })
+            ->editColumn('direccion', function (Contacto $contacto) {
+                return $contacto->direccion;
+            })
+            ->editColumn('barrio', function (Contacto $contacto) {
+                return $contacto->barrio;
+            })
+            ->editColumn('contrato', function (Contacto $contacto) {
+                return $contacto->contract();
+            })
             ->addColumn('acciones', $modoLectura ?  "" : "contactos.acciones-contactos")
-            //->rawColumns(['acciones', 'nombre', 'serial_onu'])
-            ->rawColumns(['acciones', 'nombre'])
+            ->rawColumns(['acciones', 'nombre', 'contrato'])
             ->toJson();
     }
 
@@ -204,6 +236,7 @@ class ContactosController extends Controller
     }
 
     public function show($id){
+        view()->share(['invertfalse' => true]);
         $this->getAllPermissions(Auth::user()->id);
 
         $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();

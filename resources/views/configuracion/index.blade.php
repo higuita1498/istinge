@@ -25,7 +25,7 @@
 			<a href="{{route('roles.index')}}">Tipos de Usuario</a><br>
 			<a href="{{route('configuracion.servicios')}}">Servicios</a> <br>
 			<a href="{{route('miusuario')}}">Mi perfil</a><br>
-			{{-- <a href="#"  data-toggle="modal" data-target="#seguridad">Seguridad</a><br> --}}
+			<a href="#" data-toggle="modal" data-target="#seguridad">Seguridad</a><br>
 		</div>
 
 		@if(isset($_SESSION['permisos']['40']) || isset($_SESSION['permisos']['258']))

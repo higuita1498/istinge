@@ -28,13 +28,17 @@ class Contacto extends Model
      */
     protected $fillable = [
         'empresa', 'nombre', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
-        'tipo_persona','responsableiva','plan','contrato', 'serial_onu'
+        'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD'
     ];
     
-    protected $appends = ['usado'];
+    protected $appends = ['usado', 'contract'];
 
     public function getUsadoAttribute(){
         return $this->usado();
+    }
+
+    public function getContractAttribute(){
+        return $this->contract();
     }
 
     public function lista_precios(){
@@ -315,4 +319,11 @@ class Contacto extends Model
         return Contrato::where('client_id', $this->id)->where('status', 1)->first();
     }
 
+    public function contract(){
+        $contrato = Contrato::where('client_id', $this->id)->where('status', 1)->first();
+        if($contrato){
+            return "<a href=" . route('contratos.show', $contrato->id) . " target='_blank'>".$contrato->nro."</div></a>";
+        }
+        return 'N/A';
+    }
 }
