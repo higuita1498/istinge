@@ -495,7 +495,6 @@ public function forma_pago()
     public static function booleanFacturaElectronica($clienteId){
     //Validamos que la persona tenga un contrato de lo contrario no podremos crear una factura electrónica.
     $contratoPersona = Contrato::where('client_id',$clienteId)->first();
-  
 
     if($contratoPersona){
 
@@ -505,24 +504,19 @@ public function forma_pago()
         */
         $diasCorte = GrupoCorte::join('contracts as c','c.grupo_corte','=','grupos_corte.id')
         ->where('c.client_id',$clienteId)
-        ->select('grupos_corte.fecha_corte')
+        ->select('grupos_corte.*')
         ->first();
 
         //Obtenemos la ultima factura generada para ese cliente (si es que tiene).
+        $fechaActual = Carbon::now()->format('Y-m');
         $lastFacturaFecha = false;
         $fechaPermitida = true;
         if(Factura::where('cliente', $clienteId)->orderby('id','desc')->first()){
+            
             $lastFacturaFecha = Factura::where('cliente', $clienteId)->orderby('id','desc')->first()->fecha;
-            $lastFacturaFecha = Carbon::parse($lastFacturaFecha);
-            $fechaPermitida = $lastFacturaFecha->addDays($diasCorte->fecha_corte);
-
-            /*
-                Comparamos finalmente la fecha actual con la fecha permitida, si la fecha actual es menor
-                a la fecha permitida es por que entra en el rango de creación de la factura.
-            */
-            $fechaActual = Carbon::now();
-
-            if($fechaPermitida  < $fechaActual){
+            $lastFacturaFecha = Carbon::parse($lastFacturaFecha)->format('Y-m');
+        
+            if($lastFacturaFecha != $fechaActual){
                 return response()->json(true);
             }else{
                 return response()->json(false);

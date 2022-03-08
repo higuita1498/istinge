@@ -307,7 +307,7 @@ class FacturasController extends Controller{
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
@@ -405,7 +405,7 @@ class FacturasController extends Controller{
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
@@ -691,7 +691,11 @@ class FacturasController extends Controller{
         'vendedor' => 'required',
     ]);
 
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+    $contrato =    Contrato::where('client_id',$request->cliente)->first();
+
+    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+    $nro = $nro->tipoNumeracion($nro,$contrato);
 
 
     if (!$nro) {
@@ -724,12 +728,12 @@ class FacturasController extends Controller{
     $tipo = 1; //1= normal, 2=Electrónica.
 
     $electronica = Factura::booleanFacturaElectronica($request->cliente);
-    $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
     if($contrato->facturacion == 3 && !$electronica){
         return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
     }elseif($contrato->facturacion == 3 && $electronica){
         $tipo = 2;
+        $request->documento = $tipo;
     }
 
     //Si el tipo de documento es cuenta de cobro sigue su proceso normal.
@@ -820,6 +824,10 @@ class FacturasController extends Controller{
     //Creo la variable para el mensaje final, y la variable print (imprimir)
     $mensaje='Se ha creado satisfactoriamente la factura';
     $print=false;
+
+    if($tipo == 2){
+        $mensaje = 'Se ha creado correctamente la factura electrónica';
+    }
 
     //Si se selecciono imprimir, para enviarla y que se abra la ventana emergente con el pdf
     if ($request->print) {
@@ -1823,6 +1831,8 @@ public function edit($id){
   public function xmlFacturaVenta($id){
     $FacturaVenta = Factura::find($id);
 
+    return "ok";
+
     if (!$FacturaVenta) {
         return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
     }
@@ -2308,7 +2318,7 @@ public function edit($id){
         $numeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('id', $factura->numeracion)->first();
         $empresa  = Auth::user()->empresaObj;
         $cliente  = $factura->cliente();
-
+        
         //Inicializamos la variable para ver si tiene las nuevas responsabilidades que no da la dian 042
         $resp = 0;
         if($responsabilidades > 0){
@@ -2316,9 +2326,9 @@ public function edit($id){
                 if (
                     $respo->id_responsabilidad == 5 || $respo->id_responsabilidad == 7 || $respo->id_responsabilidad == 12
                     || $respo->id_responsabilidad == 20 || $respo->id_responsabilidad == 29
-                ) {
-                    $resp = 1;
-                }
+                    ) {
+                        $resp = 1;
+                    }
             }
         }
        
