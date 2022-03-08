@@ -89,6 +89,14 @@
 			<p>Configura y organiza los puertos de conexión.</p>
 			<a href="{{route('puertos-conexion.index')}}">Puertos de Conexión</a><br>
 		</div>
+
+		@if(isset($_SESSION['permisos']['752']))
+		<div class="col-sm-3">
+			<h4 class="card-title">Gestión Servidor de Correo</h4>
+			<p>Configura y organiza el servidor de correo externo para el envío de email y notificaciones.</p>
+			<a href="{{route('servidor-correo.index')}}">Servidor de Correo</a><br>
+		</div>
+		@endif
 	</div>
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">

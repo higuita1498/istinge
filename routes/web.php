@@ -891,4 +891,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
 	    });
 		Route::resource('crm', 'CRMController');
+
+	//SERVIDOR DE CORREO
+	    Route::resource('servidor-correo', 'ServidorCorreoController');
 });
