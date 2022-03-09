@@ -169,7 +169,7 @@
                 <div class="input-group">
                     <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
                         @foreach($grupos as $grupo)
-                            <option value="{{$grupo->id}}" {{$grupo->id == $contrato->grupo_corte? 'selected':''}}>{{$grupo->nombre}}</option>
+                            <option value="{{$grupo->id}}" {{$grupo->id == $contrato->grupo_corte? 'selected':''}}>{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -201,21 +201,18 @@
 	                </select>
 	            </div>
 	            <span class="help-block error">
-	                <strong>{{ $errors->first('grupo_corte') }}</strong>
+	                <strong>{{ $errors->first('facturacion') }}</strong>
 	            </span>
 	        </div>
-            {{--<div class="col-md-4 form-group d-none">
-                <label class="control-label">Fecha Corte <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" id="fecha_corte" name="fecha_corte" required="" value="{{ $contrato->fecha_corte }}" title="Seleccione">
-                    <option value="15" @if($contrato->fecha_corte == 15) ? selected : '' @endif>15 de cada mes</option>
-                    <option value="30" @if($contrato->fecha_corte == 30) ? selected : '' @endif>30 de cada mes</option>
-                    <option value="50" @if($contrato->fecha_corte == 50) ? selected : '' @endif>Plan Gratis</option>
-                </select>
+            <div class="col-md-4 form-group">
+                <label class="control-label">Fecha de Suspensión <a><i data-tippy-content="Fecha de suspensión personalizada, distinta a la asociada al grupo de corte" class="icono far fa-question-circle"></i></a></label>
+                <input type="number" class="form-control"  id="fecha_suspension" value="{{$contrato->fecha_suspension}}" name="fecha_suspension" min="1" max="30">
+
                 <span class="help-block error">
-                    <strong>{{ $errors->first('fecha_corte') }}</strong>
+                    <strong>{{ $errors->first('fecha_suspension') }}</strong>
                 </span>
             </div>
-            <div class="col-md-4 form-group d-none">
+            {{-- <div class="col-md-4 form-group d-none">
                 <label class="control-label">Días para suspender <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" id="fecha_suspension" name="fecha_suspension" required="" value="{{ $contrato->fecha_suspension }}" title="Seleccione">
                     <option value="0" @if($contrato->fecha_suspension == 0) ? selected : '' @endif>No Suspender</option>
