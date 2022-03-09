@@ -110,7 +110,7 @@
             padding-left: 1%;
         }
         .divheader-pr{
-            width: 100%;height:auto;border: 1px solid {{ env('APP_COLOR') }}; background-color:#fff; border-radius:5px; justify-content:center;padding-top: 15px;
+            width: 100%;height:auto;border: 1px solid {{ env('APP_COLOR') }}; background-color:{{ env('APP_COLOR') }}; border-radius:5px; justify-content:center;padding-top: 15px;
             margin-bottom: 2px;color:#fff;
         }
         
@@ -280,13 +280,17 @@
         .tr-estadocuenta > td li{
             color:#fff;
         }
+        
+        .imgwifi{
+            width:80px;
+        }
     </style>
     
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
             <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
-        <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%; color:{{ env('APP_COLOR') }};">
+        <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
             <br><br>
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
             <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
@@ -301,7 +305,7 @@
         <div style="width: 21%; display: inline-block; text-align: left; vertical-align: top;margin-top: 2%;">
             <table style="border:none;width:100%;height:auto;">
                 <tr>
-                    
+                    <img class="imgwifi" src="{{asset('images/wifi.png')}}">
                 </tr>
             </table>
         </div>
