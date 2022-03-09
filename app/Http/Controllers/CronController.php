@@ -134,7 +134,7 @@ class CronController extends Controller
             orWhere('cs.fecha_suspension', $fecha_corte)->
             get();
 
-            dd($contactos);
+            //dd($contactos);
 
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
