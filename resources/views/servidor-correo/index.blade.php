@@ -1,28 +1,32 @@
 @extends('layouts.app')
 @section('content')
     @if(Session::has('success'))
-        <div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
+        <div class="alert alert-success alerta" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('success')}}
         </div>
         <script type="text/javascript">
             setTimeout(function() {
-                $('.alert').hide();
+                $('.alerta').hide();
                 $('.active_table').attr('class', ' ');
             }, 5000);
         </script>
     @endif
 
     @if(Session::has('danger'))
-        <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
+        <div class="alert alert-danger" alerta style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}
         </div>
         <script type="text/javascript">
             setTimeout(function() {
-                $('.alert').hide();
+                $('.alerta').hide();
                 $('.active_table').attr('class', ' ');
             }, 5000);
         </script>
     @endif
+
+    <div class="alert alert-{{ $servidor->estado('true') }} text-uppercase" style="margin-left: 2%;margin-right: 2%;">
+    	LA CONFIGURACIÓN DEL SERVIDOR SE ENCUENTRA <strong>{{ $servidor->estado() }}</strong>
+    </div>
 
 	<form method="POST" action="{{ route('servidor-correo.update', $servidor->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-banco">
 	    @csrf
