@@ -19,6 +19,8 @@ use bcrypt;
 use DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Mail\PQRSMailable;
+use Config;
+use App\ServidorCorreo;
 
 class PqrsController extends Controller
 {
@@ -123,6 +125,21 @@ class PqrsController extends Controller
             );
     
             $correo = new PQRSMailable($datos);
+
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
     
             Mail::to($pqrs->email)->send($correo);
             

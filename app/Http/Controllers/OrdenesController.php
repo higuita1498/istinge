@@ -23,6 +23,9 @@ use Session;
 use Validator; use Illuminate\Validation\Rule; use Auth;
 use Carbon\Carbon; use Mail; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
+use Config;
+use App\ServidorCorreo;
+
 class OrdenesController extends Controller
 {
   /**
@@ -453,6 +456,20 @@ class OrdenesController extends Controller
       $items = ItemsFacturaProv::where('factura',$orden->id)->get();
       $itemscount = ItemsFacturaProv::where('factura',$orden->id)->count();
       $pdf = PDF::loadView('pdf.orden_compra', compact('items', 'orden', 'itemscount'))->stream();
+      $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+      if($host){
+        $existing = config('mail');
+        $new =array_merge(
+          $existing, [
+            'host' => $host->servidor,
+            'port' => $host->puerto,
+            'encryption' => $host->seguridad,
+            'username' => $host->usuario,
+            'password' => $host->password,
+          ]
+        );
+        config(['mail'=>$new]);
+      }
       Mail::send('emails.orden_compra', compact('orden'), function($message) use ($pdf, $emails, $orden)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);

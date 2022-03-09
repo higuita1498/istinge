@@ -17,6 +17,8 @@ use Mail; use Validator; use Illuminate\Validation\Rule;  use Auth;
 use bcrypt; use DB; use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Session;
+use Config;
+use App\ServidorCorreo;
 
 class IngresosRController extends Controller
 {
@@ -327,6 +329,22 @@ class IngresosRController extends Controller
       $itemscount=IngresosRemision::where('ingreso',$ingreso->id)->count();
 
       $pdf = PDF::loadView('pdf.ingresor', compact('ingreso', 'items', 'itemscount'))->stream();
+
+      $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+      if($host){
+        $existing = config('mail');
+        $new =array_merge(
+          $existing, [
+            'host' => $host->servidor,
+            'port' => $host->puerto,
+            'encryption' => $host->seguridad,
+            'username' => $host->usuario,
+            'password' => $host->password,
+          ]
+        );
+        config(['mail'=>$new]);
+      }
+
       Mail::send('emails.ingreso', compact('ingreso'), function($message) use ($pdf, $emails, $ingreso)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);

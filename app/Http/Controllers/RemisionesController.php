@@ -21,6 +21,8 @@ use Carbon\Carbon;  use Mail; use DB;
 use Validator; use Illuminate\Validation\Rule;  use Auth;
 use Barryvdh\DomPDF\Facade as PDF;
 use Session;
+use Config;
+use App\ServidorCorreo;
 
 class RemisionesController extends Controller
 {
@@ -518,6 +520,20 @@ $categorias=Categoria::where('empresa',Auth::user()->empresa)
       $itemscount=ItemsRemision::where('remision',$remision->id)->count();
 
       $pdf = PDF::loadView('pdf.remision', compact('remision', 'items', 'retenciones', 'itemscount'))->stream();
+      $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+      if($host){
+        $existing = config('mail');
+        $new =array_merge(
+          $existing, [
+            'host' => $host->servidor,
+            'port' => $host->puerto,
+            'encryption' => $host->seguridad,
+            'username' => $host->usuario,
+            'password' => $host->password,
+          ]
+        );
+        config(['mail'=>$new]);
+      }
       Mail::send('emails.remision', compact('remision'), function($message) use ($pdf, $emails, $remision)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);

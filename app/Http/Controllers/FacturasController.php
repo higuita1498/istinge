@@ -42,6 +42,8 @@ include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 use App\Descuento;
 use App\Campos;
+use Config;
+use App\ServidorCorreo;
 
 class FacturasController extends Controller{
 
@@ -1367,6 +1369,22 @@ public function edit($id){
         $tituloCorreo = Auth::user()->empresa()->nombre.": Factura N° $factura->codigo";
         $xmlPath = 'xml/empresa'.auth()->user()->empresa.'/FV/FV-'.$factura->codigo.'.xml';
         //return $xmlPath;
+
+        $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+        if($host){
+            $existing = config('mail');
+            $new =array_merge(
+                $existing, [
+                    'host' => $host->servidor,
+                    'port' => $host->puerto,
+                    'encryption' => $host->seguridad,
+                    'username' => $host->usuario,
+                    'password' => $host->password,
+                ]
+            );
+            config(['mail'=>$new]);
+        }
+
         Mail::send('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath)
           {
               $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
@@ -2007,6 +2025,21 @@ public function edit($id){
         $total = Funcion::Parsear($factura->total()->total + $factura->totalDetalleRecaudo()->total);
         $cliente = $FacturaVenta->cliente()->nombre;
 
+        $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+        if($host){
+            $existing = config('mail');
+            $new =array_merge(
+                $existing, [
+                    'host' => $host->servidor,
+                    'port' => $host->puerto,
+                    'encryption' => $host->seguridad,
+                    'username' => $host->usuario,
+                    'password' => $host->password,
+                ]
+            );
+            config(['mail'=>$new]);
+        }
+
         Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
 
             /* Segun Resolución No. 000042 - Anexo Técnico de Factura Electrónica de Venta – Versión 1.7.-2020 – Página 626
@@ -2170,6 +2203,22 @@ public function edit($id){
 
             $total = Funcion::Parsear($factura->total()->total);
             $cliente = $FacturaVenta->cliente()->nombre;
+
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
+
             Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta) {
                 $message->attachData($pdf, 'FV-' . $FacturaVenta->codigo . '.pdf', ['mime' => 'application/pdf']);
                 $message->attach($ruta_xmlresponse);
@@ -2348,6 +2397,21 @@ public function edit($id){
                         $rango_numeracion = $json['numberingRangelist'];
                         $tituloCorreo = "Facturador Electrónico Activado";
                         $emails = auth()->user()->empresaObj->email;
+
+                        $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+                        if($host){
+                            $existing = config('mail');
+                            $new =array_merge(
+                                $existing, [
+                                    'host' => $host->servidor,
+                                    'port' => $host->puerto,
+                                    'encryption' => $host->seguridad,
+                                    'username' => $host->usuario,
+                                    'password' => $host->password,
+                                ]
+                            );
+                            config(['mail'=>$new]);
+                        }
 
                         Mail::send('emails.dian.felicidades', compact('empresa', 'rango_numeracion'), function ($message) use ($emails, $tituloCorreo) {
                             $message->from('info@gestordepartes.net', 'Facturación Electrónica - Gestor de Partes');

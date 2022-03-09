@@ -20,6 +20,9 @@ use Carbon\Carbon;
 use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use Mail; 
+use Config;
+use App\ServidorCorreo;
+use App\Empresa;
 
 use App\Mail\SolicitudMailable;
 
@@ -94,6 +97,20 @@ class SolicitudesController extends Controller
         );
     
         $correo = new SolicitudMailable($datos);
+        $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+        if($host){
+          $existing = config('mail');
+          $new =array_merge(
+            $existing, [
+              'host' => $host->servidor,
+              'port' => $host->puerto,
+              'encryption' => $host->seguridad,
+              'username' => $host->usuario,
+              'password' => $host->password,
+            ]
+          );
+          config(['mail'=>$new]);
+        }
         Mail::to($solicitud->email)->send($correo);
         return redirect('empresa/solicitudes')->with('success', 'Se ha registrado la respuesta a la solicitud de servicio satisfactoriamente.');
     }

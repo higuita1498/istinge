@@ -29,6 +29,9 @@ use Auth; use DB; use Carbon\Carbon;
 use Mail;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Model\Ingresos\Ingreso;
+use Config;
+use App\ServidorCorreo;
+
 class PagosController extends Controller
 {
     public function __construct(){
@@ -498,6 +501,20 @@ class PagosController extends Controller
             
             $retenciones = GastosRetenciones::where('gasto',$gasto->id)->get();
             $pdf = PDF::loadView('pdf.pago', compact('gasto', 'items', 'retenciones', 'itemscount'))->stream();
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
             Mail::send('emails.pago', compact('gasto'), function($message) use ($pdf, $emails, $gasto){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject('Envío de comprobante de egreso #'.$gasto->nro);
