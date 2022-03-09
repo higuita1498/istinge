@@ -31,7 +31,7 @@ class Contacto extends Model
         'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD'
     ];
     
-    protected $appends = ['usado', 'contract'];
+    protected $appends = ['usado', 'contract', 'details'];
 
     public function getUsadoAttribute(){
         return $this->usado();
@@ -39,6 +39,10 @@ class Contacto extends Model
 
     public function getContractAttribute(){
         return $this->contract();
+    }
+
+    public function getDetailsAttribute(){
+        return $this->details();
     }
 
     public function lista_precios(){
@@ -325,5 +329,9 @@ class Contacto extends Model
             return "<a href=" . route('contratos.show', $contrato->id) . " target='_blank'>".$contrato->nro."</div></a>";
         }
         return 'N/A';
+    }
+
+    public function details(){
+        return Contrato::where('client_id', $this->id)->where('status', 1)->first();
     }
 }
