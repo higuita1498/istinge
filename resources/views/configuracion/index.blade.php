@@ -13,7 +13,6 @@
 			<span class="text-primary">Teléfono:</span>  {{Auth::user()->empresa()->telefono}}<br>
 			<span class="text-primary">Dirección:</span>  {{Auth::user()->empresa()->direccion}}<br>
 			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}</p>
-
 		</div>
 	</div>
 	<div class="row card-description configuracion">
