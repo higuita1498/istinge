@@ -118,55 +118,58 @@ class CronController extends Controller
     public static function CortarFacturas(){
         $i=0;
         $fecha_corte = date('d');
-        $grupos_corte = GrupoCorte::where('fecha_corte', $fecha_corte)->where('status', 1)->get();
+        $fecha = date('Y-m-d');
+        $grupo_corte = GrupoCorte::where('fecha_suspension', $fecha_corte)->where('status', 1)->first();
 
-        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
-        join('contracts as cs','cs.client_id','=','contactos.id')->
-        select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
-        where('f.estatus',1)->
-        where('f.tipo', 1)->
-        where('f.vencimiento', $fecha)->
-        where('contactos.status',1)->
-        where('cs.state','enabled')->
-        orWhere('cs.grupo_corte', $grupo_corte->id)->
-        orWhere('cs.fecha_suspension', $fecha_corte->id)->
-        get();
+        if($grupo_corte){
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.client_id','=','contactos.id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
+            where('f.estatus',1)->
+            where('f.tipo', 1)->
+            where('f.vencimiento', $fecha)->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.grupo_corte', $grupo_corte->id)->
+            orWhere('cs.fecha_suspension', $fecha_corte)->
+            get();
 
-        //dd($contactos);
+            dd($contactos);
 
-        $empresa = Empresa::find(1);
-        foreach ($contactos as $contacto) {
-            $contrato = Contrato::where('client_id', $contacto->id)->first();
+            $empresa = Empresa::find(1);
+            foreach ($contactos as $contacto) {
+                $contrato = Contrato::where('client_id', $contacto->id)->first();
 
-            $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
-            $crm = new CRM();
-            $crm->cliente = $contacto->id;
-            $crm->factura = $contacto->factura;
-            $crm->servidor = $contrato->server_configuration_id;
-            $crm->grupo_corte = $contrato->grupo_corte;
-            $crm->save();
+                $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+                $crm = new CRM();
+                $crm->cliente = $contacto->id;
+                $crm->factura = $contacto->factura;
+                $crm->servidor = $contrato->server_configuration_id;
+                $crm->grupo_corte = $contrato->grupo_corte;
+                $crm->save();
 
-            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
 
-            if ($contrato) {
-                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    $API->write('/ip/firewall/address-list/print', TRUE);
-                    $ARRAYS = $API->read();
-                    if($contrato->state == 'enabled'){
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "comment" => $contrato->servicio,
-                            "list" => 'morosos'
-                            )
-                        );
-                        $contrato->state = 'disabled';
-                        $i++;
+                if ($contrato) {
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        $API->write('/ip/firewall/address-list/print', TRUE);
+                        $ARRAYS = $API->read();
+                        if($contrato->state == 'enabled'){
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "comment" => $contrato->servicio,
+                                "list" => 'morosos'
+                                )
+                            );
+                            $contrato->state = 'disabled';
+                            $i++;
+                        }
+                        $API->disconnect();
+                        $contrato->save();
                     }
-                    $API->disconnect();
-                    $contrato->save();
                 }
             }
         }
