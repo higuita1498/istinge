@@ -317,6 +317,7 @@ class ContratosController extends Controller
             ]);
         }
         
+
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
