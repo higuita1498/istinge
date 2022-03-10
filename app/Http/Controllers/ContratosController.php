@@ -1169,8 +1169,13 @@ class ContratosController extends Controller
 					$rows['data'][] = $tx;
 					$rows2['name'] = 'Rx';
 					$rows2['data'][] = $rx;
-				}else{  
-					echo $ARRAY['!trap'][0]['message'];	 
+				}else{
+                    return response()->json([
+                        'success' => false,
+                        'icon'    => 'error',
+                        'title'   => 'ERROR',
+                        'text'    => 'NO SE HA PODIDO REALIZAR LA GRÁFICA'
+                    ]);
 				} 
 			}
 
