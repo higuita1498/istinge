@@ -573,7 +573,8 @@ class ContactosController extends Controller
     /*
     * Generar un json con los datos del contacto
     */
-    public function json($id=false){
+    public function json($id=false, $type=false){
+    
         if (!$id) {
             $contactos = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->get();
             if ($contactos) {
