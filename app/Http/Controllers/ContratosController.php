@@ -417,7 +417,7 @@ class ContratosController extends Controller
                     
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                        "target"          => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
+                        "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
                         "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
                         "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
                         "priority"        => $priority,                           // PRIORIDAD PLAN
