@@ -321,9 +321,22 @@ class PlanesVelocidadController extends Controller
             $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
             $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
 
+            if($contrato->local_address){
+                $segmento = explode("/", $contrato->local_address);
+                $prefijo = '/'.$segmento[1];
+            }else{
+                $prefijo = '';
+            }
+            if($contrato->local_address_new){
+                $segmento = explode("/", $contrato->local_address_new);
+                $prefijo = '/'.$segmento[1];
+            }else{
+                $prefijo = '';
+            }
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $name = $API->comm("/queue/simple/getall", array(
-                    "?target" => $contrato->ip,
+                    "?target" => ($contrato->local_address) ? $contrato->ip.''.$prefijo : $contrato->ip
                     )
                 );
 
