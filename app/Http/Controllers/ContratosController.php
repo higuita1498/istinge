@@ -628,7 +628,7 @@ class ContratosController extends Controller
                         if($mk_user){
                             $API->comm("/ip/arp/set", array(
                                 ".id" => $mk_user[0][".id"],
-                                "address"   => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
+                                "address"   => $request->ip, // IP DEL CLIENTE
                                 "interface" => $request->interfaz,                                                  // INTERFAZ DEL CLIENTE
                                 "mac-address" => $request->mac_address                                              // DIRECCION MAC
                                 )
@@ -646,17 +646,17 @@ class ContratosController extends Controller
                             if($mk_id){
                                 $API->comm("/ip/arp/set", array(
                                     ".id" => $mk_id[0][".id"],
-                                    "address"   => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                                    "interface" => $request->interfaz,                                                              // INTERFACE DEL CLIENTE
-                                    "mac-address" => $request->mac_address                                                // DIRECCION MAC
+                                    "address"   => $request->ip_new, // IP DEL CLIENTE
+                                    "interface" => $request->interfaz, // INTERFACE DEL CLIENTE
+                                    "mac-address" => $request->mac_address // DIRECCION MAC
                                     )
                                 );
                             }else{
                                 $API->comm("/ip/arp/add", array(
-                                    "comment"     => $contrato->servicio.'-'.$contrato->id,                                          // NOMBRE CLIENTE
-                                    "address"   => ($request->local_address_new) ? $request->ip_new.'/'.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                                    "interface"   => $request->interfaz,                                                              // INTERFACE DEL CLIENTE
-                                    "mac-address" => $request->mac_address                                                // DIRECCION MAC
+                                    "comment"     => $contrato->servicio.'-'.$contrato->id,// NOMBRE CLIENTE
+                                    "address"   => $request->ip_new, // IP DEL CLIENTE
+                                    "interface"   => $request->interfaz,// INTERFACE DEL CLIENTE
+                                    "mac-address" => $request->mac_address// DIRECCION MAC
                                     )
                                 );
                             }
