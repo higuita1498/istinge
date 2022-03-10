@@ -517,7 +517,7 @@
         <table class="qr-table" style="width:100%;margin:5px 0px 5px 0px;">
             <tbody>
             <tr>
-            <td class="text-align:center" width="30%" style="padding:7.8em;">
+            <td class="text-align:center" width="30%" style="padding:3.8em;">
                  <div>
                      @if(isset($codqr))
                     <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(200)->generate($codqr)) !!} ">

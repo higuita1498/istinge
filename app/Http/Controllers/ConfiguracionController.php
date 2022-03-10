@@ -517,7 +517,12 @@ class ConfiguracionController extends Controller
         'nombre' => 'required',
         'inicio' => 'required|numeric',
         'preferida' => 'required|numeric'
-    ]);
+      ]);
+
+      //Tipo de numeracion_factura, 1=estandar, 2=DIAN
+      $tipo = 1;
+      if($request->tipo == 2){$tipo=2;}
+      
     if ($request->preferida==1) {
       DB::table('numeraciones_facturas')
       ->where('empresa', Auth::user()->empresa)
@@ -525,9 +530,6 @@ class ConfiguracionController extends Controller
       ->update(['preferida' => 0]);
     }
 
-      //Tipo de numeracion_factura, 1=estandar, 2=DIAN
-      $tipo = 1;
-      if($request->tipo == 2){$tipo=2;}
 
       $numeracion=new NumeracionFactura;
       $numeracion->nombre=$request->nombre;

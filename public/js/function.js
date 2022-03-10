@@ -691,7 +691,8 @@ function notif(id){
 
 }*/
 
-function contacto(selected, modificar=false){
+/* type 1 = fact estandar, 2= fact electronica */
+function contacto(selected, modificar=false, type = 1){
     if (window.location.pathname.split("/")[1] === "software") {
         var url='/software/empresa/contactos/'+selected+'/json';
     }else{
@@ -705,15 +706,34 @@ function contacto(selected, modificar=false){
             cargando(true);
         },
         success: function(data){
-            data=JSON.parse(data); data=data[0];
+            
+            if(data.plan != null){
+                data=JSON.parse(data); data=data[0];
+            }
+
+            //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
+            if(data.plan == null && type ==1){
+                Swal.fire({
+                    position: 'top-center',
+                    type: 'error',
+                    title: 'El cliente seleccionado no cuenta con nigun contrato asignado.',
+                    showConfirmButton: false,
+                    timer: 2500
+                  });
+                //   cargando(false);
+                  return;
+            }
+
             if ($('#ident').length > 0) {
                 $('#ident').val(data.nit);
                 if (data.celular == '') { $('#telefono').val(data.telefono1); }else{ $('#telefono').val(data.celular); }
                 $('#correo').val(data.email);
                 $('#direccion').val(data.direccion);
                 $('#contrato').val(data.contrato);
+                if(type != 2){
                 $('#item1').val(data.plan).selectpicker('refresh');
-                rellenar(1, data.plan);
+                    rellenar(1, data.plan);
+                }
             }
             cargando(false);
         },
@@ -3164,6 +3184,12 @@ function validateDian(id,rutasuccess,codigo)
     $textswal  = "No podrás retroceder esta acción";
     $confirmswal = "Si, emitir";
 
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/validatedian/invoice';
+    }else{
+        var url = '/validatedian/invoice';
+    }
+
     Swal.fire({
         title: $titleswal,
         text: $textswal,
@@ -3177,7 +3203,7 @@ function validateDian(id,rutasuccess,codigo)
       if (result.value) {
 
         $.ajax({
-            url: '/validatedian/invoice',
+            url: url,
             headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             method:'post',
             data:{id:id,},

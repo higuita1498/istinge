@@ -240,7 +240,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::group(['prefix' => 'contactos'], function() {
 		Route::get('clientes', 'ContactosController@clientes')->name('contactos.clientes');
 		Route::get('proveedores', 'ContactosController@proveedores')->name('contactos.proveedores');
-		Route::get('clientes/json', 'ContactosController@json')->name('contactos.clientes.json');
+		Route::get('clientes/json/{type?}', 'ContactosController@json')->name('contactos.clientes.json');
 		Route::get('{id}/json', 'ContactosController@json')->name('contactos.json');
 		Route::get('exportar/{tipo?}', 'ContactosController@exportar')->name('contactos.exportar');
 		Route::get('importar', 'ContactosController@importar')->name('contactos.importar');
@@ -371,6 +371,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
 		Route::get('facturas_electronica', 'FacturasController@index_electronica')->name('facturas.index-electronica');
+		Route::get('facturas_electronica/create', 'FacturasController@create_electronica')->name('facturas.create-electronica');
 		Route::get('/{tipo}/listado', 'FacturasController@indexNew')->name('facturas.tipo');
 
 	});

@@ -593,6 +593,90 @@ class FacturasController extends Controller{
     'extras'));
   }
 
+  public function create_electronica($producto=false, $cliente=false){
+    $this->getAllPermissions(Auth::user()->id);
+    //echo $cliente;die;
+    view()->share(['icon' =>'', 'title' => 'Nueva Factura Electrónica', 'subseccion' => 'venta']);
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+
+    $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
+
+    if (!$nro) {
+      $mensaje='Debes crear una numeración para facturas de venta preferida';
+      return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+    }
+
+    if ($nro->inicio==$nro->final) {
+      $nro->estado=0;
+      $nro->save();
+      $mensaje='Debes crear una numeración para facturas de venta preferida';
+      return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+    }
+
+    if ($nro->hasta) {
+      if ($nro->hasta<date('Y-m-d')) {
+        $nro->estado=0;
+        $nro->save();
+        $mensaje='Debes crear una numeración para facturas de venta preferida';
+        return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+      }
+    }
+
+    //se obtiene la fecha de hoy
+      $fecha = date('d-m-Y');
+
+
+      $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+
+    $inventario = Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
+        DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
+        ->where('empresa',Auth::user()->empresa)
+        ->where('status', 1)
+        ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
+        ->orderBy('producto','ASC')
+        ->get();
+    $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+    $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+    $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+    $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
+    $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
+    $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+    $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
+    $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+
+        //Datos necesarios para hacer funcionar la ventana modal
+    $dataPro = (new InventarioController)->create();
+    $medidas2 = $dataPro->medidas;
+    $unidades2 = $dataPro->unidades;
+    $extras2 = $dataPro->extras;
+    $listas2 = $dataPro->listas;
+    $bodegas2 = $dataPro->bodegas;
+    $categorias=Categoria::where('empresa',Auth::user()->empresa)
+        ->orWhere('empresa', 1)
+        ->whereNull('asociado')->get();
+      $identificaciones=TipoIdentificacion::all();
+      //$vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
+      //$listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+      $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
+      $prefijos=DB::table('prefijos_telefonicos')->get();
+      // /Datos necesarios para hacer funcionar la ventana modal
+
+
+    $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+
+        $title = "Nueva Factura de Venta";
+    $seccion = "facturas";
+    $subseccion = "venta";
+
+
+    return view('facturas-electronica.create')->with(compact('clientes', 'tipo_documento',
+    'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos',
+    'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones',
+    'categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2',
+    'unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion',
+    'extras'));  
+  }
+
   public function create_cliente($cliente){
     return $this->create(false, $cliente);
   }
@@ -693,16 +777,30 @@ class FacturasController extends Controller{
         'vendedor' => 'required',
     ]);
 
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
-    $contrato =    Contrato::where('client_id',$request->cliente)->first();
+    $nro = false;
+    $contrato = false;
 
-    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-    $nro = $nro->tipoNumeracion($nro,$contrato);
+    if(!isset($request->electronica)){
+        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
+        //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
+        $nro = $nro->tipoNumeracion($nro,$contrato);
+    }
 
     if (!$nro) {
-        $mensaje='Debes crear una numeración para facturas de venta preferida';
-        return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+
+        if(isset($request->electronica)){
+            $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+            if(!$nro){
+                $mensaje='Debes crear una numeración para facturas de venta preferida';
+                return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+            }
+        }else{
+            $mensaje='Debes crear una numeración para facturas de venta preferida';
+            return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        }
+
     }
 
       //Actualiza el nro de inicio para la numeracion seleccionada
@@ -731,12 +829,16 @@ class FacturasController extends Controller{
 
     $electronica = Factura::booleanFacturaElectronica($request->cliente);
 
-    if($contrato->facturacion == 3 && !$electronica){
-        return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-    }elseif($contrato->facturacion == 3 && $electronica){
-        $tipo = 2;
-        $request->documento = $tipo;
+    if($contrato){
+        if($contrato->facturacion == 3 && !$electronica){
+            return redirect('empresa/facturas/facturas_electronica')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+        }elseif($contrato->facturacion == 3 && $electronica){
+            $tipo = 2;
+            $request->documento = $tipo;
+        }
     }
+
+    if(isset($request->electronica)){$tipo = 2;}
 
     //Si el tipo de documento es cuenta de cobro sigue su proceso normal.
     if($request->documento != 3){
@@ -850,6 +952,10 @@ class FacturasController extends Controller{
       return redirect('empresa/facturas/create')->with('success', $mensaje)->with('print', $print);
     }
 
+    else if($tipo == 2){
+        return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
+    }
+    
     return redirect('empresa/facturas')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
   }
 
