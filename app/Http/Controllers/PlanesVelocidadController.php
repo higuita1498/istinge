@@ -327,12 +327,6 @@ class PlanesVelocidadController extends Controller
             }else{
                 $prefijo = '';
             }
-            if($contrato->local_address_new){
-                $segmento = explode("/", $contrato->local_address_new);
-                $prefijo = '/'.$segmento[1];
-            }else{
-                $prefijo = '';
-            }
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $name = $API->comm("/queue/simple/getall", array(
