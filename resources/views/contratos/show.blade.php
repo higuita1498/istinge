@@ -111,6 +111,12 @@
 						<td><a href="{{ route('grupos-corte.show',$contrato->grupo_corte()->id )}}" target="_blank"><strong>{{ $contrato->grupo_corte()->nombre }}</strong></a> (CORTE {{ $contrato->grupo_corte()->fecha_corte }} - SUSPENSIÓN {{ $contrato->grupo_corte()->fecha_suspension }})</td>
 					</tr>
 					@endif
+					@if($contrato->fecha_suspension)
+					<tr>
+						<th>Fecha de Suspensión</th>
+						<td>El día <strong>{{ $contrato->fecha_suspension }}</strong> del mes</td>
+					</tr>
+					@endif
 					<tr>
 						<th>Estado Contrato</th>
 						<td>
@@ -124,7 +130,7 @@
 					@if($contrato->puerto_conexion)
 					<tr>
 						<th>Puerto de Conexión</th>
-						<td>{{ $contrato->puerto_conexion() }}</td>
+						<td>{{ $contrato->puerto() }}</td>
 					</tr>
 					@endif
 					@if($contrato->ip_new)

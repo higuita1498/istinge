@@ -95,6 +95,11 @@ class ContactosController extends Controller
                     $query->orWhere('email', 'like', "%{$request->email}%");
                 });
             }
+            if($request->serial_onu){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('serial_onu', 'like', "%{$request->serial_onu}%");
+                });
+            }
             if($request->t_contrato == 1){
                 $contactos->whereNotExists(function($query){
                     $query->select(DB::raw(1))
@@ -115,9 +120,9 @@ class ContactosController extends Controller
         $contactos->where('contactos.status', 1);
 
         return datatables()->eloquent($contactos)
-            /*->editColumn('serial_onu', function (Contacto $contacto) {
-                return "<a href=" . route('contactos.show', $contacto->id) . ">{$contacto->serial_onu}</div></a>";
-            })*/
+            ->editColumn('serial_onu', function (Contacto $contacto) {
+                return $contacto->serial_onu;
+            })
             ->editColumn('nombre', function (Contacto $contacto) {
                 return "<a href=" . route('contactos.show', $contacto->id) . ">{$contacto->nombre}</div></a>";
             })

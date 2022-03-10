@@ -27,6 +27,8 @@ use App\Mikrotik;
 use App\User;
 use App\CRM;
 use App\Campos;
+use Config;
+use App\ServidorCorreo;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -775,6 +777,22 @@ class IngresosController extends Controller
 
             $pdf = PDF::loadView('pdf.ingreso', compact('ingreso', 'items', 'retenciones', 'itemscount'))->stream();
             $asunto = "Recibo de Caja # $ingreso->nro";
+
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
+
             Mail::send('emails.ingreso', compact('ingreso'), function($message) use ($pdf, $emails, $ingreso, $asunto){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject($asunto);

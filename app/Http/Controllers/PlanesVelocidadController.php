@@ -155,6 +155,7 @@ class PlanesVelocidadController extends Controller
             $inventario->save();
             
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
+            return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('plan_id', $plan->id);
             return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
       }
       return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');

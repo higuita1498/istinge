@@ -13,6 +13,8 @@ use App\Plantilla;
 use App\Contrato;
 use Mail;
 use App\Mail\NotificacionMailable;
+use Config;
+use App\ServidorCorreo;
 
 class AvisosController extends Controller
 {
@@ -146,14 +148,28 @@ class AvisosController extends Controller
                         return redirect('empresa/avisos')->with('danger', 'ERROR: No tiene los parámetros de SMS GATEWAY ME registrado en el sistema. Dirígase a Configuración > Empresa');
                     }
                 }elseif($request->type == 'EMAIL'){
+                    $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+                    if($host){
+                        $existing = config('mail');
+                        $new =array_merge(
+                            $existing, [
+                                'host' => $host->servidor,
+                                'port' => $host->puerto,
+                                'encryption' => $host->seguridad,
+                                'username' => $host->usuario,
+                                'password' => $host->password,
+                            ]
+                        );
+                        config(['mail'=>$new]);
+                    }
+
                     $datos = array(
                         'titulo' => $plantilla->title,
                         'contenido' => $plantilla->contenido,
-                );
-                
-                $correo = new NotificacionMailable($datos);
-                Mail::to($contrato->cliente()->email)->send($correo);
-                return redirect('empresa/avisos')->with('success', 'Notificaciones por EMAIL, enviadas con éxito');
+                    );
+                    $correo = new NotificacionMailable($datos);
+                    Mail::to($contrato->cliente()->email)->send($correo);
+                    return redirect('empresa/avisos')->with('success', 'Notificaciones por EMAIL, enviadas con éxito');
                 }
             }
         }

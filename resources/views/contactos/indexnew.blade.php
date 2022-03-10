@@ -54,6 +54,11 @@
 	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
 		<div class="card-body py-0">
 			<div class="row">
+				@if($tipo_usuario == 0)
+				<div class="col-md-3 pl-1 pt-1">
+					<input type="text" placeholder="Serial ONU" id="serial_onu" class="form-control rounded">
+				</div>
+				@endif
 				<div class="col-md-3 pl-1 pt-1">
 					<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
 				</div>
@@ -159,6 +164,7 @@
             data.barrio = $('#barrio').val();
             data.email = $('#email').val();
             data.t_contrato = $('#t_contrato').val();
+            data.serial_onu = $('#serial_onu').val();
             data.filtro = true;
         });
 
@@ -198,6 +204,7 @@
 		$('#barrio').val('');
 		$('#email').val('');
 		$('#t_contrato').val('').selectpicker('refresh');
+		$('#serial_onu').val('');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

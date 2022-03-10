@@ -24,6 +24,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 use App\NumeracionFactura;
 use DOMDocument;
 use App\Model\Ingresos\FacturaRetencion; use QrCode; use File;
+use Config;
+use App\ServidorCorreo;
+
 class NotasdebitoController extends Controller
 {
   /**
@@ -1025,6 +1028,20 @@ $codqr = "NumFac:" . $NotaDebito->codigo . "\n" .
   );
     $total = Funcion::Parsear($nota->total()->total);
     $cliente = $nota->cliente()->nombre;
+    $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+    if($host){
+      $existing = config('mail');
+      $new =array_merge(
+        $existing, [
+          'host' => $host->servidor,
+          'port' => $host->puerto,
+          'encryption' => $host->seguridad,
+          'username' => $host->usuario,
+          'password' => $host->password,
+        ]
+      );
+      config(['mail'=>$new]);
+    }
     Mail::send('emails.notasdebito', compact('nota','total','cliente'), function($message) use ($pdf, $emails,$ruta_xmlresponse,$nota)
     {
       $message->attachData($pdf, 'NotaCredito.pdf', ['mime' => 'application/pdf']);

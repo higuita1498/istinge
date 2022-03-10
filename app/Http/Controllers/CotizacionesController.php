@@ -21,6 +21,9 @@ use Illuminate\Validation\Rule; use Auth;
 use bcrypt; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use Session;
+use Config;
+use App\ServidorCorreo;
+
 class CotizacionesController extends Controller
 {
     /**
@@ -631,20 +634,32 @@ class CotizacionesController extends Controller
             $items = ItemsFactura::where('factura',$factura->id)->get();
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $pdf = PDF::loadView('pdf.cotizacion', compact('items', 'factura', 'itemscount'))->stream();
-            Mail::send('emails.cotizacion', compact('factura'), function($message) use ($pdf, $emails, $factura)
-            {
+
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
+
+            Mail::send('emails.cotizacion', compact('factura'), function($message) use ($pdf, $emails, $factura){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject('Cotización #'.$factura->cot_nro);
                 $message->attachData($pdf, 'cotizacion.pdf', ['mime' => 'application/pdf']);
             });
-
-
         }
         if ($redireccionar) {
             return redirect('empresa/cotizaciones/'.$factura->cot_nro)->with('success', 'Se ha enviado el correo');
         }
     }
-
 
     public function datatable_producto(Request $request, $producto){
         // storing  request (ie, get/post) global array to a variable
@@ -821,7 +836,4 @@ class CotizacionesController extends Controller
         );
         return json_encode($json_data);
     }
-
-
-
 }

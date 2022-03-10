@@ -549,7 +549,7 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -589,40 +589,40 @@ class ContratosController extends Controller
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
                 //$API->debug = true;
-                
+
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     /*PPPOE*/
                     if($request->conexion == 1){
                         $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
                     }
-                    
+
                     /*DHCP*/
                     if($request->conexion == 2){
-                        
+
                     }
-                    
+
                     /*IP ESTÁTICA*/
                     if($request->conexion == 3){
                         //EDITANDO IP E INTERFACE
-                        if($request->local_address){ 
+                        if($request->local_address){
                             $segmento = explode("/", $request->local_address);
                             $prefijo = '/'.$segmento[1];
                         }else{
                             $prefijo = '';
                         }
-                        if($request->local_address_new){ 
+                        if($request->local_address_new){
                             $segmento = explode("/", $request->local_address_new);
                             $prefijo = '/'.$segmento[1];
                         }else{
                             $prefijo = '';
                         }
-                        
+
                         //OBTENEMOS AL CONTRATO MK
                         $mk_user = $API->comm("/ip/arp/getall", array(
                             "?comment" => $contrato->servicio,
                             )
                         );
-                        
+
                         //ACTUALIZAMOS IP
                         if($mk_user){
                             $API->comm("/ip/arp/set", array(
@@ -633,14 +633,14 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                        
+
                         if($request->ip_new){
                             //OBTENEMOS AL CONTRATO MK
                             $mk_id = $API->comm("/ip/arp/getall", array(
                                 "?comment" => $contrato->servicio.'-'.$contrato->id,
                                 )
                             );
-                            
+
                             //ACTUALIZAMOS IP
                             if($mk_id){
                                 $API->comm("/ip/arp/set", array(
@@ -666,7 +666,7 @@ class ContratosController extends Controller
                                     "?comment" => $contrato->servicio.'-'.$contrato->id,
                                     )
                                 );
-                                
+
                                 //ELIMINAMOS IP
                                 if($id_simple){
                                     $API->comm("/ip/arp/remove", array(
@@ -676,14 +676,14 @@ class ContratosController extends Controller
                                 }
                             }
                         }
-                        
+
                         //EDITANDO PLAN
                         //BUSCAMOS CLIENTE POR ID
                         $name = $API->comm("/queue/simple/getall", array(
                             "?comment" => $contrato->servicio,
                             )
                         );
-                        
+
                         if($name){
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
@@ -692,13 +692,13 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                        
+
                         if($request->ip_new){
                             $dos = $API->comm("/queue/simple/getall", array(
                                 "?comment" => $contrato->servicio.'-'.$contrato->id,
                                 )
                             );
-                            
+
                             if(!$dos){
                                 $API->comm("/queue/simple/add", array(
                                     "name"        => $contrato->servicio.'-'.$contrato->id, // NOMBRE MAS ID DEL CONTRATO
@@ -713,7 +713,7 @@ class ContratosController extends Controller
                                 "?comment" => $contrato->servicio.'-'.$contrato->id,
                                 )
                             );
-                            
+
                             if($dos){
                                 $API->comm("/queue/simple/remove", array(
                                     ".id" => $dos[0][".id"],
@@ -722,13 +722,13 @@ class ContratosController extends Controller
                             }
                         }
                     }
-                    
+
                     /*VLAN*/
                     if($request->conexion == 4){
-                        
+
                     }
                 }
-                
+
                 $API->disconnect();
                 
                 $grupo = GrupoCorte::find($request->grupo_corte);
@@ -742,10 +742,10 @@ class ContratosController extends Controller
                 $contrato->facturacion = $request->facturacion;
                 
                 /*$descripcion .= ($contrato->fecha_corte == $request->fecha_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Corte</b> de '.$contrato->fecha_corte.' a '.$request->fecha_corte.'<br>';
-                $contrato->fecha_corte = $request->fecha_corte;
+                $contrato->fecha_corte = $request->fecha_corte;*/
                 
-                $descripcion .= ($contrato->fecha_suspension == $request->fecha_suspension) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Suspensión</b> de '.$contrato->fecha_suspension.' a '.$request->fecha_suspension.'<br>';
-                $contrato->fecha_suspension = $request->fecha_suspension;*/
+                $descripcion .= ($contrato->fecha_suspension == $request->fecha_suspension) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Suspensión Personalizada</b> a '.$request->fecha_suspension.'<br>';
+                $contrato->fecha_suspension = $request->fecha_suspension;
                 
                 $plan_old = PlanesVelocidad::find($contrato->plan_id);
                 $plan_new = PlanesVelocidad::find($request->plan_id);

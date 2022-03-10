@@ -33,7 +33,7 @@ class CronController extends Controller
         $grupos_corte = GrupoCorte::where('fecha_corte', $fecha_corte)->where('status', 1)->get();
         
         foreach($grupos_corte as $grupo_corte){
-            $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',date($grupo_corte->id))->where('contracts.status',1)->where('contracts.state','enabled')->get();
+            $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
             
             $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
             if($num){
@@ -51,17 +51,19 @@ class CronController extends Controller
 
                 //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
                 $nro = $nro->tipoNumeracion($nro,$contrato);
-            
-                if($ultimo[2] == 31 && date('d') == "25"){
-                    $fecha_suspension = $grupo_corte->fecha_suspension + 1;
-                }else{
-                    $fecha_suspension = $grupo_corte->fecha_suspension;
-                }
 
-                if($ultimo[1] == 2){
-                    $creacion = $qwerty;
+                if($contrato->fecha_suspension){
+                    if($ultimo[2] == 31 && date('d') == "25"){
+                        $fecha_suspension = $contrato->fecha_suspension + 1;
+                    }else{
+                        $fecha_suspension = $contrato->fecha_suspension;
+                    }
                 }else{
-                    $creacion = date('Y-m-d', strtotime("+5 days", strtotime($fecha)));
+                    if($ultimo[2] == 31 && date('d') == "25"){
+                        $fecha_suspension = $grupo_corte->fecha_suspension + 1;
+                    }else{
+                        $fecha_suspension = $grupo_corte->fecha_suspension;
+                    }
                 }
 
                 $plazo=TerminosPago::where('dias',$fecha_suspension)->first();
@@ -87,11 +89,11 @@ class CronController extends Controller
                 $factura->facnotas      = $contrato->notas_fact;
                 $factura->empresa       = 1;
                 $factura->cliente       = $contrato->cliente;
-                $factura->fecha         = $creacion;
-                $factura->tipo         = $tipo;
+                $factura->fecha         = $grupo_corte->fecha_factura;
+                $factura->tipo          = $tipo;
                 $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
                 $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
-                $factura->observaciones = 'Facturación Automática - Corte '.$fecha_corte;
+                $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                 $factura->bodega        = 1;
                 $factura->vendedor      = 1;
                 $factura->save();
@@ -102,8 +104,8 @@ class CronController extends Controller
                 $item_reg->ref         = $contrato->ref;
                 $item_reg->precio      = $contrato->price;
                 $item_reg->descripcion = $contrato->plan;
-                $item_reg->id_impuesto = 2;
-                $item_reg->impuesto    = 0;
+                $item_reg->id_impuesto = $contrato->id_impuesto;
+                $item_reg->impuesto    = $contrato->impuesto;
                 $item_reg->cant        = 1;
                 $item_reg->save();
                 $nro->save();
@@ -115,45 +117,59 @@ class CronController extends Controller
 
     public static function CortarFacturas(){
         $i=0;
+        $fecha_corte = date('d');
         $fecha = date('Y-m-d');
+        $grupo_corte = GrupoCorte::where('fecha_suspension', $fecha_corte)->where('status', 1)->first();
 
-        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->where('f.estatus',1)->where('f.tipo', 1)->where('f.vencimiento', $fecha)->where('contactos.status',1)->where('cs.state','enabled')->get();
+        if($grupo_corte){
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.client_id','=','contactos.id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
+            where('f.estatus',1)->
+            where('f.tipo', 1)->
+            where('f.vencimiento', $fecha)->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.grupo_corte', $grupo_corte->id)->
+            orWhere('cs.fecha_suspension', $fecha_corte)->
+            get();
 
-        //dd($contactos);
+            //dd($contactos);
 
-        $empresa = Empresa::find(1);
-        foreach ($contactos as $contacto) {
-            $contrato = Contrato::where('client_id', $contacto->id)->first();
+            $empresa = Empresa::find(1);
+            foreach ($contactos as $contacto) {
+                $contrato = Contrato::where('client_id', $contacto->id)->first();
 
-            $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
-            $crm = new CRM();
-            $crm->cliente = $contacto->id;
-            $crm->factura = $contacto->factura;
-            $crm->servidor = $contrato->server_configuration_id;
-            $crm->grupo_corte = $contrato->grupo_corte;
-            $crm->save();
+                $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+                $crm = new CRM();
+                $crm->cliente = $contacto->id;
+                $crm->factura = $contacto->factura;
+                $crm->servidor = $contrato->server_configuration_id;
+                $crm->grupo_corte = $contrato->grupo_corte;
+                $crm->save();
 
-            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
 
-            if ($contrato) {
-                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    $API->write('/ip/firewall/address-list/print', TRUE);
-                    $ARRAYS = $API->read();
-                    if($contrato->state == 'enabled'){
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "comment" => $contrato->servicio,
-                            "list" => 'morosos'
-                            )
-                        );
-                        $contrato->state = 'disabled';
-                        $i++;
+                if ($contrato) {
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        $API->write('/ip/firewall/address-list/print', TRUE);
+                        $ARRAYS = $API->read();
+                        if($contrato->state == 'enabled'){
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "comment" => $contrato->servicio,
+                                "list" => 'morosos'
+                                )
+                            );
+                            $contrato->state = 'disabled';
+                            $i++;
+                        }
+                        $API->disconnect();
+                        $contrato->save();
                     }
-                    $API->disconnect();
-                    $contrato->save();
                 }
             }
         }
