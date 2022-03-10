@@ -720,7 +720,7 @@ function contacto(selected, modificar=false, type = 1){
                     showConfirmButton: false,
                     timer: 2500
                   });
-                  cargando(false);
+                //   cargando(false);
                   return;
             }
 
