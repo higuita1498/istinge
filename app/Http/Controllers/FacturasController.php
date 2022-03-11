@@ -2125,7 +2125,7 @@ public function edit($id){
         ................................*/
 
         $data = array(
-            'email' => 'info@gestordepartes.net',
+            'email' => 'info@networksoft.online',
         );
         $total = Funcion::Parsear($factura->total()->total);
         $cliente = $FacturaVenta->cliente()->nombre;
@@ -2303,7 +2303,7 @@ public function edit($id){
         Construcción del envío de correo electrónico
         ................................*/
             $data = array(
-                'email' => 'info@gestordepartes.net',
+                'email' => 'info@networksoft.online',
             );
 
             $total = Funcion::Parsear($factura->total()->total);
@@ -2327,7 +2327,7 @@ public function edit($id){
             Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta) {
                 $message->attachData($pdf, 'FV-' . $FacturaVenta->codigo . '.pdf', ['mime' => 'application/pdf']);
                 $message->attach($ruta_xmlresponse);
-                $message->from('info@gestordepartes.net', Auth::user()->empresaObj->nombre);
+                $message->from('info@networksoft.online', Auth::user()->empresaObj->nombre);
                 $message->to($emails)->subject(Auth::user()->empresaObj->nombre . " Factura Electrónica " . $FacturaVenta->codigo);
             });
         }
@@ -2524,7 +2524,7 @@ public function edit($id){
                         }
 
                         Mail::send('emails.dian.felicidades', compact('empresa', 'rango_numeracion'), function ($message) use ($emails, $tituloCorreo) {
-                            $message->from('info@gestordepartes.net', 'Facturación Electrónica - Gestor de Partes');
+                            $message->from('info@networksoft.online', 'Facturación Electrónica - Gestor de Partes');
                             $message->to($emails)->subject($tituloCorreo);
                         });
 
