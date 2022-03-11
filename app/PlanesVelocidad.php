@@ -21,6 +21,13 @@ class PlanesVelocidad extends Model
         'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
 
+    protected $appends = ['uso'];
+
+    public function getUsoAttribute()
+    {
+        return $this->uso();
+    }
+
     public function updated_by(){
         return User::where('id', $this->updated_by)->first();
     }

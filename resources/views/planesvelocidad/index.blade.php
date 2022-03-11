@@ -1,88 +1,183 @@
 @extends('layouts.app')
+
+@section('styles')
+
+@endsection
+
 @section('boton')
     @if(isset($_SESSION['permisos']['435']))
         <a href="{{route('planes-velocidad.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
     @endif
+    <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
 @endsection
 
 @section('content')
-	@if(Session::has('success'))
-		<div class="alert alert-success" >
-			{{Session::get('success')}}
-		</div>
+    @if(Session::has('success'))
+        <div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
+	    {{Session::get('success')}}
+        </div>
+        <script type="text/javascript">
+            setTimeout(function() {
+                $('.alert').hide();
+                $('.active_table').attr('class', ' ');
+            }, 5000);
+        </script>
+    @endif
+    
+    @if(Session::has('danger'))
+        <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
+	    {{Session::get('danger')}}
+        </div>
+        <script type="text/javascript">
+            setTimeout(function() {
+                $('.alert').hide();
+                $('.active_table').attr('class', ' ');
+            }, 5000);
+        </script>
+    @endif
 
-		<script type="text/javascript">
-			setTimeout(function(){
-			    $('.alert').hide();
-			    $('.active_table').attr('class', ' ');
-			}, 50000);
-		</script>
-	@endif
-	
-	@if(Session::has('danger'))
-		<div class="alert alert-danger" >
-			{{Session::get('danger')}}
-		</div>
+	<div class="container-fluid d-none" id="form-filter">
+		<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
+			<div class="card-body py-0">
+				<div class="row">
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Nombre" id="name" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="number" placeholder="Precio" id="price" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="number" placeholder="Vel. Descarga" id="download" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="number" placeholder="Vel. Subida" id="upload" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Tipo" class="form-control rounded selectpicker" id="type" data-size="5" data-live-search="true">
+							<option value="A">Queue Simple</option>
+        	                <option value="1">PCQ</option>
+						</select>
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Mikrotik" class="form-control rounded selectpicker" id="mikrotik_s" data-size="5" data-live-search="true">
+							@foreach($mikrotiks as $mikrotik)
+							<option value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Estado" class="form-control rounded selectpicker" id="status" data-size="5" data-live-search="true">
+							<option value="A">Deshabilitado</option>
+        	                <option value="1">Habilitado</option>
+						</select>
+					</div>
 
-		<script type="text/javascript">
-			setTimeout(function(){
-			    $('.alert').hide();
-			    $('.active_table').attr('class', ' ');
-			}, 50000);
-		</script>
-	@endif
+					<div class="col-md-1 pl-1 pt-1 text-left">
+						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="row card-description">
 		<div class="col-md-12">
-			<table class="table table-striped table-hover" id="example">
-			<thead class="thead-dark">
-				<tr>
-				    <th>Nombre</th>
-				    <th class="text-center">Precio</th>
-				    <th class="text-center">Download</th>
-				    <th class="text-center">Upload</th>
-				    <th class="text-center">Tipo</th>
-				    <th class="text-center">Mikrotik</th>
-				    <th class="text-center">Estado</th>
-				    <th class="text-center">Acciones</th>
-	          </tr>                              
-			</thead>
-			<tbody>
-				@foreach($planes as $plan)
-					<tr @if($plan->id==Session::get('plan_id')) class="active" @endif>
-						<td><a href="{{route('planes-velocidad.show',$plan->id)}}">{{$plan->name}}</a></td>
-						<td class="text-center">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($plan->price)}}</td>
-						<td class="text-center">{{$plan->download}}</td>
-						<td class="text-center">{{$plan->upload}}</td>
-						<td class="font-weight-bold text-center text-{{$plan->type('true')}}">{{$plan->type()}}</td>
-						<td class="font-weight-bold text-center">{{$plan->mikrotik()->nombre}}</td>
-						<td class="font-weight-bold text-center text-{{$plan->status('true')}}">{{$plan->status()}}</td>
-						<td class="text-center">
-						    <form action="{{ route('planes-velocidad.destroy',$plan->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-plan{{$plan->id}}">
-						        @csrf
-						        <input name="_method" type="hidden" value="DELETE">
-						    </form>
-						    <form action="{{ route('planes-velocidad.status',$plan->id) }}" method="get" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$plan->id}}">
-						        @csrf
-						    </form>
-						    <form action="{{route('planes-velocidad.reglas',$plan->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="regla-{{$plan->id}}">
-			                    @csrf
-			                </form>
-						    <a href="{{route('planes-velocidad.edit',$plan->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
-						    <a href="{{route('planes-velocidad.show',$plan->id)}}" class="btn btn-outline-info btn-icons"><i class="fas fa-eye"></i></a>
-						    @if($plan->type == 1)
-						    <button title="Aplicar Reglas" class="btn btn-outline-dark btn-icons" type="submit" onclick="confirmar('regla-{{$plan->id}}', '¿Está seguro que desea aplicar las reglas de este plan a la Mikrotik?', '');"><i class="fas fa-plus"></i></button>
-						    @endif
-						    <button @if($plan->status == 1) class="btn btn-outline-danger btn-icons" title="Deshabilitar" @else class="btn btn-outline-success btn-icons" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$plan->id}}', '¿Está seguro que desea @if($plan->status == 1) deshabilitar @else habilitar @endif el plan?', '');"><i class="fas fa-power-off"></i></button>
-						    <a href="{{route('planes-velocidad.aplicar-cambios',$plan->id)}}" class="btn btn-outline-success btn-icons" title="Aplicar Cambios"><i class="fas fa-check"></i></a>
-						    @if($plan->uso()==0)
-						    <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-plan{{$plan->id}}', '¿Está seguro que desea eliminar el Plan?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
-						   @endif
-						</td>
+			<table class="table table-striped table-hover w-100" id="tabla-planes">
+				<thead class="thead-dark">
+					<tr>
+						@foreach($tabla as $campo)
+						<th>{{$campo->nombre}}</th>
+	                    @endforeach
+						<th>Acciones</th>
 					</tr>
-				@endforeach
-			</tbody>
-		</table>
+				</thead>
+			</table>
 		</div>
 	</div>
+@endsection
+
+@section('scripts')
+<script>
+    var tabla = null;
+    window.addEventListener('load',
+    function() {
+		$('#tabla-planes').DataTable({
+			responsive: true,
+			serverSide: true,
+			processing: true,
+			language: {
+				'url': '/vendors/DataTables/es.json'
+			},
+			order: [
+				[0, "asc"]
+			],
+			"pageLength": 25,
+			ajax: '{{url("/planes")}}',
+			headers: {
+				'X-CSRF-TOKEN': '{{csrf_token()}}'
+			},
+			columns: [
+			    @foreach($tabla as $campo)
+			    {data: '{{$campo->campo}}'},
+                @endforeach
+				{data: 'acciones'},
+			]
+		});
+
+
+        tabla = $('#tabla-planes');
+
+        tabla.on('preXhr.dt', function(e, settings, data) {
+            //data.serial_onu = $('#serial_onu').val();
+            data.name = $('#name').val();
+            data.price = $('#price').val();
+            data.download = $('#download').val();
+            data.upload = $('#upload').val();
+            data.type = $('#type').val();
+            data.mikrotik_s = $('#mikrotik_s').val();
+            data.status = $('#status').val();
+            data.filtro = true;
+        });
+
+        $('#filtrar').on('click', function(e) {
+            getDataTable();
+            return false;
+        });
+
+        $('#form-filter').on('keypress',function(e) {
+            if(e.which == 13) {
+                getDataTable();
+                return false;
+            }
+        });
+    });
+
+	function getDataTable() {
+		tabla.DataTable().ajax.reload();
+	}
+
+	function abrirFiltrador() {
+		if ($('#form-filter').hasClass('d-none')) {
+			$('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
+			$('#form-filter').removeClass('d-none');
+		} else {
+			$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+			cerrarFiltrador();
+		}
+	}
+
+	function cerrarFiltrador() {
+		$('#name').val('');
+		$('#price').val('');
+		$('#download').val('');
+		$('#upload').val('');
+		$('#type').val('').selectpicker('refresh');
+		$('#mikrotik_s').val('').selectpicker('refresh');
+		$('#status').val('').selectpicker('refresh');
+		$('#form-filter').addClass('d-none');
+		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+		getDataTable();
+	}
+</script>
 @endsection

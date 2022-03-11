@@ -30,6 +30,7 @@ include_once(app_path() .'/../public/api_mt_include2.php');
 use routeros_api;
 use RouterosAPI;
 use StdClass;
+use App\Campos;
 
 class PlanesVelocidadController extends Controller
 {
@@ -39,10 +40,94 @@ class PlanesVelocidadController extends Controller
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Planes de Velocidad', 'icon' =>'fas fa-server']);
     }
     
-    public function index(){
-      $this->getAllPermissions(Auth::user()->id);
-      $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
-      return view('planesvelocidad.index')->with(compact('planes'));
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $tabla = Campos::where('modulo', 10)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
+        return view('planesvelocidad.index')->with(compact('mikrotiks','tabla'));
+    }
+
+    public function planes(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $planes = PlanesVelocidad::query();
+
+        if ($request->filtro == true) {
+            if($request->name){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('name', 'like', "%{$request->name}%");
+                });
+            }
+            if($request->price){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('price', 'like', "%{$request->price}%");
+                });
+            }
+            if($request->download){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('download', 'like', "%{$request->download}%");
+                });
+            }
+            if($request->upload){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('upload', 'like', "%{$request->upload}%");
+                });
+            }
+            if($request->type){
+                if($request->type == 'A'){
+                    $type = 0;
+                }else{
+                    $type = $request->type;
+                }
+                $planes->where(function ($query) use ($type) {
+                    $query->orWhere('type', $type);
+                });
+            }
+            if($request->mikrotik_s){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('mikrotik', $request->mikrotik_s);
+                });
+            }
+            if($request->status){
+                if($request->status == 'A'){
+                    $status = 0;
+                }else{
+                    $status = $request->status;
+                }
+                $planes->where(function ($query) use ($status) {
+                    $query->orWhere('status', $status);
+                });
+            }
+        }
+
+        $planes->where('planes_velocidad.empresa', auth()->user()->empresa);
+
+        return datatables()->eloquent($planes)
+            ->editColumn('name', function (PlanesVelocidad $plan) {
+                return "<a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</div></a>";
+            })
+            ->editColumn('price', function (PlanesVelocidad $plan) use ($moneda) {
+                return "{$moneda} {$plan->price}";
+            })
+            ->editColumn('download', function (PlanesVelocidad $plan) {
+                return $plan->download;
+            })
+            ->editColumn('upload', function (PlanesVelocidad $plan) {
+                return $plan->upload;
+            })
+            ->editColumn('type', function (PlanesVelocidad $plan) {
+                return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
+            })
+            ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
+                return $plan->mikrotik()->nombre;
+            })
+            ->editColumn('status', function (PlanesVelocidad $plan) {
+                return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
+            ->rawColumns(['acciones', 'name', 'status', 'type'])
+            ->toJson();
     }
     
     public function create(){
