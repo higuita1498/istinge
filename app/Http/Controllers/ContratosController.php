@@ -629,7 +629,7 @@ class ContratosController extends Controller
 
                     /*DHCP*/
                     if($contrato->conexion == 2){
-                        if($plan->dhcp_server){
+                        if(!isset($plan->dhcp_server)){
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
                                 "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
                                 )
