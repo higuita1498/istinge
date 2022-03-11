@@ -605,7 +605,7 @@ class ContratosController extends Controller
             $request->validate([
                 'server_configuration_id' => 'required',
                 'plan_id' => 'required',
-                'interfaz' => 'required',
+                //'interfaz' => 'required',
                 'ip' => 'required',
                 'grupo_corte' => 'required',
                 /*'fecha_corte' => 'required',
