@@ -396,61 +396,90 @@ class Controller extends BaseController
         }
     }
 
-    function EnviarDatosDian($xml){
+    public function EnviarDatosDian($xml)
+    {
+        $encoded = base64_encode($xml);
+        $json = json_encode($encoded);
 
-    $encoded = base64_encode($xml);
-    $json=json_encode($encoded);
-
-    $curl = curl_init();    
-    curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/documentos/proceso/alianzas", //"https://apivp.efacturacadena.com/staging/vp-hab/documentos/proceso/alianzas",
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => "",
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 30,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "POST",
-      CURLOPT_POSTFIELDS => $json,
-      CURLOPT_HTTPHEADER => array(
-        "Content-Type: application/json",
-        "Postman-Token: 13e97781-32ef-49b7-ad05-3461f465d410",
-        "cache-control: no-cache",
-        "efacturaAuthorizationToken:62808bf1-d446-46ee-8120-00162e95c059"
-      ),
-    ));
-    $response = curl_exec($curl);
-    $err = curl_error($curl);    
-    curl_close($curl);    
-    if ($err) {
-      return "cURL Error #:" . $err;
-    } else {
-      return $response;
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/documentos/proceso/alianzas", //"https://apivp.efacturacadena.com/staging/vp-hab/documentos/proceso/alianzas",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/json",
+                "Postman-Token: 13e97781-32ef-49b7-ad05-3461f465d410",
+                "cache-control: no-cache",
+                "efacturaAuthorizationToken:62808bf1-d446-46ee-8120-00162e95c059"
+            ),
+        ));
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return "cURL Error #:" . $err;
+        } else {
+            return $response;
+        }
     }
-}
 
-    public function getTechnicalKey($softwareCode,$accountCodeVendor,$accountCode){
-    $curl = curl_init();
-    $url = "https://apivp.efacturacadena.com/v1/vp/consulta/rango-numeracion?softwareCode=".$softwareCode."&accountCodeVendor=".$accountCodeVendor."&accountCode=".$accountCode."";
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-    ));
 
-    $response = curl_exec($curl);
-    $err = curl_error($curl);    
-    curl_close($curl);    
-    if ($err) {
-      return "cURL Error #:" . $err;
-  } else {
-      return $response;
-  }
-}
+    public function getTechnicalKey($softwareCode, $accountCodeVendor, $accountCode)
+    {
+        $curl = curl_init();
+        $url = "https://apivp.efacturacadena.com/v1/vp/consulta/rango-numeracion?softwareCode=" . $softwareCode . "&accountCodeVendor=" . $accountCodeVendor . "&accountCode=" . $accountCode . "";
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return "cURL Error #:" . $err;
+        } else {
+            return $response;
+        }
+    }
+
+    //Metodo para devolver json de rspuesta para saber si existe o no un documento
+    public function validateStatusDian($nitemisor, $idDocumento, $codigoTipo, $prefijo)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/consulta/documentos?nit_emisor=" . $nitemisor . "&id_documento=" . $idDocumento . "&codigo_tipo_documento=" . $codigoTipo . "&prefijo=" . $prefijo . "",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "efacturaAuthorizationToken: 62808bf1-d446-46ee-8120-00162e95c059",
+                "Content-Type: text/plain",
+                "Partnership-Id: 1128464945"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
+    }
 
     public function change_pass($nombre,$identificacion){
         $curl = curl_init();
