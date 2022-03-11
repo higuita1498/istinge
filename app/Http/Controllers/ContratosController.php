@@ -904,7 +904,7 @@ class ContratosController extends Controller
                 
                 if($contrato->conexion == 2){
                     $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                            "?comment" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                            "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
                         )
                     );
 
