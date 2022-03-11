@@ -397,7 +397,7 @@ class ContratosController extends Controller
                         $API->comm("/ip/dhcp-server/lease/add", array(
                             "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
                             "address"     => $request->ip,                        // IP DEL CLIENTE
-                            "server"      => $plan->dhcp_server,                  // INTERFACE DEL CLIENTE
+                            "server"      => $plan->dhcp_server,                  // SERVIDOR DHCP
                             "mac-address" => $request->mac_address                // DIRECCION MAC
                             )
                         );
@@ -409,9 +409,19 @@ class ContratosController extends Controller
 
                         if($name){
                             $registro = true;
+                            $API->comm("/queue/simple/add", array(
+                                "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                                "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
+                                "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                                "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
+                                "priority"        => $priority,                           // PRIORIDAD PLAN
+                                "burst-limit"     => $burst_limit,
+                                "burst-threshold" => $burst_threshold
+                                )
+                            );
                         }
                     }else{
-                        $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO';
+                        $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
                         return redirect('empresa/contratos')->with('danger', $mensaje);
                     }
                 }
