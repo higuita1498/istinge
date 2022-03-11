@@ -71,12 +71,20 @@ class Factura extends Model
         }
 
         if ($this->estatus==2) {
-               return 'Anulada';
+            $mensaje = 'Anulada';
         }
         if ($this->estatus==3) {
-               return 'Reconexión';
+            $mensaje = 'Reconexión';
         }
-        return $this->estatus==1?'Abierta':'Cerrada';
+        $mensaje = $this->estatus==1?'Abierta':'Cerrada';
+
+        if(isset($this->tipo) && $this->tipo == 2){
+            if($this->emitida = 1){
+                $mensaje.="-emitida";
+            }else{
+                $mensaje.="-no emitida";
+            }
+        }
     }
 
 
