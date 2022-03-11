@@ -94,14 +94,17 @@
             <div class="col-md-4 form-group">
                 <label class="control-label" id="div_local_address">Segmento de IP</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" name="local_address" value="{{$contrato->local_address}}" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
+                    {{-- <input type="text" class="form-control" name="local_address" value="{{$contrato->local_address}}" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                     <div class="input-group-append" id="option_segmento">
                         @if($contrato->local_address_new)
                         <a href="javascript:deleteSegmento();" class="btn btn-outline-danger btn-sm"><i class="fas fa-minus" style="margin: 2px;"></i></a>
                         @else
                         <a href="javascript:addSegmento();" class="btn btn-outline-success btn-sm"><i class="fas fa-plus" style="margin: 2px;"></i></a>
                         @endif
-                    </div>
+                    </div> --}}
+                    <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
+
+                    </select>
                     <span class="help-block error">
                         <strong>{{ $errors->first('local_address') }}</strong>
                     </span>
@@ -136,7 +139,7 @@
                     </span>
                 </div>
             </div>
-            <div class="col-md-4 form-group {{$contrato->conexion==3?'d-none':''}}">
+            <div class="col-md-4 form-group d-none">
                 <label class="control-label">Access Point Asociado <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" id="ap" name="ap" required="" title="Seleccione" data-live-search="true" data-size="5">
                     @foreach($nodos as $nodo)
