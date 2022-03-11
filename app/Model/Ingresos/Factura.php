@@ -85,6 +85,8 @@ class Factura extends Model
                 $mensaje.="-no emitida";
             }
         }
+
+        return $mensaje;
     }
 
 
