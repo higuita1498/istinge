@@ -389,7 +389,7 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->porpagar)}";
         })
         ->addColumn('estado', function (Factura $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . $factura->emitida == 1 ? '-Emitida' : '-No emitida' . '</span>';
+            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus(). '</span>';
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'estado', 'acciones', 'vencimiento'])
@@ -1918,14 +1918,14 @@ public function edit($id){
 
         $isImpuesto = 1;
         // return $data;
-          if(auth()->user()->empresa == 1)
-          {
-              return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
-          ->header('Content-Description', 'File Transfer')
-          ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
-          ->header('Content-Transfer-Encoding', 'binary')
-          ->header('Content-Type', 'text/xml');
-          }
+        //   if(auth()->user()->empresa == 1)
+        //   {
+        //       return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
+        //   ->header('Content-Description', 'File Transfer')
+        //   ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
+        //   ->header('Content-Transfer-Encoding', 'binary')
+        //   ->header('Content-Type', 'text/xml');
+        //   }
 
         //-- Generación del XML a enviar a la DIAN -- //
         $xml = view('templates.xml.01', compact('CUFEvr', 'ResolucionNumeracion', 'FacturaVenta', 'data', 'items', 'retenciones', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
@@ -1935,7 +1935,6 @@ public function edit($id){
 
         //-- Decodificación de respuesta de la DIAN --//
         $res = json_decode($res, true);
-
 
 
         if (isset($res['errorType'])) {
@@ -2385,7 +2384,12 @@ public function edit($id){
         } elseif ($codigo == $numeracion->inicioverdadero) { //-- si no entra es por que hay la posibilidad de que sea la primer factura emitida de esa numeración
             $emitida = true;
         } else { //cambió el prefijo de una numeracion existente ademas hay mas facturas con esa numeración sin emitir
-            $emitida = false;
+              /*
+            Actualizacion: Como no es igual al inicioverdadero es muy probable que no 
+            se este emitiendo desde el numero de inicio verdadero si no que arranco un poco mas
+            adelante.
+            */
+            $emitida = true;
         }
 
         return response()->json([

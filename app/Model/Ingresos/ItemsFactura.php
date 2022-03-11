@@ -155,7 +155,7 @@ class ItemsFactura extends Model
      
         if ($impuesto) {
             
-            if($text == "Ninguno" || $text == "NINGUNO"){
+            if($text == "Ninguno" || $text == "NINGUNO" || $text == "N/A"){
                 $text = "IVA";
             }
             
