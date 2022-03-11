@@ -81,6 +81,7 @@
 			{{-- <a href="{{route('campos.organizar', 6)}}">Factura de Proveedores</a><br>
 			<a href="{{route('campos.organizar', 7)}}">Pagos / Egresos</a><br>
 			<a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
+			<a href="{{route('campos.organizar', 10)}}">Planes de Velocidad</a><br>
 		</div>
 		@endif
 		<div class="col-sm-3">
