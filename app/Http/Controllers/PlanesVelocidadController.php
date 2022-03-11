@@ -99,6 +99,7 @@ class PlanesVelocidadController extends Controller
         $plan->prioridad = $request->prioridad;
         $plan->item = $inventario->id;
         $plan->empresa = Auth::user()->empresa;
+        $plan->dhcp_server = $request->dhcp_server;
         $plan->save();
             
         $mensaje='Se ha creado satisfactoriamente el plan';
@@ -146,6 +147,7 @@ class PlanesVelocidadController extends Controller
             $plan->queue_type_bajada = $request->queue_type_bajada;
             $plan->parenta = $request->parenta;
             $plan->prioridad = $request->prioridad;
+            $plan->dhcp_server = $request->dhcp_server;
             $plan->save();
             
             $inventario = Inventario::find($plan->item);

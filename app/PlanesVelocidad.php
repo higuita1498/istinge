@@ -18,7 +18,7 @@ class PlanesVelocidad extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
 
     public function updated_by(){
