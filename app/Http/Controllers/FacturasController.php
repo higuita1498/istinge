@@ -2385,7 +2385,12 @@ public function edit($id){
         } elseif ($codigo == $numeracion->inicioverdadero) { //-- si no entra es por que hay la posibilidad de que sea la primer factura emitida de esa numeración
             $emitida = true;
         } else { //cambió el prefijo de una numeracion existente ademas hay mas facturas con esa numeración sin emitir
-            $emitida = false;
+              /*
+            Actualizacion: Como no es igual al inicioverdadero es muy probable que no 
+            se este emitiendo desde el numero de inicio verdadero si no que arranco un poco mas
+            adelante.
+            */
+            $emitida = true;
         }
 
         return response()->json([
