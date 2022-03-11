@@ -393,7 +393,22 @@ class ContratosController extends Controller
                 
                 /*DHCP*/
                 if($request->conexion == 2){
-                    
+                    $API->comm("/ip/dhcp/lease/add", array(
+                        "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        "address"     => $request->ip,                        // IP DEL CLIENTE
+                        "server"      => $request->interfaz,                  // INTERFACE DEL CLIENTE
+                        "mac-address" => $request->mac_address                // DIRECCION MAC
+                        )
+                    );
+
+                    $name = $API->comm("/ip/dhcp/lease/getall", array(
+                        "?address" => $request->ip
+                        )
+                    );
+
+                    if($name){
+                        $registro = true;
+                    }
                 }
                 
                 /*IP ESTÁTICA*/
