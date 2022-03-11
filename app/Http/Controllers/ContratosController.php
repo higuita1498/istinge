@@ -374,7 +374,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "target"          => $request->ip,                        // IP
                         "name"            => $plan->name,                         // NOMBRE PLAN
-                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold
@@ -384,7 +384,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
                         "target"    => $request->ip,                      //IP
-                        "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                         "parent"    => $plan->name,                       // NOMBRE PLAN
                         "comment"   => $nro_contrato                      // NRO DEL CONTRATO
                         )
@@ -412,7 +412,7 @@ class ContratosController extends Controller
                             $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
                                 "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                                "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
                                 "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
                                 "priority"        => $priority,                           // PRIORIDAD PLAN
                                 "burst-limit"     => $burst_limit,
@@ -448,7 +448,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
                         "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
                         "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
@@ -468,7 +468,7 @@ class ContratosController extends Controller
                         $API->comm("/queue/simple/add", array(
                             "name"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
                             "target"      => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                            "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
+                            "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),                    // VELOCIDAD PLAN
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
                             "priority"        => $priority,                           // PRIORIDAD PLAN
                             "burst-limit"     => $burst_limit,
@@ -496,7 +496,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "target"      => $request->ip,                          //IP
                         "name"        => $plan->name,                           // NOMBRE PLAN
-                        "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                        "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold
@@ -506,7 +506,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
                         "target"    => $request->ip,                      //IP
-                        "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                         "parent"    => $plan->name,                       // NOMBRE PLAN
                         "comment"   => $nro_contrato                      // NRO DEL CONTRATO
                         )
@@ -719,7 +719,7 @@ class ContratosController extends Controller
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
                                 "target"    => $request->ip,                      //IP
-                                "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                                "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                                 )
                             );
                         }
@@ -734,7 +734,7 @@ class ContratosController extends Controller
                                 $API->comm("/queue/simple/add", array(
                                     "name"        => $contrato->servicio.'-'.$contrato->id, // NOMBRE MAS ID DEL CONTRATO
                                     "target"      => $request->ip_new,                      // IP DEL CLIENTE
-                                    "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                                    "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
                                     "comment"     => $contrato->servicio.'-'.$contrato->id  // NRO DEL CONTRATO
                                     )
                                 );
