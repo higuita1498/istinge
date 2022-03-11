@@ -389,7 +389,7 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->porpagar)}";
         })
         ->addColumn('estado', function (Factura $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . $factura->emitida == 1 ? '-Emitida' : '-No emitida' . '</span>';
+            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus(). '</span>';
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'estado', 'acciones', 'vencimiento'])
