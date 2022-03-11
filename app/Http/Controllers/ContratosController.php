@@ -903,7 +903,31 @@ class ContratosController extends Controller
                 }
                 
                 if($contrato->conexion == 2){
-                    
+                    $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                            "?comment" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        )
+                    );
+
+                    if($name){
+                        // REMOVEMOS EL IP DHCP
+                        $API->comm("/ip/dhcp-server/lease/remove", array(
+                            ".id" => $mk_user[0][".id"],
+                            )
+                        );
+                    }
+
+                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                    $id_simple = $API->comm("/queue/simple/getall", array(
+                        "?comment" => $contrato->servicio,
+                        )
+                    );
+                    // REMOVEMOS LA COLA SIMPLE
+                    if($id_simple){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
+                            )
+                        );
+                    }
                 }
                 
                 if($contrato->conexion == 3){
