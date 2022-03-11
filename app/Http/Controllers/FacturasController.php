@@ -44,6 +44,7 @@ use App\Descuento;
 use App\Campos;
 use Config;
 use App\ServidorCorreo;
+use ZipArchive;
 
 class FacturasController extends Controller{
 
@@ -2093,8 +2094,7 @@ public function edit($id){
         $vendedor = Vendedor::where('id', $FacturaVenta->vendedor)->first();
 
         if ($factura->tipo_operacion == 3) {
-            $detalle_recaudo = $factura->detalleRecaudo();
-            $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'detalle_recaudo', 'vendedor', 'empresa'))
+            $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
                 ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
         } else {                                           
             $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
@@ -2127,7 +2127,7 @@ public function edit($id){
         $data = array(
             'email' => 'info@gestordepartes.net',
         );
-        $total = Funcion::Parsear($factura->total()->total + $factura->totalDetalleRecaudo()->total);
+        $total = Funcion::Parsear($factura->total()->total);
         $cliente = $FacturaVenta->cliente()->nombre;
 
         $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
