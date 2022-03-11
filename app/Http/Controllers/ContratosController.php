@@ -623,12 +623,12 @@ class ContratosController extends Controller
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     /*PPPOE*/
-                    if($request->conexion == 1){
+                    if($contrato->conexion == 1){
                         $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
                     }
 
                     /*DHCP*/
-                    if($request->conexion == 2){
+                    if($contrato->conexion == 2){
                         if($plan->dhcp_server){
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
                                 "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
@@ -665,7 +665,7 @@ class ContratosController extends Controller
                     }
 
                     /*IP ESTÁTICA*/
-                    if($request->conexion == 3){
+                    if($contrato->conexion == 3){
                         //EDITANDO IP E INTERFACE
                         if($request->local_address){
                             $segmento = explode("/", $request->local_address);
@@ -787,7 +787,7 @@ class ContratosController extends Controller
                     }
 
                     /*VLAN*/
-                    if($request->conexion == 4){
+                    if($contrato->conexion == 4){
 
                     }
                 }
