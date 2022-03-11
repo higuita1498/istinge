@@ -389,7 +389,7 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->porpagar)}";
         })
         ->addColumn('estado', function (Factura $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
+            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . $factura->emitida == 1 ? '-Emitida' : '-No emitida' . '</span>';
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'estado', 'acciones', 'vencimiento'])
@@ -2097,8 +2097,8 @@ public function edit($id){
             $detalle_recaudo = $factura->detalleRecaudo();
             $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'detalle_recaudo', 'vendedor', 'empresa'))
                 ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
-        } else {
-            $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
+        } else {                                           
+            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
                 ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
         }
 
