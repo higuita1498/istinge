@@ -629,7 +629,39 @@ class ContratosController extends Controller
 
                     /*DHCP*/
                     if($request->conexion == 2){
+                        if($plan->dhcp_server){
+                            $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                                "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
+                                )
+                            );
 
+                            if($name){
+                                $API->comm("/ip/dhcp-server/lease/set", array(
+                                    ".id" => $name[0][".id"],
+                                    "address"     => $request->ip,         // IP DEL CLIENTE
+                                    "server"      => $plan->dhcp_server,   // SERVIDOR DHCP
+                                    "mac-address" => $request->mac_address // DIRECCION MAC
+                                    )
+                                );
+                            }
+
+                            $name_new = $API->comm("/queue/simple/getall", array(
+                                    "?comment" => $contrato->servicio,
+                                )
+                            );
+
+                            if($name_new){
+                                $API->comm("/queue/simple/set", array(
+                                        ".id"       => $name_new[0][".id"],
+                                        "target"    => $request->ip, //IP
+                                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                    )
+                                );
+                            }
+                        }else{
+                            $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
+                            return redirect('empresa/contratos')->with('danger', $mensaje);
+                        }
                     }
 
                     /*IP ESTÁTICA*/
