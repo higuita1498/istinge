@@ -317,6 +317,7 @@ class ContratosController extends Controller
             ]);
         }
         
+
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
@@ -416,7 +417,7 @@ class ContratosController extends Controller
                     
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                        "target"          => $request->ip,                        // IP DEL CLIENTE
+                        "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
                         "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
                         "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
                         "priority"        => $priority,                           // PRIORIDAD PLAN
@@ -427,16 +428,16 @@ class ContratosController extends Controller
 
                     if($request->ip_new){
                         $API->comm("/ip/arp/add", array(
-                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,                            // NOMBRE MAS ID DEL CONTRATO
-                            "address"     => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                            "interface"   => $request->interfaz,                                                               // INTERFACE DEL CLIENTE
-                            "mac-address" => $request->mac_address                                                            // DIRECCION MAC
+                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
+                            "address"     => $request->ip_new, // IP DEL CLIENTE
+                            "interface"   => $request->interfaz, // INTERFACE DEL CLIENTE
+                            "mac-address" => $request->mac_address // DIRECCION MAC
                             )
                         );
                         
                         $API->comm("/queue/simple/add", array(
                             "name"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
-                            "target"      => $request->ip_new,                                     // IP DEL CLIENTE
+                            "target"      => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
                             "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
                             "priority"        => $priority,                           // PRIORIDAD PLAN
@@ -1168,8 +1169,13 @@ class ContratosController extends Controller
 					$rows['data'][] = $tx;
 					$rows2['name'] = 'Rx';
 					$rows2['data'][] = $rx;
-				}else{  
-					echo $ARRAY['!trap'][0]['message'];	 
+				}else{
+                    return response()->json([
+                        'success' => false,
+                        'icon'    => 'error',
+                        'title'   => 'ERROR',
+                        'text'    => 'NO SE HA PODIDO REALIZAR LA GRÁFICA'
+                    ]);
 				} 
 			}
 

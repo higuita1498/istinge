@@ -29,17 +29,21 @@
 			url: 'graficajson',
 			datatype: "json",
 			success: function(data) {
-				var midata = JSON.parse(data);
-				if( midata.length > 0 ) {
-					var TX=parseInt(midata[0].data);
-					var RX=parseInt(midata[1].data);
-					var x = (new Date()).getTime(); 
-					shift=chart.series[0].data.length > 19;
-					chart.series[0].addPoint([x, TX], true, shift);
-					chart.series[1].addPoint([x, RX], true, shift);
-					document.getElementById("trafico").innerHTML=formatBytes(TX) + " / " + formatBytes(RX);
+				if(data.success==false){
+					window.stop();
 				}else{
-					document.getElementById("trafico").innerHTML="- / -";
+					var midata = JSON.parse(data);
+					if( midata.length > 0 ) {
+						var TX=parseInt(midata[0].data);
+						var RX=parseInt(midata[1].data);
+						var x = (new Date()).getTime();
+						shift=chart.series[0].data.length > 19;
+						chart.series[0].addPoint([x, TX], true, shift);
+						chart.series[1].addPoint([x, RX], true, shift);
+						document.getElementById("trafico").innerHTML=formatBytes(TX) + " / " + formatBytes(RX);
+					}else{
+						document.getElementById("trafico").innerHTML="- / -";
+					}
 				}
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { 
