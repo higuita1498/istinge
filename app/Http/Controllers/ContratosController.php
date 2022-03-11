@@ -868,22 +868,28 @@ class ContratosController extends Controller
                         "?comment" => $contrato->id,
                         )
                     );
-                    // REMOVEMOS EL SECRET
-                    $API->comm("/ppp/secret/remove", array(
-                        ".id" => $mk_user[0][".id"],
-                        )
-                    );
-                    
+
+                    if($mk_user){
+                        // REMOVEMOS EL SECRET
+                        $API->comm("/ppp/secret/remove", array(
+                            ".id" => $mk_user[0][".id"],
+                            )
+                        );
+                    }
+
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
                         "?comment" => $contrato->id,
                         )
                     );
-                    // REMOVEMOS LA COLA SIMPLE
-                    $API->comm("/queue/simple/remove", array(
-                        ".id" => $id_simple[0][".id"],
-                        )
-                    );
+
+                    if($id_simple){
+                        // REMOVEMOS LA COLA SIMPLE
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
+                            )
+                        );
+                    }
                 }
                 
                 if($contrato->conexion == 2){
@@ -902,18 +908,18 @@ class ContratosController extends Controller
                             ".id" => $mk_user[0][".id"],
                             )
                         );
-                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                        $id_simple = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio,
+                    }
+                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                    $id_simple = $API->comm("/queue/simple/getall", array(
+                        "?comment" => $contrato->servicio,
+                        )
+                    );
+                    // REMOVEMOS LA COLA SIMPLE
+                    if($id_simple){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
                             )
                         );
-                        // REMOVEMOS LA COLA SIMPLE
-                        if($id_simple){
-                            $API->comm("/queue/simple/remove", array(
-                                ".id" => $id_simple[0][".id"],
-                                )
-                            );
-                        }
                     }
                     
                     if($contrato->ip_new){
@@ -928,18 +934,18 @@ class ContratosController extends Controller
                                 ".id" => $mk_user[0][".id"],
                                 )
                             );
-                            //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                            $id_simple = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                        }
+                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                        $id_simple = $API->comm("/queue/simple/getall", array(
+                            "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                            )
+                        );
+                        // REMOVEMOS LA COLA SIMPLE
+                        if($id_simple){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
                                 )
                             );
-                            // REMOVEMOS LA COLA SIMPLE
-                            if($id_simple){
-                                $API->comm("/queue/simple/remove", array(
-                                    ".id" => $id_simple[0][".id"],
-                                    )
-                                );
-                            }
                         }
                     }
                 }
