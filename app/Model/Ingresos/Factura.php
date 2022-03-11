@@ -79,7 +79,7 @@ class Factura extends Model
         $mensaje = $this->estatus==1?'Abierta':'Cerrada';
 
         if(isset($this->tipo) && $this->tipo == 2){
-            if($this->emitida = 1){
+            if($this->emitida == 1){
                 $mensaje.="-emitida";
             }else{
                 $mensaje.="-no emitida";
