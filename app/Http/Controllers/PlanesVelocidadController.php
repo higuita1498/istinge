@@ -120,13 +120,14 @@ class PlanesVelocidadController extends Controller
                 return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
             })
             ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
-                return $plan->mikrotik()->nombre;
+                return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
+                return ;
             })
             ->editColumn('status', function (PlanesVelocidad $plan) {
                 return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
             })
             ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
-            ->rawColumns(['acciones', 'name', 'status', 'type'])
+            ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik'])
             ->toJson();
     }
     
