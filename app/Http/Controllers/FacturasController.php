@@ -1918,14 +1918,14 @@ public function edit($id){
 
         $isImpuesto = 1;
         // return $data;
-          if(auth()->user()->empresa == 1)
-          {
-              return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
-          ->header('Content-Description', 'File Transfer')
-          ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
-          ->header('Content-Transfer-Encoding', 'binary')
-          ->header('Content-Type', 'text/xml');
-          }
+        //   if(auth()->user()->empresa == 1)
+        //   {
+        //       return $xml = response()->view('templates.xml.01',compact('CUFEvr','ResolucionNumeracion','FacturaVenta', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
+        //   ->header('Content-Description', 'File Transfer')
+        //   ->header('Content-Disposition', 'attachment; filename=FV-'.$FacturaVenta->codigo.'.xml')
+        //   ->header('Content-Transfer-Encoding', 'binary')
+        //   ->header('Content-Type', 'text/xml');
+        //   }
 
         //-- Generación del XML a enviar a la DIAN -- //
         $xml = view('templates.xml.01', compact('CUFEvr', 'ResolucionNumeracion', 'FacturaVenta', 'data', 'items', 'retenciones', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
@@ -1935,7 +1935,6 @@ public function edit($id){
 
         //-- Decodificación de respuesta de la DIAN --//
         $res = json_decode($res, true);
-
 
 
         if (isset($res['errorType'])) {
