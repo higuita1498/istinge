@@ -75,7 +75,7 @@
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
-        	            <label class="control-label">Servidor DHCP <span class="text-danger">*</span></label>
+        	            <label class="control-label">Servidor DHCP</label>
         	            <div class="input-group">
         	                <input type="text" class="form-control" name="dhcp_server" id="dhcp_server" value="{{ $plan->dhcp_server }}">
         	            </div>
