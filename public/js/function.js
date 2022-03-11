@@ -3880,6 +3880,9 @@ function interfazChange(){
         document.getElementById("div_usuario").classList.add('d-none');
         document.getElementById("div_mac").classList.add('d-none');
         document.getElementById("div_password").classList.add('d-none');
+    }else if(document.getElementById("conexion").value == 2){
+        document.getElementById("div_interfaz").classList.remove('d-none');
+        document.getElementById("interfaz").setAttribute('required', true);
     }else{
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');
