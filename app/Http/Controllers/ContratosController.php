@@ -911,7 +911,7 @@ class ContratosController extends Controller
                     if($name){
                         // REMOVEMOS EL IP DHCP
                         $API->comm("/ip/dhcp-server/lease/remove", array(
-                            ".id" => $mk_user[0][".id"],
+                            ".id" => $name[0][".id"],
                             )
                         );
                     }
