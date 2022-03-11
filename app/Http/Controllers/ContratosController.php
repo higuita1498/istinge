@@ -403,7 +403,7 @@ class ContratosController extends Controller
                         );
 
                         $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                            "?address" => $request->ip
+                            "?comment" => $request->ip
                             )
                         );
 
