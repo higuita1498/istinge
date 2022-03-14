@@ -71,6 +71,12 @@
         	                <option value="1">Habilitado</option>
 						</select>
 					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Tipo Plan" class="form-control rounded selectpicker" id="tipo_plan" data-size="5" data-live-search="true">
+							<option value="1">Residencial</option>
+        	                <option value="2">Corporativo</option>
+						</select>
+					</div>
 
 					<div class="col-md-1 pl-1 pt-1 text-left">
 						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -137,6 +143,7 @@
             data.type = $('#type').val();
             data.mikrotik_s = $('#mikrotik_s').val();
             data.status = $('#status').val();
+            data.tipo_plan = $('#tipo_plan').val();
             data.filtro = true;
         });
 
@@ -175,6 +182,7 @@
 		$('#type').val('').selectpicker('refresh');
 		$('#mikrotik_s').val('').selectpicker('refresh');
 		$('#status').val('').selectpicker('refresh');
+		$('#tipo_plan').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

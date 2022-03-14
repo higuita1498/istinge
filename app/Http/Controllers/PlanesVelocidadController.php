@@ -99,6 +99,11 @@ class PlanesVelocidadController extends Controller
                     $query->orWhere('status', $status);
                 });
             }
+            if($request->tipo_plan){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('tipo_plan', $request->tipo_plan);
+                });
+            }
         }
 
         $planes->where('planes_velocidad.empresa', auth()->user()->empresa);
@@ -125,6 +130,9 @@ class PlanesVelocidadController extends Controller
             })
             ->editColumn('status', function (PlanesVelocidad $plan) {
                 return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
+            })
+            ->editColumn('tipo_plan', function (PlanesVelocidad $plan) {
+                return $plan->tipo();
             })
             ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
             ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik'])
