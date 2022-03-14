@@ -72,7 +72,7 @@
 	            <label class="control-label">Tipo Conexión <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" id="conexion" name="conexion"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="interfazChange();">
 	                <option value="1" {{$contrato->conexion==1?'selected':''}}>PPPOE</option>
-	                <option value="2" disabled {{$contrato->conexion==2?'selected':''}}>DHCP</option>
+	                <option value="2" {{$contrato->conexion==2?'selected':''}}>DHCP</option>
 	                <option value="3" {{$contrato->conexion==3?'selected':''}}>IP Estática</option>
 	                <option value="4" {{$contrato->conexion==4?'selected':''}}>VLAN</option>
 	            </select>
