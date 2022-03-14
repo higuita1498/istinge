@@ -105,7 +105,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
