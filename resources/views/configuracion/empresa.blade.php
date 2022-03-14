@@ -368,7 +368,7 @@
         var sw = 0;
 		$(document).ready(function () {
 
-		    var url = 'software/empresa/configuracion/check_FE';
+		    var url = '/software/empresa/configuracion/check_FE';
             var _token =   $('meta[name="csrf-token"]').attr('content');
 
 
