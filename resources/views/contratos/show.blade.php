@@ -195,6 +195,10 @@
 						<td>{{ $contrato->creador }}</td>
 					</tr>
 					@endif
+					<tr>
+						<th>Contrato Registrado el</th>
+						<td>{{date('d-m-Y g:i:s A', strtotime($contrato->created_at))}}</td>
+					</tr>
 				</tbody>
 			</table>
 			
