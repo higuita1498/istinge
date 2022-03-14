@@ -514,7 +514,7 @@ class FacturasController extends Controller{
       $this->getAllPermissions(Auth::user()->id);
     //echo $cliente;die;
     view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
 
     $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
 
@@ -598,20 +598,20 @@ class FacturasController extends Controller{
     $this->getAllPermissions(Auth::user()->id);
     //echo $cliente;die;
     view()->share(['icon' =>'', 'title' => 'Nueva Factura Electrónica', 'subseccion' => 'venta']);
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
 
     $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
 
     if (!$nro) {
       $mensaje='Debes crear una numeración para facturas de venta preferida';
-      return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+      return redirect('empresa/configuracion/numeraciones/dian')->with('error', $mensaje);
     }
 
     if ($nro->inicio==$nro->final) {
       $nro->estado=0;
       $nro->save();
       $mensaje='Debes crear una numeración para facturas de venta preferida';
-      return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+      return redirect('empresa/configuracion/numeraciones/dian')->with('error', $mensaje);
     }
 
     if ($nro->hasta) {
@@ -619,7 +619,7 @@ class FacturasController extends Controller{
         $nro->estado=0;
         $nro->save();
         $mensaje='Debes crear una numeración para facturas de venta preferida';
-        return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        return redirect('empresa/configuracion/numeraciones/dian')->with('error', $mensaje);
       }
     }
 
