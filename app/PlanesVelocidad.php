@@ -79,4 +79,12 @@ class PlanesVelocidad extends Model
     public function uso(){
         return Contrato::where('plan_id', $this->id)->count();
     }
+
+    public function tipo(){
+        if($this->tipo_plan == 1){
+            return 'Residencial';
+        }elseif($this->tipo_plan == 2){
+            return 'Corporativo';
+        }
+    }
 }

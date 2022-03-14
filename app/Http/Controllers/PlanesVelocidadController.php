@@ -147,21 +147,24 @@ class PlanesVelocidadController extends Controller
             'download' => 'required|max:200',
             'type' => 'required|max:200',
             'mikrotik' => 'required|max:200',
+            'tipo_plan' => 'required|max:200',
         ]);
-        
-        $inventario = new Inventario;
-        $inventario->empresa=Auth::user()->empresa;
-        $inventario->producto=strtoupper($request->name);
-        $inventario->ref=strtoupper($request->name);
-        $inventario->precio=$this->precision($request->price);
-        $inventario->id_impuesto=2;
-        $inventario->impuesto=0;
-        $inventario->tipo_producto=2;
-        $inventario->unidad=1;
-        $inventario->nro=0;
-        $inventario->categoria=116;
-        $inventario->lista = 0;
-        $inventario->type = 'PLAN';
+
+        $inventario                = new Inventario;
+        $inventario->empresa       = Auth::user()->empresa;
+        $inventario->producto      = strtoupper($request->name);
+        $inventario->ref           = strtoupper($request->name);
+        $inventario->precio        = $this->precision($request->price);
+
+        $inventario->id_impuesto   = ($request->tipo_plan == 2) ? 1 : 2;
+        $inventario->impuesto      = ($request->tipo_plan == 2) ? 19 : 0;
+
+        $inventario->tipo_producto = 2;
+        $inventario->unidad        = 1;
+        $inventario->nro           = 0;
+        $inventario->categoria     = 116;
+        $inventario->lista         = 0;
+        $inventario->type          = 'PLAN';
         $inventario->save();
         
         $plan = new PlanesVelocidad;
@@ -173,6 +176,7 @@ class PlanesVelocidadController extends Controller
         $plan->type = $request->type;
         $plan->address_list = $request->address_list;
         $plan->created_by = Auth::user()->id;
+        $plan->tipo_plan = $request->tipo_plan;
         $plan->burst_limit_subida = $request->burst_limit_subida;
         $plan->burst_limit_bajada = $request->burst_limit_bajada;
         $plan->burst_threshold_subida = $request->burst_threshold_subida;
@@ -223,6 +227,7 @@ class PlanesVelocidadController extends Controller
             $plan->type = $request->type;
             $plan->address_list = $request->address_list;
             $plan->updated_by = Auth::user()->id;
+            $plan->tipo_plan = $request->tipo_plan;
             $plan->burst_limit_subida = $request->burst_limit_subida;
             $plan->burst_limit_bajada = $request->burst_limit_bajada;
             $plan->burst_threshold_subida = $request->burst_threshold_subida;
@@ -236,10 +241,12 @@ class PlanesVelocidadController extends Controller
             $plan->dhcp_server = $request->dhcp_server;
             $plan->save();
             
-            $inventario = Inventario::find($plan->item);
-            $inventario->producto = strtoupper($request->name);
-            $inventario->ref      = strtoupper($request->name);
-            $inventario->precio   = $this->precision($request->price);
+            $inventario              = Inventario::find($plan->item);
+            $inventario->producto    = strtoupper($request->name);
+            $inventario->ref         = strtoupper($request->name);
+            $inventario->precio      = $this->precision($request->price);
+            $inventario->id_impuesto = ($request->tipo_plan == 2) ? 1 : 2;
+            $inventario->impuesto    = ($request->tipo_plan == 2) ? 19 : 0;
             $inventario->save();
             
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
