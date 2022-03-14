@@ -65,7 +65,7 @@
         	            <select class="form-control selectpicker" name="type" id="type" required="" title="Seleccione" onchange="typeChange();">
         	                <option {{old('type')==0?'selected':''}} value="0">Queue Simple</option>
         	                <option {{old('type')==1?'selected':''}} value="1">PCQ</option>
-          			</select>
+          			    </select>
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('type') }}</strong>
         	            </span>
@@ -77,6 +77,25 @@
         	            </div>
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('address_list') }}</strong>
+        	            </span>
+        	        </div>
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Servidor DHCP</label>
+        	            <div class="input-group">
+        	                <input type="text" class="form-control" name="dhcp_server" id="dhcp_server" value="{{old('dhcp_server')}}">
+        	            </div>
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('dhcp_server') }}</strong>
+        	            </span>
+        	        </div>
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Tipo de Plan <span class="text-danger">*</span></label>
+        	            <select class="form-control selectpicker" name="tipo_plan" id="tipo_plan" required="" title="Seleccione">
+        	                <option {{old('tipo_plan')==1?'selected':''}} value="1">Residencial</option>
+        	                <option {{old('tipo_plan')==2?'selected':''}} value="2">Corportativo</option>
+          			    </select>
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('tipo_plan') }}</strong>
         	            </span>
         	        </div>
         	   </div>

@@ -48,9 +48,19 @@
 						<td><span class="font-weight-bold text-{{$plan->type('true')}}">{{ $plan->type() }}</span></td>
 					</tr>
 					<tr>
+						<th>Tipo Plan</th>
+						<td>{{ $plan->tipo() }}</td>
+					</tr>
+					<tr>
 						<th>Estado</th>
 						<td><span class="font-weight-bold text-{{$plan->status('true')}}">{{ $plan->status() }}</span></td>
 					</tr>
+					@if($plan->dhcp_server)
+					<tr>
+						<th>Servidor DHCP</th>
+						<td>{{$plan->dhcp_server}}</td>
+					</tr>
+					@endif
 				</tbody>
 			</table>
 		</div>

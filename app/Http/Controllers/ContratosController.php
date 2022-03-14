@@ -105,7 +105,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -374,7 +374,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "target"          => $request->ip,                        // IP
                         "name"            => $plan->name,                         // NOMBRE PLAN
-                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold
@@ -384,7 +384,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
                         "target"    => $request->ip,                      //IP
-                        "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                         "parent"    => $plan->name,                       // NOMBRE PLAN
                         "comment"   => $nro_contrato                      // NRO DEL CONTRATO
                         )
@@ -393,21 +393,36 @@ class ContratosController extends Controller
                 
                 /*DHCP*/
                 if($request->conexion == 2){
-                    $API->comm("/ip/dhcp-server/lease/add", array(
-                        "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                        "address"     => $request->ip,                        // IP DEL CLIENTE
-                        "server"      => $request->interfaz,                  // INTERFACE DEL CLIENTE
-                        "mac-address" => $request->mac_address                // DIRECCION MAC
-                        )
-                    );
+                    if($plan->dhcp_server){
+                        $API->comm("/ip/dhcp-server/lease/add", array(
+                            "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                            "address"     => $request->ip,                        // IP DEL CLIENTE
+                            "server"      => $plan->dhcp_server,                  // SERVIDOR DHCP
+                            "mac-address" => $request->mac_address                // DIRECCION MAC
+                            )
+                        );
 
-                    $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                        "?address" => $request->ip
-                        )
-                    );
+                        $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                            "?comment" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                            )
+                        );
 
-                    if($name){
-                        $registro = true;
+                        if($name){
+                            $registro = true;
+                            $API->comm("/queue/simple/add", array(
+                                "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                                "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
+                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                                "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
+                                "priority"        => $priority,                           // PRIORIDAD PLAN
+                                "burst-limit"     => $burst_limit,
+                                "burst-threshold" => $burst_threshold
+                                )
+                            );
+                        }
+                    }else{
+                        $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
+                        return redirect('empresa/contratos')->with('danger', $mensaje);
                     }
                 }
                 
@@ -433,7 +448,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
                         "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                        "max-limit"       => $plan->upload.'/'.$plan->download,   // VELOCIDAD PLAN
+                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
                         "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
@@ -453,7 +468,7 @@ class ContratosController extends Controller
                         $API->comm("/queue/simple/add", array(
                             "name"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
                             "target"      => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                            "max-limit"   => $plan->upload.'/'.$plan->download,                    // VELOCIDAD PLAN
+                            "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),                    // VELOCIDAD PLAN
                             "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
                             "priority"        => $priority,                           // PRIORIDAD PLAN
                             "burst-limit"     => $burst_limit,
@@ -481,7 +496,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "target"      => $request->ip,                          //IP
                         "name"        => $plan->name,                           // NOMBRE PLAN
-                        "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                        "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
                         "priority"        => $priority,                           // PRIORIDAD PLAN
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold
@@ -491,7 +506,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
                         "target"    => $request->ip,                      //IP
-                        "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                         "parent"    => $plan->name,                       // NOMBRE PLAN
                         "comment"   => $nro_contrato                      // NRO DEL CONTRATO
                         )
@@ -590,7 +605,7 @@ class ContratosController extends Controller
             $request->validate([
                 'server_configuration_id' => 'required',
                 'plan_id' => 'required',
-                'interfaz' => 'required',
+                //'interfaz' => 'required',
                 'ip' => 'required',
                 'grupo_corte' => 'required',
                 /*'fecha_corte' => 'required',
@@ -608,17 +623,49 @@ class ContratosController extends Controller
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     /*PPPOE*/
-                    if($request->conexion == 1){
+                    if($contrato->conexion == 1){
                         $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
                     }
 
                     /*DHCP*/
-                    if($request->conexion == 2){
+                    if($contrato->conexion == 2){
+                        if(isset($plan->dhcp_server)){
+                            $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                                "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
+                                )
+                            );
 
+                            if($name){
+                                $API->comm("/ip/dhcp-server/lease/set", array(
+                                    ".id" => $name[0][".id"],
+                                    "address"     => $request->ip,         // IP DEL CLIENTE
+                                    "server"      => $plan->dhcp_server,   // SERVIDOR DHCP
+                                    "mac-address" => $request->mac_address // DIRECCION MAC
+                                    )
+                                );
+                            }
+
+                            $name_new = $API->comm("/queue/simple/getall", array(
+                                    "?comment" => $contrato->servicio,
+                                )
+                            );
+
+                            if($name_new){
+                                $API->comm("/queue/simple/set", array(
+                                        ".id"       => $name_new[0][".id"],
+                                        "target"    => $request->ip, //IP
+                                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                    )
+                                );
+                            }
+                        }else{
+                            $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
+                            return redirect('empresa/contratos')->with('danger', $mensaje);
+                        }
                     }
 
                     /*IP ESTÁTICA*/
-                    if($request->conexion == 3){
+                    if($contrato->conexion == 3){
                         //EDITANDO IP E INTERFACE
                         if($request->local_address){
                             $segmento = explode("/", $request->local_address);
@@ -704,7 +751,7 @@ class ContratosController extends Controller
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
                                 "target"    => $request->ip,                      //IP
-                                "max-limit" => $plan->upload.'/'.$plan->download, // VELOCIDAD PLAN
+                                "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                                 )
                             );
                         }
@@ -719,7 +766,7 @@ class ContratosController extends Controller
                                 $API->comm("/queue/simple/add", array(
                                     "name"        => $contrato->servicio.'-'.$contrato->id, // NOMBRE MAS ID DEL CONTRATO
                                     "target"      => $request->ip_new,                      // IP DEL CLIENTE
-                                    "max-limit"   => $plan->upload.'/'.$plan->download,     // VELOCIDAD PLAN
+                                    "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
                                     "comment"     => $contrato->servicio.'-'.$contrato->id  // NRO DEL CONTRATO
                                     )
                                 );
@@ -740,7 +787,7 @@ class ContratosController extends Controller
                     }
 
                     /*VLAN*/
-                    if($request->conexion == 4){
+                    if($contrato->conexion == 4){
 
                     }
                 }
@@ -863,26 +910,56 @@ class ContratosController extends Controller
                         "?comment" => $contrato->id,
                         )
                     );
-                    // REMOVEMOS EL SECRET
-                    $API->comm("/ppp/secret/remove", array(
-                        ".id" => $mk_user[0][".id"],
-                        )
-                    );
-                    
+
+                    if($mk_user){
+                        // REMOVEMOS EL SECRET
+                        $API->comm("/ppp/secret/remove", array(
+                            ".id" => $mk_user[0][".id"],
+                            )
+                        );
+                    }
+
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
                         "?comment" => $contrato->id,
                         )
                     );
-                    // REMOVEMOS LA COLA SIMPLE
-                    $API->comm("/queue/simple/remove", array(
-                        ".id" => $id_simple[0][".id"],
-                        )
-                    );
+
+                    if($id_simple){
+                        // REMOVEMOS LA COLA SIMPLE
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
+                            )
+                        );
+                    }
                 }
                 
                 if($contrato->conexion == 2){
-                    
+                    $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                            "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
+                        )
+                    );
+
+                    if($name){
+                        // REMOVEMOS EL IP DHCP
+                        $API->comm("/ip/dhcp-server/lease/remove", array(
+                            ".id" => $name[0][".id"],
+                            )
+                        );
+                    }
+
+                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                    $id_simple = $API->comm("/queue/simple/getall", array(
+                        "?comment" => $contrato->servicio,
+                        )
+                    );
+                    // REMOVEMOS LA COLA SIMPLE
+                    if($id_simple){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
+                            )
+                        );
+                    }
                 }
                 
                 if($contrato->conexion == 3){
@@ -897,18 +974,18 @@ class ContratosController extends Controller
                             ".id" => $mk_user[0][".id"],
                             )
                         );
-                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                        $id_simple = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio,
+                    }
+                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                    $id_simple = $API->comm("/queue/simple/getall", array(
+                        "?comment" => $contrato->servicio,
+                        )
+                    );
+                    // REMOVEMOS LA COLA SIMPLE
+                    if($id_simple){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $id_simple[0][".id"],
                             )
                         );
-                        // REMOVEMOS LA COLA SIMPLE
-                        if($id_simple){
-                            $API->comm("/queue/simple/remove", array(
-                                ".id" => $id_simple[0][".id"],
-                                )
-                            );
-                        }
                     }
                     
                     if($contrato->ip_new){
@@ -923,18 +1000,18 @@ class ContratosController extends Controller
                                 ".id" => $mk_user[0][".id"],
                                 )
                             );
-                            //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                            $id_simple = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                        }
+                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                        $id_simple = $API->comm("/queue/simple/getall", array(
+                            "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                            )
+                        );
+                        // REMOVEMOS LA COLA SIMPLE
+                        if($id_simple){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
                                 )
                             );
-                            // REMOVEMOS LA COLA SIMPLE
-                            if($id_simple){
-                                $API->comm("/queue/simple/remove", array(
-                                    ".id" => $id_simple[0][".id"],
-                                    )
-                                );
-                            }
                         }
                     }
                 }

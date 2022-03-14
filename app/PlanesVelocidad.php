@@ -18,8 +18,15 @@ class PlanesVelocidad extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
+
+    protected $appends = ['uso'];
+
+    public function getUsoAttribute()
+    {
+        return $this->uso();
+    }
 
     public function updated_by(){
         return User::where('id', $this->updated_by)->first();
@@ -71,5 +78,13 @@ class PlanesVelocidad extends Model
     
     public function uso(){
         return Contrato::where('plan_id', $this->id)->count();
+    }
+
+    public function tipo(){
+        if($this->tipo_plan == 1){
+            return 'Residencial';
+        }elseif($this->tipo_plan == 2){
+            return 'Corporativo';
+        }
     }
 }

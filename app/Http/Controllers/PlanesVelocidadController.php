@@ -30,6 +30,7 @@ include_once(app_path() .'/../public/api_mt_include2.php');
 use routeros_api;
 use RouterosAPI;
 use StdClass;
+use App\Campos;
 
 class PlanesVelocidadController extends Controller
 {
@@ -39,10 +40,103 @@ class PlanesVelocidadController extends Controller
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Planes de Velocidad', 'icon' =>'fas fa-server']);
     }
     
-    public function index(){
-      $this->getAllPermissions(Auth::user()->id);
-      $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
-      return view('planesvelocidad.index')->with(compact('planes'));
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $tabla = Campos::where('modulo', 10)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
+        return view('planesvelocidad.index')->with(compact('mikrotiks','tabla'));
+    }
+
+    public function planes(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $planes = PlanesVelocidad::query();
+
+        if ($request->filtro == true) {
+            if($request->name){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('name', 'like', "%{$request->name}%");
+                });
+            }
+            if($request->price){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('price', 'like', "%{$request->price}%");
+                });
+            }
+            if($request->download){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('download', 'like', "%{$request->download}%");
+                });
+            }
+            if($request->upload){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('upload', 'like', "%{$request->upload}%");
+                });
+            }
+            if($request->type){
+                if($request->type == 'A'){
+                    $type = 0;
+                }else{
+                    $type = $request->type;
+                }
+                $planes->where(function ($query) use ($type) {
+                    $query->orWhere('type', $type);
+                });
+            }
+            if($request->mikrotik_s){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('mikrotik', $request->mikrotik_s);
+                });
+            }
+            if($request->status){
+                if($request->status == 'A'){
+                    $status = 0;
+                }else{
+                    $status = $request->status;
+                }
+                $planes->where(function ($query) use ($status) {
+                    $query->orWhere('status', $status);
+                });
+            }
+            if($request->tipo_plan){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('tipo_plan', $request->tipo_plan);
+                });
+            }
+        }
+
+        $planes->where('planes_velocidad.empresa', auth()->user()->empresa);
+
+        return datatables()->eloquent($planes)
+            ->editColumn('name', function (PlanesVelocidad $plan) {
+                return "<a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</div></a>";
+            })
+            ->editColumn('price', function (PlanesVelocidad $plan) use ($moneda) {
+                return "{$moneda} {$plan->price}";
+            })
+            ->editColumn('download', function (PlanesVelocidad $plan) {
+                return $plan->download;
+            })
+            ->editColumn('upload', function (PlanesVelocidad $plan) {
+                return $plan->upload;
+            })
+            ->editColumn('type', function (PlanesVelocidad $plan) {
+                return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
+            })
+            ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
+                return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
+                return ;
+            })
+            ->editColumn('status', function (PlanesVelocidad $plan) {
+                return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
+            })
+            ->editColumn('tipo_plan', function (PlanesVelocidad $plan) {
+                return $plan->tipo();
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
+            ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik'])
+            ->toJson();
     }
     
     public function create(){
@@ -61,21 +155,24 @@ class PlanesVelocidadController extends Controller
             'download' => 'required|max:200',
             'type' => 'required|max:200',
             'mikrotik' => 'required|max:200',
+            'tipo_plan' => 'required|max:200',
         ]);
-        
-        $inventario = new Inventario;
-        $inventario->empresa=Auth::user()->empresa;
-        $inventario->producto=strtoupper($request->name);
-        $inventario->ref=strtoupper($request->name);
-        $inventario->precio=$this->precision($request->price);
-        $inventario->id_impuesto=2;
-        $inventario->impuesto=0;
-        $inventario->tipo_producto=2;
-        $inventario->unidad=1;
-        $inventario->nro=0;
-        $inventario->categoria=116;
-        $inventario->lista = 0;
-        $inventario->type = 'PLAN';
+
+        $inventario                = new Inventario;
+        $inventario->empresa       = Auth::user()->empresa;
+        $inventario->producto      = strtoupper($request->name);
+        $inventario->ref           = strtoupper($request->name);
+        $inventario->precio        = $this->precision($request->price);
+
+        $inventario->id_impuesto   = ($request->tipo_plan == 2) ? 1 : 2;
+        $inventario->impuesto      = ($request->tipo_plan == 2) ? 19 : 0;
+
+        $inventario->tipo_producto = 2;
+        $inventario->unidad        = 1;
+        $inventario->nro           = 0;
+        $inventario->categoria     = 116;
+        $inventario->lista         = 0;
+        $inventario->type          = 'PLAN';
         $inventario->save();
         
         $plan = new PlanesVelocidad;
@@ -87,6 +184,7 @@ class PlanesVelocidadController extends Controller
         $plan->type = $request->type;
         $plan->address_list = $request->address_list;
         $plan->created_by = Auth::user()->id;
+        $plan->tipo_plan = $request->tipo_plan;
         $plan->burst_limit_subida = $request->burst_limit_subida;
         $plan->burst_limit_bajada = $request->burst_limit_bajada;
         $plan->burst_threshold_subida = $request->burst_threshold_subida;
@@ -99,6 +197,7 @@ class PlanesVelocidadController extends Controller
         $plan->prioridad = $request->prioridad;
         $plan->item = $inventario->id;
         $plan->empresa = Auth::user()->empresa;
+        $plan->dhcp_server = $request->dhcp_server;
         $plan->save();
             
         $mensaje='Se ha creado satisfactoriamente el plan';
@@ -136,6 +235,7 @@ class PlanesVelocidadController extends Controller
             $plan->type = $request->type;
             $plan->address_list = $request->address_list;
             $plan->updated_by = Auth::user()->id;
+            $plan->tipo_plan = $request->tipo_plan;
             $plan->burst_limit_subida = $request->burst_limit_subida;
             $plan->burst_limit_bajada = $request->burst_limit_bajada;
             $plan->burst_threshold_subida = $request->burst_threshold_subida;
@@ -146,12 +246,15 @@ class PlanesVelocidadController extends Controller
             $plan->queue_type_bajada = $request->queue_type_bajada;
             $plan->parenta = $request->parenta;
             $plan->prioridad = $request->prioridad;
+            $plan->dhcp_server = $request->dhcp_server;
             $plan->save();
             
-            $inventario = Inventario::find($plan->item);
-            $inventario->producto = strtoupper($request->name);
-            $inventario->ref      = strtoupper($request->name);
-            $inventario->precio   = $this->precision($request->price);
+            $inventario              = Inventario::find($plan->item);
+            $inventario->producto    = strtoupper($request->name);
+            $inventario->ref         = strtoupper($request->name);
+            $inventario->precio      = $this->precision($request->price);
+            $inventario->id_impuesto = ($request->tipo_plan == 2) ? 1 : 2;
+            $inventario->impuesto    = ($request->tipo_plan == 2) ? 19 : 0;
             $inventario->save();
             
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';

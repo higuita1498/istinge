@@ -239,7 +239,7 @@
                 <div class="input-group">
                     <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
                         @foreach($grupos as $grupo)
-                            <option value="{{$grupo->id}}">{{$grupo->nombre}}</option>
+                            <option value="{{$grupo->id}}">{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
                         @endforeach
                     </select>
                 </div>

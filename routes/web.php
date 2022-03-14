@@ -71,6 +71,7 @@ Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
 Route::get('reporte', 'CRMController@reporte');
 Route::get('puertos', 'PuertosController@puertos');
+Route::get('planes', 'PlanesVelocidadController@planes');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
