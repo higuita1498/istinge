@@ -110,12 +110,12 @@
             padding-left: 1%;
         }
         .divheader-pr{
-            width: 100%;height:auto;border: 1px solid {{Auth::user()->empresa()->color}}; background-color:#fff; border-radius:5px; justify-content:center;padding-top: 15px;
+            width: 100%;height:auto;border: 1px solid {{Auth::user()->empresa()->color}}; background-color:{{Auth::user()->empresa()->color}}; border-radius:5px; justify-content:center;padding-top: 15px;
             margin-bottom: 2px;color:#fff;
         }
         
         .divheader-pr a{
-            color:{{Auth::user()->empresa()->color}};
+            color:#fff;
         }
         
         .divheader-datoscli{
