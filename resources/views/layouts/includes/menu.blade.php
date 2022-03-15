@@ -122,9 +122,9 @@
                     </li> --}}
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['34'])){ ?>
-                    {{-- <li class="nav-item" id="bodegas">
+                    <li class="nav-item" id="bodegas">
                         <a class="nav-link" href="{{route('bodegas.index')}}" >Bodegas</a>
-                    </li> --}}
+                    </li>
                     <?php } ?>
                 </ul>
             </div>
