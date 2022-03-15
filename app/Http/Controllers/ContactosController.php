@@ -144,6 +144,10 @@ class ContactosController extends Controller
             ->editColumn('contrato', function (Contacto $contacto) {
                 return $contacto->contract();
             })
+            ->editColumn('fecha_contrato', function (Contacto $contacto) {
+                return ($contacto->fecha_contrato) ? date('d-m-Y g:i:s A', strtotime($contacto->fecha_contrato)) : '- - - -';
+            })
+
             ->addColumn('acciones', $modoLectura ?  "" : "contactos.acciones-contactos")
             ->rawColumns(['acciones', 'nombre', 'contrato'])
             ->toJson();

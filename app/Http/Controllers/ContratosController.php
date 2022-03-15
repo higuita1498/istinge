@@ -963,7 +963,7 @@ class ContratosController extends Controller
                         );
                     }
                 }
-                
+
                 if($contrato->conexion == 3){
                     //OBTENEMOS AL CONTRATO MK
                     $mk_user = $API->comm("/ip/arp/getall", array(
@@ -989,13 +989,13 @@ class ContratosController extends Controller
                             )
                         );
                     }
-                    
+
                     if($contrato->ip_new){
                         $mk_user = $API->comm("/ip/arp/getall", array(
                             "?comment" => $contrato->servicio.'-'.$contrato->nro,
                             )
                         );
-                        
+
                         if($mk_user){
                             // REMOVEMOS EL IP ARP
                             $API->comm("/ip/arp/remove", array(
@@ -1017,9 +1017,13 @@ class ContratosController extends Controller
                         }
                     }
                 }
-                
+
                 $API->disconnect();
                 Ping::where('contrato', $contrato->id)->delete();
+
+                $cliente = Contacto::find($contrato->client_id);
+                $cliente->fecha_contrato = Carbon::now();
+                $cliente->save();
                 $contrato->delete();
                 
                 $mensaje='SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
