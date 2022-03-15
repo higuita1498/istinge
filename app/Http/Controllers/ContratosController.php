@@ -1335,6 +1335,16 @@ class ContratosController extends Controller
                 
                 if(count($ARRAY)>0){
                     if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
+                        $data = [
+                            'contrato' => $contrato->id,
+                            'ip' => $contrato->ip,
+                            'fecha' => Carbon::parse(now())->format('Y-m-d')
+                        ];
+
+                        $ping = Ping::updateOrCreate(
+                            ['contrato' => $contrato->id],
+                            $data
+                        );
                         return response()->json([
                             'success' => false,
                             'icon'    => 'error',
