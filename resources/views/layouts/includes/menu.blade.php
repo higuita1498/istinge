@@ -102,9 +102,9 @@
                         </li> --}}
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['15'])){ ?>
-                    {{-- <li class="nav-item" id="valor_inventario">
+                    <li class="nav-item" id="valor_inventario">
                         <a class="nav-link" href="{{route('valorinventario')}}" >Valor Inventario</a>
-                    </li> --}}
+                    </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['16'])){ ?>
                     <li class="nav-item" id="ajustes_inventario">

@@ -53,7 +53,7 @@
 							<td class="text-right" style="padding-right: 4% !important;">{{$producto->total_bodega}}</td>	              	
 						@endif
 						<td class="text-right" style="padding-right: 4% !important;">{{$producto->total}}</td>
-						<td >{{$producto->unidad}}</td>
+						<td >{{round($producto->unidad,0)}}</td>
 						<td>{{$producto->status==1?'Activo':'Inactivo'}}</td>
 						<td class="text-right" style="padding-right: 4% !important;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($producto->precio)}}</td>
 						<td class="text-right" style="padding-right: 4% !important;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($producto->precio_total)}}</td>
