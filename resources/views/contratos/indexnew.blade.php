@@ -169,7 +169,8 @@
     
     <div class="row card-description">
     	<div class="col-md-12">
-    		<div class="container-filtercolumn" >
+    		<div class="container-filtercolumn">
+                <a href="{{ route('pings.index') }}" class="btn btn-danger">Ver Pings Fallidos <i class="fa fa-plug"></i></a>
     			<a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
     			<ul class="options-search-columns"  id="columnOptions">
     				@foreach($tabla as $campo)

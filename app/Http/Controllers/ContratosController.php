@@ -624,7 +624,7 @@ class ContratosController extends Controller
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     /*PPPOE*/
                     if($contrato->conexion == 1){
-                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
+                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip\n=name=$request->usuario\n=password=$request->password]");
                     }
 
                     /*DHCP*/
