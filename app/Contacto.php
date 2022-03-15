@@ -334,4 +334,10 @@ class Contacto extends Model
     public function details(){
         return Contrato::where('client_id', $this->id)->where('status', 1)->first();
     }
+
+    public function radicados(){
+        $temp = 0;
+        $temp += Radicado::where('cliente', $this->id)->count();
+        return $temp;
+    }
 }
