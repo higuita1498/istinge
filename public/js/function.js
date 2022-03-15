@@ -3850,9 +3850,9 @@ function getPlanes(mikrotik) {
 function interfazChange(){
     if(document.getElementById("conexion").value == 3){
         document.getElementById("div_interfaz").classList.remove('d-none');
-        document.getElementById("div_mac").classList.add('d-none');
+        document.getElementById("div_mac").classList.remove('d-none');
         
-        document.getElementById("mac_address").removeAttribute('required');
+        document.getElementById("mac_address").setAttribute('required', true);
         document.getElementById("interfaz").setAttribute('required', true);
         document.getElementById("div_local_address").innerHTML = "Segmento de IP <span class='text-danger'>*</span>";
         document.getElementById("div_ip").innerHTML = "Dirección IP (Remote Address)";
@@ -3897,6 +3897,8 @@ function interfazChange(){
         document.getElementById("usuario").removeAttribute('required');
         document.getElementById("div_password").classList.add('d-none');
         document.getElementById("password").removeAttribute('required');
+        document.getElementById("div_mac").classList.remove('d-none');
+        document.getElementById("mac_address").setAttribute('required', true);
     }else if(document.getElementById("conexion").value == 1){
         document.getElementById("usuario").value = '';
         document.getElementById("password").value = '';
@@ -3904,6 +3906,9 @@ function interfazChange(){
         document.getElementById("usuario").setAttribute('required', true);
         document.getElementById("div_password").classList.remove('d-none');
         document.getElementById("password").setAttribute('required', true);
+
+        document.getElementById("div_mac").classList.add('d-none');
+        document.getElementById("mac_address").removeAttribute('required');
     }else{
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');

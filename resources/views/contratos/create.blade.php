@@ -108,16 +108,6 @@
                 </div>
             </div>
               
-            <div class="col-md-4 form-group d-none" id="div_mac">
-                <label class="control-label">Dirección MAC de Conexión</label>
-                <div class="input-group">
-                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" required>
-                    <span class="help-block error">
-                        <strong>{{ $errors->first('mac_address') }}</strong>
-                    </span>
-                </div>
-            </div>
-              
             <div class="col-md-4 form-group">
                 <label class="control-label" id="div_local_address">Segmento de IP <span class="text-danger">*</span></label>
                   <div class="input-group">
@@ -223,11 +213,11 @@
                     <strong>{{ $errors->first('rehuso_aplicar') }}</strong>
                 </span>
             </div>
-            
-            <div class="col-md-4 form-group">
-                <label class="">Dirección MAC <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" required="">
+
+            <div class="col-md-4 form-group" id="div_mac">
+                <label class="control-label">Dirección MAC <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address">
                     <span class="help-block error">
                         <strong>{{ $errors->first('mac_address') }}</strong>
                     </span>
