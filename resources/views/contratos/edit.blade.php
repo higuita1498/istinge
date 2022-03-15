@@ -139,6 +139,27 @@
                     </span>
                 </div>
             </div>
+
+            <div class="col-md-4 form-group d-none" id="div_usuario">
+                <label class="control-label">Usuario <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="usuario" id="usuario">
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('usuario') }}</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-4 form-group d-none" id="div_password">
+                <label class="control-label">Contraseña <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="password" id="password">
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('password') }}</strong>
+                    </span>
+                </div>
+            </div>
+
             <div class="col-md-4 form-group d-none">
                 <label class="control-label">Access Point Asociado <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" id="ap" name="ap" required="" title="Seleccione" data-live-search="true" data-size="5">

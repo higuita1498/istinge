@@ -862,6 +862,8 @@ class ContratosController extends Controller
                 }
 
                 $contrato->puerto_conexion = $request->puerto_conexion;
+                $contrato->usuario  = $request->usuario;
+                $contrato->password = $request->password;
                 
                 $contrato->save();
                 
