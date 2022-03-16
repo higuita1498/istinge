@@ -783,6 +783,7 @@ class FacturasController extends Controller{
 
     if(!isset($request->electronica)){
         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
         $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
         //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
@@ -793,6 +794,7 @@ class FacturasController extends Controller{
 
         if(isset($request->electronica)){
             $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+            $num = Factura::where('empresa',1)->where('tipo',2)->orderby('nro','asc')->get()->last();
             if(!$nro){
                 $mensaje='Debes crear una numeración para facturas de venta preferida';
                 return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
@@ -819,7 +821,6 @@ class FacturasController extends Controller{
     $key = str_replace($toReplace, "", $key);
     //
     
-    $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
     if($num){
         $numero = $num->nro + 1;
     }else{
