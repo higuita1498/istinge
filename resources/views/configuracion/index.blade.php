@@ -56,6 +56,7 @@
 			<p>Organice a su medida el plan único de cuentas.</p>
 			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
 			<a href="{{route('puc.index')}}">Gestionar PUC</a> <br>
+			<a href="{{route('puc.forma_pago')}}">Formas de Pago</a> <br>
 		</div>
 		@endif
 

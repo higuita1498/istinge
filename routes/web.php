@@ -546,7 +546,12 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	});
 
 	Route::resource('categorias', 'CategoriasController');
+	
+	Route::group(['prefix' => 'puc'], function(){
+		Route::get('/formaspago', 'PucController@forma_pago')->name('puc.forma_pago');
+	});
 	Route::resource('puc', 'PucController');
+
 	Route::group(['prefix' => 'configuracion'], function() {
 		Route::get('/terminos', 'ConfiguracionController@terminos')->name('configuracion.terminos');
 		Route::get('/termino/create', 'ConfiguracionController@terminos_create')->name('termino.create');
