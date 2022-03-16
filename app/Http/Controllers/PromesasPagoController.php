@@ -15,13 +15,66 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use App\Funciones;
 use App\Model\Ingresos\Factura;
+use App\Contacto;
+use App\Campos;
 
 class PromesasPagoController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones de Contratos', 'icon' =>'fas fa-file-contract']);
+        view()->share(['seccion' => 'facturas', 'subseccion' => 'venta', 'title' => 'Promesas de Pago', 'icon' =>'fas fa-calendar']);
+    }
+
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $tabla = Campos::where('modulo', 11)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+
+        return view('promesas-pago.index', compact('clientes','usuarios','tabla'));
+    }
+
+    public function promesas(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+
+        $promesas = PromesaPago::query()
+            ->join('factura', 'factura.id', '=', 'promesa_pago.factura')
+            ->join('contactos', 'contactos.id', '=', 'promesa_pago.cliente')
+            ->select('promesa_pago.*');
+
+        if ($request->filtro == true) {
+            if($request->cliente){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('promesa_pago.cliente', $request->cliente);
+                });
+            }
+            if($request->created_by){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('promesa_pago.created_by', $request->created_by);
+                });
+            }
+        }
+
+        return datatables()->eloquent($promesas)
+        ->editColumn('nro', function (PromesaPago $promesa) {
+            return $promesa->nro;
+        })
+        ->editColumn('cliente', function (PromesaPago $promesa) {
+            return  "<a href=" . route('contactos.show', $promesa->cliente) . ">{$promesa->cliente()->nombre}</a>";
+        })
+        ->editColumn('factura', function (PromesaPago $promesa) {
+            return  "<a href=" . route('facturas.show', $promesa->factura()->id) . ">{$promesa->factura()->codigo}</a>";
+        })
+        ->editColumn('fecha', function (PromesaPago $promesa) {
+            return date('d-m-Y', strtotime($promesa->fecha));
+        })
+        ->editColumn('vencimiento', function (PromesaPago $promesa) {
+            return (date('Y-m-d') > $promesa->vencimiento) ? '<span class="text-danger">' . date('d-m-Y', strtotime($promesa->vencimiento)) . '</span>' : date('d-m-Y', strtotime($promesa->vencimiento));
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "promesas-pago.acciones")
+        ->rawColumns(['cliente', 'acciones', 'factura', 'vencimiento'])
+        ->toJson();
     }
     
     public function json(Request $request, $id){

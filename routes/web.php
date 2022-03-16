@@ -72,6 +72,7 @@ Route::get('cartera/{tipo}', 'CRMController@cartera');
 Route::get('reporte', 'CRMController@reporte');
 Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
+Route::get('promesas', 'PromesasPagoController@promesas');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -893,6 +894,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
 	    });
 		Route::resource('crm', 'CRMController');
+
+	//SERVIDOR DE CORREO
+	    Route::resource('servidor-correo', 'ServidorCorreoController');
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');

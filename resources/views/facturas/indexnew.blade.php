@@ -108,6 +108,11 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
+    		<div class="container-filtercolumn">
+                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
+			</div>
+		</div>
+		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
