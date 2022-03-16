@@ -73,6 +73,22 @@ class ItemsNotaCredito extends Model
         return $total;
     }
 
+    public function impuestoSingular()
+    {
+        $text = '';
+        $ivas =  array();
+
+        $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+        if ($impuesto) {
+            array_push($ivas, ["imp0" => $impuesto->nombre."(".$impuesto->porcentaje."%)"]);
+        }
+    
+        if ($impuesto) {
+            return $ivas;
+        }
+        return '';
+    }
+
     public function impuestoSingularNombre()
     {
         $text = '';

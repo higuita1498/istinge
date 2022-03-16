@@ -572,4 +572,21 @@ public function forma_pago()
 
         return false;
     }
+
+    public function itemImpuestoSingular()
+    {
+        $text = '';
+        $ivas =  array();
+
+        $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+        if ($impuesto) {
+            array_push($ivas, ["imp0" => $impuesto->porcentaje]);
+        }
+        
+        if ($impuesto) {
+            return $ivas;
+        }
+        return '';
+    }
+
 }
