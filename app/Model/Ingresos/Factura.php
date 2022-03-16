@@ -557,4 +557,19 @@ public function forma_pago()
         }
         return $total;
     }
+
+    public function isItemSinIva()
+    {
+
+        $items = ItemsFactura::where('factura', $this->id)->get();
+
+        foreach ($items as $item) {
+            if ($item->id_impuesto == 0) {
+                return true;
+            }
+        }
+
+
+        return false;
+    }
 }
