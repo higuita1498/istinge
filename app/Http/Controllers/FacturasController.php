@@ -79,7 +79,7 @@ class FacturasController extends Controller{
               ((Select SUM(pago) from ingresos_factura where factura=factura.id) +
               (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) -
               (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) )    as porpagar'))
-        ->where('factura.empresa',Auth::user()->empresa)->where('tipo','!=',2)->
+        ->where('factura.empresa',Auth::user()->empresa)->
         where('tipo','!=',5)->
         //where('factura.fecha','>=', '2021-03-01')->
         where('lectura',1);
@@ -514,7 +514,7 @@ class FacturasController extends Controller{
       $this->getAllPermissions(Auth::user()->id);
     //echo $cliente;die;
     view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
 
     $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
 
@@ -782,7 +782,7 @@ class FacturasController extends Controller{
     $contrato = false;
 
     if(!isset($request->electronica)){
-        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
+        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
         $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
         //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
@@ -819,7 +819,7 @@ class FacturasController extends Controller{
     $key = str_replace($toReplace, "", $key);
     //
     
-    $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+    $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
     if($num){
         $numero = $num->nro + 1;
     }else{
@@ -920,7 +920,7 @@ class FacturasController extends Controller{
       }
 
       //Actualiza el nro de inicio para la numeracion seleccionada
-  $cant=Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('codigo','=',($nro->prefijo.$inicio))->count();
+  $cant=Factura::where('empresa',Auth::user()->empresa)->where('codigo','=',($nro->prefijo.$inicio))->count();
   if($cant==0){
       $nro->inicio-=1;
       $nro->save();
@@ -1515,7 +1515,7 @@ public function edit($id){
   }
 
     public function cliente_factura_json($cliente, $cerradas=false){
-        $facturas=Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2);
+        $facturas=Factura::where('empresa',Auth::user()->empresa);
         $facturas=$facturas->where('cliente', $cliente)->OrderBy('id', 'desc')->select('codigo', 'id')->get();
         return json_encode($facturas);
     }
@@ -1534,7 +1534,7 @@ public function edit($id){
     }
 
     public function factura_json($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('id', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $array=array();
         if ($factura) {
             $array["fecha"]=date('d/m/Y', strtotime($factura->fecha));
@@ -1548,7 +1548,7 @@ public function edit($id){
     }
 
     public function anular($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         if ($factura) {
             if ($factura->estatus==1) {
                 $factura->estatus=2;
@@ -1567,7 +1567,7 @@ public function edit($id){
     }
 
     public function cerrar($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('nro', $id)->first();
         if ($factura) {
             if ($factura->estatus==1) {
                 $factura->estatus=0;
