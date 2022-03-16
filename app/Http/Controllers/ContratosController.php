@@ -580,7 +580,7 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -623,12 +623,12 @@ class ContratosController extends Controller
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     /*PPPOE*/
-                    if($contrato->conexion == 1){
-                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip]");
+                    if($request->conexion == 1){
+                        $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip\n=name=$request->usuario\n=password=$request->password]");
                     }
 
                     /*DHCP*/
-                    if($contrato->conexion == 2){
+                    if($request->conexion == 2){
                         if(isset($plan->dhcp_server)){
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
                                 "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
@@ -665,7 +665,7 @@ class ContratosController extends Controller
                     }
 
                     /*IP ESTÁTICA*/
-                    if($contrato->conexion == 3){
+                    if($request->conexion == 3){
                         //EDITANDO IP E INTERFACE
                         if($request->local_address){
                             $segmento = explode("/", $request->local_address);
@@ -787,7 +787,7 @@ class ContratosController extends Controller
                     }
 
                     /*VLAN*/
-                    if($contrato->conexion == 4){
+                    if($request->conexion == 4){
 
                     }
                 }
@@ -862,6 +862,8 @@ class ContratosController extends Controller
                 }
 
                 $contrato->puerto_conexion = $request->puerto_conexion;
+                $contrato->usuario  = $request->usuario;
+                $contrato->password = $request->password;
                 
                 $contrato->save();
                 
@@ -961,7 +963,7 @@ class ContratosController extends Controller
                         );
                     }
                 }
-                
+
                 if($contrato->conexion == 3){
                     //OBTENEMOS AL CONTRATO MK
                     $mk_user = $API->comm("/ip/arp/getall", array(
@@ -987,13 +989,13 @@ class ContratosController extends Controller
                             )
                         );
                     }
-                    
+
                     if($contrato->ip_new){
                         $mk_user = $API->comm("/ip/arp/getall", array(
                             "?comment" => $contrato->servicio.'-'.$contrato->nro,
                             )
                         );
-                        
+
                         if($mk_user){
                             // REMOVEMOS EL IP ARP
                             $API->comm("/ip/arp/remove", array(
@@ -1015,9 +1017,13 @@ class ContratosController extends Controller
                         }
                     }
                 }
-                
+
                 $API->disconnect();
                 Ping::where('contrato', $contrato->id)->delete();
+
+                $cliente = Contacto::find($contrato->client_id);
+                $cliente->fecha_contrato = Carbon::now();
+                $cliente->save();
                 $contrato->delete();
                 
                 $mensaje='SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
@@ -1333,6 +1339,16 @@ class ContratosController extends Controller
                 
                 if(count($ARRAY)>0){
                     if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
+                        $data = [
+                            'contrato' => $contrato->id,
+                            'ip' => $contrato->ip,
+                            'fecha' => Carbon::parse(now())->format('Y-m-d')
+                        ];
+
+                        $ping = Ping::updateOrCreate(
+                            ['contrato' => $contrato->id],
+                            $data
+                        );
                         return response()->json([
                             'success' => false,
                             'icon'    => 'error',

@@ -23,7 +23,7 @@ class PingsController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['inicio' => 'master', 'seccion' => 'inicio', 'title' => 'Pings Fallidos', 'icon' => 'fas fa-plug']);
+        view()->share(['seccion' => 'contratos', 'subseccion' => 'listado', 'title' => 'Pings Fallidos', 'icon' => 'fas fa-plug']);
     }
     
     public function index(Request $request){

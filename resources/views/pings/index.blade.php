@@ -67,7 +67,7 @@
 				'url': '/vendors/DataTables/es.json'
 			},
 			order: [
-				[4, "desc"]
+				[0, "desc"]
 			],
 			"pageLength": 25,
 			ajax: '{{url("/pings")}}',

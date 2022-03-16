@@ -709,6 +709,8 @@ function contacto(selected, modificar=false, type = 1){
             
             if(data.plan != null){
                 data=JSON.parse(data); data=data[0];
+            }else{
+                data=JSON.parse(data);
             }
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
@@ -3850,9 +3852,9 @@ function getPlanes(mikrotik) {
 function interfazChange(){
     if(document.getElementById("conexion").value == 3){
         document.getElementById("div_interfaz").classList.remove('d-none');
-        document.getElementById("div_mac").classList.add('d-none');
+        document.getElementById("div_mac").classList.remove('d-none');
         
-        document.getElementById("mac_address").removeAttribute('required');
+        document.getElementById("mac_address").setAttribute('required', true);
         document.getElementById("interfaz").setAttribute('required', true);
         document.getElementById("div_local_address").innerHTML = "Segmento de IP <span class='text-danger'>*</span>";
         document.getElementById("div_ip").innerHTML = "Dirección IP (Remote Address)";
@@ -3864,6 +3866,10 @@ function interfazChange(){
         document.getElementById("ap").removeAttribute('required');
         
         getInterfaces(document.getElementById("server_configuration_id").value);
+        document.getElementById("div_usuario").classList.add('d-none');
+        document.getElementById("usuario").removeAttribute('required');
+        document.getElementById("div_password").classList.add('d-none');
+        document.getElementById("password").removeAttribute('required');
     }else if(document.getElementById("conexion").value == 4){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_name_vlan").classList.remove('d-none');
@@ -3880,9 +3886,31 @@ function interfazChange(){
         document.getElementById("div_usuario").classList.add('d-none');
         document.getElementById("div_mac").classList.add('d-none');
         document.getElementById("div_password").classList.add('d-none');
+
+        document.getElementById("div_usuario").classList.add('d-none');
+        document.getElementById("usuario").removeAttribute('required');
+        document.getElementById("div_password").classList.add('d-none');
+        document.getElementById("password").removeAttribute('required');
     }else if(document.getElementById("conexion").value == 2){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("interfaz").setAttribute('required', true);
+
+        document.getElementById("div_usuario").classList.add('d-none');
+        document.getElementById("usuario").removeAttribute('required');
+        document.getElementById("div_password").classList.add('d-none');
+        document.getElementById("password").removeAttribute('required');
+        document.getElementById("div_mac").classList.remove('d-none');
+        document.getElementById("mac_address").setAttribute('required', true);
+    }else if(document.getElementById("conexion").value == 1){
+        document.getElementById("usuario").value = '';
+        document.getElementById("password").value = '';
+        document.getElementById("div_usuario").classList.remove('d-none');
+        document.getElementById("usuario").setAttribute('required', true);
+        document.getElementById("div_password").classList.remove('d-none');
+        document.getElementById("password").setAttribute('required', true);
+
+        document.getElementById("div_mac").classList.add('d-none');
+        document.getElementById("mac_address").removeAttribute('required');
     }else{
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');
@@ -3906,6 +3934,8 @@ function interfazChange(){
     document.getElementById("mac_address").value = '';
     document.getElementById("name_vlan").value = '';
     document.getElementById("id_vlan").value = '';
+    document.getElementById("usuario").value = '';
+    document.getElementById("password").value = '';
 }
 
 function modificarPromesa(id) {

@@ -72,7 +72,7 @@
 	            <label class="control-label">Tipo Conexión <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" id="conexion" name="conexion"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="interfazChange();">
 	                <option value="1" {{$contrato->conexion==1?'selected':''}}>PPPOE</option>
-	                <option value="2" disabled {{$contrato->conexion==2?'selected':''}}>DHCP</option>
+	                <option value="2" {{$contrato->conexion==2?'selected':''}}>DHCP</option>
 	                <option value="3" {{$contrato->conexion==3?'selected':''}}>IP Estática</option>
 	                <option value="4" {{$contrato->conexion==4?'selected':''}}>VLAN</option>
 	            </select>
@@ -139,6 +139,27 @@
                     </span>
                 </div>
             </div>
+
+            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_usuario">
+                <label class="control-label">Usuario <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="usuario" id="usuario" value="{{ $contrato->usuario}}">
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('usuario') }}</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_password">
+                <label class="control-label">Contraseña <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="password" id="password" value="{{ $contrato->password}}">
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('password') }}</strong>
+                    </span>
+                </div>
+            </div>
+
             <div class="col-md-4 form-group d-none">
                 <label class="control-label">Access Point Asociado <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" id="ap" name="ap" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -157,10 +178,10 @@
                 </span>
             </div>
             
-            <div class="col-md-4 form-group">
-                <label class="">Dirección MAC</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" name="mac_address" id="mac_address" value="{{$contrato->mac_address}}">
+            <div class="col-md-4 form-group {{$contrato->conexion==1?'d-none':''}}" id="div_mac">
+                <label class="control-label">Dirección MAC <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address">
                     <span class="help-block error">
                         <strong>{{ $errors->first('mac_address') }}</strong>
                     </span>

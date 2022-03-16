@@ -108,7 +108,7 @@
                         <hr>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2 offset-md-1">
                             <a href="{{route('contactos.create')}}">
                             <div class="card-counter success">
                                 <i class="fas fa-users"></i>
@@ -117,7 +117,7 @@
                             </div>
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <a href="{{route('contratos.create')}}">
                             <div class="card-counter success">
                                 <i class="fas fa-file-contract"></i>
@@ -126,7 +126,7 @@
                             </div>
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <a href="{{route('radicados.create')}}">
                             <div class="card-counter success">
                                 <i class="fas fa-ticket-alt"></i>
@@ -135,12 +135,21 @@
                             </div>
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <a href="{{route('facturas.create')}}">
                             <div class="card-counter success">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="count-numbers">Crear</span>
                                 <span class="count-name">Factura</span>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="{{route('facturas.create-electronica')}}">
+                            <div class="card-counter success">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span class="count-numbers">Crear</span>
+                                <span class="count-name" style="right: 20px;font-size: 13px;top: 70px;">Factura Electrónica</span>
                             </div>
                             </a>
                         </div>

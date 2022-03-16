@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="row card-description">
-	<div class="col-md-9">
+	<div class="col-md-12">
 		<div class="table-responsive">
 			<table class="table table-striped table-bordered table-sm info">
 				<tbody>
