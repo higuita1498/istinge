@@ -557,4 +557,36 @@ public function forma_pago()
         }
         return $total;
     }
+
+    public function isItemSinIva()
+    {
+
+        $items = ItemsFactura::where('factura', $this->id)->get();
+
+        foreach ($items as $item) {
+            if ($item->id_impuesto == 0) {
+                return true;
+            }
+        }
+
+
+        return false;
+    }
+
+    public function itemImpuestoSingular()
+    {
+        $text = '';
+        $ivas =  array();
+
+        $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+        if ($impuesto) {
+            array_push($ivas, ["imp0" => $impuesto->porcentaje]);
+        }
+        
+        if ($impuesto) {
+            return $ivas;
+        }
+        return '';
+    }
+
 }

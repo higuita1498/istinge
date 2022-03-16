@@ -230,4 +230,19 @@ class NotaCredito extends Model
         }
         return $total;
     }
+
+    public function isItemSinIva()
+    {
+
+        $items = ItemsNotaCredito::where('nota', $this->id)->get();
+
+
+        foreach ($items as $item) {
+            if ($item->id_impuesto == 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }   
