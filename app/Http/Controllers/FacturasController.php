@@ -514,7 +514,7 @@ class FacturasController extends Controller{
       $this->getAllPermissions(Auth::user()->id);
     //echo $cliente;die;
     view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
-    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+    $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
 
     $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
 
@@ -782,7 +782,7 @@ class FacturasController extends Controller{
     $contrato = false;
 
     if(!isset($request->electronica)){
-        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->first();
         $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
         //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
@@ -819,7 +819,7 @@ class FacturasController extends Controller{
     $key = str_replace($toReplace, "", $key);
     //
     
-    $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
+    $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
     if($num){
         $numero = $num->nro + 1;
     }else{
@@ -1567,7 +1567,7 @@ public function edit($id){
     }
 
     public function cerrar($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         if ($factura) {
             if ($factura->estatus==1) {
                 $factura->estatus=0;
