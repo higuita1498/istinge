@@ -164,6 +164,20 @@
                 border: solid 1px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
                 padding: 2% 1%;
             }
+            .whatsapp {
+                position: fixed;
+                right:25px; /*Margen derecho*/
+                bottom:20px; /*Margen abajo*/
+                z-index:999;
+            }
+            .whatsapp img {
+                width:60px; /*Alto del icono*/
+                height:60px; /*Ancho del icono*/
+            }
+            .whatsapp:hover{
+                opacity: 0.7 !important;
+                filter: alpha(opacity=70) !important;
+            }
         </style>
         @yield('style')
     </head>
@@ -330,6 +344,11 @@
                             </span>
                         </div>
                     </footer>
+                </div>
+                <div class="whatsapp text-left">
+                    <a href="https://api.whatsapp.com/send?phone=+573135774747&text=Hola Network Soft, necesito soporte para la empresa {{ Auth::user()->empresa()->nombre}}" target="_blank" title="Soporte vía Whatsapp">
+                        <img src="{{asset('images/whatsapp.png')}}" alt="WhatsApp" />
+                    </a>
                 </div>
             </div>
         </div>
