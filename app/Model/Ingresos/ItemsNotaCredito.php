@@ -120,6 +120,25 @@ class ItemsNotaCredito extends Model
         }
         return '';
     }
-    
+
+    public function impuestoNombre(){
+        $text = '';
+
+       $impuesto = Impuesto::where('id', $this->id_impuesto)->first();
+       if ($impuesto) {
+           $text .= $impuesto->nombre;
+       }
+
+        if ($impuesto) {
+           
+           if($text == "Ninguno" || $text == "NINGUNO" || $text == "N/A"){
+               $text = "IVA";
+           }
+           
+           return $text;
+       }
+       return '';
+   }
+
 
 }
