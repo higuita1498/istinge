@@ -371,18 +371,20 @@ class ContratosController extends Controller
                         )
                     );
                     
-                    $API->comm("/queue/simple/add", array(
-                        "target"          => $request->ip,                        // IP
-                        "name"            => $plan->name,                         // NOMBRE PLAN
-                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
-                        "priority"        => $priority,                           // PRIORIDAD PLAN
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
-                        )
-                    );
+                    if(Auth::user()->empresa()->nombre != 'International Security Networks S.A.S'){
+                        $API->comm("/queue/simple/add", array(
+                            "target"          => $request->ip,                        // IP
+                            "name"            => $plan->name,                         // NOMBRE PLAN
+                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                            "priority"        => $priority,                           // PRIORIDAD PLAN
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
+                            )
+                        );
+                    }
                     
                     $API->comm("/queue/simple/add", array(
-                        "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
+                        "name"      => $this->normaliza($cliente->nombre),                  // NOMBRE CLIENTE
                         "target"    => $request->ip,                      //IP
                         "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                         "parent"    => $plan->name,                       // NOMBRE PLAN
@@ -409,14 +411,24 @@ class ContratosController extends Controller
 
                         if($name){
                             $registro = true;
+                            if(Auth::user()->empresa()->nombre != 'International Security Networks S.A.S'){
+                                $API->comm("/queue/simple/add", array(
+                                    "target"          => $request->ip,                        // IP
+                                    "name"            => $plan->name,                         // NOMBRE PLAN
+                                    "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                                    "priority"        => $priority,                           // PRIORIDAD PLAN
+                                    "burst-limit"     => $burst_limit,
+                                    "burst-threshold" => $burst_threshold
+                                    )
+                                );
+                            }
+
                             $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                                "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
-                                "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
-                                "priority"        => $priority,                           // PRIORIDAD PLAN
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold
+                                "name" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                                "target"    => $request->ip,                   //IP
+                                "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                "parent"    => $plan->name,                    // NOMBRE PLAN
+                                "comment"   => $nro_contrato                   // NRO DEL CONTRATO
                                 )
                             );
                         }
@@ -445,14 +457,24 @@ class ContratosController extends Controller
                         $registro = true;
                     }
                     
+                    if(Auth::user()->empresa()->nombre != 'International Security Networks S.A.S'){
+                        $API->comm("/queue/simple/add", array(
+                            "target"          => $request->ip,                        // IP
+                            "name"            => $plan->name,                         // NOMBRE PLAN
+                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                            "priority"        => $priority,                           // PRIORIDAD PLAN
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
+                            )
+                        );
+                    }
+
                     $API->comm("/queue/simple/add", array(
-                        "name"            => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                        "target"          => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
-                        "comment"         => $this->normaliza($cliente->nombre),  // NRO DEL CONTRATO
-                        "priority"        => $priority,                           // PRIORIDAD PLAN
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
+                        "name" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                        "target"    => $request->ip,                   //IP
+                        "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                        "parent"    => $plan->name,                    // NOMBRE PLAN
+                        "comment"   => $nro_contrato                   // NRO DEL CONTRATO
                         )
                     );
 
@@ -465,14 +487,24 @@ class ContratosController extends Controller
                             )
                         );
                         
+                        if(Auth::user()->empresa()->nombre != 'International Security Networks S.A.S'){
+                            $API->comm("/queue/simple/add", array(
+                                "target"          => $request->ip,                        // IP
+                                "name"            => $plan->name,                         // NOMBRE PLAN
+                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                                "priority"        => $priority,                           // PRIORIDAD PLAN
+                                "burst-limit"     => $burst_limit,
+                                "burst-threshold" => $burst_threshold
+                                )
+                            );
+                        }
+
                         $API->comm("/queue/simple/add", array(
-                            "name"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
-                            "target"      => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                            "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),                    // VELOCIDAD PLAN
-                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,  // NRO DEL CONTRATO
-                            "priority"        => $priority,                           // PRIORIDAD PLAN
-                            "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold
+                            "name" => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                            "target"    => $request->ip_new,                   //IP
+                            "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                            "parent"    => $plan->name,                    // NOMBRE PLAN
+                            "comment"   => $nro_contrato                   // NRO DEL CONTRATO
                             )
                         );
                     }
@@ -493,15 +525,17 @@ class ContratosController extends Controller
                         )
                     );
                     
-                    $API->comm("/queue/simple/add", array(
-                        "target"      => $request->ip,                          //IP
-                        "name"        => $plan->name,                           // NOMBRE PLAN
-                        "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
-                        "priority"        => $priority,                           // PRIORIDAD PLAN
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
-                        )
-                    );
+                    if(Auth::user()->empresa()->nombre != 'International Security Networks S.A.S'){
+                        $API->comm("/queue/simple/add", array(
+                            "target"          => $request->ip,                        // IP
+                            "name"            => $plan->name,                         // NOMBRE PLAN
+                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),   // VELOCIDAD PLAN
+                            "priority"        => $priority,                           // PRIORIDAD PLAN
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
+                            )
+                        );
+                    }
                     
                     $API->comm("/queue/simple/add", array(
                         "name"      => $cliente->nombre,                  // NOMBRE CLIENTE
@@ -625,6 +659,21 @@ class ContratosController extends Controller
                     /*PPPOE*/
                     if($request->conexion == 1){
                         $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip\n=name=$request->usuario\n=password=$request->password]");
+
+                        $name_new = $API->comm("/queue/simple/getall", array(
+                                "?target" => $contrato->ip.'/32'
+                            )
+                        );
+
+                        if($name_new){
+                            $API->comm("/queue/simple/set", array(
+                                    ".id"       => $name_new[0][".id"],
+                                    "target"    => $request->ip, //IP
+                                    "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                    "parent"    => $plan->name, // NOMBRE PLAN
+                                )
+                            );
+                        }
                     }
 
                     /*DHCP*/
@@ -655,6 +704,7 @@ class ContratosController extends Controller
                                         ".id"       => $name_new[0][".id"],
                                         "target"    => $request->ip, //IP
                                         "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                        "parent"    => $plan->name, // NOMBRE PLAN
                                     )
                                 );
                             }
@@ -752,6 +802,7 @@ class ContratosController extends Controller
                                 ".id"       => $name[0][".id"],
                                 "target"    => $request->ip, // IP DEL CLIENTE
                                 "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
+                                "parent"    => $plan->name, // NOMBRE PLAN
                                 )
                             );
                         }
@@ -767,7 +818,8 @@ class ContratosController extends Controller
                                     "name"        => $contrato->servicio.'-'.$contrato->id, // NOMBRE MAS ID DEL CONTRATO
                                     "target"      => $request->ip_new,                      // IP DEL CLIENTE
                                     "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),     // VELOCIDAD PLAN
-                                    "comment"     => $contrato->servicio.'-'.$contrato->id  // NRO DEL CONTRATO
+                                    "comment"     => $contrato->servicio.'-'.$contrato->id,  // NRO DEL CONTRATO
+                                    "parent"    => $plan->name, // NOMBRE PLAN
                                     )
                                 );
                             }
