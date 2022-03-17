@@ -714,17 +714,19 @@ function contacto(selected, modificar=false, type = 1){
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
             if(data.plan == null && type ==1){
-                Swal.fire({
-                    position: 'top-center',
-                    type: 'error',
-                    title: 'El cliente seleccionado no cuenta con nigun contrato asignado.',
-                    showConfirmButton: false,
-                    timer: 2500
-                  });
-                  $("#cliente").val("");
-                  $('#cliente').selectpicker('refresh');
-                  cargando(false);
-                  return;
+                if($("#dian").val() == null){
+                    Swal.fire({
+                        position: 'top-center',
+                        type: 'error',
+                        title: 'El cliente seleccionado no cuenta con nigun contrato asignado.',
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                    $("#cliente").val("");
+                    $('#cliente').selectpicker('refresh');
+                    cargando(false);
+                    return;
+                }
             }
 
             if ($('#ident').length > 0) {
