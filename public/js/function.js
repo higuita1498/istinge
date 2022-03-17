@@ -705,11 +705,9 @@ function contacto(selected, modificar=false, type = 1){
             cargando(true);
         },
         success: function(data){
-            
-            if(data.plan != null){
-                data=JSON.parse(data); data=data[0];
-            }else{
-                data=JSON.parse(data);
+            data=JSON.parse(data);
+            if(type == 1){
+                 data=data[0];
             }
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
