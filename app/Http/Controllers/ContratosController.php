@@ -646,7 +646,7 @@ class ContratosController extends Controller
                             }
 
                             $name_new = $API->comm("/queue/simple/getall", array(
-                                    "?target" => $contrato->ip
+                                    "?target" => $contrato->ip.'/32'
                                 )
                             );
 
@@ -743,7 +743,7 @@ class ContratosController extends Controller
                         //EDITANDO PLAN
                         //BUSCAMOS CLIENTE POR ID
                         $name = $API->comm("/queue/simple/getall", array(
-                            "?target" => $request->ip
+                            "?target" => $contrato->ip.'/32'
                             )
                         );
 
@@ -758,7 +758,7 @@ class ContratosController extends Controller
 
                         if($request->ip_new){
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?target" => $request->ip_new
+                                "?target" => $contrato->ip_new.'/32'
                                 )
                             );
 
@@ -773,7 +773,7 @@ class ContratosController extends Controller
                             }
                         }else{
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?target" => $request->ip_new
+                                "?target" => $contrato->ip_new.'/32'
                                 )
                             );
 
@@ -923,7 +923,7 @@ class ContratosController extends Controller
 
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->id,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
 
@@ -952,7 +952,7 @@ class ContratosController extends Controller
 
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->servicio,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
                     // REMOVEMOS LA COLA SIMPLE
@@ -979,7 +979,7 @@ class ContratosController extends Controller
                     }
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->servicio,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
                     // REMOVEMOS LA COLA SIMPLE
@@ -1005,7 +1005,7 @@ class ContratosController extends Controller
                         }
                         //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                         $id_simple = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                            "?target" => $contrato->ip_new.'/32'
                             )
                         );
                         // REMOVEMOS LA COLA SIMPLE
