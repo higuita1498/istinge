@@ -84,6 +84,7 @@
 			<a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
 			<a href="{{route('campos.organizar', 10)}}">Planes de Velocidad</a><br>
 			<a href="{{route('campos.organizar', 11)}}">Promesas de Pago</a><br>
+			<a href="{{route('campos.organizar', 12)}}">Radicados</a><br>
 		</div>
 		@endif
 		<div class="col-sm-3">

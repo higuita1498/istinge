@@ -19,6 +19,7 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Session;
+use App\Campos;
 use Barryvdh\DomPDF\Facade as PDF;
 
 class RadicadosController extends Controller{
@@ -34,8 +35,9 @@ class RadicadosController extends Controller{
         $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tipo = '';
+        $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -43,6 +45,7 @@ class RadicadosController extends Controller{
 
         $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         if($tipo == 'solventados'){
             $tipo = 1;
         }elseif($tipo == 'pendientes'){
@@ -52,7 +55,7 @@ class RadicadosController extends Controller{
         }
 
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla'));
     }
 
     public function radicados(Request $request, $estado){
@@ -145,6 +148,9 @@ class RadicadosController extends Controller{
         })
         ->addColumn('estatus', function (Radicado $radicado) {
             return   '<span class="font-weight-bold text-' . $radicado->estatus(true) . '">' . $radicado->estatus() . '</span>';
+        })
+        ->addColumn('nro_radicados', function (Radicado $radicado) {
+            return $radicado->nro_radicados();
         })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
         ->rawColumns(['codigo', 'estatus', 'acciones'])

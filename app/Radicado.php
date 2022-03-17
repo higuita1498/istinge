@@ -83,4 +83,10 @@ class Radicado extends Model
     public function show_url(){
         return route('radicados.show', $this->id);
     }
+
+    public function nro_radicados(){
+        $temp = 0;
+        $temp += Radicado::where('cliente', $this->cliente)->count();
+        return $temp;
+    }
 }

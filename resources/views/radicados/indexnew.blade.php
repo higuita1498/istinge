@@ -179,13 +179,9 @@
     				    <table class="table table-striped table-hover w-100" id="table_sin_gestionar">
     				        <thead class="thead-dark">
 								<tr>
-									<th>Nro Radicado</th>
-									<th>Fecha</th>
-									<th>Contrato</th>
-									<th>Cliente</th>
-									<th>Nro Celular</th>
-									<th>Servicio</th>
-									<th>Estado</th>
+									@foreach($tabla as $campo)
+									    <th>{{$campo->nombre}}</th>
+									@endforeach
 									<th>Acciones</th>
 								</tr>
 							</thead>
@@ -248,13 +244,9 @@
     				    <table class="table table-striped table-hover w-100" id="table_sin_gestionarG">
     				        <thead class="thead-dark">
 								<tr>
-									<th>Nro Radicado</th>
-									<th>Fecha</th>
-									<th>Contrato</th>
-									<th>Cliente</th>
-									<th>Nro Celular</th>
-									<th>Servicio</th>
-									<th>Estado</th>
+									@foreach($tabla as $campo)
+									    <th>{{$campo->nombre}}</th>
+									@endforeach
 									<th>Acciones</th>
 								</tr>
 							</thead>
@@ -287,14 +279,9 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-				{data: 'codigo'},
-				{data: 'fecha'},
-				{data: 'contrato'},
-				{data: 'cliente'},
-				{data: 'telefono'},
-				{data: 'servicio'},
-				//{data: 'direccion'},
-				{data: 'estatus'},
+				@foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
 				{data: 'acciones'}
 			]
 		});
@@ -350,14 +337,9 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-				{data: 'codigo'},
-				{data: 'fecha'},
-				{data: 'contrato'},
-				{data: 'cliente'},
-				{data: 'telefono'},
-				{data: 'servicio'},
-				//{data: 'direccion'},
-				{data: 'estatus'},
+				@foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
 				{data: 'acciones'}
 			]
 		});
