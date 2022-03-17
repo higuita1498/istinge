@@ -386,10 +386,14 @@ class ContratosController extends Controller
                 if($request->conexion == 2){
                     if($plan->dhcp_server){
                         $API->comm("/ip/dhcp-server/lease/add", array(
-                            "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                            "address"     => $request->ip,                        // IP DEL CLIENTE
-                            "server"      => $plan->dhcp_server,                  // SERVIDOR DHCP
-                            "mac-address" => $request->mac_address                // DIRECCION MAC
+                            "comment"     => $this->normaliza($cliente->nombre),
+                            "address"     => $request->ip,
+                            "server"      => $plan->dhcp_server,
+                            "mac-address" => $request->mac_address,
+                            "rate-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "priority"        => $priority,
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
                             )
                         );
 
@@ -629,10 +633,14 @@ class ContratosController extends Controller
 
                             if($name){
                                 $API->comm("/ip/dhcp-server/lease/set", array(
-                                    ".id" => $name[0][".id"],
-                                    "address"     => $request->ip,         // IP DEL CLIENTE
-                                    "server"      => $plan->dhcp_server,   // SERVIDOR DHCP
-                                    "mac-address" => $request->mac_address // DIRECCION MAC
+                                    ".id"             => $name[0][".id"],
+                                    "address"         => $request->ip,
+                                    "server"          => $plan->dhcp_server,
+                                    "mac-address"     => $request->mac_address,
+                                    "rate-limit"      => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "priority"        => $priority,
+                                    "burst-limit"     => $burst_limit,
+                                    "burst-threshold" => $burst_threshold
                                     )
                                 );
                             }
