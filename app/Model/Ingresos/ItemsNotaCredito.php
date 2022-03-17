@@ -120,5 +120,6 @@ class ItemsNotaCredito extends Model
         }
         return '';
     }
+    
 
 }
