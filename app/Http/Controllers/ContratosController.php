@@ -631,7 +631,7 @@ class ContratosController extends Controller
                     if($request->conexion == 2){
                         if(isset($plan->dhcp_server)){
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
+                                "?address" => $contrato->ip // IP DEL CLIENTE
                                 )
                             );
 
@@ -646,7 +646,7 @@ class ContratosController extends Controller
                             }
 
                             $name_new = $API->comm("/queue/simple/getall", array(
-                                    "?comment" => $contrato->servicio,
+                                    "?target" => $contrato->ip
                                 )
                             );
 
@@ -680,19 +680,19 @@ class ContratosController extends Controller
                             $prefijo = '';
                         }
 
-                        //OBTENEMOS AL CONTRATO MK
+                        //OBTENEMOS EL CONTRATO ARP
                         $mk_user = $API->comm("/ip/arp/getall", array(
-                            "?comment" => $contrato->servicio,
+                            "?address" => $contrato->ip,
                             )
                         );
 
-                        //ACTUALIZAMOS IP
+                        //ACTUALIZAMOS EL ARP
                         if($mk_user){
                             $API->comm("/ip/arp/set", array(
                                 ".id" => $mk_user[0][".id"],
-                                "address"   => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                                "interface" => $request->interfaz,                                                  // INTERFAZ DEL CLIENTE
-                                "mac-address" => $request->mac_address                                              // DIRECCION MAC
+                                "address"   => $request->ip,            // IP DEL CLIENTE
+                                "interface" => $request->interfaz,      // INTERFAZ DEL CLIENTE
+                                "mac-address" => $request->mac_address  // DIRECCION MAC
                                 )
                             );
                         }
@@ -743,14 +743,14 @@ class ContratosController extends Controller
                         //EDITANDO PLAN
                         //BUSCAMOS CLIENTE POR ID
                         $name = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio,
+                            "?target" => $request->ip
                             )
                         );
 
                         if($name){
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
-                                "target"    => $request->ip,                      //IP
+                                "target"    => $request->ip, // IP DEL CLIENTE
                                 "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                                 )
                             );
@@ -758,7 +758,7 @@ class ContratosController extends Controller
 
                         if($request->ip_new){
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                "?target" => $request->ip_new
                                 )
                             );
 
@@ -773,7 +773,7 @@ class ContratosController extends Controller
                             }
                         }else{
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                "?target" => $request->ip_new
                                 )
                             );
 
