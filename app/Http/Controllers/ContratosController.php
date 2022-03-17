@@ -631,7 +631,7 @@ class ContratosController extends Controller
                     if($request->conexion == 2){
                         if(isset($plan->dhcp_server)){
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                "?comment" => $contrato->servicio,  // NOMBRE CLIENTE
+                                "?address" => $contrato->ip // IP DEL CLIENTE
                                 )
                             );
 
@@ -646,7 +646,7 @@ class ContratosController extends Controller
                             }
 
                             $name_new = $API->comm("/queue/simple/getall", array(
-                                    "?comment" => $contrato->servicio,
+                                    "?target" => $contrato->ip.'/32'
                                 )
                             );
 
@@ -680,19 +680,19 @@ class ContratosController extends Controller
                             $prefijo = '';
                         }
 
-                        //OBTENEMOS AL CONTRATO MK
+                        //OBTENEMOS EL CONTRATO ARP
                         $mk_user = $API->comm("/ip/arp/getall", array(
-                            "?comment" => $contrato->servicio,
+                            "?address" => $contrato->ip,
                             )
                         );
 
-                        //ACTUALIZAMOS IP
+                        //ACTUALIZAMOS EL ARP
                         if($mk_user){
                             $API->comm("/ip/arp/set", array(
                                 ".id" => $mk_user[0][".id"],
-                                "address"   => ($request->local_address) ? $request->ip.''.$prefijo : $request->ip, // IP DEL CLIENTE
-                                "interface" => $request->interfaz,                                                  // INTERFAZ DEL CLIENTE
-                                "mac-address" => $request->mac_address                                              // DIRECCION MAC
+                                "address"   => $request->ip,            // IP DEL CLIENTE
+                                "interface" => $request->interfaz,      // INTERFAZ DEL CLIENTE
+                                "mac-address" => $request->mac_address  // DIRECCION MAC
                                 )
                             );
                         }
@@ -700,7 +700,7 @@ class ContratosController extends Controller
                         if($request->ip_new){
                             //OBTENEMOS AL CONTRATO MK
                             $mk_id = $API->comm("/ip/arp/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                "?address" => $contrato->ip_new,
                                 )
                             );
 
@@ -708,17 +708,17 @@ class ContratosController extends Controller
                             if($mk_id){
                                 $API->comm("/ip/arp/set", array(
                                     ".id" => $mk_id[0][".id"],
-                                    "address"   => ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                                    "interface" => $request->interfaz,                                                              // INTERFACE DEL CLIENTE
-                                    "mac-address" => $request->mac_address                                                // DIRECCION MAC
+                                    "address"   => $request->ip_new, // IP DEL CLIENTE
+                                    "interface" => $request->interfaz, // INTERFACE DEL CLIENTE
+                                    "mac-address" => $request->mac_address // DIRECCION MAC
                                     )
                                 );
                             }else{
                                 $API->comm("/ip/arp/add", array(
-                                    "comment"     => $contrato->servicio.'-'.$contrato->id,                                          // NOMBRE CLIENTE
-                                    "address"   => ($request->local_address_new) ? $request->ip_new.'/'.$prefijo : $request->ip_new, // IP DEL CLIENTE
-                                    "interface"   => $request->interfaz,                                                              // INTERFACE DEL CLIENTE
-                                    "mac-address" => $request->mac_address                                                // DIRECCION MAC
+                                    "comment"   => $contrato->servicio.'-'.$contrato->id,// NOMBRE CLIENTE
+                                    "address"   => $request->ip_new, // IP DEL CLIENTE
+                                    "interface" => $request->interfaz, // INTERFACE DEL CLIENTE
+                                    "mac-address" => $request->mac_address // DIRECCION MAC
                                     )
                                 );
                             }
@@ -726,7 +726,7 @@ class ContratosController extends Controller
                             if($contrato->ip_new){
                                 //OBTENEMOS AL CONTRATO MK
                                 $id_simple = $API->comm("/ip/arp/getall", array(
-                                    "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                    "?address" => $contrato->ip_new,
                                     )
                                 );
 
@@ -743,14 +743,14 @@ class ContratosController extends Controller
                         //EDITANDO PLAN
                         //BUSCAMOS CLIENTE POR ID
                         $name = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio,
+                            "?target" => $contrato->ip.'/32'
                             )
                         );
 
                         if($name){
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
-                                "target"    => $request->ip,                      //IP
+                                "target"    => $request->ip, // IP DEL CLIENTE
                                 "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download), // VELOCIDAD PLAN
                                 )
                             );
@@ -758,7 +758,7 @@ class ContratosController extends Controller
 
                         if($request->ip_new){
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                "?target" => $contrato->ip_new.'/32'
                                 )
                             );
 
@@ -773,7 +773,7 @@ class ContratosController extends Controller
                             }
                         }else{
                             $dos = $API->comm("/queue/simple/getall", array(
-                                "?comment" => $contrato->servicio.'-'.$contrato->id,
+                                "?target" => $contrato->ip_new.'/32'
                                 )
                             );
 
@@ -923,7 +923,7 @@ class ContratosController extends Controller
 
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->id,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
 
@@ -952,7 +952,7 @@ class ContratosController extends Controller
 
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->servicio,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
                     // REMOVEMOS LA COLA SIMPLE
@@ -979,7 +979,7 @@ class ContratosController extends Controller
                     }
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?comment" => $contrato->servicio,
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
                     // REMOVEMOS LA COLA SIMPLE
@@ -1005,7 +1005,7 @@ class ContratosController extends Controller
                         }
                         //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                         $id_simple = $API->comm("/queue/simple/getall", array(
-                            "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                            "?target" => $contrato->ip_new.'/32'
                             )
                         );
                         // REMOVEMOS LA COLA SIMPLE
