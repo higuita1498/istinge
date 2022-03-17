@@ -357,6 +357,7 @@ class ContratosController extends Controller
                 $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
                 $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
                 $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+                $burst_time = ($plan->burst_time_subida) ? $plan->burst_time_subida.'S/'.$plan->burst_time_bajada.'S': '';
 
                 /*PPPOE*/
                 if($request->conexion == 1){
@@ -377,7 +378,8 @@ class ContratosController extends Controller
                         "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                         "priority"        => $priority,
                         "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
+                        "burst-threshold" => $burst_threshold,
+                        "burst-time"      => $burst_time
                         )
                     );
                 }
@@ -391,9 +393,9 @@ class ContratosController extends Controller
                             "server"      => $plan->dhcp_server,
                             "mac-address" => $request->mac_address,
                             "rate-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                            "priority"        => $priority,
+                            /*"priority"        => $priority,
                             "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold
+                            "burst-threshold" => $burst_threshold*/
                             )
                         );
 
@@ -410,7 +412,8 @@ class ContratosController extends Controller
                                 "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                                 "priority"        => $priority,
                                 "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold
+                                "burst-threshold" => $burst_threshold,
+                                "burst-time"      => $burst_time
                                 )
                             );
                         }
@@ -443,7 +446,8 @@ class ContratosController extends Controller
                             "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                             "priority"        => $priority,
                             "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold
+                            "burst-threshold" => $burst_threshold,
+                            "burst-time"      => $burst_time
                             )
                         );
                     }
@@ -463,7 +467,8 @@ class ContratosController extends Controller
                             "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                             "priority"        => $priority,
                             "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold
+                            "burst-threshold" => $burst_threshold,
+                            "burst-time"      => $burst_time
                             )
                         );
                     }
@@ -490,7 +495,8 @@ class ContratosController extends Controller
                         "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                         "priority"        => $priority,
                         "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
+                        "burst-threshold" => $burst_threshold,
+                        "burst-time"      => $burst_time
                         )
                     );
                 }
@@ -604,6 +610,11 @@ class ContratosController extends Controller
                 //$API->debug = true;
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+                    $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+                    $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+                    $burst_time = ($plan->burst_time_subida) ? $plan->burst_time_subida.'S/'.$plan->burst_time_bajada.'S': '';
+
                     /*PPPOE*/
                     if($request->conexion == 1){
                         $API->comm("ppp/secrets\n=find\n=name=$contrato->servicio\n=[set\n=remote-address=$request->ip\n=name=$request->usuario\n=password=$request->password]");
@@ -640,7 +651,8 @@ class ContratosController extends Controller
                                     "rate-limit"      => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                                     "priority"        => $priority,
                                     "burst-limit"     => $burst_limit,
-                                    "burst-threshold" => $burst_threshold
+                                    "burst-threshold" => $burst_threshold,
+                                    "burst-time"      => $burst_time
                                     )
                                 );
                             }
