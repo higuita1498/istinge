@@ -699,7 +699,6 @@ function contacto(selected, modificar=false, type = 1){
         var url = '/empresa/contactos/'+selected+'/json';
     }
 
-
     $.ajax({
         url: url,
         beforeSend: function(){

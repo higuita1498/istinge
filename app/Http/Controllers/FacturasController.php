@@ -780,10 +780,10 @@ class FacturasController extends Controller{
 
     $nro = false;
     $contrato = false;
+    $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
 
     if(!isset($request->electronica)){
         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
-        $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
         $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
         //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
@@ -794,7 +794,6 @@ class FacturasController extends Controller{
 
         if(isset($request->electronica)){
             $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
-            $num = Factura::where('empresa',1)->where('tipo',2)->orderby('nro','asc')->get()->last();
             if(!$nro){
                 $mensaje='Debes crear una numeración para facturas de venta preferida';
                 return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
@@ -809,7 +808,6 @@ class FacturasController extends Controller{
       //Actualiza el nro de inicio para la numeracion seleccionada
       $inicio = $nro->inicio;
       $nro->inicio += 1;
-
 
       if($request->nro_remision){
         DB::table('remisiones')->where('nro', $request->nro_remision)->update(['estatus' => 3]);
