@@ -11,7 +11,7 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
                     <div class="col-sm-8">
-                        <select class="form-control form-control-sm selectpicker" name="cliente" id="cliente" title="Seleccione" data-live-search="true" data-size="5" required="" onchange="contacto(this.value,2); getFacturas(this.value)">
+                        <select class="form-control form-control-sm selectpicker" name="cliente" id="cliente" title="Seleccione" data-live-search="true" data-size="5" required="" onchange="contacto(this.value,false,2); getFacturas(this.value)">
                             @foreach($clientes as $cliente)
                                 <option {{$nota->cliente==$cliente->id?'selected':''}} value="{{$cliente->id}}">{{$cliente->nombre}} - {{$cliente->nit}}</option>
                             @endforeach
