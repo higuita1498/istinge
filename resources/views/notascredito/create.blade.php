@@ -10,7 +10,7 @@
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
           <div class="col-sm-8">
-            <select class="form-control form-control-sm selectpicker" name="cliente" id="cliente" title="Seleccione" data-live-search="true" data-size="5" required="" onchange="contacto(this.value); getFacturas(this.value)">
+            <select class="form-control form-control-sm selectpicker" name="cliente" id="cliente" title="Seleccione" data-live-search="true" data-size="5" required="" onchange="contacto(this.value,false,2); getFacturas(this.value)">
               @foreach($clientes as $cliente)
                 <option {{old('cliente')==$cliente->id?'selected':''}} value="{{$cliente->id}}">{{$cliente->nombre}} - {{$cliente->nit}}</option>
               @endforeach
@@ -394,7 +394,12 @@
     <script>
         function getFacturas(id){
            // $('#error-cliente').hide();
-            var url = $('#url').val()+'/empresa/facturas/cliente/'+id;
+            
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url = $('#url').val()+'/empresa/facturas/cliente/'+id;
+            }else{
+              var url = $('#url').val()+'/empresa/facturas/cliente/'+id;
+            }
             $.ajax({
                 url: url,
                 complete: function(data){

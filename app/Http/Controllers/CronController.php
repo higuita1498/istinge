@@ -35,7 +35,7 @@ class CronController extends Controller
         foreach($grupos_corte as $grupo_corte){
             $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
             
-            $num = Factura::where('empresa',1)->where('tipo',1)->orderby('nro','asc')->get()->last();
+            $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
             if($num){
                 $numero = $num->nro;
             }else{
@@ -47,7 +47,12 @@ class CronController extends Controller
         
             foreach ($contratos as $contrato) {
                 $numero++;
-                $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+
+                if($contrato->facturacion == 3){
+                    $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+                }else{
+                    $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+                }
 
                 //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
                 $nro = $nro->tipoNumeracion($nro,$contrato);
