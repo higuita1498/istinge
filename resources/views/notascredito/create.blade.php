@@ -395,9 +395,8 @@
         function getFacturas(id){
            // $('#error-cliente').hide();
             
-
             if (window.location.pathname.split("/")[1] === "software") {
-                var url = $('#url').val()+'/software/empresa/facturas/cliente/'+id;
+                var url = $('#url').val()+'/empresa/facturas/cliente/'+id;
             }else{
               var url = $('#url').val()+'/empresa/facturas/cliente/'+id;
             }
