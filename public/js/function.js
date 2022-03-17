@@ -721,7 +721,9 @@ function contacto(selected, modificar=false, type = 1){
                     showConfirmButton: false,
                     timer: 2500
                   });
-                //   cargando(false);
+                  $("#cliente").val("");
+                  $('#cliente').selectpicker('refresh');
+                  cargando(false);
                   return;
             }
 
