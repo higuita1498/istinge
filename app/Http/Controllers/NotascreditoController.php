@@ -1128,243 +1128,435 @@ public function facturas_retenciones($id){
         return json_encode($json_data);
     }
 
-    public function xmlNotaCredito($id){
-
+    public function xmlNotaCredito($id)
+    {
         $NotaCredito = NotaCredito::find($id);
 
-        $ResolucionNumeracion = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->first();
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('preferida', 1)->first();
 
-        $infoEmpresa = Empresa::find(Auth::user()->empresa);
+        $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
 
-
-
-        $NotaCredito = NotaCredito::find($id);
-
-        $retenciones = NotaRetencion::where('notas', $NotaCredito->id)->get();
+        $retenciones = NotaRetencion::select('notas_retenciones.*', 'retenciones.tipo as id_tipo')
+            ->join('retenciones', 'retenciones.id', '=', 'notas_retenciones.id_retencion')
+            ->where('notas', $NotaCredito->id)
+            ->where('retenciones.empresa', Auth::user()->empresa)
+            ->get();
 
         //-------------- Factura Relacionada -----------------------//
-
-        $nroFacturaRelacionada =  NotaCreditoFactura::where('nota',$id)->first()->factura;
-
-
-        $FacturaRelacionada    = Factura::find($nroFacturaRelacionada);
+        $nroFacturaRelacionada =  NotaCreditoFactura::where('nota', $id)->first()->factura;
+        $FacturaRelacionada    = Factura::find($nroFacturaRelacionada) ?? null;
 
         $impTotal = 0;
-        foreach ($FacturaRelacionada->total()->imp as $totalImp){
-          if(isset($totalImp->total)){
-            $impTotal = $totalImp->total;
+        if (isset($FacturaRelacionada)) {
+            foreach ($FacturaRelacionada->total()->imp as $totalImp) {
+                if (isset($totalImp->total)) {
+                    $impTotal = $totalImp->total;
+                }
+            }
         }
+
+        $decimal = explode(".", $impTotal);
+        if (
+            isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
+            || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
+        ) {
+            $impTotal = round($impTotal);
+        } else {
+            $impTotal = round($impTotal);
+        }
+
+        $CufeFactRelacionada  = $FacturaRelacionada->info_cufe($nroFacturaRelacionada, $impTotal);
+        //--------------Fin Factura Relacionada -----------------------//
+
+
+        $impTotal = 0;
+
+        foreach ($NotaCredito->total()->imp as $totalImp) {
+            if (isset($totalImp->total)) {
+                $impTotal = $totalImp->total;
+            }
+        }
+
+        $decimal = explode(".", $impTotal);
+        if (isset($decimal[1])) {
+            $impTotal = round($impTotal);
+        }
+
+        $items = ItemsNotaCredito::where('nota', $id)->get();
+
+        if ($NotaCredito->tiempo_creacion) {
+            $horaFac = $NotaCredito->tiempo_creacion;
+        } else {
+            $horaFac = $NotaCredito->created_at;
+        }
+
+        $infoCude = [
+            'Numfac' => $NotaCredito->nro,
+            'FecFac' => Carbon::parse($NotaCredito->fecha)->format('Y-m-d'),
+            'HorFac' => Carbon::parse($horaFac)->format('H:i:s') . '-05:00',
+            'ValFac' => number_format($NotaCredito->total()->subtotal - $NotaCredito->total()->descuento, 2, '.', ''),
+            'CodImp' => '01',
+            'ValImp' => number_format($impTotal, 2, '.', ''),
+            'CodImp2' => '04',
+            'ValImp2' => '0.00',
+            'CodImp3' => '03',
+            'ValImp3' => '0.00',
+            'ValTot' => number_format($NotaCredito->total()->subtotal + $NotaCredito->impuestos_totales() - $NotaCredito->total()->descuento, 2, '.', ''),
+            'NitFE'  => $data['Empresa']['nit'],
+            'NumAdq' => $NotaCredito->cliente()->nit,
+            'pin'    => 75315,
+            'TipoAmb' => 1,
+        ];
+
+        $CUDE = $infoCude['Numfac'] . $infoCude['FecFac'] . $infoCude['HorFac'] . $infoCude['ValFac'] . $infoCude['CodImp'] . $infoCude['ValImp'] . $infoCude['CodImp2'] . $infoCude['ValImp2'] . $infoCude['CodImp3'] . $infoCude['ValImp3'] . $infoCude['ValTot'] . $infoCude['NitFE'] . $infoCude['NumAdq'] . $infoCude['pin'] . $infoCude['TipoAmb'];
+
+
+        $CUDEvr = hash('sha384', $CUDE);
+
+        $infoCliente = Contacto::find($NotaCredito->cliente);
+        $data['Cliente'] = $infoCliente->toArray();
+
+        $responsabilidades_empresa = DB::table('empresa_responsabilidad as er')
+            ->join('responsabilidades_facturacion as rf', 'rf.id', '=', 'er.id_responsabilidad')
+            ->select('rf.*')
+            ->where('er.id_empresa', '=', Auth::user()->empresa)->where('er.id_responsabilidad', 5)
+            ->orWhere('er.id_responsabilidad', 7)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 12)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 20)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 29)->where('er.id_empresa', '=', Auth::user()->empresa)->get();
+
+        $emails = $NotaCredito->cliente()->email;
+        if ($NotaCredito->cliente()->asociados('number') > 0) {
+            $email = $emails;
+            $emails = array();
+            if ($email) {
+                $emails[] = $email;
+            }
+            foreach ($NotaCredito->cliente()->asociados() as $asociado) {
+                if ($asociado->notificacion == 1 && $asociado->email) {
+                    $emails[] = $asociado->email;
+                }
+            }
+        }
+
+        $tituloCorreo =  $data['Empresa']['nit'] . ";" . $data['Empresa']['nombre'] . ";" . $NotaCredito->nro . ";91;" . $data['Empresa']['nombre'];
+
+        if (is_array($emails)) {
+            $max = count($emails);
+        } else {
+            $max = 1;
+        }
+
+
+        if (!$emails || $max == 0) {
+            return redirect('empresa/notascredito/' . $NotaCredito->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
+        }
+
+        $isImpuesto = 1;
+        // foreach($NotaCredito->total()->imp as $impuesto){
+        //     if(isset($impuesto->total)){
+        //         $isImpuesto = 1;
+        //     }
+        // }
+
+
+        // if(auth()->user()->empresa == 114){
+        //     return response()->view('templates.xml.91',compact('CUDEvr','ResolucionNumeracion','NotaCredito', 'data','items','retenciones','FacturaRelacionada','CufeFactRelacionada','responsabilidades_empresa','emails','impTotal','isImpuesto'))
+        //      ->header('Cache-Control', 'public')
+        //      ->header('Content-Description', 'File Transfer')
+        //      ->header('Content-Disposition', 'attachment; filename=NC-'.$NotaCredito->nro.'.xml')
+        //      ->header('Content-Transfer-Encoding', 'binary')
+        //      ->header('Content-Type', 'text/xml');
+        //  }
+
+        $xml = view('templates.xml.91', compact('CUDEvr', 'ResolucionNumeracion', 'NotaCredito', 'data', 'items', 'retenciones', 'FacturaRelacionada', 'CufeFactRelacionada', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
+
+        //-- Envío de datos a la DIAN --//
+        $res = $this->EnviarDatosDian($xml);
+
+        //-- Decodificación de respuesta de la DIAN --//
+        $res = json_decode($res, true);
+
+        if (!isset($res['statusCode']) && isset($res['message'])) {
+            return redirect('/empresa/notascredito')->with('message_denied', $res['message']);
+        }
+
+        $statusCode = $res['statusCode']; //200
+
+        //-- Guardamos la respuesta de la dian cuando sea negativa --//
+        if ($statusCode != 200) {
+            $NotaCredito->dian_response = $res['statusCode'];
+            $NotaCredito->save();
+        }
+
+        //-- Validación 1 del status code (Cuando hay un error) --//
+        if ($statusCode != 200) {
+            $message = $res['errorMessage'];
+            $errorReason = $res['errorReason'];
+            $statusCode =  $res['statusCode'];
+
+            //Validamos si depronto la nota crédito fue emitida pero no quedamos con ningun registro de ella.
+            $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91", $NotaCredito->nro);
+
+            //Decodificamos repsuesta y la guardamos en la variable status json
+            $statusJson = json_decode($statusJson, true);
+
+            if ($statusJson["statusCode"] != 200) {
+                //Validamos enviando la solciitud de esta manera, ya que funciona de varios modos
+                $res = $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91", "");
+
+                //Decodificamos repsuesta y la guardamos en la variable status json
+                $statusJson = json_decode($statusJson, true);
+            }
+
+            if ($statusJson["statusCode"] == 200) {
+                $message = "Nota crédito emitida correctamente";
+                $NotaCredito->emitida = 1;
+                $NotaCredito->dian_response = $statusJson["statusCode"];
+                $NotaCredito->fecha_expedicion = Carbon::now();
+                $NotaCredito->save();
+
+                $this->generateXmlPdfEmail($statusJson['document'], $NotaCredito, $emails, $data, $CUDEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+            } else {
+
+                //Si no pasa despues de validar el estado de la dian, probablemente sea por que esta tirando error de "documento procesado anteriormente" así no esté procesado
+                //entonces requerimos ir al xml colocar un espacio en el nro y colocar un espacio en el cude.
+                $responseConEspacio = $this->reenvioXmlEspacio(
+                    $NotaCredito,
+                    $impTotal,
+                    $data,
+                    $ResolucionNumeracion,
+                    $items,
+                    $retenciones,
+                    $FacturaRelacionada,
+                    $CufeFactRelacionada,
+                    $responsabilidades_empresa,
+                    $emails,
+                    $isImpuesto
+                );
+
+                if (isset($responseConEspacio["statusCode"])) {
+
+                    if ($responseConEspacio["statusCode"] == 200) {
+                        $message = "Nota crédito emitida correctamente";
+                        $NotaCredito->emitida = 1;
+                        $NotaCredito->dian_response = $responseConEspacio['statusCode'];
+                        $NotaCredito->notificacion = 1;
+                        $NotaCredito->fecha_expedicion = Carbon::now();
+                        $NotaCredito->save();
+
+                        $this->generateXmlPdfEmail($responseConEspacio['document'], $NotaCredito, $emails, $data, $CUDEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+                    } else {
+                        return back()->with('message_denied', $message)->with('errorReason', $errorReason)->with('statusCode', $statusCode);
+                    }
+                } else {
+                    return back()->with('message_denied', $message)->with('errorReason', $errorReason)->with('statusCode', $statusCode);
+                }
+            }
+        }
+
+        //-- estátus de que la factura ha sido aprobada --//
+        if ($statusCode == 200) {
+            $message = "Nota crédito emitida correctamente";
+            $NotaCredito->emitida = 1;
+            $NotaCredito->fecha_expedicion = Carbon::now();
+            $NotaCredito->save();
+
+            $this->generateXmlPdfEmail($res['document'], $NotaCredito, $emails, $data, $CUDEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+        }
+        return back()->with('message_success', $message);
     }
 
-    $CufeFactRelacionada  = $FacturaRelacionada->info_cufe($nroFacturaRelacionada, $impTotal);
-
-
-      //--------------Fin Factura Relacionada -----------------------//
-
-
-    $impTotal = 0;
-
-    foreach ($NotaCredito->total()->imp as $totalImp){
-        if(isset($totalImp->total)){
-            $impTotal = $totalImp->total;
-        }
-    }
-
-    $items = ItemsNotaCredito::where('nota',$id)->get();
-
-
-    $infoCude = [
-      'Numfac' => $NotaCredito->nro,
-      'FecFac' => Carbon::parse($NotaCredito->created_at)->format('Y-m-d'),
-      'HorFac' => Carbon::parse($NotaCredito->created_at)->format('H:i:s').'-05:00',
-      'ValFac' => number_format($NotaCredito->total()->subtotal - $NotaCredito->total()->descuento,2,'.',''),
-      'CodImp' => '01',
-      'ValImp' => number_format($impTotal,2,'.',''),
-      'CodImp2'=> '04',
-      'ValImp2'=> '0.00',
-      'CodImp3'=> '03',
-      'ValImp3'=> '0.00',
-      'ValTot' => number_format($NotaCredito->total()->subtotal + $NotaCredito->impuestos_totales() - $NotaCredito->total()->descuento, 2, '.', ''),
-      'NitFE'  => $data['Empresa']['nit'],
-      'NumAdq' => $NotaCredito->cliente()->nit,
-      'pin'    => 75315,
-      'TipoAmb'=> 1,
-  ];
-
-  $CUDE = $infoCude['Numfac'].$infoCude['FecFac'].$infoCude['HorFac'].$infoCude['ValFac'].$infoCude['CodImp'].$infoCude['ValImp'].$infoCude['CodImp2'].$infoCude['ValImp2'].$infoCude['CodImp3'].$infoCude['ValImp3'].$infoCude['ValTot'].$infoCude['NitFE'].$infoCude['NumAdq'].$infoCude['pin'].$infoCude['TipoAmb'];
-
-  $CUDEvr = hash('sha384',$CUDE);
-
-  $infoCliente = Contacto::find($NotaCredito->cliente);
-  $data['Cliente'] = $infoCliente->toArray();
-
-  $DocumentXML = new DOMDocument();
-  $DocumentXML->preserveWhiteSpace = false;
-  $DocumentXML->formatOutput = true;
-
-
-  $responsabilidades_empresa = DB::table('empresa_responsabilidad as er')
-  ->join('responsabilidades_facturacion as rf','rf.id','=','er.id_responsabilidad')
-  ->select('rf.*')
-  ->where('er.id_empresa',Auth::user()->empresa)
-  ->get();
-
-//   if(auth()->user()->empresa == 88){
-//         return response()->view('templates.xml.91',compact('CUDEvr','ResolucionNumeracion','NotaCredito', 'data','items','retenciones','FacturaRelacionada','CufeFactRelacionada','responsabilidades_empresa'))
-//           ->header('Cache-Control', 'public')
-//           ->header('Content-Description', 'File Transfer')
-//           ->header('Content-Disposition', 'attachment; filename=NC-'.$NotaCredito->nro.'.xml')
-//           ->header('Content-Transfer-Encoding', 'binary')
-//           ->header('Content-Type', 'text/xml');
-//   }    
-
-
-  $xml = view('templates.xml.91',compact('CUDEvr','ResolucionNumeracion','NotaCredito', 'data','items','retenciones','FacturaRelacionada','CufeFactRelacionada','responsabilidades_empresa'));
-
-  //-- Envío de datos a la DIAN --//
-  $res = $this->EnviarDatosDian($xml);
-
-      //-- Guardamos la respuesta de la dian --//
-  $NotaCredito->dian_response = $res;
-  $NotaCredito->save();
-
-      //-- Decodificación de respuesta de la DIAN --//
-  $res=json_decode($res,true);
-
-  $statusCode=$res['statusCode'];//200
-
-  //-- Validación 1 del status code (Cuando hay un error) --//
-  if ($statusCode != 200) {
-      $message = $res['errorMessage'];
-      $errorReason = $res['errorReason'];
-      return back()->with('message_denied',$message)->with('errorReason',$errorReason);
-  }
-
-
-  $document=$res['document'];
-    //-- estátus de que la factura ha sido aprobada --//
-  if($statusCode == 200)
-  {
-      //$message = $res['statusMessage'];
-      $message = "Nota  crédito emitida correctamente";
-      $NotaCredito->emitida = 1;
-      $NotaCredito->fecha_expedicion = Carbon::now();
-      $NotaCredito->save();
-
-      $document=base64_decode($document);
-
-    //-- Generación del archivo .xml mas el lugar donde se va a guardar --//
-      $path = public_path() . '/xml/empresa' . auth()->user()->empresa;
-
-      if (!File::exists($path)) {
-        File::makeDirectory($path);
-        $path = $path."/NC";
-        File::makeDirectory($path);
-    }else
+    public function reenvioXmlEspacio($NotaCredito, $impTotal, $data, $ResolucionNumeracion, $items, $retenciones, $FacturaRelacionada, $CufeFactRelacionada, $responsabilidades_empresa, $emails, $isImpuesto)
     {
-        $path = public_path() . '/xml/empresa' . auth()->user()->empresa . "/NC";
+        //Hacemos parche que nos ha servido hasta el momento para este tipo de errores
+        $NotaCredito->nro = "  " . $NotaCredito->nro;
+
+        $infoCude = [
+            'Numfac' => $NotaCredito->nro,
+            'FecFac' => Carbon::parse($NotaCredito->fecha)->format('Y-m-d'),
+            'HorFac' => Carbon::parse($NotaCredito->created_at)->format('H:i:s') . '-05:00',
+            'ValFac' => number_format($NotaCredito->total()->subtotal - $NotaCredito->total()->descuento, 2, '.', ''),
+            'CodImp' => '01',
+            'ValImp' => number_format($impTotal, 2, '.', ''),
+            'CodImp2' => '04',
+            'ValImp2' => '0.00',
+            'CodImp3' => '03',
+            'ValImp3' => '0.00',
+            'ValTot' => number_format($NotaCredito->total()->subtotal + $NotaCredito->impuestos_totales() - $NotaCredito->total()->descuento, 2, '.', ''),
+            'NitFE'  => $data['Empresa']['nit'],
+            'NumAdq' => $NotaCredito->cliente()->nit,
+            'pin'    => 75315,
+            'TipoAmb' => 1,
+        ];
+
+        $CUDE = $infoCude['Numfac'] . $infoCude['FecFac'] . $infoCude['HorFac'] . $infoCude['ValFac'] . $infoCude['CodImp'] . $infoCude['ValImp'] . $infoCude['CodImp2'] . $infoCude['ValImp2'] . $infoCude['CodImp3'] . $infoCude['ValImp3'] . $infoCude['ValTot'] . $infoCude['NitFE'] . $infoCude['NumAdq'] . $infoCude['pin'] . $infoCude['TipoAmb'];
+
+
+        $CUDEvr = hash('sha384', $CUDE);
+
+        // if(auth()->user()->empresa == 240){
+        //  return response()->view('templates.xml.91',compact('CUDEvr','ResolucionNumeracion','NotaCredito', 'data','items','retenciones','FacturaRelacionada','CufeFactRelacionada','responsabilidades_empresa','emails','impTotal','isImpuesto'))
+        //     ->header('Cache-Control', 'public')
+        //     ->header('Content-Description', 'File Transfer')
+        //     ->header('Content-Disposition', 'attachment; filename=NC-'.$NotaCredito->nro.'.xml')
+        //     ->header('Content-Transfer-Encoding', 'binary')
+        //     ->header('Content-Type', 'text/xml');
+        // }
+
+        $xml = view('templates.xml.91', compact('CUDEvr', 'ResolucionNumeracion', 'NotaCredito', 'data', 'items', 'retenciones', 'FacturaRelacionada', 'CufeFactRelacionada', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
+
+        $res = $this->EnviarDatosDian($xml);
+
+        $res = json_decode($res, true);
+
+        return $res;
+    }
+
+    /**
+     * Metodo de generacion de xml,pdf y envio de email de una nota credito dian
+     * Consultamos si una factura ya fue emititda y no quedamos con registro de ella, de ser así la guardamos, en bd, generamos el xml y enviamos el correo al cliente.
+     */
+    public function generateXmlPdfEmail($document, $NotaCredito, $emails, $data, $CUDEvr, $items, $ResolucionNumeracion, $tituloCorreo)
+    {
+
+        $empresa = auth()->user()->empresaObj;
+        $document = base64_decode($document);
+
+        //-- Generación del archivo .xml mas el lugar donde se va a guardar --//
+        $path = public_path() . '/xml/empresa' . auth()->user()->empresa;
+
         if (!File::exists($path)) {
             File::makeDirectory($path);
+            $path = $path . "/NC";
+            File::makeDirectory($path);
+        } else {
+            $path = public_path() . '/xml/empresa' . auth()->user()->empresa . "/NC";
+            if (!File::exists($path)) {
+                File::makeDirectory($path);
+            }
+        }
+
+        $namexml = 'NC-' . $NotaCredito->nro . ".xml";
+        $ruta_xmlresponse = $path . "/" . $namexml;
+        $file = fopen($ruta_xmlresponse, "w");
+        fwrite($file, $document . PHP_EOL);
+        fclose($file);
+
+        //-- Construccion del pdf a enviar con el código qr + el envío del archivo xml --//
+        if ($NotaCredito) {
+
+            /*..............................
+        Construcción del código qr a la factura
+        ................................*/
+            $impuesto = 0;
+            foreach ($NotaCredito->total()->imp as $key => $imp) {
+                if (isset($imp->total)) {
+                    $impuesto = $imp->total;
+                }
+            }
+
+            $codqr = "NumFac:" . $NotaCredito->codigo . "\n" .
+                "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                "FecFac:" . Carbon::parse($NotaCredito->created_at)->format('Y-m-d') .  "\n" .
+                "HoraFactura" . Carbon::parse($NotaCredito->created_at)->format('H:i:s') . '-05:00' . "\n" .
+                "ValorFactura:" .  number_format($NotaCredito->total()->subtotal, 2, '.', '') . "\n" .
+                "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+                "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                "ValorTotalFactura:" .  number_format($NotaCredito->total()->subtotal + $NotaCredito->impuestos_totales(), 2, '.', '') . "\n" .
+                "CUDE:" . $CUDEvr;
+
+            /*..............................
+            Construcción del código qr a la factura
+            ................................*/
+
+            $itemscount = $items->count();
+            $nota = $NotaCredito;
+            $facturas = NotaCreditoFactura::where('nota', $nota->id)->get();
+            $retenciones = FacturaRetencion::join('notas_factura as nf', 'nf.factura', '=', 'factura_retenciones.factura')
+                ->join('retenciones', 'retenciones.id', '=', 'factura_retenciones.id_retencion')
+                ->where('nf.nota', $nota->id)->get();
+
+            if ($nota->tipo_operacion == 3) {
+                $detalle_recaudo = Factura::where('id', $facturas->first()->factura)->first();
+                $nota->placa = $detalle_recaudo->placa;
+                $detalle_recaudo = $detalle_recaudo->detalleRecaudo();
+                $pdf = PDF::loadView('pdf.creditotercero', compact('nota', 'items', 'facturas', 'itemscount', 'codqr', 'CUDEvr', 'detalle_recaudo'))
+                    ->save(public_path() . "/convertidor" . "/NC-" . $nota->nro . ".pdf")->stream();
+            } else {
+                $pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones', 'itemscount', 'codqr', 'CUDEvr', 'empresa'))
+                    ->save(public_path() . "/convertidor" . "/NC-" . $nota->nro . ".pdf")->stream();
+            }
+
+            /*..............................
+            Construcción del envío de correo electrónico
+            ................................*/
+
+            $data = array(
+                'email' => 'info@gestordepartes.net',
+            );
+            $totalRecaudo = 0;
+            if ($nota->total_recaudo != null) {
+                $totalRecaudo = $nota->total_recaudo;
+            }
+            $total = Funcion::Parsear($nota->total()->total + $totalRecaudo);
+            $cliente = $nota->cliente()->nombre;
+
+            //Construccion del archivo zip.
+            $zip = new ZipArchive();
+
+            //Después creamos un archivo zip temporal que llamamos miarchivo.zip y que eliminaremos después de descargarlo.
+            //Para indicarle que tiene que crearlo ya que no existe utilizamos el valor ZipArchive::CREATE.
+            $nombreArchivoZip = "NC-" . $nota->nro . ".zip";
+
+            $zip->open("convertidor/" . $nombreArchivoZip, ZipArchive::CREATE);
+
+            if (!$zip->open($nombreArchivoZip, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+                return ("Error abriendo ZIP en $nombreArchivoZip");
+            }
+
+            $ruta_pdf = public_path() . "/convertidor" . "/NC-" . $nota->nro . ".pdf";
+
+            $zip->addFile($ruta_xmlresponse, "NC-" . $nota->nro . ".xml");
+            $zip->addFile($ruta_pdf, "NC-" . $nota->nro . ".pdf");
+            $resultado = $zip->close();
+
+            Mail::send('emails.notascredito', compact('nota', 'total', 'cliente'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $nota, $nombreArchivoZip, $tituloCorreo) {
+                $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
+
+
+                /*Peticiones de clientes que no quieren que se mande la factura de venta por fuera del zip (tal como si es permitido por la DIAN)*/
+                if (config('app.name') == "Gestoru" && auth()->user()->empresa != 52) {
+                    $message->attachData($pdf, 'NC-' . $nota->nro . '.pdf', ['mime' => 'application/pdf']);
+                }
+
+                $message->from('info@gestordepartes.net', Auth::user()->empresaObj->nombre);
+                $message->to(array_filter((array) $emails))->subject($tituloCorreo);
+            });
+
+            // Si quieres puedes eliminarlo después:
+            if (isset($nombreArchivoZip)) {
+                unlink($nombreArchivoZip);
+                unlink($ruta_pdf);
+            }
         }
     }
 
-    $namexml ='NC-'.$NotaCredito->nro . ".xml";
-    $ruta_xmlresponse = $path."/".$namexml;
-    $file = fopen($ruta_xmlresponse, "w");
-    fwrite($file, $document. PHP_EOL);
-    fclose($file);
 
-      //-- Construccion del pdf a enviar con el código qr + el envío del archivo xml --//
-    if ($NotaCredito) {
-
-        $emails=$NotaCredito->cliente()->email;
-        if ($NotaCredito->cliente()->asociados('number')>0) {
-          $email=$emails;
-          $emails=array();
-          if ($email) {$emails[]=$email;}
-          foreach ($NotaCredito->cliente()->asociados() as $asociado) {
-            if ($asociado->notificacion==1 && $asociado->email) {
-              $emails[]=$asociado->email;
-          }
-      }
-  }
-
-
-  if (!$emails || count($emails)==0) {
-    return redirect('empresa/notascredito/'.$NotaCredito->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
-}
-
-
-    /*..............................
-    Construcción del código qr a la factura
-    ................................*/
-    $impuesto = 0;
-    foreach ($NotaCredito->total()->imp as $key => $imp) {
-      if(isset($imp->total))
-      {
-        $impuesto = $imp->total;
-    }
-}
-
-$codqr = "NumFac:" . $NotaCredito->codigo . "\n" .
-"NitFac:"  . $data['Empresa']['nit']   . "\n" .
-"DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-"FecFac:" . Carbon::parse($NotaCredito->created_at)->format('Y-m-d') .  "\n" .
-"HoraFactura" . Carbon::parse($NotaCredito->created_at)->format('H:i:s').'-05:00' . "\n" .
-"ValorFactura:" .  number_format($NotaCredito->total()->subtotal, 2, '.', '') . "\n" .
-"ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-"ValorOtrosImpuestos:" .  0.00 . "\n" .
-"ValorTotalFactura:" .  number_format($NotaCredito->total()->subtotal + $NotaCredito->impuestos_totales(), 2, '.', '') . "\n" .
-"CUDE:" . $CUDEvr;
-
-    /*..............................
-    Construcción del código qr a la factura
-    ................................*/
-
-    $itemscount= $items->count();
-    $nota = $NotaCredito;
-    $facturas = NotaCreditoFactura::where('nota',$nota->id)->get();
-    $retenciones = FacturaRetencion::join('notas_factura as nf','nf.factura','=','factura_retenciones.factura')
-    ->join('retenciones','retenciones.id','=','factura_retenciones.id_retencion')
-    ->where('nf.nota',$nota->id)->get();
-
-    $pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones','itemscount','codqr','CUDEvr'))->stream();
-
-    /*..............................
-    Construcción del envío de correo electrónico
-    ................................*/
-
-    $data = array(
-      'email'=> 'info@gestordepartes.net',
-  );
-    $total = Funcion::Parsear($nota->total()->total);
-    $cliente = $nota->cliente()->nombre;
-    Mail::send('emails.notascredito', compact('nota','total','cliente'), function($message) use ($pdf, $emails,$ruta_xmlresponse,$nota)
+    public function validateTimeEmicion()
     {
-      $message->attachData($pdf, 'NotaCredito.pdf', ['mime' => 'application/pdf']);
-      $message->attach($ruta_xmlresponse);
-      $message->from('info@gestordepartes.net', Auth::user()->empresa()->nombre);
-      $message->to($emails)->subject(Auth::user()->empresa()->nombre . " Nota Crédito Electrónica " . $nota->nro);
-  });
-}
-return back()->with('message_success',$message);
-}
-}
-
-
-public function validateTimeEmicion()
-{
-  
-  if(auth()->user()->empresa()->estado_dian == 1){
-
-    $pendientes = NotaCredito::where('empresa',auth()->user()->empresa)
-  ->where('emitida',0)->where('created_at','<=',Carbon::now()->subDay(1))->get();
-
-  return response()->json($pendientes);
-  }else return null;
-
-} 
+        if (Auth::user()->empresaObj->estado_dian == 1) {
+            $pendientes = NotaCredito::where('empresa', auth()->user()->empresa)
+                ->where('emitida', 0)
+                ->whereDate('fecha', '>=', '2019-11-01')
+                ->get();
+            return response()->json($pendientes);
+        } else {
+            return null;
+        }
+    }
 
 
 }
