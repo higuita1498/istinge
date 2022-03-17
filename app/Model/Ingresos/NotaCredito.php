@@ -245,4 +245,9 @@ class NotaCredito extends Model
 
         return false;
     }
+
+    public function modelDetalle()
+    {
+        return NotaCreditoFactura::where('nota', $this->id)->first();
+    }
 }   

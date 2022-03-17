@@ -5,6 +5,7 @@
         <input name="_method" type="hidden" value="PATCH">
         <input type="hidden" value="1" name="fact_prov" id="fact_prov">
         <input type="hidden" value="1" name="cotizacion" id="cotizacion_si">
+        <input type="hidden" value="1" name="dian" id="dian">
 
         <div class="row" style=" text-align: right;">
             <div class="col-md-6">
