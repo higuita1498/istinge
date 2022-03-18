@@ -376,10 +376,10 @@ class ContratosController extends Controller
                         "target"          => $request->ip,
                         "name"            => $this->normaliza($cliente->nombre),
                         "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                        "priority"        => $priority,
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold,
-                        "burst-time"      => $burst_time
+                        // "priority"        => $priority,
+                        // "burst-limit"     => $burst_limit,
+                        // "burst-threshold" => $burst_threshold,
+                        // "burst-time"      => $burst_time
                         )
                     );
                 }
@@ -393,9 +393,10 @@ class ContratosController extends Controller
                             "server"      => $plan->dhcp_server,
                             "mac-address" => $request->mac_address,
                             "rate-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                            /*"priority"        => $priority,
-                            "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold*/
+                            // "priority"        => $priority,
+                            // "burst-limit"     => $burst_limit,
+                            // "burst-threshold" => $burst_threshold,
+                            // "burst-time"      => $burst_time
                             )
                         );
 
@@ -410,10 +411,10 @@ class ContratosController extends Controller
                                 "target"          => $request->ip,
                                 "name"            => $this->normaliza($cliente->nombre),
                                 "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                "priority"        => $priority,
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold,
-                                "burst-time"      => $burst_time
+                                // "priority"        => $priority,
+                                // "burst-limit"     => $burst_limit,
+                                // "burst-threshold" => $burst_threshold,
+                                // "burst-time"      => $burst_time
                                 )
                             );
                         }
@@ -444,10 +445,10 @@ class ContratosController extends Controller
                             "target"          => $request->ip,
                             "name"            => $this->normaliza($cliente->nombre),
                             "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                            "priority"        => $priority,
-                            "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold,
-                            "burst-time"      => $burst_time
+                            // "priority"        => $priority,
+                            // "burst-limit"     => $burst_limit,
+                            // "burst-threshold" => $burst_threshold,
+                            // "burst-time"      => $burst_time
                             )
                         );
                     }
@@ -465,10 +466,10 @@ class ContratosController extends Controller
                             "target"          => $request->ip_new,
                             "name"            => $this->normaliza($cliente->nombre),
                             "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                            "priority"        => $priority,
-                            "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold,
-                            "burst-time"      => $burst_time
+                            // "priority"        => $priority,
+                            // "burst-limit"     => $burst_limit,
+                            // "burst-threshold" => $burst_threshold,
+                            // "burst-time"      => $burst_time
                             )
                         );
                     }
@@ -493,10 +494,10 @@ class ContratosController extends Controller
                         "target"          => $request->ip,
                         "name"            => $this->normaliza($cliente->nombre),
                         "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                        "priority"        => $priority,
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold,
-                        "burst-time"      => $burst_time
+                        // "priority"        => $priority,
+                        // "burst-limit"     => $burst_limit,
+                        // "burst-threshold" => $burst_threshold,
+                        // "burst-time"      => $burst_time
                         )
                     );
                 }
@@ -649,10 +650,10 @@ class ContratosController extends Controller
                                     "server"          => $plan->dhcp_server,
                                     "mac-address"     => $request->mac_address,
                                     "rate-limit"      => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                    "priority"        => $priority,
-                                    "burst-limit"     => $burst_limit,
-                                    "burst-threshold" => $burst_threshold,
-                                    "burst-time"      => $burst_time
+                                    // "priority"        => $priority,
+                                    // "burst-limit"     => $burst_limit,
+                                    // "burst-threshold" => $burst_threshold,
+                                    // "burst-time"      => $burst_time
                                     )
                                 );
                             }
