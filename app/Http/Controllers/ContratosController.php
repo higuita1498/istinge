@@ -365,7 +365,7 @@ class ContratosController extends Controller
                         "name"           => $request->usuario,       //USER
                         "password"       => $request->password,      //CLAVE
                         "profile"        => 'default',               //PERFIL
-                        "local-address"  => $request->local_address, //IP LOCAL
+                        "local-address"  => $request->ip,            //IP LOCAL
                         "remote-address" => $request->ip,            // IP CLIENTE
                         "service"        => 'pppoe',                 // SERVICIO
                         "comment"        => $nro_contrato            //NRO DEL CONTATO
