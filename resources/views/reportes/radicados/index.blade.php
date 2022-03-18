@@ -85,7 +85,7 @@
                     <th>Cliente</th>
                     <th class="text-center">Servicio</th>
                     <th class="text-center">Técnico</th>
-                    <th class="text-center">Nro Rdicados</th>
+                    <th class="text-center">Nro Radicados</th>
                     <th class="text-center">Estatus</th>
                 </tr>
                 </thead>
