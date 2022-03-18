@@ -517,7 +517,7 @@
         <table class="qr-table" style="width:100%;margin:5px 0px 5px 0px;">
             <tbody>
             <tr>
-            <td class="text-align:center" width="30%" style="padding:3.8em;">
+            <td class="text-align:center" width="50%" style="padding:3em;">
                  <div>
                      @if(isset($codqr))
                     <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(200)->generate($codqr)) !!} ">
@@ -552,11 +552,17 @@
                     <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
                     </tr>
                     </tbody>
+                    
                 </table>
             </td>
             </tr>
             </tbody>
         </table>
+                @if(isset($CUFEvr))
+              
+                        <div style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
+                    
+                @endif
       </div>
       
     <div class="margin-docpdf">
