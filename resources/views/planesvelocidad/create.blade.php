@@ -5,6 +5,31 @@
     		background: #f9f9f9;
     		border-color: #dee4e6;
     	}
+    	.nav-tabs .nav-link {
+    		font-size: 1em;
+    	}
+    	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		color: #fff!important;
+    	}
+    	.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    	.nav-pills .nav-link {
+    		font-weight: 700!important;
+    	}
+    	.nav-pills .nav-link{
+    		color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    		background-color: #f9f9f9!important;
+    		margin: 2px;
+    		border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		transition: 0.4s;
+    	}
+    	.nav-pills .nav-link:hover {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
     </style>
 
     <form method="POST" action="{{ route('planes-velocidad.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-retencion" >
@@ -208,6 +233,33 @@
         	            <input type="number" class="form-control"  id="prioridad" name="prioridad"  value="8" min="1" max="8">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('prioridad') }}</strong>
+        	            </span>
+        	        </div>
+
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Limit at subida</label>
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="limit_at_subida" name="limit_at_subida"  value="{{old('limit_at_subida')}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('limit_at_subida') }}</strong>
+        	            </span>
+        	        </div>
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Limit at bajada</label>
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="limit_at_bajada" name="limit_at_bajada"  value="{{old('limit_at_bajada')}}" maxlength="200" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">Mb</div>
+        	            	</div>
+        	            </div>
+
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('limit_at_bajada') }}</strong>
         	            </span>
         	        </div>
         	   </div>
