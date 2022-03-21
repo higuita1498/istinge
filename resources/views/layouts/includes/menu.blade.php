@@ -305,6 +305,11 @@
                         <a class="nav-link" href="{{route('planes-velocidad.index')}}">Planes de Velocidad</a>
                     </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['753']))
+                    <li class="nav-item" id="gestion_blacklist">
+                        <a class="nav-link" href="{{route('monitor-blacklist.index')}}">Monitor Blacklist</a>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </li>

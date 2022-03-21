@@ -73,6 +73,7 @@ Route::get('reporte', 'CRMController@reporte');
 Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
+Route::get('blacklist', 'BlacklistController@blacklist');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -905,4 +906,12 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');
+
+	//MONITOR BLACKLIST
+	    Route::group(['prefix' => 'monitor-blacklist'], function() {
+	        Route::get('/verificar/{id}', 'BlacklistController@verificar')->name('monitor-blacklist.verificar');
+	        Route::get('/api/', 'BlacklistController@create_apikey')->name('monitor-blacklist.api');
+	        Route::post('store_api', 'BlacklistController@store_api')->name('monitor-blacklist.store_api');
+	    });
+		Route::resource('monitor-blacklist', 'BlacklistController');
 });
