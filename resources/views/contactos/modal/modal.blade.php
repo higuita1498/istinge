@@ -129,6 +129,20 @@
       	</div>
     
       	<div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Estrato</label>
+                <select class="form-control selectpicker" id="estrato" name="estrato"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('estato') }}</strong>
+                </span>
+            </div>
       	    <div class="form-group col-md-3">
     			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
     			<div class="form-check form-check-flat">

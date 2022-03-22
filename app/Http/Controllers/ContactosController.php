@@ -100,6 +100,11 @@ class ContactosController extends Controller
                     $query->orWhere('serial_onu', 'like', "%{$request->serial_onu}%");
                 });
             }
+            if($request->estrato){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('estrato', 'like', "%{$request->estrato}%");
+                });
+            }
             if($request->t_contrato == 1){
                 $contactos->whereNotExists(function($query){
                     $query->select(DB::raw(1))
@@ -152,6 +157,9 @@ class ContactosController extends Controller
             })
             ->editColumn('ip', function (Contacto $contacto) {
                 return $contacto->contract('true');
+            })
+            ->editColumn('estrato', function (Contacto $contacto) {
+                return ($contacto->estrato) ? $contacto->estrato : 'N/A';
             })
 
             ->addColumn('acciones', $modoLectura ?  "" : "contactos.acciones-contactos")
@@ -363,6 +371,7 @@ class ContactosController extends Controller
         $contacto->telefono2=$request->telefono2;
         $contacto->fax=$request->fax;
         $contacto->celular=$request->celular;
+        $contacto->estrato=$request->estrato;
         $contacto->observaciones=$request->observaciones;
         $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
 
@@ -417,6 +426,7 @@ class ContactosController extends Controller
         $contacto->telefono2=$request->telefono2;
         $contacto->fax=$request->fax;
         $contacto->celular=$request->celular;
+        $contacto->estrato=$request->estrato;
         $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
         $contacto->observaciones=$request->observaciones;
 
@@ -451,7 +461,7 @@ class ContactosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contacto =Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
+        $contacto = Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
         
         if ($contacto) {
             $identificaciones=TipoIdentificacion::all();
@@ -490,6 +500,7 @@ class ContactosController extends Controller
             $contacto->telefono2=$request->telefono2;
             $contacto->fax=$request->fax;
             $contacto->celular=$request->celular;
+            $contacto->estrato=$request->estrato;
             $contacto->observaciones=$request->observaciones;
             $contacto->serial_onu=$request->serial_onu;
             $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
@@ -597,7 +608,7 @@ class ContactosController extends Controller
             }
         }
         
-        $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, CS.public_id as contrato, I.id as plan, GC.fecha_corte, GC.fecha_suspension FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE C.id = '".$id."'");
+        $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, I.id as plan, GC.fecha_corte, GC.fecha_suspension FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE C.id = '".$id."'");
 
         if ($contacto) {
             return json_encode($contacto);

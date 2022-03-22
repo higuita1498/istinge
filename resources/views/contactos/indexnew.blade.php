@@ -84,6 +84,16 @@
 						<option value="1" >Sin contratos</option>
 					</select>
 				</div>
+				<div class="col-md-3 pl-1 pt-1">
+					<select title="Estrato" class="form-control rounded selectpicker" id="estrato" data-size="5" data-live-search="true">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+					</select>
+				</div>
 				@endif
 				<div class="col-md-1 pl-1 pt-1 text-left">
 					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -166,6 +176,7 @@
             data.email = $('#email').val();
             data.t_contrato = $('#t_contrato').val();
             data.serial_onu = $('#serial_onu').val();
+            data.estrato = $('#estrato').val();
             data.filtro = true;
         });
 
@@ -206,6 +217,7 @@
 		$('#email').val('');
 		$('#t_contrato').val('').selectpicker('refresh');
 		$('#serial_onu').val('');
+		$('#estrato').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
