@@ -150,9 +150,12 @@ class ContactosController extends Controller
             ->editColumn('radicado', function (Contacto $contacto) {
                 return $contacto->radicados();
             })
+            ->editColumn('ip', function (Contacto $contacto) {
+                return $contacto->contract('true');
+            })
 
             ->addColumn('acciones', $modoLectura ?  "" : "contactos.acciones-contactos")
-            ->rawColumns(['acciones', 'nombre', 'contrato'])
+            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
             ->toJson();
     }
 
