@@ -1454,7 +1454,7 @@ class Controller extends BaseController
     }
     
     public function getIps($mikrotik){
-        $ips = Contrato::where('server_configuration_id', $mikrotik)->where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
+        $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
         return response()->json($ips);
         
     }
