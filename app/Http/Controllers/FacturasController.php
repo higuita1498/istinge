@@ -790,7 +790,7 @@ class FacturasController extends Controller{
         $nro = $nro->tipoNumeracion($contrato);
     }
 
-    //Por acá entra cuando quiero crear una factura electrónica sin que esté asociadaa un contrato.
+    //Por acá entra cuando quiero crear una factura electrónica sin que esté asociadaa un contrato
     if (!$nro) {
 
         if(isset($request->electronica)){
@@ -1456,11 +1456,11 @@ public function edit($id){
     Construcción del código qr a la factura
     ................................*/
 
-    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'))->stream();
+    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'))->stream();
       }
       else
       {
-       $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'))->stream();
+       $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'))->stream();
       }
       //-----------------------------------------------//
 
