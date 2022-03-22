@@ -45,14 +45,8 @@ class CronController extends Controller
             foreach ($contratos as $contrato) {
                 $numero++;
 
-                if($contrato->facturacion == 3){
-                    $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
-                }else{
-                    $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
-                }
-
                 //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                $nro = $nro->tipoNumeracion($nro,$contrato);
+                $nro = $nro->tipoNumeracion($contrato);
 
                 if($contrato->fecha_suspension){
                     if($ultimo[2] == 31 && date('d') == "25"){

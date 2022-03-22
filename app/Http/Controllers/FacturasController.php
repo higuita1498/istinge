@@ -787,12 +787,15 @@ class FacturasController extends Controller{
         $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
         //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
-        $nro = $nro->tipoNumeracion($nro,$contrato);
+        $nro = $nro->tipoNumeracion($contrato);
     }
 
+    //Por acá entra cuando quiero crear una factura electrónica sin que esté asociadaa un contrato.
     if (!$nro) {
 
         if(isset($request->electronica)){
+
+            //No se llama el metodo de tipoNumeracion por que las facturas electrónicas no necesitan de un contrato para ser generadas.
             $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
             if(!$nro){
                 $mensaje='Debes crear una numeración para facturas de venta preferida';
@@ -1379,7 +1382,7 @@ public function edit($id){
         }
         
         view()->share(['title' => 'Imprimir Factura']);
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=', 2)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         if ($factura) {
             if (!$emails) {
                 $emails=$factura->cliente()->email;

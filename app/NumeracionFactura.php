@@ -40,9 +40,14 @@ class NumeracionFactura extends Model
         
     }
 
-    public function tipoNumeracion($numeracion, $contrato){
+    public function tipoNumeracion($contrato){
+    
         if($contrato->facturacion == 3){
-            NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+            $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+        }else{
+            $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
         }
+
+        return $nro;
     }
 } 
