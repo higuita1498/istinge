@@ -26,11 +26,8 @@ class CronController extends Controller
 {
     public static function CrearFactura(){
         $i=0;
-        $fecha = date('Y-m-d');
-        $fecha_corte = date('d', strtotime("+5 days", strtotime($fecha)));
-        $fecha_corte = date('d') + 5;
-        
-        $grupos_corte = GrupoCorte::where('fecha_corte', $fecha_corte)->where('status', 1)->get();
+
+        $grupos_corte = GrupoCorte::where('fecha_factura', date('d'))->where('status', 1)->get();
         
         foreach($grupos_corte as $grupo_corte){
             $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
@@ -94,10 +91,10 @@ class CronController extends Controller
                 $factura->facnotas      = $contrato->notas_fact;
                 $factura->empresa       = 1;
                 $factura->cliente       = $contrato->cliente;
-                $factura->fecha         = $grupo_corte->fecha_factura;
+                $factura->fecha         = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura;
                 $factura->tipo          = $tipo;
-                $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
-                $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($factura->fecha)));
+                $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura)));
+                $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura)));
                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                 $factura->bodega        = 1;
                 $factura->vendedor      = 1;

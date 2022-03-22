@@ -912,6 +912,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/verificar/{id}', 'BlacklistController@verificar')->name('monitor-blacklist.verificar');
 	        Route::get('/api/', 'BlacklistController@create_apikey')->name('monitor-blacklist.api');
 	        Route::post('store_api', 'BlacklistController@store_api')->name('monitor-blacklist.store_api');
+	        Route::get('/reporte/{id}', 'BlacklistController@reporte')->name('monitor-blacklist.reporte');
 	    });
 		Route::resource('monitor-blacklist', 'BlacklistController');
 });

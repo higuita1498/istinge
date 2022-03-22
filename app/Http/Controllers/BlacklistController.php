@@ -303,4 +303,50 @@ class BlacklistController extends Controller
             return redirect('empresa/monitor-blacklist')->with('success', $mensaje);
         }
     }
+
+    public function reporte($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $blacklist = Blacklist::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+
+        if ($blacklist) {
+            $empresa = Empresa::find(Auth::user()->empresa);
+            $api_key = $empresa->api_key_hetrixtools;
+            $contact = $empresa->id_contacto_hetrixtools;
+
+            if(!isset($api_key) || !isset($contact)){
+                return redirect('empresa/monitor-blacklist/api')->with('danger', 'Disculpe, debe configurar el api key y el ID de la lista de contactos para hacer uso de monitor blacklist.');
+            }
+
+            $url = 'https://api.hetrixtools.com/v1/'.$api_key.'/blacklist/report/'.$blacklist->ip.'/';
+
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+            $result = curl_exec($curl);
+            curl_close($curl);
+
+            $response = json_decode($result, true);
+
+            if(!$response[0]['RBL'] == null){
+                $blacklist->blacklisted_count = count($response);
+                $blacklist->estado = (count($response) > 0) ? 2:1;
+                $blacklist->save();
+                return view('monitor-blacklist.reporte', compact('response', 'blacklist'));
+            }else{
+                $mensaje = 'LA IP NO APARECE BLOQUEADA EN NINGÚN SITIO';
+                return redirect('empresa/monitor-blacklist')->with('success', $mensaje);
+            }
+        }else{
+            return redirect('empresa/monitor-blacklist')->with('danger', 'MONITOR BLACKLIST NO ENCONTRADO, INTENTE NUEVAMENTE');
+        }
+    }
 }
