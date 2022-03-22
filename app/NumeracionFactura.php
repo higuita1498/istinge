@@ -40,7 +40,7 @@ class NumeracionFactura extends Model
         
     }
 
-    public function tipoNumeracion($contrato){
+    public static function tipoNumeracion($contrato){
     
         if($contrato->facturacion == 3){
             $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();

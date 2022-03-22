@@ -46,7 +46,7 @@ class CronController extends Controller
                 $numero++;
 
                 //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                $nro = $nro->tipoNumeracion($contrato);
+                $nro = NumeracionFactura::tipoNumeracion($contrato);
 
                 if($contrato->fecha_suspension){
                     if($ultimo[2] == 31 && date('d') == "25"){
