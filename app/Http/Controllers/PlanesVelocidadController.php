@@ -195,6 +195,8 @@ class PlanesVelocidadController extends Controller
         $plan->queue_type_bajada = $request->queue_type_bajada;
         $plan->parenta = $request->parenta;
         $plan->prioridad = $request->prioridad;
+        $plan->limit_at_subida = $request->limit_at_subida;
+        $plan->limit_at_bajada = $request->limit_at_bajada;
         $plan->item = $inventario->id;
         $plan->empresa = Auth::user()->empresa;
         $plan->dhcp_server = $request->dhcp_server;
@@ -247,6 +249,8 @@ class PlanesVelocidadController extends Controller
             $plan->parenta = $request->parenta;
             $plan->prioridad = $request->prioridad;
             $plan->dhcp_server = $request->dhcp_server;
+            $plan->limit_at_subida = $request->limit_at_subida;
+            $plan->limit_at_bajada = $request->limit_at_bajada;
             $plan->save();
             
             $inventario              = Inventario::find($plan->item);

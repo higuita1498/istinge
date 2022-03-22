@@ -41,7 +41,8 @@ class PromesasPagoController extends Controller
         $promesas = PromesaPago::query()
             ->join('factura', 'factura.id', '=', 'promesa_pago.factura')
             ->join('contactos', 'contactos.id', '=', 'promesa_pago.cliente')
-            ->select('promesa_pago.*');
+            ->select('promesa_pago.*')
+            ->where('factura.estatus', 1);
 
         if ($request->filtro == true) {
             if($request->cliente){

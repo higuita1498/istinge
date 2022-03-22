@@ -85,6 +85,7 @@
                     <th>Cliente</th>
                     <th class="text-center">Servicio</th>
                     <th class="text-center">Técnico</th>
+                    <th class="text-center">Nro Radicados</th>
                     <th class="text-center">Estatus</th>
                 </tr>
                 </thead>
@@ -97,6 +98,7 @@
                         <td>{{ $movimiento->nombre }}</td>
                         <td class="text-center">{{ $movimiento->servicio()->nombre }}</td>
                         <td class="text-center">{{ $movimiento->tecnico_reporte() }}</td>
+                        <td class="text-center">{{ $movimiento->nro_radicados() }}</td>
                         <td class="text-center">
                             @if ($movimiento->estatus == 0)
 							    <span class="text-danger font-weight-bold">Pendiente</span>

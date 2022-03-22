@@ -34,6 +34,8 @@ use DB;
 use Carbon\Carbon;
 use Session;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel; 
@@ -292,7 +294,7 @@ class ContratosController extends Controller
         $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa'));
     }
     
     public function store(Request $request){
@@ -358,6 +360,7 @@ class ContratosController extends Controller
                 $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
                 $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
                 $burst_time = ($plan->burst_time_subida) ? $plan->burst_time_subida.'S/'.$plan->burst_time_bajada.'S': '';
+                $limit_at = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
 
                 /*PPPOE*/
                 if($request->conexion == 1){
@@ -365,7 +368,7 @@ class ContratosController extends Controller
                         "name"           => $request->usuario,       //USER
                         "password"       => $request->password,      //CLAVE
                         "profile"        => 'default',               //PERFIL
-                        "local-address"  => $request->local_address, //IP LOCAL
+                        "local-address"  => $request->ip,            //IP LOCAL
                         "remote-address" => $request->ip,            // IP CLIENTE
                         "service"        => 'pppoe',                 // SERVICIO
                         "comment"        => $nro_contrato            //NRO DEL CONTATO
@@ -373,9 +376,10 @@ class ContratosController extends Controller
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "target"          => $request->ip,
-                        "name"            => $this->normaliza($cliente->nombre),
-                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                        "target"     => $request->ip,
+                        "name"       => $this->normaliza($cliente->nombre),
+                        "max-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                        "limit-at"   => $limit_at,
                         // "priority"        => $priority,
                         // "burst-limit"     => $burst_limit,
                         // "burst-threshold" => $burst_threshold,
@@ -408,9 +412,10 @@ class ContratosController extends Controller
                         if($name){
                             $registro = true;
                             $API->comm("/queue/simple/add", array(
-                                "target"          => $request->ip,
-                                "name"            => $this->normaliza($cliente->nombre),
-                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                "target"     => $request->ip,
+                                "name"       => $this->normaliza($cliente->nombre),
+                                "max-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                "limit-at"   => $limit_at,
                                 // "priority"        => $priority,
                                 // "burst-limit"     => $burst_limit,
                                 // "burst-threshold" => $burst_threshold,
@@ -442,9 +447,10 @@ class ContratosController extends Controller
                     if($name){
                         $registro = true;
                         $API->comm("/queue/simple/add", array(
-                            "target"          => $request->ip,
-                            "name"            => $this->normaliza($cliente->nombre),
-                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "target"     => $request->ip,
+                            "name"       => $this->normaliza($cliente->nombre),
+                            "max-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "limit-at"   => $limit_at,
                             // "priority"        => $priority,
                             // "burst-limit"     => $burst_limit,
                             // "burst-threshold" => $burst_threshold,
@@ -463,9 +469,10 @@ class ContratosController extends Controller
                         );
                         
                         $API->comm("/queue/simple/add", array(
-                            "target"          => $request->ip_new,
-                            "name"            => $this->normaliza($cliente->nombre),
-                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "target"     => $request->ip_new,
+                            "name"       => $this->normaliza($cliente->nombre),
+                            "max-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "limit-at"   => $limit_at,
                             // "priority"        => $priority,
                             // "burst-limit"     => $burst_limit,
                             // "burst-threshold" => $burst_threshold,
@@ -546,7 +553,40 @@ class ContratosController extends Controller
                     $contrato->nodo    = $ap->nodo;
                     $contrato->ap      = $request->ap;
                 }
-                
+
+                ### DOCUMENTOS ADJUNTOS ###
+
+                if($request->adjunto_a) {
+                    $file = $request->file('adjunto_a');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_a = $nombre;
+                    $contrato->referencia_a = $request->referencia_a;
+                }
+                if($request->adjunto_b) {
+                    $file = $request->file('adjunto_b');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_b = $nombre;
+                    $contrato->referencia_b = $request->referencia_b;
+                }
+                if($request->adjunto_c) {
+                    $file = $request->file('adjunto_c');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_c = $nombre;
+                    $contrato->referencia_c = $request->referencia_c;
+                }
+                if($request->adjunto_d) {
+                    $file = $request->file('adjunto_d');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_d = $nombre;
+                    $contrato->referencia_d = $request->referencia_d;
+                }
+
+                ### DOCUMENTOS ADJUNTOS ###
+
                 $contrato->creador = Auth::user()->nombres;
                 $contrato->save();
                 
@@ -569,7 +609,7 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -615,6 +655,7 @@ class ContratosController extends Controller
                     $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
                     $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
                     $burst_time = ($plan->burst_time_subida) ? $plan->burst_time_subida.'S/'.$plan->burst_time_bajada.'S': '';
+                    $limit_at = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
 
                     /*PPPOE*/
                     if($request->conexion == 1){
@@ -630,6 +671,7 @@ class ContratosController extends Controller
                                     ".id"       => $name_new[0][".id"],
                                     "target"    => $request->ip,
                                     "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "limit-at"  => $limit_at,
                                 )
                             );
                         }
@@ -668,6 +710,7 @@ class ContratosController extends Controller
                                         ".id"       => $name_new[0][".id"],
                                         "target"    => $request->ip,
                                         "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                        "limit-at"  => $limit_at,
                                     )
                                 );
                             }
@@ -765,6 +808,7 @@ class ContratosController extends Controller
                                 ".id"       => $name[0][".id"],
                                 "target"    => $request->ip,
                                 "max-limit" => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                "limit-at"  => $limit_at,
                                 )
                             );
                         }
@@ -780,6 +824,7 @@ class ContratosController extends Controller
                                     "name"        => $contrato->servicio.'-'.$contrato->id,
                                     "target"      => $request->ip_new,
                                     "max-limit"   => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "limit-at"    => $limit_at,
                                     )
                                 );
                             }
@@ -876,6 +921,47 @@ class ContratosController extends Controller
                 $contrato->puerto_conexion = $request->puerto_conexion;
                 $contrato->usuario  = $request->usuario;
                 $contrato->password = $request->password;
+
+                ### DOCUMENTOS ADJUNTOS ###
+
+                if($request->referencia_a) {
+                    $contrato->referencia_a = $request->referencia_a;
+                    if($request->adjunto_a){
+                        $file = $request->file('adjunto_a');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_a = $nombre;
+                    }
+                }
+                if($request->referencia_b) {
+                    $contrato->referencia_b = $request->referencia_b;
+                    if($request->adjunto_b){
+                        $file = $request->file('adjunto_b');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_b = $nombre;
+                    }
+                }
+                if($request->referencia_c) {
+                    $contrato->referencia_c = $request->referencia_c;
+                    if($request->adjunto_c){
+                        $file = $request->file('adjunto_c');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_c = $nombre;
+                    }
+                }
+                if($request->referencia_d) {
+                    $contrato->referencia_d = $request->referencia_d;
+                    if($request->adjunto_d){
+                        $file = $request->file('adjunto_d');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_d = $nombre;
+                    }
+                }
+
+                ### DOCUMENTOS ADJUNTOS ###
                 
                 $contrato->save();
                 
@@ -899,7 +985,7 @@ class ContratosController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'p.name as plan', 'p.price','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.ip','contracts.grupo_corte')->where('contracts.id', $id)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'p.name as plan', 'p.price', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d')->where('contracts.id', $id)->first();
         
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Detalles Contrato: '.$contrato->nro]);

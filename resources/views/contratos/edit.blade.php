@@ -18,7 +18,7 @@
         </script>
     @endif
 
-    <form method="POST" action="{{ route('contratos.update', $contrato->id ) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato">
+    <form method="POST" action="{{ route('contratos.update', $contrato->id ) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
         {{ csrf_field() }}
         <input name="_method" type="hidden" value="PATCH">
         <div class="row">
@@ -301,6 +301,69 @@
                     <strong>{{ $errors->first('modelo_antena') }}</strong>
                 </span>
             </div>
+
+            <div class="col-md-12 text-center">
+                <hr>
+                <h4>ADJUNTOS RELACIONADOS AL CONTRATO</h4>
+            </div>
+
+            <div class="col-md-3 form-group">
+                <label class="control-label">Referencia A</label>
+                <input type="text" class="form-control" id="referencia_a" name="referencia_a" value="{{$contrato->referencia_a}}">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('referencia_a') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Referencia B</label>
+                <input type="text" class="form-control" id="referencia_b" name="referencia_b" value="{{$contrato->referencia_b}}">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('referencia_b') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Referencia C</label>
+                <input type="text" class="form-control" id="referencia_c" name="referencia_c" value="{{$contrato->referencia_c}}">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('referencia_c') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Referencia D</label>
+                <input type="text" class="form-control" id="referencia_d" name="referencia_d" value="{{$contrato->referencia_d}}">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('referencia_d') }}</strong>
+                </span>
+            </div>
+
+            <div class="col-md-3 form-group">
+                <label class="control-label">Adjunto A</label>
+                <input type="file" class="form-control"  id="adjunto_a" name="adjunto_a" value="{{$contrato->adjunto_a}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('adjunto_a') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Adjunto B</label>
+                <input type="file" class="form-control"  id="adjunto_b" name="adjunto_b" value="{{$contrato->adjunto_b}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('adjunto_b') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Adjunto C</label>
+                <input type="file" class="form-control"  id="adjunto_c" name="adjunto_c" value="{{$contrato->adjunto_c}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('adjunto_c') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Adjunto D</label>
+                <input type="file" class="form-control"  id="adjunto_d" name="adjunto_d" value="{{$contrato->adjunto_d}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('adjunto_d') }}</strong>
+                </span>
+            </div>
         </div>
         
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
@@ -335,6 +398,47 @@
 
 @section('scripts')
     <script>
+        $(document).on('change','input[type="file"]',function(){
+            var fileName = this.files[0].name;
+            var fileSize = this.files[0].size;
+
+            if(fileSize > 512000){
+                this.value = '';
+                Swal.fire({
+                    title: 'La documentación adjuntada no puede exceder 512kb',
+                    text: 'Intente nuevamente',
+                    type: 'error',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Cancelar',
+                    timer: 10000
+                });
+            }else{
+                var ext = fileName.split('.').pop();
+                switch (ext) {
+                    case 'jpg':
+                    case 'png':
+                    case 'pdf':
+                    case 'JPG':
+                    case 'PNG':
+                    case 'PDF':
+                        break;
+                    default:
+                        this.value = '';
+                        Swal.fire({
+                            title: 'La documentación adjuntada debe poseer una extensión apropiada. Sólo se aceptan archivos jpg, png o pdf',
+                            text: 'Intente nuevamente',
+                            type: 'error',
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'Cancelar',
+                            timer: 10000
+                        });
+                }
+            }
+        });
         $(document).ready(function () {
             $('#mac_address').mask('AA:AA:AA:AA:AA:AA', {
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},

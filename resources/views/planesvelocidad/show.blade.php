@@ -120,6 +120,18 @@
 						<td>{{ $plan->queue_type_bajada }}Mb</td>
 					</tr>
 					@endif
+					@if($plan->limit_at_subida)
+					<tr>
+						<th>Limit-at Subida</th>
+						<td>{{ $plan->limit_at_subida }}Mb</td>
+					</tr>
+					@endif
+					@if($plan->limit_at_bajada)
+					<tr>
+						<th>Limit-at Bajada</th>
+						<td>{{ $plan->limit_at_bajada }}Mb</td>
+					</tr>
+					@endif
 					@if($plan->parenta)
 					<tr>
 						<th>Parent</th>

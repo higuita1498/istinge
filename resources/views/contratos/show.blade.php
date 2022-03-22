@@ -189,6 +189,31 @@
 						<th>Precio Plan</th>
 						<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->price) }}</td>
 					</tr>
+					@if($contrato->adjunto_a)
+					<tr>
+						<th>{{ $contrato->referencia_a }}</th>
+						<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_a)}}" target="_blank"><strong>Ver {{ $contrato->referencia_a }}</strong></a></td>
+					</tr>
+					@endif
+					@if($contrato->adjunto_b)
+					<tr>
+						<th>{{ $contrato->referencia_b }}</th>
+						<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_b)}}" target="_blank"><strong>Ver {{ $contrato->referencia_b }}</strong></a></td>
+					</tr>
+					@endif
+					@if($contrato->adjunto_c)
+					<tr>
+						<th>{{ $contrato->referencia_c }}</th>
+						<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_c)}}" target="_blank"><strong>Ver {{ $contrato->referencia_c }}</strong></a></td>
+					</tr>
+					@endif
+					@if($contrato->adjunto_d)
+					<tr>
+						<th>{{ $contrato->referencia_d }}</th>
+						<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank"><strong>Ver {{ $contrato->referencia_d }}</strong></a></td>
+					</tr>
+					@endif
+
 					@if($contrato->creador)
 					<tr>
 						<th>Contrato Registrado por</th>
