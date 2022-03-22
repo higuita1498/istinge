@@ -546,7 +546,7 @@
                     <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
+                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;"> {{Auth::user()->empresa()->moneda}}{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
                     </tr>
                     <tr>
                     <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>

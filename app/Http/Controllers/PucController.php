@@ -183,9 +183,5 @@ class PucController extends Controller
         return redirect('empresa/contactos')->with('success', $mensaje);
     }
 
-    public function forma_pago(){
-        view()->share(['seccion' => 'categorias', 'title' => 'Formas de Pago', 'icon' =>'fas fa-list-ul']);
-        $this->getAllPermissions(Auth::user()->id);
-        return view('formapago.index');
-    }
+ 
 }

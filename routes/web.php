@@ -546,11 +546,13 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	});
 
-	Route::resource('categorias', 'CategoriasController');
 	
 	Route::group(['prefix' => 'puc'], function(){
-		Route::get('/formaspago', 'PucController@forma_pago')->name('puc.forma_pago');
 	});
+	
+	Route::resource('categorias', 'CategoriasController');
+	Route::post('/formapago/store', 'FormaPagoController@store')->name('formapago.store');
+	Route::get('/formapago', 'FormaPagoController@index')->name('formapago.index');
 	Route::resource('puc', 'PucController');
 
 	Route::group(['prefix' => 'configuracion'], function() {

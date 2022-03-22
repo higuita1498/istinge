@@ -1829,7 +1829,7 @@ public function edit($id){
     $FacturaVenta = Factura::find($id);
 
     if (!$FacturaVenta) {
-        return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
+        return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
     }
 
     $FacturaVenta->emitida = $FacturaVenta->emitida;
@@ -1854,7 +1854,7 @@ public function edit($id){
         //Si el tiempo es de menos de 10 segundos mandamos al listado general
         if ($diasDiferencia <= 10) {
             $mensaje = "La factura electrónica ya ha sido enviada.";
-            return redirect('empresa/facturas')->with('success', $mensaje);
+            return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje);
         }
     }
 
@@ -1944,7 +1944,7 @@ public function edit($id){
         }
 
         if (!isset($res['statusCode']) && isset($res['message'])) {
-            return redirect('/empresa/facturas')->with('message_denied', $res['message']);
+            return redirect('/empresa/facturas/facturas_electronica')->with('message_denied', $res['message']);
         }
 
         $statusCode = $res['statusCode'] ?? null; //200
@@ -2051,7 +2051,7 @@ public function edit($id){
 
         if (!$emails || $max == 0) {
 
-            return redirect('empresa/facturas/' . $FacturaVenta->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
+            return redirect('empresa/facturas/facturas_electronica' . $FacturaVenta->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
         }
 
 
