@@ -340,6 +340,7 @@ class BlacklistController extends Controller
                 $blacklist->blacklisted_count = count($response);
                 $blacklist->estado = (count($response) > 0) ? 2:1;
                 $blacklist->save();
+                view()->share(['title' => 'Reporte Monitor Blacklist', 'icon' =>'fas fa-file-contract']);
                 return view('monitor-blacklist.reporte', compact('response', 'blacklist'));
             }else{
                 $mensaje = 'LA IP NO APARECE BLOQUEADA EN NINGÚN SITIO';
