@@ -195,33 +195,35 @@ class CronController extends Controller
         $contact    = $empresa->id_contacto_hetrixtools;
         $respon     = '';
 
-        foreach($blacklists as $blacklist) {
-            $url = 'https://api.hetrixtools.com/v2/'.$api_key.'/blacklist-check/ipv4/'.$blacklist->ip.'/';
+        if(!isset($api_key) || !isset($contact)){
+            foreach($blacklists as $blacklist) {
+                $url = 'https://api.hetrixtools.com/v2/'.$api_key.'/blacklist-check/ipv4/'.$blacklist->ip.'/';
 
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-            ));
-            $result = curl_exec($curl);
-            curl_close($curl);
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                ));
+                $result = curl_exec($curl);
+                curl_close($curl);
 
-            $response = json_decode($result, true);
-            if($response['status'] == 'ERROR'){
-                $respon .= $blacklist->ip.' - '.$response['error_message'].'<br>';
-            }else{
-                $blacklist->blacklisted_count = $response['blacklisted_count'];
-                $blacklist->estado = ($response['blacklisted_count'] == 0) ? 1:2;
-                $blacklist->response = '';
-                $blacklist->save();
-                $respon .= $blacklist->ip.' - '.$response['blacklisted_count'].'<br>';
+                $response = json_decode($result, true);
+                if($response['status'] == 'ERROR'){
+                    $respon .= $blacklist->ip.' - '.$response['error_message'].'<br>';
+                }else{
+                    $blacklist->blacklisted_count = $response['blacklisted_count'];
+                    $blacklist->estado = ($response['blacklisted_count'] == 0) ? 1:2;
+                    $blacklist->response = '';
+                    $blacklist->save();
+                    $respon .= $blacklist->ip.' - '.$response['blacklisted_count'].'<br>';
+                }
             }
         }
     }
