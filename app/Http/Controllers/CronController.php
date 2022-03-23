@@ -18,6 +18,7 @@ use App\Empresa;
 use App\GrupoCorte;
 use App\Mikrotik;
 use App\CRM;
+use App\Blacklist;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -184,6 +185,44 @@ class CronController extends Controller
             $crm->grupo_corte = $contacto->grupo_corte;
             $crm->servidor = $contacto->server_configuration_id;
             $crm->save();
+        }
+    }
+
+    public static function monitorBlacklist(){
+        $blacklists = Blacklist::all();
+        $empresa    = Empresa::find(1);
+        $api_key    = $empresa->api_key_hetrixtools;
+        $contact    = $empresa->id_contacto_hetrixtools;
+        $respon     = '';
+
+        foreach($blacklists as $blacklist) {
+            $url = 'https://api.hetrixtools.com/v2/'.$api_key.'/blacklist-check/ipv4/'.$blacklist->ip.'/';
+
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+            $result = curl_exec($curl);
+            curl_close($curl);
+
+            $response = json_decode($result, true);
+            if($response['status'] == 'ERROR'){
+                $respon .= $blacklist->ip.' - '.$response['error_message'].'<br>';
+            }else{
+                $blacklist->blacklisted_count = $response['blacklisted_count'];
+                $blacklist->estado = ($response['blacklisted_count'] == 0) ? 1:2;
+                $blacklist->response = '';
+                $blacklist->save();
+                $respon .= $blacklist->ip.' - '.$response['blacklisted_count'].'<br>';
+            }
         }
     }
 }
