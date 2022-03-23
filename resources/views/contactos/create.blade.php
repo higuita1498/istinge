@@ -184,7 +184,7 @@
 
   	<div class="row" style="text-align: right;">
   		<div class="col-md-12">
-  			<a href="{{route('empresas.index')}}" class="btn btn-outline-light" >Cancelar</a>
+  			<a href="{{route('contactos.clientes')}}" class="btn btn-outline-light" >Cancelar</a>
   			<button type="submit" class="btn btn-success">Guardar</button>
   		</div>
   	</div>
