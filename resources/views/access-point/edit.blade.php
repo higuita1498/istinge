@@ -21,7 +21,7 @@
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Modo de Red <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="modo_red" id="modo_red" title="Seleccione" required="">
-	                <option value="1" {{ ($ap->modo_red == 1) ? 'selected' : '' }}>Bridgre</option>
+	                <option value="1" {{ ($ap->modo_red == 1) ? 'selected' : '' }}>Bridge</option>
 	                <option value="2" {{ ($ap->modo_red == 2) ? 'selected' : '' }}>Enrutador</option>
 	            </select>
 	            <span class="help-block error">

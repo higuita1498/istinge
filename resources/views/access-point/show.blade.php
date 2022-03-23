@@ -27,7 +27,7 @@
                         </h5>
                     </div>
                     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                        <div class="card-body" style="border: solid 1px #317ebf;padding: 0;">
+                        <div class="card-body" style="border: solid 1px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};padding: 0;">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-sm info">
                                     <tbody>

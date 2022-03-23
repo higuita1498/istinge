@@ -20,7 +20,7 @@
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Modo de Red <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="modo_red" id="modo_red" title="Seleccione" required="">
-	                <option value="1">Bridgre</option>
+	                <option value="1">Bridge</option>
 	                <option value="2">Enrutador</option>
 	            </select>
 	            <span class="help-block error">
