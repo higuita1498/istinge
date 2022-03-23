@@ -178,6 +178,10 @@
                 opacity: 0.7 !important;
                 filter: alpha(opacity=70) !important;
             }
+            .select2-container--default .select2-selection--multiple {
+                border: 1px solid #dee4e6;
+                border-radius: 2px;
+            }
         </style>
         @yield('style')
     </head>
