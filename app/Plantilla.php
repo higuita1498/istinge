@@ -18,7 +18,7 @@ class Plantilla extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'nro', 'tipo', 'clasificacion', 'title', 'contenido', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'id', 'nro', 'tipo', 'clasificacion', 'title', 'contenido', 'archivo', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
     
     public function created_by()

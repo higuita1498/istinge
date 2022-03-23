@@ -11,7 +11,7 @@ class NotificacionMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject = "Notificación";
+    public $subject;
 
     public $datos;
 
@@ -20,10 +20,13 @@ class NotificacionMailable extends Mailable
      *
      * @return void
      */
-    public function __construct($datos)
-    {
-        $subject = $datos['titulo'];
-        $this->datos = $datos;
+    public function __construct($datos){
+        $this->datos   = $datos;
+        $this->subject = $datos['titulo'];
+        $this->archivo = $datos['archivo'];
+        $this->name    = $datos['cliente'];
+        $this->company = $datos['empresa'];
+        $this->nit     = $datos['nit'];
     }
 
     /**
@@ -31,8 +34,11 @@ class NotificacionMailable extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
-        return $this->view('emails.notificacion');
+    public function build(){
+        $name = $this->name;
+        $company = $this->company;
+        $nit = $this->nit;
+
+        return $this->view('emails.plantillas.'.$this->archivo)->with(compact('name', 'company', 'nit'));
     }
 }

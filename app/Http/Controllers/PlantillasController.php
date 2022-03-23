@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use stdClass;
 use Auth; 
 use DB;
@@ -40,7 +41,8 @@ class PlantillasController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nueva Plantilla']);
-        return view('plantillas.create');
+        $name = '{{ $name }}'; $company = '{{ $company }}'; $nit = '{{ $nit }}'; $date = '{{ $date }}';
+        return view('plantillas.create')->with(compact('name', 'company', 'nit', 'date'));
     }
 
     /**
@@ -70,9 +72,15 @@ class PlantillasController extends Controller
         $plantilla->clasificacion = $request->clasificacion;
         $plantilla->title = $request->title;
         $plantilla->contenido = $request->contenido;
+
         $plantilla->created_by = Auth::user()->id;
         $plantilla->status = 0;
         $plantilla->save();
+
+        $plantilla->archivo = 'plantilla'.$plantilla->id;
+        $plantilla->save();
+
+        Storage::disk('emails')->put('plantillas/'.$plantilla->archivo.'.blade.php', $plantilla->contenido);
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
         return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
@@ -109,7 +117,8 @@ class PlantillasController extends Controller
         
         if($plantilla){
             view()->share(['title' => 'Editar Plantilla: '.$plantilla->nro]);
-            return view('plantillas.edit')->with(compact('plantilla'));
+            $name = '{{ $name }}'; $company = '{{ $company }}'; $nit = '{{ $nit }}'; $date = '{{ $date }}';
+            return view('plantillas.edit')->with(compact('name', 'company', 'nit', 'date', 'plantilla'));
         }
         return redirect('empresa/plantillas')->with('danger', 'No existe un registro con ese id');
     }
@@ -133,12 +142,16 @@ class PlantillasController extends Controller
         $plantilla = Plantilla::find($id);
         
         if($plantilla){
+            Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
             $plantilla->title = $request->title;
             $plantilla->contenido = $request->contenido;
             $plantilla->updated_by = Auth::user()->id;
             $plantilla->save();
+
+            Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
             
             $mensaje = 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
