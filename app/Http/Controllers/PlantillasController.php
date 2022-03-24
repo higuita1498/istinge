@@ -80,7 +80,7 @@ class PlantillasController extends Controller
         $plantilla->archivo = 'plantilla'.$plantilla->id;
         $plantilla->save();
 
-        Storage::disk('emails')->put('plantillas/'.$plantilla->archivo.'.blade.php', $plantilla->contenido);
+        Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
         return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
