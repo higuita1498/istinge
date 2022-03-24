@@ -190,7 +190,7 @@ class MikrotikController extends Controller
             
                 $API->disconnect();
                 
-                $mikrotik->nombre = $ARRAYS[0]['name'];
+                //$mikrotik->nombre = $ARRAYS[0]['name'];
                 $mikrotik->board = $ARRAY[0]['board-name'];
                 $mikrotik->uptime = $ARRAY[0]['uptime'];
                 $mikrotik->cpu = $ARRAY[0]['cpu-load'];
