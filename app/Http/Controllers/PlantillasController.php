@@ -171,6 +171,7 @@ class PlantillasController extends Controller
         $plantilla = Plantilla::find($id);
         
         if($plantilla){
+            Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
             $plantilla->delete();
             $mensaje = 'SE HA ELIMINADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje);
