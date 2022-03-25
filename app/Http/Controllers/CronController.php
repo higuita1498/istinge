@@ -18,6 +18,7 @@ use App\Empresa;
 use App\GrupoCorte;
 use App\Mikrotik;
 use App\CRM;
+use App\Blacklist;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -28,7 +29,6 @@ class CronController extends Controller
         $i=0;
 
         $grupos_corte = GrupoCorte::where('fecha_factura', date('d'))->where('status', 1)->get();
-        
         
         foreach($grupos_corte as $grupo_corte){
             $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
@@ -63,7 +63,7 @@ class CronController extends Controller
                     }
                 }
 
-                $plazo=TerminosPago::where('dias',$fecha_suspension)->first();
+                $plazo=TerminosPago::where('dias',$fecha_suspension-date('d'))->first();
 
                 $tipo = 1; //1= normal, 2=Electrónica.
 
@@ -88,8 +88,9 @@ class CronController extends Controller
                 $factura->cliente       = $contrato->cliente;
                 $factura->fecha         = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura;
                 $factura->tipo          = $tipo;
-                $factura->vencimiento   = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura)));
-                $factura->suspension    = date('Y-m-d', strtotime("+".$fecha_suspension." days", strtotime($ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura)));
+                $factura->vencimiento   = $ultimo[0].'-'.$ultimo[1].'-'.$fecha_suspension;
+                $factura->suspension    = $ultimo[0].'-'.$ultimo[1].'-'.$fecha_suspension;
+                $factura->pago_oportuno = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_pago;
                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                 $factura->bodega        = 1;
                 $factura->vendedor      = 1;
@@ -184,6 +185,46 @@ class CronController extends Controller
             $crm->grupo_corte = $contacto->grupo_corte;
             $crm->servidor = $contacto->server_configuration_id;
             $crm->save();
+        }
+    }
+
+    public static function monitorBlacklist(){
+        $blacklists = Blacklist::all();
+        $empresa    = Empresa::find(1);
+        $api_key    = $empresa->api_key_hetrixtools;
+        $contact    = $empresa->id_contacto_hetrixtools;
+        $respon     = '';
+
+        if(!isset($api_key) || !isset($contact)){
+            foreach($blacklists as $blacklist) {
+                $url = 'https://api.hetrixtools.com/v2/'.$api_key.'/blacklist-check/ipv4/'.$blacklist->ip.'/';
+
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                ));
+                $result = curl_exec($curl);
+                curl_close($curl);
+
+                $response = json_decode($result, true);
+                if($response['status'] == 'ERROR'){
+                    $respon .= $blacklist->ip.' - '.$response['error_message'].'<br>';
+                }else{
+                    $blacklist->blacklisted_count = $response['blacklisted_count'];
+                    $blacklist->estado = ($response['blacklisted_count'] == 0) ? 1:2;
+                    $blacklist->response = '';
+                    $blacklist->save();
+                    $respon .= $blacklist->ip.' - '.$response['blacklisted_count'].'<br>';
+                }
+            }
         }
     }
 }

@@ -48,7 +48,7 @@
 	            <div class="row">
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Mikrotik Asociada <span class="text-danger">*</span></label>
-        	            <select name="mikrotik" id="mikrotik" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
+        	            <select name="mikrotik[]" id="mikrotik" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required multiple>
                         @foreach($mikrotiks as $mikrotik)
                             <option value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
                         @endforeach

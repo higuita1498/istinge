@@ -110,7 +110,7 @@ class PlanesVelocidadController extends Controller
 
         return datatables()->eloquent($planes)
             ->editColumn('name', function (PlanesVelocidad $plan) {
-                return "<a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</div></a>";
+                return "<div class='elipsis-short-300'><a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</a></div>";
             })
             ->editColumn('price', function (PlanesVelocidad $plan) use ($moneda) {
                 return "{$moneda} {$plan->price}";
@@ -154,55 +154,56 @@ class PlanesVelocidadController extends Controller
             'upload' => 'required|max:200',
             'download' => 'required|max:200',
             'type' => 'required|max:200',
-            'mikrotik' => 'required|max:200',
             'tipo_plan' => 'required|max:200',
         ]);
 
-        $inventario                = new Inventario;
-        $inventario->empresa       = Auth::user()->empresa;
-        $inventario->producto      = strtoupper($request->name);
-        $inventario->ref           = strtoupper($request->name);
-        $inventario->precio        = $this->precision($request->price);
+        for ($i=0; $i < count($request->mikrotik) ; $i++) {
+            $inventario                = new Inventario;
+            $inventario->empresa       = Auth::user()->empresa;
+            $inventario->producto      = strtoupper($request->name);
+            $inventario->ref           = strtoupper($request->name);
+            $inventario->precio        = $this->precision($request->price);
 
-        $inventario->id_impuesto   = ($request->tipo_plan == 2) ? 1 : 2;
-        $inventario->impuesto      = ($request->tipo_plan == 2) ? 19 : 0;
+            $inventario->id_impuesto   = ($request->tipo_plan == 2) ? 1 : 2;
+            $inventario->impuesto      = ($request->tipo_plan == 2) ? 19 : 0;
 
-        $inventario->tipo_producto = 2;
-        $inventario->unidad        = 1;
-        $inventario->nro           = 0;
-        $inventario->categoria     = 116;
-        $inventario->lista         = 0;
-        $inventario->type          = 'PLAN';
-        $inventario->save();
-        
-        $plan = new PlanesVelocidad;
-        $plan->mikrotik = $request->mikrotik;
-        $plan->name = $request->name;
-        $plan->price = $request->price;
-        $plan->upload = $request->upload;
-        $plan->download = $request->download;
-        $plan->type = $request->type;
-        $plan->address_list = $request->address_list;
-        $plan->created_by = Auth::user()->id;
-        $plan->tipo_plan = $request->tipo_plan;
-        $plan->burst_limit_subida = $request->burst_limit_subida;
-        $plan->burst_limit_bajada = $request->burst_limit_bajada;
-        $plan->burst_threshold_subida = $request->burst_threshold_subida;
-        $plan->burst_threshold_bajada = $request->burst_threshold_bajada;
-        $plan->burst_time_subida = $request->burst_time_subida;
-        $plan->burst_time_bajada = $request->burst_time_bajada;
-        $plan->queue_type_subida = $request->queue_type_subida;
-        $plan->queue_type_bajada = $request->queue_type_bajada;
-        $plan->parenta = $request->parenta;
-        $plan->prioridad = $request->prioridad;
-        $plan->limit_at_subida = $request->limit_at_subida;
-        $plan->limit_at_bajada = $request->limit_at_bajada;
-        $plan->item = $inventario->id;
-        $plan->empresa = Auth::user()->empresa;
-        $plan->dhcp_server = $request->dhcp_server;
-        $plan->save();
+            $inventario->tipo_producto = 2;
+            $inventario->unidad        = 1;
+            $inventario->nro           = 0;
+            $inventario->categoria     = 116;
+            $inventario->lista         = 0;
+            $inventario->type          = 'PLAN';
+            $inventario->save();
+
+            $plan = new PlanesVelocidad;
+            $plan->mikrotik = $request->mikrotik[$i];
+            $plan->name = $request->name;
+            $plan->price = $request->price;
+            $plan->upload = $request->upload;
+            $plan->download = $request->download;
+            $plan->type = $request->type;
+            $plan->address_list = $request->address_list;
+            $plan->created_by = Auth::user()->id;
+            $plan->tipo_plan = $request->tipo_plan;
+            $plan->burst_limit_subida = $request->burst_limit_subida;
+            $plan->burst_limit_bajada = $request->burst_limit_bajada;
+            $plan->burst_threshold_subida = $request->burst_threshold_subida;
+            $plan->burst_threshold_bajada = $request->burst_threshold_bajada;
+            $plan->burst_time_subida = $request->burst_time_subida;
+            $plan->burst_time_bajada = $request->burst_time_bajada;
+            $plan->queue_type_subida = $request->queue_type_subida;
+            $plan->queue_type_bajada = $request->queue_type_bajada;
+            $plan->parenta = $request->parenta;
+            $plan->prioridad = $request->prioridad;
+            $plan->limit_at_subida = $request->limit_at_subida;
+            $plan->limit_at_bajada = $request->limit_at_bajada;
+            $plan->item = $inventario->id;
+            $plan->empresa = Auth::user()->empresa;
+            $plan->dhcp_server = $request->dhcp_server;
+            $plan->save();
+        }
             
-        $mensaje='Se ha creado satisfactoriamente el plan';
+        $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PLAN';
         return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);
     }
     

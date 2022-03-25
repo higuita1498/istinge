@@ -27,7 +27,7 @@
           <label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
           <div class="col-sm-8">
             <div class="input-group">
-              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value);">
+              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value,false,2);">
                 @foreach($clientes as $client)
                   <option {{old('cliente')==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}} - {{$client->nit}}</option>
                 @endforeach

@@ -34,6 +34,28 @@
         	        <strong>{{ $errors->first('clasificacion') }}</strong>
         	    </span>
         	</div>
+
+        	<div class="col-md-12 form-group">
+        		<div class="alert alert-success" role="alert">
+        			<h4 class="alert-heading">VARIABLLES DE PERSONALIZACIÓN</h4>
+        			<p>Si al crear la plantilla, desea utilizar variables de personalización, le dejamos el listado de las variables disponibles. Por favor utilizarlas tal cual como se reflejan.</p>
+        			<hr>
+        			<div class="row mb-0">
+        				<div class="col-md-4 form-group mb-0 offset-2">
+        					<ul class="list-unstyled">
+        						<li><strong>{{$name}}</strong> - Nombre del Cliente</li>
+        						<li><strong>{{$date}}</strong> - Fecha</li>
+        					</ul>
+        				</div>
+        				<div class="col-md-4 form-group mb-0">
+        					<ul class="list-unstyled">
+        						<li><strong>{{$company}}</strong> - Nombre de la Empresa</li>
+        						<li><strong>{{$nit}}</strong> - Nit de la Empresa</li>
+        					</ul>
+        				</div>
+        			</div>
+        		</div>
+        	</div>
         	
         	<div class="col-md-12 form-group">
         	    <label class="control-label">Contenido <span class="text-danger">*</span></label>

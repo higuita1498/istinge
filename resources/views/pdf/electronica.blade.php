@@ -369,7 +369,7 @@
             </tr>
             <tr>
                 <th class="right smalltd">FECHA PAGO OPORTUNO</th>
-                <td colspan="">{{Carbon\Carbon::parse($factura->fecha)->format('d-m-Y')}}</td>
+                <td colspan="">{{Carbon\Carbon::parse($factura->pago_oportuno)->format('d-m-Y')}}</td>
             </tr>
             <tr>
                 <th class="right smalltd">FECHA SUSPENSION</th>

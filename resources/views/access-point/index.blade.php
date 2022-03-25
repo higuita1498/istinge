@@ -46,7 +46,7 @@
 				</div>
 				<div class="col-md-3 pl-1 pt-1">
 				    <select id="nodo" class="form-control rounded selectpicker" title="Modo de Red" data-live-search="true" data-size="5">
-                        <option value="1">Bridgre</option>
+                        <option value="1">Bridge</option>
 						<option value="2">Enrutador</option>
                     </select>
 				</div>

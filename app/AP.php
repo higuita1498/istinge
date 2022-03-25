@@ -78,6 +78,6 @@ class AP extends Model
     }
     
     public function modo_red(){
-        return $this->modo_red == '1' ? 'BRIDGRE' : 'ENRUTADOR';
+        return $this->modo_red == '1' ? 'BRIDGE' : 'ENRUTADOR';
     }
 }

@@ -114,7 +114,7 @@ class NodosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->get();
+        $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
         if ($nodo) {
             view()->share(['title' => 'Editar Nodo: '.$nodo->nombre]);

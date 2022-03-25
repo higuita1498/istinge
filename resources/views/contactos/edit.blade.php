@@ -185,6 +185,20 @@
     	@endif
 
   		<div class="row">
+  			<div class="form-group col-md-3">
+                <label class="control-label">Estrato</label>
+                <select class="form-control selectpicker" id="estrato" name="estrato"  title="Seleccione" data-live-search="true" data-size="5">
+                    <option value="1" {{ $contacto->estrato == 1 ? 'selected':'' }}>1</option>
+                    <option value="2" {{ $contacto->estrato == 2 ? 'selected':'' }}>2</option>
+                    <option value="3" {{ $contacto->estrato == 3 ? 'selected':'' }}>3</option>
+                    <option value="4" {{ $contacto->estrato == 4 ? 'selected':'' }}>4</option>
+                    <option value="5" {{ $contacto->estrato == 5 ? 'selected':'' }}>5</option>
+                    <option value="6" {{ $contacto->estrato == 6 ? 'selected':'' }}>6</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('estrato') }}</strong>
+                </span>
+            </div>
   		    <div class="form-group col-md-3">
 	  			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
 				<div class="form-check form-check-flat">
@@ -215,7 +229,7 @@
   		<hr>
   		<div class="row" style="text-align: right;">
   			<div class="col-md-12">
-				<a href="{{route('contactos.index')}}" class="btn btn-outline-light" >Cancelar</a>
+				<a href="{{route('contactos.clientes')}}" class="btn btn-outline-light" >Cancelar</a>
   				<button type="submit" class="btn btn-success">Guardar</button>
   			</div>
   		</div>

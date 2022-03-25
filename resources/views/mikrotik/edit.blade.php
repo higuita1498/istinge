@@ -60,35 +60,19 @@
 	                <strong>{{ $errors->first('clave') }}</strong>
 	            </span>
 	        </div>
+	        <div class="col-md-12 form-group">
+	            <label class="control-label">Segmentos <a><i data-tippy-content="Escriba los segmentos separados por espacios" class="icono far fa-question-circle"></i></a> <span class="text-danger">*</span></label>
+	            <select class="form-control" name="segmento_ip[]" id="segmento_ip" style="width: 100%;" required multiple="multiple">
+	            	@foreach($segmentos as $segmento)
+	            	<option value="{{$segmento->segmento}}" selected>{{$segmento->segmento}}</option>
+	            	@endforeach
+	            </select>
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('segmento_ip') }}</strong>
+	            </span>
+	        </div>
 	   </div>
-	    
-	   <div class="row" id="div_segmentos">
-	        @php $cont=0; @endphp
-	        @foreach($segmentos as $segmento)
-            @php $cont++; @endphp
-                <div class="col-md-3 form-group" id="{{$cont}}">
-    	            <label class="control-label">Segmento de IP <span class="text-danger">*</span></label>
-    	            
-    	            <div class="input-group">
-    	                <input type="text" class="form-control" name="segmento_ip[]"  value="{{$segmento->segmento}}" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
-    	                <div class="input-group-append">
-    	                    @if($cont>1)
-    	                    <a href="javascript:eliminarColumna({{$cont}});" class="btn btn-outline-danger btn-sm">
-    	                        <i class="fas fa-minus" style="margin: 2px;"></i>
-    	                    </a>
-    	                    @else
-    	                    <a href="javascript:crearColumna({{$cont}});" class="btn btn-outline-success btn-sm">
-    	                        <i class="fas fa-plus" style="margin: 2px;"></i>
-    	                    </a>
-    	                    @endif
-    	                </div>
-    	            </div>
-    	            <span class="help-block error">
-    	                <strong>{{ $errors->first('segmento_ip') }}</strong>
-    	            </span>
-    	        </div>     
-            @endforeach
-	   </div>
+
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
 	   <hr>
 	   <div class="row" >
@@ -98,39 +82,22 @@
 	       </div>
 	   </div>
     </form>
-    
+@endsection
+
+@section('scripts')
     <script>
-        function eliminarColumna(i) {
-            $("#" + i).remove();
-        }
-        
-        function crearColumna() {
-            var nro = $("#div_segmentos label").length + 1;
-            if ($("#" + nro).length > 0) {
-                for (i = 1; i <= nro; i++) {
-                    if ($("#" + i).length == 0) {
-                        nro = i;
-                        break;
-                    }
-                }
-            }
-            
-            datos = `<div class="col-md-3 form-group" id="${nro}">
-	            <label class="control-label">Segmento de IP <span class="text-danger">*</span></label>
-	            
-	            <div class="input-group">
-	                <input type="text" class="form-control" name="segmento_ip[]"  required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
-	                <div class="input-group-append">
-	                    <a href="javascript:eliminarColumna(${nro});" class="btn btn-outline-danger btn-sm">
-	                        <i class="fas fa-minus" style="margin: 2px;"></i>
-	                    </a>
-	                </div>
-	            </div>
-	            <span class="help-block error">
-	                <strong>{{ $errors->first('segmento_ip') }}</strong>
-	            </span>
-	        </div>`;
-            $("#div_segmentos").append(datos);
-        }
+    	$(document).on('keypress', '.select2-search__field', function () {
+    		if ((event.which < 32 || event.which > 57)) {
+    			event.preventDefault();
+    		}
+    	});
+
+    	$(document).ready(function() {
+    		$("#segmento_ip").select2({
+    			tags: true,
+    			tokenSeparators: [' '],
+    			allowClear: true
+    		})
+    	});
     </script>
 @endsection

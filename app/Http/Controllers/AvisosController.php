@@ -164,8 +164,11 @@ class AvisosController extends Controller
                     }
 
                     $datos = array(
-                        'titulo' => $plantilla->title,
-                        'contenido' => $plantilla->contenido,
+                        'titulo'  => $plantilla->title,
+                        'archivo' => $plantilla->archivo,
+                        'cliente' => $contrato->cliente()->nombre,
+                        'empresa' => Auth::user()->empresa()->nombre,
+                        'nit' => Auth::user()->empresa()->nit.'-'.Auth::user()->empresa()->dv,
                     );
                     $correo = new NotificacionMailable($datos);
                     Mail::to($contrato->cliente()->email)->send($correo);

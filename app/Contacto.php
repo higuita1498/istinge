@@ -27,7 +27,7 @@ class Contacto extends Model
      * @var array
      */
     protected $fillable = [
-        'empresa', 'nombre', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
+        'empresa', 'nombre', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'estrato', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
         'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD', 'fecha_contrato'
     ];
     
@@ -323,9 +323,12 @@ class Contacto extends Model
         return Contrato::where('client_id', $this->id)->where('status', 1)->first();
     }
 
-    public function contract(){
+    public function contract($details=false){
         $contrato = Contrato::where('client_id', $this->id)->where('status', 1)->first();
         if($contrato){
+            if($details){
+                return $contrato->ip;
+            }
             return "<a href=" . route('contratos.show', $contrato->id) . " target='_blank'>".$contrato->nro."</div></a>";
         }
         return 'N/A';

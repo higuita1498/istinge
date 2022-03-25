@@ -181,6 +181,12 @@
 							<td>{{$contacto->celular}}</td>
 						</tr>
 						@endif
+						@if($contacto->estrato)
+						<tr>
+							<th>Estrato</th>
+							<td>{{$contacto->estrato}}</td>
+						</tr>
+						@endif
 						@if($contacto->direccion)
 						<tr>
 							<th>Dirección</th>

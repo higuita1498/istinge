@@ -73,28 +73,28 @@
 
             <div class="col-md-3 form-group">
                 <label class="control-label" id="div_campo_a">{{$empresa->campo_a}}</label>
-                <input type="file" class="form-control"  id="imgA" name="imgA"  required="" value="{{old('imgA')}}" accept=".jpg, .jpeg, .png">
+                <input type="file" class="form-control"  id="imgA" name="imgA"  value="{{old('imgA')}}" accept=".jpg, .jpeg, .png">
                 <span style="color: red;">
                     <strong>{{ $errors->first('imgA') }}</strong>
                 </span>
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label" id="div_campo_b">{{$empresa->campo_b}}</label>
-                <input type="file" class="form-control"  id="imgB" name="imgB"  required="" value="{{old('imgB')}}" accept=".jpg, .jpeg, .png">
+                <input type="file" class="form-control"  id="imgB" name="imgB"  value="{{old('imgB')}}" accept=".jpg, .jpeg, .png">
                 <span style="color: red;">
                     <strong>{{ $errors->first('imgB') }}</strong>
                 </span>
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label" id="div_campo_c">{{$empresa->campo_c}}</label>
-                <input type="file" class="form-control"  id="imgC" name="imgC"  required="" value="{{old('imgC')}}" accept=".jpg, .jpeg, .png">
+                <input type="file" class="form-control"  id="imgC" name="imgC"  value="{{old('imgC')}}" accept=".jpg, .jpeg, .png">
                 <span style="color: red;">
                     <strong>{{ $errors->first('imgC') }}</strong>
                 </span>
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label" id="div_campo_d">{{$empresa->campo_d}}</label>
-                <input type="file" class="form-control"  id="imgD" name="imgD"  required="" value="{{old('imgD')}}" accept=".jpg, .jpeg, .png">
+                <input type="file" class="form-control"  id="imgD" name="imgD"  value="{{old('imgD')}}" accept=".jpg, .jpeg, .png">
                 <span style="color: red;">
                     <strong>{{ $errors->first('imgD') }}</strong>
                 </span>
@@ -310,8 +310,13 @@
                 var ext = fileName.split('.').pop();
                 switch (ext) {
                     case 'jpg':
+                    case 'jpeg':
                     case 'png':
                     case 'pdf':
+                    case 'JPG':
+                    case 'JPEG':
+                    case 'PNG':
+                    case 'PDF':
                         break;
                     default:
                         this.value = '';

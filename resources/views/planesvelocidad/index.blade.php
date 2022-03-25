@@ -1,7 +1,24 @@
 @extends('layouts.app')
 
-@section('styles')
-
+@section('style')
+    <style>
+		td .elipsis-short-300 {
+			width: 300px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			display: inline-block;
+		}
+		@media all and (max-width: 768px){
+			td .elipsis-short-300 {
+				width: 200px;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				display: inline-block;
+			}
+		}
+	</style>
 @endsection
 
 @section('boton')
