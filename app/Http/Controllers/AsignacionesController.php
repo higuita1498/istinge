@@ -77,25 +77,33 @@ class AsignacionesController extends Controller
       Storage::disk('documentos')->put($nombre, \File::get($file));
       $contrato->documento = $nombre;
 
-      $file = $request->file('imgA');
-      $nombre =  $file->getClientOriginalName();
-      Storage::disk('documentos')->put($nombre, \File::get($file));
-      $contrato->imgA = $nombre;
+      if($request->file('imgA')){
+        $file = $request->file('imgA');
+        $nombre =  $file->getClientOriginalName();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgA = $nombre;
+      }
 
-      $file = $request->file('imgB');
-      $nombre =  $file->getClientOriginalName();
-      Storage::disk('documentos')->put($nombre, \File::get($file));
-      $contrato->imgB = $nombre;
+      if($request->file('imgB')){
+        $file = $request->file('imgB');
+        $nombre =  $file->getClientOriginalName();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgB = $nombre;
+      }
 
-      $file = $request->file('imgC');
-      $nombre =  $file->getClientOriginalName();
-      Storage::disk('documentos')->put($nombre, \File::get($file));
-      $contrato->imgC = $nombre;
+      if($request->file('imgC')){
+        $file = $request->file('imgC');
+        $nombre =  $file->getClientOriginalName();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgC = $nombre;
+      }
 
-      $file = $request->file('imgD');
-      $nombre =  $file->getClientOriginalName();
-      Storage::disk('documentos')->put($nombre, \File::get($file));
-      $contrato->imgD = $nombre;
+      if($request->file('imgD')){
+        $file = $request->file('imgD');
+        $nombre =  $file->getClientOriginalName();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgD = $nombre;
+      }
 
       $contrato->save();
       $mensaje='Se ha registrado satisfactoriamente la asignación del contrato digital.';
