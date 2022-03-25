@@ -242,7 +242,7 @@
                         <td>${pago.medioPago}</td>
                         <td>
                             <div clas="d-flex">
-                                <a href="#" onclick="delete_forma('${$pago.id}')"><i class="fas fa-times"></i></a>
+                                <a href="#" onclick="delete_forma('${pago.id}')"><i class="fas fa-times"></i></a>
                                 <a href="#" onclick="editForma('${pago.id}')" data-toggle="modal" data-target="#editForma" href=""><i class="fas fa-edit"></i></a>
                             </div>
                         </td>
