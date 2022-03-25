@@ -179,7 +179,7 @@
             </div>
             
             <div class="col-md-4 form-group {{$contrato->conexion==1?'d-none':''}}" id="div_mac">
-                <label class="control-label">Dirección MAC <span class="text-danger">*</span></label>
+                <label class="control-label">Dirección MAC</label>
                 <div class="input-group">
                     <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" value="{{ $contrato->mac_address }}">
                     <span class="help-block error">
