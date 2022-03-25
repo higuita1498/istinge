@@ -236,8 +236,8 @@
 		    		</div>
 	      			<div class="col-sm-5"><p>{{$categoria->codigo}}</p></div>
 		      		<div class="col-sm-2">
-		      			<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
-		      			<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
+		      			<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+		      			<a href="#" onclick="modal_show('{{route('puc.edit',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 		      			<form action="{{ route('categorias.act_desc',$categoria->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria->nro}}">
 		                    {{ csrf_field() }}
 		                </form>

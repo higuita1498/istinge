@@ -540,7 +540,6 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::get('pagosrecurrentes/{id}/act_des', 'PagosRecurrentesController@act_des')->name('pagosrecurrentes.act_des');
 
 	Route::group(['prefix' => 'categorias'], function() {
-		Route::get('/create/{id}', 'CategoriasController@create')->name('categorias.create_id');
 		Route::post('/create/{id}/act_desc', 'CategoriasController@act_desc')->name('categorias.act_desc');
 		Route::post('/default/{id}', 'CategoriasController@default')->name('categorias.default');
 		Route::post('/quitar', 'CategoriasController@quitar')->name('categorias.quitar');
@@ -550,11 +549,16 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	
 	Route::group(['prefix' => 'puc'], function(){
+		Route::get('/create/{id}', 'PucController@create')->name('puc.create_id');
+		Route::post('/puc/store', 'PucController@store')->name('puc.store');
 	});
 	
 	Route::resource('categorias', 'CategoriasController');
-	Route::post('/formapago/store', 'FormaPagoController@store')->name('formapago.store');
 	Route::get('/formapago', 'FormaPagoController@index')->name('formapago.index');
+	Route::post('/formapago/store', 'FormaPagoController@store')->name('formapago.store');
+	Route::get('/formapago/edit', 'FormaPagoController@edit')->name('formapago.edit');
+	Route::post('/formapago/update', 'FormaPagoController@update')->name('formapago.update');
+	Route::post('/formapago/delete', 'FormaPagoController@delete')->name('formapago.delete');
 	Route::resource('puc', 'PucController');
 
 	Route::group(['prefix' => 'configuracion'], function() {

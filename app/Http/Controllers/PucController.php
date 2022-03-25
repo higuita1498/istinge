@@ -44,6 +44,47 @@ class PucController extends Controller
  		return view('puc.index')->with(compact('categorias', 'default'));   	
     }
 
+    public function create($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
+        return view('puc.create')->with(compact('categoria'));
+    }
+
+    /**
+  * Registrar un nuevo banco
+  * @param Request $request
+  * @return redirect
+  */
+  public function store(Request $request){
+        
+    $request->validate([
+        'nombre' => 'required|max:200',
+        'asociado' => 'required|numeric',
+        ]);
+
+        $nro = Puc::where('empresa',Auth::user()->empresa)->get()->last()->nro;
+        
+        $categoria = new Puc;
+        $categoria->empresa=Auth::user()->empresa;
+        $categoria->nro = $nro+1;
+        $categoria->asociado=$request->asociado;
+        $categoria->nombre=$request->nombre;
+        $categoria->codigo=$request->codigo;
+        $categoria->descripcion=$request->descripcion;
+        $categoria->save();
+        $mensaje='Se ha creado satisfactoriamente la categoría';
+        return redirect('empresa/puc')->with('success', $mensaje);
+    }
+
+    public function edit($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
+        if ($categoria) {        
+          return view('puc.edit')->with(compact('categoria'));
+        }
+        return 'No existe un registro con ese id';
+    }
+
     /**
      * Importación de la estructura base del puc segun excel madre.
      *
