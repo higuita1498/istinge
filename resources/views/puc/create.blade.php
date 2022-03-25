@@ -1,5 +1,5 @@
 
-<form method="POST" action="{{ route('categorias.store') }}" role="form" class="forms-sample" novalidate id="form-categoria" >
+<form method="POST" action="{{ route('puc.store') }}" role="form" class="forms-sample" novalidate id="form-categoria" >
     <div class="modal-header">
       <h5 class="modal-title" id="modal-small-CenterTitle">Nueva categoría</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
