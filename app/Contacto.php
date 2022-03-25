@@ -120,7 +120,7 @@ class Contacto extends Model
         $tmp        = 0;
         $tmp        += Factura::where('cliente', $this->id)->where('empresa', $this->empresa)->count();
         $tmp        += FacturaProveedores::where('proveedor', $this->id)->where('empresa', $this->empresa)->count();
-        $tmp        += Contrato::where('client_id', $this->id)->count();
+        $tmp        += Contrato::where('client_id', $this->id)->where('status',1)->count();
         $tmp        += Radicado::where('cliente', $this->id)->count();
         return $tmp;
     }
