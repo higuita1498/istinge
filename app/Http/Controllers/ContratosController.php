@@ -315,7 +315,7 @@ class ContratosController extends Controller
 
         if($request->interfaz == 3){
             $request->validate([
-                'mac_address' => 'required'
+                //'mac_address' => 'required'
             ]);
         }
         
