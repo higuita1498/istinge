@@ -287,10 +287,11 @@
 		</div>
 	</div>
 
-	@if($contacto->usado()>0)
+
 	<div class="row card-description">
 		<div class="col-md-12">
 			<ul class="nav nav-pills" id="myTab" role="tablist">
+				@if($contacto->usado()>0)
 				<li class="nav-item">
 					<a class="nav-link active" id="profile-tab" data-toggle="tab" href="#facturas_venta" role="tab" aria-controls="facturas_venta" aria-selected="false">Facturas Generadas</a>
 				</li>
@@ -308,12 +309,14 @@
 				<li class="nav-item">
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
+				@endif
 				<li class="nav-item">
-					<a class="nav-link" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
+					<a class="nav-link {{ $contacto->usado()==0?'active':'' }}" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
 				</li>
 			</ul>
 			<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
 			<div class="tab-content fact-table" id="myTabContent">
+				@if($contacto->usado()>0)
 				<div class="tab-pane fade" id="transacciones" role="tabpanel" aria-labelledby="transacciones-tab">
 					<input type="hidden" id="url-show-movimientos" value="{{route('bancos.cliente.movimientos.cuenta', $contacto->id)}}">
 					<div class="table-responsive mt-3">
@@ -404,6 +407,7 @@
 						</table>
 					</div>
 				</div>
+				@endif
 				<div class="tab-pane fade" id="arcadj" role="tabpanel" aria-labelledby="arcadj-tab">
 					<div class="row mt-3">
 						@if($contrato->adjunto_a || $contrato->adjunto_b || $contrato->adjunto_c || $contrato->adjunto_d || $contacto->imgA || $contacto->imgB || $contacto->imgC || $contacto->imgD || $contacto->firma_isp)
@@ -515,7 +519,6 @@
 			</div>
 		</div>
 	</div>
-    @endif
 
     <div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
