@@ -216,27 +216,8 @@
 							<th>Asignación de Contrato Digital</th>
 							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 						</tr>
-						@if($contacto->imgA || $contacto->imgB || $contacto->imgC || $contacto->imgD)
-						<tr>
-							<th>Archivos Adjuntos</th>
-							<td>
-								@if($contacto->imgA)
-								<a href="{{asset('../adjuntos/documentos/'.$contacto->imgA)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_a }}</strong></a>
-								@endif
-								@if($contacto->imgB)
-								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgB)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_b }}</strong></a>
-								@endif
-								@if($contacto->imgC)
-								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgC)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_c }}</strong></a>
-								@endif
-								@if($contacto->imgD)
-								| <a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank"><strong>Ver {{ auth()->user()->empresa()->campo_d }}</strong></a>
-								@endif
-							</td>
-						</tr>
 						@endif
-						@endif
-						</tbody>
+					</tbody>
 				</table>
 
 				@if($contrato)
@@ -410,8 +391,7 @@
 				@endif
 				<div class="tab-pane fade {{ $contacto->usado()==0?'show active':'' }}" id="arcadj" role="tabpanel" aria-labelledby="arcadj-tab">
 					<div class="row mt-3">
-						@if($contacto->contract('true') != 'N/A')
-							@if($contacto->firma_isp)
+						@if($contacto->firma_isp)
 							<div class="col-md-2 mb-2 text-center">
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;padding: 1.88rem 0.88rem;">
@@ -420,7 +400,8 @@
 								    </div>
 								</div>
 							</div>
-							@endif
+						@endif
+						@if($contacto->contract('true') != 'N/A')
 							@if($contrato->adjunto_a)
 							<div class="col-md-2 mb-2 text-center" id="div_adjunto_a">
 								<div class="card card-adj">
