@@ -3937,6 +3937,7 @@ function interfazChange(){
     document.getElementById("id_vlan").value = '';
     document.getElementById("usuario").value = '';
     document.getElementById("password").value = '';
+    document.getElementById("mac_address").removeAttribute('required');
 }
 
 function modificarPromesa(id) {
