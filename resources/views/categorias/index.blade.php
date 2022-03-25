@@ -42,7 +42,7 @@
 						<td class=""><a href="">c - {{$categoria->nombre}}</a></td>
 						<td>{{$categoria->codigo}}</td>
 						<td>
-							<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+							<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 							<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 							<form action="{{ route('categorias.act_desc',$categoria->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria->nro}}">
 								{{ csrf_field() }}
@@ -70,7 +70,7 @@
 								<td class=""><a href="">c1 - {{$categoria1->nombre}}</a></td>
 								<td>{{$categoria1->codigo}}</td>
 								<td>
-									<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+									<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 									<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 									<form action="{{ route('categorias.act_desc',$categoria1->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria1->nro}}">
 										{{ csrf_field() }}
@@ -105,7 +105,7 @@
 										<td class=""><a href="">c2 - {{$categoria2->nombre}}</a></td>
 										<td>{{$categoria2->codigo}}</td>
 										<td>
-											<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+											<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 											<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 											<form action="{{ route('categorias.act_desc',$categoria2->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria2->nro}}">
 												{{ csrf_field() }}
@@ -140,7 +140,7 @@
 												<td class=""><a href="">c3 - {{$categoria3->nombre}}</a></td>
 												<td>{{$categoria3->codigo}}</td>
 												<td>
-													<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+													<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 													<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 													<form action="{{ route('categorias.act_desc',$categoria3->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria3->nro}}">
 														{{ csrf_field() }}
@@ -174,7 +174,7 @@
 														<td class=""><a href="">c4 - {{$categoria4->nombre}}</a></td>
 														<td>{{$categoria4->codigo}}</td>
 														<td>
-															<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria4->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+															<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria4->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 															<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria4->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 															<form action="{{ route('categorias.act_desc',$categoria4->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria4->nro}}">
 																{{ csrf_field() }}
@@ -282,7 +282,7 @@
 					    	</div>
 					      	<div class="col-sm-4">{{$categoria1->codigo}}</div>
 				      		<div class="col-sm-3">
-				      			<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+				      			<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 		      					<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria1->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 		      					<form action="{{ route('categorias.act_desc',$categoria1->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria1->nro}}">
 				                    {{ csrf_field() }}
@@ -333,7 +333,7 @@
 								    	</div>
 								      	<div class="col-sm-4">{{$categoria2->codigo}}</div>
 							      		<div class="col-sm-3">
-							      			<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+							      			<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 							      			<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria2->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 							      			<form action="{{ route('categorias.act_desc',$categoria2->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria2->nro}}">
 							                    {{ csrf_field() }}
@@ -384,7 +384,7 @@
 											    	</div>
 											      	<div class="col-sm-4">{{$categoria3->codigo}}</div>
 										      		<div class="col-sm-3">
-										      			<a href="#" onclick="modal_show('{{route('categorias.create_id',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
+										      			<a href="#" onclick="modal_show('{{route('puc.create_id',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Agregar sub-categoría"><i class="fas fa-plus"></i></a>
 										      			<a href="#" onclick="modal_show('{{route('categorias.edit',$categoria3->nro)}}', 'small');" class="btn btn-outline-primary btn-icons" title="Modificar"><i class="far fa-edit"></i></a>
 										      			<form action="{{ route('categorias.act_desc',$categoria3->nro) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$categoria3->nro}}">
 										                    {{ csrf_field() }}
