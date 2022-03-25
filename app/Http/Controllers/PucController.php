@@ -50,6 +50,53 @@ class PucController extends Controller
         return view('puc.create')->with(compact('categoria'));
     }
 
+    /**
+  * Registrar un nuevo banco
+  * @param Request $request
+  * @return redirect
+  */
+  public function store(Request $request){
+        
+        //Tomamos el tiempo en el que se crea el registro
+        Session::put('posttimer', Puc::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+        $sw = 1;
+
+        //Recorremos la sesion para obtener la fecha
+        foreach (Session::get('posttimer') as $key) {
+            if ($sw == 1) {
+            $ultimoingreso = $key;
+            $sw=0;
+            }
+        }
+
+    //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+
+    //Si el tiempo es de menos de 30 segundos mandamos al listado general
+    if ($diasDiferencia <= 10) {
+        $mensaje = "El formulario ya ha sido enviado.";
+    return redirect('empresa/puc')->with('success', $mensaje);
+    }
+        
+    $request->validate([
+        'nombre' => 'required|max:200',
+        'asociado' => 'required|numeric',
+        ]);
+
+        $nro = Puc::where('empresa',Auth::user()->empresa)->get()->last()->nro;
+        
+        $categoria = new Puc;
+        $categoria->empresa=Auth::user()->empresa;
+        $categoria->nro = $nro+1;
+        $categoria->asociado=$request->asociado;
+        $categoria->nombre=$request->nombre;
+        $categoria->codigo=$request->codigo;
+        $categoria->descripcion=$request->descripcion;
+        $categoria->save();
+        $mensaje='Se ha creado satisfactoriamente la categoría';
+        return redirect('empresa/puc')->with('success', $mensaje);
+    }
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
