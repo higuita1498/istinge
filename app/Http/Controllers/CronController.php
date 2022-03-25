@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
+use Mail;
 
 use App\Model\Ingresos\Factura;
 use App\NumeracionFactura;
@@ -19,6 +20,8 @@ use App\GrupoCorte;
 use App\Mikrotik;
 use App\CRM;
 use App\Blacklist;
+use App\Mail\BlacklistMailable;
+use App\ServidorCorreo;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -194,8 +197,9 @@ class CronController extends Controller
         $api_key    = $empresa->api_key_hetrixtools;
         $contact    = $empresa->id_contacto_hetrixtools;
         $respon     = '';
+        $datos      = [];
 
-        if(!isset($api_key) || !isset($contact)){
+        if($api_key || $contact){
             foreach($blacklists as $blacklist) {
                 $url = 'https://api.hetrixtools.com/v2/'.$api_key.'/blacklist-check/ipv4/'.$blacklist->ip.'/';
 
@@ -223,7 +227,39 @@ class CronController extends Controller
                     $blacklist->response = '';
                     $blacklist->save();
                     $respon .= $blacklist->ip.' - '.$response['blacklisted_count'].'<br>';
+
+                    if($blacklist->estado == 2){
+                        $var = array(
+                            'nombre' => $blacklist->nombre,
+                            'ip' => $blacklist->ip,
+                            'blacklisted_count' => $blacklist->blacklisted_count,
+                            'estado' => $blacklist->estado,
+                            'empresa' => $empresa->nombre,
+                            'color' => $empresa->color
+                        );
+
+                        array_push($datos,$var);
+                    }
                 }
+            }
+
+            if(count($datos)>0){
+                $correo = new BlacklistMailable($datos);
+                $host = ServidorCorreo::where('estado', 1)->where('empresa', 1)->first();
+                if($host){
+                    $existing = config('mail');
+                    $new =array_merge(
+                        $existing, [
+                            'host' => $host->servidor,
+                            'port' => $host->puerto,
+                            'encryption' => $host->seguridad,
+                            'username' => $host->usuario,
+                            'password' => $host->password,
+                        ]
+                    );
+                    config(['mail'=>$new]);
+                }
+                Mail::to($empresa->email)->send($correo);
             }
         }
     }
