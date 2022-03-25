@@ -44,6 +44,21 @@ class PucController extends Controller
  		return view('puc.index')->with(compact('categorias', 'default'));   	
     }
 
+    public function create($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
+        return view('puc.create')->with(compact('categoria'));
+    }
+
+    public function edit($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
+        if ($categoria) {        
+          return view('puc.edit')->with(compact('categoria'));
+        }
+        return 'No existe un registro con ese id';
+    }
+
     /**
      * Importación de la estructura base del puc segun excel madre.
      *

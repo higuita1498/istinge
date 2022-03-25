@@ -33,5 +33,9 @@ class Puc extends Model
         return Puc::where('asociado', $this->nro)->whereIn('empresa', [1, Auth::user()->empresa] )->count();
 
     }
+
+    public function formasPago(){
+        return $this->hasOne('App\FormaPago','cuenta_id');
+    }
     
 }
