@@ -1649,4 +1649,43 @@ class ContratosController extends Controller
         }
         return back()->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
+
+    public function eliminarAdjunto($id, $archivo){
+        $contrato = Contrato::where('id', $id)->where('empresa',Auth::user()->empresa)->first();
+        if($contrato){
+            switch ($archivo) {
+                case 'adjunto_a':
+                    $contrato->adjunto_a = NULL;
+                    $contrato->referencia_a = NULL;
+                    break;
+                case 'adjunto_b':
+                    $contrato->adjunto_b = NULL;
+                    $contrato->referencia_b = NULL;
+                    break;
+                case 'adjunto_c':
+                    $contrato->adjunto_c = NULL;
+                    $contrato->referencia_c = NULL;
+                    break;
+                case 'adjunto_d':
+                    $contrato->adjunto_d = NULL;
+                    $contrato->referencia_d = NULL;
+                    break;
+                default:
+                    break;
+            }
+            $contrato->save();
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+        return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'title'   => 'Archivo no eliminado',
+                'text'    => 'Inténtelo Nuevamente'
+            ]);
+    }
 }

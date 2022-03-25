@@ -1287,4 +1287,39 @@ class ContactosController extends Controller
         DB::table('usuarios_app')->where('id_cliente', $id)->delete();
         return redirect('empresa/contactos/clientes')->with('success', 'Cliente Desasociado de la APP');
     }
+
+    public function eliminarAdjunto($id, $archivo){
+        $contacto = Contacto::where('id', $id)->where('empresa',Auth::user()->empresa)->first();
+        if($contacto){
+            switch ($archivo) {
+                case 'imgA':
+                    $contacto->imgA = NULL;
+                    break;
+                case 'imgB':
+                    $contacto->imgB = NULL;
+                    break;
+                case 'imgC':
+                    $contacto->imgC = NULL;
+                    break;
+                case 'imgD':
+                    $contacto->imgD = NULL;
+                    break;
+                default:
+                    break;
+            }
+            $contacto->save();
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+        return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'title'   => 'Archivo no eliminado',
+                'text'    => 'Inténtelo Nuevamente'
+            ]);
+    }
 }

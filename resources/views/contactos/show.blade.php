@@ -7,13 +7,6 @@
         border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
         color: #fff !important;
     }
-    .nav-tabs .nav-link {
-        font-size: 1em;
-    }
-    .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
-        color: #fff!important;
-    }
     .table .thead-light th {
         color: #fff!important;
         background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
@@ -25,10 +18,12 @@
     .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
         background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         color: #fff!important;
+        box-shadow: 2px 2px 10px #797979;
     }
     .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
         color: #fff!important;
         background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        box-shadow: 2px 2px 10px #797979;
     }
     .nav-pills .nav-link {
         font-weight: 700!important;
@@ -43,11 +38,18 @@
     .nav-pills .nav-link:hover {
         color: #fff!important;
         background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        box-shadow: 2px 2px 10px #797979;
     }
     table.dataTable td.dataTables_empty, table.dataTable th.dataTables_empty {
         text-align: center;
         color: red;
         font-weight: 900;
+    }
+    .card-adj:hover{
+    	box-shadow: 2px 2px 10px #797979;
+    }
+    .btn.btn-icons {
+    	border-radius: 50%;
     }
 </style>
 @endsection
@@ -306,6 +308,9 @@
 				<li class="nav-item">
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
+				</li>
 			</ul>
 			<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
 			<div class="tab-content fact-table" id="myTabContent">
@@ -399,6 +404,114 @@
 						</table>
 					</div>
 				</div>
+				<div class="tab-pane fade" id="arcadj" role="tabpanel" aria-labelledby="arcadj-tab">
+					<div class="row mt-3">
+						@if($contrato->adjunto_a || $contrato->adjunto_b || $contrato->adjunto_c || $contrato->adjunto_d || $contacto->imgA || $contacto->imgB || $contacto->imgC || $contacto->imgD || $contacto->firma_isp)
+							@if($contacto->firma_isp)
+							<div class="col-md-2 mb-2 text-center">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;padding: 1.88rem 0.88rem;">
+								    	<h3 class="card-title">Contrato Digital</h3>
+								    	<a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contrato->adjunto_a)
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto_a">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ $contrato->referencia_a }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_a)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contratos','adjunto_a','{{$contrato->referencia_a}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contrato->adjunto_b)
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto_b">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ $contrato->referencia_b }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_b)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contratos','adjunto_b','{{$contrato->referencia_b}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contrato->adjunto_c)
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto_c">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ $contrato->referencia_c }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_c)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contratos','adjunto_c','{{$contrato->referencia_c}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contrato->adjunto_d)
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto_d">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ $contrato->referencia_d }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contratos','adjunto_d','{{$contrato->referencia_d}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contacto->imgA)
+							<div class="col-md-2 mb-2 text-center" id="div_imgA">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_a }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgA)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contactos','imgA','{{auth()->user()->empresa()->campo_a}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contacto->imgB)
+							<div class="col-md-2 mb-2 text-center" id="div_imgB">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_b }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgB)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contactos','imgB','{{auth()->user()->empresa()->campo_b}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contacto->imgC)
+							<div class="col-md-2 mb-2 text-center" id="div_imgC">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_c }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgC)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contactos','imgC','{{auth()->user()->empresa()->campo_c}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+							@if($contacto->imgD)
+							<div class="col-md-2 mb-2 text-center" id="div_imgD">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_d }}</h3>
+								    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="javascript:eliminar('contactos','imgD','{{auth()->user()->empresa()->campo_d}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+								    </div>
+								</div>
+							</div>
+							@endif
+						@else
+						    <div class="col-md-12 text-center">
+						    	<p class="font-weight-bold" style="color: red;">EL CLIENTE NO POSEE ARCHIVOS ADJUNTOS</p>
+						    </div>
+						@endif
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -419,4 +532,64 @@
     </div>
 
     <input type="hidden" value="{{$contacto->id}}" id="idContacto">
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+        });
+
+        function eliminar(tipo, archivo, referencia, id){
+        	swal({
+        		title: '¿Está seguro de eliminar el archivo '+referencia+' del sistema?',
+        		text: 'Se borrara de forma permanente',
+        		type: 'question',
+        		showCancelButton: true,
+        		confirmButtonColor: '#00ce68',
+        		cancelButtonColor: '#d33',
+        		confirmButtonText: 'Aceptar',
+        		cancelButtonText: 'Cancelar',
+        	}).then((result) => {
+        		if (result.value) {
+        			if (window.location.pathname.split("/")[1] === "software") {
+        				var url = '/software/empresa/'+tipo+'/'+id+'/'+archivo+'/eliminar';
+        			}else{
+        				var url = '/empresa/'+tipo+'/'+id+'/'+archivo+'/eliminar';
+        			}
+
+        			$.ajax({
+        				url: url,
+        				beforeSend: function(){
+        					cargando(true);
+        				},
+        				success: function(data){
+        					//data=JSON.parse(data);
+        					if(data.success == true){
+        						$("#div_"+archivo).remove();
+        					}
+        					Swal.fire({
+        						type:  data.type,
+        						title: data.title,
+        						text:  data.text,
+        						showConfirmButton: false,
+        						timer: 5000
+        					})
+        					cargando(false);
+        				},
+        				error: function(data){
+        					cargando(false);
+        					Swal.fire({
+        						type:  'error',
+        						title: 'Disculpe, estamos presentando problemas al tratar de enviar el formulario.',
+        						text:  'intentelo mas tarde',
+        						showConfirmButton: false,
+        						timer: 2500
+        					})
+        				}
+        			});
+        		}
+        	})
+        }
+    </script>
 @endsection
