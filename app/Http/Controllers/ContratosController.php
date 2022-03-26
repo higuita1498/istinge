@@ -356,11 +356,32 @@ class ContratosController extends Controller
                     $prefijo = '';
                 }
 
+                $rate_limit = '';
                 $priority        = $plan->prioridad;
                 $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
                 $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
                 $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
                 $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
+                $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
+
+                if($max_limit){
+                    $rate_limit .= ' '.$max_limit;
+                }
+                if($burst_limit){
+                    $rate_limit .= ' '.$burst_limit;
+                }
+                if($burst_threshold){
+                    $rate_limit .= ' '.$burst_thresh;
+                }
+                if($burst_time){
+                    $rate_limit .= ' '.$burst_time;
+                }
+                if($priority){
+                    $rate_limit .= ' '.$priority;
+                }
+                if($limit_at){
+                    $rate_limit .= ' '.$limit_at;
+                }
 
                 /*PPPOE*/
                 if($request->conexion == 1){
@@ -396,11 +417,7 @@ class ContratosController extends Controller
                             "address"     => $request->ip,
                             "server"      => $plan->dhcp_server,
                             "mac-address" => $request->mac_address,
-                            "rate-limit"  => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                            // "priority"        => $priority,
-                            // "burst-limit"     => $burst_limit,
-                            // "burst-threshold" => $burst_threshold,
-                            // "burst-time"      => $burst_time
+                            "rate-limit"  => $rate_limit
                             )
                         );
 
@@ -652,11 +669,32 @@ class ContratosController extends Controller
                 //$API->debug = true;
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
-                    $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+                    $rate_limit = '';
+                    $priority        = $plan->prioridad;
+                    $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
                     $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
-                    $burst_time = ($plan->burst_time_subida) ? $plan->burst_time_subida.'s/'.$plan->burst_time_bajada.'s': '';
-                    $limit_at = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
+                    $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
+                    $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
+                    $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
+
+                    if($max_limit){
+                        $rate_limit .= ' '.$max_limit;
+                    }
+                    if($burst_limit){
+                        $rate_limit .= ' '.$burst_limit;
+                    }
+                    if($burst_threshold){
+                        $rate_limit .= ' '.$burst_thresh;
+                    }
+                    if($burst_time){
+                        $rate_limit .= ' '.$burst_time;
+                    }
+                    if($priority){
+                        $rate_limit .= ' '.$priority;
+                    }
+                    if($limit_at){
+                        $rate_limit .= ' '.$limit_at;
+                    }
 
                     /*PPPOE*/
                     if($request->conexion == 1){
@@ -672,11 +710,10 @@ class ContratosController extends Controller
                                     ".id"             => $name_new[0][".id"],
                                     "target"          => $request->ip,
                                     "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                    "parent"          => $plan->parenta,
-                                    "priority"        => $priority,
                                     "burst-limit"     => $burst_limit,
                                     "burst-threshold" => $burst_threshold,
                                     "burst-time"      => $burst_time,
+                                    "priority"        => $priority,
                                     "limit-at"        => $limit_at
                                 )
                             );
@@ -697,11 +734,7 @@ class ContratosController extends Controller
                                     "address"         => $request->ip,
                                     "server"          => $plan->dhcp_server,
                                     "mac-address"     => $request->mac_address,
-                                    "rate-limit"      => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                    // "priority"        => $priority,
-                                    // "burst-limit"     => $burst_limit,
-                                    // "burst-threshold" => $burst_threshold,
-                                    // "burst-time"      => $burst_time
+                                    "rate-limit"      => $rate_limit
                                     )
                                 );
                             }
@@ -716,11 +749,10 @@ class ContratosController extends Controller
                                         ".id"             => $name_new[0][".id"],
                                         "target"          => $request->ip,
                                         "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                        "parent"          => $plan->parenta,
-                                        "priority"        => $priority,
                                         "burst-limit"     => $burst_limit,
                                         "burst-threshold" => $burst_threshold,
                                         "burst-time"      => $burst_time,
+                                        "priority"        => $priority,
                                         "limit-at"        => $limit_at
                                     )
                                 );
@@ -819,11 +851,10 @@ class ContratosController extends Controller
                                 ".id"       => $name[0][".id"],
                                 "target"          => $request->ip,
                                 "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
-                                "parent"          => $plan->parenta,
-                                "priority"        => $priority,
                                 "burst-limit"     => $burst_limit,
                                 "burst-threshold" => $burst_threshold,
                                 "burst-time"      => $burst_time,
+                                "priority"        => $priority,
                                 "limit-at"        => $limit_at
                                 )
                             );
@@ -837,7 +868,7 @@ class ContratosController extends Controller
 
                             if(!$dos){
                                 $API->comm("/queue/simple/add", array(
-                                    "name"        => $contrato->servicio.'-'.$contrato->id,
+                                    "name"            => $contrato->servicio.'-'.$contrato->id,
                                     "target"          => $request->ip,
                                     "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
                                     "parent"          => $plan->parenta,
