@@ -180,31 +180,31 @@ class MikrotikController extends Controller
                 //$API->write("/tool/user-manager/user/getall", true);
                 //$API->write("/system/identity/getall", true);
                 
-                $API->write('/system/resource/print');
-                $READ = $API->read(false);
-                $ARRAY = $API->parseResponse($READ);
+                // $API->write('/system/resource/print');
+                // $READ = $API->read(false);
+                // $ARRAY = $API->parseResponse($READ);
                 
-                $API->write("/system/identity/getall", true);
-                $READ = $API->read(false);
-                $ARRAYS = $API->parseResponse($READ);
+                // $API->write("/system/identity/getall", true);
+                // $READ = $API->read(false);
+                // $ARRAYS = $API->parseResponse($READ);
             
                 $API->disconnect();
                 
                 //$mikrotik->nombre = $ARRAYS[0]['name'];
-                $mikrotik->board = $ARRAY[0]['board-name'];
-                $mikrotik->uptime = $ARRAY[0]['uptime'];
-                $mikrotik->cpu = $ARRAY[0]['cpu-load'];
-                $mikrotik->version = $ARRAY[0]['version'];
-                $mikrotik->buildtime = $ARRAY[0]['build-time'];
-                $mikrotik->freememory = $ARRAY[0]['free-memory'];
-                $mikrotik->totalmemory = $ARRAY[0]['total-memory'];
-                $mikrotik->cpucount = $ARRAY[0]['cpu-count'];
-                $mikrotik->cpufrequency = $ARRAY[0]['cpu-frequency'].' MHz';
-                $mikrotik->cpuload = $ARRAY[0]['cpu-load'].' %';
-                $mikrotik->freehddspace = $ARRAY[0]['free-hdd-space'];
-                $mikrotik->totalhddspace = $ARRAY[0]['total-hdd-space'];
-                $mikrotik->architecturename = $ARRAY[0]['architecture-name'];
-                $mikrotik->platform = $ARRAY[0]['platform'];
+                // $mikrotik->board = $ARRAY[0]['board-name'];
+                // $mikrotik->uptime = $ARRAY[0]['uptime'];
+                // $mikrotik->cpu = $ARRAY[0]['cpu-load'];
+                // $mikrotik->version = $ARRAY[0]['version'];
+                // $mikrotik->buildtime = $ARRAY[0]['build-time'];
+                // $mikrotik->freememory = $ARRAY[0]['free-memory'];
+                // $mikrotik->totalmemory = $ARRAY[0]['total-memory'];
+                // $mikrotik->cpucount = $ARRAY[0]['cpu-count'];
+                // $mikrotik->cpufrequency = $ARRAY[0]['cpu-frequency'].' MHz';
+                // $mikrotik->cpuload = $ARRAY[0]['cpu-load'].' %';
+                // $mikrotik->freehddspace = $ARRAY[0]['free-hdd-space'];
+                // $mikrotik->totalhddspace = $ARRAY[0]['total-hdd-space'];
+                // $mikrotik->architecturename = $ARRAY[0]['architecture-name'];
+                // $mikrotik->platform = $ARRAY[0]['platform'];
                 $mikrotik->status = 1;
                 $mikrotik->save();
                 $mensaje='Conexión a la Mikrotik '.$mikrotik->nombre.' Realizada';

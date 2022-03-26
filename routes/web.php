@@ -254,6 +254,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('contactosModal', 'ContactosController@contactoModal')->name('contactos.contactoModal');
         Route::post('{id}/desasociar', 'ContactosController@desasociar')->name('contactos.desasociar');
         Route::get('createp', 'ContactosController@createp')->name('contactos.createp');
+        Route::get('{id}/{archivo}/eliminar', 'ContactosController@eliminarAdjunto')->name('contactos.eliminarAdjunto');
 	});
 	Route::resource('contactos', 'ContactosController');
 
@@ -758,6 +759,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{cliente}/create', 'ContratosController@create')->name('contratos.create_cliente');
 		Route::get('deshabilitados', 'ContratosController@disabled')->name('contratos.disabled');
 		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
+		Route::get('{id}/{archivo}/eliminar', 'ContratosController@eliminarAdjunto')->name('contratos.eliminarAdjunto');
 	});
 	Route::resource('contratos', 'ContratosController');
 	

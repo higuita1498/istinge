@@ -3855,7 +3855,7 @@ function interfazChange(){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_mac").classList.remove('d-none');
         
-        document.getElementById("mac_address").setAttribute('required', true);
+        //document.getElementById("mac_address").setAttribute('required', true);
         document.getElementById("interfaz").setAttribute('required', true);
         document.getElementById("div_local_address").innerHTML = "Segmento de IP <span class='text-danger'>*</span>";
         document.getElementById("div_ip").innerHTML = "Dirección IP (Remote Address)";
@@ -3937,6 +3937,7 @@ function interfazChange(){
     document.getElementById("id_vlan").value = '';
     document.getElementById("usuario").value = '';
     document.getElementById("password").value = '';
+    document.getElementById("mac_address").removeAttribute('required');
 }
 
 function modificarPromesa(id) {

@@ -13,28 +13,48 @@
 
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Fecha de Factura <span class="text-danger">*</span></label>
-	            <input type="number" class="form-control"  id="fecha_factura" name="fecha_factura"  required="" value="{{old('fecha_factura')}}" min="0" max="30">
+	            <select class="form-control selectpicker" name="fecha_factura" id="fecha_factura" title="Seleccione" data-live-search="true" data-size="5">
+	            	@for ($i = 1; $i < 31; $i++)
+	            	    <option {{old('fecha_factura')==$i?'selected':''}} value="{{$i}}">{{$i}}</option>
+	            	@endfor
+            	</select>
+	            {{-- <input type="number" class="form-control"  id="fecha_factura" name="fecha_factura"  required="" value="{{old('fecha_factura')}}" min="0" max="30"> --}}
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('fecha_factura') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Fecha de Pago <span class="text-danger">*</span></label>
-	            <input type="number" class="form-control"  id="fecha_pago" name="fecha_pago"  required="" value="{{old('fecha_pago')}}" min="0" max="30">
+	            <select class="form-control selectpicker" name="fecha_pago" id="fecha_pago" title="Seleccione" data-live-search="true" data-size="5">
+	            	@for ($i = 1; $i < 31; $i++)
+	            	    <option {{old('fecha_pago')==$i?'selected':''}} value="{{$i}}">{{$i}}</option>
+	            	@endfor
+            	</select>
+	            {{-- <input type="number" class="form-control"  id="fecha_pago" name="fecha_pago"  required="" value="{{old('fecha_pago')}}" min="0" max="30"> --}}
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('fecha_pago') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Fecha de Corte <span class="text-danger">*</span></label>
-	            <input type="number" class="form-control"  id="fecha_corte" name="fecha_corte"  required="" value="{{old('fecha_corte')}}" min="0" max="30">
+	            <select class="form-control selectpicker" name="fecha_corte" id="fecha_corte" title="Seleccione" data-live-search="true" data-size="5">
+	            	@for ($i = 1; $i < 31; $i++)
+	            	    <option {{old('fecha_corte')==$i?'selected':''}} value="{{$i}}">{{$i}}</option>
+	            	@endfor
+            	</select>
+	            {{-- <input type="number" class="form-control"  id="fecha_corte" name="fecha_corte"  required="" value="{{old('fecha_corte')}}" min="0" max="30"> --}}
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('fecha_corte') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Fecha de Suspensión <span class="text-danger">*</span></label>
-	            <input type="number" class="form-control"  id="fecha_suspension" name="fecha_suspension"  required="" value="{{old('fecha_suspension')}}" min="0" max="30">
+	            <select class="form-control selectpicker" name="fecha_suspension" id="fecha_suspension" title="Seleccione" data-live-search="true" data-size="5">
+	            	@for ($i = 1; $i < 31; $i++)
+	            	    <option {{old('fecha_suspension')==$i?'selected':''}} value="{{$i}}">{{$i}}</option>
+	            	@endfor
+            	</select>
+	            {{-- <input type="number" class="form-control"  id="fecha_suspension" name="fecha_suspension"  required="" value="{{old('fecha_suspension')}}" min="0" max="30"> --}}
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('fecha_suspension') }}</strong>
 	            </span>
