@@ -589,4 +589,30 @@ public function forma_pago()
         return '';
     }
 
+    public function periodoCobrado(){
+        
+        $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+        where('client_id',$this->cliente)
+        ->select('gc.*')->first();
+        
+        //obtenemos el mes de la factura actual
+        $mesFactura = Carbon::parse($this->fecha)->format('m-Y');
+        
+        //construimos el inicio del corte tomando la fecha de la factura mes y año y el grupo de corte el dia
+        $inicio = $grupo->fecha_corte . "-" . $mesFactura;
+        $inicioCorte = Carbon::parse($inicio)->subMonth()->addDay()->toFormattedDateString();
+        
+        $finCorte = $grupo->fecha_corte . "-" . $mesFactura;
+        $finCorte = Carbon::parse($inicio)->toFormattedDateString();
+        
+        //dias cobrados
+        $fechaFactura = Carbon::parse($this->fecha);
+        $inicio = Carbon::parse($inicio);
+        $diasCobrados = $fechaFactura->diffInDays($inicio);
+        
+        $mensaje = "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte . " total días cobrados: " . $diasCobrados; 
+        
+        return $mensaje;
+    }
+
 }

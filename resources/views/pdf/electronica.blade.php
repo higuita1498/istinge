@@ -375,6 +375,10 @@
                 <th class="right smalltd">FECHA SUSPENSION</th>
                 <td style="border-bottom: 2px solid #ccc;">{{Carbon\Carbon::parse($factura->vencimiento)->format('d-m-Y')}}</td>
             </tr>
+            <tr>
+                <th class="right smalltd">PERIODO COBRADO</th>
+                <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobrado()}}</td>
+            </tr>
         </table>
     </div>
     
