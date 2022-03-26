@@ -371,7 +371,7 @@ class ContratosController extends Controller
                     $rate_limit .= ' '.$burst_limit;
                 }
                 if($burst_threshold){
-                    $rate_limit .= ' '.$burst_thresh;
+                    $rate_limit .= ' '.$burst_threshold;
                 }
                 if($burst_time){
                     $rate_limit .= ' '.$burst_time;
@@ -684,7 +684,7 @@ class ContratosController extends Controller
                         $rate_limit .= ' '.$burst_limit;
                     }
                     if($burst_threshold){
-                        $rate_limit .= ' '.$burst_thresh;
+                        $rate_limit .= ' '.$burst_threshold;
                     }
                     if($burst_time){
                         $rate_limit .= ' '.$burst_time;
