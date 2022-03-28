@@ -328,7 +328,7 @@ class ContratosController extends Controller
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             $registro = false;
-            //$API->debug = true;
+            $API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $nro = Numeracion::where('empresa', 1)->first();
@@ -543,7 +543,7 @@ class ContratosController extends Controller
                         )
                     );
                 }
-
+dd('debug');
                 $ip_autorizada = 0;
 
                 if($mikrotik->regla_ips_autorizadas == 1){
