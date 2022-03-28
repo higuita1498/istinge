@@ -3871,6 +3871,8 @@ function interfazChange(){
         document.getElementById("usuario").removeAttribute('required');
         document.getElementById("div_password").classList.add('d-none');
         document.getElementById("password").removeAttribute('required');
+        document.getElementById("div_dhcp").classList.add('d-none');
+        document.getElementById("simple_queue").removeAttribute('required');
     }else if(document.getElementById("conexion").value == 4){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_name_vlan").classList.remove('d-none');
@@ -3892,6 +3894,8 @@ function interfazChange(){
         document.getElementById("usuario").removeAttribute('required');
         document.getElementById("div_password").classList.add('d-none');
         document.getElementById("password").removeAttribute('required');
+        document.getElementById("div_dhcp").classList.add('d-none');
+        document.getElementById("simple_queue").removeAttribute('required');
     }else if(document.getElementById("conexion").value == 2){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("interfaz").setAttribute('required', true);
@@ -3902,6 +3906,9 @@ function interfazChange(){
         document.getElementById("password").removeAttribute('required');
         document.getElementById("div_mac").classList.remove('d-none');
         document.getElementById("mac_address").setAttribute('required', true);
+
+        document.getElementById("div_dhcp").classList.remove('d-none');
+        document.getElementById("simple_queue").setAttribute('required', true);
     }else if(document.getElementById("conexion").value == 1){
         document.getElementById("usuario").value = '';
         document.getElementById("password").value = '';
@@ -3912,6 +3919,8 @@ function interfazChange(){
 
         document.getElementById("div_mac").classList.add('d-none');
         document.getElementById("mac_address").removeAttribute('required');
+        document.getElementById("div_dhcp").classList.add('d-none');
+        document.getElementById("simple_queue").removeAttribute('required');
     }else{
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');
@@ -3930,8 +3939,11 @@ function interfazChange(){
         
         document.getElementById("usuario").removeAttribute('required');
         document.getElementById("password").removeAttribute('required');
+        document.getElementById("div_dhcp").classList.add('d-none');
+        document.getElementById("simple_queue").removeAttribute('required');
     }
     document.getElementById("interfaz").value = '';
+    document.getElementById("simple_queue").value = '';
     document.getElementById("mac_address").value = '';
     document.getElementById("name_vlan").value = '';
     document.getElementById("id_vlan").value = '';
@@ -4250,6 +4262,9 @@ function getSegmentos(mikrotik) {
             });
 
             $select.selectpicker('refresh');
+
+            $('#local_address').val($("#segmento_bd").val());
+            $('#local_address').selectpicker('refresh');
         },
         error: function(data){
             cargando(false);

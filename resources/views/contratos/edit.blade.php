@@ -77,6 +77,14 @@
 	                <option value="4" {{$contrato->conexion==4?'selected':''}}>VLAN</option>
 	            </select>
 	        </div>
+
+            <div class="col-md-4 form-group {{$contrato->conexion==2?'':'d-none'}}" id="div_dhcp">
+                <label class="control-label">Simple Queue <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" id="simple_queue" name="simple_queue"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <option value="dinamica" {{$contrato->simple_queue == 'dinamica' ? 'selected':''}}>Dinámica</option>
+                    <option value="estatica" {{$contrato->simple_queue == 'estatica' ? 'selected':''}}>Estática</option>
+                </select>
+            </div>
 	        
 	        <div class="col-md-4 form-group {{$contrato->conexion==3?'':'d-none'}}" id="div_interfaz">
                 <label class="control-label">Interfaz de Conexión <span class="text-danger">*</span></label>
@@ -102,6 +110,7 @@
                         <a href="javascript:addSegmento();" class="btn btn-outline-success btn-sm"><i class="fas fa-plus" style="margin: 2px;"></i></a>
                         @endif
                     </div> --}}
+                    <input type="hidden" id="segmento_bd" value="{{ $contrato->local_address }}">
                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
 
                     </select>
