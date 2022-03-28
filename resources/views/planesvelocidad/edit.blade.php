@@ -68,7 +68,7 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Precio <span class="text-danger">*</span></label>
-        	            <input type="text" class="form-control"  id="price" name="price"  required="" value="{{$plan->price}}" maxlength="200">
+        	            <input type="text" class="form-control"  id="price" name="price"  required="" value="{{$plan->price}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('price') }}</strong>
         	            </span>
@@ -132,7 +132,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{$plan->burst_limit_subida}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{$plan->burst_limit_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
@@ -145,7 +145,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{$plan->burst_limit_bajada}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{$plan->burst_limit_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
@@ -158,7 +158,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{$plan->burst_threshold_subida}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{$plan->burst_threshold_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
@@ -171,7 +171,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{$plan->burst_threshold_bajada}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{$plan->burst_threshold_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
@@ -184,7 +184,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{$plan->burst_time_subida}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_time_subida" name="burst_time_subida"  value="{{$plan->burst_time_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Seg</div>
         	            	</div>
@@ -197,7 +197,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{$plan->burst_time_bajada}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="burst_time_bajada" name="burst_time_bajada"  value="{{$plan->burst_time_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Seg</div>
         	            	</div>
@@ -232,7 +232,7 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Prioridad</label>
-        	            <input type="number" class="form-control"  id="prioridad" name="prioridad"  value="{{$plan->prioridad}}" min="1" max="8">
+        	            <input type="number" class="form-control"  id="prioridad" name="prioridad"  value="{{$plan->prioridad}}" min="1" max="8" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('prioridad') }}</strong>
         	            </span>
@@ -241,7 +241,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Limit at subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="limit_at_subida" name="limit_at_subida"  value="{{$plan->limit_at_subida}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="limit_at_subida" name="limit_at_subida"  value="{{$plan->limit_at_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
@@ -254,7 +254,7 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Limit at bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="limit_at_bajada" name="limit_at_bajada"  value="{{$plan->limit_at_bajada}}" maxlength="200" min="0">
+        	            	<input type="number" class="form-control"  id="limit_at_bajada" name="limit_at_bajada"  value="{{$plan->limit_at_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            	<div class="input-group-prepend">
         	            		<div class="input-group-text font-weight-bold">Mb</div>
         	            	</div>
