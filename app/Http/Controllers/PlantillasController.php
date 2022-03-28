@@ -56,10 +56,9 @@ class PlantillasController extends Controller
         $request->validate([
             'title' => 'required',
             'tipo' => 'required',
-            'clasificacion' => 'required',
-            'contenido' => 'required'
+            'clasificacion' => 'required'
         ]);
-        
+
         if (Plantilla::where('empresa', Auth::user()->empresa)->count() > 0) {
             $nro = Plantilla::where('empresa', Auth::user()->empresa)->get()->last()->nro;
         }else{
@@ -71,16 +70,17 @@ class PlantillasController extends Controller
         $plantilla->tipo = $request->tipo;
         $plantilla->clasificacion = $request->clasificacion;
         $plantilla->title = $request->title;
-        $plantilla->contenido = $request->contenido;
+        $plantilla->contenido = ($request->tipo==0) ? $request->contenido_sms:$request->contenido;
 
         $plantilla->created_by = Auth::user()->id;
         $plantilla->status = 0;
         $plantilla->save();
 
-        $plantilla->archivo = 'plantilla'.$plantilla->id;
-        $plantilla->save();
-
-        Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+        if($plantilla->tipo==1){
+            $plantilla->archivo = 'plantilla'.$plantilla->id;
+            $plantilla->save();
+            Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+        }
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
         return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
@@ -135,23 +135,26 @@ class PlantillasController extends Controller
         $request->validate([
             'title' => 'required',
             'tipo' => 'required',
-            'clasificacion' => 'required',
-            'contenido' => 'required'
+            'clasificacion' => 'required'
         ]);
         
         $plantilla = Plantilla::find($id);
         
         if($plantilla){
-            Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            if($plantilla->tipo==1){
+                Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            }
 
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
             $plantilla->title = $request->title;
-            $plantilla->contenido = $request->contenido;
+            $plantilla->contenido = ($request->tipo==0) ? $request->contenido_sms:$request->contenido;
             $plantilla->updated_by = Auth::user()->id;
             $plantilla->save();
 
-            Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+            if($plantilla->tipo==1){
+                Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+            }
             
             $mensaje = 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
@@ -171,7 +174,9 @@ class PlantillasController extends Controller
         $plantilla = Plantilla::find($id);
         
         if($plantilla){
-            Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            if($plantilla->tipo==1){
+                Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            }
             $plantilla->delete();
             $mensaje = 'SE HA ELIMINADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje);
