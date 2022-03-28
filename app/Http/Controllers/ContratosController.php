@@ -365,7 +365,7 @@ class ContratosController extends Controller
                 $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
 
                 if($max_limit){
-                    $rate_limit .= ' '.$max_limit;
+                    $rate_limit .= $max_limit;
                 }
                 if($burst_limit){
                     $rate_limit .= ' '.$burst_limit;
@@ -696,7 +696,7 @@ class ContratosController extends Controller
                     $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
 
                     if($max_limit){
-                        $rate_limit .= ' '.$max_limit;
+                        $rate_limit .= $max_limit;
                     }
                     if($burst_limit){
                         $rate_limit .= ' '.$burst_limit;
