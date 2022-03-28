@@ -75,61 +75,61 @@
 					@if($plan->burst_limit_subida)
 					<tr>
 						<th width="20%">Burst limit subida</th>
-						<td>{{ $plan->burst_limit_subida }}Mb</td>
+						<td>{{ $plan->burst_limit_subida }}</td>
 					</tr>
 					@endif
 					@if($plan->burst_limit_bajada)
 					<tr>
 						<th>Burst limit bajada</th>
-						<td>{{ $plan->burst_limit_bajada }}Mb</td>
+						<td>{{ $plan->burst_limit_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->burst_threshold_subida)
 					<tr>
 						<th>Burst threshold subida</th>
-						<td>{{ $plan->burst_threshold_subida }}Mb</td>
+						<td>{{ $plan->burst_threshold_subida }}</td>
 					</tr>
 					@endif
 					@if($plan->burst_threshold_bajada)
 					<tr>
 						<th>Burst threshold bajada</th>
-						<td>{{ $plan->burst_threshold_bajada }}Mb</td>
-					</tr>
-					@endif
-					@if($plan->burst_time_subida)
-					<tr>
-						<th>Burst time subida</th>
-						<td>{{ $plan->burst_time_subida }}Mb</td>
-					</tr>
-					@endif
-					@if($plan->burst_time_bajada)
-					<tr>
-						<th>Burst time bajada</th>
-						<td>{{ $plan->burst_time_bajada }}Mb</td>
-					</tr>
-					@endif
-					@if($plan->queue_type_bajada)
-					<tr>
-						<th>Queue Type de bajada</th>
-						<td>{{ $plan->queue_type_bajada }}Mb</td>
-					</tr>
-					@endif
-					@if($plan->queue_type_bajada)
-					<tr>
-						<th>Queue Type de bajada</th>
-						<td>{{ $plan->queue_type_bajada }}Mb</td>
+						<td>{{ $plan->burst_threshold_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->limit_at_subida)
 					<tr>
 						<th>Limit-at Subida</th>
-						<td>{{ $plan->limit_at_subida }}Mb</td>
+						<td>{{ $plan->limit_at_subida }}</td>
 					</tr>
 					@endif
 					@if($plan->limit_at_bajada)
 					<tr>
 						<th>Limit-at Bajada</th>
-						<td>{{ $plan->limit_at_bajada }}Mb</td>
+						<td>{{ $plan->limit_at_bajada }}</td>
+					</tr>
+					@endif
+					@if($plan->burst_time_subida)
+					<tr>
+						<th>Burst time subida</th>
+						<td>{{ $plan->burst_time_subida }}</td>
+					</tr>
+					@endif
+					@if($plan->burst_time_bajada)
+					<tr>
+						<th>Burst time bajada</th>
+						<td>{{ $plan->burst_time_bajada }}</td>
+					</tr>
+					@endif
+					@if($plan->queue_type_subida)
+					<tr>
+						<th>Queue Type de subida</th>
+						<td>{{ $plan->queue_type_subida }}</td>
+					</tr>
+					@endif
+					@if($plan->queue_type_bajada)
+					<tr>
+						<th>Queue Type de bajada</th>
+						<td>{{ $plan->queue_type_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->parenta)

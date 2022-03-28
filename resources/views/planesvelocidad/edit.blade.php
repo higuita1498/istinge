@@ -4,6 +4,7 @@
     	.input-group-prepend .input-group-text {
     		background: #f9f9f9;
     		border-color: #dee4e6;
+    		font-size: 0.9rem;
     	}
     	.nav-tabs .nav-link {
     		font-size: 1em;
@@ -29,6 +30,16 @@
     	.nav-pills .nav-link:hover {
     		color: #fff!important;
     		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    	.select-group input.form-control{ width: 65%}
+    	.select-group select.input-group-addon { width: 35%; }
+    	.input-group-addon{
+    		background: #f9f9f9;
+    		border-color: #dee4e6;
+    		font-size: .9em;
+    		font-weight: bold;
+    		color: #495057;
+    		padding: 0 1% 0 2%;
     	}
     </style>
 
@@ -68,21 +79,33 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Precio <span class="text-danger">*</span></label>
-        	            <input type="text" class="form-control"  id="price" name="price"  required="" value="{{$plan->price}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            <input type="number" class="form-control"  id="price" name="price"  required="" value="{{$plan->price}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57" min="0">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('price') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Vel. de Descarga <span class="text-danger">*</span></label>
-        	            <input type="text" class="form-control"  id="download" name="download"  required="" value="{{$plan->download}}" maxlength="200">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="download" name="download"  required="" value="{{substr($plan->download, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_download">
+        	            		<option value="k" {{ substr($plan->download, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->download, -1)=='M'?'selected':'' }}>Mbps</option>
+        	            	</select>
+        	            </div>
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('download') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Vel. de Subida <span class="text-danger">*</span></label>
-        	            <input type="text" class="form-control"  id="upload" name="upload"  required="" value="{{$plan->upload}}" maxlength="200">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="upload" name="upload"  required="" value="{{substr($plan->upload, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_upload">
+        	            		<option value="k" {{ substr($plan->upload, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->upload, -1)=='M'?'selected':'' }}>Mbps</option>
+        	            	</select>
+        	            </div>
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('upload') }}</strong>
         	            </span>
@@ -132,10 +155,11 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{$plan->burst_limit_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
+        	            	<input type="number" class="form-control"  id="burst_limit_subida" name="burst_limit_subida"  value="{{substr($plan->burst_limit_subida, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_burst_limit_subida">
+								<option value="k" {{ substr($plan->burst_limit_subida, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->burst_limit_subida, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
         	            </div>
 
         	            <span class="help-block error">
@@ -145,10 +169,11 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst limit bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{$plan->burst_limit_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
+        	            	<input type="number" class="form-control"  id="burst_limit_bajada" name="burst_limit_bajada"  value="{{substr($plan->burst_limit_bajada, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_burst_limit_bajada">
+								<option value="k" {{ substr($plan->burst_limit_bajada, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->burst_limit_bajada, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
         	            </div>
 
         	            <span class="help-block error">
@@ -158,10 +183,11 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold subida</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{$plan->burst_threshold_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
+        	            	<input type="number" class="form-control"  id="burst_threshold_subida" name="burst_threshold_subida"  value="{{substr($plan->burst_threshold_subida, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_burst_threshold_subida">
+								<option value="k" {{ substr($plan->burst_threshold_subida, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->burst_threshold_subida, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
         	            </div>
 
         	            <span class="help-block error">
@@ -171,16 +197,47 @@
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst threshold bajada</label>
         	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{$plan->burst_threshold_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
+        	            	<input type="number" class="form-control"  id="burst_threshold_bajada" name="burst_threshold_bajada"  value="{{substr($plan->burst_threshold_bajada, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_burst_threshold_bajada">
+								<option value="k" {{ substr($plan->burst_threshold_bajada, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->burst_threshold_bajada, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
         	            </div>
 
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('burst_threshold_bajada') }}</strong>
         	            </span>
         	        </div>
+
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Limit at subida</label>
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="limit_at_subida" name="limit_at_subida"  value="{{substr($plan->limit_at_subida, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_limit_at_subida">
+								<option value="k" {{ substr($plan->limit_at_subida, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->limit_at_subida, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
+        	            </div>
+
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('limit_at_subida') }}</strong>
+        	            </span>
+        	        </div>
+        	        <div class="col-md-3 form-group">
+        	            <label class="control-label">Limit at bajada</label>
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="limit_at_bajada" name="limit_at_bajada"  value="{{substr($plan->limit_at_bajada, 0, -1)}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+        	            	<select class="input-group-addon" name="inicial_limit_at_bajada">
+								<option value="k" {{ substr($plan->limit_at_bajada, -1)=='k'?'selected':'' }}>Kbps</option>
+        	            		<option value="M" {{ substr($plan->limit_at_bajada, -1)=='M'?'selected':'' }}>Mbps</option>
+							</select>
+        	            </div>
+
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('limit_at_bajada') }}</strong>
+        	            </span>
+        	        </div>
+
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Burst time subida</label>
         	            <div class="input-group mb-2">
@@ -235,33 +292,6 @@
         	            <input type="number" class="form-control"  id="prioridad" name="prioridad"  value="{{$plan->prioridad}}" min="1" max="8" onkeypress="return event.charCode >= 48 && event.charCode <=57">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('prioridad') }}</strong>
-        	            </span>
-        	        </div>
-
-        	        <div class="col-md-3 form-group">
-        	            <label class="control-label">Limit at subida</label>
-        	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="limit_at_subida" name="limit_at_subida"  value="{{$plan->limit_at_subida}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
-        	            </div>
-
-        	            <span class="help-block error">
-        	                <strong>{{ $errors->first('limit_at_subida') }}</strong>
-        	            </span>
-        	        </div>
-        	        <div class="col-md-3 form-group">
-        	            <label class="control-label">Limit at bajada</label>
-        	            <div class="input-group mb-2">
-        	            	<input type="number" class="form-control"  id="limit_at_bajada" name="limit_at_bajada"  value="{{$plan->limit_at_bajada}}" maxlength="200" min="0" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-        	            	<div class="input-group-prepend">
-        	            		<div class="input-group-text font-weight-bold">Mb</div>
-        	            	</div>
-        	            </div>
-
-        	            <span class="help-block error">
-        	                <strong>{{ $errors->first('limit_at_bajada') }}</strong>
         	            </span>
         	        </div>
         	   </div>
