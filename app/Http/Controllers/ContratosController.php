@@ -543,7 +543,7 @@ class ContratosController extends Controller
                         )
                     );
                 }
-dd('debug');
+//dd('debug');
                 $ip_autorizada = 0;
 
                 if($mikrotik->regla_ips_autorizadas == 1){
