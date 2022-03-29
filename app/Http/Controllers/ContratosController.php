@@ -358,11 +358,11 @@ class ContratosController extends Controller
 
                 $rate_limit = '';
                 $priority        = $plan->prioridad;
-                $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
-                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
-                $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
-                $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
-                $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
+                $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada : '';
+                $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
+                $max_limit       = $plan->upload.'/'.$plan->download;
 
                 if($max_limit){
                     $rate_limit .= $max_limit;
@@ -399,7 +399,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($cliente->nombre),
                         "target"          => $request->ip,
-                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                        "max-limit"       => $plan->upload.'/'.$plan->download,
                         "burst-limit"     => $burst_limit,
                         "burst-threshold" => $burst_threshold,
                         "burst-time"      => $burst_time,
@@ -447,7 +447,7 @@ class ContratosController extends Controller
                                 $API->comm("/queue/simple/add", array(
                                     "name"            => $this->normaliza($cliente->nombre),
                                     "target"          => $request->ip,
-                                    "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "max-limit"       => $plan->upload.'/'.$plan->download,
                                     "burst-limit"     => $burst_limit,
                                     "burst-threshold" => $burst_threshold,
                                     "burst-time"      => $burst_time,
@@ -483,7 +483,7 @@ class ContratosController extends Controller
                         $API->comm("/queue/simple/add", array(
                             "name"            => $this->normaliza($cliente->nombre),
                             "target"          => $request->ip,
-                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
                             "burst-threshold" => $burst_threshold,
                             "burst-time"      => $burst_time,
@@ -505,7 +505,7 @@ class ContratosController extends Controller
                         $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($cliente->nombre),
                                 "target"          => $request->ip,
-                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
                                 "burst-threshold" => $burst_threshold,
                                 "burst-time"      => $burst_time,
@@ -534,7 +534,7 @@ class ContratosController extends Controller
                     $API->comm("/queue/simple/add", array(
                             "name"            => $this->normaliza($cliente->nombre),
                             "target"          => $request->ip,
-                            "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                            "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
                             "burst-threshold" => $burst_threshold,
                             "burst-time"      => $burst_time,
@@ -689,11 +689,11 @@ class ContratosController extends Controller
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     $rate_limit = '';
                     $priority        = $plan->prioridad;
-                    $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
-                    $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+                    $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                    $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
                     $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
-                    $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'M/'.$plan->limit_at_bajada.'M' : '';
-                    $max_limit       = strtoupper($plan->upload).'/'.strtoupper($plan->download);
+                    $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada : '';
+                    $max_limit       = $plan->upload.'/'.$plan->download;
 
                     if($max_limit){
                         $rate_limit .= $max_limit;
@@ -727,7 +727,7 @@ class ContratosController extends Controller
                             $API->comm("/queue/simple/set", array(
                                     ".id"             => $name_new[0][".id"],
                                     "target"          => $request->ip,
-                                    "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "max-limit"       => $plan->upload.'/'.$plan->download,
                                     "burst-limit"     => $burst_limit,
                                     "burst-threshold" => $burst_threshold,
                                     "burst-time"      => $burst_time,
@@ -766,7 +766,7 @@ class ContratosController extends Controller
                                 $API->comm("/queue/simple/set", array(
                                         ".id"             => $name_new[0][".id"],
                                         "target"          => $request->ip,
-                                        "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                        "max-limit"       => $plan->upload.'/'.$plan->download,
                                         "burst-limit"     => $burst_limit,
                                         "burst-threshold" => $burst_threshold,
                                         "burst-time"      => $burst_time,
@@ -868,7 +868,7 @@ class ContratosController extends Controller
                             $API->comm("/queue/simple/set", array(
                                 ".id"       => $name[0][".id"],
                                 "target"          => $request->ip,
-                                "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
                                 "burst-threshold" => $burst_threshold,
                                 "burst-time"      => $burst_time,
@@ -888,7 +888,7 @@ class ContratosController extends Controller
                                 $API->comm("/queue/simple/add", array(
                                     "name"            => $contrato->servicio.'-'.$contrato->id,
                                     "target"          => $request->ip,
-                                    "max-limit"       => strtoupper($plan->upload).'/'.strtoupper($plan->download),
+                                    "max-limit"       => $plan->upload.'/'.$plan->download,
                                     "parent"          => $plan->parenta,
                                     "priority"        => $priority,
                                     "burst-limit"     => $burst_limit,
