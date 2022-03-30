@@ -59,7 +59,8 @@ class MikrotikController extends Controller
             'puerto_api' => 'required',
             'segmento_ip' => 'required',
             'interfaz' => 'required',
-            'interfaz_lan' => 'required'
+            'interfaz_lan' => 'required',
+            'amarre_mac' => 'required'
         ]);
         
         $mikrotik = new Mikrotik;
@@ -73,6 +74,7 @@ class MikrotikController extends Controller
         $mikrotik->interfaz_lan = $request->interfaz_lan;
         $mikrotik->created_by = Auth::user()->id;
         $mikrotik->empresa = Auth::user()->empresa;
+        $mikrotik->amarre_mac = $request->amarre_mac;
         $mikrotik->save();
         
         for ($i = 0; $i < count($request->segmento_ip); $i++) {
@@ -107,7 +109,8 @@ class MikrotikController extends Controller
                 'clave' => 'required',
                 'puerto_api' => 'required',
                 'interfaz' => 'required',
-                'interfaz_lan' => 'required'
+                'interfaz_lan' => 'required',
+                'amarre_mac' => 'required'
             ]);
             
             $mikrotik->nombre = $request->nombre;
@@ -120,6 +123,7 @@ class MikrotikController extends Controller
             $mikrotik->clave = $request->clave;
             $mikrotik->updated_by = Auth::user()->id;
             $mikrotik->status = 0;
+            $mikrotik->amarre_mac = $request->amarre_mac;
             $mikrotik->save();
             
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();

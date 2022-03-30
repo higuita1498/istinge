@@ -53,4 +53,12 @@ class Mikrotik extends Model
         $tmp        += PlanesVelocidad::where('mikrotik', $this->id)->where('status',1)->count();
         return $tmp;
     }
+
+    public function amarre_mac($class = false){
+        if($class){
+            return ($this->amarre_mac == 0) ? 'danger' : 'success';
+        }
+
+        return ($this->amarre_mac == 0) ? 'Deshabilitado' : 'Habilitado';
+    }
 }
