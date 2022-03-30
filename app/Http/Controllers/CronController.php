@@ -36,9 +36,10 @@ class CronController extends Controller
         $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
         
         foreach($grupos_corte as $grupo_corte){
-            $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+            $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->take(2)->get();
             
             $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+
             if($num){
                 $numero = $num->nro;
             }else{
@@ -55,20 +56,12 @@ class CronController extends Controller
                 $nro = NumeracionFactura::tipoNumeracion($contrato);
 
                 if($contrato->fecha_suspension){
-                    if($ultimo[2] == 31 && $date == "25"){
-                        $fecha_suspension = $contrato->fecha_suspension + 1;
-                    }else{
-                        $fecha_suspension = $contrato->fecha_suspension;
-                    }
+                    $fecha_suspension = $contrato->fecha_suspension;
                 }else{
-                    if($ultimo[2] == 31 && $date == "25"){
-                        $fecha_suspension = $grupo_corte->fecha_suspension + 1;
-                    }else{
-                        $fecha_suspension = $grupo_corte->fecha_suspension;
-                    }
+                    $fecha_suspension = $grupo_corte->fecha_suspension;
                 }
 
-                $plazo=TerminosPago::where('dias',$fecha_suspension-$date)->first();
+                $plazo=TerminosPago::where('dias',$grupo_corte->fecha_pago-$date)->first();
 
                 $tipo = 1; //1= normal, 2=Electrónica.
 
@@ -79,7 +72,7 @@ class CronController extends Controller
                 }elseif($contrato->facturacion == 3 && $electronica){
                     $tipo = 2;
                 }
-                
+
                 $inicio = $nro->inicio;
                 $nro->inicio += 1;
                 $factura = new Factura;
@@ -93,8 +86,8 @@ class CronController extends Controller
                 $factura->cliente       = $contrato->cliente;
                 $factura->fecha         = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura;
                 $factura->tipo          = $tipo;
-                $factura->vencimiento   = $ultimo[0].'-'.$ultimo[1].'-'.$fecha_suspension;
-                $factura->suspension    = $ultimo[0].'-'.$ultimo[1].'-'.$fecha_suspension;
+                $factura->vencimiento   = $ultimo[0].'-'.($ultimo[1]+1).'-'.$fecha_suspension;
+                $factura->suspension    = $ultimo[0].'-'.($ultimo[1]+1).'-'.$fecha_suspension;
                 $factura->pago_oportuno = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_pago;
                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                 $factura->bodega        = 1;
