@@ -170,7 +170,7 @@
 			    }).then((result) => {
 			        if (result.value) {
 			            $.ajax({
-			                url: '/configuracion_facturacionAutomatica',
+			                url: 'configuracion_facturacionAutomatica',
 			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 			                method: 'post',
 			                data: { status: $("#facturaAuto").val() },
