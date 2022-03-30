@@ -243,11 +243,11 @@
             @foreach($items as $item)
                 <tr>
                     <td>@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blanck">{{$item->producto()}}</a>@endif</td>
-                    <td>{{$item->ref}}</td>
+                    <td><div class="elipsis-short">{{$item->ref}}</div></td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->precio)}}</td>
                     <td>{{$item->desc?$item->desc:0}}%</td>
                     <td>{{$item->impuesto()}}</td>
-                    <td>{{$item->descripcion}}</td>
+                    <td><div class="elipsis-short">{{$item->descripcion}}</div></td>
                     <td>{{round($item->cant)}}</td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->total())}}</td>
                 </tr>
