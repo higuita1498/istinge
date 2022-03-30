@@ -62,7 +62,7 @@ class CronController extends Controller
                         $fecha_suspension = $grupo_corte->fecha_suspension;
                     }
 
-                    $plazo=TerminosPago::where('dias',$grupo_corte->fecha_pago-$date)->first();
+                    $plazo=TerminosPago::where('dias',$grupo_corte->fecha_pago)->first();
 
                     $tipo = 1; //1= normal, 2=Electrónica.
 
