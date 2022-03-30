@@ -72,37 +72,37 @@
 					<tr>
 						<th colspan="2" class="text-center" style="font-size: 1em;">CONFIGURACIÓN AVANZADA</th>
 					</tr>
-					@if($plan->burst_limit_subida)
+					@if(strlen($plan->burst_limit_subida)>1)
 					<tr>
 						<th width="20%">Burst limit subida</th>
 						<td>{{ $plan->burst_limit_subida }}</td>
 					</tr>
 					@endif
-					@if($plan->burst_limit_bajada)
+					@if(strlen($plan->burst_limit_bajada)>1)
 					<tr>
 						<th>Burst limit bajada</th>
 						<td>{{ $plan->burst_limit_bajada }}</td>
 					</tr>
 					@endif
-					@if($plan->burst_threshold_subida)
+					@if(strlen($plan->burst_threshold_subida)>1)
 					<tr>
 						<th>Burst threshold subida</th>
 						<td>{{ $plan->burst_threshold_subida }}</td>
 					</tr>
 					@endif
-					@if($plan->burst_threshold_bajada)
+					@if(strlen($plan->burst_threshold_bajada)>1)
 					<tr>
 						<th>Burst threshold bajada</th>
 						<td>{{ $plan->burst_threshold_bajada }}</td>
 					</tr>
 					@endif
-					@if($plan->limit_at_subida)
+					@if(strlen($plan->limit_at_subida)>1)
 					<tr>
 						<th>Limit-at Subida</th>
 						<td>{{ $plan->limit_at_subida }}</td>
 					</tr>
 					@endif
-					@if($plan->limit_at_bajada)
+					@if(strlen($plan->limit_at_bajada)>1)
 					<tr>
 						<th>Limit-at Bajada</th>
 						<td>{{ $plan->limit_at_bajada }}</td>
