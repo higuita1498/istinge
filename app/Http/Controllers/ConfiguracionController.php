@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Empresa; use App\Banco;
@@ -1885,6 +1886,20 @@ class ConfiguracionController extends Controller
       $empresa->factura_auto = 0;
       $empresa->save();
       return 0;
+    }
+  }
+
+  public function limpiarCache(Request $request){
+    $empresa = Empresa::find($request->empresa);
+
+    if ($empresa) {
+      $empresa->cache = rand();
+      $empresa->save();
+
+      $exitCode = Artisan::call('config:clear');
+      $exitCode = Artisan::call('cache:clear');
+      $exitCode = Artisan::call('view:clear');
+      return 1;
     }
   }
 }

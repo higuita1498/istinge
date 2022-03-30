@@ -77,7 +77,12 @@
         	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Precio <span class="text-danger">*</span></label>
-        	            <input type="number" class="form-control"  id="price" name="price"  required="" value="{{old('price')}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57" min="0">
+        	            <div class="input-group mb-2">
+        	            	<input type="number" class="form-control"  id="price" name="price"  required="" value="{{old('price')}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57" min="0">
+        	            	<div class="input-group-prepend">
+        	            		<div class="input-group-text font-weight-bold">{{ Auth::user()->empresa()->moneda }}</div>
+        	            	</div>
+        	            </div>
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('price') }}</strong>
         	            </span>

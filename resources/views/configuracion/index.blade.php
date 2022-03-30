@@ -103,6 +103,12 @@
 			<a href="{{route('servidor-correo.index')}}">Servidor de Correo</a><br>
 		</div>
 		@endif
+
+		<div class="col-sm-3">
+			<h4 class="card-title">Limpieza del Sistema</h4>
+			<p>Limpia los archivos temporales y caché del sistema.</p>
+			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
+		</div>
 	</div>
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">
@@ -202,6 +208,52 @@
 			                    setTimeout(function(){
 			                    	var a = document.createElement("a");
 			                    	a.href = window.location.pathname;
+			                    	a.click();
+			                    }, 1000);
+			                }
+			            });
+
+			        }
+			    })
+			}
+
+			function limpiarCache() {
+				if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/configuracion_limpiarCache';
+				}else{
+					var url = '/configuracion_limpiarCache';
+				}
+
+				var empresa = {{ Auth::user()->empresa()->id }};
+				var href = '{{route('home')}}';
+
+			    Swal.fire({
+			        title: '¿Desea limpiar los archivos temporales y la caché del sistema?',
+			        type: 'warning',
+			        showCancelButton: true,
+			        confirmButtonColor: '#3085d6',
+			        cancelButtonColor: '#d33',
+			        cancelButtonText: 'Cancelar',
+			        confirmButtonText: 'Aceptar',
+			    }).then((result) => {
+			        if (result.value) {
+			        	cargando(true);
+			            $.ajax({
+			                url: url,
+			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+			                method: 'post',
+			                data: { empresa: empresa },
+			                success: function (data) {
+			                	cargando(false);
+			                    Swal.fire({
+			                    	type: 'success',
+			                    	title: 'Limpieza realizada con éxito',
+			                    	showConfirmButton: false,
+			                    	timer: 5000
+			                    });
+			                    setTimeout(function(){
+			                    	var a = document.createElement("a");
+			                    	a.href = href;
 			                    	a.click();
 			                    }, 1000);
 			                }

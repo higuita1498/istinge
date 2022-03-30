@@ -398,9 +398,9 @@
         <script src="{{asset('vendors/light-gallery/js/lightgallery-all.js')}}"></script>
         <!-- endinject -->
         <script src="{{asset('js/moment.js')}}"></script>
-        <script src="{{asset('js/function.js')}}"></script>
-        <script src="{{asset('js/custom.js')}}"></script>
-        <script src="{{asset('js/dian.js')}}"></script>
+        <script src="{{asset('js/function.js')}}?v={{ Auth::user()->empresa()->cache }}"></script>
+        <script src="{{asset('js/custom.js')}}?v={{ Auth::user()->empresa()->cache }}"></script>
+        <script src="{{asset('js/dian.js')}}?v={{ Auth::user()->empresa()->cache }}"></script>
         
         <script type="text/javascript">
             $( document ).ready(function() {
