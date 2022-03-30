@@ -31,7 +31,6 @@ class CronController extends Controller
     public static function CrearFactura(){
         $i=0;
         $date = date('d');
-        $date = 25;
 
         $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
         
