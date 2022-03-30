@@ -80,67 +80,67 @@
 					@endif
 					@if(strlen($plan->burst_limit_bajada)>1)
 					<tr>
-						<th>Burst limit bajada</th>
+						<th width="20%">Burst limit bajada</th>
 						<td>{{ $plan->burst_limit_bajada }}</td>
 					</tr>
 					@endif
 					@if(strlen($plan->burst_threshold_subida)>1)
 					<tr>
-						<th>Burst threshold subida</th>
+						<th width="20%">Burst threshold subida</th>
 						<td>{{ $plan->burst_threshold_subida }}</td>
 					</tr>
 					@endif
 					@if(strlen($plan->burst_threshold_bajada)>1)
 					<tr>
-						<th>Burst threshold bajada</th>
+						<th width="20%">Burst threshold bajada</th>
 						<td>{{ $plan->burst_threshold_bajada }}</td>
 					</tr>
 					@endif
 					@if(strlen($plan->limit_at_subida)>1)
 					<tr>
-						<th>Limit-at Subida</th>
+						<th width="20%">Limit-at Subida</th>
 						<td>{{ $plan->limit_at_subida }}</td>
 					</tr>
 					@endif
 					@if(strlen($plan->limit_at_bajada)>1)
 					<tr>
-						<th>Limit-at Bajada</th>
+						<th width="20%">Limit-at Bajada</th>
 						<td>{{ $plan->limit_at_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->burst_time_subida)
 					<tr>
-						<th>Burst time subida</th>
+						<th width="20%">Burst time subida</th>
 						<td>{{ $plan->burst_time_subida }}</td>
 					</tr>
 					@endif
 					@if($plan->burst_time_bajada)
 					<tr>
-						<th>Burst time bajada</th>
+						<th width="20%">Burst time bajada</th>
 						<td>{{ $plan->burst_time_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->queue_type_subida)
 					<tr>
-						<th>Queue Type de subida</th>
+						<th width="20%">Queue Type de subida</th>
 						<td>{{ $plan->queue_type_subida }}</td>
 					</tr>
 					@endif
 					@if($plan->queue_type_bajada)
 					<tr>
-						<th>Queue Type de bajada</th>
+						<th width="20%">Queue Type de bajada</th>
 						<td>{{ $plan->queue_type_bajada }}</td>
 					</tr>
 					@endif
 					@if($plan->parenta)
 					<tr>
-						<th>Parent</th>
+						<th width="20%">Parent</th>
 						<td>{{ $plan->parenta }}</td>
 					</tr>
 					@endif
 					@if($plan->prioridad)
 					<tr>
-						<th>Prioridad</th>
+						<th width="20%">Prioridad</th>
 						<td>{{ $plan->prioridad }}</td>
 					</tr>
 					@endif

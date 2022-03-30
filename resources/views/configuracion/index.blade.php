@@ -36,6 +36,8 @@
 			<a href="{{route('configuracion.numeraciones_dian')}}">Numeraciones DIAN</a><br>
 			<a href="{{route('configuracion.datos')}}">Datos generales</a><br>
 			<a href="{{route('vendedores.index')}}">Vendedores</a><br>
+			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
+			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
 		</div>
 
 		<div class="col-sm-3">
@@ -144,4 +146,63 @@
 				</div>
 			</div>
 			{{-- /Modal contacto nuevo --}}
+	@endsection
+
+	@section('scripts')
+	    <script>
+			function facturacionAutomatica() {
+			    if ($("#facturaAuto").val() == 0) {
+			        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
+			    }
+
+			    if ($("#facturaAuto").val() == 1) {
+			        $titleswal = "¿Desea deshabilitar la facturación automática de los contratos?";
+			    }
+
+			    Swal.fire({
+			        title: $titleswal,
+			        type: 'warning',
+			        showCancelButton: true,
+			        confirmButtonColor: '#3085d6',
+			        cancelButtonColor: '#d33',
+			        cancelButtonText: 'Cancelar',
+			        confirmButtonText: 'Aceptar',
+			    }).then((result) => {
+			        if (result.value) {
+			            $.ajax({
+			                url: '/configuracion_facturacionAutomatica',
+			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+			                method: 'post',
+			                data: { status: $("#facturaAuto").val() },
+			                success: function (data) {
+			                    console.log(data);
+			                    if (data == 1) {
+			                        Swal.fire({
+			                            type: 'success',
+			                            title: 'Factuación automática para los contratos habilitada',
+			                            showConfirmButton: false,
+			                            timer: 5000
+			                        })
+			                        $("#facturaAuto").val(1);
+			                    } else {
+			                        Swal.fire({
+			                            type: 'success',
+			                            title: 'Factuación automática para los contratos deshabilitada',
+			                            showConfirmButton: false,
+			                            timer: 5000
+			                        })
+			                        $("#facturaAuto").val(0);
+			                    }
+			                    setTimeout(function(){
+			                    	var a = document.createElement("a");
+			                    	a.href = window.location.pathname;
+			                    	a.click();
+			                    }, 1000);
+			                }
+			            });
+
+			        }
+			    })
+			}
+	    </script>
 	@endsection

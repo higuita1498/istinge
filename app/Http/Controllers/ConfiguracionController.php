@@ -1870,4 +1870,21 @@ class ConfiguracionController extends Controller
       }
       return redirect('empresa/configuracion/servicios')->with('danger', 'No existe un registro con ese id');
     }
+
+    /**
+     * Crear Facturación Automática
+     */
+  public function facturacionAutomatica(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->status == 0) {
+      $empresa->factura_auto = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->factura_auto = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
 }

@@ -1,11 +1,11 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'NETWORK SOFT S.A.S.',
+    'name' => 'IST INGENIERIA Y SOLUCIONES TECNOLOGICAS S.A.S.',
     'api_key' => NULL,
-    'env' => 'production',
+    'env' => 'http://127.0.0.1:8000',
     'debug' => true,
-    'url' => 'https://networksoft.online/software',
+    'url' => 'https://istingenieria.online/software',
     'timezone' => 'America/Bogota',
     'locale' => 'es',
     'fallback_locale' => 'es',
@@ -178,7 +178,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\laragon\\www\\istingen\\storage\\framework/cache/data',
+        'path' => 'C:\\wamp64\\www\\istinge\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -208,7 +208,7 @@
         'connection' => 'default',
       ),
     ),
-    'prefix' => 'network_soft_sas_cache',
+    'prefix' => 'ist_ingenieria_y_soluciones_tecnologicas_sas_cache',
   ),
   'database' => 
   array (
@@ -336,19 +336,25 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istingen\\storage\\app',
+        'root' => 'C:\\wamp64\\www\\istinge\\storage\\app',
       ),
       'documentos' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istingen\\public\\../../public_html/adjuntos/documentos',
+        'root' => 'C:\\wamp64\\www\\istinge\\public\\../../public_html/adjuntos/documentos',
         'visibility' => 'public',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istingen\\storage\\app/public',
-        'url' => 'https://networksoft.online/software/storage',
+        'root' => 'C:\\wamp64\\www\\istinge\\storage\\app/public',
+        'url' => 'https://istingenieria.online/software/storage',
+        'visibility' => 'public',
+      ),
+      'emails' => 
+      array (
+        'driver' => 'local',
+        'root' => 'C:\\wamp64\\www\\istinge\\public\\../resources/views/emails/plantillas',
         'visibility' => 'public',
       ),
       's3' => 
@@ -378,7 +384,7 @@
   ),
   'log-viewer' => 
   array (
-    'storage-path' => 'C:\\laragon\\www\\istingen\\storage\\logs',
+    'storage-path' => 'C:\\wamp64\\www\\istinge\\storage\\logs',
     'pattern' => 
     array (
       'prefix' => 'laravel-',
@@ -458,13 +464,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
+        'path' => 'C:\\wamp64\\www\\istinge\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
+        'path' => 'C:\\wamp64\\www\\istinge\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 7,
       ),
@@ -500,23 +506,23 @@
   'mail' => 
   array (
     'driver' => 'smtp',
-    'host' => 'mail.networksoft.online',
-    'port' => '465',
+    'host' => '',
+    'port' => '',
     'from' => 
     array (
       'address' => 'info@networksoft.online',
       'name' => 'NETWORK SOFT S.A.S',
     ),
-    'encryption' => 'ssl',
-    'username' => 'info@networksoft.online',
-    'password' => 'networks_root',
+    'encryption' => '',
+    'username' => '',
+    'password' => '',
     'sendmail' => '/usr/sbin/sendmail -bs',
     'markdown' => 
     array (
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\laragon\\www\\istingen\\resources\\views/vendor/mail',
+        0 => 'C:\\wamp64\\www\\istinge\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -603,7 +609,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\laragon\\www\\istingen\\storage\\framework/sessions',
+    'files' => 'C:\\wamp64\\www\\istinge\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -612,7 +618,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'network_soft_sas_session',
+    'cookie' => 'ist_ingenieria_y_soluciones_tecnologicas_sas_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => false,
@@ -623,9 +629,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\laragon\\www\\istingen\\resources\\views',
+      0 => 'C:\\wamp64\\www\\istinge\\resources\\views',
     ),
-    'compiled' => 'C:\\laragon\\www\\istingen\\storage\\framework\\views',
+    'compiled' => 'C:\\wamp64\\www\\istinge\\storage\\framework\\views',
   ),
   'dompdf' => 
   array (
@@ -633,10 +639,10 @@
     'orientation' => 'portrait',
     'defines' => 
     array (
-      'font_dir' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
-      'font_cache' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
-      'temp_dir' => 'C:\\Users\\57300\\AppData\\Local\\Temp',
-      'chroot' => 'C:\\laragon\\www\\istingen',
+      'font_dir' => 'C:\\wamp64\\www\\istinge\\storage\\fonts/',
+      'font_cache' => 'C:\\wamp64\\www\\istinge\\storage\\fonts/',
+      'temp_dir' => 'C:\\Users\\aj23t\\AppData\\Local\\Temp',
+      'chroot' => 'C:\\wamp64\\www\\istinge',
       'enable_font_subsetting' => false,
       'pdf_backend' => 'CPDF',
       'default_media_type' => 'screen',
@@ -666,6 +672,7 @@
     ),
     'dont_alias' => 
     array (
+      0 => 'App\\Nova',
     ),
   ),
 );
