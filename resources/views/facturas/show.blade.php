@@ -204,14 +204,14 @@
                         <tr>
                             <td>{{$factura->cliente()->tip_iden('true')}}</td>
                             <th>{{$factura->cliente()->nit}}</th>
-                            <td>Vencimiento</td>
-                            <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
+                            <td>Pago Oportuno</td>
+                            <th>{{date('d-m-Y', strtotime($factura->pago_oportuno))}}</th>
                         </tr>
                         <tr>
                             <td>Teléfono</td>
                             <th>{{$factura->cliente()->celular?$factura->cliente()->celular:$factura->cliente()->telefono1}}</th>
-                            <td>Plazo</td>
-                            <th>{{$factura->plazo()}}</th>
+                            <td>Vencimiento</td>
+                            <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
                         </tr>
                     </tbody>
                 </table>
