@@ -30,8 +30,10 @@ class CronController extends Controller
 {
     public static function CrearFactura(){
         $i=0;
+        $date = date('d');
+        $date = 25;
 
-        $grupos_corte = GrupoCorte::where('fecha_factura', date('d'))->where('status', 1)->get();
+        $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
         
         foreach($grupos_corte as $grupo_corte){
             $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
@@ -53,20 +55,20 @@ class CronController extends Controller
                 $nro = NumeracionFactura::tipoNumeracion($contrato);
 
                 if($contrato->fecha_suspension){
-                    if($ultimo[2] == 31 && date('d') == "25"){
+                    if($ultimo[2] == 31 && $date == "25"){
                         $fecha_suspension = $contrato->fecha_suspension + 1;
                     }else{
                         $fecha_suspension = $contrato->fecha_suspension;
                     }
                 }else{
-                    if($ultimo[2] == 31 && date('d') == "25"){
+                    if($ultimo[2] == 31 && $date == "25"){
                         $fecha_suspension = $grupo_corte->fecha_suspension + 1;
                     }else{
                         $fecha_suspension = $grupo_corte->fecha_suspension;
                     }
                 }
 
-                $plazo=TerminosPago::where('dias',$fecha_suspension-date('d'))->first();
+                $plazo=TerminosPago::where('dias',$fecha_suspension-$date)->first();
 
                 $tipo = 1; //1= normal, 2=Electrónica.
 
