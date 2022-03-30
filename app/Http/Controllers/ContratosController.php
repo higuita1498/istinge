@@ -367,19 +367,19 @@ class ContratosController extends Controller
                 if($max_limit){
                     $rate_limit .= $max_limit;
                 }
-                if($burst_limit){
+                if(count($burst_limit)>3){
                     $rate_limit .= ' '.$burst_limit;
                 }
-                if($burst_threshold){
+                if(count($burst_threshold)>3){
                     $rate_limit .= ' '.$burst_threshold;
                 }
-                if($burst_time){
+                if(count($burst_time)>3){
                     $rate_limit .= ' '.$burst_time;
                 }
                 if($priority){
                     $rate_limit .= ' '.$priority;
                 }
-                if($limit_at){
+                if(count($limit_at)>3){
                     $rate_limit .= ' '.$limit_at;
                 }
 
@@ -698,13 +698,13 @@ class ContratosController extends Controller
                     if($max_limit){
                         $rate_limit .= $max_limit;
                     }
-                    if($burst_limit){
+                    if(count($burst_limit)>3){
                         $rate_limit .= ' '.$burst_limit;
                     }
-                    if($burst_threshold){
+                    if(count($burst_threshold)>3){
                         $rate_limit .= ' '.$burst_threshold;
                     }
-                    if($burst_time){
+                    if(count($burst_time)>3){
                         $rate_limit .= ' '.$burst_time;
                     }
                     if($priority){
