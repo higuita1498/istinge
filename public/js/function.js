@@ -3826,11 +3826,10 @@ function getPlanes(mikrotik) {
         method: 'get',
         success: function (data) {
             cargando(false);
-            data=JSON.parse(data);
 
             $("#plan_id").empty();
             var $select = $('#plan_id');
-            $.each(data,function(key, value){
+            $.each(data.planes,function(key, value){
                 
                 if(value.type == 0){
                     var type = 'Queue Simple';
@@ -3843,6 +3842,8 @@ function getPlanes(mikrotik) {
 
             $select.selectpicker('refresh');
             getInterfaces(mikrotik);
+            $("#amarre_mac").val(data.mikrotik.amarre_mac);
+            $('#conexion').val('').selectpicker('refresh');
         },
         error: function(data){
             cargando(false);
@@ -3950,6 +3951,14 @@ function interfazChange(){
     document.getElementById("usuario").value = '';
     document.getElementById("password").value = '';
     document.getElementById("mac_address").removeAttribute('required');
+
+    if(document.getElementById("conexion").value == 3){
+        if(document.getElementById("amarre_mac").value == 1){
+            document.getElementById("mac_address").setAttribute('required', true);
+        }else{
+            document.getElementById("mac_address").removeAttribute('required');
+        }
+    }
 }
 
 function modificarPromesa(id) {

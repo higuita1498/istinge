@@ -74,6 +74,7 @@
                     <option value="3">IP Estática</option>
                     <option value="4">VLAN</option>
                 </select>
+                <input type="hidden" name="amarre_mac" id="amarre_mac">
             </div>
 
             <div class="col-md-4 form-group d-none" id="div_dhcp">

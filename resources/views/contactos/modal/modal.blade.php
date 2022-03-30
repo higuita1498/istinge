@@ -196,7 +196,7 @@
             searchMunicipality(2);
             //getPlanes(1);
             //getSegmentos(1);
-            $('#conexion').val(3).selectpicker('refresh');
+            //$('#conexion').val(3).selectpicker('refresh');
             interfazChange(3);
             $('#departamento').val(2).selectpicker('refresh');
             $('#municipio').val(145);

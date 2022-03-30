@@ -76,6 +76,7 @@
 	                <option value="3" {{$contrato->conexion==3?'selected':''}}>IP Estática</option>
 	                <option value="4" {{$contrato->conexion==4?'selected':''}}>VLAN</option>
 	            </select>
+                <input type="hidden" name="amarre_mac" id="amarre_mac">
 	        </div>
 
             <div class="col-md-4 form-group {{$contrato->conexion==2?'':'d-none'}}" id="div_dhcp">

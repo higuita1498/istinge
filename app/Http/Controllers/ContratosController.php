@@ -313,13 +313,6 @@ class ContratosController extends Controller
             'caja' => 'required'*/
         ]);
 
-        if($request->interfaz == 3){
-            $request->validate([
-                //'mac_address' => 'required'
-            ]);
-        }
-        
-
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
@@ -465,42 +458,51 @@ class ContratosController extends Controller
                 
                 /*IP ESTÁTICA*/
                 if($request->conexion == 3){
-                    $API->comm("/ip/arp/add", array(
-                        "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
-                        "address"     => $request->ip,                        // IP DEL CLIENTE
-                        "interface"   => $request->interfaz,                  // INTERFACE DEL CLIENTE
-                        "mac-address" => $request->mac_address                // DIRECCION MAC
+                    if($mikrotik->amarre_mac == 1){
+                        $request->validate([
+                            'mac_address' => 'required'
+                        ]);
+
+                        $API->comm("/ip/arp/add", array(
+                            "comment"     => $this->normaliza($cliente->nombre),  // NOMBRE CLIENTE
+                            "address"     => $request->ip,                        // IP DEL CLIENTE
+                            "interface"   => $request->interfaz,                  // INTERFACE DEL CLIENTE
+                            "mac-address" => $request->mac_address                // DIRECCION MAC
+                            )
+                        );
+                    }
+
+                    $API->comm("/queue/simple/add", array(
+                        "name"            => $this->normaliza($cliente->nombre),
+                        "target"          => $request->ip,
+                        "max-limit"       => $plan->upload.'/'.$plan->download,
+                        "burst-limit"     => $burst_limit,
+                        "burst-threshold" => $burst_threshold,
+                        "burst-time"      => $burst_time,
+                        "priority"        => $priority,
+                        "limit-at"        => $limit_at
                         )
                     );
 
-                    $name = $API->comm("/ip/arp/getall", array(
-                        "?address" => $request->ip
+                    $name = $API->comm("/queue/simple/getall", array(
+                        "?target" => $request->ip
                         )
                     );
 
                     if($name){
                         $registro = true;
-                        $API->comm("/queue/simple/add", array(
-                            "name"            => $this->normaliza($cliente->nombre),
-                            "target"          => $request->ip,
-                            "max-limit"       => $plan->upload.'/'.$plan->download,
-                            "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold,
-                            "burst-time"      => $burst_time,
-                            "priority"        => $priority,
-                            "limit-at"        => $limit_at
-                            )
-                        );
                     }
 
                     if($request->ip_new){
-                        $API->comm("/ip/arp/add", array(
-                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
-                            "address"     => $request->ip_new, // IP DEL CLIENTE
-                            "interface"   => $request->interfaz, // INTERFACE DEL CLIENTE
-                            "mac-address" => $request->mac_address // DIRECCION MAC
-                            )
-                        );
+                        if($mikrotik->amarre_mac == 1){
+                            $API->comm("/ip/arp/add", array(
+                                "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato, // NOMBRE MAS ID DEL CONTRATO
+                                "address"     => $request->ip_new, // IP DEL CLIENTE
+                                "interface"   => $request->interfaz, // INTERFACE DEL CLIENTE
+                                "mac-address" => $request->mac_address // DIRECCION MAC
+                                )
+                            );
+                        }
                         
                         $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($cliente->nombre),
@@ -805,13 +807,15 @@ class ContratosController extends Controller
 
                         //ACTUALIZAMOS EL ARP
                         if($mk_user){
-                            $API->comm("/ip/arp/set", array(
-                                ".id" => $mk_user[0][".id"],
-                                "address"   => $request->ip,            // IP DEL CLIENTE
-                                "interface" => $request->interfaz,      // INTERFAZ DEL CLIENTE
-                                "mac-address" => $request->mac_address  // DIRECCION MAC
-                                )
-                            );
+                            if($mikrotik->amarre_mac == 1){
+                                $API->comm("/ip/arp/set", array(
+                                    ".id" => $mk_user[0][".id"],
+                                    "address"   => $request->ip,            // IP DEL CLIENTE
+                                    "interface" => $request->interfaz,      // INTERFAZ DEL CLIENTE
+                                    "mac-address" => $request->mac_address  // DIRECCION MAC
+                                    )
+                                );
+                            }
                         }
 
                         if($request->ip_new){
@@ -823,13 +827,15 @@ class ContratosController extends Controller
 
                             //ACTUALIZAMOS IP
                             if($mk_id){
-                                $API->comm("/ip/arp/set", array(
-                                    ".id" => $mk_id[0][".id"],
-                                    "address"   => $request->ip_new, // IP DEL CLIENTE
-                                    "interface" => $request->interfaz, // INTERFACE DEL CLIENTE
-                                    "mac-address" => $request->mac_address // DIRECCION MAC
-                                    )
-                                );
+                                if($mikrotik->amarre_mac == 1){
+                                    $API->comm("/ip/arp/set", array(
+                                        ".id" => $mk_id[0][".id"],
+                                        "address"   => $request->ip_new, // IP DEL CLIENTE
+                                        "interface" => $request->interfaz, // INTERFACE DEL CLIENTE
+                                        "mac-address" => $request->mac_address // DIRECCION MAC
+                                        )
+                                    );
+                                }
                             }else{
                                 $API->comm("/ip/arp/add", array(
                                     "comment"   => $contrato->servicio.'-'.$contrato->id,// NOMBRE CLIENTE
