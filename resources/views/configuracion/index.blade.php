@@ -151,6 +151,12 @@
 	@section('scripts')
 	    <script>
 			function facturacionAutomatica() {
+				if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/configuracion_facturacionAutomatica';
+				}else{
+					var url = '/configuracion_facturacionAutomatica';
+				}
+
 			    if ($("#facturaAuto").val() == 0) {
 			        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
 			    }
@@ -170,7 +176,7 @@
 			    }).then((result) => {
 			        if (result.value) {
 			            $.ajax({
-			                url: 'configuracion_facturacionAutomatica',
+			                url: url,
 			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 			                method: 'post',
 			                data: { status: $("#facturaAuto").val() },
