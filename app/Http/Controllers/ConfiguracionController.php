@@ -1902,4 +1902,15 @@ class ConfiguracionController extends Controller
       return 1;
     }
   }
+
+  public function configurarOLT(Request $request){
+    $empresa = Empresa::find(Auth::user()->empresa);
+
+    if ($empresa) {
+      $empresa->adminOLT = $request->adminOLT;
+      $empresa->smartOLT = $request->smartOLT;
+      $empresa->save();
+      return 1;
+    }
+  }
 }
