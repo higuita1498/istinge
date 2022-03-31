@@ -1261,7 +1261,8 @@ class Controller extends BaseController
     
     public function getPlanes($mikrotik){
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
-        return json_encode($planes);
+        $mikrotik = Mikrotik::find($mikrotik);
+        return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik]);
     }
     
     public function logsMK($mikrotik){

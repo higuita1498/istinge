@@ -57,11 +57,19 @@
         		</div>
         	</div>
         	
-        	<div class="col-md-12 form-group">
+        	<div class="col-md-12 form-group {{$plantilla->tipo==0?'d-none':''}}" id="div_email">
         	    <label class="control-label">Contenido <span class="text-danger">*</span></label>
         	    <textarea class="form-control ckeditor" name="contenido" id="contenido" rows="4">{{$plantilla->contenido}}</textarea>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('contenido') }}</strong>
+        	    </span>
+        	</div>
+
+        	<div class="col-md-12 form-group {{$plantilla->tipo==1?'d-none':''}}" id="div_sms">
+        	    <label class="control-label">Contenido (Máximo 120 caracteres)<span class="text-danger">*</span></label>
+        	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="120">{{$plantilla->contenido}}</textarea>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('contenido_sms') }}</strong>
         	    </span>
         	</div>
         </div>
@@ -81,6 +89,14 @@
 
 @section('scripts')
 <script type="text/javascript">
-    
+    $('#tipo').change(function() {
+    	if($("#tipo").val() == 0){
+    		$("#div_email").addClass('d-none');
+    		$("#div_sms").removeClass('d-none');
+    	}else if($("#tipo").val() == 1){
+    		$("#div_sms").addClass('d-none');
+    		$("#div_email").removeClass('d-none');
+    	}
+    });
 </script>
 @endsection

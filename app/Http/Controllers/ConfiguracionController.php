@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Empresa; use App\Banco;
@@ -1870,4 +1871,46 @@ class ConfiguracionController extends Controller
       }
       return redirect('empresa/configuracion/servicios')->with('danger', 'No existe un registro con ese id');
     }
+
+    /**
+     * Crear Facturación Automática
+     */
+  public function facturacionAutomatica(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->status == 0) {
+      $empresa->factura_auto = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->factura_auto = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
+
+  public function limpiarCache(Request $request){
+    $empresa = Empresa::find($request->empresa);
+
+    if ($empresa) {
+      $empresa->cache = rand();
+      $empresa->save();
+
+      $exitCode = Artisan::call('config:clear');
+      $exitCode = Artisan::call('cache:clear');
+      $exitCode = Artisan::call('view:clear');
+      return 1;
+    }
+  }
+
+  public function configurarOLT(Request $request){
+    $empresa = Empresa::find(Auth::user()->empresa);
+
+    if ($empresa) {
+      $empresa->adminOLT = $request->adminOLT;
+      $empresa->smartOLT = $request->smartOLT;
+      $empresa->save();
+      return 1;
+    }
+  }
 }

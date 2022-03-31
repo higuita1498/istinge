@@ -204,14 +204,14 @@
                         <tr>
                             <td>{{$factura->cliente()->tip_iden('true')}}</td>
                             <th>{{$factura->cliente()->nit}}</th>
-                            <td>Vencimiento</td>
-                            <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
+                            <td>Pago Oportuno</td>
+                            <th>{{date('d-m-Y', strtotime($factura->pago_oportuno))}}</th>
                         </tr>
                         <tr>
                             <td>Teléfono</td>
                             <th>{{$factura->cliente()->celular?$factura->cliente()->celular:$factura->cliente()->telefono1}}</th>
-                            <td>Plazo</td>
-                            <th>{{$factura->plazo()}}</th>
+                            <td>Vencimiento</td>
+                            <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
                         </tr>
                     </tbody>
                 </table>
@@ -243,11 +243,11 @@
             @foreach($items as $item)
                 <tr>
                     <td>@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blanck">{{$item->producto()}}</a>@endif</td>
-                    <td>{{$item->ref}}</td>
+                    <td><div class="elipsis-short">{{$item->ref}}</div></td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->precio)}}</td>
                     <td>{{$item->desc?$item->desc:0}}%</td>
                     <td>{{$item->impuesto()}}</td>
-                    <td>{{$item->descripcion}}</td>
+                    <td><div class="elipsis-short">{{$item->descripcion}}</div></td>
                     <td>{{round($item->cant)}}</td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->total())}}</td>
                 </tr>

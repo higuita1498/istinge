@@ -93,6 +93,9 @@ Route::get('/testerroute54','Controller@tester54');
 Route::get('qrcode', function () {
      return QrCode::generate('Make me into a QrCode!');
  });
+Route::post('configuracion_facturacionAutomatica', 'ConfiguracionController@facturacionAutomatica');
+Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache');
+Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
 
 Route::get('guiaenvio/contacto/{id}/{cliente}','ContactosController@modalGuiaEnvio');
 Route::post('factura/guiaenvio/asociar','FacturasController@asociarGuiaEnvio')->name('factura.guia_envio');

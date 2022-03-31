@@ -60,6 +60,16 @@
 	                <strong>{{ $errors->first('clave') }}</strong>
 	            </span>
 	        </div>
+	        <div class="col-md-3 form-group">
+	            <label class="control-label">Amarre MAC <span class="text-danger">*</span></label>
+	            <select class="form-control selectpicker" name="amarre_mac" id="amarre_mac" title="Seleccione" required="">
+	                <option value="1">Habilitado</option>
+	                <option value="0">Deshabilitado</option>
+	            </select>
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('amarre_mac') }}</strong>
+	            </span>
+	        </div>
 	        <div class="col-md-12 form-group">
 	            <label class="control-label">Segmentos <a><i data-tippy-content="Escriba los segmentos separados por espacios" class="icono far fa-question-circle"></i></a> <span class="text-danger">*</span></label>
 	            <select class="form-control" name="segmento_ip[]" id="segmento_ip" style="width: 100%;" required multiple="multiple"></select>
