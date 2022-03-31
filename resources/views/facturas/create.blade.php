@@ -120,7 +120,7 @@
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Tipo movimiento <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
-                  <select name="vendedor" id="vendedor" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
+                  <select name="relacion" id="relacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
                       @foreach($relaciones as $relacion)
                           <option value="{{$relacion->id}}">{{$relacion->codigo}} - {{$relacion->nombre}}</option>
                       @endforeach
