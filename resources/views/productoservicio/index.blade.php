@@ -26,30 +26,33 @@
         <th>En uso</th>
         <th>Código</th>
         <th>Nombre</th>
-        <th>Relacionado con</th>
-        <th>cuenta contable</th>
-        <th>Medio de pago<th>
+        <th>Inventario</th>
+        <th>Costo</th>
+        <th>Venta</th>
+        <th>Devolución</th>
+        <th></th>
         </tr>
     </thead>
-    @foreach($formasPago as $forma)
+    @foreach($productos as $producto)
         <tr>
             <td>
                 <div class="">
                     <label class="form-check-label">
-                        <input type="checkbox" class="forma-check" name="" value="{{$forma->en_uso}}" {{$forma->en_uso == 1 ? 'checked' : ''}} disabled>
+                        <input type="checkbox" class="forma-check" name="" value="{{$producto->en_uso}}" {{$producto->en_uso == 1 ? 'checked' : ''}} disabled>
                         <i class="input-helper"></i>
                     </label>
                 </div>
                 </td>
-                <td>{{$forma->codigo}}</td>
-                <td>{{$forma->nombre}}</td>
-                <td>{{$forma->relacion()}}</td>
-                <td>{{$forma->categoria->nombre}}</td>
-                <td>{{$forma->formaPagoMedio->nombre}}</td>
+                <td>{{$producto->codigo}}</td>
+                <td>{{$producto->nombre}}</td>
+                <td>{{$producto->inventario()->nombre}}</td>
+                <td>{{$producto->costo()->nombre}}</td>
+                <td>{{$producto->venta()->nombre}}</td>
+                <td>{{$producto->devolucion()->nombre}}</td>
                 <td>
                 <div clas="d-flex">
-                    <a href="#"  onclick="delete_forma('{{$forma->id}}')"><i class="fas fa-times"></i></a>
-                    <a href="#" onclick="edit_forma('{{$forma->id}}')" data-toggle="modal" data-target="#editForma" class="btn btn-icons"><i class="fas fa-edit"></i></a>
+                    <a href="#"  onclick="delete_prodcuto('{{$producto->id}}')"><i class="fas fa-times"></i></a>
+                    <a href="#" onclick="edit_producto('{{$producto->id}}')" data-toggle="modal" data-target="#editProducto" class="btn btn-icons"><i class="fas fa-edit"></i></a>
                 </div>
             </td>
         </tr>
@@ -65,7 +68,9 @@
         <th></th>
         <th></th>
         <th></th>
-        <th><th>
+        <th></th>
+        <th></th>
+        <th></th>
         </tr>
     </thead>
     <tr>
@@ -78,25 +83,32 @@
         </div>
         </td>
         <td width="10%"><input type="text" class="form-control form-control-sm" placeholder="codigo" name="codigo" id="codigo"></td>
-        <td width="15%"><input type="text" class="form-control form-control-sm" placeholder="nombre cuenta" name="nombrecuenta" id="nombrecuenta"></td>
+        <td width="10%"><input type="text" class="form-control form-control-sm" placeholder="nombre cuenta" name="nombrecuenta" id="nombrecuenta"></td>
         <td width="20%">
-            <select class="form-control form-control-sm selectpicker p-0" name="relacion" id="relacion" title="Relacionado con" required="">
-                <option value="1">Cartera - (Factura de venta - Recibos de caja)</option>
-                <option value="2">Proveedores - (Factura de compra - Recibos de pago)</option>
-                <option value="3">Cartera / Proveedores</option>
-            </select>
-        </td>
-        <td width="25%">
-            <select class="form-control form-control-sm selectpicker p-0" name="cuenta" id="cuenta" title="Cuenta contable" required="">
+            <select class="form-control form-control-sm selectpicker p-0" name="inventario_producto" id="inventario_producto" title="Cuenta contable" required="">
                 @foreach($categorias as $cat)
                     <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                 @endforeach
             </select>
         </td>
-        <td width="25%">
-            <select class="form-control form-control-sm selectpicker p-0" name="mediopago" id="mediopago" title="Medio de pago doc. electrónico" required="">
-                @foreach($mediosPago as $medio)
-                    <option value="{{$medio->id}}">{{$medio->nombre}}</option>
+        <td width="20%">
+            <select class="form-control form-control-sm selectpicker p-0" name="costo" id="costo" title="Cuenta contable" required="">
+                @foreach($categorias as $cat)
+                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                @endforeach
+            </select>
+        </td>
+        <td width="20%">
+            <select class="form-control form-control-sm selectpicker p-0" name="inventario_producto" id="venta_producto" title="Medio de pago doc. electrónico" required="">
+                @foreach($categorias as $cat)
+                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                @endforeach
+            </select>
+        </td>
+        <td width="20%">
+            <select class="form-control form-control-sm selectpicker p-0" name="devolucion" id="devolucion" title="Medio de pago doc. electrónico" required="">
+                @foreach($categorias as $cat)
+                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                 @endforeach
             </select>
         </td>
@@ -109,7 +121,7 @@
   </table>
 
   {{-- Modal editar --}}    
-  <div class="modal fade" id="editForma" tabindex="-1" role="dialog" aria-labelledby="editForma" aria-hidden="true">
+  <div class="modal fade" id="editProducto" tabindex="-1" role="dialog" aria-labelledby="editProducto" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -136,17 +148,17 @@
             
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="message-text" class="col-form-label">Relacionado con:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="relacion_edit" id="relacion_edit" title="Relacionado con" required="">
-                        <option value="1">Cartera - (Factura de venta - Recibos de caja)</option>
-                        <option value="2">Proveedores - (Factura de compra - Recibos de pago)</option>
-                        <option value="3">Cartera / Proveedores</option>
+                    <label for="message-text" class="col-form-label">Inventario:</label>
+                    <select class="form-control form-control-sm selectpicker p-0" name="inventario_edit" id="inventario_edit" title="Inventario" required="">
+                        @foreach($categorias as $cat)
+                        <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                        @endforeach
                     </select>
                 </div>
     
                 <div class="form-group col-md-6">
-                    <label for="message-text" class="col-form-label">Cuenta contable:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="cuenta_edit" id="cuenta_edit" title="Cuenta contable" required="">
+                    <label for="message-text" class="col-form-label">Costo:</label>
+                    <select class="form-control form-control-sm selectpicker p-0" name="costo_edit" id="costo_edit" title="Costo" required="">
                         @foreach($categorias as $cat)
                             <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                         @endforeach
@@ -157,14 +169,26 @@
 
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="message-text" class="col-form-label">Medio de pago doc. electrónico:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="mediopago_edit" id="mediopago_edit" title="Medio de pago doc. electrónico" required="">
-                        @foreach($mediosPago as $medio)
-                            <option value="{{$medio->id}}">{{$medio->nombre}}</option>
+                    <label for="message-text" class="col-form-label">Venta:</label>
+                    <select class="form-control form-control-sm selectpicker p-0" name="venta_edit" id="venta_edit" title="Venta" required="">
+                        @foreach($categorias as $cat)
+                            <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group col-md-6">
+                    <label for="message-text" class="col-form-label">Devolución:</label>
+                    <select class="form-control form-control-sm selectpicker p-0" name="devolucion_edit" id="devolucion_edit" title="Devolución" required="">
+                        @foreach($categorias as $cat)
+                            <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                        @endforeach
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12">
                     <label for="recipient-name" class="col-form-label">¿En uso?:</label>
                     <label class="form-check-label">
                         <input type="checkbox" class="forma-check" name="checkForm_edit" id="checkForm_edit" value="">
@@ -176,7 +200,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <a type="button" onclick="update_forma()" class="btn btn-primary">Actualizar</a>
+          <a type="button" onclick="update_producto()" class="btn btn-primary">Actualizar</a>
         </div>
       </div>
     </div>
@@ -197,53 +221,56 @@
             checkForm = 1;
         }
 
-        var codigo    = $("#codigo").val();
-        var nombre    = $("#nombrecuenta").val();
-        var relacion  = $("#relacion").val();
-        var cuenta_id = $("#cuenta").val();
-        var medio_pago_id = $("#mediopago").val();
-        var url = $("#url").val();
+        var codigo      = $("#codigo").val();
+        var nombre      = $("#nombrecuenta").val();
+        var inventario  = $("#inventario_producto").val();
+        var costo       = $("#costo").val();
+        var venta       = $("#venta_producto").val();
+        var devolucion  = $("#devolucion").val();
+        var url         = $("#url").val();
 
         var table = $("#table-forma");
 
         //*Petición ajax.
         $.ajax({
-        url: url +'/empresa/formapago/store',
+        url: url +'/empresa/productoservicio/store',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         method: 'POST',
         data: {
             checkForm:checkForm, 
             codigo:codigo,
             nombre:nombre,
-            relacion:relacion,
-            cuenta_id:cuenta_id,
-            medio_pago_id:medio_pago_id
+            inventario:inventario,
+            costo:costo,
+            venta:venta,
+            devolucion:devolucion,
         },
         beforeSend: function(){
             cargando(true);
         },
-        success: function(pago){
+        success: function(producto){
 
-                if(pago != null){   
+                if(producto != null){   
                     table.append(`
                     <tr>
                         <td>
                             <div class="">
                                 <label class="form-check-label">
-                                    <input type="checkbox" class="forma-check" name="contacto[]" value="${pago.en_uso}" ${pago.en_uso == 1 ? 'checked' : ''} disabled>
+                                    <input type="checkbox" class="forma-check" name="contacto[]" value="${producto.en_uso}" ${producto.en_uso == 1 ? 'checked' : ''} disabled>
                                     <i class="input-helper"></i>
                                 </label>
                             </div>
                         </td>
-                        <td>${pago.codigo}</td>
-                        <td>${pago.nombre}</td>
-                        <td>${pago.relacion}</td>
-                        <td>${pago.cuenta}</td>
-                        <td>${pago.medioPago}</td>
+                        <td>${producto.codigo}</td>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.inventario}</td>
+                        <td>${producto.costo}</td>
+                        <td>${producto.venta}</td>
+                        <td>${producto.devolucion}</td>
                         <td>
                             <div clas="d-flex">
-                                <a href="#" onclick="delete_forma('${pago.id}')"><i class="fas fa-times"></i></a>
-                                <a href="#" onclick="edit_forma('${pago.id}')" data-toggle="modal" data-target="#editForma" href=""><i class="fas fa-edit"></i></a>
+                                <a href="#" onclick="delete_producto('${producto.id}')"><i class="fas fa-times"></i></a>
+                                <a href="#" onclick="edit_producto('${producto.id}')" data-toggle="modal" data-target="#editProducto" href=""><i class="fas fa-edit"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -252,17 +279,17 @@
 
                 cargando(false);
             },
-            error: function(pago){
+            error: function(producto){
                 alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
             }
         });
 }
 
-function edit_forma(id) {
+function edit_producto(id) {
 
     var url = $("#url").val();
     $.ajax({
-        url: url +'/empresa/formapago/edit',
+        url: url +'/empresa/productoservicio/edit',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: "GET",
         datatype: "json",
@@ -271,47 +298,51 @@ function edit_forma(id) {
         },
         success: function (response) {
 
-            var forma = response.forma;
+            var producto = response.producto;
 
             //limpiamos los campos
             
             $("#id_edit").val()
             $("#codigo_edit").val();
             $("#nombrecuenta_edit").val();
-            $("#relacion_edit").val();
-            $("#cuenta_edit").val();
-            $("#mediopago_edit").val();
+            $("#inventario_edit").val();
+            $("#costo_edit").val();
+            $("#venta_edit").val();
+            $("#devolucion_edit").val();
             $("#checkForm_edit").prop("checked", false);
 
             //Agregamos las variables a los campos.
-            $("#id_edit").val(forma.id)
-            $("#codigo_edit").val(forma.codigo);
-            $("#nombrecuenta_edit").val(forma.nombre);
-            $("#relacion_edit").selectpicker("val",forma.relacion);
-            $("#cuenta_edit").selectpicker("val",forma.cuenta_id)
-            $("#mediopago_edit").selectpicker("val",forma.medio_pago_id);
-            $("#checkForm_edit").prop("checked", forma.en_uso);
+            $("#id_edit").val(producto.id)
+            $("#codigo_edit").val(producto.codigo);
+            $("#nombrecuenta_edit").val(producto.nombre);
+            $("#inventario_edit").selectpicker("val",producto.inventario_id);
+            $("#costo_edit").selectpicker("val",producto.costo_id)
+            $("#venta_edit").selectpicker("val",producto.venta_id);
+            $("#devolucion_edit").selectpicker("val",producto.devolucion_id);
+            $("#checkForm_edit").prop("checked", producto.en_uso);
 
             //refrescamos los selectpicker
-            $("#relacion_edit").selectpicker("refresh");
-            $("#cuenta_edit").selectpicker("refresh");
-            $("#mediopago_edit").selectpicker("refresh");
+            $("#inventario_edit").selectpicker("refresh");
+            $("#costo_edit").selectpicker("refresh");
+            $("#venta_edit").selectpicker("refresh");
+            $("#devolucion_edit").selectpicker("refresh");
 
         },
     });
 }
 
 
-function update_forma(){
+function update_producto(){
     var url = $("#url").val();
 
     //obtenemos las Variables
     var id = $("#id_edit").val();
     var codigo = $("#codigo_edit").val();
     var nombre = $("#nombrecuenta_edit").val();
-    var relacion = $("#relacion_edit").val();
-    var cuenta_id = $("#cuenta_edit").val();
-    var medio_pago_id = $("#mediopago_edit").val();
+    var inventario = $("#inventario_edit").val();
+    var costo = $("#costo_edit").val();
+    var venta = $("#venta_edit").val();
+    var devolucion = $("#devolucion_edit").val();
 
     var checkForm = 0;
         if($("#checkForm_edit").prop('checked')){
@@ -320,7 +351,7 @@ function update_forma(){
 
     
     $.ajax({
-        url: url +'/empresa/formapago/update',
+        url: url +'/empresa/productoservicio/update',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: "POST",
         datatype: "json",
@@ -328,24 +359,25 @@ function update_forma(){
             id : id,
             codigo : codigo,
             nombre : nombre,
-            relacion : relacion,
-            cuenta_id : cuenta_id,
-            medio_pago_id : medio_pago_id,
+            inventario : inventario,
+            costo : costo,
+            venta : venta,
+            devolucion : devolucion,
             checkForm : checkForm,
         },
         beforeSend: function(){
             cargando(true);
         },
-        success: function (pago) {
+        success: function (producto) {
             location.reload();
         },
-        error: function(pago){
+        error: function(producto){
                 alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
         }
     });
 }
 
-function delete_forma(id){
+function delete_prodcuto(id){
 
     var url = $("#url").val();
 
@@ -361,7 +393,7 @@ function delete_forma(id){
     }).then((result) => {
       if (result.value) {
         $.ajax({
-        url: url +'/empresa/formapago/delete',
+        url: url +'/empresa/productoservicio/delete',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: "POST",
         datatype: "json",
@@ -372,7 +404,7 @@ function delete_forma(id){
             cargando(true);
         },
         success: function (response) {
-            if(response.forma){
+            if(response.producto){
                 location.reload();
             }
             else{

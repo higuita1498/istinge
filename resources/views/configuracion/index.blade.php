@@ -57,6 +57,7 @@
 			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
 			<a href="{{route('puc.index')}}">Gestionar PUC</a> <br>
 			<a href="{{route('formapago.index')}}">Formas de Pago</a> <br>
+			<a href="{{route('productoservicio.index')}}">Productos y Servicios</a> <br>
 		</div>
 		@endif
 

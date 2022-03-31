@@ -555,12 +555,21 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	});
 	
 	Route::resource('categorias', 'CategoriasController');
+
+	// FORMAS DE PAGOS
 	Route::get('/formapago', 'FormaPagoController@index')->name('formapago.index');
 	Route::post('/formapago/store', 'FormaPagoController@store')->name('formapago.store');
 	Route::get('/formapago/edit', 'FormaPagoController@edit')->name('formapago.edit');
 	Route::post('/formapago/update', 'FormaPagoController@update')->name('formapago.update');
 	Route::post('/formapago/delete', 'FormaPagoController@delete')->name('formapago.delete');
 	Route::resource('puc', 'PucController');
+
+	// PRODUCTOS Y SERVICIOS
+	Route::get('/productoservicio', 'ProductoServicioController@index')->name('productoservicio.index');
+	Route::post('/productoservicio/store', 'ProductoServicioController@store')->name('productoservicio.store');
+	Route::get('/productoservicio/edit', 'ProductoServicioController@edit')->name('productoservicio.edit');
+	Route::post('/productoservicio/update', 'ProductoServicioController@update')->name('productoservicio.update');
+	Route::post('/productoservicio/delete', 'ProductoServicioController@delete')->name('productoservicio.delete');
 
 	Route::group(['prefix' => 'configuracion'], function() {
 		Route::get('/terminos', 'ConfiguracionController@terminos')->name('configuracion.terminos');
