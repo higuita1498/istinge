@@ -1472,8 +1472,8 @@ class Controller extends BaseController
         
         $forma = FormaPago::find($id);
         
-        $pucMovimiento = new PucMovimiento;
-        dd($forma);
+        // $pucMovimiento = new PucMovimiento;
+        // dd($forma);
 
     }
 }
