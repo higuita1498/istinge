@@ -2952,4 +2952,20 @@ public function edit($id){
         $objWriter->save('php://output');
         exit;
     }
+
+    public function updateContratoId(){
+        $facturas = Factura::all();
+
+        foreach($facturas as $factura){
+            //a cada favtura vamos a buscarle su contrato si tiene se le asocia la nueva id si no se salta
+            $contrato = Contrato::where('client_id',$factura->cliente)->first();
+
+            if($contrato){
+                $factura->contrato_id = $contrato->id;
+                $factura->save();
+            }
+        }
+
+        return "Actualizacion lista";
+    }
 }

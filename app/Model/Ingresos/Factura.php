@@ -636,24 +636,40 @@ public function forma_pago()
         }
         
         //construimos el inicio del corte tomando la fecha de la factura (mes y año) y el grupo de corte (el dia)
-        $inicioCorte = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
+        $fechaInicio = $inicioCorte = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
         $inicioCorte = Carbon::parse($inicioCorte)->addDay()->toFormattedDateString();
         
         //obtenemos el mes de la factura actual
         $mesFactura = Carbon::parse($this->fecha)->format('m-Y');
         
-        $finCorte = $diaFinCorte . "-" . $mesFactura;
+        $fechaFin = $finCorte = $diaFinCorte . "-" . $mesFactura;
         $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
         
-        //dias cobrados
         
-        //Primero analizamos si el contrato es la primer factura que vamos a generar
+        //Construimos una fecha con el grupo de corte y mes y año de la factura, tambien formateamos la fecha de la factura completamente
         $fechaFactura = Carbon::parse($this->fecha);
         $inicio = $grupo->fecha_corte . "-" . $mesFactura;
         $inicio = Carbon::parse($inicio);
-        $diasCobrados = $fechaFactura->diffInDays($inicio);
         
-        $mensaje = "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte . " total días cobrados: " . $diasCobrados; 
+        $diasCobrados = 0;
+        $mensaje = "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
+        
+        //Primero analizamos si el contrato es la primer factura que vamos a generar
+        if($this->contrato_id != null){
+            
+            $factura = Factura::where('empresa',$this->empresa)->where('contrato_id',$this->contrato_id)->orderBy('id','ASC')->first();
+            
+            //De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos los primeros dias de uso
+            if($factura->id == $this->id){
+                $diasCobrados = $fechaFactura->diffInDays($inicio);
+                $mensaje.= " total días cobrados: " . $diasCobrados; 
+            }else{
+                $fechaInicio = Carbon::parse($fechaInicio);
+                $fechaFin    = Carbon::parse($fechaFin);
+                $diasCobrados = $fechaInicio->diffInDays($fechaFin);
+                $mensaje.= " total días cobrados: " . $diasCobrados; 
+            }
+        }
         
         return $mensaje;
     }

@@ -27,6 +27,7 @@ Route::get('clear', function () {
 
 /* IMPORTAR API*/
 Route::post('/import_puc','PucController@import_puc')->name('puc.import_puc');
+Route::get('/updatecontratofactura','FacturasController@updateContratoId');
 
 Route::get('/import_plans','Controller@import_plans')->name('import_plans');
 Route::get('/import_clients','Controller@import_clients')->name('import_clients');
