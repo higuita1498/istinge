@@ -1463,6 +1463,10 @@ class Controller extends BaseController
     public function getSegmentos($mikrotik){
         $ips = Segmento::where('mikrotik', $mikrotik)->get();
         return response()->json($ips);
-        
+    }
+
+    public function getContracts($id){
+        $contratos = Contrato::where('client_id', $id)->get();
+        return response()->json($contratos);
     }
 }
