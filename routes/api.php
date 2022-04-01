@@ -31,6 +31,7 @@ Route::get('getNotificaciones', 'Controller@getNotificaciones');
 Route::get('getIps/{mikrotik}', 'Controller@getIps');
 Route::get('getGrupo/{grupo}', 'Controller@getGrupo');
 Route::get('getSegmentos/{mikrotik}', 'Controller@getSegmentos');
+Route::get('getContracts/{id}', 'Controller@getContracts');
 
 
 /**

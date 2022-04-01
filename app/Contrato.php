@@ -26,7 +26,7 @@ class Contrato extends Model
      */
     public $timestamps = false;
     protected $fillable = [
-        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at', 'puerto_conexion'
+        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at', 'puerto_conexion', 'factura_individual'
     ];
     
     protected $appends = ['status'];
