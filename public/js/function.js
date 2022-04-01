@@ -4058,173 +4058,6 @@ $('#rehuso').change(function() {
     }
 });
 
-$('#searchIP').click(function() {
-    $('#row_ip').html('');
-    let prefijo = $("#local_address").val().split('/');
-    let ip = $("#local_address").val().split('.');
-    let mk = $("#server_configuration_id").val();
-
-    switch (prefijo['1']) {
-        case '22':
-        var nro = 1022;
-        break;
-        case '23':
-        var nro = 510;
-        break;
-        case '24':
-        var nro = 254;
-        break;
-        case '25':
-        var nro = 126;
-        break;
-        case '26':
-        var nro = 62;
-        break;
-        case '27':
-        var nro = 30;
-        break;
-        case '28':
-        var nro = 14;
-        break;
-        case '29':
-        var nro = 6;
-        break;
-        case '30':
-        var nro = 2;
-        break;
-        case '>22':
-        console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
-        break;
-    }
-
-    var ini = parseInt(ip['3'])+parseInt(1);
-    var fin = nro;
-
-    for (i = ini; i < fin; i++) {
-        var div =`
-        <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
-            <a href="javascript:selectIP('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
-        </div>
-        `;
-        $('#row_ip').append(div);
-        //console.log(ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i);
-    }
-
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url = `/software/api/getIps/${mk}`;
-    }else{
-        var url = `/api/getIps/${mk}`;
-    }
-
-    $.ajax({
-        url: url,
-        method: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(data) {
-            cargando(false);
-            if (data) {
-                for (i = 0; i < data.length; i++){
-                    let ip = data[i].ip.replace(/\./g, '');
-                    $("#"+ip).remove();
-                }
-            }
-        }
-    });
-
-    $('#modal-ips').modal('show');
-});
-
-function selectIP(ip){
-    $('#ip').val(ip);
-    console.log($('#ip').val());
-    $('#modal-ips').modal('hide');
-}
-
-$('#searchIP2').click(function() {
-    $('#row_ip').html('');
-    let prefijo = $("#local_address_new").val().split('/');
-    let ip = $("#local_address_new").val().split('.');
-    let mk = $("#server_configuration_id").val();
-
-    switch (prefijo['1']) {
-        case '22':
-        var nro = 1022;
-        break;
-        case '23':
-        var nro = 510;
-        break;
-        case '24':
-        var nro = 254;
-        break;
-        case '25':
-        var nro = 126;
-        break;
-        case '26':
-        var nro = 62;
-        break;
-        case '27':
-        var nro = 30;
-        break;
-        case '28':
-        var nro = 14;
-        break;
-        case '29':
-        var nro = 6;
-        break;
-        case '30':
-        var nro = 2;
-        break;
-        case '>22':
-        console.log("DISCULPE EL PREFIJO DE RED DEBE SER MAYOR O IGUAL A 22");
-        break;
-    }
-
-    var ini = parseInt(ip['3'])+parseInt(1);
-    var fin = nro;
-
-    for (i = ini; i < fin; i++) {
-        var div =`
-        <div class="col-md-2 text-center mb-1" id="`+ip['0']+``+ip['1']+``+ip['2']+``+i+`">
-            <a href="javascript:selectIP2('`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i+`</a>
-        </div>
-        `;
-        $('#row_ip').append(div);
-        //console.log(ip['0']+`.`+ip['1']+`.`+ip['2']+`.`+i);
-    }
-
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url = `/software/api/getIps/${mk}`;
-    }else{
-        var url = `/api/getIps/${mk}`;
-    }
-
-    $.ajax({
-        url: url,
-        method: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(data) {
-            cargando(false);
-            if (data) {
-                for (i = 0; i < data.length; i++){
-                    let ip = data[i].ip.replace(/\./g, '');
-                    $("#"+ip).remove();
-                }
-            }
-        }
-    });
-
-    $('#modal-ips').modal('show');
-});
-
-function selectIP2(ip){
-    $('#ip_new').val(ip);
-    $('#modal-ips').modal('hide');
-}
-
 function addSegmento(){
     $('#div_addSegmento').addClass('d-none');
     $('#new_segmento').removeClass('d-none');
@@ -4315,4 +4148,177 @@ function getInterfaz(mikrotik) {
             cargando(false);
         }
     })
+}
+
+function getContracts(id){
+    cargando(true);
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getContracts'+id;
+    }else{
+        var url = '/api/getContracts/'+id;
+    }
+
+    $.ajax({
+        url: url,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'get',
+        success: function (data) {
+            cargando(false);
+            if(data.length > 0){
+                $("#div_facturacion").removeClass('d-none');
+                $('#factura_individual').val('').selectpicker('refresh');
+                document.getElementById("factura_individual").setAttribute('required', true);
+            }else{
+                $("#div_facturacion").addClass('d-none');
+                $('#factura_individual').val('').selectpicker('refresh');
+                document.getElementById("factura_individual").removeAttribute('required');
+            }
+        },
+        error: function(data){
+            cargando(false);
+        }
+    })
+}
+
+$('#searchIP').click(function() {
+    let prefijo = $("#local_address").val().split('/');
+    let mk = $("#server_configuration_id").val();
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getSubnetting/'+prefijo['0']+'/'+prefijo['1'];
+    }else{
+        var url = '/api/getSubnetting/'+prefijo['0']+'/'+prefijo['1'];
+    }
+
+    $.ajax({
+        url: url,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'get',
+        success: function (data) {
+            $('#row_ip').html('');
+            let ip_ini = data.inicial.split('.');
+            let ip_fin = data.final.split('.');
+
+            var ini = ip_ini['3'];
+            var fin = ip_fin['3'];
+
+            for (i = ini; i <= fin; i++) {
+                var div =`
+                <div class="col-md-2 text-center mb-1" id="`+ip_ini['0']+``+ip_ini['1']+``+ip_ini['2']+``+i+`">
+                    <a href="javascript:selectIP('`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`</a>
+                </div>
+                `;
+                $('#row_ip').append(div);
+            }
+
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url = `/software/api/getIps/${mk}`;
+            }else{
+                var url = `/api/getIps/${mk}`;
+            }
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if (data) {
+                        for (i = 0; i < data.length; i++){
+                            let ip = data[i].ip.replace(/\./g, '');
+                            $("#"+ip).remove();
+                        }
+                    }
+                }
+            });
+            $('#modal-ips').modal('show');
+        },
+        error: function(data){
+            Swal.fire({
+                type: 'error',
+                title: 'ERROR EN EL CÁLCULO DE LA SUBNETTING',
+                tet: 'INTENTE NUEVAMENTE',
+                showConfirmButton: false,
+                timer: 5000
+            })
+        }
+    })
+});
+
+function selectIP(ip){
+    $('#ip').val(ip);
+    $('#modal-ips').modal('hide');
+}
+
+$('#searchIP2').click(function() {
+    let prefijo = $("#local_address_new").val().split('/');
+    let mk = $("#server_configuration_id").val();
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/api/getSubnetting/'+prefijo['0']+'/'+prefijo['1'];
+    }else{
+        var url = '/api/getSubnetting/'+prefijo['0']+'/'+prefijo['1'];
+    }
+
+    $.ajax({
+        url: url,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'get',
+        success: function (data) {
+            $('#row_ip').html('');
+            let ip_ini = data.inicial.split('.');
+            let ip_fin = data.final.split('.');
+
+            var ini = ip_ini['3'];
+            var fin = ip_fin['3'];
+
+            for (i = ini; i <= fin; i++) {
+                var div =`
+                <div class="col-md-2 text-center mb-1" id="`+ip_ini['0']+``+ip_ini['1']+``+ip_ini['2']+``+i+`">
+                    <a href="javascript:selectIP2('`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`</a>
+                </div>
+                `;
+                $('#row_ip').append(div);
+            }
+
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url = `/software/api/getIps/${mk}`;
+            }else{
+                var url = `/api/getIps/${mk}`;
+            }
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    if (data) {
+                        for (i = 0; i < data.length; i++){
+                            let ip = data[i].ip.replace(/\./g, '');
+                            $("#"+ip).remove();
+                        }
+                    }
+                }
+            });
+            $('#modal-ips').modal('show');
+        },
+        error: function(data){
+            Swal.fire({
+                type: 'error',
+                title: 'ERROR EN EL CÁLCULO DE LA SUBNETTING',
+                tet: 'INTENTE NUEVAMENTE',
+                showConfirmButton: false,
+                timer: 5000
+            })
+        }
+    })
+});
+
+function selectIP2(ip){
+    $('#ip_new').val(ip);
+    $('#modal-ips').modal('hide');
 }

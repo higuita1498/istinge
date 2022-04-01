@@ -32,6 +32,7 @@ Route::get('getIps/{mikrotik}', 'Controller@getIps');
 Route::get('getGrupo/{grupo}', 'Controller@getGrupo');
 Route::get('getSegmentos/{mikrotik}', 'Controller@getSegmentos');
 Route::get('getContracts/{id}', 'Controller@getContracts');
+Route::get('getSubnetting/{ip_address}/{prefijo}', 'Controller@getSubnetting');
 
 
 /**

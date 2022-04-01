@@ -1480,4 +1480,137 @@ class Controller extends BaseController
         // dd($forma);
 
     }
+
+    public function getSubnetting($ip_address,$prefijo){
+        switch ($prefijo) {
+            case '0':
+                $ip_nmask = "0.0.0.0";
+            break;
+            case '1':
+                $ip_nmask = "128.0.0.0";
+            break;
+            case '2':
+                $ip_nmask = "192.0.0.0";
+            break;
+            case '3':
+                $ip_nmask = "224.0.0.0";
+            break;
+            case '4':
+                $ip_nmask = "240.0.0.0";
+            break;
+            case '5':
+                $ip_nmask = "248.0.0.0";
+            break;
+            case '6':
+                $ip_nmask = "252.0.0.0";
+            break;
+            case '7':
+                $ip_nmask = "254.0.0.0";
+            break;
+            case '8':
+                $ip_nmask = "255.0.0.0";
+            break;
+            case '9':
+                $ip_nmask = "255.128.0.0";
+            break;
+            case '10':
+                $ip_nmask = "255.192.0.0";
+            break;
+            case '11':
+                $ip_nmask = "255.224.0.0";
+            break;
+            case '12':
+                $ip_nmask = "255.240.0.0";
+            break;
+            case '13':
+                $ip_nmask = "255.248.0.0";
+            break;
+            case '14':
+                $ip_nmask = "255.252.0.0";
+            break;
+            case '15':
+                $ip_nmask = "255.254.0.0";
+            break;
+            case '16':
+                $ip_nmask = "255.255.0.0";
+            break;
+            case '17':
+                $ip_nmask = "255.255.128.0";
+            break;
+            case '18':
+                $ip_nmask = "255.255.192.0";
+            break;
+            case '19':
+                $ip_nmask = "255.255.224.0";
+            break;
+            case '20':
+                $ip_nmask = "255.255.240.0";
+            break;
+            case '21':
+                $ip_nmask = "255.255.248.0";
+            break;
+            case '22':
+                $ip_nmask = "255.255.252.0";
+            break;
+            case '23':
+                $ip_nmask = "255.255.254.0";
+            break;
+            case '24':
+                $ip_nmask = "255.255.255.0";
+            break;
+            case '25':
+                $ip_nmask = "255.255.255.128";
+            break;
+            case '26':
+                $ip_nmask = "255.255.255.192";
+            break;
+            case '27':
+                $ip_nmask = "255.255.255.224";
+            break;
+            case '28':
+                $ip_nmask = "255.255.255.240";
+            break;
+            case '29':
+                $ip_nmask = "255.255.255.248";
+            break;
+            case '30':
+                $ip_nmask = "255.255.255.252";
+            break;
+            case '31':
+                $ip_nmask = "255.255.255.254";
+            break;
+            case '32':
+                $ip_nmask = "255.255.255.255";
+            break;
+        }
+
+        //CONVERT IP ADDRESSES TO LONG FORM
+        $ip_address_long = ip2long($ip_address);
+        $ip_nmask_long = ip2long($ip_nmask);
+
+        //CACULATE NETWORK ADDRESS
+        $ip_net = $ip_address_long & $ip_nmask_long;
+
+        //CACULATE FIRST USABLE ADDRESS
+        $ip_host_first = ((~$ip_nmask_long) & $ip_address_long);
+        $ip_first = ($ip_address_long ^ $ip_host_first) + 1;
+
+        //CACULATE LAST USABLE ADDRESS
+        $ip_broadcast_invert = ~$ip_nmask_long;
+        $ip_last = ($ip_address_long | $ip_broadcast_invert) - 1;
+
+        //CACULATE BROADCAST ADDRESS
+        $ip_broadcast = $ip_address_long | $ip_broadcast_invert;
+
+        //OUTPUT
+        $ip_net_short = long2ip($ip_net);
+        $ip_first_short = long2ip($ip_first);
+        $ip_last_short = long2ip($ip_last);
+        $ip_broadcast_short = long2ip($ip_broadcast);
+        return response()->json([
+            'inicial' => $ip_first_short,
+            'final' => $ip_last_short,
+            'broadcast' => $ip_broadcast_short
+        ]);
+    }
 }
