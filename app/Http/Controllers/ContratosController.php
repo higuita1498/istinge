@@ -278,7 +278,7 @@ class ContratosController extends Controller
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
-        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id NOT IN (SELECT cs.client_id FROM contracts AS cs) AND tipo_contacto = 0 OR tipo_contacto = 2 AND c.empresa = $empresa ORDER BY c.nombre ASC";
+        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id /*NOT IN (SELECT cs.client_id FROM contracts AS cs)*/ AND tipo_contacto = 0 OR tipo_contacto = 2 AND c.empresa = $empresa ORDER BY c.nombre ASC";
         $clientes = DB::select($sql);
         $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -316,7 +316,7 @@ class ContratosController extends Controller
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
-        
+
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
@@ -357,24 +357,12 @@ class ContratosController extends Controller
                 $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
                 $max_limit       = $plan->upload.'/'.$plan->download;
 
-                if($max_limit){
-                    $rate_limit .= $max_limit;
-                }
-                if(strlen($burst_limit)>3){
-                    $rate_limit .= ' '.$burst_limit;
-                }
-                if(strlen($burst_threshold)>3){
-                    $rate_limit .= ' '.$burst_threshold;
-                }
-                if(strlen($burst_time)>3){
-                    $rate_limit .= ' '.$burst_time;
-                }
-                if($priority){
-                    $rate_limit .= ' '.$priority;
-                }
-                if(strlen($limit_at)>3){
-                    $rate_limit .= ' '.$limit_at;
-                }
+                if($max_limit){ $rate_limit .= $max_limit; }
+                if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
+                if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
+                if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
+                if($priority){ $rate_limit .= ' '.$priority; }
+                if(strlen($limit_at)>3){ $rate_limit .= ' '.$limit_at; }
 
                 /*PPPOE*/
                 if($request->conexion == 1){
@@ -385,7 +373,7 @@ class ContratosController extends Controller
                         "local-address"  => $request->ip,            //IP LOCAL
                         "remote-address" => $request->ip,            // IP CLIENTE
                         "service"        => 'pppoe',                 // SERVICIO
-                        "comment"        => $nro_contrato            //NRO DEL CONTATO
+                        "comment"        => $this->normaliza($cliente->nombre)            //NRO DEL CONTATO
                         )
                     );
                     
@@ -549,8 +537,7 @@ class ContratosController extends Controller
                 $ip_autorizada = 0;
 
                 if($mikrotik->regla_ips_autorizadas == 1){
-                    $r_ip = ($request->local_address) ? $request->ip.''.$prefijo : $request->ip;
-                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$r_ip);
+                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$request->ip);
                     $ip_autorizada = 1;
                 }
                 
@@ -562,10 +549,8 @@ class ContratosController extends Controller
                 $contrato->servicio                = $this->normaliza($cliente->nombre);
                 $contrato->client_id               = $request->client_id;
                 $contrato->server_configuration_id = $request->server_configuration_id;
-                $contrato->ip                      = ($request->local_address) ? $request->ip.''.$prefijo : $request->ip;
-                $contrato->ip_new                  = ($request->local_address_new) ? $request->ip_new.''.$prefijo : $request->ip_new;
-                //$contrato->fecha_corte             = $request->fecha_corte;
-                //$contrato->fecha_suspension        = $request->fecha_suspension;
+                $contrato->ip                      = $request->ip;
+                $contrato->ip_new                  = $request->ip_new;
                 $contrato->usuario                 = $request->usuario;
                 $contrato->password                = $request->password;
                 $contrato->conexion                = $request->conexion;
@@ -1250,9 +1235,10 @@ class ContratosController extends Controller
                     
                     if(count($ARRAYS)>0){
                         //REMOVEMOS EL ID DE LA ADDRESS LIST                    
-                        $API->write('/ip/firewall/address-list/remove', false);
-                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                        $READ = $API->read();
+                        // $API->write('/ip/firewall/address-list/remove', false);
+                        // $API->write('=.id='.$ARRAYS[0]['.id']);
+                        // $READ = $API->read();
+                        $API->comm("/ip\n=firewall\n=address-list\n=remove\n=[find\n=list=morosos\n=address=".$contrato->ip."]");
                     }
                     
                     $contrato->state = 'enabled';

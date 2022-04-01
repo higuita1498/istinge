@@ -61,10 +61,10 @@
                 Acciones del Contacto {{ $contacto->contrato }}
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            	@if($contrato)
-            	<form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
+            	@if(count($contratos)>0)
+            	{{-- <form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
             		{{ csrf_field() }}
-            	</form>
+            	</form> --}}
 
             	<form action="{{ route('contactos.desasociar', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="desasociar-contacto{{$contacto->id}}">
             		{{ csrf_field() }}
@@ -80,17 +80,17 @@
             	    @if(isset($_SESSION['permisos']['6']))
             	        <a href="{{route('contactos.edit',$id)}}" class="dropdown-item"><i class="fas fa-edit"></i> Editar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</a>
             	    @endif
-            	    @if(!$contrato && $contacto->tipo_contacto !=1)
+            	    {{-- @if(!$contrato && $contacto->tipo_contacto !=1) --}}
             	    <a href="{{route('contratos.create_cliente',$id)}}" class="dropdown-item"><i class="fas fa-file-contract"></i> Crear Contrato</a>
-            	    @endif
+            	    {{-- @endif --}}
             	    @if(isset($_SESSION['permisos']['201']) && $contacto->tipo_contacto !=1)
             	        <a href="{{route('radicados.create_cliente', $id)}}" class="dropdown-item"><i class="far fa-life-ring"></i> Crear Radicado</a>
             	    @endif
 
-            	    @if($contrato)
-            	        @if(isset($_SESSION['permisos']['407']))
+            	    @if(count($contratos)>0)
+            	        {{-- @if(isset($_SESSION['permisos']['407']))
             	            <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar" @else class="btn btn-outline-success" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
-            	        @endif
+            	        @endif --}}
             	        @if($user_app && isset($_SESSION['permisos']['730']))
             	            <button class="dropdown-item" type="submit" title="Desasociar de APP" onclick="confirmar('desasociar-contacto{{$contacto->id}}', '¿Está seguro que desea desasociar el cliente de la APP?', 'Se borrara de forma permanente');"><i class="fas fa-mobile-alt"></i> Desasociar de APP</button>
             	        @endif
@@ -128,146 +128,153 @@
 	
 	<div class="row card-description">
 		<div class="col-md-12">
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered table-sm info">
-					<tbody>
-						<tr>
-							<th class="bg-th text-center" width="20%">DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</th>
-							<th class="bg-th text-center"></th></th>
-						</tr>
-						@if($contacto->serial_onu)
-						<tr>
-							<th>Serial ONU</th>
-							<td>{{$contacto->serial_onu}}</td>
-						</tr>
-						@endif
-						<tr>
-							<th>Nombre</th>
-							<td>{{$contacto->nombre}}</td>
-						</tr>
-						<tr>
-							<th>Tipo de Identificación</th>
-							<td>{{ $contacto->identificacion }}</td>
-						</tr>
-						<tr>
-							<th>Identificación</th>
-							<td>{{$contacto->nit}}</td>
-						</tr>
-						@if($contacto->tip_iden == 6)
-						<tr>
-							<th>DV</th>
-							<td>{{$contacto->dv}}</td>
-						</tr>
-						@endif
-						@if($contacto->telefono1)
-						<tr>
-							<th>Teléfono</th>
-							<td>{{$contacto->telefono1}}</td>
-						</tr>
-						@endif
-						@if($contacto->telefono2)
-						<tr>
-							<th>Teléfono 2</th>
-							<td>{{$contacto->telefono2}}</td>
-						</tr>
-						@endif
-						@if($contacto->fax)
-						<tr>
-							<th>Fax</th>
-							<td>{{$contacto->fax}}</td>
-						</tr>
-						@endif
-						@if($contacto->celular)
-						<tr>
-							<th>Celular</th>
-							<td>{{$contacto->celular}}</td>
-						</tr>
-						@endif
-						@if($contacto->estrato)
-						<tr>
-							<th>Estrato</th>
-							<td>{{$contacto->estrato}}</td>
-						</tr>
-						@endif
-						@if($contacto->direccion)
-						<tr>
-							<th>Dirección</th>
-							<td>{{$contacto->direccion}}</td>
-						</tr>
-						@endif
-						@if($contacto->barrio)
-						<tr>
-							<th>Barrio</th>
-							<td>{{$contacto->barrio}}</td>
-						</tr>
-						@endif
-						@if($contacto->email)
-						<tr>
-							<th>Correo Electrónico</th>
-							<td>{{$contacto->email}}</td>
-						</tr>
-						@endif
-						@if($contacto->firma_isp)
-						<tr>
-							<th>Fecha de la firma del Contrato</th>
-							<td>{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</strong></a></td>
-						</tr>
-						<tr>
-							<th>Asignación de Contrato Digital</th>
-							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
-						</tr>
-						@endif
-					</tbody>
-				</table>
+			<table class="table table-striped table-bordered table-sm info">
+				<tbody>
+					<tr>
+						<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
+					</tr>
+					@if($contacto->serial_onu)
+					<tr>
+						<th width="20%">Serial ONU</th>
+						<td>{{$contacto->serial_onu}}</td>
+					</tr>
+					@endif
+					<tr>
+						<th width="20%">Nombre</th>
+						<td>{{$contacto->nombre}}</td>
+					</tr>
+					<tr>
+						<th width="20%">Tipo de Identificación</th>
+						<td>{{ $contacto->identificacion }}</td>
+					</tr>
+					<tr>
+						<th width="20%">Identificación</th>
+						<td>{{$contacto->nit}}</td>
+					</tr>
+					@if($contacto->tip_iden == 6)
+					<tr>
+						<th width="20%">DV</th>
+						<td>{{$contacto->dv}}</td>
+					</tr>
+					@endif
+					@if($contacto->telefono1)
+					<tr>
+						<th width="20%">Teléfono</th>
+						<td>{{$contacto->telefono1}}</td>
+					</tr>
+					@endif
+					@if($contacto->telefono2)
+					<tr>
+						<th width="20%">Teléfono 2</th>
+						<td>{{$contacto->telefono2}}</td>
+					</tr>
+					@endif
+					@if($contacto->fax)
+					<tr>
+						<th width="20%">Fax</th>
+						<td>{{$contacto->fax}}</td>
+					</tr>
+					@endif
+					@if($contacto->celular)
+					<tr>
+						<th width="20%">Celular</th>
+						<td>{{$contacto->celular}}</td>
+					</tr>
+					@endif
+					@if($contacto->estrato)
+					<tr>
+						<th width="20%">Estrato</th>
+						<td>{{$contacto->estrato}}</td>
+					</tr>
+					@endif
+					@if($contacto->direccion)
+					<tr>
+						<th width="20%">Dirección</th>
+						<td>{{$contacto->direccion}}</td>
+					</tr>
+					@endif
+					@if($contacto->barrio)
+					<tr>
+						<th width="20%">Barrio</th>
+						<td>{{$contacto->barrio}}</td>
+					</tr>
+					@endif
+					@if($contacto->email)
+					<tr>
+						<th width="20%">Correo Electrónico</th>
+						<td>{{$contacto->email}}</td>
+					</tr>
+					@endif
+					@if($contacto->firma_isp)
+					<tr>
+						<th width="20%">Fecha de la firma del Contrato</th>
+						<td>{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</strong></a></td>
+					</tr>
+					<tr>
+						<th width="20%">Asignación de Contrato Digital</th>
+						<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
+					</tr>
+					@endif
+				</tbody>
+			</table>
 
-				@if($contrato)
-				<table class="table table-striped table-bordered table-sm info mt-4">
-					<tbody>
-						<tr>
-							<th class="bg-th" width="20%"><strong>CONTRATO ASOCIADO</strong></th>
-							<th class="bg-th"></th>
-						</tr>
-						@if($contrato->nro)
-						<tr>
-							<th>N° Contrato</th>
-							<td><a href="{{ route('contratos.show',$contrato->id )}}"><strong>{{ $contrato->nro }}</strong></a></td>
-						</tr>
-						@endif
-						@if($contrato->grupo_corte)
-						<tr>
-							<th>Grupo de Corte</th>
-							<td><a href="{{ route('grupos-corte.show',$contrato->grupo_corte()->id )}}" target="_blank"><strong>{{ $contrato->grupo_corte()->nombre }}</strong></a> (CORTE {{ $contrato->grupo_corte()->fecha_corte }} - SUSPENSIÓN {{ $contrato->grupo_corte()->fecha_suspension }})</td>
-						</tr>
-						@endif
-						@if($contrato->state)
-						<tr>
-							<th>Estado del Contrato</th>
-							<td>
-							    <strong class="text-{{$contrato->status('true')}}">{{$contrato->status()}}</strong>
-							</td>
-						</tr>
-						@endif
-						@if($contrato->ip)
-						<tr>
-							<th>Dirección IP</th>
-							<td>
-							    {{$contrato->ip}}
-							</td>
-						</tr>
-						@endif
-						@if($contrato->plan()->name)
-						<tr>
-							<th>Plan Contratado</th>
-							<td>{{$contrato->plan()->name}}</td>
-						</tr>
-						@endif
-					</tbody>
-				</table>
-				@endif
-			</div>
+			<div class="row">
+				@foreach($contratos as $contrato)
+					<div class="col-md-{{count($contratos)>1?'6':'12'}}">
+						<div class="table-responsive">
+						<table class="table table-striped table-bordered table-sm info mt-4">
+							<tbody>
+								<tr>
+									<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>CONTRATO ASOCIADO</strong></th>
+								</tr>
+								@if($contrato->nro)
+								<tr>
+									<th width="20%">N° Contrato</th>
+									<td><a href="{{ route('contratos.show',$contrato->id )}}"><strong>{{ $contrato->nro }}</strong></a></td>
+								</tr>
+								@endif
+								@if($contrato->grupo_corte)
+								<tr>
+									<th width="20%">Grupo de Corte</th>
+									<td><a href="{{ route('grupos-corte.show',$contrato->grupo_corte()->id )}}" target="_blank"><strong>{{ $contrato->grupo_corte()->nombre }}</strong></a> (CORTE {{ $contrato->grupo_corte()->fecha_corte }} - SUSPENSIÓN {{ $contrato->grupo_corte()->fecha_suspension }})</td>
+								</tr>
+								@endif
+								@if($contrato->state)
+								<tr>
+									<th width="20%">Estado del Contrato</th>
+									<td>
+									    <strong class="text-{{$contrato->status('true')}}">{{$contrato->status()}}</strong>
+									</td>
+								</tr>
+								@endif
+								@if($contrato->ip)
+								<tr>
+									<th width="20%">Dirección IP</th>
+									<td>
+									    {{$contrato->ip}}
+									</td>
+								</tr>
+								@endif
+								@if($contrato->plan()->name)
+								<tr>
+									<th width="20%">Plan Contratado</th>
+									<td>{{$contrato->plan()->name}}</td>
+								</tr>
+								@endif
+								@if($contrato->factura_individual)
+								<tr>
+									<th>Facturación Individual</th>
+									<td>{{ $contrato->factura_individual == 1 ?'Si':'No' }}</td>
+								</tr>
+								@endif
+							</tbody>
+						</table>
+					    </div>
+					</div>
+				@endforeach
+		    </div>
 		</div>
 	</div>
-
 
 	<div class="row card-description">
 		<div class="col-md-12">

@@ -189,6 +189,12 @@
 						<th>Precio Plan</th>
 						<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->price) }}</td>
 					</tr>
+					@if($contrato->factura_individual)
+					<tr>
+						<th>Facturación Individual</th>
+						<td>{{ $contrato->factura_individual == 1 ?'Si':'No' }}</td>
+					</tr>
+					@endif
 					@if($contrato->adjunto_a)
 					<tr>
 						<th>{{ $contrato->referencia_a }}</th>

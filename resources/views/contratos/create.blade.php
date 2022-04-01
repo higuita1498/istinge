@@ -24,7 +24,7 @@
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Cliente <span class="text-danger">*</span></label>
 	            <div class="input-group">
-	                <select class="form-control selectpicker" name="client_id" id="client_id" required="" title="Seleccione" data-live-search="true" data-size="5">
+	                <select class="form-control selectpicker" name="client_id" id="client_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getContracts(this.value)">
 	                    @foreach($clientes as $client)
 	                        <option value="{{$client->id}}" {{$cliente== $client->id?'selected':''}} >{{$client->nombre}} - {{$client->nit}}</option>
 	                    @endforeach
@@ -271,9 +271,22 @@
 	                </select>
 	            </div>
 	            <span class="help-block error">
-	                <strong>{{ $errors->first('grupo_corte') }}</strong>
+	                <strong>{{ $errors->first('facturacion') }}</strong>
 	            </span>
 	        </div>
+
+            <div class="col-md-4 form-group d-none" id="div_facturacion">
+                <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
+                <div class="input-group">
+                    <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
+                            <option value="1">Si</option>
+                            <option value="0">No</option>
+                    </select>
+                </div>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('grupo_corte') }}</strong>
+                </span>
+            </div>
 
             <div class="col-md-12 text-center">
                 <hr>

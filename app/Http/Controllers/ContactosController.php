@@ -284,8 +284,8 @@ class ContactosController extends Controller
                         ->get();*/
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
-            $contrato = Contrato::where('client_id', $contacto->id)->where('status', 1)->first();
-            return view('contactos.show')->with(compact('contacto', 'id', 'user_app', 'contrato'));
+            $contratos = Contrato::where('client_id', $contacto->id)->where('status', 1)->get();
+            return view('contactos.show')->with(compact('contacto', 'id', 'user_app', 'contratos'));
         }
         return redirect('empresa/contactos')->with('danger', 'CLIENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
