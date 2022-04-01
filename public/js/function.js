@@ -4239,7 +4239,7 @@ $('#searchIP').click(function() {
             Swal.fire({
                 type: 'error',
                 title: 'ERROR EN EL CÁLCULO DE LA SUBNETTING',
-                tet: 'INTENTE NUEVAMENTE',
+                text: 'INTENTE NUEVAMENTE',
                 showConfirmButton: false,
                 timer: 5000
             })
@@ -4310,7 +4310,7 @@ $('#searchIP2').click(function() {
             Swal.fire({
                 type: 'error',
                 title: 'ERROR EN EL CÁLCULO DE LA SUBNETTING',
-                tet: 'INTENTE NUEVAMENTE',
+                text: 'INTENTE NUEVAMENTE',
                 showConfirmButton: false,
                 timer: 5000
             })
