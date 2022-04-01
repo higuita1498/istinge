@@ -1608,9 +1608,12 @@ class Controller extends BaseController
         $ip_last_short = long2ip($ip_last);
         $ip_broadcast_short = long2ip($ip_broadcast);
         return response()->json([
-            'inicial' => $ip_first_short,
-            'final' => $ip_last_short,
-            'broadcast' => $ip_broadcast_short
+            'address'   => $ip_address,
+            'netmask'   => $ip_nmask,
+            'network'   => $ip_net_short.'/'.$prefijo,
+            'inicial'   => $ip_first_short,
+            'final'     => $ip_last_short,
+            'broadcast' => $ip_broadcast_short,
         ]);
     }
 }
