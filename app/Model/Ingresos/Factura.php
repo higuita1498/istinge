@@ -654,18 +654,31 @@ public function forma_pago()
         $diasCobrados = 0;
         $mensaje = "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
         
+        $fechaInicio = Carbon::parse($fechaInicio);
+        $fechaFin    = Carbon::parse($fechaFin);
+        
         //Primero analizamos si el contrato es la primer factura que vamos a generar
         if($this->contrato_id != null){
             
             $factura = Factura::where('empresa',$this->empresa)->where('contrato_id',$this->contrato_id)->orderBy('id','ASC')->first();
             
-            //De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos los primeros dias de uso
+            //De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos los primeros dias de uso dependidneod de la creacion del contrato
             if($factura->id == $this->id){
-                $diasCobrados = $fechaFactura->diffInDays($inicio);
+                
+                $contrato = Contrato::find($this->contrato_id);
+                $fechaContrato = Carbon::parse($contrato->created_at);
+                
+                $yearContrato = Carbon::parse($contrato->created_at)->format('Y');
+                $mesContrato = Carbon::parse($contrato->created_at)->format('m');
+                $diaContrato = Carbon::parse($contrato->created_at)->format('d');
+                
+                $fechaContrato = $yearContrato . "-" . $mesContrato . "-" . $diaContrato;
+                $fechaContrato = Carbon::parse($fechaContrato);
+            
+                $diasCobrados = $fechaContrato->diffInDays($fechaFin);
                 $mensaje.= " total días cobrados: " . $diasCobrados; 
             }else{
-                $fechaInicio = Carbon::parse($fechaInicio);
-                $fechaFin    = Carbon::parse($fechaFin);
+
                 $diasCobrados = $fechaInicio->diffInDays($fechaFin);
                 $mensaje.= " total días cobrados: " . $diasCobrados; 
             }
