@@ -32,6 +32,8 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Ping;
 use App\Segmento;
+use App\FormaPago;
+use App\PucMovimiento;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -1468,5 +1470,14 @@ class Controller extends BaseController
     public function getContracts($id){
         $contratos = Contrato::where('client_id', $id)->get();
         return response()->json($contratos);
+    }
+
+    public function addMovimientoPuc($id){
+        
+        $forma = FormaPago::find($id);
+        
+        // $pucMovimiento = new PucMovimiento;
+        // dd($forma);
+
     }
 }

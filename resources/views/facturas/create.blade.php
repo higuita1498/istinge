@@ -117,6 +117,16 @@
                     </select>
                 </div>
             </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Tipo movimiento <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
+              <div class="col-sm-8">
+                  <select name="relacion" id="relacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
+                      @foreach($relaciones as $relacion)
+                          <option value="{{$relacion->id}}">{{$relacion->codigo}} - {{$relacion->nombre}}</option>
+                      @endforeach
+                  </select>
+              </div>
+          </div>
         <div class="form-group row">
           <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
         </div>

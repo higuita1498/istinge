@@ -44,6 +44,7 @@ use App\Descuento;
 use App\Campos;
 use Config;
 use App\ServidorCorreo;
+use App\FormaPago;
 use ZipArchive;
 
 class FacturasController extends Controller{
@@ -518,6 +519,9 @@ class FacturasController extends Controller{
 
     $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
 
+    //obtiene las formas de pago relacionadas con este modulo (Facturas)
+    $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
     if (!$nro) {
       $mensaje='Debes crear una numeración para facturas de venta preferida';
       return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
@@ -591,7 +595,7 @@ class FacturasController extends Controller{
     'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones',
     'categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2',
     'unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion',
-    'extras'));
+    'extras','relaciones'));
   }
 
   public function create_electronica($producto=false, $cliente=false){
@@ -974,6 +978,9 @@ public function edit($id){
     $retencionesFacturas = FacturaRetencion::where('factura', $factura->id)->get();
     $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
 
+     //obtiene las formas de pago relacionadas con este modulo (Facturas)
+     $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
     if ($factura) {
       if ($factura->estatus==1) {
         view()->share(['icon' =>'', 'title' => 'Modificar Factura de Venta '.$factura->codigo, 'subseccion' => 'venta']);
@@ -1009,7 +1016,7 @@ public function edit($id){
 
         return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos',
             'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento',
-            'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras'));
+            'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones'));
       }
       return redirect('empresa/facturas')->with('success', 'La factura de venta '.$factura->codigo.' ya esta cerrada');
     }
@@ -1056,6 +1063,8 @@ public function edit($id){
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
         $factura->save();
+
+        $this->addMovimientoPuc($request->relacion);
 
         $inner=array();
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
@@ -2942,5 +2951,21 @@ public function edit($id){
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
+    }
+
+    public function updateContratoId(){
+        $facturas = Factura::all();
+
+        foreach($facturas as $factura){
+            //a cada favtura vamos a buscarle su contrato si tiene se le asocia la nueva id si no se salta
+            $contrato = Contrato::where('client_id',$factura->cliente)->first();
+
+            if($contrato){
+                $factura->contrato_id = $contrato->id;
+                $factura->save();
+            }
+        }
+
+        return "Actualizacion lista";
     }
 }
