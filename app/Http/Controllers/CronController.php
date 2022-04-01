@@ -32,7 +32,7 @@ class CronController extends Controller
         $empresa = Empresa::find(1);
         if($empresa->factura_auto == 1){
             $i=0;
-            $date = date('d');
+            $date = date('d') * 1;
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 

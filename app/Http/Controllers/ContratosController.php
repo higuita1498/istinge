@@ -1230,6 +1230,7 @@ class ContratosController extends Controller
                     //BUSCAMOS EL ID POR LA IP DEL CONTRATO
                     $API->write('/ip/firewall/address-list/print', false);
                     $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=morosos",false);
                     $API->write('=.proplist=.id');
                     $ARRAYS = $API->read();
                     
@@ -1238,6 +1239,11 @@ class ContratosController extends Controller
                         // $API->write('/ip/firewall/address-list/remove', false);
                         // $API->write('=.id='.$ARRAYS[0]['.id']);
                         // $READ = $API->read();
+
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+
                         $API->comm("/ip\n=firewall\n=address-list\n=remove\n=[find\n=list=morosos\n=address=".$contrato->ip."]");
                     }
                     
