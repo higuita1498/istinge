@@ -873,6 +873,11 @@ class FacturasController extends Controller{
     $factura->nro_remision = $request->nro_remision;
     $factura->tipo_operacion = $request->tipo_operacion;
     $factura->ordencompra    = $request->ordencompra;
+
+    if($contrato){
+        $factura->contrato_id = $contrato->id;
+    }
+    
     $factura->save();
     $nro->save();
 

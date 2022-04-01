@@ -93,6 +93,11 @@ class CronController extends Controller
                     $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                     $factura->bodega        = 1;
                     $factura->vendedor      = 1;
+
+                    if($contrato){
+                        $factura->contrato_id = $contrato->id;
+                    }
+                    
                     $factura->save();
 
                     $item_reg = new ItemsFactura;
