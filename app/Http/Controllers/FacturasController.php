@@ -1057,7 +1057,6 @@ public function edit($id){
         $factura->lista_precios=$request->lista_precios;
         $factura->bodega=$request->bodega;
         $factura->plazo=$request->plazo;
-        $factura->tipo=$request->documento;
         $factura->term_cond=$request->term_cond;
         $factura->facnotas=$request->notas;
         $factura->tipo_operacion = $request->tipo_operacion;
