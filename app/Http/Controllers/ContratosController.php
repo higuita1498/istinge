@@ -585,6 +585,9 @@ class ContratosController extends Controller
                 $contrato->ip_autorizada           = $ip_autorizada;
                 $contrato->empresa                 = Auth::user()->empresa;
                 $contrato->puerto_conexion         = $request->puerto_conexion;
+                if($request->factura_individual){
+                    $contrato->factura_individual = $request->factura_individual;
+                }
                 
                 if($request->ap){
                     $ap = AP::find($request->ap);
@@ -994,10 +997,13 @@ class ContratosController extends Controller
                     $contrato->nodo = $ap_new->nodo;
                 }
 
-                $contrato->puerto_conexion = $request->puerto_conexion;
-                $contrato->usuario  = $request->usuario;
-                $contrato->password = $request->password;
-                $contrato->simple_queue = $request->simple_queue;
+                $contrato->puerto_conexion    = $request->puerto_conexion;
+                $contrato->usuario            = $request->usuario;
+                $contrato->password           = $request->password;
+                $contrato->simple_queue       = $request->simple_queue;
+                if($request->factura_individual){
+                    $contrato->factura_individual = $request->factura_individual;
+                }
 
                 ### DOCUMENTOS ADJUNTOS ###
 
@@ -1503,6 +1509,7 @@ class ContratosController extends Controller
             
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
+            //$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 // PING
@@ -1552,11 +1559,22 @@ class ContratosController extends Controller
                 }
                 $API->disconnect();
             } else {
+                $data = [
+                    'contrato' => $contrato->id,
+                    'ip' => $contrato->ip,
+                    'fecha' => Carbon::parse(now())->format('Y-m-d')
+                ];
+
+                $ping = Ping::updateOrCreate(
+                    ['contrato' => $contrato->id],
+                    $data
+                );
+
                 return response()->json([
                     'success' => false,
                     'icon'    => 'error',
                     'title'   => 'ERROR',
-                    'text'    => 'NO SE HA PODIDO REALIZAR EL PING AL CONTRATO DE SERVICIOS'
+                    'text'    => 'NO SE HA PODIDO REALIZAR EL PING. VERIFIQUE LA CONEXIÓN DE LA MIKROTIK <b><i><u>'.$mikrotik->nombre.'</u></i></b>'
                 ]);
             }
         }

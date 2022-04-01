@@ -146,9 +146,8 @@
                             Swal.fire({
                                 type: data.icon,
                                 title: data.title,
-                                text: data.text,
-                                showConfirmButton: false,
-                                timer: 5000
+                                html: data.text,
+                                showConfirmButton: false
                             });
                         }
                         cargando(false);
