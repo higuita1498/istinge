@@ -1184,6 +1184,19 @@ class ContratosController extends Controller
                     }
                 }
 
+                $API->write('/ip/firewall/address-list/print', false);
+                $API->write('?address='.$contrato->ip, false);
+                $API->write("?list=IP_autorizadas",false);
+                $API->write('=.proplist=.id');
+                $ARRAYS = $API->read();
+
+                if(count($ARRAYS)>0){
+                    //REMOVEMOS EL ID DE LA ADDRESS LIST
+                    $API->write('/ip/firewall/address-list/remove', false);
+                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                    $READ = $API->read();
+                }
+
                 $API->disconnect();
                 Ping::where('contrato', $contrato->id)->delete();
 
@@ -1235,16 +1248,10 @@ class ContratosController extends Controller
                     $ARRAYS = $API->read();
                     
                     if(count($ARRAYS)>0){
-                        //REMOVEMOS EL ID DE LA ADDRESS LIST                    
-                        // $API->write('/ip/firewall/address-list/remove', false);
-                        // $API->write('=.id='.$ARRAYS[0]['.id']);
-                        // $READ = $API->read();
-
+                        //REMOVEMOS EL ID DE LA ADDRESS LIST
                         $API->write('/ip/firewall/address-list/remove', false);
                         $API->write('=.id='.$ARRAYS[0]['.id']);
                         $READ = $API->read();
-
-                        $API->comm("/ip\n=firewall\n=address-list\n=remove\n=[find\n=list=morosos\n=address=".$contrato->ip."]");
                     }
                     
                     $contrato->state = 'enabled';
