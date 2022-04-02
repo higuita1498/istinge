@@ -38,6 +38,8 @@
 			<a href="{{route('vendedores.index')}}">Vendedores</a><br>
 			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
+			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
+			<input type="hidden" id="prorrateoid" value="{{Auth::user()->empresa()->prorrateo}}">
 		</div>
 
 		<div class="col-sm-3">
@@ -341,6 +343,66 @@
 	                    }, 2000);
 	                }
 	            });
+			}
+
+			function prorrateo(){
+
+				if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/prorrateo';
+				}else{
+					var url = '/prorrateo';
+				}
+
+			    if ($("#prorrateoid").val() == 0) {
+			        $titleswal = "¿Desea habilitar el prorrateo de las facturas?";
+					text = "La primer factura de los clientes se cobrará según los días de uso de los servicios.";
+			    }
+
+			    if ($("#prorrateoid").val() == 1) {
+			        $titleswal = "¿Desea deshabilitar el prorrateo de las facturas?";
+					text = "";
+			    }
+
+			    Swal.fire({
+			        title: $titleswal,
+			        type: 'warning',
+			        showCancelButton: true,
+			        confirmButtonColor: '#3085d6',
+			        cancelButtonColor: '#d33',
+			        cancelButtonText: 'Cancelar',
+			        confirmButtonText: 'Aceptar',
+					text: text
+			    }).then((result) => {
+			        if (result.value) {
+			            $.ajax({
+			                url: url,
+			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+			                method: 'post',
+			                data: { prorrateo: $("#prorrateoid").val() },
+			                success: function (data) {
+
+			                    if (data == 1) {
+			                        Swal.fire({
+			                            type: 'success',
+			                            title: 'Prorrateo para facturas ha sido habilitado.',
+			                            showConfirmButton: false,
+			                            timer: 5000
+			                        })
+			                        $("#prorrateoid").val(1);
+			                    } else {
+			                        Swal.fire({
+			                            type: 'success',
+			                            title: 'Prorrateo para facturas ha sido deshabilitado',
+			                            showConfirmButton: false,
+			                            timer: 5000
+			                        })
+			                        $("#prorrateoid").val(0);
+			                    }
+								location.reload();
+							}
+			            });
+			        }
+			    });
 			}
 	    </script>
 	@endsection

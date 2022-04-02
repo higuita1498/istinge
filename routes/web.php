@@ -97,6 +97,7 @@ Route::get('qrcode', function () {
 Route::post('configuracion_facturacionAutomatica', 'ConfiguracionController@facturacionAutomatica');
 Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache');
 Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
+Route::post('prorrateo', 'ConfiguracionController@actDescProrrateo');
 
 Route::get('guiaenvio/contacto/{id}/{cliente}','ContactosController@modalGuiaEnvio');
 Route::post('factura/guiaenvio/asociar','FacturasController@asociarGuiaEnvio')->name('factura.guia_envio');

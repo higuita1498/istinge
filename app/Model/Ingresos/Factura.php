@@ -594,6 +594,8 @@ public function forma_pago()
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('client_id',$this->cliente)
         ->select('gc.*')->first();
+
+        $empresa = Empresa::find($this->empresa);
         
         $mesInicioCorte = $mesFinCorte = Carbon::parse($this->fecha)->format('m');
         $yearInicioCorte = $yearFinCorte = Carbon::parse($this->fecha)->format('Y');
@@ -662,8 +664,12 @@ public function forma_pago()
             
             $factura = Factura::where('empresa',$this->empresa)->where('contrato_id',$this->contrato_id)->orderBy('id','ASC')->first();
             
-            //De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos los primeros dias de uso dependidneod de la creacion del contrato
-            if($factura->id == $this->id){
+            /*
+            De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos 
+            los primeros dias de uso dependidneod de la creacion del contrato
+            también debemos tener la opción de prorrateo activa en el menú de configuración.
+            */
+            if($factura->id == $this->id && $empresa->prorrateo == 1){
                 
                 $contrato = Contrato::find($this->contrato_id);
                 $fechaContrato = Carbon::parse($contrato->created_at);

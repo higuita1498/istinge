@@ -1913,4 +1913,19 @@ class ConfiguracionController extends Controller
       return 1;
     }
   }
+
+  public function actDescProrrateo(Request $request){
+
+    $empresa = Empresa::find(Auth::user()->empresa);
+
+    if($empresa){
+        if($request->prorrateo == 0){
+          $empresa->prorrateo = 1;  
+        }else{
+          $empresa->prorrateo = 0;
+        }
+        $empresa->save();
+        return $empresa->prorrateo;
+    }
+  }
 }
