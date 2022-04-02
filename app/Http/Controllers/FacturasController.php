@@ -1841,6 +1841,23 @@ public function edit($id){
 
   }
 
+  public function xmlFacturaVentaMasivoIni()
+    {
+        $empresa = Auth::user()->empresa;
+        $facturas = Factura::where('empresa', $empresa)->where('emitida', 0)->where('modificado', 0)->limit(5)->get();
+
+        foreach ($facturas as $factura) {
+            $factura->modificado = 1;
+            $factura->save();
+        }
+
+        foreach ($facturas as $factura) {
+            $this->xmlFacturaVentaMasivo($factura->id, $empresa);
+        }
+
+        return back()->with('message_success', "Importacion masiva temrinada");
+    }
+
   public function xmlFacturaVenta($id){
     $FacturaVenta = Factura::find($id);
 
@@ -2971,5 +2988,166 @@ public function edit($id){
         }
 
         return "Actualizacion lista";
+    }
+
+    public function xmlFacturaVentaMasivo($id)
+    {
+        $FacturaVenta = Factura::find($id);
+
+        if (!$FacturaVenta) {
+            return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
+        }
+
+        $FacturaVenta->emitida = $FacturaVenta->emitida;
+        $FacturaVenta->save();
+
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('preferida', 1)->first();
+
+        $infoEmpresa = Auth::user()->empresaObj;
+        $data['Empresa'] = $infoEmpresa->toArray();
+
+        $retenciones = FacturaRetencion::where('factura', $FacturaVenta->id)->get();
+
+        $impTotal = 0;
+
+        foreach ($FacturaVenta->total()->imp as $totalImp) {
+            if (isset($totalImp->total)) {
+                $impTotal += $totalImp->total;
+            }
+        }
+        $items = ItemsFactura::where('factura', $id)->get();
+
+        $decimal = explode(".", $impTotal);
+        if (
+            isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
+            || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
+        ) {
+            $impTotal = round($impTotal);
+        } else {
+            $impTotal = round($impTotal);
+        }
+
+
+        $CUFEvr = $FacturaVenta->info_cufe($FacturaVenta->id, $impTotal);
+
+        $infoCliente = Contacto::find($FacturaVenta->cliente);
+        $data['Cliente'] = $infoCliente->toArray();
+
+
+        $responsabilidades_empresa = DB::table('empresa_responsabilidad as er')
+            ->join('responsabilidades_facturacion as rf', 'rf.id', '=', 'er.id_responsabilidad')
+            ->select('rf.*')
+            ->where('er.id_empresa', '=', Auth::user()->empresa)->where('er.id_responsabilidad', 5)
+            ->orWhere('er.id_responsabilidad', 7)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 12)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 20)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 29)->where('er.id_empresa', '=', Auth::user()->empresa)->get();
+
+        //-- Construccion del pdf a enviar con el código qr + el envío del archivo xml --//
+        if ($FacturaVenta) {
+            $emails = $FacturaVenta->cliente()->email;
+            if ($FacturaVenta->cliente()->asociados('number') > 0) {
+                $email = $emails;
+                $emails = array();
+                if ($email) {
+                    $emails[] = $email;
+                }
+                foreach ($FacturaVenta->cliente()->asociados() as $asociado) {
+                    if ($asociado->notificacion == 1 && $asociado->email) {
+                        $emails[] = $asociado->email;
+                    }
+                }
+            }
+
+            $tituloCorreo =  $data['Empresa']['nit'] . ";" . $data['Empresa']['nombre'] . ";" . $FacturaVenta->codigo . ";01;" . $data['Empresa']['nombre'];
+
+            $isImpuesto = 1;
+
+            //-- Generación del XML a enviar a la DIAN -- //
+            $xml = view('templates.xml.01', compact('CUFEvr', 'ResolucionNumeracion', 'FacturaVenta', 'data', 'items', 'retenciones', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
+
+            //-- Envío de datos a la DIAN --//
+            $res = $this->EnviarDatosDian($xml);
+
+            //-- Decodificación de respuesta de la DIAN --//
+            $res = json_decode($res, true);
+
+
+
+            if (isset($res['errorType'])) {
+                if ($res['errorType'] == "KeyError") {
+                    return back()->with('message_denied', "La dian está presentando problemas para emitir documentos electrónicos, inténtelo más tarde.");
+                }
+            }
+
+            if (!isset($res['statusCode']) && isset($res['message'])) {
+                return redirect('/empresa/facturas')->with('message_denied', $res['message']);
+            }
+
+            $statusCode = $res['statusCode'] ?? null; //200
+
+            if (!isset($statusCode)) {
+                return back()->with('message_denied', isset($res['message']) ? $res['message'] : 'Error en la emisión del docuemento, intente nuevamente en un momento');
+            }
+
+            //-- Guardamos la respuesta de la dian solo cuando son errores--//
+            if ($statusCode != 200) {
+                $FacturaVenta->dian_response = $res['statusCode'] ?? null;
+                $FacturaVenta->save();
+            }
+
+            //-- Validación 1 del status code (Cuando hay un error) --//
+            if ($statusCode != 200) {
+                $message = $res['errorMessage'];
+                $errorReason = $res['errorReason'];
+
+                //Validamos si depronto la factura fue emitida pero no quedamos con ningun registro de ella.
+                $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $FacturaVenta->codigo, "01", $ResolucionNumeracion->prefijo);
+
+                $statusJson = json_decode($statusJson, true);
+
+                if ($statusJson["statusCode"] == 200) {
+
+                    //linea comentada por ahorro de espacio en bd, ay que esta información de las facturas procesadas se puede obtener mediante consulta api.
+                    // $FacturaVenta->dian_response = $saveNoJson;
+                    $message = "Factura emitida correctamente por validación";
+                    $FacturaVenta->emitida = 1;
+                    $FacturaVenta->fecha_expedicion = Carbon::now();
+
+                    //Llave unica para acceso por correo
+                    $key = Hash::make(date("H:i:s"));
+                    $toReplace = array('/', '$', '.');
+                    $key = str_replace($toReplace, "", $key);
+                    $FacturaVenta->nonkey = $key;
+
+                    $FacturaVenta->save();
+
+                    $this->generateXmlPdfEmail($statusJson['document'], $FacturaVenta, $emails, $data, $CUFEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+                } else {
+                    return back()->with('message_denied', $message)->with('errorReason', $errorReason);
+                }
+            }
+
+            $document = $res['document'];
+
+            //-- estátus de que la factura ha sido aprobada --//
+            if ($statusCode == 200) {
+
+                //Llave unica para acceso por correo
+                $key = Hash::make(date("H:i:s"));
+                $toReplace = array('/', '$', '.');
+                $key = str_replace($toReplace, "", $key);
+                $FacturaVenta->nonkey = $key;
+                $FacturaVenta->save();
+                //
+
+                $message = "Factura emitida correctamente";
+                $FacturaVenta->emitida = 1;
+                $FacturaVenta->fecha_expedicion = Carbon::now();
+                $FacturaVenta->save();
+
+                $this->generateXmlPdfEmail($document, $FacturaVenta, $emails, $data, $CUFEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+            }
+        }
     }
 }
