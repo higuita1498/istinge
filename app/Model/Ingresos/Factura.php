@@ -361,28 +361,60 @@ class Factura extends Model
 
     public function info_cufe($id, $impTotal)
 {
+
     $factura = Factura::find($id);
-   $infoCufe = [
-      'Numfac' => $factura->codigo,
-      'FecFac' => Carbon::parse($factura->created_at)->format('Y-m-d'),
-      'HorFac' => Carbon::parse($factura->created_at)->format('H:i:s').'-05:00',
-      'ValFac' => number_format($factura->total()->subtotal - $factura->total()->descuento,2,'.',''),
-      'CodImp' => '01',
-      'ValImp' => number_format($impTotal,2, '.',''),
-      'CodImp2'=> '04',
-      'ValImp2'=> '0.00',
-      'CodImp3'=> '03',
-      'ValImp3'=> '0.00',
-      'ValTot' => number_format($factura->total()->subtotal + $factura->impuestos_totales() - $factura->total()->descuento, 2, '.', ''),
-      'NitFE'  => Auth::user()->empresa()->nit,
-      'NumAdq' => $factura->cliente()->nit,
-      'ClvTec' => Auth::user()->empresa()->technicalkey,
-      'TipoAmb'=> 1,
-  ];
+    $technicalKey = "";
 
-   $CUFE = $infoCufe['Numfac'].$infoCufe['FecFac'].$infoCufe['HorFac'].$infoCufe['ValFac'].$infoCufe['CodImp'].$infoCufe['ValImp'].$infoCufe['CodImp2'].$infoCufe['ValImp2'].$infoCufe['CodImp3'].$infoCufe['ValImp3'].$infoCufe['ValTot'].$infoCufe['NitFE'].$infoCufe['NumAdq'].$infoCufe['ClvTec'].$infoCufe['TipoAmb'];
+    if ($factura->technicalkey == null) {
+        $technicalKey = Auth::user()->empresaObj->technicalkey;
+    } else {
+        $technicalKey = $factura->technicalkey;
+    }
 
-     return hash('sha384',$CUFE);
+    //Validacion de desarrollo nuevo solamente para facturas nuevas desde el 15 de dic de 2021.
+    if (Carbon::parse($factura->created_at)->format('Y-m-d') >= "2021-12-15") {
+        if ($factura->tiempo_creacion) {
+            $horaFac = $factura->tiempo_creacion;
+        } else {
+            $horaFac = $factura->created_at;
+        }
+    } else {
+        $horaFac = $factura->created_at;
+        $factura->fecha = $factura->created_at;
+    }
+
+    $totalIva = 0.00;
+    $totalInc = 0.00;
+
+    foreach ($factura->total()->imp as $key => $imp) {
+        if (isset($imp->total) && $imp->tipo == 1) {
+            $totalIva = $impTotal;
+        } elseif (isset($imp->total) && $imp->tipo == 3) {
+            $totalInc = $impTotal;
+        }
+    }
+
+    $infoCufe = [
+        'Numfac' => $factura->codigo,
+        'FecFac' => Carbon::parse($factura->fecha)->format('Y-m-d'),
+        'HorFac' => Carbon::parse($horaFac)->format('H:i:s') . '-05:00',
+        'ValFac' => number_format($factura->total()->subtotal - $factura->total()->descuento, 2, '.', ''),
+        'CodImp' => '01',
+        'ValImp' => number_format($totalIva, 2, '.', ''),
+        'CodImp2' => '04',
+        'ValImp2' => number_format($totalInc, 2, '.', ''),
+        'CodImp3' => '03',
+        'ValImp3' => '0.00',
+        'ValTot' => number_format($factura->total()->subtotal + $factura->impuestos_totales() - $factura->total()->descuento, 2, '.', ''),
+        'NitFE'  => Auth::user()->empresaObj->nit,
+        'NumAdq' => $factura->cliente()->nit,
+        'ClvTec' => $technicalKey,
+        'TipoAmb' => 1,
+    ];
+
+    $CUFE = $infoCufe['Numfac'] . $infoCufe['FecFac'] . $infoCufe['HorFac'] . $infoCufe['ValFac'] . $infoCufe['CodImp'] . $infoCufe['ValImp'] . $infoCufe['CodImp2'] . $infoCufe['ValImp2'] . $infoCufe['CodImp3'] . $infoCufe['ValImp3'] . $infoCufe['ValTot'] . $infoCufe['NitFE'] . $infoCufe['NumAdq'] . $infoCufe['ClvTec'] . $infoCufe['TipoAmb'];
+
+    return hash('sha384', $CUFE);
 }
 
     public function info_cufeAPI($id, $impTotal, $empresa)
