@@ -1844,7 +1844,7 @@ public function edit($id){
   public function xmlFacturaVentaMasivoIni()
     {
         $empresa = Auth::user()->empresa;
-        $facturas = Factura::where('empresa', $empresa)->where('emitida', 0)->where('modificado', 0)->limit(5)->get();
+        $facturas = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('modificado', 0)->limit(5)->get();
 
         foreach ($facturas as $factura) {
             $factura->modificado = 1;
