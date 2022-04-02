@@ -3001,7 +3001,7 @@ public function edit($id){
         $FacturaVenta->emitida = $FacturaVenta->emitida;
         $FacturaVenta->save();
 
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('preferida', 1)->first();
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('tipo',2)->where('preferida', 1)->first();
 
         $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
