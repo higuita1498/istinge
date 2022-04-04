@@ -52,7 +52,7 @@
     <div class="row">
       <div class="col-md-6 form-group">
         <label class="control-label">Cuenta contable para ventas<span class="text-danger">*</span></label>
-        <select class="form-control selectpicker"  id="venta" name="venta" title="Seleccione">
+        <select class="form-control selectpicker"  id="venta" name="venta" title="Seleccione" data-live-search="true" data-size="5">
             @foreach($cuentas as $cuenta)
               <option value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
             @endforeach
@@ -64,7 +64,7 @@
 
       <div class="col-md-6 form-group">
         <label class="control-label">Cuenta contable para compras<span class="text-danger">*</span></label>
-        <select class="form-control selectpicker"  id="compra" name="compra" title="Seleccione">
+        <select class="form-control selectpicker"  id="compra" name="compra" title="Seleccione" data-live-search="true" data-size="5">
           @foreach($cuentas as $cuenta)
             <option value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
           @endforeach
