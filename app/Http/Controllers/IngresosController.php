@@ -430,7 +430,7 @@ class IngresosController extends Controller
                 
                 $post['to'] = array('57'.$numero);
                 $post['text'] = $mensaje;
-                $post['from'] = "IST S.A.S.";
+                $post['from'] = "ISP";
                 $login ="jjtuiran2021";
                 $password = 'Bstc2710';
                 
