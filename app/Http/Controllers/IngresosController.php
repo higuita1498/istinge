@@ -403,11 +403,12 @@ class IngresosController extends Controller
                 //BUSCAMOS EL ID POR LA IP DEL CONTRATO
                 $API->write('/ip/firewall/address-list/print', false);
                 $API->write('?address='.$contrato->ip, false);
+                $API->write("?list=morosos",false);
                 $API->write('=.proplist=.id');
                 $ARRAYS = $API->read();
-                
-                //REMOVEMOS EL ID DE LA ADDRESS LIST                    
+
                 if(count($ARRAYS)>0){
+                    //REMOVEMOS EL ID DE LA ADDRESS LIST
                     $API->write('/ip/firewall/address-list/remove', false);
                     $API->write('=.id='.$ARRAYS[0]['.id']);
                     $READ = $API->read();
