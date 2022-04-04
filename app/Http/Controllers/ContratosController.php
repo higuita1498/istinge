@@ -354,7 +354,7 @@ class ContratosController extends Controller
                 $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
                 $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
                 $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada : '';
-                $limit_at        = (strlen($plan->limit_at_subida)>1)subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
+                $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
                 $max_limit       = $plan->upload.'/'.$plan->download;
 
                 if($max_limit){ $rate_limit .= $max_limit; }
