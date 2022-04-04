@@ -66,6 +66,10 @@
 						<td>{{ $mikrotik->puerto_api }}</td>
 					</tr>
 					<tr>
+						<th>Puerto WINBOX</th>
+						<td>{{ $mikrotik->puerto_winbox }}</td>
+					</tr>
+					<tr>
 						<th>Puerto WEB</th>
 						<td>{{ $mikrotik->puerto_web }}</td>
 					</tr>
