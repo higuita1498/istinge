@@ -53,7 +53,7 @@ class Puc extends Model
             }
         }
 
-        return $t;
+        return $cuentas;
     }
     
 }
