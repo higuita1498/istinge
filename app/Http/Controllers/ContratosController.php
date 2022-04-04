@@ -1189,7 +1189,7 @@ class ContratosController extends Controller
 
                 $API->write('/ip/firewall/address-list/print', false);
                 $API->write('?address='.$contrato->ip, false);
-                $API->write("?list=IP_autorizadas",false);
+                $API->write("?list=ips_autorizadas",false);
                 $API->write('=.proplist=.id');
                 $ARRAYS = $API->read();
 
