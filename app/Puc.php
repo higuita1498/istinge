@@ -37,5 +37,23 @@ class Puc extends Model
     public function formasPago(){
         return $this->hasOne('App\FormaPago','cuenta_id');
     }
+
+    public static function cuentasTransaccionables(){
+        $tr = Puc::where('empresa',auth()->user()->empresa)
+        ->whereRaw('length(codigo) > 4')
+        ->get();
+
+        $cuentas = collect();
+
+        //preguntamos si tiene asociado el objeto que estamos consultando , si si no es una cuenta transaccional
+        foreach($tr as $t){
+            $response = $tr->contains('asociado',$t->codigo);
+            if(!$response){
+                $cuentas->push($t);
+            }
+        }
+
+        return $t;
+    }
     
 }

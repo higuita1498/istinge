@@ -626,8 +626,9 @@ public function forma_pago()
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('client_id',$this->cliente)
         ->select('gc.*')->first();
-
-        $empresa = Empresa::find($this->empresa);
+        
+        if($grupo){
+            $empresa = Empresa::find($this->empresa);
         
         $mesInicioCorte = $mesFinCorte = Carbon::parse($this->fecha)->format('m');
         $yearInicioCorte = $yearFinCorte = Carbon::parse($this->fecha)->format('Y');
@@ -722,7 +723,9 @@ public function forma_pago()
             }
         }
         
-        return $mensaje;
+            return $mensaje;
+        }
+
     }
 
 }

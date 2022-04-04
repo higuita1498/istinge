@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Empresa; use App\Retencion; use Carbon\Carbon; 
 use Validator; use Illuminate\Validation\Rule;  use Auth;
 use Session;
+use App\Puc;
 
 class RetencionesController extends Controller
 {
@@ -34,7 +35,10 @@ class RetencionesController extends Controller
   public function create(){
       $this->getAllPermissions(Auth::user()->id);
     view()->share(['title' => 'Nuevo Tipo de Retención']);
-    return view('configuracion.retenciones.create'); 
+
+    $cuentas = Puc::cuentasTransaccionables();
+
+    return view('configuracion.retenciones.create', compact('cuentas')); 
   }
 
   /**
