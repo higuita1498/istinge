@@ -83,6 +83,8 @@ class RetencionesController extends Controller
     $retencion->porcentaje=$request->porcentaje;
     $retencion->tipo=$request->tipo;
     $retencion->descripcion=$request->descripcion;
+    $retencion->puc_compra = $request->compra;
+    $retencion->puc_venta = $request->venta;
     $retencion->save();
 
     $mensaje='Se ha creado satisfactoriamente el tipo de retención';
@@ -97,9 +99,10 @@ class RetencionesController extends Controller
   public function edit($id){
       $this->getAllPermissions(Auth::user()->id);
     $retencion = Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    $cuentas = Puc::cuentasTransaccionables();
     if ($retencion) {        
       view()->share(['title' => 'Modificar Tipo de Retención']);
-      return view('configuracion.retenciones.edit')->with(compact('retencion'));
+      return view('configuracion.retenciones.edit')->with(compact('retencion','cuentas'));
     }
     return redirect('empresa/configuracion/retenciones')->with('success', 'No existe un registro con ese id');
   }
@@ -121,6 +124,8 @@ class RetencionesController extends Controller
       $retencion->porcentaje=$request->porcentaje;
       $retencion->tipo=$request->tipo;
       $retencion->descripcion=$request->descripcion;
+      $retencion->puc_compra = $request->compra;
+      $retencion->puc_venta = $request->venta;
       $retencion->save();
       $mensaje='Se ha modificado satisfactoriamente el tipo de retención';
       return redirect('empresa/configuracion/retenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
