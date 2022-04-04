@@ -351,8 +351,8 @@ class ContratosController extends Controller
 
                 $rate_limit = '';
                 $priority        = $plan->prioridad;
-                $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
-                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
                 $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada : '';
                 $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
                 $max_limit       = $plan->upload.'/'.$plan->download;
@@ -679,8 +679,8 @@ class ContratosController extends Controller
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     $rate_limit = '';
                     $priority        = $plan->prioridad;
-                    $burst_limit     = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
-                    $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                    $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                    $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
                     $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
                     $limit_at        = ($plan->limit_at_subida) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada : '';
                     $max_limit       = $plan->upload.'/'.$plan->download;
