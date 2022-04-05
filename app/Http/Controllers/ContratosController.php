@@ -814,7 +814,7 @@ class ContratosController extends Controller
 
                     }
 
-                    if($getall){
+                    //if($getall){
                         $registro = true;
                         $queue = $API->comm("/queue/simple/getall", array(
                             "?target" => $contrato->ip.'/32'
@@ -846,7 +846,7 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                    }
+                    //}
                 }
 
                 $API->disconnect();
