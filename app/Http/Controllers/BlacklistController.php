@@ -110,6 +110,8 @@ class BlacklistController extends Controller
                 $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
             }else if($response['error_message'] == 'invalid ip address or range'){
                 $error = 'ERROR API: DIRECCIÓN IP INVÁLIDA';
+            }else if($response['error_message'] == 'invalid contact list'){
+                $error = 'ERROR API: LISTA DE CONTACTO INVÁLIDA. VERIFIQUE LA CONFIGURACIÓN API.';
             }
             return back()->with('danger', $error);
         }else{
@@ -178,6 +180,8 @@ class BlacklistController extends Controller
                     $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
                 }else if($response['error_message'] == 'invalid ip address or range'){
                     $error = 'ERROR API: DIRECCIÓN IP INVÁLIDA';
+                }else if($response['error_message'] == 'invalid contact list'){
+                    $error = 'ERROR API: LISTA DE CONTACTO INVÁLIDA. VERIFIQUE LA CONFIGURACIÓN API.';
                 }
                 return back()->with('danger', $error);
             }else{
@@ -219,6 +223,8 @@ class BlacklistController extends Controller
                     $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
                 }else if($response['error_message'] == 'invalid ip address or range'){
                     $error = 'ERROR API: DIRECCIÓN IP INVÁLIDA';
+                }else if($response['error_message'] == 'invalid contact list'){
+                    $error = 'ERROR API: LISTA DE CONTACTO INVÁLIDA. VERIFIQUE LA CONFIGURACIÓN API.';
                 }
                 return back()->with('danger', $error);
             }else{
@@ -266,6 +272,8 @@ class BlacklistController extends Controller
                     $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
                 }else if($response['error_message'] == 'invalid ip address or range'){
                     $error = 'ERROR API: DIRECCIÓN IP INVÁLIDA';
+                }else if($response['error_message'] == 'invalid contact list'){
+                    $error = 'ERROR API: LISTA DE CONTACTO INVÁLIDA. VERIFIQUE LA CONFIGURACIÓN API.';
                 }
                 return back()->with('danger', $error);
             }else{
