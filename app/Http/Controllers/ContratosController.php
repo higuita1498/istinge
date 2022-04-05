@@ -643,6 +643,7 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         $descripcion = '';
+        $registro = false;
         $getall = '';
         if ($contrato) {
             $request->validate([
