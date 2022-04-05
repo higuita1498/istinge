@@ -321,7 +321,7 @@ class ContratosController extends Controller
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             $registro = false;
-            $API->debug = true;
+            //$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $nro = Numeracion::where('empresa', 1)->first();
@@ -660,7 +660,7 @@ class ContratosController extends Controller
             if ($mikrotik) {
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
-                $API->debug = true;
+                //$API->debug = true;
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     ## ELIMINAMOS DE MK ##
@@ -1355,7 +1355,7 @@ class ContratosController extends Controller
         
         $API = new RouterosAPI();
         $API->port = $mikrotik->puerto_api;
-        //$API->debug = true;
+//        $API->debug = true;
         
         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
             $rows = array(); $rows2 = array(); $Type=1; $Interface='ether1';
@@ -1449,7 +1449,7 @@ class ContratosController extends Controller
             
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            //$API->debug = true;
+          ////$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 // PING
