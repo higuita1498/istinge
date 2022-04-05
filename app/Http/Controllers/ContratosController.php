@@ -848,140 +848,141 @@ class ContratosController extends Controller
 
                 $API->disconnect();
 
-            if($registro){
-                $grupo = GrupoCorte::find($request->grupo_corte);
-                
-                if($contrato->grupo_corte){
-                    $descripcion .= ($contrato->grupo_corte == $request->grupo_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Grupo de Corte</b> de '.$contrato->grupo_corte()->nombre.' a '.$grupo->nombre.'<br>';
+                if($registro){
+                    $grupo = GrupoCorte::find($request->grupo_corte);
+
+                    if($contrato->grupo_corte){
+                        $descripcion .= ($contrato->grupo_corte == $request->grupo_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Grupo de Corte</b> de '.$contrato->grupo_corte()->nombre.' a '.$grupo->nombre.'<br>';
+                    }else{
+                        $descripcion .= ($contrato->grupo_corte == $request->grupo_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Grupo de Corte</b> a '.$grupo->nombre.'<br>';
+                    }
+                    $contrato->grupo_corte = $request->grupo_corte;
+                    $contrato->facturacion = $request->facturacion;
+
+                    /*$descripcion .= ($contrato->fecha_corte == $request->fecha_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Corte</b> de '.$contrato->fecha_corte.' a '.$request->fecha_corte.'<br>';
+                    $contrato->fecha_corte = $request->fecha_corte;*/
+
+                    $descripcion .= ($contrato->fecha_suspension == $request->fecha_suspension) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Suspensión Personalizada</b> a '.$request->fecha_suspension.'<br>';
+                    $contrato->fecha_suspension = $request->fecha_suspension;
+
+                    $plan_old = PlanesVelocidad::find($contrato->plan_id);
+                    $plan_new = PlanesVelocidad::find($request->plan_id);
+
+                    $descripcion .= ($contrato->plan_id == $request->plan_id) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Plan</b> de '.$plan_old->name.' a '.$plan_new->name.'<br>';
+                    $contrato->plan_id = $request->plan_id;
+
+                    $descripcion .= ($contrato->ip == $request->ip) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de IP</b> de '.$contrato->ip.' a '.$request->ip.'<br>';
+                    $contrato->ip = $request->ip;
+
+                    $descripcion .= ($contrato->ip_new == $request->ip_new) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de IP</b> de '.$contrato->ip_new.' a '.$request->ip_new.'<br>';
+                    $contrato->ip_new = $request->ip_new;
+
+                    $descripcion .= ($contrato->local_address == $request->local_address) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Segmento</b> de '.$contrato->local_address.' a '.$request->local_address.'<br>';
+                    $contrato->local_address = $request->local_address;
+
+                    $descripcion .= ($contrato->local_address_new == $request->local_address_new) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Segmento</b> de '.$contrato->local_address_new.' a '.$request->local_address_new.'<br>';
+                    $contrato->local_address_new = $request->local_address_new;
+
+                    $descripcion .= ($contrato->mac_address == $request->mac_address) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de MAC</b> de '.$contrato->mac_address.' a '.$request->mac_address.'<br>';
+                    $contrato->mac_address   = $request->mac_address;
+
+                    $descripcion .= ($contrato->marca_router == $request->marca_router) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Marca Router</b> de '.$contrato->marca_router.' a '.$request->marca_router.'<br>';
+                    $contrato->marca_router  = $request->marca_router;
+
+                    $descripcion .= ($contrato->modelo_router == $request->modelo_router) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Modelo Router</b> de '.$contrato->modelo_router.' a '.$request->modelo_router.'<br>';
+                    $contrato->modelo_router = $request->modelo_router;
+
+                    $descripcion .= ($contrato->marca_antena == $request->marca_antena) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Marca Antena</b> de '.$contrato->marca_antena.' a '.$request->marca_antena.'<br>';
+                    $contrato->marca_antena  = $request->marca_antena;
+
+                    $descripcion .= ($contrato->modelo_antena == $request->modelo_antena) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Modelo Antena</b> de '.$contrato->modelo_antena.' a '.$request->modelo_antena.'<br>';
+                    $contrato->modelo_antena = $request->modelo_antena;
+
+                    $descripcion .= ($contrato->interfaz == $request->interfaz) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Interfaz</b> de '.$contrato->interfaz.' a '.$request->interfaz.'<br>';
+                    $contrato->interfaz = $request->interfaz;
+
+                    if($request->ap){
+                        $ap_new = AP::find($request->ap);
+                        $ap_old = AP::find($contrato->ap);
+                        $descripcion .= ($contrato->ap == $ap_new->ap) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Access Point</b> de '.$ap_old->nombre.' a '.$ap_new->nombre.'<br>';
+                        $contrato->ap   = $request->ap;
+                    }
+
+                    if($contrato->nodo){
+                        $nodo_old = Nodo::find($contrato->nodo);
+                        $nodo_new = Nodo::find($ap_new->nodo);
+
+                        $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new->nombre.'<br>';
+                        $contrato->nodo = $ap_new->nodo;
+                    }
+
+                    $contrato->puerto_conexion    = $request->puerto_conexion;
+                    $contrato->usuario            = $request->usuario;
+                    $contrato->password           = $request->password;
+                    $contrato->simple_queue       = $request->simple_queue;
+                    if($request->factura_individual){
+                        $contrato->factura_individual = $request->factura_individual;
+                    }
+
+                    ### DOCUMENTOS ADJUNTOS ###
+
+                    if($request->referencia_a) {
+                        $contrato->referencia_a = $request->referencia_a;
+                        if($request->adjunto_a){
+                            $file = $request->file('adjunto_a');
+                            $nombre =  $file->getClientOriginalName();
+                            Storage::disk('documentos')->put($nombre, \File::get($file));
+                            $contrato->adjunto_a = $nombre;
+                        }
+                    }
+                    if($request->referencia_b) {
+                        $contrato->referencia_b = $request->referencia_b;
+                        if($request->adjunto_b){
+                            $file = $request->file('adjunto_b');
+                            $nombre =  $file->getClientOriginalName();
+                            Storage::disk('documentos')->put($nombre, \File::get($file));
+                            $contrato->adjunto_b = $nombre;
+                        }
+                    }
+                    if($request->referencia_c) {
+                        $contrato->referencia_c = $request->referencia_c;
+                        if($request->adjunto_c){
+                            $file = $request->file('adjunto_c');
+                            $nombre =  $file->getClientOriginalName();
+                            Storage::disk('documentos')->put($nombre, \File::get($file));
+                            $contrato->adjunto_c = $nombre;
+                        }
+                    }
+                    if($request->referencia_d) {
+                        $contrato->referencia_d = $request->referencia_d;
+                        if($request->adjunto_d){
+                            $file = $request->file('adjunto_d');
+                            $nombre =  $file->getClientOriginalName();
+                            Storage::disk('documentos')->put($nombre, \File::get($file));
+                            $contrato->adjunto_d = $nombre;
+                        }
+                    }
+
+                    ### DOCUMENTOS ADJUNTOS ###
+
+                    $contrato->save();
+
+                    /*REGISTRO DEL LOG*/
+                    if(!is_null($descripcion)){
+                        $movimiento = new MovimientoLOG;
+                        $movimiento->contrato    = $id;
+                        $movimiento->modulo      = 5;
+                        $movimiento->descripcion = $descripcion;
+                        $movimiento->created_by  = Auth::user()->id;
+                        $movimiento->empresa     = Auth::user()->empresa;
+                        $movimiento->save();
+                    }
+
+                    $mensaje='SE HA MODIFICADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
+                    return redirect('empresa/contratos/'.$id)->with('success', $mensaje);
                 }else{
-                    $descripcion .= ($contrato->grupo_corte == $request->grupo_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Grupo de Corte</b> a '.$grupo->nombre.'<br>';
+                    return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA SIDO ACTUALIZADO');
                 }
-                $contrato->grupo_corte = $request->grupo_corte;
-                $contrato->facturacion = $request->facturacion;
-                
-                /*$descripcion .= ($contrato->fecha_corte == $request->fecha_corte) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Corte</b> de '.$contrato->fecha_corte.' a '.$request->fecha_corte.'<br>';
-                $contrato->fecha_corte = $request->fecha_corte;*/
-                
-                $descripcion .= ($contrato->fecha_suspension == $request->fecha_suspension) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Suspensión Personalizada</b> a '.$request->fecha_suspension.'<br>';
-                $contrato->fecha_suspension = $request->fecha_suspension;
-                
-                $plan_old = PlanesVelocidad::find($contrato->plan_id);
-                $plan_new = PlanesVelocidad::find($request->plan_id);
-                
-                $descripcion .= ($contrato->plan_id == $request->plan_id) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Plan</b> de '.$plan_old->name.' a '.$plan_new->name.'<br>';
-                $contrato->plan_id = $request->plan_id;
-                
-                $descripcion .= ($contrato->ip == $request->ip) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de IP</b> de '.$contrato->ip.' a '.$request->ip.'<br>';
-                $contrato->ip = $request->ip;
-                
-                $descripcion .= ($contrato->ip_new == $request->ip_new) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de IP</b> de '.$contrato->ip_new.' a '.$request->ip_new.'<br>';
-                $contrato->ip_new = $request->ip_new;
-                
-                $descripcion .= ($contrato->local_address == $request->local_address) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Segmento</b> de '.$contrato->local_address.' a '.$request->local_address.'<br>';
-                $contrato->local_address = $request->local_address;
-                
-                $descripcion .= ($contrato->local_address_new == $request->local_address_new) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Segmento</b> de '.$contrato->local_address_new.' a '.$request->local_address_new.'<br>';
-                $contrato->local_address_new = $request->local_address_new;
-                
-                $descripcion .= ($contrato->mac_address == $request->mac_address) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de MAC</b> de '.$contrato->mac_address.' a '.$request->mac_address.'<br>';
-                $contrato->mac_address   = $request->mac_address;
-                
-                $descripcion .= ($contrato->marca_router == $request->marca_router) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Marca Router</b> de '.$contrato->marca_router.' a '.$request->marca_router.'<br>';
-                $contrato->marca_router  = $request->marca_router;
-                
-                $descripcion .= ($contrato->modelo_router == $request->modelo_router) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Modelo Router</b> de '.$contrato->modelo_router.' a '.$request->modelo_router.'<br>';
-                $contrato->modelo_router = $request->modelo_router;
-                
-                $descripcion .= ($contrato->marca_antena == $request->marca_antena) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Marca Antena</b> de '.$contrato->marca_antena.' a '.$request->marca_antena.'<br>';
-                $contrato->marca_antena  = $request->marca_antena;
-                
-                $descripcion .= ($contrato->modelo_antena == $request->modelo_antena) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Modelo Antena</b> de '.$contrato->modelo_antena.' a '.$request->modelo_antena.'<br>';
-                $contrato->modelo_antena = $request->modelo_antena;
-                
-                $descripcion .= ($contrato->interfaz == $request->interfaz) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Interfaz</b> de '.$contrato->interfaz.' a '.$request->interfaz.'<br>';
-                $contrato->interfaz = $request->interfaz;
-                
-                if($request->ap){
-                    $ap_new = AP::find($request->ap);
-                    $ap_old = AP::find($contrato->ap);
-                    $descripcion .= ($contrato->ap == $ap_new->ap) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Access Point</b> de '.$ap_old->nombre.' a '.$ap_new->nombre.'<br>';
-                    $contrato->ap   = $request->ap;
-                }
-                
-                if($contrato->nodo){
-                    $nodo_old = Nodo::find($contrato->nodo);
-                    $nodo_new = Nodo::find($ap_new->nodo);
-                    
-                    $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new->nombre.'<br>';
-                    $contrato->nodo = $ap_new->nodo;
-                }
-
-                $contrato->puerto_conexion    = $request->puerto_conexion;
-                $contrato->usuario            = $request->usuario;
-                $contrato->password           = $request->password;
-                $contrato->simple_queue       = $request->simple_queue;
-                if($request->factura_individual){
-                    $contrato->factura_individual = $request->factura_individual;
-                }
-
-                ### DOCUMENTOS ADJUNTOS ###
-
-                if($request->referencia_a) {
-                    $contrato->referencia_a = $request->referencia_a;
-                    if($request->adjunto_a){
-                        $file = $request->file('adjunto_a');
-                        $nombre =  $file->getClientOriginalName();
-                        Storage::disk('documentos')->put($nombre, \File::get($file));
-                        $contrato->adjunto_a = $nombre;
-                    }
-                }
-                if($request->referencia_b) {
-                    $contrato->referencia_b = $request->referencia_b;
-                    if($request->adjunto_b){
-                        $file = $request->file('adjunto_b');
-                        $nombre =  $file->getClientOriginalName();
-                        Storage::disk('documentos')->put($nombre, \File::get($file));
-                        $contrato->adjunto_b = $nombre;
-                    }
-                }
-                if($request->referencia_c) {
-                    $contrato->referencia_c = $request->referencia_c;
-                    if($request->adjunto_c){
-                        $file = $request->file('adjunto_c');
-                        $nombre =  $file->getClientOriginalName();
-                        Storage::disk('documentos')->put($nombre, \File::get($file));
-                        $contrato->adjunto_c = $nombre;
-                    }
-                }
-                if($request->referencia_d) {
-                    $contrato->referencia_d = $request->referencia_d;
-                    if($request->adjunto_d){
-                        $file = $request->file('adjunto_d');
-                        $nombre =  $file->getClientOriginalName();
-                        Storage::disk('documentos')->put($nombre, \File::get($file));
-                        $contrato->adjunto_d = $nombre;
-                    }
-                }
-
-                ### DOCUMENTOS ADJUNTOS ###
-                
-                $contrato->save();
-                
-                /*REGISTRO DEL LOG*/
-                if(!is_null($descripcion)){
-                    $movimiento = new MovimientoLOG;
-                    $movimiento->contrato    = $id;
-                    $movimiento->modulo      = 5;
-                    $movimiento->descripcion = $descripcion;
-                    $movimiento->created_by  = Auth::user()->id;
-                    $movimiento->empresa     = Auth::user()->empresa;
-                    $movimiento->save();
-                }
-                
-                $mensaje='SE HA MODIFICADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
-                return redirect('empresa/contratos/'.$id)->with('success', $mensaje);
-            }else{
-                return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA SIDO ACTUALIZADO');
             }
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
