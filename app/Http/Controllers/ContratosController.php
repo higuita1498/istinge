@@ -920,6 +920,7 @@ class ContratosController extends Controller
                     $contrato->usuario            = $request->usuario;
                     $contrato->password           = $request->password;
                     $contrato->simple_queue       = $request->simple_queue;
+                    $contrato->conexion           = $request->conexion;
                     if($request->factura_individual){
                         $contrato->factura_individual = $request->factura_individual;
                     }
