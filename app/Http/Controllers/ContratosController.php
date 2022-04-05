@@ -321,6 +321,7 @@ class ContratosController extends Controller
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             $registro = false;
+            $getall = '';
             //$API->debug = true;
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
@@ -642,6 +643,7 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         $descripcion = '';
+        $getall = '';
         if ($contrato) {
             $request->validate([
                 'server_configuration_id' => 'required',
