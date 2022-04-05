@@ -750,7 +750,7 @@ class ContratosController extends Controller
                         );
 
                         $getall = $API->comm("/ppp/secret/getall", array(
-                            "?local-address" => $request->ip
+                            "?local-address" => $contrato->ip
                             )
                         );
                     }
@@ -779,7 +779,7 @@ class ContratosController extends Controller
                             }
 
                             $getall = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                "?address" => $request->ip
+                                "?address" => $contrato->ip
                                 )
                             );
                         }else{
@@ -800,7 +800,7 @@ class ContratosController extends Controller
                             );
 
                             $getall = $API->comm("/ip/arp/getall", array(
-                                "?address" => $request->ip
+                                "?address" => $contrato->ip
                                 )
                             );
                         }
