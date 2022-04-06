@@ -271,7 +271,7 @@ class InventarioController extends Controller{
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
-        $cuentas = ProductoServicio::all();
+        $cuentas = ProductoServicio::where('en_uso',1)->get();
         return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas'));
     }
     
@@ -614,7 +614,7 @@ class InventarioController extends Controller{
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
-        $cuentas = ProductoServicio::all();
+        $cuentas = ProductoServicio::where('en_uso',1)->get();
         
         if ($inventario) {
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
