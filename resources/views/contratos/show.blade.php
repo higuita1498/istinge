@@ -125,7 +125,7 @@
 					</tr>
 					<tr>
 						<th>Dirección IP</th>
-						<td>{{ $contrato->ip }}</td>
+						<td><a href="http://{{ $contrato->ip }}" target="_blank">{{ $contrato->ip }} <i class="fas fa-external-link-alt"></i></a></td>
 					</tr>
 					@if($contrato->puerto_conexion)
 					<tr>

@@ -229,7 +229,7 @@ class ContratosController extends Controller
                 return $contrato->mac_address;
             })
             ->editColumn('ip', function (Contrato $contrato) {
-                return $contrato->ip;
+                return '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>';
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {
                 return $contrato->grupo_corte('true');
@@ -294,7 +294,7 @@ class ContratosController extends Controller
         $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'ip'));
     }
     
     public function store(Request $request){
