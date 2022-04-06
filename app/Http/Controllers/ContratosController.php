@@ -294,7 +294,7 @@ class ContratosController extends Controller
         $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'ip'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa'));
     }
     
     public function store(Request $request){
