@@ -30,6 +30,7 @@ use PHPExcel_Style_NumberFormat;
 use ZipArchive;
 use PHPExcel_Shared_ZipArchive; 
 use App\Puc;
+use App\ProductoServicio;
 
 class InventarioController extends Controller{
     public $id;
@@ -270,7 +271,7 @@ class InventarioController extends Controller{
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
-        $cuentas = Puc::cuentasTransaccionables();
+        $cuentas = ProductoServicio::all();
         return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas'));
     }
     
@@ -613,7 +614,7 @@ class InventarioController extends Controller{
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
-        $cuentas = Puc::cuentasTransaccionables();
+        $cuentas = ProductoServicio::all();
         
         if ($inventario) {
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
