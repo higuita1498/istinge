@@ -224,4 +224,52 @@ class User extends Authenticatable
         return $this->belongsTo('App\Empresa', 'empresa');
     }
 
+     /**
+     * @return bool $fechaCorteSuscripcion
+     * @return bool $cantidadPersonasValidas
+     */
+    public function modoLecturaNomina()
+    {
+        $usuario = auth()->user();
+        $suscripcion = SuscripcionNomina::where('id_empresa',  $usuario->empresa)->first();
+
+        if (isset($suscripcion) && $usuario->rol >= 2) {
+            switch ($suscripcion) {
+                case $suscripcion->fec_corte < date('Y-m-d'):
+                    return [
+                        'success' => true,
+                        'message' => 'Tu plan actual ya ha finalizado'
+                    ];
+                    break;
+                case $this->personal():
+                    return [
+                        'success' => true,
+                        'message' => 'Ha alcanzado el límite de personas para el plan suscrito'
+                    ];
+                    break;
+                default:
+                    return [
+                        'success' => false,
+                        'message' => ''
+                    ];
+                    break;
+            }
+        }
+
+        return [
+            'success' => false,
+            'message' => 'No existe ua suscripción activa'
+        ];
+    }
+
+      /**
+    *
+    * Método que recupera la cantidad de personas que se pueden obtener segun el plan escogido por la empresa.
+    *
+    */
+    public function personal()
+    {
+        return (SuscripcionNomina::where('id_empresa', Auth::user()->empresa)->get()->last())->personal();
+    }
+
 }

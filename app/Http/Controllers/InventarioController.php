@@ -29,6 +29,7 @@ use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
 use ZipArchive;
 use PHPExcel_Shared_ZipArchive; 
+use App\Puc;
 
 class InventarioController extends Controller{
     public $id;
@@ -269,7 +270,8 @@ class InventarioController extends Controller{
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
-        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas'));
+        $cuentas = Puc::cuentasTransaccionables();
+        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas'));
     }
     
     public function store(Request $request){
@@ -349,6 +351,16 @@ class InventarioController extends Controller{
                     $precio->precio=$this->precision($request->preciolistavalor[$key]);
                     $precio->save();
                 }
+            }
+        }
+
+        //Desarrollo pendiente de cuentas por producto
+        if ($request->cuentacontable) {
+            foreach ($request->cuentacontable as $key => $value) {
+                    DB::table('producto_cuentas')->insert([
+                        'cuenta_id' => $value,
+                        'inventario_id' => $inventario->id
+                    ]);
             }
         }
         
@@ -601,13 +613,15 @@ class InventarioController extends Controller{
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
+        $cuentas = Puc::cuentasTransaccionables();
         
         if ($inventario) {
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
             $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
             $medidas=DB::table('medidas')->get();
             $unidades=DB::table('unidades_medida')->get();
-            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras', 'bodegas', 'listas'));
+            $cuentasInventario = $inventario->cuentas();
+            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras', 'bodegas', 'listas','cuentasInventario','cuentas'));
         }
         return redirect('empresa/inventario')->with('success', 'No existe un registro con ese id');
     }
@@ -731,6 +745,34 @@ class InventarioController extends Controller{
                 }
             }else{
                 ProductosPrecios::where('empresa', Auth::user()->empresa)->where('producto', $inventario->id)->delete();
+            }
+
+            //actualizando cuentas del inventario
+            $insertsCuenta=array();
+            if ($request->cuentacontable) {
+                foreach ($request->cuentacontable as $key) {
+
+                    if(!DB::table('producto_cuentas')->
+                    where('cuenta_id',$key)->
+                    where('inventario_id',$inventario->id)->first()){
+                        
+                        $idCuentaPro = DB::table('producto_cuentas')->insertGetId([
+                            'cuenta_id' => $key,
+                            'inventario_id' => $inventario->id
+                        ]);
+
+                        $insertsCuenta[]=$idCuentaPro;
+                    }
+                }
+                if (count($insertsCuenta)>0) {
+                    DB::table('producto_cuentas')
+                    ->where('inventario_id',$inventario->id)
+                    ->whereNotIn('id',$insertsCuenta)->delete();
+                }
+            }else{
+                DB::table('producto_cuentas')
+                    ->where('inventario_id',$inventario->id)
+                    ->delete();
             }
             
             if ($request->tipo_producto==1) {

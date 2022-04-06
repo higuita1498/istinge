@@ -373,6 +373,50 @@
         </li>
     @endif
 
+    <li id="nomina" class="nav-item">
+        @if(auth()->user()->empresaObj->nomina)
+        <a class="nav-link" data-toggle="collapse" href="#ui-nomina" aria-expanded="false" aria-controls="ui-nomina">
+            <i class="menu-icon far fa-money-bill-alt"></i>
+            <span class="menu-title">Nómina
+                <span class="badge badge-info ml-1">Nuevo</span>
+            </span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="ui-nomina">
+            <ul class="nav flex-column sub-menu">
+                        <li class="nav-item" id="personas-nomina">
+                            <a class="nav-link" href="{{ route('personas.index') }}">Personas</a>
+                        </li>
+
+                        <li class="nav-item" id="liquidar-nomina">
+                            <a class="nav-link" href="{{ route('nomina.index') }}" id="liquidar-nomina-anchor">Liquidar Nómina</a>
+                        </li>
+ 
+                    {{-- <li class="nav-item" id="historial-periodos">
+                        <a class="nav-link" href="{{ route('historial.periodos') }}">Historial de periodos</a>
+                    </li> --}}
+                    <li class="nav-item" id="contabilidad">
+                        <a class="nav-link" href="{{ route('contabilidad.index') }}">Contabilidad
+                        </a>
+                    </li>
+                    <li class="nav-item" id="planes-nomina">
+                        <a class="nav-link" href="{{ route('nomina.planes') }}">Planes</a>
+                    </li>
+                    {{-- <li class="nav-item" id="asisente-habilitacion">
+                        <a id="nomina_asistente" href="{{ route('nomina-dian.asistente') }}" class="{{auth()->user()->empresaObj->nomina ? 'nav-link' : 'd-none'}}">Asistente de habilitación</a>
+                    </li> --}}
+            </ul>
+        </div>
+        @else
+        <a class="nav-link" href="{{route('configuracion.index')}}">
+            <i class="menu-icon far fa-money-bill-alt"></i>
+            <span class="menu-title">Nómina
+                <span class="badge badge-info ml-1">Nuevo</span>
+            </span>
+        </a>
+        @endif
+    </li>
+
     @if(isset($_SESSION['permisos']['281']))
         <li class="nav-item" id="bancos">
             <a  class="nav-link" href="{{route('bancos.index')}}">

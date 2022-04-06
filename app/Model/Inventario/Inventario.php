@@ -214,4 +214,8 @@ class Inventario extends Model
 
     }
 
+    public function cuentas(){
+      return DB::table('producto_cuentas')->where('inventario_id',$this->id)->get();
+    }
+
 }

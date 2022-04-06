@@ -11,6 +11,10 @@
 |
 */
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Nomina\NominaController;
+use App\Http\Controllers\Nomina\NominaDianController;
+use App\Model\Nomina\Nomina;
+use App\Model\Nomina\NominaPeriodos;
 
 Route::get('phpinfo', function(){phpinfo();});
 
@@ -99,11 +103,15 @@ Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache'
 Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
 Route::post('prorrateo', 'ConfiguracionController@actDescProrrateo');
 
+Route::post('configuracion_nominadian', 'ConfiguracionController@nominaDian');
+
 Route::get('guiaenvio/contacto/{id}/{cliente}','ContactosController@modalGuiaEnvio');
 Route::post('factura/guiaenvio/asociar','FacturasController@asociarGuiaEnvio')->name('factura.guia_envio');
 
 // Rutas referentes a la Dian
 Route::post('/validatedian/invoice', 'FacturasController@validate_dian');
+Route::get('/emitirjson/{nominaId}', 'Nomina\NominaController@emitirJson');
+Route::get('/nomina-json/{nomina}', 'Nomina\NominaController@emitirJson')->name('nomina.json');
 Route::post('/validatetechnicalkeydian', 'FacturasController@validate_technicalkey_dian');
 
 //Route::get('', 'HomeController@inicio')->name('Inicio');
@@ -131,6 +139,11 @@ Route::get('/PreGuardarPago','PlanesController@PreGuardarPago');
 Route::get('/ConsultaEstadoTransaccion','PlanesController@consultaestado');
 Route::get('/DatosFaltantesTransaccion','PlanesController@datosfaltantes');
 //fin rutas planes
+
+//Rutas Planes nomina. 
+Route::get('/respuestapagowompi', 'PlanesNominaController@respuestapagowompi')->name('planesnomina.respuestapagowompi');
+Route::post('/store_respuesta_wompi', 'PlanesNominaController@store_respuesta_wompi')->name('planesnomina.store_respuesta_wompi');
+
 Route::post('searchMunicipality', 'ContactosController@searchMunicipality');
 Route::get('/getDataClient/{id}','ContactosController@getDataClient');
 Route::post('/updatedirection/client','ContactosController@updatedirection');
@@ -193,6 +206,8 @@ Route::post('password/email', 'Auth\ForgotPasswordController@enviar')->name('pas
 Route::get('change_pass/{token}', 'Auth\ResetPasswordController@recuperar_pass')->name('pass.change');
 Route::post('save_pass', 'Auth\ResetPasswordController@cambiar_pass')->name('pass.save');
 
+Route::get('/categorymassive', 'HomeController@createCategoryMassive');
+
 Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], function() {
 	Route::get('/', 'HomeController@index')->name('master');
 
@@ -224,6 +239,9 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
 
         Route::get('anular/{id}', 'SuscripcionController@anular')->name('suscripciones.anular');
         Route::get('activar/{id}', 'SuscripcionController@activar')->name('suscripciones.activar');
+
+		Route::get('nominas', 'SuscripcionController@nomina_pendientes')->name('suscripciones-nomina.pendientes');
+        Route::post('nomina-confirmar/{id}', 'SuscripcionController@nomina_confirmar')->name('suscripciones-nomina.confirmar');
     });
 
 
@@ -232,6 +250,7 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
         Route::post('activar/{id}', 'EmpresasController@activar')->name('empresas.activar');
         Route::get('inactivas', 'EmpresasController@inactivas')->name('empresas.inactivas');
         Route::get('ingresar/{email}','EmpresasController@ingresar')->name('empresas.ingresar');
+		Route::get('{id}/nomina', 'EmpresasController@nomina')->name('empresas.nomina');
 	});
 	Route::resource('empresas', 'EmpresasController');
 	Route::get('edit', 'UsuariosController@my_edit')->name('user.editar');
@@ -387,6 +406,225 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	});
 	Route::resource('facturas', 'FacturasController');
+
+	//NOMINA
+    Route::group(['namespace' => 'Nomina', 'prefix' => 'nomina', 'middleware' => ['nomina']], function () {
+
+        Route::get('/agrupadas/{periodo?}/{year?}/{tipo?}', 'NominaController@nominasAgrupadas')->name('nomina.agrupadas');
+        Route::get('/individuales/{periodo?}/{year?}/{tipo?}', 'NominaController@nominasIndividuales')->name('nomina.individuales');
+        Route::get('/liquidar-nomina/correo/{year?}/{periodo?}/{tipo?}', 'NominaController@notificarLiquidacion')->name('liquidar-nomina.correo');
+        Route::get('/liquidacion/{nomina}/{periodo?}', 'NominaController@enviarNominaLiquidada')->name('nomina.liquidacion');
+        Route::get('/periodos', 'NominaController@index')->name('nomina.index');
+        Route::post('/periodos', 'NominaController@store_nomina')->name('nomina.periodo');
+        Route::get('/recalcular-reiniciar/personas-faltantes/{periodo}/{year}', 'NominaController@validarPersonasPeriodo')->name('nomina.periodo.verificar.personas');
+        Route::get('/liquidar-nomina/{periodo?}/{year?}/{editar?}/{tipo?}', 'NominaController@liquidar')->name('nomina.liquidar');
+        Route::get('/liquidar-nomina-excel/{periodo?}/{year?}/{tipo?}', 'NominaController@exportarResumenNomina')->name('nomina.resumenExcel');
+        Route::get('/ajustar-nomina/{periodo?}/{year?}/{persona}/{tipo?}', 'NominaController@ajustar')->name('nomina.ajustar');
+        Route::get('/ajustar-estado-nominas/{periodo}/{year}/{persona}/{nomina}', 'NominaController@ajustarEstadoNominas')->name('estado-nominas.ajustar');
+        Route::get('/emitir-nomina-calculos-completo/{nomina}/pdf', 'NominaController@generarPDFNominaCompleta')->name('nominaCompleta.pdf');
+
+        Route::post(
+            '/eliminar-nomina/{nomina}',
+            'NominaController@estadoEliminado'
+        )->name('nomina.estado_eliminado');
+
+        Route::get('/traer-observacion', 'NominaController@traerObservacion')->name('nomina.traer.observacion');
+        Route::get('/emitir-nomina/email/{nomina}', 'NominaController@correoEmicionNomina')->name('emitir-nomina.email');
+
+
+        Route::get('/confirmar-nomina', 'NominaController@confirmar')->name('nomina.confirmar');
+        Route::get('/historial/periodos', 'NominaController@historialPeriodos')->name('historial.periodos');
+
+        Route::get(
+            '/novedades/{periodo?}/{year?}/{tipo?}',
+            'NominaController@informeNovedades'
+        )->name('nomina.novedades');
+
+        Route::get(
+            '/novedades/exportar/{periodo?}/{year?}/{tipo?}',
+            'NominaController@exportarinformeNovedades'
+        )->name('nomina.exportar');
+
+		
+        Route::post(
+			'/preferencia/pago',
+            'NominaController@GuardarPreferenciaPago'
+			)->name('nomina.preferecia-pago.store');
+			
+		Route::get('/preferencia/pago', 'NominaController@preferenciaPago')->name('nomina.preferecia-pago');
+		
+        Route::get(
+            '/prestaciones-sociales/prima',
+            'NominaPrestacionSocialController@prima'
+        )->name('nomina.prestacion-social');
+
+        Route::post(
+            '/guardar-prestaciones-sociales',
+            'NominaPrestacionSocialController@store'
+        )->name('nomina.prestacion.social.store');
+
+        Route::get(
+            '/prestaciones-sociales/cesantias',
+            'NominaPrestacionSocialController@cesantias'
+        )->name('nomina.prestacion-social.cesantias');
+
+        Route::get(
+            '/prestaciones-sociales/intereses-cesantias',
+            'NominaPrestacionSocialController@interesesCesantias'
+        )->name('nomina.prestacion-social.intereses-cesantias');
+
+        Route::get(
+            '/prestaciones-sociales/refrescar/{idPrestacion?}',
+            'NominaPrestacionSocialController@refrescar'
+        )->name('nomina.prestacion-social.refrescar');
+
+        Route::get(
+            '/prestaciones-sociales/imprimir/{idPrestacion}',
+            'NominaPrestacionSocialController@imprimir'
+        )->name('prestacion-social.imprimir');
+
+        Route::get(
+            '/prestaciones-sociales/imprimir/prima/{idPrestacion}',
+            'NominaPrestacionSocialController@imprimir_prima'
+        )->name('nomina.imprimir.prima');
+
+
+        Route::post('/liquidar-nomina/{id}/edit', 'NominaController@edit_extras')->name('extras.edit');
+        Route::post('/liquidar-nomina/update', 'NominaController@update_extras')->name('extras.update');
+
+        Route::post(
+            '/liquidar-nomina/{id}/edit_vacaciones',
+            'NominaController@edit_vacaciones'
+        )->name('vacaciones.edit');
+
+        Route::post(
+            '/liquidar-nomina/update_vacaciones',
+            'NominaController@update_vacaciones'
+        )->name('vacaciones.update');
+
+        Route::post(
+            '/liquidar-nomina/{id}/destroy_vacaciones',
+            'NominaController@destroy_vacaciones'
+        )->name('vacaciones.destroy');
+
+        Route::post(
+            '/liquidar-nomina/{id}/edit_adicionales',
+            'NominaController@edit_adicionales'
+        )->name('adicionales.edit');
+
+
+        Route::post(
+            '/liquidar-nomina/update_adicionales',
+            'NominaController@update_adicionales'
+        )->name('adicionales.update');
+
+        Route::post(
+            '/liquidar-nomina/{id}/destroy_adicionales',
+            'NominaController@destroy_adicionales'
+        )->name('adicionales.destroy');
+
+        Route::post(
+            '/liquidar-nomina/{id}/edit_deducciones',
+            'NominaController@edit_deducciones'
+        )->name('deducciones.edit');
+
+        Route::post(
+            '/liquidar-nomina/update_deducciones',
+            'NominaController@update_deducciones'
+        )->name('deducciones.update');
+
+        Route::post(
+            '/liquidar-nomina/{id}/destroy_deducciones',
+            'NominaController@destroy_deducciones'
+        )->name('deducciones.destroy');
+
+        Route::get(
+            '/liquidar-nomina-calculos/costo-general/{tipo}',
+            'NominaController@costoPeriodo'
+        )->name('nomina.costoPeriodo');
+
+        Route::get('/liquidar-nomina-calculos/{id}', 'NominaController@calculos')->name('nomina.calculos');
+
+        Route::get(
+            '/liquidar-nomina-calculos-completo/{id}',
+            'NominaController@calculosCompleto'
+        )->name('nomina.calculosCompleto');
+
+        Route::get('/liquidar-nomina-calculos/{id}/pdf', 'NominaController@details_pdf')->name('nomina.pdf');
+
+        route::get(
+            '/liquidar-nomina-calculos/resumen/{nominaPeriodo}',
+            'NominaController@resumen'
+        )->name('nomina.resumen');
+
+        Route::get('/personas', 'PersonasController@index')->name('personas.index');
+        Route::get('/personas/create', 'PersonasController@create')->name('personas.create');
+        Route::post('/personas/create', 'PersonasController@store')->name('personas.store');
+        Route::get('/personas/{id}/edit', 'PersonasController@edit')->name('personas.edit');
+        Route::post('/personas/{id}/edit', 'PersonasController@update')->name('personas.update');
+        Route::get('/personas/{id}/show', 'PersonasController@show')->name('personas.show');
+        Route::get('/personas/{id}/destroy', 'PersonasController@destroy')->name('personas.destroy');
+
+        Route::post(
+            '/personas/activar_desactivar/{idPersona}',
+            'PersonasController@act_desc'
+        )->name('personas.act_des');
+
+        Route::post('ajax_sede', 'PersonasController@sede')->name('personas.ajax_sede');
+        Route::post('ajax_area', 'PersonasController@area')->name('personas.ajax_area');
+        Route::post('ajax_cargo', 'PersonasController@cargo')->name('personas.ajax_cargo');
+
+        Route::get('/contabilidad', 'ContabilidadController@index')->name('contabilidad.index');
+        Route::post('/ccosto/store', 'ContabilidadController@store_ccosto')->name('ccosto.store');
+        Route::post('/ccosto/{id}/edit', 'ContabilidadController@edit_ccosto')->name('ccosto.edit');
+        Route::post('/ccosto/update', 'ContabilidadController@update_ccosto')->name('ccosto.update');
+        Route::post('/ccosto/{id}/destroy', 'ContabilidadController@destroy_ccosto')->name('ccosto.destroy');
+
+        Route::post('/ctacontable/{id}/edit', 'ContabilidadController@edit_ctacontable')->name('ctacontable.edit');
+        Route::post('/ctacontable/update', 'ContabilidadController@update_ctacontable')->name('ctacontable.update');
+
+
+        //->Planes de nómina
+        Route::get('/planes', 'NominaController@planes')->name('nomina.planes');
+        Route::get('/planes/{pago}', 'NominaController@plan_pago')->name('nomina.plan_pago');
+        Route::get('/planes/plan_pago_informacion/{valor}', 'NominaController@plan_pago_informacion');
+        Route::post('/planes/plan_pago_preguardar', 'NominaController@plan_pago_preguardar');
+        Route::get('/suscripciones', 'NominaController@suscripciones')->name('nomina.suscripciones');
+
+        //->observaciones de nomina
+
+        Route::post('/agregar-observacion-periodo', 'NominaController@agregarObservacionPeriodo');
+        Route::post('/agregar-observacion', 'NominaController@agregarObservacion')->name('nomina.agregar.observacion');
+    });
+
+    //NOMINA DIAN
+    Route::get('/eli', 'Nomina\NominaDianController@eliminarNominaEmpresa');
+    //NOMINA DIAN
+    Route::group(['namespace' => 'Nomina', 'prefix' => 'nominadian', 'middleware' => ['nomina']], function () {
+        Route::get('/asistente-habilitacion-dian', 'NominaDianController@asistente_DIAN')->name('nomina-dian.asistente');
+        Route::get('/proceso-habilitacion', 'NominaDianController@procesoHabilitacion')->name('nomina-dian.proceso-habilitacion');
+        Route::get('/emitir-nomina/{periodo?}/{year?}/{persona?}', 'NominaDianController@emitir')->name('nomina-dian.emitir');
+        Route::get('/validatedian', 'NominaDianController@validate_dian');
+        Route::get('/emitirjson/{nominaId}', 'NominaDianController@emitirJson');
+        Route::get('/nomina-json/{nomina}', 'NominaDianController@emitirJson')->name('nomina.json');
+        Route::get('/nomina-emitida/xml/{nomina}', 'NominaDianController@xmlNominaEmitida')->name('nomina.xml');
+    });
+
+	Route::get(
+		'/prestaciones-sociales/descargar',
+		'ExportarReportesController@descargar_resumen_prestacion_social'
+	)->name('nomina.prestacion-social.descargar');
+
+    Route::resource('nomina/personas', 'Nomina\PersonasController');
+    Route::get('nomina/liquidar-persona/{idPersona}', 'Nomina\PersonasController@liquidar')->name('nomina.liquidar.persona');
+    Route::get('nomina/reincorporar-persona/{idPersona}', 'Nomina\PersonasController@reincorporar')->name('nomina.reincorporar.persona');
+    Route::post('nomina/liquida-pesona/guardar', 'Nomina\PersonasController@storeLiquidar')->name('nomina.liquidar.guardar');
+    Route::get('nomina/liquidacion-persona/{idPersona}/editar', 'Nomina\PersonasController@editLiquidar')->name('nomina.liquidar.edit');
+    Route::post('nomina/liquida-pesona/update', 'Nomina\PersonasController@updateLiquidar')->name('nomina.liquidar.update');
+    Route::get('nomina/imprimir-liquidacion/comprobante/{idContrato}', 'Nomina\PersonasController@imprimirLiquidacion')->name('nomina.imprimir.comprobanteLiquidacion');
+
+
+    Route::get('nomina/eliminar-liquidacion/{idContrato}', 'Nomina\PersonasController@destroyLiquidar')->name('nomina.liquidar.destroy');
 
 	//Cotizaciones
 
@@ -656,6 +894,46 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 		Route::resource('puertos-conexion', 'PuertosController');
 		Route::get('puertos-conexion/{id}/act_desc', 'PuertosController@act_desc')->name('puertos-conexion.act_des');
+
+		Route::post('/estado/nomina', 'ConfiguracionController@estadoNomina');
+
+		/*NUMERACIONES NOMINA ELECTRONICA */
+        Route::get(
+            '/numeraciones_nomina_electronica/crear',
+            'ConfiguracionController@numeracion_nomina_create'
+        )->name('numeraciones_nomina.create');
+        Route::get(
+            '/numeraciones_nomina_electronica/lista',
+            'ConfiguracionController@numeracion_nomina_index'
+        )->name('numeraciones_nomina.index');
+        Route::get(
+            '/numeraciones_nomina_electronica/editar/{id}',
+            'ConfiguracionController@numeracion_nomina_edit'
+        )->name('numeraciones_nomina.edit');
+        Route::delete(
+            '/numeraciones_nomina_electronica/eliminar/{id}',
+            'ConfiguracionController@numeracion_nomina_destroy'
+        )->name('numeraciones_nomina.destroy');
+        Route::post(
+            'numeraciones_nomina_electronica/guardar',
+            'ConfiguracionController@numeracion_nomina_store'
+        )->name('numeraciones_nomina.store');
+        Route::post(
+            'numeraciones_nomina_electronica/actualizar/{numeracion}',
+            'ConfiguracionController@numeracion_nomina_update'
+        )->name('numeraciones_nomina.update');
+        Route::post(
+            '/numeracion_nomina/{id}/act_desc',
+            'ConfiguracionController@numeraciones_nomina_act_desc'
+        )->name('numeraciones_nomina.act_desc');
+
+        /*CALCULOS NOMINA ELECTRONICA */
+        Route::get('/calculos_nomina', 'ConfiguracionController@calculos_nomina')->name('configuraicon.calculosnomina');
+        Route::get(
+            '/calculos_nomina/editcalculo/{id}',
+            'ConfiguracionController@calculos_nomina_editcalculo'
+        )->name('configuraicon.calculosnomina_edit');
+        Route::post('/calculos_nomina/storecalculo', 'ConfiguracionController@storecalculo');
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
@@ -939,4 +1217,6 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/reporte/{id}', 'BlacklistController@reporte')->name('monitor-blacklist.reporte');
 	    });
 		Route::resource('monitor-blacklist', 'BlacklistController');
+
+
 });

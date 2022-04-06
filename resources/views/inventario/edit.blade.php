@@ -137,8 +137,47 @@
 			</div>
 
 		</div>
-
 	</div>
+
+	<div class="row">
+		<div class="form-group col-md-5">
+			  
+		</div>
+		  <div class="form-group col-md-7 ">
+			  <div class="row">
+				  <div class="col-md-6 monetario">
+				  </div>
+				  <div class="col-md-6" style="padding-top: 1%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregar_cuenta();" @if(json_encode($cuentas)=='[]') title="Usted no tiene cuentas registradas" @endif><i class="fas fa-plus"></i> Agregar cuentas contables</button></div>
+			  </div>
+			  <div class="row" id="lista_cuentas">
+				  <div class="col-md-12">
+					  <table id="table_cuentas">
+						<tbody>
+							@php $key2= 0; @endphp
+							@foreach($cuentasInventario as $cuenta)
+							<tr id="tr_cuenta_{{($key2+1)}}">
+								<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">*</span></label></td>
+								<td width="30%">
+									<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">							        		
+										@foreach($cuentas as $c) 
+										<option value="{{$c->id}}" {{$cuenta->cuenta_id ==$c->id ? 'selected':''}}  >{{$c->nombre}}</option>
+										@endforeach
+									</select>
+									<input type="hidden" name="idcuenta{{($key2)}}" value="{{$cuenta->id}}">
+								</td>
+								<td width="5%"><button type="button" class="btn btn-link" onclick="eliminarCuenta('tr_cuenta_{{($key2+1)}}');">X</button></td>
+							</tr>
+							@php $key2++; @endphp
+							@endforeach
+
+						</tbody>
+					  </table>
+				  </div>
+			  </div>
+
+		</div>
+	  </div>
+
 	<div class="row">
 		<div class="form-group col-md-8">
 			<label class="control-label" for="email">Descripción</label>
@@ -374,6 +413,7 @@
     	</div>
     </div>
 					<input type="hidden" id="json_precios" value="{{json_encode($listas)}}">
-					<input type="hidden" id="json_bodegas" value="{{json_encode($bodegas)}}">	
+					<input type="hidden" id="json_bodegas" value="{{json_encode($bodegas)}}">
+					<input type="hidden" id="json_cuentas" value="{{json_encode($cuentas)}}">	
 
 					@endsection
