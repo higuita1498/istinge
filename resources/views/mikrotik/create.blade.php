@@ -32,6 +32,13 @@
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
+	            <label class="control-label">Puerto WINBOX</label>
+	            <input type="text" class="form-control"  id="puerto_winbox" name="puerto_winbox" value="{{old('puerto_winbox')}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('puerto_winbox') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-3 form-group">
 	            <label class="control-label">Interfaz WAN <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control"  id="interfaz" name="interfaz" required="" value="{{old('interfaz')}}" maxlength="200" required="">
 	            <span class="help-block error">

@@ -68,6 +68,7 @@ class MikrotikController extends Controller
         $mikrotik->ip = $request->ip;
         $mikrotik->puerto_api = $request->puerto_api;
         $mikrotik->puerto_web = $request->puerto_web;
+        $mikrotik->puerto_winbox = $request->puerto_winbox;
         $mikrotik->usuario = $request->usuario;
         $mikrotik->clave = $request->clave;
         $mikrotik->interfaz = $request->interfaz;
@@ -117,6 +118,7 @@ class MikrotikController extends Controller
             $mikrotik->ip = $request->ip;
             $mikrotik->puerto_api = $request->puerto_api;
             $mikrotik->puerto_web = $request->puerto_web;
+            $mikrotik->puerto_winbox = $request->puerto_winbox;
             $mikrotik->interfaz = $request->interfaz;
             $mikrotik->interfaz_lan = $request->interfaz_lan;
             $mikrotik->usuario = $request->usuario;
