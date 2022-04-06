@@ -400,7 +400,7 @@ class IngresosController extends Controller
                 $API->write('/ip/firewall/address-list/print', TRUE);
                 $ARRAYS = $API->read();
                 
-                //BUSCAMOS EL ID POR LA IP DEL CONTRATO
+                #ELIMINAMOS DE MOROSOS#
                 $API->write('/ip/firewall/address-list/print', false);
                 $API->write('?address='.$contrato->ip, false);
                 $API->write("?list=morosos",false);
@@ -408,11 +408,20 @@ class IngresosController extends Controller
                 $ARRAYS = $API->read();
 
                 if(count($ARRAYS)>0){
-                    //REMOVEMOS EL ID DE LA ADDRESS LIST
                     $API->write('/ip/firewall/address-list/remove', false);
                     $API->write('=.id='.$ARRAYS[0]['.id']);
                     $READ = $API->read();
                 }
+                #ELIMINAMOS DE MOROSOS#
+
+                #AGREGAMOS A IP_AUTORIZADAS#
+                $API->comm("/ip/firewall/address-list/add", array(
+                    "address" => $contrato->ip,
+                    "comment" => $contrato->servicio,
+                    "list" => 'ips_autorizadas'
+                    )
+                );
+                #AGREGAMOS A IP_AUTORIZADAS#
                 
                 $API->disconnect();
                 

@@ -1130,7 +1130,6 @@ class ContratosController extends Controller
 
                 $API->write('/ip/firewall/address-list/print', false);
                 $API->write('?address='.$contrato->ip, false);
-                $API->write("?list=ips_autorizadas",false);
                 $API->write('=.proplist=.id');
                 $ARRAYS = $API->read();
 
@@ -1175,28 +1174,54 @@ class ContratosController extends Controller
                 $ARRAYS = $API->read();
                 
                 if($contrato->state == 'enabled'){
+                    #AGREGAMOS A MOROSOS#
                     $API->comm("/ip/firewall/address-list/add", array(
                         "address" => $contrato->ip,
                         "comment" => $contrato->servicio,
                         "list" => 'morosos'
                         )
                     );
+                    #AGREGAMOS A MOROSOS#
+
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=ips_autorizadas",false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
+
+                    if(count($ARRAYS)>0){
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+                    }
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
+
                     $contrato->state = 'disabled';
                     $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
                 }else{
-                    //BUSCAMOS EL ID POR LA IP DEL CONTRATO
+                    #ELIMINAMOS DE MOROSOS#
                     $API->write('/ip/firewall/address-list/print', false);
                     $API->write('?address='.$contrato->ip, false);
                     $API->write("?list=morosos",false);
                     $API->write('=.proplist=.id');
                     $ARRAYS = $API->read();
-                    
+
                     if(count($ARRAYS)>0){
-                        //REMOVEMOS EL ID DE LA ADDRESS LIST
                         $API->write('/ip/firewall/address-list/remove', false);
                         $API->write('=.id='.$ARRAYS[0]['.id']);
                         $READ = $API->read();
                     }
+                    #ELIMINAMOS DE MOROSOS#
+
+                    #AGREGAMOS A IP_AUTORIZADAS#
+                    $API->comm("/ip/firewall/address-list/add", array(
+                        "address" => $contrato->ip,
+                        "comment" => $contrato->servicio,
+                        "list" => 'ips_autorizadas'
+                        )
+                    );
+                    #AGREGAMOS A IP_AUTORIZADAS#
                     
                     $contrato->state = 'enabled';
                     $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
