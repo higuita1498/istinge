@@ -149,7 +149,7 @@
     
     <br>
 
-    <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; padding-top: 5px;">
+    <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
         <table style="width: 100%;text-align: center;">
             <thead>
                 <tr>
