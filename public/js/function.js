@@ -4367,5 +4367,5 @@ function agregar_cuenta(){
 	}
 
 	function eliminarCuenta(id){
-		$("#tr_cuenta_" + id).remove();
+		$("#" + id).remove();
 	}

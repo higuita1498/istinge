@@ -83,7 +83,6 @@ class CotizacionesController extends Controller
 
 
         $facturas=$facturas->OrderBy($orderby, $order)->paginate(25)->appends($appends);
-
         return view('cotizaciones.index')->with(compact('facturas', 'request', 'busqueda'));
     }
 
@@ -283,6 +282,7 @@ class CotizacionesController extends Controller
      * @return view
      */
     public function show($id){
+        return "ok";
         $this->getAllPermissions(Auth::user()->id);
         $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
         if ($factura) {

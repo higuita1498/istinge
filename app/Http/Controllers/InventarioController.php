@@ -627,6 +627,7 @@ class InventarioController extends Controller{
     }
     
     public function update(Request $request, $id){
+
         $inventario =Inventario::find($id);
         if ($inventario) {
             $request->validate([
@@ -761,8 +762,12 @@ class InventarioController extends Controller{
                             'inventario_id' => $inventario->id
                         ]);
 
-                        $insertsCuenta[]=$idCuentaPro;
+                    }else{
+                        $idCuentaPro = DB::table('producto_cuentas')->
+                        where('cuenta_id',$key)->
+                        where('inventario_id',$inventario->id)->first()->id;
                     }
+                    $insertsCuenta[]=$idCuentaPro;
                 }
                 if (count($insertsCuenta)>0) {
                     DB::table('producto_cuentas')
