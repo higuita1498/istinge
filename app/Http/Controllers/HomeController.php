@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\User;
 use Carbon\Carbon;
 use App\Empresa;
+use App\Categoria;
 use App\Soporte;
 use App\NumeracionFactura; use App\Impuesto;
 use App\Banco; use App\Retencion;
@@ -472,6 +473,38 @@ class HomeController extends Controller
         Auth::logout();
         return redirect('/Inicio');
     }
+
+    public function createCategoryMassive(){
+        //Programacion de insercion de nuevas categorias en todas las empresas dle sistema contable
+      $categorias = Categoria::whereNull('empresa')->where('nomina',1)->orWhere('fk_catgral',0)->whereNull('empresa')->get();
+      $empresas = Empresa::where('status',1)->get();
+
+      foreach($empresas as $empresa)
+      {
+          foreach ($categorias->chunk(10) as $chunk) {
+
+              foreach($chunk as $categoria){
+                  if(Categoria::where('empresa',$empresa->id)->where('codigo',$categoria->codigo)->where('nombre',$categoria->nombre)->count() == 0)
+                  {
+                              $cat = new Categoria;
+                                  $cat->nombre = $categoria->nombre;
+                                  $cat->empresa = $empresa->id;
+                                  $cat->nro = $categoria->nro;
+                                  $cat->descripcion = $categoria->descripcion;
+                                  $cat->asociado = $categoria->asociado;
+                                  $cat->codigo = $categoria->codigo;
+                                  $cat->nomina = 1;
+                                  $cat->fk_catgral = $categoria->fk_catgral;
+                                  $cat->fk_nomcuenta_tipo = $categoria->fk_nomcuenta_tipo;
+                                  $cat->valor_hora_ordinaria = $categoria->valor_hora_ordinaria;
+                                  $cat->save();
+                  }
+              }
+            }
+      }
+
+      return "importacion de cateogiras completado";
+  }
 
 
 }

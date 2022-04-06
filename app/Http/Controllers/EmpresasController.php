@@ -16,6 +16,7 @@ use App\Model\Inventario\Bodega;
 use App\Model\Inventario\Inventario;
 use App\CamposExtra;
 use App\NumeracionFactura;
+use App\SuscripcionNomina;
 
 
 class EmpresasController extends Controller
@@ -422,6 +423,28 @@ class EmpresasController extends Controller
         Auth::logout();
         auth()->login($usuario);
         return redirect('/home')->with('success',"Bienvenido ".$usuario->nombre);
+    }
+
+    public function nomina($id)
+    {
+        $suscripcion = SuscripcionNomina::where('id_empresa', $id)->first();
+        if ($suscripcion) {
+            $suscripcion->fec_vencimiento = date('Y-m-d', strtotime(Carbon::now() . "+ 15 days"));
+            $suscripcion->fec_corte = date('Y-m-d', strtotime(Carbon::now() . "+ 15 days"));
+            $suscripcion->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'message' => 'Suscripción Ampliada con éxito'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'message' => 'Ha ocurrido un error, intente de nuevo'
+            ]);
+        }
     }
 
 }

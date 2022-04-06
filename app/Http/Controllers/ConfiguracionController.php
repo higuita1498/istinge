@@ -19,6 +19,15 @@ use App\Servicio;
 use App\Mikrotik;
 use App\PlanesVelocidad;
 
+use App\Http\Controllers\Nomina\NominaController;
+use App\Http\Controllers\Nomina\NominaDianController;
+use App\Model\Nomina\Nomina;
+use App\Model\Nomina\NominaPeriodos;
+use App\SuscripcionNomina;
+use App\Model\Nomina\NominaConfiguracionCalculos;
+use App\Model\Nomina\Persona;
+use App\Http\Controllers\Nomina\PersonasController;
+
 include_once(app_path() .'/../public/routeros_api.class.php');
 include_once(app_path() .'/../public/api_mt_include2.php');
 
@@ -48,7 +57,8 @@ class ConfiguracionController extends Controller
       }else{
         $personalPlan = false;    
       }
- 	  return view('configuracion.index')->with(compact('personalPlan'));
+      $empresa = auth()->user()->empresaObj;
+ 	  return view('configuracion.index')->with(compact('personalPlan','empresa'));
  	}
 
   /**
@@ -1928,4 +1938,270 @@ class ConfiguracionController extends Controller
         return $empresa->prorrateo;
     }
   }
+
+  // cambia el estado de la nomina electronica de una empresa
+  public function estadoNomina()
+  {
+      $empresa = auth()->user()->empresaObj;
+      $user_master = User::where('empresa', $empresa->id)->first()->id;
+      $text = '';
+
+      
+
+      if ($empresa->nomina == 1) {
+        DB::table('empresas')->where('id',$empresa->id)->update(['nomina' => 0]);
+          return response()->json([
+              'success' => true,
+              'message' => 'La nómina ha sido desactivada',
+              'text'    => $text,
+              'nomina' => 0
+          ]);
+      } elseif ($empresa->fresh()->nomina == 0) {
+        DB::table('empresas')->where('id',$empresa->id)->update(['nomina' => 1]);
+
+          // $permisos = DB::table('permisos_usuarios')->where('id_permiso', 157)->where('id_usuario', $user_master)->get()->count();
+          // if ($permisos == 0) {
+          //     $permisosAccesos = DB::table('permisos_botones')->where('id_modulo', 17)->select('id')->get();
+
+          //     foreach ($permisosAccesos as $permiso) {
+          //         DB::table('permisos_usuarios')->insert(['id_usuario' => $user_master, 'id_permiso' => $permiso->id]);
+          //     }
+          // }
+
+          $suscripcion = SuscripcionNomina::where('id_empresa', $empresa->id)->first();
+
+          if (!$suscripcion) {
+              $suscripcion                  = new SuscripcionNomina();
+              $suscripcion->id_empresa      = $empresa->id;
+              $suscripcion->fec_inicio      = date('Y-m-d');
+              $suscripcion->fec_vencimiento = date('Y-m-d', strtotime(Carbon::now() . "+ 15 days"));
+              $suscripcion->fec_corte       = date('Y-m-d', strtotime(Carbon::now() . "+ 15 days"));
+              $suscripcion->created_at      = Carbon::now();
+              $suscripcion->save();
+              $text = 'RECUERDE: La nómina estará habilitada por 15 días de manera gratuita.';
+          }
+
+          return response()->json([
+              'success' => true,
+              'message' => 'La nómina ha sido activada',
+              'text'    => 'Recuerde habilitar los persmisos a través del módulo configuración > usuario y en el candado de permisos',
+              'nomina'  => 1
+          ]);
+      }
+  }
+
+  public function numeracion_nomina_create()
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Crear numeración Nomina Electrónica']);
+        return view('configuracion.numeracion-nomina.create');
+    }
+
+    public function numeracion_nomina_store(Request $request)
+    {
+        $empresa = auth()->user()->empresaObj;
+
+        $request->validate([
+            'nombre' => 'required',
+            'inicio' => 'required',
+        ]);
+
+        if (NumeracionFactura::where('nombre', $request->nombre)
+            ->where('nomina', 1)
+            ->where('empresa', $empresa->id)
+            ->first() 
+        ) {
+            return back()
+            ->withInput()
+            ->withErrors(['nombre' => 'La numeración ya existe. Cambie el nombre o borre la anterior numeración']);
+        }
+
+        $numeracion = new NumeracionFactura();
+        $numeracion->nombre = $request->nombre;
+        $numeracion->prefijo = $request->prefijo;
+        $numeracion->inicio = $request->inicio;
+        $numeracion->inicioverdadero = $request->inicio;
+        $numeracion->preferida = $request->preferida;
+        $numeracion->empresa = $empresa->id;
+        $numeracion->nomina = 1;
+        if ($numeracion->preferida) {
+            DB::table('numeraciones_facturas')->where('nomina', 1)->where('tipo_nomina',$request->tipo_nomina)->where('preferida', 1)->update(['preferida' => 0]);
+        }
+        $numeracion->tipo_nomina = $request->tipo_nomina;
+        $numeracion->save();
+
+        $mensaje = 'Se ha creado satisfactoriamente la numeración';
+        return redirect()->route('numeraciones_nomina.index')->with('success', $mensaje);
+    }
+
+    public function numeracion_nomina_index()
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Numeraciones de la nomina electrónica']);
+
+        $numeraciones = NumeracionFactura::where('empresa', auth()->user()->empresa)->where('nomina', 1)->get();
+        return view('configuracion.numeracion-nomina.index')->with(compact('numeraciones'));
+    }
+
+    public function numeracion_nomina_edit($id)
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Editar numeracion Nomina Electrónica']);
+
+        $empresa = auth()->user()->empresaObj;
+        $numeracion = NumeracionFactura::where('id', $id)->where('empresa', $empresa->id)->first();
+
+        return view('configuracion.numeracion-nomina.edit', compact('numeracion', 'empresa'));
+    }
+
+    public function numeracion_nomina_update(Request $request)
+    {
+
+        $empresa = $request->user()->empresaObj;
+        $numeracion = NumeracionFactura::where('id', $request->numeracion)->where('empresa', $empresa->id)->first();
+
+        if (NumeracionFactura::where('nombre', $request->nombre)
+            ->where('nomina', 1)
+            ->where('id', '<>', $numeracion->id)
+            ->where('empresa', $empresa->id)
+            ->first()
+        ) {
+            return back()
+            ->withErrors(['nombre' => 'La numeración ya existe. Cambie el nombre o borre la anterior numeración']);
+        }
+
+        if ((bool) $request->preferida) {
+
+            NumeracionFactura::where('preferida', 1)->where('empresa', $empresa->id)
+                ->where('id', '<>',  $numeracion->id)
+                ->where('tipo_nomina',$request->tipo_nomina)
+                ->where('nomina',1)
+                ->update(['preferida' => 0]);
+
+            $numeracion->fresh();
+            $numeracion->preferida = 1;
+        }
+
+        
+        $numeracion->nombre = $request->nombre;
+        $numeracion->prefijo = $request->prefijo;
+        $numeracion->inicio = $request->inicio;
+        $numeracion->tipo_nomina = $request->tipo_nomina;
+        $numeracion->inicioverdadero = $request->inicioverdadero;
+        $numeracion->empresa = $empresa->id;
+
+        $numeracion->update();
+
+
+        $mensaje = 'Se actualizó la numeración correctamente';
+        return redirect()->route('numeraciones_nomina.index')->with('success', $mensaje);
+    }
+
+    public function numeracion_nomina_destroy($id)
+    {
+        $numeracion = NumeracionFactura::find($id);
+        $numeracion->delete();
+        $mensaje = 'Se elminó la numeración correctamente';
+        return redirect()->route('numeraciones_nomina.index')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+    }
+
+    public function numeraciones_nomina_act_desc($id)
+    {
+        $numeracion = NumeracionFactura::where('empresa', auth()->user()->empresa)->where('id', $id)->first();
+        if ($numeracion) {
+            if ($numeracion->estado == 1) {
+                $mensaje = 'Se ha desactivado la numeración';
+                $numeracion->estado = 0;
+                $numeracion->update();
+            } else {
+                $mensaje = 'Se ha activado la numeración';
+                $numeracion->estado = 1;
+                $numeracion->update();
+            }
+            return redirect()->route('numeraciones_nomina.index')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+        }
+        return redirect()->route('numeraciones_nomina.index')->with('success', 'No existe un registro con ese id');
+    }
+
+    /**
+     * Tabla principal para configuración de calculos fijos.
+     *
+     * @return view
+     */
+    function calculos_nomina()
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Configuración de cálculos fijos']);
+
+        $calculos = NominaConfiguracionCalculos::where('fk_idempresa', auth()->user()->empresa)->get();
+
+        /* >>> SCRIPT PARA AGREGAR LOS CALCULOS FIJOS A TODAS LAS EMPRESAS <<< */
+        // $empresas = Empresa::all();
+
+        // foreach($empresas as $empresa){
+        //     foreach($calculos as $calculo){
+        //         $nuevoCalculo = new NominaConfiguracionCalculos;
+        //         $nuevoCalculo->nro = $calculo->nro;
+        //         $nuevoCalculo->nombre = $calculo->nombre;
+        //         $nuevoCalculo->tipo = $calculo->tipo;
+        //         $nuevoCalculo->simbolo = $calculo->simbolo;
+        //         $nuevoCalculo->valor = $calculo->valor;
+        //         $nuevoCalculo->observaciones = $calculo->observaciones;
+        //         $nuevoCalculo->fk_idempresa = $calculo->fk_idempresa;
+        //         $nuevoCalculo->save();
+        //     }
+        // }
+
+        return view('configuracion.calculos-nomina.index')->with(compact('calculos'));
+    }
+
+      function calculos_nomina_editcalculo($id)
+    {
+        $calculo = NominaConfiguracionCalculos::find($id);
+        if ($calculo) {
+            $calculo->valor = round($calculo->valor);
+            return response()->json($calculo);
+        }
+    }
+
+    function storecalculo(Request $request)
+    {
+
+        $calculo = NominaConfiguracionCalculos::find($request->id);
+
+        if ($calculo) {
+            $calculo->valor = floatval($request->valor);
+            $calculo->save();
+            $calculo->valorFormateado = $calculo->valor();
+
+            /* actualizar nomina de las personas en su ultimo periodo */
+            $personas = Persona::where('fk_empresa', auth()->user()->empresa)->get();
+            foreach ($personas as $persona) {
+                //PersonasController::nominaPersona($persona);
+                $persona->refrescarUltimaNomina();
+            }
+
+            return response()->json($calculo);
+        } else {
+            return response()->json(false);
+        }
+    }
+
+    /**
+     * Habilitar/Deshabilitar Emisión de Nómina por la DIAN
+     */
+    public function nominaDian(Request $request)
+    {
+        $empresa = Empresa::find(auth()->user()->empresa);
+
+        if ($request->status == 0) {
+            $empresa->nomina_dian = 1;
+            $empresa->save();
+            return 1;
+        } else {
+            $empresa->nomina_dian = 0;
+            $empresa->save();
+            return 0;
+        }
+    }
 }

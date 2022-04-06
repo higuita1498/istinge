@@ -46,6 +46,23 @@
     </div>
 
   </div>
+
+  <hr>
+
+  <h4>Configuración de contabilidad</h4> 
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label class="control-label">Cuenta contable para ventas<span class="text-danger">*</span></label>
+      <select class="form-control selectpicker"  id="venta" name="venta" title="Seleccione" data-live-search="true" data-size="5">
+          @foreach($cuentas as $cuenta)
+            <option value="{{$cuenta->id}}" {{$cuenta->id == $impuesto->puc_venta ? 'selected' : ''}}>{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+          @endforeach
+      </select>
+      <span class="help-block error">
+        <strong>{{ $errors->first('venta') }}</strong>
+      </span>
+    </div>
+  </div>
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
 	<div class="row" >

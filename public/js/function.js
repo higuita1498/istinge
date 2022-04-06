@@ -4322,3 +4322,50 @@ function selectIP2(ip){
     $('#ip_new').val(ip);
     $('#modal-ips').modal('hide');
 }
+
+function agregar_cuenta(){
+		cuentas=$('#json_cuentas').val();
+		cuentas=JSON.parse(cuentas);
+
+		console.log(cuentas);
+		if(cuentas.length==0)
+		{
+			$('#error-cuentas').html('Usted no posee cuentas contables');
+			$('#error-cuentas').show();
+		}
+
+		nro=$('#table_cuentas tbody tr').length +1 ;
+		if ($('#tr_cuenta_'+nro).length > 0) {
+			for (i = 1; i <= nro; i++) {
+				if ($('#tr_cuenta_'+i).length == 0) {
+					nro=i;
+					break;
+				}
+			}
+		}
+		$('#table_cuentas tbody').append(
+			`<tr id="tr_cuenta_${nro}">
+			<td width="20%"><label class="control-label">Cuenta contable<span class="text-danger">*</span></label></td>
+			<td width="30%"><select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable${nro}" onchange="change_precio_lista(${nro});" required=""></select></td>
+			<td width="5%"><button type="button" class="btn btn-link" onclick="eliminarCuenta('tr_cuenta_${nro}');">X</button></td>
+		</tr>`
+		);
+
+		$.each( cuentas, function( key, value ){
+
+			nombre=value.nombre;
+			$('#cuentacontable'+nro).append($('<option>',
+				{
+					value: value.id,
+					text: nombre
+				}));
+		});
+
+
+		$('#cuentacontable'+nro).selectpicker('refresh');
+		// comprobar_lista_precios(nro);
+	}
+
+	function eliminarCuenta(id){
+		$("#tr_cuenta_" + id).remove();
+	}

@@ -98,6 +98,27 @@
 
 			</div>
   		</div>
+		  <div class="row">
+			<div class="form-group col-md-5">
+	  			
+			</div>
+  			<div class="form-group col-md-7 ">
+	  			<div class="row">
+	  				<div class="col-md-6 monetario">
+	  				</div>
+	  				<div class="col-md-6" style="padding-top: 1%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregar_cuenta();" @if(json_encode($cuentas)=='[]') title="Usted no tiene cuentas registradas" @endif><i class="fas fa-plus"></i> Agregar cuentas contables</button></div>
+	  			</div>
+	  			<div class="row" id="lista_cuentas">
+	  				<div class="col-md-12">
+	  					<table id="table_cuentas">
+	  						<tbody>
+	  						</tbody>
+	  					</table>
+	  				</div>
+	  			</div>
+
+			</div>
+  		</div>
   		<div class="row">
 			<div class="form-group col-md-8">
 	  			<label class="control-label" for="email">Descripción</label>
@@ -322,53 +343,55 @@
 	<input type="hidden" id="json_extras"  value="{{json_encode($extras)}}" >
   	<input type="hidden" id="json_precios" value="{{json_encode($listas)}}">
   	<input type="hidden" id="json_bodegas" value="{{json_encode($bodegas)}}">
+  	<input type="hidden" id="json_cuentas" value="{{json_encode($cuentas)}}">
 @endsection
 @section('scripts')
-	<script>
-		function camposExtras(){
-            var nro = $('#table-extras tbody tr').length + 1;
-            var i;
-            var tr;
+<script>
+	function camposExtras(){
+		var nro = $('#table-extras tbody tr').length + 1;
+		var i;
+		var tr;
 
-            if($('#'+nro).length > 0){
-                for(i = 1; i <= nro; i++){
-                    if($('#'+i).length == 0){
-                        nro = i;
-                        break;
-                    }
-                }
-            }
-
-            data=$('#json_extras').val();
-            data=JSON.parse(data);
-            //var tabla = $('#scConsejos'+nro);
-            tr += '<tr id ="'+nro+'">';
-            $.each(data,function(key, value)
-            {
-                if(value.tipo == 1){
-                    var requerido = '<span class="text-danger">*</span>';
-				}else{
-                    requerido = '';
+		if($('#'+nro).length > 0){
+			for(i = 1; i <= nro; i++){
+				if($('#'+i).length == 0){
+					nro = i;
+					break;
 				}
-
-				if(value.default==null || value.descripcion== null){
-                    value.default = '';
-                    value.descripcion = '';
-				}
-                tr+= '<td>' +
-                     '<div class="form-group col-md-12" >' +
-                     '<label class="control-label">'+value.nombre+'</label>'+requerido+' ' +
-                     '<input type="text" class="form-control" name="ext_'+value.campo+'[]" id="'+value.campo+'-autocomplete"  value="'+value.default+'">' +
-                     '<p><small>'+value.descripcion +'</small></p>' +
-                     '</div>' +
-                     '</td>';
-
-            });
-
-            tr+='</tr>';
-
-            $('#table-extras').append(tr);
-
+			}
 		}
-	</script>
+
+		data=$('#json_extras').val();
+		data=JSON.parse(data);
+		//var tabla = $('#scConsejos'+nro);
+		tr += '<tr id ="'+nro+'">';
+		$.each(data,function(key, value)
+		{
+			if(value.tipo == 1){
+				var requerido = '<span class="text-danger">*</span>';
+			}else{
+				requerido = '';
+			}
+
+			if(value.default==null || value.descripcion== null){
+				value.default = '';
+				value.descripcion = '';
+			}
+			tr+= '<td>' +
+					'<div class="form-group col-md-12" >' +
+					'<label class="control-label">'+value.nombre+'</label>'+requerido+' ' +
+					'<input type="text" class="form-control" name="ext_'+value.campo+'[]" id="'+value.campo+'-autocomplete"  value="'+value.default+'">' +
+					'<p><small>'+value.descripcion +'</small></p>' +
+					'</div>' +
+					'</td>';
+
+		});
+
+		tr+='</tr>';
+
+		$('#table-extras').append(tr);
+
+	}
+
+</script>
 @endsection

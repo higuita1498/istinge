@@ -40,7 +40,7 @@ class Puc extends Model
 
     public static function cuentasTransaccionables(){
         $tr = Puc::where('empresa',auth()->user()->empresa)
-        ->whereRaw('length(codigo) > 4')
+        ->whereRaw('length(codigo) > 6')
         ->get();
 
         $cuentas = collect();

@@ -14,6 +14,12 @@
 			<span class="text-primary">Dirección:</span>  {{Auth::user()->empresa()->direccion}}<br>
 			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}</p>
 		</div>
+		<div class="col-sm-8 offset-md-2 {{$empresa->nomina ? 'd-none' : ''}}" id="alerta_nomina">
+			<div class="alert alert-info" role="alert" style="color: #d08f50;background-color: #d08f5026;border-color: #d08f50;">
+				<h4 class="alert-heading font-weight-bold">SUGERENCIA</h4>
+				<p>Para hacer uso del módulo de <strong>Nómina</strong>, primero debe habilitarlo en la opción <strong>Nómina &gt; Habilitar nómina</strong>.</p>
+			</div>
+		</div>
 	</div>
 	<div class="row card-description configuracion">
 		<div class="col-sm-3">
@@ -108,6 +114,21 @@
 			<a href="{{route('servidor-correo.index')}}">Servidor de Correo</a><br>
 		</div>
 		@endif
+
+		<div class="col-sm-3">
+			<h4 class="card-title">Nómina</h4>
+			<p>Gestione la nómina electrónicamente de los empleados que trabajan en su empresa.</p>
+			<input type="hidden" name="estado_nomina" id="estado_nomina" value="{{$empresa->nomina}}">
+			<a id="texto_nomina" href="javascript:habilitarNomina()">{{$empresa->nomina ? 'Deshabilitar' : 'Habilitar'}} nómina</a> <br>
+			<a id="preferencia_pago" href="{{route('nomina.preferecia-pago')}}" class="{{$empresa->nomina ? '' : 'd-none'}}">Preferencias de pago</a> <br>
+			<a id="nomina_numeracion" href="{{ route('numeraciones_nomina.index') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Numeraciones</a> <br>
+			<a id="nomina_calculos" href="{{ route('configuraicon.calculosnomina') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Cálculos fijos</a> <br>
+			{{-- <a href="#" onclick="nominaDIAN()" id="div_nominaDIAN"  class="{{$empresa->nomina ? '' : 'd-none'}}">{{ Auth::user()->empresaObj->nomina_dian == 0 ? 'Activar' : 'Desactivar' }} Nómina Electrónica por la DIAN</a><br> --}}
+			<input type="hidden" id="nominaDIAN" value="{{Auth::user()->empresaObj->nomina_dian}}">
+			{{-- <a id="nomina_asistentes" href="{{ route('nomina-dian.asistente') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Asistente de habilitación DIAN</a> <br> --}}
+			<hr class="nomina {{$empresa->nomina ? '' : 'd-none'}}">
+			<a id="planes_nomina" href="{{route('nomina.suscripciones')}}" class="{{$empresa->nomina ? '' : 'd-none'}}">Planes de Suscripción</a> <br>
+		</div>
 
 		<div class="col-sm-3">
 			<h4 class="card-title">Administración OLT</h4>
@@ -404,5 +425,76 @@
 			        }
 			    });
 			}
+
+			function habilitarNomina() {
+
+var estadoNomina = parseInt($('#estado_nomina').val());
+
+if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/empresa';
+				}else{
+					var url = '/empresa';
+				}
+
+Swal.fire({
+	title: `¿${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'} nómina?`,
+	text: `${estadoNomina == 1 ? 'La nómina de su empresa será deshabilitada' : 'Recuerde que la nomina electrónica estará habilitada por 15 días de manera gratuita'} `,
+	type: 'question',
+	showCancelButton: true,
+	confirmButtonColor: '#3085d6',
+	cancelButtonColor: '#d33',
+	cancelButtonText: 'Cancelar',
+	confirmButtonText: `${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'}`,
+}).then((result) => {
+	if (result.value) {
+		$.ajax({
+			url: url + '/configuracion/estado/nomina',
+			headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+			method: 'post',
+			success: function (response) {
+				console.log(response);
+				if (response.success) {
+					Swal.fire({
+						position: 'top-center',
+						type: 'success',
+						text: response.text,
+						title: response.message,
+						showConfirmButton: false,
+						timer: 5000
+					})
+					$("#estado_nomina").val(response.nomina);
+					$("#texto_nomina").text(response.nomina == 1 ? 'Deshabilitar nómina' : 'Habilitar nómina');
+					if (response.nomina == 1) {
+						$("#preferencia_pago").removeClass('d-none');
+						$("#nomina_numeracion").removeClass('d-none');
+						$("#nomina_calculos").removeClass('d-none');
+						$("#nomina").removeClass('d-none');
+						$('#div_nominaDIAN').removeClass('d-none');
+						$("#nomina").addClass('nav-item');
+						$("#nomina_asistente").removeClass('d-none');
+						$(".nomina").removeClass('d-none');
+						$("#planes_nomina").removeClass('d-none');
+						$("#nomina_asistentes").removeClass('d-none');
+						$("#alerta_nomina").addClass('d-none');
+					} else {
+						$("#preferencia_pago").addClass('d-none');
+						$("#nomina_numeracion").addClass('d-none');
+						$("#nomina_calculos").addClass('d-none');
+						$("#nomina").addClass('d-none');
+						$('#div_nominaDIAN').addClass('d-none');
+						$("#nomina_asistente").addClass('d-none');
+						$(".nomina").addClass('d-none');
+						$("#planes_nomina").addClass('d-none');
+						$("#nomina_asistentes").addClass('d-none');
+						$("#alerta_nomina").removeClass('d-none');
+					}
+				}
+				location.reload()
+			}
+		});
+
+	}
+})
+}
 	    </script>
 	@endsection
