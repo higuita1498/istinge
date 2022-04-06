@@ -154,7 +154,7 @@
 
                                                                     Todos los derechos reservados <a href="{{ config('app.url') }}" target="_blank" style="color: #fff; font-weight: bold; text-align: center;">@ {{ ucfirst(config('app.name')) }}</a>
 
-                                                                    <p style="text-align: center; color:#c2c2c2 !important">{{ now()->isoFormat('LLLL') }}</p>
+                                                                    {{-- <p style="text-align: center; color:#c2c2c2 !important">{{ now()->isoFormat('LLLL') }}</p> --}}
                                                                 </td>
                                                             </tr>
                                                         </tbody>
