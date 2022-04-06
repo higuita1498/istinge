@@ -149,7 +149,7 @@
     
     <br>
 
-    <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; padding-top: 5px;">
+    <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
         <table style="width: 100%;text-align: center;">
             <thead>
                 <tr>
@@ -176,6 +176,16 @@
                     <td style="width: 70%;">Subtotal:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>
                 </tr>
+                @if($factura->total()->imp)
+                    @foreach($factura->total()->imp as $imp)
+                        @if(isset($imp->total))
+                            <tr>
+                                <td style="width: 70%;">{{$imp->nombre}} ({{$imp->porcentaje}}%)</td>
+                                <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
+                            </tr>
+                        @endif
+                    @endforeach
+                @endif
                 <tr>
                     <td style="width: 70%;">Total:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </td>

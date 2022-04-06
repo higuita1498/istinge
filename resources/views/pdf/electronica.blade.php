@@ -489,8 +489,8 @@
             </table>
         </div>
     </div>
-    
-    <br><br><br>
+
+    <br><br><br><br>
     
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta">
@@ -521,7 +521,6 @@
                 </table>
             </div>
         </div>
-    
     </div>
     
     <div class="margin-docpdf">
@@ -589,21 +588,19 @@
     </div>
     
     <div class="margin-docpdf">
-        <div class="divheader-nota">
-            <p>NOTA</p>
+        <div class="divheader-nota" style="width:25%;">
+            <p>TÉRMINOS Y CONDICIONES</p>
         </div>
     </div>
     
     <div class="nota-content">
         <p>
-            En caso de no estar de acuerdo con el monto facturado, puede llamar antes de la fecha de vencimiento a 
-            servicio al cliente y/o dirigirse a los puntos de atención para que se le efectúe el descuento provisional del valor 
-            reclamado o presentar el reclamo luego del pago total de su factura.
+            {{ Auth::user()->empresa()->terminos_cond }}
         </p>
     </div>
     
     <div class="margin-docpdf">
-        <div class="divheader-estadocuenta" style="width:30%; margin-bottom:7px;">
+        <div class="divheader-estadocuenta" style="width:30%;">
             <p>MI CLAUSULA DE PERMANENCIA</p>
         </div>
         
@@ -628,8 +625,6 @@
             </div>
         </div>
     </div>
-    
-    <br>
     
     <div class="margin-docpdf">
         <div class="divheader-nota" style="width:70%">
@@ -675,7 +670,7 @@
     </div>
     
     <div class="margin-docpdf">
-        <table style="width:100%;margin:5px 0px;">
+        <table style="width:100%;">
             <tbody>
                 <tr>
                 <td style="width:55%;border:none;">

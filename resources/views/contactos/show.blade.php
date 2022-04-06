@@ -251,7 +251,7 @@
 								<tr>
 									<th width="20%">Dirección IP</th>
 									<td>
-									    {{$contrato->ip}}
+										<a href="http://{{$contrato->ip}}" target="_blank">{{$contrato->ip}} <i class="fas fa-external-link-alt"></i></a>
 									</td>
 								</tr>
 								@endif

@@ -1750,7 +1750,7 @@ public function edit($id){
             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
             DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) ) as porpagar'))
         ->where('factura.empresa',Auth::user()->empresa)
-        ->where('factura.tipo','!=',2)
+        ->whereIn('factura.tipo',[1,2])
         ->where('factura.cliente',$contacto)
         ->groupBy('if.factura');
 
