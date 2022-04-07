@@ -530,7 +530,7 @@
             <td class="text-align:center" width="50%" style="padding:3em;">
                  <div>
                      @if(isset($codqr))
-                    <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(200)->generate($codqr)) !!} ">
+                    <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(200)->generate($codqr)) !!}">
                     @endif
                 </div>
             </td>
@@ -556,7 +556,7 @@
                     <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;"> {{Auth::user()->empresa()->moneda}}{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
+                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;"> {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
                     </tr>
                     <tr>
                     <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
@@ -568,11 +568,9 @@
             </tr>
             </tbody>
         </table>
-                @if(isset($CUFEvr))
-              
-                        <div style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
-                    
-                @endif
+            @if(isset($CUFEvr))
+                <div style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
+            @endif
       </div>
       
     <div class="margin-docpdf">
@@ -705,20 +703,21 @@
         <p>
             En caso que no esté de acuerdo con nuestra respuesta, recuerde que puede solicitar que su caso sea transferido a la Superintendencia de Industria y Comercio, 
             <br>https://www.sic.gov.co/content/bolivar 
-            <br>
+            <br><br>
             <strong>Superintendencia de Industria y Comercio</strong>
-            <br><span style="color:#144dc1;">Sede Principal</span>
-            <br><br>
+            <br>
+            <span style="color:#144dc1;">Sede Principal: </span>
             Carrera 13 No. 27 - 00, Pisos 1 y 3
-            <br><br>
-            Horario de Atención Presencial: Lunes a Viernes de 8:00 a.m a 4:30 p.m
+            <br>
+            <span style="color:#144dc1;">Horario de Atención Presencial:</span>
+            Lunes a Viernes de 8:00 a.m a 4:30 p.m
             <br>
             <span style="color:#144dc1;">Líneas de atención</span>
-            <br><br>
+            <br>
             Teléfono Conmutador: +60 (1) 587 00 00 - Bogotá - Línea Gratuita Nacional: 01 8000 910165
-            <br><br>
+            <br>
             Contact center: +60 (1) 592 0400
-            <br><br>
+            <br>
             Correo Institucional: contactenos@sic.gov.co
         </p>
     </div>
