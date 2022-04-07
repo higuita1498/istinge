@@ -102,7 +102,7 @@
                     <td>
                         <div>
                             <div style="width: 50%; margin-top: 10px; float:left;">
-
+                                <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100%;">
                             </div>
                             <div style="width: 50%; margin-top:10px ;  float:right;">
                                 {{-- <p>
