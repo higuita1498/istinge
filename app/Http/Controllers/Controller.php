@@ -1458,8 +1458,20 @@ class Controller extends BaseController
     
     public function getIps($mikrotik){
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
-        return response()->json($ips);
-        
+
+        $mikrotik = Mikrotik::find($mikrotik);
+        if ($mikrotik) {
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $API->write("/queue/simple/getall");
+                $READ = $API->read(false);
+                $ARRAY = $API->parseResponse($READ);
+                $API->disconnect();
+            }
+        }
+        return response()->json(['software' => $ips, 'mikrotik' => $ARRAY]);
     }
     
     public function getSegmentos($mikrotik){

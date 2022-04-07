@@ -4225,9 +4225,19 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-                    if (data) {
-                        for (i = 0; i < data.length; i++){
-                            let ip = data[i].ip.replace(/\./g, '');
+                    console.log(data.software);
+                    if (data.software) {
+                        for (i = 0; i < data.software.length; i++){
+                            let ip = data.software[i].ip.replace(/\./g, '');
+                            $("#"+ip).remove();
+                        }
+                    }
+
+                    console.log(data.mikrotik);
+                    if (data.mikrotik) {
+                        for (i = 0; i < data.mikrotik.length; i++){
+                            let target = data.mikrotik[i].target.split('/');
+                            let ip = target[0].replace(/\./g, '');
                             $("#"+ip).remove();
                         }
                     }
