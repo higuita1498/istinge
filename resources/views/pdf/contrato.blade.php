@@ -133,7 +133,7 @@
 
                         <div style="width: 100%;  margin-top: 10px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INFORMACIÓN DEL SUSCRIPTOR</p><br>
-                            <p style="text-align: justify;" class="small pl-2">Contrato No.:<b></b> </p>
+                            <p style="text-align: justify;" class="small pl-2">Contrato No.: <b>{{ $contrato->details() ? $contrato->details()->nro : '' }}</b> </p>
                             <p style="text-align: justify;" class="small pl-2">Nombre / Razón Social: <b>{{ $contrato->nombre }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Identificación: <b>{{ $contrato->nit }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Correo electrónico: <b>{{ $contrato->email }}</b></p>
@@ -156,19 +156,19 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Down</td>
-                                    <td></td>
+                                    <td>{{ $contrato->details() ? $contrato->details()->plan()->download : '' }}</td>
                                     <td style="font-size: 9px;">Ip Fijo</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Up</td>
-                                    <td></td>
+                                    <td>{{ $contrato->details() ? $contrato->details()->plan()->upload : '' }}</td>
                                     <td style="font-size: 9px;">Otros</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;">$________</td>
+                                    <td style="font-size: 9px;"><b>$ {{ $contrato->details() ? $contrato->details()->plan()->price : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total</td>
                                     <td style="font-size: 9px;">$________</td>
                                 </tr>
@@ -202,7 +202,7 @@
                         </div>
 
                         <div style="border: 1px  solid #000; margin-top: 5px; padding:2px; text-align: right;">
-                            VALOR TOTAL <span style="background-color:silver;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;
+                            VALOR TOTAL <span style="background-color:silver;">&nbsp;&nbsp;&nbsp;{{ $contrato->details() ? $contrato->details()->plan()->price : '' }}&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;
                         </div>
 
                         <br><p style="text-align: justify; color: blue;" class="small">* Espacio diligenciado por el usuario</p>
