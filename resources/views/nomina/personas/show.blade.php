@@ -471,7 +471,7 @@
 									<tr>
 										<td>
 											<a href="{{ route('nomina.liquidar', ['periodo' => $nomina->periodo, 'year'=> $nomina->year, 'editar' => true, 'tipo' => $periodo->periodo]) }}" target="_blank">
-												{{ $periodo->fecha_desde->format('d') }}-{{ $periodo->fecha_hasta->format('d') }}/{{ ucfirst($periodo->fecha_desde->monthName) }}/{{ $periodo->fecha_desde->format('Y') }}
+												{{ $periodo->fecha_desde->format('d') }}-{{ $periodo->fecha_hasta->format('d') }}/{{ ucfirst($periodo->fecha_desde->format('F')) }}/{{ $periodo->fecha_desde->format('Y') }}
 											</a>
 										</td>
 										@php

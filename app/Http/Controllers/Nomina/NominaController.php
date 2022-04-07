@@ -30,6 +30,7 @@ use App\SuscripcionPagoNomina;
 use Illuminate\Support\Facades\Mail;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
+include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 include_once(app_path() . '/../public/Spout/Autoloader/autoload.php');
 
 use PHPExcel;
