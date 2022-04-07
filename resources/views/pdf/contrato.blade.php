@@ -101,7 +101,7 @@
                 <tr>
                     <td>
                         <div style="width: 100%; margin-top: 10px; text-align:center;">
-                            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 200px;">
+                            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100px;">
                         </div>
 
                         <div style="width: 100%; background-color: {{Auth::user()->empresa()->color}}; clear:both;  margin-top: 10px;">
@@ -134,13 +134,13 @@
                         <div style="width: 100%;  margin-top: 10px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INFORMACIÓN DEL SUSCRIPTOR</p><br>
                             <p style="text-align: justify;" class="small pl-2">Contrato No.:<b></b> </p>
-                            <p style="text-align: justify;" class="small pl-2">Nombre / Razón Social:<b>{{ $contrato->nombre }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Identificación:<b>{{ $contrato->nit }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Correo electrónico:<b>{{ $contrato->email }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Teléfono de contacto:<b>{{ $contrato->celular }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Dirección Servicio:<b>{{ $contrato->direccion }}</b>Estrato: <b>{{ $contrato->estrato ? $contrato->estrato : '   ' }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Nombre / Razón Social: <b>{{ $contrato->nombre }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Identificación: <b>{{ $contrato->nit }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Correo electrónico: <b>{{ $contrato->email }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Teléfono de contacto: <b>{{ $contrato->celular }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Dirección Servicio: <b>{{ $contrato->direccion }}</b>Estrato: <b>{{ $contrato->estrato ? $contrato->estrato : '   ' }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Departamento: <b>{{ $contrato->departamento()->nombre }}</b> Municipio: <b>{{ $contrato->municipio()->nombre }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Dirección Suscriptor:<b>{{ $contrato->direccion }}</b></p><br>
+                            <p style="text-align: justify;" class="small pl-2">Dirección Suscriptor: <b>{{ $contrato->direccion }}</b></p><br>
                         </div>
 
                         <div style="width: 100%;  margin-top: 5px; border: 1px  solid #000;">
