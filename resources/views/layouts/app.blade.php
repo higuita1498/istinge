@@ -182,6 +182,24 @@
                 border: 1px solid #dee4e6;
                 border-radius: 2px;
             }
+            .Cerrada-emitida span {
+                font-size: 0.8em; padding: 1%; font-weight: bold; color: #FFF; text-transform: uppercase; text-align: center; line-height: 20px; transform: rotate(-45deg); -webkit-transform: rotate(-45deg); width: 79%; display: block; background: #79A70A; background: linear-gradient(#00CE68 0%, #00CE68 100%); box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1); position: absolute; top: 19%; left: -36px;
+            }
+            .Cerrada-emitida span::before {
+                content: ""; position: absolute; left: 0px; top: 100%; z-index: -1; border-left: 3px solid #00CE68; border-right: 3px solid transparent; border-bottom: 3px solid transparent; border-top: 3px solid #00CE68;
+            }
+            .Cerrada-emitida span::after {
+                content: ""; position: absolute; right: 0px; top: 100%; z-index: -1; border-left: 3px solid transparent; border-right: 3px solid #00CE68; border-bottom: 3px solid transparent; border-top: 3px solid #00CE68;
+            }
+            .Abierta-no span, .Abierta-emitida span{
+                font-size: 0.8em; padding: 1%; font-weight: bold; color: #FFF; text-transform: uppercase; text-align: center; line-height: 20px; transform: rotate(-45deg); -webkit-transform: rotate(-45deg); width: 79%; display: block; background: #e65251; background: linear-gradient(#e65251 0%, #e65251 100%); box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1); position: absolute; top: 19%; left: -36px;
+            }
+            .Abierta-no span::before, .Abierta-emitida span::before{
+                content: ""; position: absolute; left: 0px; top: 100%; z-index: -1; border-left: 3px solid #e65251; border-right: 3px solid transparent; border-bottom: 3px solid transparent; border-top: 3px solid #e65251;
+            }
+            .Abierta-no span::after, .Abierta-emitida span::after{
+                content: ""; position: absolute; right: 0px; top: 100%; z-index: -1; border-left: 3px solid transparent; border-right: 3px solid #e65251; border-bottom: 3px solid transparent; border-top: 3px solid #e65251;
+            }
         </style>
         @yield('style')
     </head>
