@@ -864,8 +864,9 @@ class FacturasController extends Controller{
     $factura->cliente=$request->cliente;
     $factura->tipo=$request->documento;
     $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-    $factura->vencimiento=date('Y-m', strtotime("+1 month", strtotime($request->fecha))).'-03';
-    $factura->suspension=date('Y-m', strtotime("+1 month", strtotime($request->fecha))).'-04';
+    $factura->vencimiento=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
+    $factura->suspension=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
+    $factura->pago_oportuno = date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
     $factura->observaciones=mb_strtolower($request->observaciones);
     $factura->vendedor=$request->vendedor;
     $factura->lista_precios=$request->lista_precios;
