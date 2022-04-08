@@ -869,7 +869,6 @@ class ContratosController extends Controller
                     #AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
                         "address" => $request->ip,
-                        "comment" => $this->normaliza($cliente->nombre),
                         "list" => 'ips_autorizadas'
                         )
                     );
@@ -1244,7 +1243,6 @@ class ContratosController extends Controller
                     #AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
                         "address" => $contrato->ip,
-                        "comment" => $contrato->servicio,
                         "list" => 'ips_autorizadas'
                         )
                     );
