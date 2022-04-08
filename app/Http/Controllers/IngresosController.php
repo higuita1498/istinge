@@ -417,7 +417,6 @@ class IngresosController extends Controller
                 #AGREGAMOS A IP_AUTORIZADAS#
                 $API->comm("/ip/firewall/address-list/add", array(
                     "address" => $contrato->ip,
-                    "comment" => $contrato->servicio,
                     "list" => 'ips_autorizadas'
                     )
                 );
