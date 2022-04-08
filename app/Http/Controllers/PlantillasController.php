@@ -70,7 +70,7 @@ class PlantillasController extends Controller
         $plantilla->tipo = $request->tipo;
         $plantilla->clasificacion = $request->clasificacion;
         $plantilla->title = $request->title;
-        $plantilla->contenido = ($request->tipo==0) ? $request->contenido_sms:$request->contenido;
+        $plantilla->contenido = ($request->tipo==0) ? strip_tags($request->contenido_sms):$request->contenido;
 
         $plantilla->created_by = Auth::user()->id;
         $plantilla->status = 0;
@@ -148,7 +148,7 @@ class PlantillasController extends Controller
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
             $plantilla->title = $request->title;
-            $plantilla->contenido = ($request->tipo==0) ? $request->contenido_sms:$request->contenido;
+            $plantilla->contenido = ($request->tipo==0) ? strip_tags($request->contenido_sms):$request->contenido;
             $plantilla->updated_by = Auth::user()->id;
             $plantilla->save();
 
