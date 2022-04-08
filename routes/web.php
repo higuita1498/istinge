@@ -43,6 +43,7 @@ Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFactu
 Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
 Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
+Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
 
 /*PAYU*/
 
