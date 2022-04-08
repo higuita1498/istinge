@@ -130,11 +130,13 @@
 			<a id="planes_nomina" href="{{route('nomina.suscripciones')}}" class="{{$empresa->nomina ? '' : 'd-none'}}">Planes de Suscripción</a> <br>
 		</div>
 
+		@if(isset($_SESSION['permisos']['759']))
 		<div class="col-sm-3">
 			<h4 class="card-title">Administración OLT</h4>
 			<p>Completa la información de la OLT de tu empresa.</p>
 			<a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
 		</div>
+		@endif
 
 		<div class="col-sm-3">
 			<h4 class="card-title">Limpieza del Sistema</h4>

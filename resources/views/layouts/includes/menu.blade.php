@@ -462,7 +462,7 @@
         </li>
     @endif
 
-    @if(Auth::user()->empresa()->smartOLT)
+    @if(Auth::user()->empresa()->smartOLT && isset($_SESSION['permisos']['760']))
     <li class="nav-item">
         <a  class="nav-link" href="{{Auth::user()->empresa()->smartOLT}}" target="_blank">
             <i class="menu-icon fas fa-server"></i>
@@ -471,7 +471,7 @@
     </li>
     @endif
 
-    @if(Auth::user()->empresa()->adminOLT)
+    @if(Auth::user()->empresa()->adminOLT && isset($_SESSION['permisos']['761']))
     <li class="nav-item">
         <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank">
             <i class="menu-icon fas fa-server"></i>
