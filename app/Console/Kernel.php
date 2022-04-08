@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         //$schedule->command('facturas:end')->cron('0 */12 * * *');
         //$schedule->command('pagos:end')->cron('0 */12 * * *');
         //$schedule->command('check:invoices')->everyMinute();everyFiveMinutes
+        $schedule->command('facturas:cortar')->everyMinute();
     }
 
     /**
