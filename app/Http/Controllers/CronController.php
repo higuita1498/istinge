@@ -126,7 +126,7 @@ class CronController extends Controller
             join('contracts as cs','cs.client_id','=','contactos.id')->
             select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
             where('f.estatus',1)->
-            where('f.tipo', 1)->
+            whereIn('f.tipo', [1,2])->
             where('f.vencimiento', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
@@ -162,6 +162,21 @@ class CronController extends Controller
                             "list" => 'morosos'
                             )
                         );
+
+                        #ELIMINAMOS DE IP_AUTORIZADAS#
+                        $API->write('/ip/firewall/address-list/print', false);
+                        $API->write('?address='.$contrato->ip, false);
+                        $API->write("?list=ips_autorizadas",false);
+                        $API->write('=.proplist=.id');
+                        $ARRAYS = $API->read();
+
+                        if(count($ARRAYS)>0){
+                            $API->write('/ip/firewall/address-list/remove', false);
+                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                            $READ = $API->read();
+                        }
+                        #ELIMINAMOS DE IP_AUTORIZADAS#
+
                         $contrato->state = 'disabled';
                         $i++;
                     }
