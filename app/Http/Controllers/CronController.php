@@ -405,7 +405,7 @@ class CronController extends Controller
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
 
-            $pago_oportuno = $contacto->vencimiento;
+            $vencimiento = $contacto->vencimiento;
         }
 
         if(count($numeros)){
