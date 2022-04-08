@@ -392,7 +392,7 @@ class CronController extends Controller
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
-            select('contactos.celular')->
+            select('contactos.celular', 'f.vencimiento')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.pago_oportuno', $fecha)->
@@ -404,10 +404,13 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
+
+            $pago_oportuno = $contacto->vencimiento;
         }
 
         if(count($numeros)){
             $post['to'] = $numeros;
+            $post['text'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
             $post['text'] = "Estimado cliente Ud. tiene una factura pendiente, por favor realice su pago y evite la suspension del servicio. ".$empresa->slogan;
             $post['from'] = "";
             $login ="jjtuiran2021";
@@ -511,7 +514,7 @@ class CronController extends Controller
 
         if(count($numeros)){
             $post['to'] = $numeros;
-            $post['text'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y').", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
+            $post['text'] = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
             $post['from'] = "";
             $login ="jjtuiran2021";
             $password = 'Bstc2710';
@@ -568,8 +571,8 @@ class CronController extends Controller
                 }
             }
 
-            if (file_exists("PagoOportuno.txt")){
-                $file = fopen("PagoOportuno.txt", "a");
+            if (file_exists("PagoVencimiento.txt")){
+                $file = fopen("PagoVencimiento.txt", "a");
                 fputs($file, "-----------------".PHP_EOL);
                 fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
                 fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
@@ -577,7 +580,7 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }else{
-                $file = fopen("PagoOportuno.txt", "w");
+                $file = fopen("PagoVencimiento.txt", "w");
                 fputs($file, "-----------------".PHP_EOL);
                 fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
                 fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
