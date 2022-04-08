@@ -175,23 +175,6 @@
 					<strong>{{ $errors->first('email') }}</strong>
 				</span>
 			</div>
-			
-			<div class="form-group col-md-4">
-	  			<label class="control-label">API Token <a href="https://smsgateway.me/login" target="_blank">(SMS Gateway) <i class="fas fa-external-link-alt"></i></a></label>
-				<input type="text" class="form-control" id="sms_gateway" name="sms_gateway" value="{{$empresa->sms_gateway}}">
-				<div class="help-block error with-errors"></div>
-				<span class="help-block error">
-					<strong>{{ $errors->first('sms_gateway') }}</strong>
-				</span>
-			</div>
-			<div class="form-group col-md-4">
-	  			<label class="control-label">ID Device <a href="https://smsgateway.me/login" target="_blank">(SMS Gateway) <i class="fas fa-external-link-alt"></i></a></label>
-				<input type="text" class="form-control" id="device_id" name="device_id" value="{{$empresa->device_id}}">
-				<div class="help-block error with-errors"></div>
-				<span class="help-block error">
-					<strong>{{ $errors->first('device_id') }}</strong>
-				</span>
-			</div>
   		</div>
 
 		  <div class="card-separator">
