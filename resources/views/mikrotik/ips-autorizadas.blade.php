@@ -87,9 +87,17 @@
 		tabla.DataTable().ajax.reload();
 	}
 	function aplicar_cambios() {
+		if ($('#tabla-ips').DataTable().data().count() > 100) {
+			$("#contador_t").val('100');
+			var contador_t = $("#contador_t").val();
+		}else{
+			$("#contador_t").val($('#tabla-ips').DataTable().data().count());
+			var contador_t = $("#contador_t").val();
+		}
+
 		swal({
 			title: '¿Está seguro que desea aplicar la regla?',
-			text: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que esten registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio',
+			html: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que estén registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio<br><br><b>LOS CAMBIOS SE APLICARÁN A LOS PRIMEROS '+contador_t+' REGISTROS<br><span style="color:red;">(EL PROCESO PUEDE DEMORAR UNOS MINUTOS)</span></b>',
 			type: 'question',
 			showCancelButton: true,
 			confirmButtonColor: '#00ce68',
@@ -99,7 +107,6 @@
 		}).then((result) => {
 			if (result.value) {
 				cargando(true);
-				var contador_t = $("#contador_t").val($('#tabla-ips').DataTable().data().count());
 
 				$('#tabla-ips tbody tr td.sorting_1 a strong').each(function() {
 					var nro = $(this).text();

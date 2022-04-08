@@ -459,7 +459,7 @@ class MikrotikController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('ip_autorizada', 0)->get();
             view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
             return view('mikrotik.ips-autorizadas')->with(compact('contratos', 'mikrotik'));
         }
@@ -488,12 +488,16 @@ class MikrotikController extends Controller
                     $mikrotik->save();
                 }
 
-                $existe = $API->comm("/ip/firewall/address-list/getall", array(
-                    "?address" => $contrato->ip
-                    )
-                );
+                $API->write('/ip/firewall/address-list/print', TRUE);
+                $ARRAYS = $API->read();
 
-                if($existe){
+                $API->write('/ip/firewall/address-list/print', false);
+                $API->write('?address='.$contrato->ip, false);
+                $API->write("?list=ips_autorizadas",false);
+                $API->write('=.proplist=.id');
+                $ARRAYS = $API->read();
+
+                if(count($ARRAYS)>0){
                     $contrato->ip_autorizada = 1;
                     $contrato->save();
                     return response()->json([
@@ -502,8 +506,13 @@ class MikrotikController extends Controller
                         'repetido' => $existe,
                     ]);
                 }else{
-                    $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$contrato->ip);
-                    $API->disconnect();
+                    $API->comm("/ip/firewall/address-list/add", array(
+                        "address" => $contrato->ip,
+                        "comment" => $contrato->servicio,
+                        "list" => 'ips_autorizadas'
+                        )
+                    );
+
                     $contrato->ip_autorizada = 1;
                     $contrato->save();
                     return response()->json([
@@ -511,6 +520,7 @@ class MikrotikController extends Controller
                         'servicio' => $contrato->servicio,
                     ]);
                 }
+                $API->disconnect();
             } else {
                 return response()->json([
                     'success'  => false,
