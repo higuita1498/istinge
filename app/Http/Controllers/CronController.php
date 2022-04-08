@@ -33,6 +33,9 @@ class CronController extends Controller
         if($empresa->factura_auto == 1){
             $i=0;
             $date = date('d') * 1;
+            $numeros = [];
+            $fail = 0;
+            $succ = 0;
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
@@ -112,9 +115,98 @@ class CronController extends Controller
                     $item_reg->save();
                     $nro->save();
                     $i++;
+
+                    $numero = str_replace('+','',$factura->cliente()->celular);
+                    $numero = str_replace(' ','',$numero);
+
+                    array_push($numeros, '57'.$numero);
                 }
             }
-            echo "Se han generado ".$i." facturas electrónicas";
+
+            if(count($numeros)){
+                $post['to'] = $numeros;
+                $post['text'] = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
+                $post['from'] = "";
+                $login ="jjtuiran2021";
+                $password = 'Bstc2710';
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                array(
+                    "Accept: application/json",
+                    "Authorization: Basic ".base64_encode($login.":".$password)));
+                $result = curl_exec ($ch);
+                $err  = curl_error($ch);
+                curl_close($ch);
+
+                if ($err) {
+                    return back()->with('danger', $err);
+                }else{
+                    $response = json_decode($result, true);
+                    //return $response;
+                    if(isset($response['error'])){
+                        if($response['error']['code'] == 102){
+                            $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                        }else if($response['error']['code'] == 103){
+                            $msj = "Nombre de usuario o contraseña desconocidos";
+                        }else if($response['error']['code'] == 104){
+                            $msj = "Falta el mensaje de texto";
+                        }else if($response['error']['code'] == 105){
+                            $msj = "Mensaje de texto demasiado largo";
+                        }else if($response['error']['code'] == 106){
+                            $msj = "Falta el remitente";
+                        }else if($response['error']['code'] == 107){
+                            $msj = "Remitente demasiado largo";
+                        }else if($response['error']['code'] == 108){
+                            $msj = "No hay fecha y hora válida para enviar";
+                        }else if($response['error']['code'] == 109){
+                            $msj = "URL de notificación incorrecta";
+                        }else if($response['error']['code'] == 110){
+                            $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                        }else if($response['error']['code'] == 111){
+                            $msj = "Crédito/Saldo insuficiente";
+                        }else if($response['error']['code'] == 112){
+                            $msj = "Dirección IP no permitida";
+                        }else if($response['error']['code'] == 113){
+                            $msj = "Codificación no válida";
+                        }else{
+                            $msj = $response['error']['description'];
+                        }
+                        $factura->response = $msj;
+                        $factura->save();
+                        $fail++;
+                    }else{
+                        $factura->mensaje = 1;
+                        $factura->response = 'Mensaje enviado correctamente.';
+                        $factura->save();
+                        $succ++;
+                    }
+                }
+
+                if (file_exists("CrearFactura.txt")){
+                    $file = fopen("CrearFactura.txt", "a");
+                    fputs($file, "-----------------".PHP_EOL);
+                    fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                    fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                    fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                    fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                    fputs($file, "-----------------".PHP_EOL);
+                    fclose($file);
+                }else{
+                    $file = fopen("CrearFactura.txt", "w");
+                    fputs($file, "-----------------".PHP_EOL);
+                    fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                    fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                    fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                    fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                    fputs($file, "-----------------".PHP_EOL);
+                    fclose($file);
+                }
+            }
         }
     }
 
