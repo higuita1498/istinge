@@ -130,6 +130,7 @@ class CronController extends Controller
             where('f.vencimiento', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
+            take(25)->
             get();
 
         //dd($contactos);
@@ -185,7 +186,21 @@ class CronController extends Controller
                 }
             }
         }
-        echo "Se han suspendido ".$i." contratos";
+        if (file_exists("CorteFacturas.txt")){
+            $file = fopen("CorteFacturas.txt", "a");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Corte: ".date('Y-m-d').''. PHP_EOL);
+            fputs($file, "Contratos Deshabilitados: ".$i.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
+        }else{
+            $file = fopen("CorteFacturas.txt", "w");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Corte: ".date('Y-m-d').''. PHP_EOL);
+            fputs($file, "Contratos Deshabilitados: ".$i.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
+        }
     }
 
     public static function migrarCRM(){
