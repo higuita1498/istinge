@@ -411,7 +411,6 @@ class CronController extends Controller
         if(count($numeros)){
             $post['to'] = $numeros;
             $post['text'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
-            $post['text'] = "Estimado cliente Ud. tiene una factura pendiente, por favor realice su pago y evite la suspension del servicio. ".$empresa->slogan;
             $post['from'] = "";
             $login ="jjtuiran2021";
             $password = 'Bstc2710';
