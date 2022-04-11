@@ -182,6 +182,22 @@
 
 @section('scripts')
     <script>
+        $('#us2').locationpicker({
+            location: {
+                latitude: 3.619790333228524,
+                longitude: -73.79701780434284
+            },
+            zoom: 6,
+            radius: 300,
+            inputBinding: {
+                latitudeInput: $('#us2-lat'),
+                longitudeInput: $('#us2-lon'),
+                radiusInput: $('#us2-radius'),
+                locationNameInput: $('#us2-address')
+            },
+            mapTypeId: google.maps.MapTypeId.roadmap,
+        });
+
         $("#formulario").submit(function () {
             return false;
         });

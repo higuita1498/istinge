@@ -125,7 +125,7 @@
                   <div class="input-group">
                     <input type="text" class="form-control" name="ip" value="{{$contrato->ip}}" id="ip" required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-success btn-sm" type="button" id="searchIP"><i class="fa fa-search" style="margin: 2px;"></i></button>
+                        <button class="btn btn-outline-success btn-sm" type="button" id="searchIP" style="border-radius: 0 5px 5px 0;"><i class="fa fa-search" style="margin: 2px;"></i></button>
                     </div>
                     <span class="help-block error">
                         <strong>{{ $errors->first('ip') }}</strong>
@@ -246,33 +246,18 @@
                     <strong>{{ $errors->first('fecha_suspension') }}</strong>
                 </span>
             </div>
-            {{-- <div class="col-md-4 form-group d-none">
-                <label class="control-label">Días para suspender <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" id="fecha_suspension" name="fecha_suspension" required="" value="{{ $contrato->fecha_suspension }}" title="Seleccione">
-                    <option value="0" @if($contrato->fecha_suspension == 0) ? selected : '' @endif>No Suspender</option>
-                    <option value="1" @if($contrato->fecha_suspension == 1) ? selected : '' @endif>1 día después de la fecha de corte</option>
-                    <option value="2" @if($contrato->fecha_suspension == 2) ? selected : '' @endif>2 días después de la fecha de corte</option>
-                    <option value="3" @if($contrato->fecha_suspension == 3) ? selected : '' @endif>3 días después de la fecha de corte</option>
-                    <option value="4" @if($contrato->fecha_suspension == 4) ? selected : '' @endif>4 días después de la fecha de corte</option>
-                    <option value="5" @if($contrato->fecha_suspension == 5) ? selected : '' @endif>5 días después de la fecha de corte</option>
-                    <option value="6" @if($contrato->fecha_suspension == 6) ? selected : '' @endif>6 días después de la fecha de corte</option>
-                    <option value="7" @if($contrato->fecha_suspension == 7) ? selected : '' @endif>7 días después de la fecha de corte</option>
-                    <option value="8" @if($contrato->fecha_suspension == 8) ? selected : '' @endif>8 días después de la fecha de corte</option>
-                    <option value="9" @if($contrato->fecha_suspension == 9) ? selected : '' @endif>9 días después de la fecha de corte</option>
-                    <option value="10" @if($contrato->fecha_suspension == 10) ? selected : '' @endif>10 días después de la fecha de corte</option>
-                    <option value="11" @if($contrato->fecha_suspension == 11) ? selected : '' @endif>11 días después de la fecha de corte</option>
-                    <option value="12" @if($contrato->fecha_suspension == 12) ? selected : '' @endif>12 días después de la fecha de corte</option>
-                    <option value="13" @if($contrato->fecha_suspension == 13) ? selected : '' @endif>13 días después de la fecha de corte</option>
-                    <option value="14" @if($contrato->fecha_suspension == 14) ? selected : '' @endif>14 días después de la fecha de corte</option>
-                    <option value="15" @if($contrato->fecha_suspension == 15) ? selected : '' @endif>15 días después de la fecha de corte</option>
-                </select>
-                <span class="help-block error">
-                    <strong>{{ $errors->first('fecha_suspension') }}</strong>
-                </span>
-            </div>--}}
-            
-            <div class="col-md-12 d-none">
-                <hr>
+
+            <div class="col-md-4 form-group">
+                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly value="{{ $contrato->latitude }}">
+                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly value="{{ $contrato->longitude }}">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
+                            <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <div class="col-md-3 form-group d-none">
@@ -404,10 +389,52 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal-gps" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body px-0">
+                    <div class="row" style="text-align: center;">
+                        <div class="col-md-12">
+                            <p><span class="font-weight-bold text-uppercase">Arrastre el pin para indicar las coordenadas deseadas.</span><br>(Por defecto el mapa está centrado en Colombia)</p>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center;">
+                        <span class="d-none">
+                            Location: <input type="text" id="us2-address" style="width: 200px"/>
+                            Radius: <input type="text" id="us2-radius"/>
+                        </span>
+                        <center>
+                            <div id="us2" style="width: 465px; height: 400px; position: relative; overflow: hidden; margin: 0 30px;"></div>
+                        </center>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
     <script>
+        $('#us2').locationpicker({
+            location: {
+                latitude: {{ $contrato->latitude }},
+                longitude: {{ $contrato->longitude }}
+            },
+            zoom: 6,
+            radius: 300,
+            inputBinding: {
+                latitudeInput: $('#us2-lat'),
+                longitudeInput: $('#us2-lon'),
+                radiusInput: $('#us2-radius'),
+                locationNameInput: $('#us2-address')
+            },
+            mapTypeId: google.maps.MapTypeId.roadmap,
+        });
+
         $(document).on('change','input[type="file"]',function(){
             var fileName = this.files[0].name;
             var fileSize = this.files[0].size;

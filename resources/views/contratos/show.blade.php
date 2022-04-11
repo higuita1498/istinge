@@ -127,6 +127,15 @@
 						<th>Dirección IP</th>
 						<td><a href="http://{{ $contrato->ip }}" target="_blank">{{ $contrato->ip }} <i class="fas fa-external-link-alt"></i></a></td>
 					</tr>
+					@if($contrato->latitude && $contrato->longitude)
+					@php
+					    $url = 'https://www.google.com/maps/search/'.$contrato->latitude.','.$contrato->longitude.'?hl=es';
+					 @endphp
+					<tr>
+						<th>Dirección GPS</th>
+						<td>({{$contrato->latitude}} {{$contrato->longitude}}) <a href="{{ $url }}" target="_blank">Ver en Google Maps <i class="fas fa-external-link-alt"></i></a></td>
+					</tr>
+					@endif
 					@if($contrato->puerto_conexion)
 					<tr>
 						<th>Puerto de Conexión</th>
