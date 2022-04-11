@@ -1436,7 +1436,7 @@ class ContratosController extends Controller
 			}else if($Type==1){ //  Queues
 			    $API->write("/queue/simple/print",false);
 			    $API->write("=stats",false);
-			    $API->write("?ip=".$contrato->ip,true);
+			    $API->write("?name=".$contrato->servicio,true);
 			    $READ = $API->read(false);
 			    $ARRAY = $API->parseResponse($READ);
 			    if(count($ARRAY)>0){  
