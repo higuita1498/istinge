@@ -315,6 +315,7 @@ class FacturasController extends Controller{
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
+
             if($request->codigo){
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.codigo', 'like', "%{$request->codigo}%");
@@ -341,13 +342,8 @@ class FacturasController extends Controller{
                 });
             }
             if($request->estado){
-                $status = ($request->estado == 'A') ? 0 : $request->estado; 
-                $facturas->where(function ($query) use ($request, $status) {
-                    $query->orWhere('factura.estatus', $status);
-                });
-            }else{
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.estatus', 1);
+                    $query->orWhere('factura.estatus', $request->estado);
                 });
             }
             if($request->correo){
@@ -834,6 +830,7 @@ class FacturasController extends Controller{
 
     $tipo = 1; //1= normal, 2=Electrónica.
 
+    // Retorna si un cliente puede crear factura electrónica o no.
     $electronica = Factura::booleanFacturaElectronica($request->cliente);
 
     if($contrato){
@@ -877,6 +874,15 @@ class FacturasController extends Controller{
 
     if($contrato){
         $factura->contrato_id = $contrato->id;
+    }else{
+        /*
+        Validamos aca de nuevo si tiene contrato o no, para que las facturas electronicas que tienen contrato
+         tengan la posibilidad de que se les guarde el id del contrato en la factura. 
+         */
+        $contrato = Contrato::where('client_id',$request->cliente)->first();
+        if($contrato){
+            $factura->contrato_id = $contrato->id;
+        }
     }
     
     $factura->save();
