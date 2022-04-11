@@ -46,7 +46,7 @@ class NotascreditoController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth'); 
         view()->share(['seccion' => 'facturas', 'title' => 'Notas de Crédito', 'icon' =>'fas fa-plus', 'subseccion' => 'credito']);
     }
 
