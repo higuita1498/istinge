@@ -279,7 +279,24 @@ class Factura extends Model
 
     public function devoluciones(){
         return NotaCreditoFactura::where('factura',$this->id)->sum('pago');
+    }
 
+    //Obtenemos el valor pagado de la factura en la devolucion(nota credito), ya que se puede abonar y hacer varios pagos en diferentes notas creditos
+    public function devolucionPagado()
+    {
+        if (NotaCreditoFactura::where('factura', $this->id)->count() > 0) {
+            $notasC = NotaCreditoFactura::where('factura', $this->id)->get();
+
+            $pagado = 0;
+
+            foreach ($notasC as $notaC) {
+                $pagado = $pagado + $notaC->nota()->total()->total;
+            }
+
+            return $pagado;
+        } else {
+            return 0;
+        }
     }
 
     public function pagos($cont=false){
