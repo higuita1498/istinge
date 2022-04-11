@@ -2679,7 +2679,7 @@ public function edit($id){
         $promesa_pago->created_by = Auth::user()->id;
         $promesa_pago->save();
         
-        $factura->promesa_pago  =$request->promesa_pago;
+        $factura->promesa_pago  = $request->promesa_pago;
         $factura->vencimiento   = $request->promesa_pago;
         $factura->observaciones = 'Añadiendo Promesa de Pago';
         $factura->observaciones = $factura->observaciones.' | Factura Editada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A'). ' para añadir Promesa de Pago Nro. '.$promesa_pago->nro;
@@ -2697,22 +2697,31 @@ public function edit($id){
                 $API->write('/ip/firewall/address-list/print', TRUE);
                 $ARRAYS = $API->read();
 
-                //BUSCAMOS EL ID POR LA IP DEL CONTRATO
-                $API->write('/ip/firewall/address-list/print', false);
-                $API->write('?address='.$contrato->ip, false);
-                $API->write('=.proplist=.id');
-                $ARRAYS = $API->read();
+                #ELIMINAMOS DE MOROSOS#
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=morosos",false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
 
-                if(count($ARRAYS)>0){
-                    //REMOVEMOS EL ID DE LA ADDRESS LIST
-                    $API->write('/ip/firewall/address-list/remove', false);
-                    $API->write('=.id='.$ARRAYS[0]['.id']);
-                    $READ = $API->read();
-                    $API->disconnect();
+                    if(count($ARRAYS)>0){
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+                    }
+                #ELIMINAMOS DE MOROSOS#
 
-                    $contrato->state = 'enabled';
-                    $contrato->save();
-                }
+                #AGREGAMOS A IP_AUTORIZADAS#
+                    $API->comm("/ip/firewall/address-list/add", array(
+                        "address" => $contrato->ip,
+                        "list" => 'ips_autorizadas'
+                        )
+                    );
+                #AGREGAMOS A IP_AUTORIZADAS#
+
+                $contrato->state = 'enabled';
+                $contrato->save();
+                $API->disconnect();
             }
         }
         
