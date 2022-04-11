@@ -315,6 +315,7 @@ class FacturasController extends Controller{
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
+
             if($request->codigo){
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.codigo', 'like', "%{$request->codigo}%");
@@ -341,13 +342,8 @@ class FacturasController extends Controller{
                 });
             }
             if($request->estado){
-                $status = ($request->estado == 'A') ? 0 : $request->estado; 
-                $facturas->where(function ($query) use ($request, $status) {
-                    $query->orWhere('factura.estatus', $status);
-                });
-            }else{
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.estatus', 1);
+                    $query->orWhere('factura.estatus', $request->estado);
                 });
             }
             if($request->correo){
