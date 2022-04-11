@@ -36,6 +36,7 @@ use App\NumeracionFactura;
 use DOMDocument; use QrCode; use File;
 use Config;
 use App\ServidorCorreo;
+use ZipArchive;
 
 class NotascreditoController extends Controller
 {
