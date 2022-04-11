@@ -140,5 +140,25 @@ class ItemsNotaCredito extends Model
        return '';
    }
 
+   public function itemCantImpuesto()
+    {
+        $imp = 0;
+        $result = $this->precio * $this->cant;
+
+        if ($this->desc>0) {
+            $desc=($result*$this->desc)/100;
+        } else {
+            $desc=0;
+        }
+
+        $result = $result - $desc;
+
+        if ($this->impuesto > 0) {
+            $imp += (($result)*$this->impuesto)/100;
+        }
+        
+        return $imp;
+    }
+
 
 }

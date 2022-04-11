@@ -121,19 +121,99 @@ class NotascreditoController extends Controller
      * @param Request $request
      * @return redirect
      */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        //Validaciones con respecto a la nueva programacion del cda.
+        if ($request->tipo_operacion == 3) {
+            if (count($request->item) > 1) {
+                $mensaje = "Si el tipo de operación es nota de crédito con detalle de recaudo a terceros no puedes facturar más de dos productos.";
+                return back()->with('error', $mensaje);
+            }
+            if (DB::table('detalle_terceros')->where('fk_idempresa', auth()->user()->empresa)->where('inventario_id', $request->item[0])->count() == 0) {
+                $mensaje = "El producto que deseas facturar no tiene un detalle de recaudo asociado.";
+                return back()->with('error', $mensaje);
+            }
+        }
+
+        if ($request->factura) {
+            $total = 0;
+            $precioNotas = 0;
+            $retencion = 0;
+            $impuesto = 0;
+            $descuento = 0;
+            $z = 1;
+
+            //MULTI IMPUESTOS
+            for ($i = 0; $i < count($request->precio); $i++) {
+                $total += ($request->cant[$i] * $request->precio[$i]);
+
+                if ($request->descuento[$i] != null) {
+                    $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->descuento[$i] / 100;
+                    $total -= $descuento;
+                }
+
+                $data  = $request->all();
+
+                if (isset($data['impuesto' . $z])) {
+                    if ($data['impuesto' . $z]) {
+                        for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
+                            $porcentaje = Impuesto::find($data['impuesto' . $z][$x])->porcentaje;
+                            if ($porcentaje > 0) {
+                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
+                            }
+                        }
+                    }
+                }
+                //en caso tal de no existir el desarrollo de multiimpuestos
+                else if(isset($data['impuesto'])){
+                    if ($data['impuesto']) {
+                        for ($x = 0; $x < count($data['impuesto']); $x++) {
+                            $porcentaje = Impuesto::find($data['impuesto'][$x])->porcentaje;
+                            if ($porcentaje > 0) {
+                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
+                            }
+                        }
+                    }
+                }
+                $z++;
+            }
+            $total += $impuesto;
+            //MULTI IMPUESTOS
+
+            if ($request->precio_reten) {
+                for ($i = 0; $i < count($request->precio_reten); $i++) {
+                    $retencion += $request->precio_reten[$i];
+                }
+            }
+
+            $total = $total - $retencion;
+            $fc = Factura::find($request->factura);
+
+            foreach ($fc->notas_credito() as $notas) {
+                //Acumulado de total en notas creditos de la factura.
+                $precioNotas += $notas->nota()->total()->total;
+            }
+
+            $precioNotas += $total;
+
+            if (round($precioNotas) > round($fc->total()->total)) {
+                return redirect()->back()->with('error', "La nota crédito supera el valor de la factura de venta");
+            }
+        }
 
         $montoFactura = 0;
         $montoRetenciones = 0;
-        if( NotaCredito::where('empresa',auth()->user()->empresa)->count() > 0){
+        $impuestoItem = 0;
+
+        if (NotaCredito::where('empresa', auth()->user()->empresa)->count() > 0) {
             //Tomamos el tiempo en el que se crea el registro
-            Session::put('posttimer', NotaCredito::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+            Session::put('posttimer', NotaCredito::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
             $sw = 1;
             //Recorremos la sesion para obtener la fecha
             foreach (Session::get('posttimer') as $key) {
                 if ($sw == 1) {
                     $ultimoingreso = $key;
-                    $sw=0;
+                    $sw = 0;
                 }
             }
 
@@ -146,78 +226,152 @@ class NotascreditoController extends Controller
             }
         }
 
-        $nro = Numeracion::where('empresa',Auth::user()->empresa)->first();
+        $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
         $caja = $nro->credito;
-        
+
         while (true) {
-            $numero=NotaCredito::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
-            if ($numero==0) {
+            $numero = NotaCredito::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+            if ($numero == 0) {
                 break;
             }
             $caja++;
         }
 
-        $notac = new NotaCredito;
-        $notac->nro=$caja;
-        $notac->empresa=Auth::user()->empresa;
-        $notac->cliente=$request->cliente;
-        $notac->tipo=$request->tipo;
-        $notac->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-        $notac->observaciones=mb_strtolower($request->observaciones);
-        $notac->notas =$request->notas;
-        $notac->lista_precios=$request->lista_precios;
-        $notac->bodega=$request->bodega;
+        $notac = new NotaCredito();
+        $notac->nro = $caja;
+        $notac->empresa = Auth::user()->empresa;
+        $notac->cliente = $request->cliente;
+        $notac->tipo = $request->tipo;
+        $notac->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+        $notac->observaciones = mb_strtolower($request->observaciones);
+        $notac->notas = $request->notas;
+        $notac->lista_precios = $request->lista_precios;
+        $notac->bodega = $request->bodega;
         $notac->tipo_operacion = $request->tipo_operacion;
         $notac->ordencompra    = $request->ordencompra;
+        // $notac->tiempo_creacion = now();
+
+        if ($request->tipo_operacion == 3) {
+            $impuesto = Impuesto::where('id', $request->impuesto1[0])->first();
+            $notac->total_recaudo  = $request->detalle_monto;
+
+            if ($request->desc) {
+                $descuento = $request->desc[0];
+            } else {
+                $descuento = 0;
+            }
+
+            //Descontamos un posible descuento.
+            $notac->total_valor = $this->precision($request->precio[0] * $request->cant[0]) - ($this->precision($request->precio[0]) * $descuento / 100);
+            //añadimos los pósibles porcentajes de iva sobre el producto.
+            $notac->total_valor += ($this->precision($request->precio[0]) * $request->cant[0] * $impuesto->porcentaje / 100);
+            //restamos retenciones
+            if ($request->precio_reten) {
+                $totalreten = 0;
+                foreach ($request->precio_reten as $valor => $v) {
+                    $totalreten += $v;
+                }
+                $notac->total_valor -= $totalreten;
+            } else {
+                $totalreten = 0;
+            }
+            //Sumamos detalle de recaudo
+            $notac->total_valor += $request->detalle_monto;
+        }
+
+        if (auth()->user()->empresaObj->estado_dian == 1) {
+            $notac->technicalkey = auth()->user()->empresaObj->technicalkey;
+        }
+
         $notac->save();
 
-        $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
+        $bodega = Bodega::where('empresa', Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
-            $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+            $bodega = Bodega::where('empresa', Auth::user()->empresa)->where('status', 1)->first();
         }
 
         //for ($i=0; $i < count($request->ref) ; $i++) {
-        foreach($request->item as $i => $valor){
-            $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
+        $z = 1;
+        foreach ($request->item as $i => $valor) {
+            //$impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
             $producto = Inventario::where('id', $request->item[$i])->first();
             //Si el producto es inventariable y existe esa bodega, restará el valor registrado
-            if ($producto->tipo_producto==1) {
-                $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
+            if ($producto->tipo_producto == 1) {
+                $ajuste = ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
 
                 if ($ajuste) {
-                    $ajuste->nro+=$request->cant[$i];
+                    $ajuste->nro += $request->cant[$i];
                     $ajuste->save();
                 }
             }
 
-            if($request->descuento[$i]){
+            if ($request->descuento[$i]) {
                 $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->descuento[$i] / 100;
                 $precioItem = ($request->precio[$i] * $request->cant[$i]) - $descuento;
 
-                $impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
+                //$impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
                 $tmp = $precioItem + $impuestoItem;
 
                 $montoFactura += $tmp;
-
-            }else{
+            } else {
                 $precioItem = $request->precio[$i] * $request->cant[$i];
-                $impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
+                //$impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
                 $montoFactura += $precioItem + $impuestoItem;
             }
 
 
-            $items = new ItemsNotaCredito;
-            $items->nota=$notac->id;
-            $items->producto=$request->item[$i];
-            $items->ref=$request->ref[$i];
-            $items->precio=$this->precision($request->precio[$i]);
-            $items->descripcion=$request->descripcion[$i];
-            $items->id_impuesto=$request->impuesto[$i];
-            $items->impuesto=$impuesto->porcentaje;
-            $items->cant=$request->cant[$i];
-            $items->desc=$request->descuento[$i];
-            $items->save();
+            $items = new ItemsNotaCredito();
 
+            //MULTI IMPUESTOS
+            $data  = $request->all();
+            if (isset($data['impuesto' . $z])) {
+                if ($data['impuesto' . $z]) {
+                    for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
+                        $id_cat = 'id_impuesto_' . $x;
+                        $cat = 'impuesto_' . $x;
+                        $impuesto = Impuesto::where('id', $data['impuesto' . $z][$x])->first();
+                        if ($impuesto) {
+                            if ($x == 0) {
+                                $items->id_impuesto = $impuesto->id;
+                                $items->impuesto = $impuesto->porcentaje;
+                            } elseif ($x > 0) {
+                                $items->$id_cat = $impuesto->id;
+                                $items->$cat = $impuesto->porcentaje;
+                            }
+                        }
+                    }
+                }
+            }
+            //en caso tal de no tener el desarrolo de multiples ivas
+            elseif(isset($data['impuesto'])){
+                if ($data['impuesto']) {
+                    for ($x = 0; $x < count($data['impuesto']); $x++) {
+                        $id_cat = 'id_impuesto_' . $x;
+                        $cat = 'impuesto_' . $x;
+                        $impuesto = Impuesto::where('id', $data['impuesto'][$x])->first();
+                        if ($impuesto) {
+                            if ($x == 0) {
+                                $items->id_impuesto = $impuesto->id;
+                                $items->impuesto = $impuesto->porcentaje;
+                            } elseif ($x > 0) {
+                                $items->$id_cat = $impuesto->id;
+                                $items->$cat = $impuesto->porcentaje;
+                            }
+                        }
+                    }
+                }
+            }
+            //MULTI IMPUESTOS
+
+            $items->nota = $notac->id;
+            $items->producto = $request->item[$i];
+            $items->ref = $request->ref[$i];
+            $items->precio = $this->precision($request->precio[$i]);
+            $items->descripcion = $request->descripcion[$i];
+            $items->cant = $request->cant[$i];
+            $items->desc = $request->descuento[$i];
+            $items->save();
+            $z++;
         }
 
         if ($request->retencion) {
@@ -226,6 +380,7 @@ class NotascreditoController extends Controller
                     $retencion = Retencion::where('id', $request->retencion[$key])->first();
                     $reten = new NotaRetencion();
                     $reten->notas = $notac->id;
+                    $reten->tipo = 1; //hace referencia a devoluciones tipo crédito.
                     $reten->valor = $this->precision($request->precio_reten[$key]);
                     $reten->retencion = $retencion->porcentaje;
                     $reten->id_retencion = $retencion->id;
@@ -243,72 +398,52 @@ class NotascreditoController extends Controller
             $factura = Factura::find($request->factura);
             $factura->estatus = 0;
             $factura->save();
-            
-            $items = new NotaCreditoFactura;
+
+            //acumulador de notas credito de una factura
+            $precioNota = 0;
+
+            foreach ($factura->notas_credito() as $notas) {
+                $precioNota += $notas->nota()->total()->total;
+            }
+
+            $items = new NotaCreditoFactura();
             $items->nota = $notac->id;
             $items->factura = $factura->id;
-            $items->pago = $this->precision($factura->porpagar());
+            //$items->pago = $this->precision($factura->porpagar());
+            $items->pago = $this->precision($total);
             if ($this->precision($montoFactura) == $this->precision($factura->porpagar())) {
                 $factura->estatus = 0;
                 $factura->save();
             }
+
+            if ($factura->total()->total == $precioNota) {
+                $factura->estatus = 0;
+            } elseif ($factura->total()->total == $factura->pagado()) {
+                $factura->estatus = 0;
+            } else {
+                $factura->estatus = 1;
+            }
+
+            $factura->save();
             $items->save();
 
-            if($factura->pagado()){
+            if ($factura->pagado()) {
                 $saldoNota = new NotaSaldo();
                 $saldoNota->id_nota = $notac->id;
                 $saldoNota->saldo_nota = $factura->pagado();
                 $saldoNota->save();
 
                 $cliente = Contacto::find($request->cliente);
-                $cliente->saldo_favor +=$factura->pagado();
+                $cliente->saldo_favor += $factura->pagado();
                 $cliente->save();
             }
-
-            //dd($factura->pagado(),$this->precision($montoFactura),$montoRetenciones);
-
         }
 
-
-
-        /* if ($request->fecha_dev) {
-        for ($i=0; $i < count($request->fecha_dev);  $i++) {
-        if ($request->montoa_dev[$i]) {
-        $items = new Devoluciones;
-        $items->nota=$notac->id;
-        $items->empresa=Auth::user()->empresa;
-        $items->fecha=Carbon::parse($request->fecha_dev[$i])->format('Y-m-d');
-        $items->monto=$this->precision($request->montoa_dev[$i]);
-        $items->cuenta=$request->cuentaa_dev[$i];
-        $items->observaciones=$request->descripciona_dev[$i];
-        $items->save();
-
-        $gasto = new Gastos;
-        $gasto->nro=Gastos::where('empresa',Auth::user()->empresa)->count()+1;
-        $gasto->empresa=Auth::user()->empresa;
-        $gasto->beneficiario=$request->cliente;
-        $gasto->cuenta=$request->cuentaa_dev[$i];
-        $gasto->metodo_pago=$request->metodo_pago;
-        $gasto->notas=$request->notas;
-        $gasto->nota_credito=$notac->id;
-        $gasto->total_credito=$this->precision($request->montoa_dev[$i]);
-        $gasto->nro_devolucion=$items->id;
-        $gasto->tipo=3;
-        $gasto->fecha=Carbon::parse($request->fecha_dev[$i])->format('Y-m-d');
-        $gasto->observaciones=$request->descripciona_dev[$i];
-        $gasto->save();
-        $gasto=Gastos::find($gasto->id);
-        //gastos
-        $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
-
-        }
-        }
-    }*/
-    $nro->credito=$caja+1;
-    $nro->save();
-    $mensaje='Se ha creado satisfactoriamente la nota de crédito';
-    return redirect('empresa/notascredito')->with('success', $mensaje)->with('nota_id', $notac->id);
-}
+        $nro->credito = $caja + 1;
+        $nro->save();
+        $mensaje = 'Se ha creado satisfactoriamente la nota de crédito';
+        return redirect('empresa/notascredito')->with('success', $mensaje)->with('nota_id', $notac->id);
+    }
 
     /**
      * Ver un Nota Credito
@@ -336,86 +471,174 @@ class NotascreditoController extends Controller
      * @param int $id
      * @return view
      */
-    public function edit($id){
+    public function edit($id)
+    {
         $this->getAllPermissions(Auth::user()->id);
-        $nota = NotaCredito::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
-        $retencionesNotas = NotaRetencion::where('notas', $nota->id)->get();
+        $nota = NotaCredito::where('empresa', Auth::user()->empresa)->where('nro', $id)->first();
+        $retenciones = Retencion::where('empresa', Auth::user()->empresa)->get();
 
-        if ($nota) {
-            view()->share(['title' => 'Editar Nota de Credito ', 'icon' =>'']);
+        if (isset($nota)) {
+            $retencionesNotas = NotaRetencion::join('retenciones as r', 'r.id', '=', 'notas_retenciones.id_retencion')
+                ->where('notas', $nota->id)->where('r.empresa', Auth::user()->empresa)
+                ->select('notas_retenciones.*')
+                ->get();
 
-            $facturaContacto = Factura::where('cliente',$nota->cliente)->where('tipo','!=',2)->select('id','codigo')->get();
-            if(Auth::user()->empresa == 77){
-                //dd($nota->id);
-            }
-            $notasFacturas = NotaCreditoFactura::where('nota',$nota->id)->first();
+            view()->share(['title' => 'Editar Nota de Credito ', 'icon' => '']);
 
-            /*$factura=array();
-            foreach ($facturas as $key => $value) {
-                $factura[]=$value->factura;
-            }
-            $facturas=Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2);
+            $facturaContacto = Factura::where('cliente', $nota->cliente)->select('id', 'codigo')->get();
 
-            $facturas=$facturas->where(function ($query) use ($factura){
-                $query->where('estatus',1)
-                    ->orWhereIn('id', $factura);
-                });*/
+            $notasFacturas = NotaCreditoFactura::where('nota', $nota->id)->first();
 
+            $categorias = Categoria::where('empresa', Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
+            $proveedores = Contacto::where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [1, 2])->get();
+            $items = ItemsNotaCredito::where('nota', $nota->id)->get();
+            $listas = ListaPrecios::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
-            //$facturas=$facturas->where('cliente',  $nota->cliente)->OrderBy('id', 'desc')->select('codigo', 'id')->get();
+            $facturas_reg = NotaCreditoFactura::where('nota', $nota->id)->get();
+            $bodega = Bodega::where('empresa', Auth::user()->empresa)->where('id', $nota->bodega)->first();
 
-                $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
-                $proveedores = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
-                $items = ItemsNotaCredito::where('nota',$nota->id)->get();
-                $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+            $retenciones = Retencion::where('empresa', Auth::user()->empresa)->get();
 
-                $facturas_reg = NotaCreditoFactura::where('nota',$nota->id)->get();
-                $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('id', $nota->bodega)->first();
+            $inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega=' . $bodega->id . ' and producto=inventario.id) as nro'))->where('empresa', Auth::user()->empresa)->where('status', 1)->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega=' . $bodega->id . '), true)')->get();
 
-                $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+            //$inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega=' . $bodega->id . ' and producto=inventario.id) as nro'))->where('empresa', Auth::user()->empresa)->where('status', 1)->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega=' . $bodega->id . '), true)')->get();
 
-                $inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))->where('empresa',Auth::user()->empresa)->where('status', 1)->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')->get();
+            $bodegas = Bodega::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
+            $impuestos = Impuesto::where('empresa', Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+            $clientes = Contacto::where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0, 2])->get();
+            $devoluciones = Devoluciones::where('nota', $nota->id)->get();
+            $tipos = DB::table('tipos_nota_credito')->get();
 
-                $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-                $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
-                $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-                $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->get();
-                $devoluciones = Devoluciones::where('nota',$nota->id)->get();
-                $tipos=DB::table('tipos_nota_credito')->get();
-
-                return view('notascredito.edit')->with(compact('nota','retencionesNotas','retenciones',
-                    'categorias', 'items', 'notasFacturas','facturaContacto', 'clientes', 'inventario',
-                    'impuestos', 'bancos', 'bodegas', 'devoluciones', 'proveedores',
-                    'facturas_reg', 'listas', 'tipos'));
-            }
-            return redirect('empresa/notascredito')->with('success', 'No existe un registro con ese id');
+            return view('notascredito.edit')->with(compact(
+                'nota',
+                'retencionesNotas',
+                'retenciones',
+                'categorias',
+                'items',
+                'notasFacturas',
+                'facturaContacto',
+                'clientes',
+                'inventario',
+                'impuestos',
+                'bancos',
+                'bodegas',
+                'devoluciones',
+                'proveedores',
+                'facturas_reg',
+                'listas',
+                'tipos'
+            ));
         }
+
+        return redirect('empresa/notascredito')->with('success', 'No existe un registro con ese id');
+    }
 
     /**
      * Modificar los datos de la nota de debito
      * @param Request $request
      * @return redirect
      */
-    public function update( Request $request, $id){
+    public function update(Request $request, $id)
+    {
 
-        $nota =NotaCredito::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        //Validaciones con respecto a la nueva programacion del cda.
+        if ($request->tipo_operacion == 3) {
+            if (count($request->item) > 1) {
+                $mensaje = "Si el tipo de operación es nota de crédito con detalle de recaudo a terceros; no puedes facturar más de dos productos.";
+                return back()->with('error', $mensaje);
+            }
+            if (DB::table('detalle_terceros')->where('fk_idempresa', auth()->user()->empresa)->where('inventario_id', $request->item[0])->count() == 0) {
+                $mensaje = "El producto que deseas facturar no tiene un detalle de recaudo asociado.";
+                return back()->with('error', $mensaje);
+            }
+        }
+
+        if ($request->factura) {
+            $total = 0;
+            $precioNotas = 0;
+            $retencion = 0;
+            $impuesto = 0;
+            $descuento = 0;
+            $z = 1;
+
+            //MULTI IMPUESTOS
+            for ($i = 0; $i < count($request->precio); $i++) {
+                $total += ($request->cant[$i] * $request->precio[$i]);
+
+                if ($request->desc[$i] != null) {
+                    $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->desc[$i] / 100;
+                    $total -= $descuento;
+                }
+
+                $data  = $request->all();
+
+                if (isset($data['impuesto' . $z])) {
+                    if ($data['impuesto' . $z]) {
+                        for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
+                            $porcentaje = Impuesto::find($data['impuesto' . $z][$x])->porcentaje;
+                            if ($porcentaje > 0) {
+                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
+                            }
+                        }
+                    }
+                }
+                //en caso tal de no tener el desarrollo de multiples ivas
+                elseif(isset($data['impuesto'])){
+                    if ($data['impuesto']) {
+                        for ($x = 0; $x < count($data['impuesto']); $x++) {
+                            $porcentaje = Impuesto::find($data['impuesto'][$x])->porcentaje;
+                            if ($porcentaje > 0) {
+                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
+                            }
+                        }
+                    }
+                }
+                $z++;
+            }
+            $total += $impuesto;
+            //MULTI IMPUESTOS
+
+            if ($request->precio_reten) {
+                for ($i = 0; $i < count($request->precio_reten); $i++) {
+                    $retencion += $request->precio_reten[$i];
+                }
+            }
+
+            $total = $total - $retencion;
+            $fc = Factura::find($request->factura);
+
+            foreach ($fc->notas_credito() as $notas) {
+                //Acumulado de total en notas creditos de la factura.
+                if ($notas->nota != $id) {
+                    $precioNotas += $notas->nota()->total()->total;
+                }
+            }
+
+            $precioNotas += $total;
+
+            if (round($precioNotas) > round($fc->total()->total)) {
+                return redirect()->back()->with('error', "La nota crédito supera el valor de la factura de venta");
+            }
+        }
+
+        $nota = NotaCredito::where('empresa', Auth::user()->empresa)->where('id', $id)->first();
         $montoFactura = 0;
         $montoRetenciones = 0;
         if ($nota) {
             //Recoloco los items los productos en la bodega
             $items = ItemsNotaCredito::join('inventario as inv', 'inv.id', '=', 'items_notas.producto')
-            ->select('items_notas.*')
-            ->where('items_notas.nota',$nota->id)
-            ->where('inv.tipo_producto', 1)->get();
-            $bodega = Bodega::where('empresa',Auth::user()->empresa)
-            ->where('status', 1)
-            ->where('id', $request->bodega)->first();
+                ->select('items_notas.*')
+                ->where('items_notas.nota', $nota->id)
+                ->where('inv.tipo_producto', 1)->get();
+            $bodega = Bodega::where('empresa', Auth::user()->empresa)
+                ->where('status', 1)
+                ->where('id', $request->bodega)->first();
 
             foreach ($items as $item) {
                 $ajuste = ProductosBodega::where('empresa', Auth::user()->empresa)
-                ->where('bodega', $bodega->id)
-                ->where('producto', $item->producto)->first();
+                    ->where('bodega', $bodega->id)
+                    ->where('producto', $item->producto)->first();
                 if ($ajuste) {
                     $ajuste->nro += $item->cant;
                     $ajuste->save();
@@ -423,98 +646,188 @@ class NotascreditoController extends Controller
             }
 
             //Coloco el estatus de la factura en abierta
-            $facturas_reg = NotaCreditoFactura::where('nota',$nota->id)->get();
+            $facturas_reg = NotaCreditoFactura::where('nota', $nota->id)->get();
             foreach ($facturas_reg as $factura) {
-                $dato=$factura->factura();
-                $dato->estatus=1;
+                $dato = $factura->factura();
+                $dato->estatus = 1;
                 $dato->save();
             }
 
             //Modifico los datos de la nota
             $nota->cliente       = $request->cliente;
             $nota->tipo          = $request->tipo;
-            $nota->fecha         = Carbon::parse($request->fecha)->format('Y-m-d');
+            $nuevaFecha = Carbon::parse($request->fecha)->format('Y-m-d');
+            // $nuevaFecha != $nota->fecha ? $nota->tiempo_creacion = now() : '';
+            $nota->fecha = $nuevaFecha;
             $nota->observaciones = mb_strtolower($request->observaciones);
             $nota->notas         = $request->notas;
             $nota->lista_precios = $request->lista_precios;
             $nota->bodega        = $request->bodega;
             $nota->tipo_operacion = $request->tipo_operacion;
             $nota->ordencompra    = $request->ordencompra;
+
+            if ($request->tipo_operacion == 3) {
+                $impuesto = Impuesto::where('id', $request->impuesto1[0])->first();
+                $nota->total_recaudo  = $request->detalle_monto;
+
+                if ($request->desc) {
+                    $descuento = $request->desc[0];
+                } else {
+                    $descuento = 0;
+                }
+
+                //Descontamos un posible descuento.
+                $nota->total_valor = $this->precision($request->precio[0] * $request->cant[0]) - ($this->precision($request->precio[0]) * $descuento / 100);
+                //añadimos los pósibles porcentajes de iva sobre el producto.
+                $nota->total_valor += ($this->precision($request->precio[0]) * $request->cant[0] * $impuesto->porcentaje / 100);
+                //restamos retenciones
+                if ($request->precio_reten) {
+                    $totalreten = 0;
+                    foreach ($request->precio_reten as $valor => $v) {
+                        $totalreten += $v;
+                    }
+                    $nota->total_valor -= $totalreten;
+                } else {
+                    $totalreten = 0;
+                }
+                //Sumamos detalle de recaudo
+
+                $nota->total_valor += $request->detalle_monto;
+            }
+
             $nota->save();
 
             //Compruebo que existe la bodega y la uso
             //$bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
             if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
-                $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+                $bodega = Bodega::where('empresa', Auth::user()->empresa)->where('status', 1)->first();
             }
 
-            $inner=array();
+            $inner = array();
             //Recorro los Categoría/Ítem
-            for ($i=0; $i < count($request->item) ; $i++) {
-                $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
-                $cat='item'.($i+1);
-                $items=array();
-                if($request->$cat){ //Comprobar que exixte ese id
+            $z = 1;
+            for ($i = 0; $i < count($request->item); $i++) {
+                //$impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
+                $cat = 'item' . ($i + 1);
+                $items = array();
+                if ($request->$cat) { //Comprobar que exixte ese id
                     $items = ItemsNotaCredito::where('id', $request->$cat)->first();
                 }
 
                 if (!$items) {
-                    $items = new ItemsNotaCredito;
-                    $items->nota=$nota->id;
+                    $items = new ItemsNotaCredito();
+                    $items->nota = $nota->id;
                 }
 
                 //Comprobar que el nro que se guarda el item
                 $producto = Inventario::where('id', $request->item[$i])->first();
-                if (!$producto) { continue; }
-                $items->producto=$producto->id;
-                if ($producto->tipo_producto==1) {
+                if (!$producto) {
+                    continue;
+                }
+                $items->producto = $producto->id;
+                if ($producto->tipo_producto == 1) {
                     //Si el producto es inventariable y existe esa bodega, agregara el valor registrado
-                    $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
+                    $ajuste = ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
                     if ($ajuste) {
-                        $ajuste->nro-=$request->cant[$i];
+                        $ajuste->nro -= $request->cant[$i];
                         $ajuste->save();
                     }
                 }
 
                 /*INICIO DE CALCULOS PARA SACAR EL SALDO A FAVOR AL CONTACTO*/
-                if($request->descuento[$i]){
+                if ($request->descuento[$i]) {
                     $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->descuento[$i] / 100;
                     $precioItem = ($request->precio[$i] * $request->cant[$i]) - $descuento;
 
-                    $impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
+                    $impuestoItem = 0;
                     $tmp = $precioItem + $impuestoItem;
 
                     $montoFactura += $tmp;
-
-                }else{
-                    $precioItem = $request->precio[$i] * $request->cant[$i];
-                    $impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
-                    $montoFactura += $precioItem + $impuestoItem;
                 }
-
 
                 /*FIN DE CALCULOS*/
 
-                $items->precio=$this->precision($request->precio[$i]);
-                $items->descripcion=$request->descripcion[$i];
-                $items->id_impuesto=$request->impuesto[$i];
-                $items->impuesto=$impuesto->porcentaje;
-                $items->cant=$request->cant[$i];
-                $items->desc=$request->desc[$i];
+                //MULTI IMPUESTOS
+                $items->id_impuesto = null;
+                $items->impuesto = null;
+                // $items->id_impuesto_1 = null;
+                // $items->impuesto_1 = null;
+                // $items->id_impuesto_2 = null;
+                // $items->impuesto_2 = null;
+                // $items->id_impuesto_3 = null;
+                // $items->impuesto_3 = null;
+                // $items->id_impuesto_4 = null;
+                // $items->impuesto_4 = null;
+                // $items->id_impuesto_5 = null;
+                // $items->impuesto_5 = null;
+                // $items->id_impuesto_6 = null;
+                // $items->impuesto_6 = null;
+                // $items->id_impuesto_7 = null;
+                // $items->impuesto_7 = null;
+
+                $data  = $request->all();
+
+                if (isset($data['impuesto' . $z])) {
+                    if ($data['impuesto' . $z]) {
+                        for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
+                            $id_cat = 'id_impuesto_' . $x;
+                            $cat = 'impuesto_' . $x;
+                            $impuesto = Impuesto::where('id', $data['impuesto' . $z][$x])->first();
+                            if ($impuesto) {
+                                if ($x == 0) {
+                                    $items->id_impuesto = $impuesto->id;
+                                    $items->impuesto = $impuesto->porcentaje;
+                                } elseif ($x > 0) {
+                                    $items->$id_cat = $impuesto->id;
+                                    $items->$cat = $impuesto->porcentaje;
+                                }
+                            }
+                        }
+                    }
+                    //en caso tal de no tener los multiples ivas
+                }else if(isset($data['impuesto'])){
+                    if ($data['impuesto']) {
+                        for ($x = 0; $x < count($data['impuesto']); $x++) {
+                            $id_cat = 'id_impuesto_' . $x;
+                            $cat = 'impuesto_' . $x;
+                            $impuesto = Impuesto::where('id', $data['impuesto'][$x])->first();
+                            if ($impuesto) {
+                                if ($x == 0) {
+                                    $items->id_impuesto = $impuesto->id;
+                                    $items->impuesto = $impuesto->porcentaje;
+                                } elseif ($x > 0) {
+                                    $items->$id_cat = $impuesto->id;
+                                    $items->$cat = $impuesto->porcentaje;
+                                }
+                            }
+                        }
+                    }
+                }
+                //MULTI IMPUESTOS
+
+                $montoFactura = $montoFactura + $items->itemCantImpuesto();
+
+                $items->precio = $this->precision($request->precio[$i]);
+                $items->descripcion = $request->descripcion[$i];
+                $items->cant = $request->cant[$i];
+                $items->ref = $request->ref[$i];
+                $items->desc = $request->desc[$i];
                 $items->save();
-                $inner[]=$items->id;
+                $inner[] = $items->id;
+                $z++;
             }
-            
+
             if ($request->retencion) {
                 foreach ($request->retencion as $key => $value) {
                     if ($request->precio_reten[$key]) {
                         $retencion = Retencion::where('id', $request->retencion[$key])->first();
                         $retencionesTmp = NotaRetencion::where('notas', $nota->id)->where('id_retencion', $retencion->id)->count();
-                        if($retencionesTmp > 0){
+                        if ($retencionesTmp > 0) {
                             continue;
                         }
                         $reten = new NotaRetencion();
                         $reten->notas = $nota->id;
+                        $reten->tipo = 1; //hace referencia a devoluciones tipo crédito.
                         $reten->valor = $this->precision($request->precio_reten[$key]);
                         $reten->retencion = $retencion->porcentaje;
                         $reten->id_retencion = $retencion->id;
@@ -523,23 +836,28 @@ class NotascreditoController extends Controller
                     $montoRetenciones += $request->precio_reten[$key];
                 }
                 $montoFactura = $this->precision($montoFactura) - $this->precision($montoRetenciones);
-            }else{
+            } else {
                 $nota_retencion = NotaRetencion::where('notas', $nota->id)->get();
-                if($nota_retencion){
+                if ($nota_retencion) {
                     NotaRetencion::where('notas', $nota->id)->delete();
                 }
             }
 
-            if (count($inner)>0) {
+            if (count($inner) > 0) {
                 ItemsNotaCredito::where('nota', $nota->id)->whereNotIn('id', $inner)->delete();
             }
 
             //Pregunto si hay facturas asociadas
-            $notaFactura = NotaCreditoFactura::where('nota',$nota->id)->get()->last();
-            
+            $notaFactura = NotaCreditoFactura::where('nota', $nota->id)->get()->last();
+
             $factura = Factura::find($request->factura);
-            $factura->estatus = 0;
-            $factura->save();
+
+            //acumulador de notas credito de una factura
+            $precioNota = 0;
+
+            foreach ($factura->notas_credito() as $notas) {
+                $precioNota += $notas->nota()->total()->total;
+            }
 
             $notaFactura->nota = $nota->id;
             $notaFactura->factura = $factura->id;
@@ -549,9 +867,20 @@ class NotascreditoController extends Controller
                 $factura->estatus = 0;
                 $factura->save();
             }
+
+            if ($factura->total()->total == $precioNota) {
+                $factura->estatus = 0;
+            } elseif ($factura->total()->total == $factura->pagado()) {
+                $factura->estatus = 0;
+            } else {
+                $factura->estatus = 1;
+            }
+
+            $factura->save();
+
             $items->save();
 
-            if($factura->pagado()){
+            if ($factura->pagado()) {
                 $saldoNota = new NotaSaldo();
                 $saldoNota->id_nota = $nota->id;
                 $saldoNota->saldo_nota = $factura->pagado();
@@ -560,16 +889,16 @@ class NotascreditoController extends Controller
                 $cliente = Contacto::find($request->cliente);
                 $saldo_contacto = NotaSaldo::where('id_nota', $nota->id)->first();
 
-                if($saldo_contacto){
+                if ($saldo_contacto) {
                     $cliente->saldo_favor = $cliente->saldo_favor - $saldo_contacto->saldo_nota;
                     $cliente->save();
                 }
-                $cliente->saldo_favor = $cliente->saldo_favor+$factura->pagado();
+                $cliente->saldo_favor = $cliente->saldo_favor + $factura->pagado();
                 $cliente->save();
 
-               // $inner=array();
-               // for ($i=0; $i < count($request->factura) ; $i++) {
-                    /*if ($request->monto_fact[$i]) {
+                // $inner=array();
+                // for ($i=0; $i < count($request->factura) ; $i++) {
+                /*if ($request->monto_fact[$i]) {
                         $cat='id_facturacion'.($i+1);
                         $items=array();
                         if($request->$cat){ //Comprobar que exixte ese id
@@ -670,7 +999,7 @@ class NotascreditoController extends Controller
             if (count($inner)>0) { $items=$items->whereNotIn('id', $inner);  }
             $items=$items->delete();*/
 
-            $mensaje='Se ha modificado satisfactoriamente la nota de Crédito';
+            $mensaje = 'Se ha modificado satisfactoriamente la nota de Crédito';
             return redirect('empresa/notascredito')->with('success', $mensaje)->with('nota_id', $nota->id);
         }
     }
@@ -678,30 +1007,31 @@ class NotascreditoController extends Controller
     /**
      * FUNCION PARA Eliminar una nota de credito
      */
-    public function destroy($id){
-        $nota = NotaCredito::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    public function destroy($id)
+    {
+        $nota = NotaCredito::where('empresa', Auth::user()->empresa)->where('id', $id)->first();
         if ($nota) {
 
             //Recoloco los items los productos en la bodega
-            $items = ItemsNotaCredito::join('inventario as inv', 'inv.id', '=', 'items_notas.producto')->select('items_notas.*')->where('items_notas.nota',$nota->id)->where('inv.tipo_producto', 1)->get();
+            $items = ItemsNotaCredito::join('inventario as inv', 'inv.id', '=', 'items_notas.producto')->select('items_notas.*')->where('items_notas.nota', $nota->id)->where('inv.tipo_producto', 1)->get();
             foreach ($items as $item) {
-                $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $nota->bodega)->where('producto', $item->producto)->first();
+                $ajuste = ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $nota->bodega)->where('producto', $item->producto)->first();
                 if ($ajuste) {
-                    $ajuste->nro+=$item->cant;
+                    $ajuste->nro -= $item->cant;
                     $ajuste->save();
                 }
             }
             ItemsNotaCredito::where('nota', $nota->id)->delete();
             $nota_retencion = NotaRetencion::where('notas', $nota->id)->get();
 
-            if($nota_retencion){
+            if ($nota_retencion) {
                 NotaRetencion::where('notas', $nota->id)->delete();
             }
 
             $cliente = Contacto::find($nota->cliente);
             $saldo_contacto = NotaSaldo::where('id_nota', $nota->id)->first();
 
-            if($saldo_contacto){
+            if ($saldo_contacto) {
                 $cliente->saldo_favor = $cliente->saldo_favor - $saldo_contacto->saldo_nota;
                 $cliente->save();
                 NotaSaldo::where('id_nota', $nota->id)->delete();
@@ -709,16 +1039,16 @@ class NotascreditoController extends Controller
 
 
             //Coloco el estatus de la factura en abierta
-            $facturas_reg = NotaCreditoFactura::where('nota',$nota->id)->get();
+            $facturas_reg = NotaCreditoFactura::where('nota', $nota->id)->get();
             foreach ($facturas_reg as $factura) {
-                $dato=$factura->factura();
-                $dato->estatus=1;
+                $dato = $factura->factura();
+                $dato->estatus = 1;
                 $dato->save();
             }
             NotaCreditoFactura::where('nota', $nota->id)->delete();
 
 
-            $items=Devoluciones::where('nota', $nota->id)->get();
+            $items = Devoluciones::where('nota', $nota->id)->get();
             foreach ($items as $key => $value) {
                 //gastos
                 $gasto = Gastos::where('empresa', Auth::user()->empresa)->where('nro_devolucion', $value->id)->first();
@@ -729,12 +1059,10 @@ class NotascreditoController extends Controller
             }
             Devoluciones::where('nota', $nota->id)->delete();
             $nota->delete();
-            $mensaje='Se ha eliminado satisfactoriamente la nota de crédito';
+            $mensaje = 'Se ha eliminado satisfactoriamente la nota de crédito';
             return back()->with('success', $mensaje);
-
         }
         return redirect('empresa/notascredito')->with('success', 'No existe un registro con ese id');
-
     }
 
     /**
@@ -1185,8 +1513,10 @@ public function facturas_retenciones($id){
 
         $items = ItemsNotaCredito::where('nota', $id)->get();
 
-        if ($NotaCredito->tiempo_creacion) {
-            $horaFac = $NotaCredito->tiempo_creacion;
+        if (isset($NotaCredito->tiempo_creacion)) {
+            if($NotaCredito->tiempo_creacion){
+                $horaFac = $NotaCredito->tiempo_creacion;
+            }
         } else {
             $horaFac = $NotaCredito->created_at;
         }
