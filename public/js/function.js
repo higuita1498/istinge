@@ -693,6 +693,14 @@ function notif(id){
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar=false, type = 1){
+    
+
+    if($("#facelectornica").val() != null){
+        if($("#facelectornica").val() == 2){
+            type = 2;
+        }
+    }
+
     if (window.location.pathname.split("/")[1] === "software") {
         var url='/software/empresa/contactos/'+selected+'/json';
     }else{
@@ -706,8 +714,11 @@ function contacto(selected, modificar=false, type = 1){
         },
         success: function(data){
             data=JSON.parse(data);
+
             if(type == 1){
-                 data=data[0];
+                if(data[0]){
+                    data=data[0];
+                }
             }
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.

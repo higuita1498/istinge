@@ -674,9 +674,10 @@ public function forma_pago()
         $fechaInicio = $inicioCorte = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
         $inicioCorte = Carbon::parse($inicioCorte)->addDay()->toFormattedDateString();
         
-        //obtenemos el mes de la factura actual
+        //obtenemos el mes y año de la factura actual
         $mesFactura = Carbon::parse($this->fecha)->format('m-Y');
         
+        //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
         $fechaFin = $finCorte = $diaFinCorte . "-" . $mesFactura;
         $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
         
@@ -692,21 +693,21 @@ public function forma_pago()
         $fechaInicio = Carbon::parse($fechaInicio);
         $fechaFin    = Carbon::parse($fechaFin);
         
-        //Primero analizamos si el contrato es la primer factura que vamos a generar
+        //Primero analizamos si es la primer factura del contrato que vamos a generar
         if($this->contrato_id != null){
             
             $factura = Factura::where('empresa',$this->empresa)->where('contrato_id',$this->contrato_id)->orderBy('id','ASC')->first();
             
             /*
             De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos 
-            los primeros dias de uso dependidneod de la creacion del contrato
+            los primeros dias de uso dependiendo de la creacion del contrato
             también debemos tener la opción de prorrateo activa en el menú de configuración.
             */
             if($factura->id == $this->id && $empresa->prorrateo == 1){
                 
+                //Buscamos el contrato al que esta asociada la factura
                 $contrato = Contrato::find($this->contrato_id);
-                $fechaContrato = Carbon::parse($contrato->created_at);
-                
+
                 $yearContrato = Carbon::parse($contrato->created_at)->format('Y');
                 $mesContrato = Carbon::parse($contrato->created_at)->format('m');
                 $diaContrato = Carbon::parse($contrato->created_at)->format('d');
@@ -717,7 +718,7 @@ public function forma_pago()
                 $diasCobrados = $fechaContrato->diffInDays($fechaFin);
                 $mensaje.= " total días cobrados: " . $diasCobrados; 
             }else{
-
+                //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
                 $diasCobrados = $fechaInicio->diffInDays($fechaFin);
                 $mensaje.= " total días cobrados: " . $diasCobrados; 
             }

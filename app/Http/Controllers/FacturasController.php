@@ -834,6 +834,7 @@ class FacturasController extends Controller{
 
     $tipo = 1; //1= normal, 2=Electrónica.
 
+    // Retorna si un cliente puede crear factura electrónica o no.
     $electronica = Factura::booleanFacturaElectronica($request->cliente);
 
     if($contrato){
@@ -877,6 +878,15 @@ class FacturasController extends Controller{
 
     if($contrato){
         $factura->contrato_id = $contrato->id;
+    }else{
+        /*
+        Validamos aca de nuevo si tiene contrato o no, para que las facturas electronicas que tienen contrato
+         tengan la posibilidad de que se les guarde el id del contrato en la factura. 
+         */
+        $contrato = Contrato::where('client_id',$request->cliente)->first();
+        if($contrato){
+            $factura->contrato_id = $contrato->id;
+        }
     }
     
     $factura->save();
