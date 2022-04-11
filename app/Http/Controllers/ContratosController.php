@@ -711,6 +711,7 @@ class ContratosController extends Controller
                         }
                     }
 
+                    #ELMINAMOS DEL QUEUE#
                     $queue = $API->comm("/queue/simple/getall", array(
                         "?target" => $contrato->ip.'/32'
                         )
@@ -722,6 +723,24 @@ class ContratosController extends Controller
                             )
                         );
                     }
+                    #ELMINAMOS DEL QUEUE#
+
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
+
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=ips_autorizadas",false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
+
+                    if(count($ARRAYS)>0){
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+                    }
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
                     ## ELIMINAMOS DE MK ##
 
                     $rate_limit      = '';
@@ -847,6 +866,13 @@ class ContratosController extends Controller
                             );
                         }
                     //}
+                    #AGREGAMOS A IP_AUTORIZADAS#
+                    $API->comm("/ip/firewall/address-list/add", array(
+                        "address" => $request->ip,
+                        "list" => 'ips_autorizadas'
+                        )
+                    );
+                    #AGREGAMOS A IP_AUTORIZADAS#
                 }
 
                 $API->disconnect();
@@ -1217,7 +1243,6 @@ class ContratosController extends Controller
                     #AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
                         "address" => $contrato->ip,
-                        "comment" => $contrato->servicio,
                         "list" => 'ips_autorizadas'
                         )
                     );

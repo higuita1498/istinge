@@ -110,7 +110,11 @@ class AvisosController extends Controller
     {
         $empresa = Empresa::find(1);
         $type = ''; $mensaje = '';
-        
+        $fail = 0;
+        $succ = 0;
+        $cor = 0;
+        $numeros = [];
+
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
 
@@ -118,35 +122,9 @@ class AvisosController extends Controller
                 $plantilla = Plantilla::find($request->plantilla);
                 
                 if($request->type == 'SMS'){
-                    if($empresa->device_id && $empresa->sms_gateway){
-                        $curl = curl_init();
-                    
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://smsgateway.me/api/v4/message/send',
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => '',
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => 'POST',
-                            CURLOPT_POSTFIELDS =>'[{
-                                                    "phone_number": "'.$empresa->codigo.''.$contrato->cliente()->celular.'",
-                                                    "message": "'.strip_tags($plantilla->contenido).'",
-                                                    "device_id": '.$empresa->device_id.'
-                                                }]',
-                            CURLOPT_HTTPHEADER => array(
-                                'Authorization: '.$empresa->sms_gateway,
-                                'Content-Type: text/plain'
-                            ),
-                        ));
-                        
-                        $response = curl_exec($curl);
-                        $err = curl_error($curl);
-                        curl_close($curl);
-                    }else{
-                        return redirect('empresa/avisos')->with('danger', 'ERROR: No tiene los parámetros de SMS GATEWAY ME registrado en el sistema. Dirígase a Configuración > Empresa');
-                    }
+                    $numero = str_replace('+','',$contrato->cliente()->celular);
+                    $numero = str_replace(' ','',$numero);
+                    array_push($numeros, '57'.$numero);
                 }elseif($request->type == 'EMAIL'){
                     $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
                     if($host){
@@ -169,33 +147,76 @@ class AvisosController extends Controller
                         'cliente' => $contrato->cliente()->nombre,
                         'empresa' => Auth::user()->empresa()->nombre,
                         'nit' => Auth::user()->empresa()->nit.'-'.Auth::user()->empresa()->dv,
+                        'date' => date('d-m-Y'),
                     );
                     $correo = new NotificacionMailable($datos);
                     Mail::to($contrato->cliente()->email)->send($correo);
-                    return redirect('empresa/avisos')->with('success', 'Notificaciones por EMAIL, enviadas con éxito');
+                    $cor++;
                 }
             }
         }
-        $response = json_decode($response, true);
-        
-        if($response[0]['status'] == 'fail'){
-            $type = 'danger';
-            if($response[0]['message'] == 'Could not process request'){
-                $mensaje = 'SMS GATEWAY ME API: No se pudo procesar la solicitud';
-            }elseif($response[0]['message'] == 'failed validation'){
-                $mensaje = 'SMS GATEWAY ME API: Validación fallida';
-            }
-        }elseif($response[0]['status'] == 'pending'){
-            $type = 'success';
-            $mensaje = 'SMS GATEWAY ME API: Respuesta exitosa. Una lista de mensajes que ahora están pendientes de enviarse.';
-        }
-        
+
         if($request->type == 'SMS'){
+            $post['to'] = $numeros;
+            $post['text'] = $plantilla->contenido;
+            $post['from'] = "";
+            $login ="jjtuiran2021";
+            $password = 'Bstc2710';
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+            curl_setopt($ch, CURLOPT_HTTPHEADER,
+            array(
+                "Accept: application/json",
+                "Authorization: Basic ".base64_encode($login.":".$password)));
+            $result = curl_exec ($ch);
+            $err  = curl_error($ch);
+            curl_close($ch);
+
             if ($err) {
-                return redirect('empresa/avisos')->with('danger', $err);
-            } else {
-                return redirect('empresa/avisos')->with($type, $mensaje);
+                return back()->with('danger', $err);
+            }else{
+                $response = json_decode($result, true);
+
+                if(isset($response['error'])){
+                    if($response['error']['code'] == 102){
+                        $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                    }else if($response['error']['code'] == 103){
+                        $msj = "Nombre de usuario o contraseña desconocidos";
+                    }else if($response['error']['code'] == 104){
+                        $msj = "Falta el mensaje de texto";
+                    }else if($response['error']['code'] == 105){
+                        $msj = "Mensaje de texto demasiado largo";
+                    }else if($response['error']['code'] == 106){
+                        $msj = "Falta el remitente";
+                    }else if($response['error']['code'] == 107){
+                        $msj = "Remitente demasiado largo";
+                    }else if($response['error']['code'] == 108){
+                        $msj = "No hay fecha y hora válida para enviar";
+                    }else if($response['error']['code'] == 109){
+                        $msj = "URL de notificación incorrecta";
+                    }else if($response['error']['code'] == 110){
+                        $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                    }else if($response['error']['code'] == 111){
+                        $msj = "Crédito/Saldo insuficiente";
+                    }else if($response['error']['code'] == 112){
+                        $msj = "Dirección IP no permitida";
+                    }else if($response['error']['code'] == 113){
+                        $msj = "Codificación no válida";
+                    }else{
+                        $msj = $response['error']['description'];
+                    }
+                    $fail++;
+                }else{
+                    $succ++;
+                }
             }
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado. SMS Enviados: '.$fail.' - SMS Fallidos: '.$succ);
+        }elseif($request->type == 'EMAIL'){
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
         }
     }
 }

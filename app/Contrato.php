@@ -14,6 +14,7 @@ use App\AP;
 use App\GrupoCorte;
 use App\Puerto;
 use App\Ping;
+use App\PlanesVelocidad;
 
 class Contrato extends Model
 {
@@ -48,7 +49,7 @@ class Contrato extends Model
     }
 	
 	public function plan(){
-		return DB::table('planes_velocidad')->where('id', $this->plan_id)->first();
+		return PlanesVelocidad::where('id', $this->plan_id)->first();
 	}
     
     public function usado(){

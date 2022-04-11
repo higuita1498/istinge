@@ -138,7 +138,7 @@
                             <p style="text-align: justify;" class="small pl-2">Identificación: <b>{{ $contrato->nit }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Correo electrónico: <b>{{ $contrato->email }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Teléfono de contacto: <b>{{ $contrato->celular }}</b></p>
-                            <p style="text-align: justify;" class="small pl-2">Dirección Servicio: <b>{{ $contrato->direccion }}</b>Estrato: <b>{{ $contrato->estrato ? $contrato->estrato : '   ' }}</b></p>
+                            <p style="text-align: justify;" class="small pl-2">Dirección Servicio: <b>{{ $contrato->direccion }}</b> Estrato: <b>{{ $contrato->estrato ? $contrato->estrato : '   ' }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Departamento: <b>{{ $contrato->departamento()->nombre }}</b> Municipio: <b>{{ $contrato->municipio()->nombre }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Dirección Suscriptor: <b>{{ $contrato->direccion }}</b></p><br>
                         </div>
@@ -550,7 +550,7 @@
                         </p>
                     </td>
                     <td style="vertical-align:top;" width="50%">
-                        <div style="border: 1px  solid #000; margin-top: 5px;text-align: center;">
+                        <div style="border: 1px  solid #000; margin-top: 0px;text-align: center;">
                             <img src="data:image/png;base64,{{substr($contrato->firma_isp,1)}}" style="width: 20%; margin-top: 12.5px;">
                             <p style="color: #9e9b9b;text-align: center;" class="small">Aceptación contrato mediante firma o cualquier otro medio válido</p>
                         </div>

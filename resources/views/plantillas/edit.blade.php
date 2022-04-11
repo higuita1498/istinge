@@ -35,7 +35,7 @@
         	    </span>
         	</div>
 
-        	<div class="col-md-12 form-group">
+        	<div class="col-md-12 form-group {{$plantilla->tipo==0?'d-none':''}}" id="div_variables">
         		<div class="alert alert-success" role="alert">
         			<h4 class="alert-heading">VARIABLLES DE PERSONALIZACIÓN</h4>
         			<p>Si al crear la plantilla, desea utilizar variables de personalización, le dejamos el listado de las variables disponibles. Por favor utilizarlas tal cual como se reflejan.</p>
@@ -91,11 +91,11 @@
 <script type="text/javascript">
     $('#tipo').change(function() {
     	if($("#tipo").val() == 0){
-    		$("#div_email").addClass('d-none');
+    		$("#div_email, #div_variables").addClass('d-none');
     		$("#div_sms").removeClass('d-none');
     	}else if($("#tipo").val() == 1){
     		$("#div_sms").addClass('d-none');
-    		$("#div_email").removeClass('d-none');
+    		$("#div_email, #div_variables").removeClass('d-none');
     	}
     });
 </script>

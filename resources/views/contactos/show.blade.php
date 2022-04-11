@@ -294,9 +294,11 @@
 				<li class="nav-item">
 					<a class="nav-link" id="promesas-pago-tab" data-toggle="tab" href="#promesas-pago" role="tab" aria-controls="promesas-pago" aria-selected="false">Promesas de Pago</a>
 				</li>
+				@if($contacto->nit)
 				<li class="nav-item">
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
+				@endif
 				@endif
 				<li class="nav-item">
 					<a class="nav-link {{ $contacto->usado()==0?'active':'' }}" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
@@ -379,6 +381,7 @@
 	    				</table>
 					</div>
 				</div>
+				@if($contacto->nit)
 				<div class="tab-pane fade" id="radicad" role="tabpanel" aria-labelledby="radicad-tab">
 					<input type="hidden" id="url-show-radicados" value="{{route('radicados.datatable.cliente', $contacto->nit)}}">
 					<div class="table-responsive mt-3">
@@ -395,6 +398,7 @@
 						</table>
 					</div>
 				</div>
+				@endif
 				@endif
 				<div class="tab-pane fade {{ $contacto->usado()==0?'show active':'' }}" id="arcadj" role="tabpanel" aria-labelledby="arcadj-tab">
 					<div class="row mt-3">

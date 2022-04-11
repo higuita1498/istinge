@@ -58,7 +58,7 @@
 	   <div class="row" >
 	       <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 	           <a href="{{route('avisos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
-	           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
+	           <button type="submit" id="submitcheck" onclick="submitLimit(this.id); alert_swal();" class="btn btn-success">Guardar</button>
 	       </div>
 	   </div>
     </form>
@@ -80,6 +80,14 @@
         }
         $("#contrato").selectpicker('refresh');
     }
-    
+
+    function alert_swal(){
+    	Swal.fire({
+    		type: 'info',
+    		title: 'ENVIANDO NOTIFICACIONES',
+    		text: 'Este proceso puede demorar varios minutos',
+    		showConfirmButton: false,
+    	})
+    }
 </script>
 @endsection
