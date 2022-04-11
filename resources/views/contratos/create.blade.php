@@ -17,6 +17,8 @@
 			}, 100000);
 		</script>
 	@endif
+
+
 	
 	<form method="POST" action="{{ route('contratos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
 	    @csrf
@@ -136,7 +138,7 @@
                   <div class="input-group">
                     <input type="text" class="form-control" name="ip" id="ip" required="" readonly onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-success btn-sm" type="button" id="searchIP"><i class="fa fa-search" style="margin: 2px;"></i></button>
+                        <button class="btn btn-outline-success btn-sm" type="button" id="searchIP" style="border-radius: 0 5px 5px 0;"><i class="fa fa-search" style="margin: 2px;"></i></button>
                     </div>
                     <span class="help-block error">
                         <strong>{{ $errors->first('ip') }}</strong>
@@ -288,6 +290,19 @@
                 </span>
             </div>
 
+            <div class="col-md-4 form-group">
+                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly>
+                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly>
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
+                            <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-12 text-center">
                 <hr>
                 <h4>ADJUNTOS RELACIONADOS AL CONTRATO</h4>
@@ -426,6 +441,32 @@
                     <div class="row" style="text-align: center;" id="row_ip">
                         
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-gps" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body px-0">
+                    <div class="row" style="text-align: center;">
+                        <div class="col-md-12">
+                            <p><span class="font-weight-bold text-uppercase">Arrastre el pin para indicar las coordenadas deseadas.</span><br>(Por defecto el mapa está centrado en Colombia)</p>
+                        </div>
+                    </div>
+                    <div class="row" style="text-align: center;">
+                        <span class="d-none">
+                            Location: <input type="text" id="us2-address" style="width: 200px"/>
+                            Radius: <input type="text" id="us2-radius"/>
+                        </span>
+                        <center>
+                            <div id="us2" style="width: 465px; height: 400px; position: relative; overflow: hidden; margin: 0 30px;"></div>
+                        </center>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

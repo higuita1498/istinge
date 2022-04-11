@@ -430,7 +430,7 @@ class ContratosController extends Controller
                         return redirect('empresa/contratos')->with('danger', $mensaje);
                     }
                 }
-                
+
                 /*IP ESTÁTICA*/
                 if($request->conexion == 3){
                     if($mikrotik->amarre_mac == 1){
@@ -478,7 +478,7 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                        
+
                         $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($cliente->nombre),
                                 "target"          => $request->ip,
@@ -492,7 +492,7 @@ class ContratosController extends Controller
                         );
                     }
                 }
-                
+
                 /*VLAN*/
                 if($request->conexion == 4){
                     $API->comm("/interface/vlan/add", array(
@@ -501,13 +501,13 @@ class ContratosController extends Controller
                         "interface"   => $request->interfaz     // INTERFACE DEL CLIENTE
                         )
                     );
-                    
+
                     $API->comm("/ip/address/add", array(
                         "address"     => $request->local_address, // SEGMENTO DE IP
                         "interface"   => $request->name_vlan      // NOMBRE DEL VLAN
                         )
                     );
-                    
+
                     $API->comm("/queue/simple/add", array(
                             "name"            => $this->normaliza($cliente->nombre),
                             "target"          => $request->ip,
@@ -527,7 +527,7 @@ class ContratosController extends Controller
                     $API->comm("/ip/firewall/address-list/add\n=list=ips_autorizadas\n=address=".$request->ip);
                     $ip_autorizada = 1;
                 }
-                
+
                 $API->disconnect();
                 
                 $contrato = new Contrato();
@@ -557,6 +557,9 @@ class ContratosController extends Controller
                 $contrato->ip_autorizada           = $ip_autorizada;
                 $contrato->empresa                 = Auth::user()->empresa;
                 $contrato->puerto_conexion         = $request->puerto_conexion;
+                $contrato->latitude                = $request->latitude;
+                $contrato->longitude               = $request->longitude;
+
                 if($request->factura_individual){
                     $contrato->factura_individual = $request->factura_individual;
                 }
@@ -622,7 +625,7 @@ class ContratosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -950,6 +953,8 @@ class ContratosController extends Controller
                     $contrato->password           = $request->password;
                     $contrato->simple_queue       = $request->simple_queue;
                     $contrato->conexion           = $request->conexion;
+                    $contrato->latitude           = $request->latitude;
+                    $contrato->longitude          = $request->longitude;
                     if($request->factura_individual){
                         $contrato->factura_individual = $request->factura_individual;
                     }
@@ -1020,7 +1025,7 @@ class ContratosController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'p.name as plan', 'p.price', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue')->where('contracts.id', $id)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'p.name as plan', 'p.price', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude')->where('contracts.id', $id)->first();
         
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Detalles Contrato: '.$contrato->nro]);

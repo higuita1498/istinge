@@ -419,6 +419,8 @@
         <script src="{{asset('js/function.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script src="{{asset('js/custom.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script src="{{asset('js/dian.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
+        <script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+        <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
         
         <script type="text/javascript">
             $( document ).ready(function() {
