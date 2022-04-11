@@ -15,6 +15,9 @@
     <a href="{{ route('contratos.log',$id )}}" class="btn btn-outline-info btn-icons" title="Log de Contrato"><i class="fas fa-clipboard-list"></i></a>
 @endif
 <a href="{{ route('contratos.edit',$id )}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+@if($latitude && $longitude)
+    <a href='https://www.google.com/maps/search/{{$latitude}},{{$longitude}}?hl=es' class="btn btn-outline-success btn-icons" title="Ver Ubicación Google Maps" target="_blank"><i class="fas fa-map-marked-alt"></i></a>
+@endif
 <button @if($state == 'enabled') class="btn btn-outline-danger btn-icons" title="Deshabilitar" @else class="btn btn-outline-success btn-icons" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$id}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i></button>
 <button class="btn btn-outline-danger btn-icons mr-1" type="submit" title="Eliminar" onclick="confirmar('eliminar-contrato{{$id}}', '¿Está seguro que desea eliminar el contrato?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 
