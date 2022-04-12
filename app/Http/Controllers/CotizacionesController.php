@@ -58,7 +58,7 @@ class CotizacionesController extends Controller
             ->select('factura.id', 'factura.codigo', 'factura.cot_nro', DB::raw('if(factura.cliente,c.nombre,fc.nombre) as nombrecliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus',
                 DB::raw('SUM(
       (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))
-            ->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo', 2);
+            ->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo', 3);
 
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $facturas=$facturas->where('factura.cot_nro', 'like', '%' .$request->name_1.'%');
@@ -173,7 +173,7 @@ class CotizacionesController extends Controller
 
         $factura = new Cotizacion;
         $factura->notas =$request->notas;
-        $factura->tipo =2;
+        $factura->tipo =3;
         $factura->cot_nro=$caja;
         $factura->empresa=Auth::user()->empresa;
         if ($request->tipocliente==1) {
@@ -245,7 +245,7 @@ class CotizacionesController extends Controller
      */
     public function facturar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $cotizacion = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $cotizacion = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
         if ($cotizacion) {
 
             $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
@@ -282,9 +282,9 @@ class CotizacionesController extends Controller
      * @return view
      */
     public function show($id){
-        return "ok";
+
         $this->getAllPermissions(Auth::user()->id);
-        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
         if ($factura) {
             view()->share(['title' => 'Cotización '.$factura->cot_nro, 'invert'=>true, 'icon' =>'']);
 
@@ -305,7 +305,7 @@ class CotizacionesController extends Controller
          * datos debemos hacer la misma consulta
          **/
         view()->share(['title' => 'Imprimir Cotización']);
-        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
         if ($factura) {
 
             $items = ItemsFactura::where('factura',$factura->id)->get();
@@ -324,7 +324,7 @@ class CotizacionesController extends Controller
      */
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $cotizacion = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $cotizacion = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
             $categorias=Categoria::where('empresa',Auth::user()->empresa)
         ->orWhere('empresa', 1)
         ->whereNull('asociado')->get();
@@ -386,7 +386,7 @@ class CotizacionesController extends Controller
         if ($factura) { //Si extiste el registro
             $factura->notas =$request->notas;
 
-            $factura->tipo =$request->facturar?1:2;
+            $factura->tipo =$request->facturar?1:3;
             $factura->estatus =1;
             $factura->empresa=Auth::user()->empresa;
             $factura->lista_precios=$request->lista_precios;
@@ -401,7 +401,7 @@ class CotizacionesController extends Controller
                     return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
                 }
 
-                $factura->nro= Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->count()+1;
+                $factura->nro= Factura::where('empresa',Auth::user()->empresa)->where('tipo','!=',3)->count()+1;
                 $factura->codigo=$nro->prefijo.$nro->inicio;
                 $factura->plazo=$request->plazo;
                 $factura->term_cond=$request->term_cond;
@@ -610,7 +610,7 @@ class CotizacionesController extends Controller
          * datos debemos hacer la misma consulta
          **/
         view()->share(['title' => 'Enviando Cotización']);
-        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
         if ($factura) {
             if (!$emails) {
                 $emails[]=$factura->cliente()->email;
@@ -677,7 +677,7 @@ class CotizacionesController extends Controller
             8=>'acciones'
         );
         $facturas=Cotizacion::leftjoin('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->leftjoin('factura_contacto as fc', 'factura.id', '=', 'fc.factura')->select('factura.*', DB::raw('if(factura.cliente,c.nombre,fc.nombre) as nombrecliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',2)->whereRaw('factura.id in (Select distinct(factura) from items_factura where producto='.$producto.' and tipo_inventario=1)');
+            ->leftjoin('factura_contacto as fc', 'factura.id', '=', 'fc.factura')->select('factura.*', DB::raw('if(factura.cliente,c.nombre,fc.nombre) as nombrecliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',3)->whereRaw('factura.id in (Select distinct(factura) from items_factura where producto='.$producto.' and tipo_inventario=1)');
 
         if ($requestData->search['value']) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
@@ -726,10 +726,10 @@ class CotizacionesController extends Controller
     }
 
     public function destroy($id){
-        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->where('cot_nro', $id)->first();
+        $factura = Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->where('cot_nro', $id)->first();
 
         //Proceso para saber cual es el número mas alto en consecutivos de una cotizacion de la empresa.
-        $last_cotizacion= Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',2)->orderBy('cot_nro','DESC')->first();
+        $last_cotizacion= Cotizacion::where('empresa',Auth::user()->empresa)->where('tipo',3)->orderBy('cot_nro','DESC')->first();
 
         if ($factura) {
 
@@ -781,7 +781,7 @@ class CotizacionesController extends Controller
                 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus',
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))
             ->where('factura.empresa',Auth::user()->empresa)
-            ->where('factura.tipo', 2)
+            ->where('factura.tipo', 3)
             ->where('factura.cliente', $cliente);
 
 
