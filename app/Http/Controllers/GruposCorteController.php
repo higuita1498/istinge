@@ -80,16 +80,16 @@ class GruposCorteController extends Controller
                 return "<a href=" . route('grupos-corte.show', $grupo->id) . ">{$grupo->nombre}</div></a>";
             })
             ->editColumn('fecha_factura', function (GrupoCorte $grupo) {
-                return $grupo->fecha_factura;
+                return ($grupo->fecha_factura == 0) ? 'No aplica' : $grupo->fecha_factura;
             })
             ->editColumn('fecha_pago', function (GrupoCorte $grupo) {
-                return $grupo->fecha_pago;
+                return ($grupo->fecha_pago == 0) ? 'No aplica' : $grupo->fecha_pago;
             })
             ->editColumn('fecha_corte', function (GrupoCorte $grupo) {
-                return $grupo->fecha_corte;
+                return ($grupo->fecha_corte == 0) ? 'No aplica' : $grupo->fecha_corte;
             })
             ->editColumn('fecha_suspension', function (GrupoCorte $grupo) {
-                return $grupo->fecha_suspension;
+                return ($grupo->fecha_suspension == 0) ? 'No aplica' : $grupo->fecha_suspension;
             })
             ->editColumn('status', function (GrupoCorte $grupo) {
                 return "<span class='text-{$grupo->status("true")}'><strong>{$grupo->status()}</strong></span>";

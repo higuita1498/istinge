@@ -31,10 +31,10 @@
                         </tr>
                         <tr>
                             <td class="text-center">{{$grupo->nombre}}</td>
-                            <td class="text-center">{{$grupo->fecha_factura}}</td>
-                            <td class="text-center">{{$grupo->fecha_pago}}</td>
-                            <td class="text-center">{{$grupo->fecha_corte}}</td>
-                            <td class="text-center">{{$grupo->fecha_suspension}}</td>
+                            <td class="text-center">{{$grupo->fecha_factura == 0 ? 'No Aplica' : $grupo->fecha_factura}}</td>
+                            <td class="text-center">{{$grupo->fecha_pago == 0 ? 'No Aplica' : $grupo->fecha_pago}}</td>
+                            <td class="text-center">{{$grupo->fecha_corte == 0 ? 'No Aplica' : $grupo->fecha_corte}}</td>
+                            <td class="text-center">{{$grupo->fecha_suspension == 0 ? 'No Aplica' : $grupo->fecha_suspension}}</td>
                             <td class="text-center"><span class="text-{{$grupo->status('true')}}"><b>{{$grupo->status()}}</b></span></td>
                             <td class="text-center">{{$contratos}}</td>
                         </tr>
