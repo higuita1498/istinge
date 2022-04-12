@@ -125,7 +125,7 @@
                         <div class="col-sm-8">
                             <select name="documento" id="documento" class="form-control selectpicker " data-live-search="true" data-size="5" required="">
                                 <option value="1" @if(isset($tipo_documento->tipo)){{$tipo_documento->tipo==1?'selected':''}}@endif>Factura de Venta</option>
-                                <option value="3" @if(isset($tipo_documento->tipo)){{$tipo_documento->tipo==3?'selected':''}}@endif>Cuenta de Cobro</option>
+                                <option value="3" @if(isset($tipo_documento->tipo)){{$tipo_documento->tipo==4?'selected':''}}@endif>Cuenta de Cobro</option>
                             </select>
                         </div>
                     </div>
