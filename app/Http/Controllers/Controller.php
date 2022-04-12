@@ -1392,6 +1392,46 @@ class Controller extends BaseController
                 $from = 950;
                 $to   = 1000;
             break;
+            case '21':
+                $from = 1000;
+                $to   = 1050;
+            break;
+            case '22':
+                $from = 1050;
+                $to   = 1100;
+            break;
+            case '23':
+                $from = 1100;
+                $to   = 1150;
+            break;
+            case '24':
+                $from = 1150;
+                $to   = 1200;
+            break;
+            case '25':
+                $from = 1200;
+                $to   = 1250;
+            break;
+            case '26':
+                $from = 1250;
+                $to   = 1300;
+            break;
+            case '27':
+                $from = 1300;
+                $to   = 1350;
+            break;
+            case '28':
+                $from = 1350;
+                $to   = 1400;
+            break;
+            case '29':
+                $from = 1400;
+                $to   = 1450;
+            break;
+            case '30':
+                $from = 1450;
+                $to   = 1500;
+            break;
         }
         
         $contratos = Contrato::where('status', 1)->where('state', 'enabled')->whereBetween('id', [$from, $to])->get();
