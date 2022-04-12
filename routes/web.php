@@ -1055,6 +1055,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('deshabilitados', 'ContratosController@disabled')->name('contratos.disabled');
 		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
 		Route::get('{id}/{archivo}/eliminar', 'ContratosController@eliminarAdjunto')->name('contratos.eliminarAdjunto');
+        Route::post('{id}/enviar_mk', 'ContratosController@enviar_mk')->name('contratos.enviar_mk');
 	});
 	Route::resource('contratos', 'ContratosController');
 	

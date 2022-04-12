@@ -24,3 +24,10 @@
 @if($firma_isp)
     <a href="{{ route('asignaciones.imprimir',$id )}}"  class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></i></a>
 @endif
+
+@if(Auth::user()->rol == 3 && $mk == 0)
+<form action="{{ route('contratos.enviar_mk',$id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="enviar-mk-{{$id}}">
+    {{ csrf_field() }}
+</form>
+<button class="btn btn-outline-warning btn-icons" title="Enviar a MK" type="submit" onclick="confirmar('enviar-mk-{{$id}}', '¿Está seguro que desea registrar este contrato en la mikrotik?', '');"><i class="fas fa-server"></i></button>
+@endif
