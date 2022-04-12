@@ -222,7 +222,7 @@ class CronController extends Controller
             where('f.vencimiento', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            take(25)->
+            take(15)->
             get();
 
         //dd($contactos);
