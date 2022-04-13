@@ -29,6 +29,18 @@
         </script>
     @endif
 
+    @if(Session::has('danger'))
+        <div class="alert alert-danger">
+        	{{Session::get('danger')}}
+        </div>
+        <script type="text/javascript">
+        	setTimeout(function() {
+        		$('.alert').hide();
+        		$('.active_table').attr('class', ' ');
+        	}, 5000);
+        </script>
+    @endif
+
     @if(Session::has('message_denied'))
 	    <div class="alert alert-danger" role="alert">
 	    	{{Session::get('message_denied')}}
