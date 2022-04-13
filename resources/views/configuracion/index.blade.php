@@ -138,6 +138,16 @@
 		</div>
 		@endif
 
+		@if(Auth::user()->nombres == 'Desarrollo')
+		<div class="col-sm-3">
+			<h4 class="card-title">Integraciones</h4>
+			<p>Configure cada uno de los servicios disponibles para darle uso en NetworkSoft</p>
+			<a href="{{ route('integracion-sms.index') }}">Mensajería</a><br>
+			<a href="#">Pasarela de Pago</a><br>
+			<a href="#">Troncal sip</a><br>
+		</div>
+		@endif
+
 		<div class="col-sm-3">
 			<h4 class="card-title">Limpieza del Sistema</h4>
 			<p>Limpia los archivos temporales y caché del sistema.</p>

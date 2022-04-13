@@ -936,6 +936,14 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
             'ConfiguracionController@calculos_nomina_editcalculo'
         )->name('configuraicon.calculosnomina_edit');
         Route::post('/calculos_nomina/storecalculo', 'ConfiguracionController@storecalculo');
+
+        //INTEGRACION SMS
+        Route::group(['prefix' => 'integracion-sms'], function() {
+            Route::post('/{id}/act_desc', 'IntegracionSMSController@act_desc')->name('integracion-sms.act_desc');
+            Route::get('/{id}/envio_prueba', 'IntegracionSMSController@envio_prueba')->name('integracion-sms.envio_prueba');
+        });
+        Route::resource('integracion-sms', 'IntegracionSMSController');
+
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
