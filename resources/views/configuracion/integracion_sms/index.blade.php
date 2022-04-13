@@ -54,7 +54,7 @@
 		                @else
 		                  <button class="btn btn-outline-success btn-icons" type="submit" title="Activar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea activar este servicio?', '');"><i class="fas fa-power-off"></i></button>
 		                @endif
-		                @if($servicio->api_key && $servicio->user && $servicio->pass)
+		                @if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero || $servicio->user && $servicio->pass && $servicio->numero)
 		                    <a href="{{route('integracion-sms.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-icons" title="Envío de SMS Prueba"><i class="far fa-comment-dots"></i></a>
 		                @endif
 					</td>

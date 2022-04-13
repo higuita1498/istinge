@@ -12,7 +12,7 @@
         <button class="btn btn-outline-success btn-sm" type="submit" title="Hablitar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea activar este servicio?', '');"><i class="fas fa-power-off"></i> Hablitar</button>
 	@endif
 
-    @if($servicio->api_key && $servicio->user && $servicio->pass)
+    @if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero || $servicio->user && $servicio->pass && $servicio->numero)
         <a href="{{route('integracion-sms.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-sm" title="Editar"><i class="far fa-comment-dots"></i> SMS de Prueba</a>
     @endif
 @endsection
