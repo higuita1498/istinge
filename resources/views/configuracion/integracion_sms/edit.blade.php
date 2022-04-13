@@ -38,17 +38,6 @@
 	                <strong>{{ $errors->first('numero') }}</strong>
 	            </span>
 	        </div>
-
-	        <div class="col-md-4 form-group">
-	        	<label class="control-label">Estado del Servicio <span class="text-danger">*</span></label>
-	        	<select class="form-control selectpicker" name="status" id="status" required="" title="Seleccione">
-	        		<option {{$servicio->status==0?'selected':''}} value="0">Deshabilitado</option>
-	        		<option {{$servicio->status==1?'selected':''}} value="1">Habilitado</option>
-	        	</select>
-	        	<span class="help-block error">
-	        		<strong>{{ $errors->first('status') }}</strong>
-	        	</span>
-	        </div>
 	    </div>
 	    <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
 	    <hr>
