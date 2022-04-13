@@ -52,6 +52,12 @@
 							<td>{{$servicio->pass}}</td>
 						</tr>
 						@endif
+						@if($servicio->numero)
+						<tr>
+							<td class="bg-th">Nro de Celular para pruebas</td>
+							<td>{{$servicio->numero}}</td>
+						</tr>
+						@endif
 						@if($servicio->updated_by)
 						<tr>
 							<td class="bg-th">Actualizado por</td>

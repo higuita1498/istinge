@@ -60,6 +60,7 @@ class IntegracionSMSController extends Controller
             $servicio->pass       = $request->pass;
             $servicio->status     = $request->status;
             $servicio->api_key    = $request->api_key;
+            $servicio->numero     = $request->numero;
             $servicio->updated_by = Auth::user()->id;
             $servicio->save();
 
@@ -93,7 +94,7 @@ class IntegracionSMSController extends Controller
         if($servicio->nombre == 'Hablame SMS'){
             if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero){
                 $post['toNumber'] = $servicio->numero;
-                $post['sms'] = "SMS Prueba Hablame SMS - Network Soft - Software Administrativo de ISP";
+                $post['sms'] = "SMS Prueba Hablame SMS | Network Soft - Software Administrativo de ISP";
 
                 $curl = curl_init();
                 curl_setopt_array($curl, array(
@@ -144,7 +145,7 @@ class IntegracionSMSController extends Controller
         }else{
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
-                $post['text'] = "SMS Prueba Colombia Red - Network Soft - Software Administrativo de ISP";
+                $post['text'] = "SMS Prueba Colombia Red | Network Soft - Software Administrativo de ISP";
                 $post['from'] = "";
                 $login = $servicio->user;
                 $password = $servicio->pass;
