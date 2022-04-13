@@ -22,6 +22,7 @@ use App\CRM;
 use App\Blacklist;
 use App\Mail\BlacklistMailable;
 use App\ServidorCorreo;
+use App\Integracion;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -123,89 +124,122 @@ class CronController extends Controller
                 }
             }
 
-            if(count($numeros)){
-                $post['to'] = $numeros;
-                $post['text'] = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
-                $post['from'] = "";
-                $login ="jjtuiran2021";
-                $password = 'Bstc2710';
+            $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+            if($servicio){
+                if($servicio->nombre == 'Hablame SMS'){
+                    if($servicio->api_key && $servicio->user && $servicio->pass){
+                        $post['toNumber'] = $numeros;
+                        $post['sms'] = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
 
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                curl_setopt($ch, CURLOPT_HTTPHEADER,
-                array(
-                    "Accept: application/json",
-                    "Authorization: Basic ".base64_encode($login.":".$password)));
-                $result = curl_exec ($ch);
-                $err  = curl_error($ch);
-                curl_close($ch);
-
-                if ($err) {
-                    return back()->with('danger', $err);
+                        $curl = curl_init();
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                            CURLOPT_HTTPHEADER => array(
+                                'account: '.$servicio->user,
+                                'apiKey: '.$servicio->api_key,
+                                'token: '.$servicio->pass,
+                                'Content-Type: application/json'
+                            ),
+                        ));
+                        $result = curl_exec ($curl);
+                        $err  = curl_error($curl);
+                        curl_close($curl);
+                    }
                 }else{
-                    $response = json_decode($result, true);
-                    //return $response;
-                    if(isset($response['error'])){
-                        if($response['error']['code'] == 102){
-                            $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
-                        }else if($response['error']['code'] == 103){
-                            $msj = "Nombre de usuario o contraseña desconocidos";
-                        }else if($response['error']['code'] == 104){
-                            $msj = "Falta el mensaje de texto";
-                        }else if($response['error']['code'] == 105){
-                            $msj = "Mensaje de texto demasiado largo";
-                        }else if($response['error']['code'] == 106){
-                            $msj = "Falta el remitente";
-                        }else if($response['error']['code'] == 107){
-                            $msj = "Remitente demasiado largo";
-                        }else if($response['error']['code'] == 108){
-                            $msj = "No hay fecha y hora válida para enviar";
-                        }else if($response['error']['code'] == 109){
-                            $msj = "URL de notificación incorrecta";
-                        }else if($response['error']['code'] == 110){
-                            $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
-                        }else if($response['error']['code'] == 111){
-                            $msj = "Crédito/Saldo insuficiente";
-                        }else if($response['error']['code'] == 112){
-                            $msj = "Dirección IP no permitida";
-                        }else if($response['error']['code'] == 113){
-                            $msj = "Codificación no válida";
-                        }else{
-                            $msj = $response['error']['description'];
+                    if($servicio->user && $servicio->pass){
+                        if(count($numeros)){
+                            $post['to'] = $numeros;
+                            $post['text'] = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
+                            $post['from'] = "";
+                            $login = $servicio->user;
+                            $password = $servicio->pass;
+
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                            curl_setopt($ch, CURLOPT_POST, 1);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                            curl_setopt($ch, CURLOPT_HTTPHEADER,
+                            array(
+                                "Accept: application/json",
+                                "Authorization: Basic ".base64_encode($login.":".$password)));
+                            $result = curl_exec ($ch);
+                            $err  = curl_error($ch);
+                            curl_close($ch);
+
+                            if ($err) {
+
+                            }else{
+                                $response = json_decode($result, true);
+
+                                if(isset($response['error'])){
+                                    if($response['error']['code'] == 102){
+                                        $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                                    }else if($response['error']['code'] == 103){
+                                        $msj = "Nombre de usuario o contraseña desconocidos";
+                                    }else if($response['error']['code'] == 104){
+                                        $msj = "Falta el mensaje de texto";
+                                    }else if($response['error']['code'] == 105){
+                                        $msj = "Mensaje de texto demasiado largo";
+                                    }else if($response['error']['code'] == 106){
+                                        $msj = "Falta el remitente";
+                                    }else if($response['error']['code'] == 107){
+                                        $msj = "Remitente demasiado largo";
+                                    }else if($response['error']['code'] == 108){
+                                        $msj = "No hay fecha y hora válida para enviar";
+                                    }else if($response['error']['code'] == 109){
+                                        $msj = "URL de notificación incorrecta";
+                                    }else if($response['error']['code'] == 110){
+                                        $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                                    }else if($response['error']['code'] == 111){
+                                        $msj = "Crédito/Saldo insuficiente";
+                                    }else if($response['error']['code'] == 112){
+                                        $msj = "Dirección IP no permitida";
+                                    }else if($response['error']['code'] == 113){
+                                        $msj = "Codificación no válida";
+                                    }else{
+                                        $msj = $response['error']['description'];
+                                    }
+                                    $factura->response = $msj;
+                                    $factura->save();
+                                    $fail++;
+                                }else{
+                                    $factura->mensaje = 1;
+                                    $factura->response = 'Mensaje enviado correctamente.';
+                                    $factura->save();
+                                    $succ++;
+                                }
+                            }
                         }
-                        $factura->response = $msj;
-                        $factura->save();
-                        $fail++;
-                    }else{
-                        $factura->mensaje = 1;
-                        $factura->response = 'Mensaje enviado correctamente.';
-                        $factura->save();
-                        $succ++;
                     }
                 }
+            }
 
-                if (file_exists("CrearFactura.txt")){
-                    $file = fopen("CrearFactura.txt", "a");
-                    fputs($file, "-----------------".PHP_EOL);
-                    fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-                    fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-                    fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                    fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                    fputs($file, "-----------------".PHP_EOL);
-                    fclose($file);
-                }else{
-                    $file = fopen("CrearFactura.txt", "w");
-                    fputs($file, "-----------------".PHP_EOL);
-                    fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-                    fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-                    fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                    fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                    fputs($file, "-----------------".PHP_EOL);
-                    fclose($file);
-                }
+            if (file_exists("CrearFactura.txt")){
+                $file = fopen("CrearFactura.txt", "a");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
+            }else{
+                $file = fopen("CrearFactura.txt", "w");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
             }
         }
     }
@@ -408,82 +442,87 @@ class CronController extends Controller
             $vencimiento = $contacto->vencimiento;
         }
 
-        if(count($numeros)){
-            $post['to'] = $numeros;
-            $post['text'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
-            $post['from'] = "";
-            $login ="jjtuiran2021";
-            $password = 'Bstc2710';
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+        if($servicio){
+            if($servicio->nombre == 'Hablame SMS'){
+                if($servicio->api_key && $servicio->user && $servicio->pass){
+                    $post['toNumber'] = $numeros;
+                    $post['sms'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-            curl_setopt($ch, CURLOPT_HTTPHEADER,
-            array(
-                "Accept: application/json",
-                "Authorization: Basic ".base64_encode($login.":".$password)));
-            $result = curl_exec ($ch);
-            $err  = curl_error($ch);
-            curl_close($ch);
-
-            if ($err) {
-                return back()->with('danger', $err);
+                    $curl = curl_init();
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                        CURLOPT_HTTPHEADER => array(
+                            'account: '.$servicio->user,
+                            'apiKey: '.$servicio->api_key,
+                            'token: '.$servicio->pass,
+                            'Content-Type: application/json'
+                        ),
+                    ));
+                    $result = curl_exec ($curl);
+                    $err  = curl_error($curl);
+                    curl_close($curl);
+                }
             }else{
-                $response = json_decode($result, true);
-                //return $response;
-                if(isset($response['error'])){
-                    if($response['error']['code'] == 102){
-                        $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
-                    }else if($response['error']['code'] == 103){
-                        $msj = "Nombre de usuario o contraseña desconocidos";
-                    }else if($response['error']['code'] == 104){
-                        $msj = "Falta el mensaje de texto";
-                    }else if($response['error']['code'] == 105){
-                        $msj = "Mensaje de texto demasiado largo";
-                    }else if($response['error']['code'] == 106){
-                        $msj = "Falta el remitente";
-                    }else if($response['error']['code'] == 107){
-                        $msj = "Remitente demasiado largo";
-                    }else if($response['error']['code'] == 108){
-                        $msj = "No hay fecha y hora válida para enviar";
-                    }else if($response['error']['code'] == 109){
-                        $msj = "URL de notificación incorrecta";
-                    }else if($response['error']['code'] == 110){
-                        $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
-                    }else if($response['error']['code'] == 111){
-                        $msj = "Crédito/Saldo insuficiente";
-                    }else if($response['error']['code'] == 112){
-                        $msj = "Dirección IP no permitida";
-                    }else if($response['error']['code'] == 113){
-                        $msj = "Codificación no válida";
-                    }else{
-                        $msj = $response['error']['description'];
+                if($servicio->user && $servicio->pass){
+                    if(count($numeros)){
+                        $post['to'] = $numeros;
+                        $post['text'] = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
+                        $post['from'] = "";
+                        $login = $servicio->user;
+                        $password = $servicio->pass;
+
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                        $result = curl_exec ($ch);
+                        $err  = curl_error($ch);
+                        curl_close($ch);
+
+                        if ($err) {
+
+                        }else{
+                            $response = json_decode($result, true);
+                            if(isset($response['error'])){
+                                $fail++;
+                            }else{
+                                $succ++;
+                            }
+                        }
                     }
-                    $fail++;
-                }else{
-                    $succ++;
                 }
             }
+        }
 
-            if (file_exists("PagoOportuno.txt")){
-                $file = fopen("PagoOportuno.txt", "a");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }else{
-                $file = fopen("PagoOportuno.txt", "w");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }
+        if (file_exists("PagoOportuno.txt")){
+            $file = fopen("PagoOportuno.txt", "a");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
+            fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+            fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
+        }else{
+            $file = fopen("PagoOportuno.txt", "w");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
+            fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+            fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
         }
     }
 
@@ -511,82 +550,87 @@ class CronController extends Controller
             array_push($numeros, '57'.$numero);
         }
 
-        if(count($numeros)){
-            $post['to'] = $numeros;
-            $post['text'] = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
-            $post['from'] = "";
-            $login ="jjtuiran2021";
-            $password = 'Bstc2710';
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+        if($servicio){
+            if($servicio->nombre == 'Hablame SMS'){
+                if($servicio->api_key && $servicio->user && $servicio->pass){
+                    $post['toNumber'] = $numeros;
+                    $post['sms'] = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-            curl_setopt($ch, CURLOPT_HTTPHEADER,
-            array(
-                "Accept: application/json",
-                "Authorization: Basic ".base64_encode($login.":".$password)));
-            $result = curl_exec ($ch);
-            $err  = curl_error($ch);
-            curl_close($ch);
-
-            if ($err) {
-                return back()->with('danger', $err);
+                    $curl = curl_init();
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                        CURLOPT_HTTPHEADER => array(
+                            'account: '.$servicio->user,
+                            'apiKey: '.$servicio->api_key,
+                            'token: '.$servicio->pass,
+                            'Content-Type: application/json'
+                        ),
+                    ));
+                    $result = curl_exec ($curl);
+                    $err  = curl_error($curl);
+                    curl_close($curl);
+                }
             }else{
-                $response = json_decode($result, true);
-                //return $response;
-                if(isset($response['error'])){
-                    if($response['error']['code'] == 102){
-                        $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
-                    }else if($response['error']['code'] == 103){
-                        $msj = "Nombre de usuario o contraseña desconocidos";
-                    }else if($response['error']['code'] == 104){
-                        $msj = "Falta el mensaje de texto";
-                    }else if($response['error']['code'] == 105){
-                        $msj = "Mensaje de texto demasiado largo";
-                    }else if($response['error']['code'] == 106){
-                        $msj = "Falta el remitente";
-                    }else if($response['error']['code'] == 107){
-                        $msj = "Remitente demasiado largo";
-                    }else if($response['error']['code'] == 108){
-                        $msj = "No hay fecha y hora válida para enviar";
-                    }else if($response['error']['code'] == 109){
-                        $msj = "URL de notificación incorrecta";
-                    }else if($response['error']['code'] == 110){
-                        $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
-                    }else if($response['error']['code'] == 111){
-                        $msj = "Crédito/Saldo insuficiente";
-                    }else if($response['error']['code'] == 112){
-                        $msj = "Dirección IP no permitida";
-                    }else if($response['error']['code'] == 113){
-                        $msj = "Codificación no válida";
-                    }else{
-                        $msj = $response['error']['description'];
+                if($servicio->user && $servicio->pass){
+                    if(count($numeros)){
+                        $post['to'] = $numeros;
+                        $post['text'] = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
+                        $post['from'] = "";
+                        $login = $servicio->user;
+                        $password = $servicio->pass;
+
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                        $result = curl_exec ($ch);
+                        $err  = curl_error($ch);
+                        curl_close($ch);
+
+                        if ($err) {
+
+                        }else{
+                            $response = json_decode($result, true);
+                            if(isset($response['error'])){
+                                $fail++;
+                            }else{
+                                $succ++;
+                            }
+                        }
                     }
-                    $fail++;
-                }else{
-                    $succ++;
                 }
             }
+        }
 
-            if (file_exists("PagoVencimiento.txt")){
-                $file = fopen("PagoVencimiento.txt", "a");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }else{
-                $file = fopen("PagoVencimiento.txt", "w");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }
+        if (file_exists("PagoVencimiento.txt")){
+            $file = fopen("PagoVencimiento.txt", "a");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
+            fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+            fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
+        }else{
+            $file = fopen("PagoVencimiento.txt", "w");
+            fputs($file, "-----------------".PHP_EOL);
+            fputs($file, "Fecha de Notificación: ".date('d-m-Y').''. PHP_EOL);
+            fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+            fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+            fputs($file, "-----------------".PHP_EOL);
+            fclose($file);
         }
     }
 }
