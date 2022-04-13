@@ -71,7 +71,12 @@ class IntegracionSMSController extends Controller
     }
 
     public function act_desc(Request $request, $id){
+        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->where('id', '<>', $id)->count();
         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+
+        if ($servicios >= 1) {
+            return redirect('empresa/configuracion/integracion-sms')->with('danger', 'Ya existe un servicio de SMS habilitado, deshabilítelo para poder habilitar el servicio de '.$servicio->nombre)->with('id', $servicio->id);
+        }
 
         if($servicio){
             if($servicio->status == 0){
