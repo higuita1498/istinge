@@ -798,6 +798,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::group(['prefix' => 'puc'], function(){
 		Route::get('/create/{id}', 'PucController@create')->name('puc.create_id');
 		Route::post('/puc/store', 'PucController@store')->name('puc.store');
+		Route::get('{codigo}/show', 'PucController@show')->name('puc.show');
+		Route::post('/create/{id}/act_desc', 'PucController@act_desc')->name('puc.act_desc');
+
 	});
 	
 	Route::resource('categorias', 'CategoriasController');

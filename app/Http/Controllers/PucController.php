@@ -31,17 +31,13 @@ class PucController extends Controller
     public function index()
     {
         $this->getAllPermissions(Auth::user()->id);
-        $defecto = Puc::where('empresa',Auth::user()->empresa)->where('id', Auth::user()->empresa()->categoria_default)->first();
-    
-        $default='';
-        if ($defecto) {
-        $default.='Categoria por Defecto: '.$defecto->nombre;
-        }
-        $categorias = Puc::where('empresa',Auth::user()->empresa)->whereNull('asociado')->orderBy('codigo','ASC')->limit(10)->paginate(10);
+     
+        
+        $categorias = Puc::where('empresa',Auth::user()->empresa)->whereNull('asociado')->orderBy('codigo','ASC')->get();
         
         view()->share(['title' => 'PUC ']);
 
- 		return view('puc.index')->with(compact('categorias', 'default'));   	
+ 		return view('puc.index')->with(compact('categorias'));   	
     }
 
     public function create($id){
@@ -61,19 +57,21 @@ class PucController extends Controller
         'nombre' => 'required|max:200',
         'asociado' => 'required|numeric',
         ]);
-
-        $nro = Puc::where('empresa',Auth::user()->empresa)->get()->last()->nro;
         
-        $categoria = new Puc;
-        $categoria->empresa=Auth::user()->empresa;
-        $categoria->nro = $nro+1;
-        $categoria->asociado=$request->asociado;
-        $categoria->nombre=$request->nombre;
-        $categoria->codigo=$request->codigo;
-        $categoria->descripcion=$request->descripcion;
-        $categoria->save();
-        $mensaje='Se ha creado satisfactoriamente la categoría';
-        return redirect('empresa/puc')->with('success', $mensaje);
+        if(!Puc::where('empresa',Auth::user()->empresa)->where('codigo',$request->codigo)->first()){
+            $categoria = new Puc;
+            $categoria->empresa=Auth::user()->empresa;
+            $categoria->nro = $request->codigo;
+            $categoria->asociado=$request->asociado;
+            $categoria->nombre=$request->nombre;
+            $categoria->codigo=$request->codigo;
+            $categoria->descripcion=$request->descripcion;
+            $categoria->save();
+            $mensaje='Se ha creado satisfactoriamente la categoría';
+            return redirect('empresa/puc')->with('success', $mensaje);
+        }else{
+            return redirect('empresa/puc')->with('info', 'el codigo ingresado ya está siendo usado');
+        }
     }
 
     public function edit($id){
@@ -83,6 +81,99 @@ class PucController extends Controller
           return view('puc.edit')->with(compact('categoria'));
         }
         return 'No existe un registro con ese id';
+    }
+
+    public function show($codigo){
+
+        $empresa = auth()->user()->empresa;
+        $hijos = Puc::where('empresa',$empresa)->where('asociado',$codigo)->get();
+
+        foreach($hijos as $hijo){
+            if(strlen($hijo->codigo) == 2){
+                $hijo->nivel = 2;
+            }elseif(strlen($hijo->codigo) > 2 && strlen($hijo->codigo) < 5){
+                $hijo->nivel = 3;
+            }else if(strlen($hijo->codigo) > 4 && strlen($hijo->codigo) < 7){
+                $hijo->nivel = 4;
+            }else if(strlen($hijo->codigo) > 6){
+                $hijo->nivel = 5;
+            }
+        }
+
+        return response()->json([
+            'categories' => $hijos
+        ]);
+        
+    }
+
+    /**
+    * Funcion para cambiar el estatus de la categoría
+    * @param int $id
+    * @return redirect
+    */
+    public function act_desc($id)
+    {
+        $categoria = Puc::where('empresa', Auth::user()->empresa)->where('nro', $id)->first();
+        if ($categoria) {
+            if ($categoria->estatus==1) {
+                $mensaje='Se ha desactivado la categoría';
+                $categoria->estatus=0;
+                $categoria->save();
+            } else {
+                $mensaje='Se ha activado la categoría';
+                $categoria->estatus=1;
+                $categoria->save();
+            }
+            return redirect('empresa/puc')->with('success', $mensaje);
+        }
+        return redirect('empresa/puc')->with('success', 'No existe un registro con ese id');
+    }
+
+    /**
+    * Modificar los datos del banco
+    * @param Request $request
+    * @return redirect
+    */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required|max:200',
+        ]);
+
+        $categoria = Puc::find($id);
+
+        if ($categoria) {
+
+            if(!Puc::where('empresa',Auth::user()->empresa)->where('codigo',$request->codigo)->where('id','!=',$id)->first()){
+                $categoria->nombre=$request->nombre;
+                $categoria->codigo=$request->codigo;
+                $categoria->descripcion=$request->descripcion;
+                $categoria->save();
+                $mensaje='Se ha modificado satisfactoriamente la categoría';
+                return redirect('empresa/puc')->with('success', $mensaje);
+            }else{
+                return redirect('empresa/puc')->with('info', 'Ya hay una cuenta del puc con ese código.');
+            }
+          
+        }
+        return redirect('empresa/puc')->with('success', 'No existe un registro con ese id');
+    }
+
+    /**
+    * Funcion para eliminar un banco
+    * @param int $id
+    * @return redirect
+    */
+    public function destroy($id)
+    {
+        if(!Puc::where('empresa', Auth::user()->empresa)->where('asociado',$id)->first()){
+            $categoria = Puc::where('empresa', Auth::user()->empresa)->where('codigo', $id)->first();
+            $categoria->delete();
+        }else{
+            return redirect('empresa/puc')->with('info', 'Esta Categoria tiene cuentas hijas, por lo tanto no se puede eliminar.');
+        }
+
+        return redirect('empresa/puc')->with('success', 'Se ha eliminado la categoría');
     }
 
     /**
