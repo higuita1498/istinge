@@ -31,6 +31,7 @@ use App\Model\Ingresos\Factura;
 use App\Servidor;
 use App\GrupoCorte;
 use App\Mikrotik;
+use App\Integracion;
 
 class CRMController extends Controller
 {
@@ -288,36 +289,72 @@ class CRMController extends Controller
             $crm->empresa = Auth::user()->empresa;
             
             if($request->promesa_pago && $request->fecha){
-                $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
-                $factura = Factura::find($crm->factura);
-                
-                if($factura->cliente()->celular){
-                    $numero = str_replace('+', '', $factura->cliente()->celular);
-                    $numero = str_replace(' ', '', $numero);
-                    
-                    $post['to'] = array($numero);
-                    $post['text'] = $mensaje;
-                    $post['from'] = auth()->user()->empresa()->nombre;
-                    $user ="jjtuiran2021";
-                    $password = 'Bstc2710';
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($ch, CURLOPT_POST, 1);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                    curl_setopt(
-                        $ch,
-                        CURLOPT_HTTPHEADER,
-                        array(
-                            "Accept: application/json",
-                            "Authorization: Basic " . base64_encode($user . ":" . $password)
-                        )
-                    );
-                    $result = curl_exec($ch);
-                    $err  = curl_error($ch);
-                    curl_close($ch);
+                $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                if($servicio){
+                    $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
+                    $factura = Factura::find($crm->factura);
+
+                    if($servicio->nombre == 'Hablame SMS'){
+                        if($servicio->api_key && $servicio->user && $servicio->pass){
+                            if($factura->cliente()->celular){
+                                $numero = str_replace('+', '', $factura->cliente()->celular);
+                                $numero = str_replace(' ', '', $numero);
+                                $post['toNumber'] = $numero;
+                                $post['sms'] = $mensaje;
+
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                    CURLOPT_HTTPHEADER => array(
+                                        'account: '.$servicio->user,
+                                        'apiKey: '.$servicio->api_key,
+                                        'token: '.$servicio->pass,
+                                        'Content-Type: application/json'
+                                    ),
+                                ));
+                                $result = curl_exec ($curl);
+                                $err  = curl_error($curl);
+                                curl_close($curl);
+                            }
+                        }
+                    }else{
+                        if($servicio->user && $servicio->pass){
+                            if($factura->cliente()->celular){
+                                $numero = str_replace('+', '', $factura->cliente()->celular);
+                                $numero = str_replace(' ', '', $numero);
+                                $post['to'] = array('57'.$numero);
+                                $post['text'] = $mensaje;
+                                $post['from'] = "";
+                                $login = $servicio->user;
+                                $password = $servicio->pass;
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                curl_setopt(
+                                    $ch,
+                                    CURLOPT_HTTPHEADER,
+                                    array(
+                                        "Accept: application/json",
+                                        "Authorization: Basic " . base64_encode($login . ":" . $password)
+                                    )
+                                );
+                                $result = curl_exec($ch);
+                                $err  = curl_error($ch);
+                                curl_close($ch);
+                            }
+                        }
+                    }
                 }
-                
+
                 $factura->vencimiento = date('Y-m-d', strtotime($request->fecha));
                 $factura->observaciones = $factura->observaciones.' | Promesa de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->save();

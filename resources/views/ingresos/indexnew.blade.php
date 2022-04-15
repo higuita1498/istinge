@@ -26,6 +26,18 @@
         </script>
     @endif
 
+    @if(Session::has('danger'))
+        <div class="alert alert-danger">
+        	{{Session::get('danger')}}
+        </div>
+        <script type="text/javascript">
+        	setTimeout(function() {
+        		$('.alert').hide();
+        		$('.active_table').attr('class', ' ');
+        	}, 5000);
+        </script>
+    @endif
+
 	<div class="container-fluid d-none" id="form-filter">
 		<div class="card shadow-sm border-0">
 			<div class="card-body py-0">
