@@ -1917,4 +1917,55 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
+
+    public function carga_adjuntos(Request $request, $id){
+        $this->getAllPermissions(Auth::user()->id);
+        $contrato = Contrato::find($id);
+
+        if ($contrato) {
+            ### DOCUMENTOS ADJUNTOS ###
+            if($request->referencia_a) {
+                $contrato->referencia_a = $request->referencia_a;
+                if($request->adjunto_a){
+                    $file = $request->file('adjunto_a');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_a = $nombre;
+                }
+            }
+            if($request->referencia_b) {
+                $contrato->referencia_b = $request->referencia_b;
+                if($request->adjunto_b){
+                    $file = $request->file('adjunto_b');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_b = $nombre;
+                }
+            }
+            if($request->referencia_c) {
+                $contrato->referencia_c = $request->referencia_c;
+                if($request->adjunto_c){
+                    $file = $request->file('adjunto_c');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_c = $nombre;
+                }
+            }
+            if($request->referencia_d) {
+                $contrato->referencia_d = $request->referencia_d;
+                if($request->adjunto_d){
+                    $file = $request->file('adjunto_d');
+                    $nombre =  $file->getClientOriginalName();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $contrato->adjunto_d = $nombre;
+                }
+            }
+
+            ### DOCUMENTOS ADJUNTOS ###
+
+            $contrato->save();
+            return redirect('empresa/contactos/'.$request->contacto_id)->with('success', 'SE HA CARGADO SATISFACTORIAMENTE LOS ARCHIVOS ADJUNTOS');
+        }
+        return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
+    }
 }
