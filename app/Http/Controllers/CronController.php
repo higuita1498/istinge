@@ -12,6 +12,7 @@ use App\NumeracionFactura;
 use App\Model\Inventario\Bodega; 
 use App\Model\Ingresos\ItemsFactura;
 use App\Model\Inventario\ProductosBodega; 
+use App\Model\Inventario\Inventario;
 use App\Contrato;
 use App\Contacto;
 use App\TerminosPago;
@@ -41,7 +42,7 @@ class CronController extends Controller
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
             foreach($grupos_corte as $grupo_corte){
-                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','contracts.facturacion','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','contracts.facturacion','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact','contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
 
                 $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
 
@@ -114,6 +115,21 @@ class CronController extends Controller
                     $item_reg->impuesto    = $contrato->impuesto;
                     $item_reg->cant        = 1;
                     $item_reg->save();
+
+                    if($contrato->servicio_tv){
+                        $item = Inventario::find($contrato->servicio_tv);
+                        $item_reg = new ItemsFactura;
+                        $item_reg->factura     = $factura->id;
+                        $item_reg->producto    = $item->id;
+                        $item_reg->ref         = $item->ref;
+                        $item_reg->precio      = $item->precio;
+                        $item_reg->descripcion = $item->producto;
+                        $item_reg->id_impuesto = $item->id_impuesto;
+                        $item_reg->impuesto    = $item->impuesto;
+                        $item_reg->cant        = 1;
+                        $item_reg->save();
+                    }
+
                     $nro->save();
                     $i++;
 
@@ -124,7 +140,7 @@ class CronController extends Controller
                 }
             }
 
-            $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+            $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
             if($servicio){
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
@@ -442,7 +458,7 @@ class CronController extends Controller
             $vencimiento = $contacto->vencimiento;
         }
 
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+        $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
         if($servicio){
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
@@ -550,7 +566,7 @@ class CronController extends Controller
             array_push($numeros, '57'.$numero);
         }
 
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+        $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
         if($servicio){
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
