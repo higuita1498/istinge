@@ -23,14 +23,14 @@
     <table class="table-forma1" id="table-forma">
     <thead>
         <tr>
-        <th>En uso</th>
-        <th>Código</th>
-        <th>Nombre</th>
-        <th>Inventario</th>
-        <th>Costo</th>
-        <th>Venta</th>
-        <th>Devolución</th>
-        <th></th>
+        <th width="5%">En uso</th>
+        <th width="15%">Código</th>
+        <th width="15%">Nombre</th>
+        <th width="15%">Inventario</th>
+        <th width="15%">Costo</th>
+        <th width="15%">Venta</th>
+        <th width="15%">Devolución</th>
+        <th width="5%"></th>
         </tr>
     </thead>
     @foreach($productos as $producto)
@@ -82,33 +82,33 @@
             </label>
         </div>
         </td>
-        <td width="10%"><input type="text" class="form-control form-control-sm" placeholder="codigo" name="codigo" id="codigo"></td>
-        <td width="10%"><input type="text" class="form-control form-control-sm" placeholder="nombre cuenta" name="nombrecuenta" id="nombrecuenta"></td>
-        <td width="20%">
-            <select class="form-control form-control-sm selectpicker p-0" name="inventario_producto" id="inventario_producto" title="Cuenta contable" required="">
+        <td width="15%"><input type="text" class="form-control form-control-sm" placeholder="codigo" name="codigo" id="codigo"></td>
+        <td width="15%"><input type="text" class="form-control form-control-sm" placeholder="nombre cuenta" name="nombrecuenta" id="nombrecuenta"></td>
+        <td width="15%">
+            <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="inventario_producto" id="inventario_producto" title="Inventario" required="">
                 @foreach($categorias as $cat)
-                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
-        <td width="20%">
-            <select class="form-control form-control-sm selectpicker p-0" name="costo" id="costo" title="Cuenta contable" required="">
+        <td width="15%">
+            <select class="form-control form-control-sm selectpicker p-0"  data-live-search="true" data-size="5" name="costo" id="costo" title="Costo" required="">
                 @foreach($categorias as $cat)
-                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
-        <td width="20%">
-            <select class="form-control form-control-sm selectpicker p-0" name="inventario_producto" id="venta_producto" title="Medio de pago doc. electrónico" required="">
+        <td width="15%">
+            <select class="form-control form-control-sm selectpicker p-0"  data-live-search="true" data-size="5" name="inventario_producto" id="venta_producto" title="Venta" required="">
                 @foreach($categorias as $cat)
-                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
-        <td width="20%">
-            <select class="form-control form-control-sm selectpicker p-0" name="devolucion" id="devolucion" title="Medio de pago doc. electrónico" required="">
+        <td width="15%">
+            <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="devolucion" id="devolucion" title="Devolución" required="">
                 @foreach($categorias as $cat)
-                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
@@ -382,8 +382,8 @@ function delete_prodcuto(id){
     var url = $("#url").val();
 
     Swal.fire({
-        title: "Eliminar Forma de Pago",
-        text: "No podrás retroceder esta acción",
+        title: "¿Eliminar producto?",
+        text: "No podrás retroceder esta acción y se puede eliminar mientras no esté en uso en un movimiento contable",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -413,8 +413,8 @@ function delete_prodcuto(id){
             }
         },
         error: function(response){
-                alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
                 cargando(false);
+                alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
         }
     });
       }

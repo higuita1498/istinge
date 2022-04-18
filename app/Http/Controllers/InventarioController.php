@@ -257,28 +257,33 @@ class InventarioController extends Controller{
     
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
-        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id','>',1)->get();
-        $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->where('estado', 1)->get();
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
+        $empresa = Auth::user()->empresa;
+        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('id','>',1)->get();
+        $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
+        $categorias=Categoria::where('empresa',$empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $medidas=DB::table('medidas')->get();
-        $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
         $unidades=DB::table('unidades_medida')->get();
         view()->share(['icon' =>'', 'title' => 'Nuevo Producto']);
-        $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
         
         $identificaciones=TipoIdentificacion::all();
-        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
-        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
+        $vendedores = Vendedor::where('empresa',$empresa)->where('estado', 1)->get();
+        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',$empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
-        $cuentas = ProductoServicio::where('en_uso',1)->get();
+        // $cuentas = Puc::where('empresa',$empresa)->where('estatus',1)->get();
+        //Tomar las categorias del puc que no son transaccionables.
+        $cuentas = Puc::where('empresa',$empresa)
+        ->where('estatus',1)
+        ->whereRaw('length(codigo) > 6')
+        ->get();
         return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas'));
     }
     
     public function store(Request $request){
         $request->validate([
             'producto' => 'required',
-            'categoria' => 'required|exists:categorias,id',
             'impuesto' => 'required|numeric',
             'tipo_producto' => 'required|numeric'
         ]);
@@ -609,16 +614,21 @@ class InventarioController extends Controller{
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->where('nro','>',1)->get();
-        $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->where('estado', 1)->get();
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
-        $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
-        $cuentas = ProductoServicio::where('en_uso',1)->get();
+        $empresa = Auth::user()->empresa;
+        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('nro','>',1)->get();
+        $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
+        $categorias=Categoria::where('empresa',$empresa)->where('estatus', 1)->whereNull('asociado')->get();
+        $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
+        $inventario =Inventario::where('id',$id)->where('empresa',$empresa)->first();
+        // $cuentas = ProductoServicio::where('en_uso',1)->get();
+        $cuentas = Puc::where('empresa',$empresa)
+        ->where('estatus',1)
+        ->whereRaw('length(codigo) > 6')
+        ->get();
         
         if ($inventario) {
-            $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
-            $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+            $categorias=Categoria::where('empresa',$empresa)->whereNull('asociado')->get();
+            $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
             $medidas=DB::table('medidas')->get();
             $unidades=DB::table('unidades_medida')->get();
             $cuentasInventario = $inventario->cuentas();
@@ -633,7 +643,6 @@ class InventarioController extends Controller{
         if ($inventario) {
             $request->validate([
                 'producto' => 'required',
-                'categoria' => 'required|exists:categorias,id',
                 'precio' => 'numeric',
                 'impuesto' => 'required|numeric',
             ]);

@@ -24,43 +24,7 @@
 		        </span>
 			</div>
 			<div class="form-group col-md-4">
-	  			<label class="control-label">Categoria <span class="text-danger">*</span><a><i data-tippy-content="Selecciona la categoría en la que se registrarán los valores por venta del ítem" class="icono far fa-question-circle"></i></a></label>
-	  			<select class="form-control selectpicker" name="categoria" id="categoria" required="" title="Seleccione" data-live-search="true" data-size="5">
-	  				@foreach($categorias as $categoria)
-                  		@if($categoria->estatus==1)
-                            <option {{old('categoria')==$categoria->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria->id?'selected':'')}} {{$categoria->nombre == 'Activos' ? 'selected' : ''}} value="{{$categoria->id}}">{{$categoria->nombre}} - {{$categoria->codigo}}</option>
-                        @endif
-                        @foreach($categoria->hijos(true) as $categoria1)
-                  			@if($categoria1->estatus==1)
-	                  			<option {{old('categoria')==$categoria1->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria1->id?'selected':'')}} value="{{$categoria1->id}}">{{$categoria1->nombre}} - {{$categoria1->codigo}}</option>
-	                  		@endif
-	                  		@foreach($categoria1->hijos(true) as $categoria2)
-	                  			@if($categoria2->estatus==1)
-		                  			<option {{old('categoria')==$categoria2->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria2->id?'selected':'')}} value="{{$categoria2->id}}">{{$categoria2->nombre}} - {{$categoria2->codigo}}</option>
-		                  		@endif
-		                  		@foreach($categoria2->hijos(true) as $categoria3)
-		                  			@if($categoria3->estatus==1)
-			                  			<option {{old('categoria')==$categoria3->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria3->id?'selected':'')}} value="{{$categoria3->id}}">{{$categoria3->nombre}} - {{$categoria3->codigo}}</option>
-			                  		@endif
-			                  		@foreach($categoria3->hijos(true) as $categoria4)
-			                  			@if($categoria4->estatus==1)
-				                  			<option {{old('categoria')==$categoria4->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria4->id?'selected':'')}} value="{{$categoria4->id}}">{{$categoria4->nombre}} - {{$categoria4->codigo}}</option>
-				                  		@endif
-
-			                  		@endforeach
-
-		                  		@endforeach
-
-	                  		@endforeach
-
-                  		@endforeach
-
-
-	  				@endforeach
-                </select>
-				<span class="help-block error">
-		        	<strong>{{ $errors->first('categoria') }}</strong>
-		        </span>
+	  			
 			</div>
   		</div>
   		<div class="row">
