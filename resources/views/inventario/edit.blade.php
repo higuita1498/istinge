@@ -48,38 +48,6 @@
 		</div>
 
 		<div class="form-group col-md-4">
-			<label class="control-label">Categoria <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" name="categoria" id="categoria" required="" title="Seleccione">
-				@foreach($categorias as $categoria)
-				@if($categoria->estatus==1)
-				<option {{$inventario->categoria==$categoria->id?'selected':''}} value="{{$categoria->id}}">{{$categoria->nombre}}</option>
-				@endif
-				@foreach($categoria->hijos(true) as $categoria1)
-				@if($categoria1->estatus==1)
-				<option {{$inventario->categoria==$categoria1->id?'selected':''}} value="{{$categoria1->id}}">{{$categoria1->nombre}}</option>
-				@endif
-				@foreach($categoria1->hijos(true) as $categoria2)
-				@if($categoria2->estatus==1)
-				<option {{$inventario->categoria==$categoria2->id?'selected':''}} value="{{$categoria2->id}}">{{$categoria2->nombre}}</option>
-				@endif
-				@foreach($categoria2->hijos(true) as $categoria3)
-				@if($categoria3->estatus==1)
-				<option {{$inventario->categoria==$categoria3->id?'selected':''}} value="{{$categoria3->id}}">{{$categoria3->nombre}}</option>
-				@endif
-				@foreach($categoria3->hijos(true) as $categoria4)
-				@if($categoria4->estatus==1)
-				<option {{$inventario->categoria==$categoria4->id?'selected':''}} value="{{$categoria4->id}}">{{$categoria4->nombre}}</option>
-				@endif
-
-				@endforeach
-				@endforeach
-				@endforeach
-				@endforeach
-				@endforeach 
-			</select>
-			<span class="help-block error">
-				<strong>{{ $errors->first('categoria') }}</strong>
-			</span>
 		</div>
 	</div>
 	<div class="row">
@@ -160,7 +128,7 @@
 								<td width="30%">
 									<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">							        		
 										@foreach($cuentas as $c) 
-										<option value="{{$c->id}}" {{$cuenta->cuenta_id ==$c->id ? 'selected':''}}  >{{$c->nombre}}</option>
+										<option value="{{$c->id}}" {{$cuenta->cuenta_id ==$c->id ? 'selected':''}}  >{{$c->nombre}} - {{$c->codigo}}</option>
 										@endforeach
 									</select>
 									<input type="hidden" name="idcuenta{{($key2)}}" value="{{$cuenta->id}}">

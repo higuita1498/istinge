@@ -7,6 +7,9 @@ use App\Puc;
 use Auth;
 use Illuminate\Http\Request;
 
+use App\Model\Inventario\Inventario; 
+use App\Impuesto; 
+
 class ProductoServicioController extends Controller
 {
     public function index(){
@@ -25,6 +28,22 @@ class ProductoServicioController extends Controller
 
     public function store(Request $request){
 
+        $empresa = Auth::user()->empresa;
+        $impuesto = Impuesto::where('porcentaje', 0)->first();
+
+        //Primero creamos el producto en el inventario.
+        $inventario = new Inventario;
+        $inventario->producto = $request->nombre;
+        $inventario->empresa = $empresa;
+        $inventario->impuesto = isset($impuesto->porcentaje) ? $impuesto->porcentaje : 0;
+        $inventario->id_impuesto = isset($impuesto->id) ? $impuesto->id : 2;
+        $inventario->type='MATERIAL';
+        $inventario->unidad=1;
+        $inventario->nro=0;
+        $inventario->tipo_producto=2;
+        $inventario->save();
+
+
         $producto = new ProductoServicio;
         $producto->en_uso = $request->checkForm;
         $producto->codigo = $request->codigo;
@@ -33,6 +52,7 @@ class ProductoServicioController extends Controller
         $producto->costo_id = $request->costo;
         $producto->venta_id = $request->venta;
         $producto->devolucion_id = $request->devolucion;
+        $producto->producto_id = $inventario->id;
         $producto->save();
 
         //Obtenemos el nombre de la categoria seleccionada.
@@ -58,19 +78,41 @@ class ProductoServicioController extends Controller
     }
 
     public function update(Request $request){
-        $prodcuto = ProductoServicio::find($request->id);
+        $producto = ProductoServicio::find($request->id);
 
-        if($prodcuto){
-            $prodcuto->en_uso = $request->checkForm;
-            $prodcuto->codigo = $request->codigo;
-            $prodcuto->nombre = $request->nombre;
-            $prodcuto->inventario_id = $request->inventario;
-            $prodcuto->costo_id = $request->costo;
-            $prodcuto->venta_id = $request->venta; 
-            $prodcuto->devolucion_id = $request->devolucion; 
-            $prodcuto->save();
+        if($producto){
+
+            //Primero creamos el producto en el inventario.
+            $inventario = Inventario::where('id',$producto->producto_id)->first();
+            if($inventario){
+                $inventario->producto = $request->nombre;
+                $inventario->save();
+            }else{
+                $inventario = new Inventario;
+                $inventario->producto = $request->nombre;
+                $inventario->empresa = $empresa;
+                $inventario->impuesto = isset($impuesto->porcentaje) ? $impuesto->porcentaje : 0;
+                $inventario->id_impuesto = $impuesto ? $impuesto : 2;
+                $inventario->type='MATERIAL';
+                $inventario->unidad=1;
+                $inventario->nro=0;
+                $inventario->tipo_producto=2;
+                $inventario->save();
+
+                $producto->producto_id = $inventario->id;
+            }
+         
+
+            $producto->en_uso = $request->checkForm;
+            $producto->codigo = $request->codigo;
+            $producto->nombre = $request->nombre;
+            $producto->inventario_id = $request->inventario;
+            $producto->costo_id = $request->costo;
+            $producto->venta_id = $request->venta; 
+            $producto->devolucion_id = $request->devolucion; 
+            $producto->save();
             return response()->json([
-                'producto' => $prodcuto
+                'producto' => $producto
             ]);
         }else{
             return reposnse()->json(['producto' => false]);

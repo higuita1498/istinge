@@ -4359,7 +4359,6 @@ function agregar_cuenta(){
 		cuentas=$('#json_cuentas').val();
 		cuentas=JSON.parse(cuentas);
 
-		console.log(cuentas);
 		if(cuentas.length==0)
 		{
 			$('#error-cuentas').html('Usted no posee cuentas contables');
@@ -4386,10 +4385,11 @@ function agregar_cuenta(){
 		$.each( cuentas, function( key, value ){
 
 			nombre=value.nombre;
+            codigo=value.codigo;
 			$('#cuentacontable'+nro).append($('<option>',
 				{
 					value: value.id,
-					text: nombre
+					text: nombre + " - " + codigo
 				}));
 		});
 
