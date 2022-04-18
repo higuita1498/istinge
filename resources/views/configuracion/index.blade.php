@@ -139,15 +139,21 @@
 		@endif
 
 
+		@if(isset($_SESSION['permisos']['762']) || isset($_SESSION['permisos']['763']) || isset($_SESSION['permisos']['764']))
 		<div class="col-sm-3">
-			<h4 class="card-title">Integraciones</h4>
+			<h4 class="card-title">Integraciones de Servicios</h4>
 			<p>Configure cada uno de los servicios disponibles para darle uso en NetworkSoft</p>
+			@if(isset($_SESSION['permisos']['762']))
 			<a href="{{ route('integracion-sms.index') }}">Mensajería</a><br>
-			@if(Auth::user()->nombres == 'Desarrollo')
-			<a href="#">Pasarela de Pago</a><br>
-			<a href="#">Troncal sip</a><br>
+			@endif
+			@if(isset($_SESSION['permisos']['763']) && Auth::user()->nombres == 'Desarrollo')
+			<a href="{{ route('integracion-pasarelas.index') }}">Pasarelas de Pago</a><br>
+			@endif
+			@if(isset($_SESSION['permisos']['764']) && Auth::user()->nombres == 'Desarrollo')
+			<a href="#">Troncal SIP</a><br>
 			@endif
 		</div>
+		@endif
 
 		<div class="col-sm-3">
 			<h4 class="card-title">Limpieza del Sistema</h4>
