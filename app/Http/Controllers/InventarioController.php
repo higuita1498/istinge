@@ -78,7 +78,7 @@ class InventarioController extends Controller{
         }
         
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
-        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','<>','PLAN');
+        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','MATERIAL');
         
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $productos=$productos->where('inventario.ref', 'like', '%' .$request->name_1.'%');
@@ -113,9 +113,10 @@ class InventarioController extends Controller{
             $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
         }
         
-        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','<>','PLAN')->count();
+        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MATERIAL')->count();
         view()->share(['title' => 'Productos']);
-        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda'));
+        $type = '';
+        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
     
     public function modems(Request $request){
@@ -184,7 +185,8 @@ class InventarioController extends Controller{
         
         $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MODEMS')->count();
         view()->share(['seccion' => 'inventario', 'title' => 'Módems', 'icon' =>'fas fa-boxes', 'subseccion'=>'modems']);
-        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda'));
+        $type = 'MODEMS';
+        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
     
     public function material(Request $request){
@@ -252,7 +254,77 @@ class InventarioController extends Controller{
         }
         $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MATERIAL')->count();
         view()->share(['seccion' => 'inventario', 'title' => 'Productos', 'icon' =>'fas fa-boxes', 'subseccion'=>'material']);
-        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda'));
+        $type = 'MATERIAL';
+        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
+    }
+
+    public function television(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $busqueda=false;
+        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $campos=array('', 'ref', 'producto', 'precio', 'disp', 'publico');
+        $tabla = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->orderBy('tabla')->get();
+        $pagination = 25;
+        if($request->itemsPage == 2 || $request->itemsPage == 3){
+            $pagination = $request->itemsPage == 2 ? 50 : 100;
+        }
+        foreach ($tabla as $key => $value) {
+            $campos[]="extr_".$value->campo;
+        }
+        if (!$request->orderby) {
+            $request->orderby=1; $request->order=1;
+        }
+        $orderby=$campos[$request->orderby];
+        $order=$request->order==1?'DESC':'ASC';
+        $select=array('inventario.*',DB::raw('(SELECT sum(nro) from productos_bodegas WHERE producto=inventario.id) as disp'));
+
+        if ($request->lista && $request->lista>1) {
+            $precio=ListaPrecios::where('empresa', Auth::user()->empresa)->where('nro', $request->lista)->first();
+            $select[]='pp.precio as precio';
+            $campos[3]=$orderby='pp.precio';
+            $productos = Inventario::join('productos_precios as pp', 'pp.producto', '=', 'inventario.id')->where('pp.lista', $precio->id)->select($select);
+        }else{
+            $productos = Inventario::select($select);
+        }
+
+        $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
+        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','TV');
+        if ($request->name_1) {
+            $busqueda=true; $appends['name_1']=$request->name_1; $productos=$productos->where('inventario.ref', 'like', '%' .$request->name_1.'%');
+        }
+        if ($request->name_2) {
+            $busqueda=true; $appends['name_2']=$request->name_2; $productos=$productos->where('inventario.producto', 'like', '%' .$request->name_2.'%');
+        }
+        if ($request->name_3) {
+            $busqueda=true; $appends['name_3']=$request->name_3; $appends['name_3_simb']=$request->name_3_simb; $productos=$productos->where($campos[3], $request->name_3_simb, $request->name_3);
+        }
+        if ($request->name_4) {
+            $busqueda=true; $appends['name_4']=$request->name_4; $appends['name_4_simb']=$request->name_4_simb; $productos=$productos->whereRaw(DB::raw('(SELECT sum(nro) from productos_bodegas WHERE producto=inventario.id) '.$request->name_4_simb.$request->name_4));
+        }
+        if ($request->name_5) {
+            $busqueda=true; $appends['name_5']=$request->name_5; $productos=$productos->where('publico', $request->name_5);
+        }
+
+        $cont=6;
+        foreach ($tabla as $key => $value) {
+            $tite='name_'.$cont;
+            if ($request->$tite) {
+                $busqueda=true;
+                $appends[$tite]=$request->$tite;
+                $productos=$productos->leftjoin('inventario_meta','id_producto','=','inventario.id')->where('meta_key',$value->campo)->where('meta_value','LIKE','%'. $request->$tite. '%');
+            }
+            $cont++;
+        }
+        if(!($request->name_1 || $request->name_2 || $request->name_3 || $request->name_4 || $request->name_5)){
+            $productos = $productos->OrderBy('id', 'DESC')->paginate($pagination)->appends($appends);
+        }else{
+            $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
+        }
+
+        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','TV')->count();
+        $type = 'TV';
+        view()->share(['seccion' => 'inventario', 'title' => 'Planes de Televisión', 'icon' =>'fas fa-boxes', 'subseccion'=>'planes_tv']);
+        return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
     
     public function create(){
@@ -273,12 +345,35 @@ class InventarioController extends Controller{
         $tipos_empresa=TipoEmpresa::where('empresa',$empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // $cuentas = Puc::where('empresa',$empresa)->where('estatus',1)->get();
+        
         //Tomar las categorias del puc que no son transaccionables.
         $cuentas = Puc::where('empresa',$empresa)
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
-        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas'));
+        $type = '';
+        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
+    }
+
+    public function television_create(){
+        $this->getAllPermissions(Auth::user()->id);
+        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id','>',1)->get();
+        $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->where('estado', 1)->get();
+        $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
+        $medidas=DB::table('medidas')->get();
+        $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $unidades=DB::table('unidades_medida')->get();
+        view()->share(['icon' =>'', 'title' => 'Nuevo Producto']);
+        $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+
+        $identificaciones=TipoIdentificacion::all();
+        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
+        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
+        $prefijos=DB::table('prefijos_telefonicos')->get();
+        $cuentas = ProductoServicio::where('en_uso',1)->get();
+        $type = 'TV';
+        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
     }
     
     public function store(Request $request){
@@ -312,7 +407,7 @@ class InventarioController extends Controller{
         $inventario->descripcion=mb_strtolower($request->descripcion);
         $inventario->precio=$this->precision($request->precio);
         $inventario->id_impuesto=$request->impuesto;
-        $inventario->type='MATERIAL';
+        $inventario->type=$request->type;
         if($request->publico){
             $inventario->publico=$request->publico;
         }
@@ -435,6 +530,9 @@ class InventarioController extends Controller{
         //----------------------/LIBRERIA INVENTORY IMAGE-------------------------------//
         
         $mensaje='Registro creado satisfactoriamente el producto';
+        if($inventario->type = 'TV'){
+            return redirect('empresa/inventario/television')->with('success', 'Se ha registrado satisfactoriamente el plan de televisión')->with('producto_id', $inventario->id);
+        }
         return redirect('empresa/inventario')->with('success', $mensaje)->with('producto_id', $inventario->id);
         if($request->type == 'PLAN'){
             return redirect('empresa/inventario')->with('success', $mensaje)->with('producto_id', $inventario->id);
@@ -443,7 +541,7 @@ class InventarioController extends Controller{
         }else{
             return redirect('empresa/inventario/modem')->with('success', $mensaje)->with('producto_id', $inventario->id);
         }
-  }
+    }
   
     public function storeBack(Request $request){
         $preApp = $request->toUrl != '' ? $request->toUrl : false;
@@ -721,7 +819,6 @@ class InventarioController extends Controller{
             $inventario->categoria=$request->categoria;
             $inventario->lista = $request->list;
             $inventario->link = $request->link;
-            $inventario->type='MATERIAL';
             $inventario->save();
             
             if ($request->tipo_producto==1) {
@@ -863,6 +960,9 @@ class InventarioController extends Controller{
             if (count($inserts)>0) {
                 DB::table('inventario_meta')->insert($inserts);
             }
+        }
+        if($inventario->type = 'TV'){
+            return redirect('empresa/inventario/television')->with('success', 'Se ha modificado satisfactoriamente el plan de televisión')->with('producto_id', $inventario->id);
         }
         return redirect('empresa/inventario/')->with('success', 'Se ha modificado satisfactoriamente el producto');
     }

@@ -251,6 +251,16 @@ class IngresosController extends Controller
                 return back()->with('danger', $mensaje)->withInput();
             }
         }
+
+        if ($request->tipo == 1) {
+            foreach ($request->factura_pendiente as $key => $value) {
+                $factura = Factura::find($request->factura_pendiente[$key]);
+                if($factura->estatus == 0){
+                    $mensaje='DISCULPE UD. ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
+                    return back()->with('danger', $mensaje)->withInput();
+                }
+            }
+        }
         
         if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
             Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);

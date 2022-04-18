@@ -311,6 +311,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/publicar/{id}', 'InventarioController@publicar')->name('inventario.publicar');
 		Route::get('/modems', 'InventarioController@modems')->name('inventario.modems');
 		Route::get('/material', 'InventarioController@material')->name('inventario.material');
+        Route::get('/television', 'InventarioController@television')->name('inventario.television');
+        Route::get('/television/create', 'InventarioController@television_create')->name('inventario.television_create');
 
 		Route::post('/diaiva', 'InventarioController@diaIva');
 
@@ -947,6 +949,12 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         });
         Route::resource('integracion-sms', 'IntegracionSMSController');
 
+        //INTEGRACION PASARELAS DE PAGO
+        Route::group(['prefix' => 'integracion-pasarelas'], function() {
+            Route::post('/{id}/act_desc', 'IntegracionPasarelaController@act_desc')->name('integracion-pasarelas.act_desc');
+        });
+        Route::resource('integracion-pasarelas', 'IntegracionPasarelaController');
+
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');
@@ -1067,6 +1075,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('habilitados', 'ContratosController@enabled')->name('contratos.enabled');
 		Route::get('{id}/{archivo}/eliminar', 'ContratosController@eliminarAdjunto')->name('contratos.eliminarAdjunto');
         Route::post('{id}/enviar_mk', 'ContratosController@enviar_mk')->name('contratos.enviar_mk');
+        Route::post('{id}/carga_adjuntos', 'ContratosController@carga_adjuntos')->name('contratos.carga_adjuntos');
 	});
 	Route::resource('contratos', 'ContratosController');
 	

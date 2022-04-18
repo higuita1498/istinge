@@ -13,7 +13,6 @@ use DB;
 use Session;
 
 use App\User;
-use App\Nodo;
 use App\Integracion;
 
 class IntegracionSMSController extends Controller
@@ -21,7 +20,7 @@ class IntegracionSMSController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['seccion' => 'configuracion', 'title' => 'Integración SMS', 'icon' =>'fas fa-cogs']);
+        view()->share(['seccion' => 'configuracion', 'title' => 'Integración SMS', 'icon' => 'far fa-envelope']);
     }
 
     public function index(Request $request){

@@ -20,7 +20,11 @@
   	</div>
 
 	<a href="{{route('inventario.exportar')}}" class="btn btn-secondary btn-sm oclt-btneximp" ><i class="fas fa-download"></i> Exportar</a> --}}
-	<a href="{{route('inventario.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Producto</a>
+	    @if($type == 'TV')
+	        <a href="{{route('inventario.television_create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan de TV</a>
+	    @else
+	        <a href="{{route('inventario.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Producto</a>
+	    @endif
 	@endif
 @endsection		
 @section('content')
@@ -39,23 +43,23 @@
 	
 	<style>
 	    td .elipsis-short-325 {
-    width: 325px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-@media all and (max-width: 768px){
-    	    td .elipsis-short-325 {
-    width: 225px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-}
+	    	width: 325px;
+	    	overflow: hidden;
+	    	white-space: nowrap;
+	    	text-overflow: ellipsis;
+	    }
+	    @media all and (max-width: 768px){
+	    	td .elipsis-short-325 {
+	    		width: 225px;
+	    		overflow: hidden;
+	    		white-space: nowrap;
+	    		text-overflow: ellipsis;
+	    	}
+	    }
 	</style>
+
 	<form id="form-table-inventario">
-	    <p><h4 class="ml-3">Total Productos: {{$totalProductos}}</h4></p>
+	    <p><h4 class="ml-3">{{ $type == 'TV' ? 'Planes de Televisión' : 'Total Productos' }}: {{$totalProductos}}</h4></p>
 		<input type="hidden" name="orderby"id="order_by"  value="1">
 		<input type="hidden" name="order" id="order" value="0">
 		<input type="hidden" id="form" value="form-table-inventario">

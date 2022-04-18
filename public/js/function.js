@@ -719,6 +719,12 @@ function contacto(selected, modificar=false, type = 1){
                 if(data[0]){
                     data=data[0];
                 }
+            }else{
+                if(data[0]){
+                    data=data[0];
+                }else{
+                    data=data;
+                }
             }
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
@@ -745,8 +751,13 @@ function contacto(selected, modificar=false, type = 1){
                 $('#direccion').val(data.direccion);
                 $('#contrato').val(data.contrato);
                 if(type != 2){
-                $('#item1').val(data.plan).selectpicker('refresh');
+                    $('#item1').val(data.plan).selectpicker('refresh');
                     rellenar(1, data.plan);
+                    if(data.servicio_tv){
+                        createRow();
+                        $('#item2').val(data.servicio_tv).selectpicker('refresh');
+                        rellenar(2, data.servicio_tv);
+                    }
                 }
             }
             cargando(false);
@@ -1274,7 +1285,7 @@ function rellenar(id, selected, producto=false){
                     $('#pcant'+id).html('Disp '+data.nro);
                 }
             }
-            console.log(data.inventariable);
+
             if(data.inventario<=0 && data.inventariable){
                 jQuery('#noMore').append(`<div class="alert alert-warning alert-dismissible fade show" id="alertInventario" role="alert">
             <strong>¡Atención!</strong> Usted esta intentando facturar un producto que no tiene unidades en inventario.

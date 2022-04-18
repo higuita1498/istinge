@@ -90,10 +90,13 @@
                 <ul class="nav flex-column sub-menu">
                     <?php if(isset($_SESSION['permisos']['8'])){ ?>
                         <li class="nav-item d-none" id="items_venta">
-                            <a class="nav-link" href="{{route('inventario.index')}}" >Planes</a>
+                            <a class="nav-link" href="{{route('inventario.index')}}">Planes</a>
                         </li>
                         <li class="nav-item" id="material">
-                            <a class="nav-link" href="{{route('inventario.material')}}" >Productos</a>
+                            <a class="nav-link" href="{{route('inventario.material')}}">Productos</a>
+                        </li>
+                        <li class="nav-item" id="planes_tv">
+                            <a class="nav-link" href="{{route('inventario.television')}}">Planes de Televisión</a>
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['412'])){ ?>

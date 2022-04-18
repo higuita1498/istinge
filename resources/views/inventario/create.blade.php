@@ -170,9 +170,8 @@
 			<div class="form-group col-md-4 d-none">
 	  			<label class="control-label">Tipo <span class="text-danger">*</span></label>
 	  			<select class="form-control selectpicker" name="type" id="type" required="" title="Seleccione" data-live-search="true" data-size="5">
-	  			    <option value="PLAN" disabled>PLAN INTERNET</option>
-	  			    <option value="MATERIAL" selected>MATERIAL</option>
-	  			    <option value="MODEMS" disabled>MÓDEMS</option>
+	  			    <option value="MATERIAL" {{ $type == 'TV' ? '' : 'selected' }}>MATERIAL</option>
+	  			    <option value="TV" {{ $type == 'TV' ? 'selected' : '' }}>TV</option>
                 </select>
 				<span class="help-block error">
 		        	<strong>{{ $errors->first('type') }}</strong>
