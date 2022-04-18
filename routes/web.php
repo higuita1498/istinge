@@ -311,6 +311,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/publicar/{id}', 'InventarioController@publicar')->name('inventario.publicar');
 		Route::get('/modems', 'InventarioController@modems')->name('inventario.modems');
 		Route::get('/material', 'InventarioController@material')->name('inventario.material');
+        Route::get('/television', 'InventarioController@television')->name('inventario.television');
+        Route::get('/television/create', 'InventarioController@television_create')->name('inventario.television_create');
 
 		Route::post('/diaiva', 'InventarioController@diaIva');
 
