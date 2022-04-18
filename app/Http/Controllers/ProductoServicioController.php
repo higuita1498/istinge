@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 use App\Model\Inventario\Inventario; 
 use App\Impuesto; 
+use App\ProductoCuenta; 
 
 class ProductoServicioController extends Controller
 {
@@ -42,6 +43,39 @@ class ProductoServicioController extends Controller
         $inventario->nro=0;
         $inventario->tipo_producto=2;
         $inventario->save();
+
+        //Registramos las cuentas en la tabla de producto_cuentas ya que hace referencia a las mismas
+        if($request->inventario){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->inventario;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 1;
+            $pr->save();
+        }
+
+        if($request->costo){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->costo;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 2;
+            $pr->save();
+        }
+
+        if($request->venta){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->venta;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 3;
+            $pr->save();
+        }
+
+        if($request->devolucion){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->devolucion;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 4;
+            $pr->save();
+        } 
 
 
         $producto = new ProductoServicio;
@@ -87,6 +121,52 @@ class ProductoServicioController extends Controller
             if($inventario){
                 $inventario->producto = $request->nombre;
                 $inventario->save();
+
+                //Actualizamos las cuentas en la tabla de producto_cuentas ya que hace referencia a las mismas
+                if($request->inventario){
+                    $pr = ProductoCuenta::where('inventario_id',$inventario->id)->where('tipo',1)->first();
+                    if(!$pr){
+                        $pr = new ProductoCuenta;
+                    }
+                    $pr->cuenta_id = $request->inventario;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 1;
+                    $pr->save();
+                }
+
+                if($request->costo){
+                    $pr = ProductoCuenta::where('inventario_id',$inventario->id)->where('tipo',2)->first();
+                    if(!$pr){
+                        $pr = new ProductoCuenta;
+                    }
+                    $pr->cuenta_id = $request->costo;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 2;
+                    $pr->save();
+                }
+
+                if($request->venta){
+                    $pr = ProductoCuenta::where('inventario_id',$inventario->id)->where('tipo',3)->first();
+                    if(!$pr){
+                        $pr = new ProductoCuenta;
+                    }
+                    $pr->cuenta_id = $request->venta;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 3;
+                    $pr->save();
+                }
+
+                if($request->devolucion){
+                    $pr = ProductoCuenta::where('inventario_id',$inventario->id)->where('tipo',4)->first();
+                    if(!$pr){
+                        $pr = new ProductoCuenta;
+                    }
+                    $pr->cuenta_id = $request->devolucion;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 4;
+                    $pr->save();
+                }
+
             }else{
                 $inventario = new Inventario;
                 $inventario->producto = $request->nombre;
@@ -97,9 +177,42 @@ class ProductoServicioController extends Controller
                 $inventario->unidad=1;
                 $inventario->nro=0;
                 $inventario->tipo_producto=2;
-                $inventario->save();
+                $inventario->save();  
 
                 $producto->producto_id = $inventario->id;
+
+                //Registramos las cuentas en la tabla de producto_cuentas ya que hace referencia a las mismas
+                if($request->inventario){
+                    $pr = new ProductoCuenta;
+                    $pr->cuenta_id = $request->inventario;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 1;
+                    $pr->save();
+                }
+
+                if($request->costo){
+                    $pr = new ProductoCuenta;
+                    $pr->cuenta_id = $request->costo;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 2;
+                    $pr->save();
+                }
+
+                if($request->venta){
+                    $pr = new ProductoCuenta;
+                    $pr->cuenta_id = $request->venta;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 3;
+                    $pr->save();
+                }
+
+                if($request->devolucion){
+                    $pr = new ProductoCuenta;
+                    $pr->cuenta_id = $request->devolucion;
+                    $pr->inventario_id = $inventario->id;
+                    $pr->tipo = 4;
+                    $pr->save();
+                } 
             }
          
 
