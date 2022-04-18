@@ -608,7 +608,7 @@ class ContactosController extends Controller
             }
         }
         
-        $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, I.id as plan, GC.fecha_corte, GC.fecha_suspension FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE C.id = '".$id."'");
+        $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, I.id as plan, GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE C.id = '".$id."'");
 
         if ($contacto) {
             return json_encode($contacto);
