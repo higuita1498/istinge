@@ -363,7 +363,7 @@ class InventarioController extends Controller{
         $medidas=DB::table('medidas')->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $unidades=DB::table('unidades_medida')->get();
-        view()->share(['icon' =>'', 'title' => 'Nuevo Producto']);
+        view()->share(['icon' =>'', 'title' => 'Nuevo Plan de Televisión']);
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
 
         $identificaciones=TipoIdentificacion::all();
