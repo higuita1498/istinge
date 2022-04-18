@@ -86,11 +86,10 @@
 				<table class="table table-striped table-bordered table-sm info">
 					<tbody>
 						<tr>
-							<th class="bg-th" width="20%">DATOS GENERALES</th>
-							<th class="bg-th"></th>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>SERVICIO DE INTERNET</strong></th>
 						</tr>
 						<tr>
-							<th>Nro. Contrato</th>
+							<th width="20%">Nro. Contrato</th>
 							<td>{{ $contrato->nro }}</td>
 						</tr>
 						<tr>
@@ -239,15 +238,40 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+		</div>
 
-				<table class="table table-striped table-bordered table-sm info mt-4">
+		@if($contrato->servicio_tv)
+		<div class="col-md-12">
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered table-sm info mt-1">
 					<tbody>
 						<tr>
-							<th class="bg-th" width="20%">CLIENTE ASOCIADO</th>
-							<th class="bg-th"></th>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>SERVICIO DE TELEVISIÓN</strong></th>
 						</tr>
 						<tr>
-							<th>Nombre Cliente</th>
+							<th width="20%">Plan Contratado</th>
+							<td><a href="{{route('inventario.show',$contrato->servicio_tv)}}" target="_blank"><strong>{{ $inventario->producto }}</strong></a></td>
+						</tr>
+						<tr>
+							<th>Precio del Plan Contratado</th>
+							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($inventario->precio) }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		@endif
+
+		<div class="col-md-12">
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered table-sm info mt-2">
+					<tbody>
+						<tr>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>CLIENTE ASOCIADO AL CONTRATO</strong></th>
+						</tr>
+						<tr>
+							<th width="20%">Nombre Cliente</th>
 							<td><a href="{{ route('contactos.show',$contrato->id_cliente )}}" target="_blank"><strong>{{ $contrato->nombre }}</strong></a></td></td>
 						</tr>
 						@if($contrato->nit)
