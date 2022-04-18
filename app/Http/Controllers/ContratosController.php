@@ -964,10 +964,7 @@ class ContratosController extends Controller
                     if($request->factura_individual){
                         $contrato->factura_individual = $request->factura_individual;
                     }
-
-                    if($request->servicio_tv){
-                        $contrato->servicio_tv = $request->servicio_tv;
-                    }
+                    $contrato->servicio_tv = $request->servicio_tv;
 
                     ### DOCUMENTOS ADJUNTOS ###
 

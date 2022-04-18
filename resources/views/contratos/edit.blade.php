@@ -367,6 +367,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Servicio de Televisión</label>
                                 <select class="form-control selectpicker" name="servicio_tv" id="servicio_tv" title="Seleccione" data-live-search="true" data-size="5">
+                                    <option value="">NINGUNO</option>
                                     @foreach($servicios as $servicio)
                                         <option value="{{$servicio->id}}" {{ $servicio->id==$contrato->servicio_tv?'selected':'' }}>{{$servicio->producto}}</option>
                                     @endforeach
