@@ -645,7 +645,7 @@ public function forma_pago()
         $items = ItemsFactura::where('factura', $this->id)->get();
 
         foreach ($items as $item) {
-            if ($item->id_impuesto == 0) {
+            if ($item->id_impuesto == 0 || $item->impuesto == 0) {
                 return true;
             }
         }
