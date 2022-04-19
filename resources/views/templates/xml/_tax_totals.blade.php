@@ -89,7 +89,7 @@
         <cbc:Percent>{{number_format($imp->porcentaje, 2, '.', '')}}</cbc:Percent>
         <cac:TaxScheme>
         <cbc:ID>ZZ</cbc:ID>
-        <cbc:Name>No aplica</cbc:Name>
+        <cbc:Name>{{isset($imp->nombre) ? $imp->nombre : "No aplica"}}</cbc:Name>
         </cac:TaxScheme>
         </cac:TaxCategory>
         </cac:TaxSubtotal>
