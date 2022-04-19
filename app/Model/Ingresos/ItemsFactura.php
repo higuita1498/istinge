@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Model\Inventario\Inventario;  
 use App\Impuesto;  use App\CamposExtra; 
 use DB; use Auth;
+use App\ProductoCuenta;
 class ItemsFactura extends Model
 {
     protected $table = "items_factura";
@@ -210,5 +211,9 @@ class ItemsFactura extends Model
             return $ivas;
         }
         return '';
+    }
+
+    public function cuentasContable(){
+        return ProductoCuenta::where('inventario_id',$this->producto)->get();
     }
 }

@@ -65,7 +65,7 @@
                         <div class="col-sm-8">
                             <select name="relacion" id="relacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5">
                                 @foreach($relaciones as $relacion)
-                                    <option value="{{$relacion->id}}">{{$relacion->codigo}} - {{$relacion->nombre}}</option>
+                                    <option value="{{$relacion->id}}" {{$relacion->id == $factura->cuenta_id ? 'selected':''}}>{{$relacion->codigo}} - {{$relacion->nombre}}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -5,6 +5,7 @@ namespace App\Model\Inventario;
 use Illuminate\Database\Eloquent\Model; 
 use App\Funcion; use App\Impuesto;
 use App\Categoria;
+use App\ProductoCuenta;
 use Auth;  use App\NotaCredito; 
 use App\Model\Ingresos\ItemsFactura;  
 use App\Model\Ingresos\Factura;
@@ -215,7 +216,7 @@ class Inventario extends Model
     }
 
     public function cuentas(){
-      return DB::table('producto_cuentas')->where('inventario_id',$this->id)->get();
+      return ProductoCuenta::where('inventario_id',$this->id)->get();
     }
 
 }

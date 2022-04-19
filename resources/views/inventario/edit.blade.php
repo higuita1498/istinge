@@ -124,7 +124,7 @@
 							@php $key2= 0; @endphp
 							@foreach($cuentasInventario as $cuenta)
 							<tr id="tr_cuenta_{{($key2+1)}}">
-								<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">*</span></label></td>
+								<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">* {{$cuenta->nombreProductoServicio()}}</span></label></td>
 								<td width="30%">
 									<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">							        		
 										@foreach($cuentas as $c) 
