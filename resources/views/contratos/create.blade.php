@@ -308,11 +308,16 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Grupo de Corte <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                    <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte_s" required="" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($grupos as $grupo)
                                             <option value="{{$grupo->id}}">{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
                                         @endforeach
                                     </select>
+                                    <div class="input-group-append">
+                                        <a href="#" data-toggle="modal" data-target="#grupoModal" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-plus" style="margin: 2px;"></i>
+                                        </a>
+                                    </div>
                                 </div>
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('grupo_corte') }}</strong>
@@ -515,6 +520,16 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="grupoModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body px-0">
+                    @include('grupos-corte.modal')
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="modal fade" id="modal-ips" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -563,6 +578,12 @@
 
 @section('scripts')
     <script>
+        $("#formGrupo").submit(function () {
+            return false;
+        });
+        $("#formulario").submit(function () {
+            return false;
+        });
         $(document).on('change','input[type="file"]',function(){
             var fileName = this.files[0].name;
             var fileSize = this.files[0].size;

@@ -129,6 +129,29 @@ class GruposCorteController extends Controller
         return redirect('empresa/grupos-corte')->with('success', $mensaje);
     }
 
+    public function storeBack(Request $request){
+        $grupo = new GrupoCorte;
+        $grupo->nombre = $request->nombre;
+        $grupo->fecha_factura = $request->fecha_factura;
+        $grupo->fecha_pago = $request->fecha_pago;
+        $grupo->fecha_corte = $request->fecha_corte;
+        $grupo->fecha_suspension = $request->fecha_suspension;
+        $grupo->status = $request->status;
+        $grupo->created_by = Auth::user()->id;
+        $grupo->empresa = Auth::user()->empresa;
+        $grupo->save();
+
+        if ($grupo) {
+            $arrayPost['success']    = true;
+            $arrayPost['id']         = GrupoCorte::all()->last()->id;
+            $arrayPost['suspension'] = GrupoCorte::all()->last()->fecha_suspension;
+            $arrayPost['corte']      = GrupoCorte::all()->last()->fecha_corte;
+            $arrayPost['nombre']     = GrupoCorte::all()->last()->nombre;
+            echo json_encode($arrayPost);
+            exit;
+        }
+    }
+
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $grupo = GrupoCorte::find($id);
