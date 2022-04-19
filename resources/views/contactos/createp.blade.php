@@ -279,15 +279,15 @@
 		if (option == 6) {
 			searchDV($("#tip_iden").val());
 		}
+		$('#departamento').val({{ Auth::user()->empresa()->fk_iddepartamento }}).selectpicker('refresh');
+		searchMunicipality({{ Auth::user()->empresa()->fk_iddepartamento }}, {{ Auth::user()->empresa()->fk_idmunicipio }});
 	});
 	$('#email').keydown(function(e) {
 		if (e.keyCode == 32) {
 			return false;
 		}
 	});
-</script>
 
-<script>
 	function plazo() {
 		var dias = $('#plazo_credito option:selected').attr('dias');
 		let fechaActual = $('#vencimiento').val();
@@ -299,6 +299,11 @@
 			$('#vencimiento').val(fecha);
 		}
 	}
+
+	setTimeout(function () {
+		$("#municipio").val({{ Auth::user()->empresa()->fk_idmunicipio }});
+		$("#municipio").selectpicker('refresh');
+    }, 500);
 </script>
 
 @endsection

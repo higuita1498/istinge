@@ -209,14 +209,10 @@
             $('.mac_address').mask('AA:AA:AA:AA:AA:AA', {
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
-            searchMunicipality(2);
-            //getPlanes(1);
-            //getSegmentos(1);
-            //$('#conexion').val(3).selectpicker('refresh');
-            interfazChange(3);
-            $('#departamento').val(2).selectpicker('refresh');
-            $('#municipio').val(145);
-            $("#municipio").selectpicker('refresh');
+
+            $('#departamento').val({{ Auth::user()->empresa()->fk_iddepartamento }}).selectpicker('refresh');
+            searchMunicipality({{ Auth::user()->empresa()->fk_iddepartamento }}, {{ Auth::user()->empresa()->fk_idmunicipio }});
+
             $("#guardarc").click(function (formulario) {
                 $.post($("#formulario").attr('action'), $("#formulario").serialize(), function (dato) {
                     if(dato['status']=='OK'){
@@ -233,12 +229,6 @@
                 }, 'json');
             });
 
-            var option = document.getElementById('tip_iden').value;
-
-            if (option == 6) {
-                alert('ok');
-            }
-
             $('#tip_iden').change(function(){
                 if($('#tip_iden').val() == 6){
                     searchDV($("#tip_iden").val());
@@ -249,6 +239,8 @@
         });
 
         setTimeout(function () {
+            $("#municipio").val({{ Auth::user()->empresa()->fk_idmunicipio }});
+            $("#municipio").selectpicker('refresh');
             $('#clnte').prop('checked', true);
             clearTimeout(this);
         }, 1000);

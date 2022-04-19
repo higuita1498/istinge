@@ -65,15 +65,15 @@
   		</div>
   		<div class="form-group col-md-3" id="validatec1">
   			<label class="control-label">Departamento <span class="text-danger">*</span></label>
-  			<select class="form-control   selectpicker" name="departamento" id="departamento" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="searchMunicipality(this.value)">
+  			<select class="form-control selectpicker" name="departamento" id="departamento" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="searchMunicipality(this.value, {{ Auth::user()->empresa()->fk_idmunicipio }})">
   				@foreach($departamentos as $departamento)
-  				  <option @if($departamento->nombre == 'Atlantico') ? selected : '' @endif value="{{ $departamento->id }}">{{ $departamento->nombre }}</option>
+  				  <option value="{{ $departamento->id }}">{{ $departamento->nombre }}</option>
   				@endforeach
   			</select>
   		</div>
   		<div class="form-group col-md-3" id="validatec2">
   			<label class="control-label">Municipio <span class="text-danger">*</span></label>
-  			<select class="form-control   selectpicker" name="municipio" id="municipio" required="" title="Seleccione" data-live-search="true" data-size="5">
+  			<select class="form-control selectpicker" name="municipio" id="municipio" required="" title="Seleccione" data-live-search="true" data-size="5">
   				
   			</select>
   		</div>
@@ -208,13 +208,18 @@
 @section('scripts')
 	<script type="text/javascript">
 		$(document).ready(function(){
-		    $('#departamento').val(2).selectpicker('refresh');
+		  $('#departamento').val({{ Auth::user()->empresa()->fk_iddepartamento }}).selectpicker('refresh');
 			var option = document.getElementById('tip_iden').value;
 
 			if (option == 6) {
 				searchDV($("#tip_iden").val());
 			}
-			searchMunicipality(2);
+			searchMunicipality({{ Auth::user()->empresa()->fk_iddepartamento }}, {{ Auth::user()->empresa()->fk_idmunicipio }});
 		});
+
+		setTimeout(function () {
+			$("#municipio").val({{ Auth::user()->empresa()->fk_idmunicipio }});
+			$("#municipio").selectpicker('refresh');
+    }, 500);
 	</script>
 @endsection
