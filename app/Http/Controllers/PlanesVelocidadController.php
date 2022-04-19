@@ -206,6 +206,100 @@ class PlanesVelocidadController extends Controller
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PLAN';
         return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);
     }
+
+    public function storeBack(Request $request){
+        if (!$request->mikrotik) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'Mikrotik Asociada no ha sido seleccionada';
+            echo json_encode($arrayPost);
+            exit;
+        }
+        if (!$request->name) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'El nombre del plan no ha sido definido';
+            echo json_encode($arrayPost);
+            exit;
+        }
+        if (!$request->price) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'El precio del plan no ha sido definido';
+            echo json_encode($arrayPost);
+            exit;
+        }
+        if (!$request->download) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'La Vel. de Descarga no ha sido definida';
+            echo json_encode($arrayPost);
+            exit;
+        }
+        if (!$request->upload) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'La Vel. de Subida no ha sido definida';
+            echo json_encode($arrayPost);
+            exit;
+        }
+        if (!$request->tipo_plan) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'El tipo de plan no ha sido definido';
+            echo json_encode($arrayPost);
+            exit;
+        }
+
+        for ($i=0; $i < count($request->mikrotik) ; $i++) {
+            $inventario                   = new Inventario;
+            $inventario->empresa          = Auth::user()->empresa;
+            $inventario->producto         = strtoupper($request->name);
+            $inventario->ref              = strtoupper($request->name);
+            $inventario->precio           = $this->precision($request->price);
+
+            $inventario->id_impuesto      = ($request->tipo_plan == 2) ? 1 : 2;
+            $inventario->impuesto         = ($request->tipo_plan == 2) ? 19 : 0;
+
+            $inventario->tipo_producto    = 2;
+            $inventario->unidad           = 1;
+            $inventario->nro              = 0;
+            $inventario->categoria        = 116;
+            $inventario->lista            = 0;
+            $inventario->type             = 'PLAN';
+            $inventario->save();
+
+            $plan                         = new PlanesVelocidad;
+            $plan->mikrotik               = $request->mikrotik[$i];
+            $plan->name                   = $request->name;
+            $plan->price                  = $request->price;
+            $plan->upload                 = $request->upload.''.$request->inicial_download;
+            $plan->download               = $request->download.''.$request->inicial_upload;
+            $plan->type                   = $request->type;
+            $plan->address_list           = $request->address_list;
+            $plan->created_by             = Auth::user()->id;
+            $plan->tipo_plan              = $request->tipo_plan;
+            $plan->burst_limit_subida     = $request->burst_limit_subida.''.$request->inicial_burst_limit_subida;
+            $plan->burst_limit_bajada     = $request->burst_limit_bajada.''.$request->inicial_burst_limit_bajada;
+            $plan->burst_threshold_subida = $request->burst_threshold_subida.''.$request->inicial_burst_threshold_subida;
+            $plan->burst_threshold_bajada = $request->burst_threshold_bajada.''.$request->inicial_burst_threshold_bajada;
+            $plan->burst_time_subida      = $request->burst_time_subida;
+            $plan->burst_time_bajada      = $request->burst_time_bajada;
+            $plan->queue_type_subida      = $request->queue_type_subida;
+            $plan->queue_type_bajada      = $request->queue_type_bajada;
+            $plan->parenta                = $request->parenta;
+            $plan->prioridad              = $request->prioridad;
+            $plan->limit_at_subida        = $request->limit_at_subida.''.$request->inicial_limit_at_subida;
+            $plan->limit_at_bajada        = $request->limit_at_bajada.''.$request->inicial_limit_at_bajada;
+            $plan->item                   = $inventario->id;
+            $plan->empresa                = Auth::user()->empresa;
+            $plan->dhcp_server            = $request->dhcp_server;
+            $plan->save();
+        }
+
+        if ($plan) {
+            $arrayPost['success'] = true;
+            $arrayPost['id']      = PlanesVelocidad::all()->last()->id;
+            $arrayPost['name']    = PlanesVelocidad::all()->last()->name;
+            $arrayPost['type']    = (PlanesVelocidad::all()->last()->type == 0) ? 'Plan Queue Simple' : 'Plan PCQ';
+            echo json_encode($arrayPost);
+            exit;
+        }
+    }
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
