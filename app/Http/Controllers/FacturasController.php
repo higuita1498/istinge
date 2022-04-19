@@ -948,6 +948,8 @@ class FacturasController extends Controller{
       $nro->save();
   }
 
+    PucMovimiento::facturaVenta($factura,1);
+
     //Creo la variable para el mensaje final, y la variable print (imprimir)
     $mensaje='Se ha creado satisfactoriamente la factura';
     $print=false;
@@ -1148,8 +1150,7 @@ public function edit($id){
             $descuento->save();
         }
 
-        return PucMovimiento::facturaVenta($factura,1);
-        
+        PucMovimiento::facturaVenta($factura,1);
 
         $mensaje='Se ha modificado satisfactoriamente la factura';
         return redirect($request->page)->with('success', $mensaje)->with('codigo', $factura->id);
