@@ -2999,23 +2999,21 @@ function validateCountry(id){
     }
 }
 
-function searchMunicipality(id){
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url='/software/searchMunicipality';
-    }else{
-        var url='/searchMunicipality';
-    }
+function searchMunicipality(id, municipio = null) {
     $.ajax({
-        url: url,
-        headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        method:'post',
-        data:{departamento_id:id},
-        success: function(municipios){
+        url: '/searchMunicipality',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'post',
+        data: { departamento_id: id },
+        success: function(municipios) {
             $("#municipio").empty();
-            $.each(municipios, function(index, value){
-                $("#municipio").append(`<option value=`+value.id+`>`+value.nombre+`</option>`)
+            $.each(municipios, function(index, value) {
+                if (value.id == municipio) {
+                    $("#municipio").append(`<option value=` + value.id + ` selected >` + value.nombre + `</option>`);
+                } else {
+                    $("#municipio").append(`<option value=` + value.id + `>` + value.nombre + `</option>`);
+                }
             });
-            $('#municipio').val(145);
             $("#municipio").selectpicker('refresh');
         }
     })

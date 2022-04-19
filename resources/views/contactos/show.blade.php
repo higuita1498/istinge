@@ -187,6 +187,18 @@
 						<td>{{$contacto->estrato}}</td>
 					</tr>
 					@endif
+					@if($contacto->fk_iddepartamento)
+					<tr>
+						<th width="20%">Departamento</th>
+						<td>{{$contacto->getDepartamentoNameAttribute()}}</td>
+					</tr>
+					@endif
+					@if($contacto->fk_idmunicipio)
+					<tr>
+						<th width="20%">Municipio</th>
+						<td>{{$contacto->getMunicipioNameAttribute()}}</td>
+					</tr>
+					@endif
 					@if($contacto->direccion)
 					<tr>
 						<th width="20%">Dirección</th>
