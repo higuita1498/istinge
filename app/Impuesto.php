@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Model\Ingresos\ItemsFactura;
 use App\Model\Inventario\Inventario;
+use App\Puc;
 class Impuesto extends Model
 {
     protected $table = "impuestos";
@@ -37,6 +38,10 @@ class Impuesto extends Model
             $tipo='Otro';
         }
         return $tipo;
+    }
+
+    public function puc(){
+        return Puc::find($this->puc_venta);
     }
 
     

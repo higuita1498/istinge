@@ -47,6 +47,7 @@ use App\ServidorCorreo;
 use App\FormaPago;
 use ZipArchive;
 use App\Integracion;
+use App\PucMovimiento;
 
 class FacturasController extends Controller{
 
@@ -872,6 +873,7 @@ class FacturasController extends Controller{
     $factura->nro_remision = $request->nro_remision;
     $factura->tipo_operacion = $request->tipo_operacion;
     $factura->ordencompra    = $request->ordencompra;
+    $factura->cuenta_id    = $request->relacion;
 
     if($contrato){
         $factura->contrato_id = $contrato->id;
@@ -937,6 +939,7 @@ class FacturasController extends Controller{
               }
           }
       }
+      
 
       //Actualiza el nro de inicio para la numeracion seleccionada
   $cant=Factura::where('empresa',Auth::user()->empresa)->where('codigo','=',($nro->prefijo.$inicio))->count();
@@ -1074,9 +1077,8 @@ public function edit($id){
         $factura->facnotas=$request->notas;
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
+        $factura->cuenta_id    = $request->relacion;
         $factura->save();
-
-        $this->addMovimientoPuc($request->relacion);
 
         $inner=array();
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
@@ -1145,6 +1147,9 @@ public function edit($id){
             $descuento->created_by = Auth::user()->id;
             $descuento->save();
         }
+
+        return PucMovimiento::facturaVenta($factura,1);
+        
 
         $mensaje='Se ha modificado satisfactoriamente la factura';
         return redirect($request->page)->with('success', $mensaje)->with('codigo', $factura->id);

@@ -26,7 +26,7 @@ class Retencion extends Model
 
     public function tipo()
     {
-        $tipo='Otro tipo de retenci¨®n';
+        $tipo='Otro tipo de retenciï¿½ï¿½n';
         if ($this->tipo==1) {
             $tipo='RetenciÃ³n de IVA';
         }
@@ -39,6 +39,10 @@ class Retencion extends Model
 
         
         return $tipo;
+    }
+
+    public function pucVenta(){
+        return Puc::find('id',$this->puc_venta);
     }
 
     

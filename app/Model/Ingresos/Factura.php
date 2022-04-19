@@ -20,6 +20,8 @@ use App\Model\Inventario\Bodega;
 use Carbon\Carbon;
 use DB;
 use App\GrupoCorte;
+use App\Puc;
+use App\FormaPago;
 class Factura extends Model
 {
     protected $table = "factura";
@@ -92,7 +94,14 @@ class Factura extends Model
 
 
     public function total(){
-        $totales=array('total'=>0, 'subtotal'=>0, 'descuento'=>0, 'subsub'=>0, 'imp'=>Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get(), 'totalreten'=>0);
+        $totales=array('total'=>0, 
+        'subtotal'=>0, 
+        'descuento'=>0, 
+        'subsub'=>0, 
+        'imp'=>Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get(), 
+        'totalreten'=>0, 
+        'reteFuente' => 0
+        );
         $items=ItemsFactura::where('factura',$this->id)->get();
         $totales["reten"]=Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $result=0; $desc=0; $impuesto=0;
@@ -132,7 +141,10 @@ class Factura extends Model
         }
 
         if (FacturaRetencion::where('factura',$this->id)->count()>0) {
-            $items=FacturaRetencion::where('factura',$this->id)->get();
+            $items=FacturaRetencion::join('retenciones as r','r.id','=','factura_retenciones.id_retencion')
+            ->where('factura_retenciones.factura',$this->id)
+            ->select('factura_retenciones.*','r.tipo as id_tipo')
+            ->get();
 
             foreach ($items as $item) {
                 foreach ($totales["reten"] as $key => $reten) {
@@ -143,6 +155,21 @@ class Factura extends Model
                         $totales["reten"][$key]->total+=$item->valor;
                         $totales['totalreten']+=$item->valor;
 
+                        $tipo = $item->id_tipo;
+                            switch ($tipo) {
+
+                                case 1:
+                                    $totales['reteIva'] += $item->valor;
+                                    break;
+
+                                case 2:
+                                    $totales['reteFuente'] += $item->valor;
+                                    break;
+
+                                case 3:
+                                    $totales['reteIca'] += $item->valor;
+                                    break;
+                            }
                     }
                 }
             }
@@ -484,6 +511,11 @@ public function forma_pago()
     return $formapago;
 }
 
+    public function itemsFactura()
+    {
+        return $this->hasMany(ItemsFactura::class,'factura','id');
+    }
+
     public function getTypeNameAttribute()
     {
         switch ($this->tipo){
@@ -744,6 +776,14 @@ public function forma_pago()
             return $mensaje;
         }
 
+    }
+
+    public function numeracionFactura(){
+        return $this->belongsTo('App\NumeracionFactura','numeracion');
+    }
+
+    public function formaPago(){
+        return FormaPago::find($this->cuenta_id);
     }
 
 }

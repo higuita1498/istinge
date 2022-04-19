@@ -17,4 +17,33 @@ class ProductoCuenta extends Model
         'cuenta_id', 'inventario_id', 'created_at', 'updated_at', 'tipo'
     ];
 
+    public function nombreProductoServicio(){
+ 
+        switch ($this->tipo) {
+          case 1:
+            return "Inventario";
+            break;
+  
+          case 2:
+            return "Costo";
+            break;
+  
+          case 3:
+            return "Venta";
+            break;
+  
+          case 4:
+            return "Devolución";
+            break;
+          
+          default:
+            return " ";
+            break;
+        }
+      }
+
+    public function puc(){
+      return $this->belongsTo('App\Puc','cuenta_id');
+    }
+
 }
