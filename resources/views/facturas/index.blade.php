@@ -31,23 +31,23 @@
 	@endif
 
 @if(Session::has('message_denied'))
-    <div class="alert alert-danger" role="alert">
-	    {{Session::get('message_denied')}}
-	    @if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
-	        @if(count(Session::get('errorReason')) > 1)
-	            @php $cont = 0 @endphp
-	            @foreach(Session::get('errorReason') as $error)
-	                @php $cont = $cont + 1; @endphp
-	                {{$cont}} - {{$error}} <br>
-	            @endforeach
-	            {{--@else
-	            {{ Session::get('errorReason') }}--}}
-	       @endif
-	    @endif
-	    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		    <span aria-hidden="true">&times;</span>
-	    </button>
-    </div>
+	<div class="alert alert-danger" role="alert">
+		{{Session::get('message_denied')}}
+		@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
+			@if(is_string(Session::get('errorReason')))
+				{{Session::get('errorReason')}}
+			@elseif (count(Session::get('errorReason')) >= 1)
+				@php $cont = 0 @endphp
+				@foreach(Session::get('errorReason') as $error)
+					@php $cont = $cont + 1; @endphp
+					{{$cont}} - {{$error}} <br>
+				@endforeach
+			@endif
+		@endif
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
 @endif
 
 @if(Session::has('message_success'))
