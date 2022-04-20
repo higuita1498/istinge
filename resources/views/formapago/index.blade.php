@@ -206,56 +206,81 @@
 
         var table = $("#table-forma");
 
-        //*Petición ajax.
-        $.ajax({
-        url: url +'/empresa/formapago/store',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        method: 'POST',
-        data: {
-            checkForm:checkForm, 
-            codigo:codigo,
-            nombre:nombre,
-            relacion:relacion,
-            cuenta_id:cuenta_id,
-            medio_pago_id:medio_pago_id
-        },
-        beforeSend: function(){
-            cargando(true);
-        },
-        success: function(pago){
+        var validate = validateCampos();
 
-                if(pago != null){   
-                    table.append(`
-                    <tr>
-                        <td>
-                            <div class="">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="forma-check" name="contacto[]" value="${pago.en_uso}" ${pago.en_uso == 1 ? 'checked' : ''} disabled>
-                                    <i class="input-helper"></i>
-                                </label>
-                            </div>
-                        </td>
-                        <td>${pago.codigo}</td>
-                        <td>${pago.nombre}</td>
-                        <td>${pago.relacion}</td>
-                        <td>${pago.cuenta}</td>
-                        <td>${pago.medioPago}</td>
-                        <td>
-                            <div clas="d-flex">
-                                <a href="#" onclick="delete_forma('${pago.id}')"><i class="fas fa-times"></i></a>
-                                <a href="#" onclick="edit_forma('${pago.id}')" data-toggle="modal" data-target="#editForma" href=""><i class="fas fa-edit"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    `);
-                }
-
-                cargando(false);
+        if(validate){
+            //*Petición ajax.
+            $.ajax({
+            url: url +'/empresa/formapago/store',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            method: 'POST',
+            data: {
+                checkForm:checkForm, 
+                codigo:codigo,
+                nombre:nombre,
+                relacion:relacion,
+                cuenta_id:cuenta_id,
+                medio_pago_id:medio_pago_id
             },
-            error: function(pago){
-                alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
+            beforeSend: function(){
+                cargando(true);
+            },
+            success: function(pago){
+
+                    if(pago != null){   
+                        table.append(`
+                        <tr>
+                            <td>
+                                <div class="">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="forma-check" name="contacto[]" value="${pago.en_uso}" ${pago.en_uso == 1 ? 'checked' : ''} disabled>
+                                        <i class="input-helper"></i>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>${pago.codigo}</td>
+                            <td>${pago.nombre}</td>
+                            <td>${pago.relacion}</td>
+                            <td>${pago.cuenta}</td>
+                            <td>${pago.medioPago}</td>
+                            <td>
+                                <div clas="d-flex">
+                                    <a href="#" onclick="delete_forma('${pago.id}')"><i class="fas fa-times"></i></a>
+                                    <a href="#" onclick="edit_forma('${pago.id}')" data-toggle="modal" data-target="#editForma" href=""><i class="fas fa-edit"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        `);
+                    }
+
+                    cargando(false);
+                },
+                error: function(pago){
+                    alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
+                }
+            });
+        }else{
+            alert("Debe llenar todos los campos.");
+        }
+        
+}
+
+function validateCampos(){
+        var codigo    = $("#codigo").val();
+        var nombre    = $("#nombrecuenta").val();
+        var relacion  = $("#relacion").val();
+        var cuenta_id = $("#cuenta").val();
+        var medio_pago_id = $("#mediopago").val();
+       
+        if(codigo == "" ||
+            nombre == "" ||
+            relacion == "" ||
+            cuenta_id == "" ||
+            medio_pago_id == ""){
+                return false;
+            }else{
+                return true;
             }
-        });
 }
 
 function edit_forma(id) {
