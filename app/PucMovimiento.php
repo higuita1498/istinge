@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Impuesto;
 use App\Retencion;
+use App\Contacto;
+use App\FormaPago;
+use App\Puc;
 
 class PucMovimiento extends Model
 {
@@ -22,7 +25,7 @@ class PucMovimiento extends Model
         'no_cuota', 'fecha_vencimiento', 'codigo_impuesto', 
         'codigo_grupo', 'codigo_activo_fijo', 'descripcion', 'codigo_centro_costos', 'debito', 
        'credito', 'observaciones', 'base_gravable', 'base_exenta', 
-       'mes_cierre', 'documento_id', 'created_at', 'updated_at'
+       'mes_cierre', 'documento_id', 'cliente_id','cuenta_id','created_at', 'updated_at'
     ];
 
     public static function facturaVenta($factura, $opcion){
@@ -49,7 +52,9 @@ class PucMovimiento extends Model
                     $mov->fecha_elaboracion = $factura->fecha;
                     $mov->documento_id = $factura->id;
                     $mov->codigo_cuenta = isset($cuentaItem->puc->codigo) ? $cuentaItem->puc->codigo : '';
+                    $mov->cuenta_id = isset($cuentaItem->puc->id) ? $cuentaItem->puc->id : '';
                     $mov->identificacion_tercero = $factura->cliente()->nit;
+                    $mov->cliente_id = $factura->cliente()->id;
                     $mov->prefijo = $factura->numeracionFactura->prefijo;
                     $mov->consecutivo = $factura->codigo;
                     $mov->fecha_vencimiento = $factura->vencimiento;
@@ -73,7 +78,9 @@ class PucMovimiento extends Model
                         $mov->fecha_elaboracion = $factura->fecha;
                         $mov->documento_id = $factura->id;
                         $mov->codigo_cuenta = isset($impuesto->puc()->codigo) ? $impuesto->puc()->codigo : '';
+                        $mov->cuenta_id = isset($impuesto->puc()->id) ? $impuesto->puc()->id : '';
                         $mov->identificacion_tercero = $factura->cliente()->nit;
+                        $mov->cliente_id = $factura->cliente()->id;
                         $mov->prefijo = $factura->numeracionFactura->prefijo;
                         $mov->consecutivo = $factura->codigo;
                         $mov->fecha_vencimiento = $factura->vencimiento;
@@ -90,6 +97,7 @@ class PucMovimiento extends Model
             foreach($totalFactura->reten as $ret){
                 if(isset($ret->total)){
                     $retencion = Retencion::find($ret->id);
+
                     if($retencion){
                         $mov = new PucMovimiento;
                         $mov->tipo_comprobante = "03";
@@ -97,7 +105,9 @@ class PucMovimiento extends Model
                         $mov->fecha_elaboracion = $factura->fecha;
                         $mov->documento_id = $factura->id;
                         $mov->codigo_cuenta = isset($retencion->pucVenta()->codigo) ? $retencion->pucVenta()->codigo : '';
+                        $mov->cuenta_id = isset($retencion->pucVenta()->id) ? $retencion->pucVenta()->id : '';
                         $mov->identificacion_tercero = $factura->cliente()->nit;
+                        $mov->cliente_id = $factura->cliente()->id;
                         $mov->prefijo = $factura->numeracionFactura->prefijo;
                         $mov->consecutivo = $factura->codigo;
                         $mov->fecha_vencimiento = $factura->vencimiento;
@@ -117,7 +127,9 @@ class PucMovimiento extends Model
             $mov->fecha_elaboracion = $factura->fecha;
             $mov->documento_id = $factura->id;
             $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
+            $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
             $mov->identificacion_tercero = $factura->cliente()->nit;
+            $mov->cliente_id = $factura->cliente()->id;
             $mov->prefijo = $factura->numeracionFactura->prefijo;
             $mov->consecutivo = $factura->codigo;
             $mov->fecha_vencimiento = $factura->vencimiento;
@@ -133,6 +145,45 @@ class PucMovimiento extends Model
 
         }
         
+    }
+
+    public function cliente(){
+        return $this->belongsTo(Contacto::class,'cliente_id');
+    }
+
+    public function cuenta(){
+        if($this->enlace_a != 4){
+            return Puc::find($this->cuenta_id);
+        }else{
+            return FormaPago::find($this->cuenta_id);
+        }
+    }
+
+    public function documento(){
+        if($this->tipo_comprobante == 3){
+            return $this->belongsTo(Factura::class,'documento_id');
+        }
+    }
+
+    public function asociadoA(){
+        switch ($this->enlace_a) {
+            case 1:
+                return "Asociado a un item.";
+                break;
+            case 2:
+                return "Asociado a un iva.";
+                break;
+            case 3:
+                return "Asociado a una retención.";
+                break;
+            case 4:
+                return "Asociado a un medio de pago.";
+                break;
+            
+            default:
+                return "";
+                break;
+        }
     }
     
 

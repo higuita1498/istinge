@@ -1201,6 +1201,26 @@ public function edit($id){
     return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
   }
 
+  public function showMovimiento($id){
+    $this->getAllPermissions(Auth::user()->id);
+    $factura = Factura::find($id);
+
+    /*
+        obtenemos los movimiento sque ha tenido este documento
+        sabemos que se trata de un tipo de movimiento 03
+    */
+
+    $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',3)->get();
+
+    if ($factura) {
+        view()->share(['title' => 'Detalle Movimiento ' .$factura->codigo]);
+        $items = ItemsFactura::where('factura',$factura->id)->get();
+        return view('facturas.show-movimiento')->with(compact('factura','movimientos'));
+    }
+
+    return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
+  }
+
 
   public function copia($id){
     return $this->pdf($id, 'copia');
