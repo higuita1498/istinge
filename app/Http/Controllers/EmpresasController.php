@@ -447,4 +447,24 @@ class EmpresasController extends Controller
         }
     }
 
+    public function storePageLength(Request $request) {
+        $empresa = Empresa::find(1);
+        if ($empresa) {
+            $empresa->pageLength = $request->pageLength;
+            $empresa->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'message' => 'Configuración Realizada con Éxito'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'message' => 'Ha ocurrido un error, intente de nuevo'
+            ]);
+        }
+    }
+
 }

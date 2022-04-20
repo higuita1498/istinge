@@ -25,9 +25,11 @@ function plazo(){
 }
 
 function table(id, value=null, order=[ 0, "desc" ]){
+  var pageLength = $("#pageLength").val();
 
   var person_dataTable = $('#'+id).DataTable({
       responsive: true,
+      "pageLength": pageLength,
       "lengthMenu": [25, 50, 100],
        "language": {
         "zeroRecords": "Disculpe, No existen registros",
@@ -60,10 +62,12 @@ function table(id, value=null, order=[ 0, "desc" ]){
 
 function notabletable(id){
 
+  var pageLength = $("#pageLength").val();
+
   $('#'+id).DataTable({
       responsive: true,
      "bPaginate": false,
-      "pageLength": 25,
+      "pageLength": pageLength,
       "searching": false,   // Search Box will Be Disabled
       "ordering": false,    // Ordering (Sorting on Each Column)will Be Disabled
       "info": true,         // Will show "1 to n of n entries" Text at bottom
@@ -128,8 +132,10 @@ $(document).ready(function() {
   }
 
   if ($('#table-bodega').length > 0) {
+    var pageLength = $("#pageLength").val();
      $('#table-bodega').DataTable({
       responsive: true,
+      "pageLength": pageLength,
        "language": {
         "zeroRecords": "Disculpe, No existen registros",
         "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1092,9 +1098,10 @@ $(function(){
 $(document).ready(function (){
 
     if ($('#table-show-movimientos').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-movimientos').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1136,12 +1143,13 @@ $(document).ready(function (){
     }
     
     if ($('#table-show-promesas').length > 0) {
+      var pageLength = $("#pageLength").val();
         var url = window.location.pathname;
         var idContacto = "/empresa/contactos/"+$('#idContacto').val();
         var server = url == idContacto ? true : false;
         var dataTable = $('#table-show-promesas').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1177,12 +1185,13 @@ $(document).ready(function (){
     }
     
     if ($('#table-show-facturas').length > 0) {
+      var pageLength = $("#pageLength").val();
         var url = window.location.pathname;
         var idContacto = "/empresa/contactos/"+$('#idContacto').val();
         var server = url == idContacto ? true : false;
         var dataTable = $('#table-show-facturas').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1224,9 +1233,10 @@ $(document).ready(function (){
     }
     
     if ($('#table-show-radicados').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-radicados').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1268,9 +1278,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-facturas-compras').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-facturas-compras').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1312,9 +1323,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-notascredito').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-notascredito').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1356,9 +1368,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-notasdebito').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-notasdebito').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1394,9 +1407,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-cotizaciones').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-cotizaciones').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1438,9 +1452,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-remisiones').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-remisiones').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1482,9 +1497,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-ordenes').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-ordenes').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",
@@ -1526,9 +1542,10 @@ $(document).ready(function (){
     }
 
     if ($('#table-show-transaccion').length > 0) {
+      var pageLength = $("#pageLength").val();
         var dataTable = $('#table-show-transaccion').DataTable({
             responsive: true,
-            "pageLength":10,
+            "pageLength": pageLength,
             "language": {
                 "zeroRecords": "Disculpe, No existen registros",
                 "info": "Mostrando páginas _PAGE_ de _PAGES_",

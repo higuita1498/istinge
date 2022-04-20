@@ -135,7 +135,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/planes")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

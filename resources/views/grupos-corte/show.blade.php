@@ -83,7 +83,7 @@
 			order: [
 				[0, "desc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/contratos/g-$grupo->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -91,17 +91,9 @@
 			columns: [
 			    { data: 'nro' },
 				{ data: 'client_id' },
-				//{ data: 'nit' },
-				//{ data: 'telefono' },
-				//{ data: 'email' },
-				//{ data: 'barrio' },
 				{ data: 'plan' },
-				//{ data: 'mac' },
 				{ data: 'ip' },
 				{ data: 'state' },
-				//{ data: 'corte' },
-				//{ data: 'pago' },
-				//{ data: 'servicio' },
 				{ data: 'acciones' },
 			]
 		});

@@ -98,6 +98,8 @@
 			<a href="{{route('campos.organizar', 11)}}">Promesas de Pago</a><br>
 			<a href="{{route('campos.organizar', 12)}}">Radicados</a><br>
 			<a href="{{route('campos.organizar', 13)}}">Monitor Blacklist</a><br>
+			<hr class="nomina">
+			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>
 		@endif
 
@@ -241,10 +243,72 @@
 		</div>
 	</div>
 	{{-- /CONFIGURACION OLT --}}
+
+	{{-- CANT REGISTRO --}}
+	<div class="modal fade show" id="nro_registro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Configurar Nro registros a mostrar</h4>
+				</div>
+				<div class="modal-body">
+					<p>Indique la cantidad de registro que quiere cargar por página en cada uno de los listados <a><i data-tippy-content="Por defecto aparecerán 25 registros por página." class="icono far fa-question-circle"></i></a></p>
+					<div class="col-sm-6 offset-sm-3">
+						<select class="form-control selectpicker" name="pageLength" id="val_pageLength" required="" title="Seleccione" data-live-search="true" data-size="5">
+							<option value="10" {{ Auth::user()->empresa()->pageLength == 10 ? 'selected' : '' }}>10 registros P/P</option>
+							<option value="25" {{ Auth::user()->empresa()->pageLength == 25 ? 'selected' : '' }}>25 registros P/P</option>
+							<option value="50" {{ Auth::user()->empresa()->pageLength == 50 ? 'selected' : '' }}>50 registros P/P</option>
+							<option value="100" {{ Auth::user()->empresa()->pageLength == 100 ? 'selected' : '' }}>100 registros P/P</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-success" onclick="storePageLength()">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /CANT REGISTRO --}}
 	@endsection
 
 	@section('scripts')
 	    <script>
+	    	function storePageLength(id) {
+	    		cargando(true);
+	    		if (window.location.pathname.split("/")[1] === "software") {
+	    			var url = `/software/empresa/configuracion/storePageLength`;
+	    		}else{
+	    			var url = `/empresa/configuracion/storePageLength`;
+	    		}
+	    		$.ajax({
+	    			url: url,
+	    			method: 'POST',
+	    			headers: {
+	    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	    			},
+	    			data: {
+	    				pageLength: $('#val_pageLength').val()
+	    			},
+	    			success: function(response) {
+	    				cargando(false);
+	    				swal({
+	    					title: 'NRO DE REGISTROS A MOSTRAR',
+	    					text: response.message,
+	    					type: response.type,
+	    					showConfirmButton: true,
+	    					confirmButtonColor: '#1A59A1',
+	    					confirmButtonText: 'ACEPTAR',
+	    				});
+	    				if (response.success == true) {
+	    					$("#nro_registro").modal('hide');
+	    					setTimeout(function(){
+	    						location.reload();
+	    					}, 1000);
+	    				}
+	    			}
+	    		});
+	    	}
 			function facturacionAutomatica() {
 				if (window.location.pathname.split("/")[1] === "software") {
 					var url='/software/configuracion_facturacionAutomatica';

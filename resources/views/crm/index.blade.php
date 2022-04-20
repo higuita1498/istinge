@@ -493,7 +493,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/cartera/0")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -542,7 +542,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/cartera/1")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -591,7 +591,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/cartera/4")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -640,7 +640,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/cartera/5")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

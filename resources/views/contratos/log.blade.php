@@ -51,7 +51,7 @@
 			order: [
 				[1, "desc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/logs/$contrato->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

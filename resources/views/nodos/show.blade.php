@@ -49,7 +49,7 @@
 			order: [
 				[0, "desc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/contratos/n-$nodo->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

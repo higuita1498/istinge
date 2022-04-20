@@ -157,7 +157,7 @@
 			order: [
 				[2, "DESC"],[0, "DESC"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/facturas-electronicas")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

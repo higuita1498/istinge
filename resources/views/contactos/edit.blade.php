@@ -112,14 +112,6 @@
 				<strong>{{ $errors->first('email') }}</strong>
 			</span>
 		</div>
-		<div class="form-group col-md-3">
-			<label class="control-label" for="">Serial ONU</label>
-			<input type="text" class="form-control" id="serial_onu" name="serial_onu" maxlength="100"  value="{{$contacto->serial_onu}}">
-			<div class="help-block error with-errors"></div>
-			<span class="help-block error">
-				<strong>{{ $errors->first('serial_onu') }}</strong>
-			</span>
-		</div>
 	</div>
   		<div class="row">
   			<div class="form-group col-md-3">

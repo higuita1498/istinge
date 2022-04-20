@@ -96,6 +96,12 @@
 							<th>Nombre Servicio</th>
 							<td>{{ $contrato->servicio }}</td>
 						</tr>
+						@if($contrato->serial_onu)
+						<tr>
+							<th>Serial ONU</th>
+							<td>{{ $contrato->serial_onu }}</td>
+						</tr>
+						@endif
 						@if($contrato->conexion)
 						<tr>
 							<th>Tipo de Conexión</th>

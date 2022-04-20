@@ -99,7 +99,7 @@
 			order: [
 				[0, "DESC"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/solicitudes")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
