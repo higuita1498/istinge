@@ -783,7 +783,11 @@ public function forma_pago()
     }
 
     public function formaPago(){
-        return Puc::find($this->cuenta_id);
+        $forma = FormaPago::find($this->cuenta_id);
+
+        if($forma){
+            return Puc::find($forma->cuenta_id); 
+        }
     }
 
     public function contract(){

@@ -146,7 +146,7 @@
     
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Cuenta contable:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="cuenta_edit" id="cuenta_edit" title="Cuenta contable" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="cuenta_edit" id="cuenta_edit" title="Cuenta contable" required="">
                         @foreach($categorias as $cat)
                             <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                         @endforeach
@@ -158,7 +158,7 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Medio de pago doc. electrónico:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="mediopago_edit" id="mediopago_edit" title="Medio de pago doc. electrónico" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="mediopago_edit" id="mediopago_edit" title="Medio de pago doc. electrónico" required="">
                         @foreach($mediosPago as $medio)
                             <option value="{{$medio->id}}">{{$medio->nombre}} - {{$medio->codigo}}</option>
                         @endforeach
