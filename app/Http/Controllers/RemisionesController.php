@@ -530,6 +530,10 @@ $categorias=Categoria::where('empresa',Auth::user()->empresa)
             'encryption' => $host->seguridad,
             'username' => $host->usuario,
             'password' => $host->password,
+            'from' => [
+              'address' => $host->address,
+              'name' => $host->name
+            ],
           ]
         );
         config(['mail'=>$new]);

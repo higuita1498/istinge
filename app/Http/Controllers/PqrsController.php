@@ -136,6 +136,10 @@ class PqrsController extends Controller
                         'encryption' => $host->seguridad,
                         'username' => $host->usuario,
                         'password' => $host->password,
+                        'from' => [
+                            'address' => $host->address,
+                            'name' => $host->name
+                        ],
                     ]
                 );
                 config(['mail'=>$new]);
