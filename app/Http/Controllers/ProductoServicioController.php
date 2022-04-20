@@ -113,7 +113,7 @@ class ProductoServicioController extends Controller
 
     public function update(Request $request){
         $producto = ProductoServicio::find($request->id);
-
+        $empresa = Auth::user()->empresa;
         if($producto){
 
             //Primero creamos el producto en el inventario.
