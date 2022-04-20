@@ -126,8 +126,8 @@ class PucMovimiento extends Model
             $mov->consecutivo_comprobante = $factura->codigo;
             $mov->fecha_elaboracion = $factura->fecha;
             $mov->documento_id = $factura->id;
-            $mov->codigo_cuenta = isset($factura->categoria()->codigo) ? $factura->categoria()->codigo : '';
-            $mov->cuenta_id = isset($factura->categoria()->id) ? $factura->categoria()->id : '';
+            $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
+            $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
             $mov->identificacion_tercero = $factura->cliente()->nit;
             $mov->cliente_id = $factura->cliente()->id;
             $mov->prefijo = $factura->numeracionFactura->prefijo;

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Categoria;
+use App\Puc;
 
 class FormaPago extends Model
 {
@@ -32,7 +33,7 @@ class FormaPago extends Model
     }
 
     public function categoria(){
-        return $this->belongsTo('App\Puc','cuenta_id');
+        return $this->belongsTo(Puc::class,'cuenta_id');
     }
 
     public function formaPagoMedio(){
