@@ -89,7 +89,7 @@
         <td width="25%">
             <select class="form-control form-control-sm selectpicker p-0" name="cuenta" id="cuenta" title="Cuenta contable" required="">
                 @foreach($categorias as $cat)
-                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
