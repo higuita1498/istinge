@@ -23,7 +23,7 @@ class ServidorCorreo extends Model
      * @var array
      */
     protected $fillable = [
-        'empresa', 'servidor', 'seguridad', 'puerto', 'password', 'estado', 'created_at', 'updated_at'
+        'empresa', 'servidor', 'seguridad', 'puerto', 'password', 'estado', 'address', 'name', 'created_at', 'updated_at'
     ];
     
     protected $appends = ['session'];

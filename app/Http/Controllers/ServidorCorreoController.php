@@ -39,6 +39,8 @@ class ServidorCorreoController extends Controller
             $servidor->usuario   = $request->usuario;
             $servidor->password  = $request->password;
             $servidor->estado    = $request->estado;
+            $servidor->address   = $request->address;
+            $servidor->name      = $request->name;
             $servidor->save();
             $mensaje='SE HA CREADO SATISFACTORIAMENTE LA CONFIGURACIÓN DEL SERVIDOR';
             return redirect('empresa/servidor-correo')->with('success', $mensaje);

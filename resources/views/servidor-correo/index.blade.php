@@ -71,6 +71,20 @@
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
+	            <label class="control-label">Enviar como (Nombre)</label>
+	            <input type="text" class="form-control"  id="name" name="name"   value="{{$servidor->name}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('name') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-4 form-group">
+	            <label class="control-label">Enviar como (Correo)</label>
+	            <input type="text" class="form-control"  id="address" name="address"   value="{{$servidor->address}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('address') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-4 form-group">
 	            <label class="control-label">Estado</label>
 	            <select class="form-control selectpicker" name="estado" id="estado" title="Seleccione" >
 	                <option value="1" {{ $servidor->estado == '1'?'selected':'' }}>Habilitado</option>
