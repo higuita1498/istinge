@@ -295,7 +295,7 @@
     
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
-            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+            {{-- <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;"> --}}
         </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
             <br><br>
@@ -312,7 +312,7 @@
         <div style="width: 21%; display: inline-block; text-align: left; vertical-align: top;margin-top: 2%;">
             <table style="border:none;width:100%;height:auto;">
                 <tr>
-                    <img class="imgwifi" src="{{asset('images/wifi.png')}}">
+                    {{-- <img class="imgwifi" src="{{asset('images/wifi.png')}}"> --}}
                 </tr>
             </table>
         </div>
@@ -642,12 +642,12 @@
                     <td>MES 6</td>
                 </tr>
                 <tr class="tr-precios">
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 12) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 11) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 10) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 9) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 8) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 7) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 12 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 12) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 11 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 11) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 10 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 10) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 9 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 9) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 8 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 8) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 7 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 7) }}</td>
                 </tr>
                 <tr class="tr-meses">
                     <td>MES 7</td>
@@ -658,12 +658,12 @@
                     <td>MES 12</td>
                 </tr>
                 <tr class="tr-precios">
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 6) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 5) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 4) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 3) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 2) }}</td>
-                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($factura->contract()->plan()->price * 1) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 6 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 6) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 5 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 5) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 4 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 4) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 3 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 3) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 2 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 2) }}</td>
+                    <td>{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * 1 : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * 1) }}</td>
                 </tr>
             </tbody>
         </table>
