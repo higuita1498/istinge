@@ -125,7 +125,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Editar Forma de Pago</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Editar Producto o Servicio</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -221,6 +221,9 @@
             checkForm = 1;
         }
 
+        var validate = validateCampos();
+
+        if(validate){
         var codigo      = $("#codigo").val();
         var nombre      = $("#nombrecuenta").val();
         var inventario  = $("#inventario_producto").val();
@@ -283,6 +286,25 @@
                 alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
             }
         });
+        }else{
+            alert("Debe llenar todos los campos.");
+        }
+        
+}
+
+function validateCampos(){
+
+    if( 
+        $("#codigo").val() == "" || 
+        $("#inventario_producto").val() == "" || 
+        $("#costo").val() == "" || 
+        $("#venta_producto").val() == "" ||
+        $("#devolucion").val() == ""
+    ){
+        return false;
+    }else{
+        return true;
+    }
 }
 
 function edit_producto(id) {

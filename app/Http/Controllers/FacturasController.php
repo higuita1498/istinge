@@ -1150,7 +1150,7 @@ public function edit($id){
             $descuento->save();
         }
 
-        PucMovimiento::facturaVenta($factura,1);
+        PucMovimiento::facturaVenta($factura,2);
 
         $mensaje='Se ha modificado satisfactoriamente la factura';
         return redirect($request->page)->with('success', $mensaje)->with('codigo', $factura->id);
