@@ -359,7 +359,7 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="pageLength" value="{{ Auth::user()->empresa()->pageLength }}">
+                    <input type="hidden" id="pageLength" value="{{Auth::user()->rol > 1 ? Auth::user()->empresa()->pageLength : '25'}}">
                     
                     <footer class="footer">
                         <div class="container-fluid clearfix">
