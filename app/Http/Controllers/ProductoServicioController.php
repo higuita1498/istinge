@@ -35,6 +35,7 @@ class ProductoServicioController extends Controller
         //Primero creamos el producto en el inventario.
         $inventario = new Inventario;
         $inventario->producto = $request->nombre;
+        $inventario->ref = $request->codigo;
         $inventario->empresa = $empresa;
         $inventario->impuesto = isset($impuesto->porcentaje) ? $impuesto->porcentaje : 0;
         $inventario->id_impuesto = isset($impuesto->id) ? $impuesto->id : 2;
@@ -112,7 +113,7 @@ class ProductoServicioController extends Controller
     }
 
     public function update(Request $request){
-        
+
         $producto = ProductoServicio::find($request->id);
         $empresa = Auth::user()->empresa;
         $impuesto = Impuesto::where('porcentaje', 0)->first();
@@ -173,6 +174,7 @@ class ProductoServicioController extends Controller
             }else{
                 $inventario = new Inventario;
                 $inventario->producto = $request->nombre;
+                $inventario->ref = $request->codigo;
                 $inventario->empresa = $empresa;
                 $inventario->impuesto = isset($impuesto->porcentaje) ? $impuesto->porcentaje : 0;
                 $inventario->id_impuesto = $impuesto ? $impuesto : 2;
