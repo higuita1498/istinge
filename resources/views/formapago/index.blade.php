@@ -87,14 +87,14 @@
             </select>
         </td>
         <td width="25%">
-            <select class="form-control form-control-sm selectpicker p-0" name="cuenta" id="cuenta" title="Cuenta contable" required="">
+            <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="cuenta" id="cuenta" title="Cuenta contable" required="">
                 @foreach($categorias as $cat)
                     <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                 @endforeach
             </select>
         </td>
         <td width="25%">
-            <select class="form-control form-control-sm selectpicker p-0" name="mediopago" id="mediopago" title="Medio de pago doc. electrónico" required="">
+            <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5"  name="mediopago" id="mediopago" title="Medio de pago doc. electrónico" required="">
                 @foreach($mediosPago as $medio)
                     <option value="{{$medio->id}}">{{$medio->nombre}}</option>
                 @endforeach
