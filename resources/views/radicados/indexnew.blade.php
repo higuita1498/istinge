@@ -273,7 +273,7 @@
 			order: [
 				[1, "desc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/radicados/0")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -331,7 +331,7 @@
 			order: [
 				[1, "desc"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/radicados/1")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

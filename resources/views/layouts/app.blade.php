@@ -358,6 +358,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <input type="hidden" id="pageLength" value="{{ Auth::user()->empresa()->pageLength }}">
                     
                     <footer class="footer">
                         <div class="container-fluid clearfix">

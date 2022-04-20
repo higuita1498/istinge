@@ -115,19 +115,12 @@
 				order: [
 					[0, "desc"]
 				],
-				"pageLength": 25,
+				"pageLength": {{ Auth::user()->empresa()->pageLength }},
 				ajax: '{{url("descuentos")}}',
 				headers: {
 					'X-CSRF-TOKEN': '{{csrf_token()}}'
 				},
 				columns: [
-				    /*{data: 'id'},
-				    {data: 'cliente'},
-				    {data: 'factura'},
-				    {data: 'descuento'},
-				    {data: 'estado'},
-				    {data: 'created_by'},
-				    {data: 'updated_by'},*/
 				    @foreach($tabla as $campo)
 					{data: '{{$campo->campo}}'},
 					@endforeach

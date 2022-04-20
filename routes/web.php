@@ -956,6 +956,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         });
         Route::resource('integracion-pasarelas', 'IntegracionPasarelaController');
 
+        Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
+
 	});
 
 	Route::post('/storetipocontactoajax','TiposEmpresaController@storeTipoContactoAjax')->name('configuracion.tipocontactoajax');

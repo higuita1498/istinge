@@ -143,8 +143,7 @@
 			order: [
 				[0, "asc"]
 			],
-			"pageLength": 25,
-			//ajax: '{{url("/contactos")}}',
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/contactos/$tipo_usuario")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'

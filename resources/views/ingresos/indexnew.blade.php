@@ -125,19 +125,12 @@
 					order: [
 						[0, "desc"]
 					],
-					"pageLength": 25,
+					"pageLength": {{ Auth::user()->empresa()->pageLength }},
 					ajax: '{{url("/ingresos")}}',
 					headers: {
 						'X-CSRF-TOKEN': '{{csrf_token()}}'
 					},
 					columns: [
-						/*{data: 'nro'},
-						{data: 'cliente'},
-						{data: 'detalle'},
-						{data: 'fecha'},
-						{data: 'cuenta'},
-						{data: 'estado'},
-						{data: 'monto'},*/
 						@foreach($tabla as $campo)
 						{data: '{{$campo->campo}}'},
 						@endforeach

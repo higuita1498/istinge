@@ -177,7 +177,7 @@
 			order: [
 				[2, "DESC"],[0, "DESC"]
 			],
-			"pageLength": 25,
+			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/facturas")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -186,15 +186,6 @@
 			    @foreach($tabla as $campo)
                 {data: '{{$campo->campo}}'},
                 @endforeach
-				/*{data: 'codigo'},
-				{data: 'cliente'},
-				{data: 'fecha'},
-				{data: 'vencimiento'},
-				{data: 'total'},
-				{data: 'impuesto'},
-				{data: 'pagado'},
-				{data: 'pendiente'},
-				{data: 'estado'},*/
 				{data: 'acciones'},
 			]
 		});
