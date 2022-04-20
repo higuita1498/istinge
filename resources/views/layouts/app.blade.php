@@ -200,6 +200,9 @@
             .Abierta-no span::after, .Abierta-emitida span::after{
                 content: ""; position: absolute; right: 0px; top: 100%; z-index: -1; border-left: 3px solid transparent; border-right: 3px solid #e65251; border-bottom: 3px solid transparent; border-top: 3px solid #e65251;
             }
+            .form-group label {
+                font-weight: 500;
+            }
         </style>
         @yield('style')
     </head>

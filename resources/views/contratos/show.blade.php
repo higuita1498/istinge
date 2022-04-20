@@ -195,6 +195,12 @@
 							<th>Precio Plan</th>
 							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->price) }}</td>
 						</tr>
+						@if($contrato->contrato_permanencia)
+						<tr>
+							<th>Contrato de Permanencia</th>
+							<td>{{ $contrato->contrato_permanencia == 1 ?'Si':'No' }}</td>
+						</tr>
+						@endif
 						@if($contrato->factura_individual)
 						<tr>
 							<th>Facturación Individual</th>
