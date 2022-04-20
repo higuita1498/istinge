@@ -124,6 +124,7 @@ class ProductoServicioController extends Controller
             $inventario = Inventario::where('id',$producto->producto_id)->first();
             if($inventario){
                 $inventario->producto = $request->nombre;
+                $inventario->ref = $request->codigo;
                 $inventario->save();
 
                 //Actualizamos las cuentas en la tabla de producto_cuentas ya que hace referencia a las mismas
