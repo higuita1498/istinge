@@ -359,6 +359,14 @@
                                     <strong>{{ $errors->first('modelo_antena') }}</strong>
                                 </span>
                             </div>
+
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                                    <option value="1" {{$contrato->contrato_permanencia == '1' ? 'selected':''}}>SI</option>
+                                    <option value="0" {{$contrato->contrato_permanencia == '0' ? 'selected':''}}>NO</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     @if(count($servicios)>0)

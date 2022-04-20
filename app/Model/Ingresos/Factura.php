@@ -786,4 +786,8 @@ public function forma_pago()
         return FormaPago::find($this->cuenta_id);
     }
 
+    public function contract(){
+        return Contrato::find($this->contrato_id);
+    }
+
 }
