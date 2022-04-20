@@ -42,7 +42,7 @@ class Retencion extends Model
     }
 
     public function pucVenta(){
-        return Puc::find('id',$this->puc_venta);
+        return Puc::find($this->puc_venta);
     }
 
     

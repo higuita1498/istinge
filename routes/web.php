@@ -408,6 +408,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('facturas_electronica/create', 'FacturasController@create_electronica')->name('facturas.create-electronica');
 		Route::get('/{tipo}/listado', 'FacturasController@indexNew')->name('facturas.tipo');
 
+		Route::get('/movimiento/{id}', 'FacturasController@showMovimiento')->name('facturas.showmovimiento');
 	});
 	Route::resource('facturas', 'FacturasController');
 
