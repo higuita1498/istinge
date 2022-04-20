@@ -149,18 +149,18 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Inventario:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="inventario_edit" id="inventario_edit" title="Inventario" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="inventario_edit" id="inventario_edit" title="Inventario" required="">
                         @foreach($categorias as $cat)
-                        <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                        <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                         @endforeach
                     </select>
                 </div>
     
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Costo:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="costo_edit" id="costo_edit" title="Costo" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="costo_edit" id="costo_edit" title="Costo" required="">
                         @foreach($categorias as $cat)
-                            <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                            <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -170,17 +170,17 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Venta:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="venta_edit" id="venta_edit" title="Venta" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="venta_edit" id="venta_edit" title="Venta" required="">
                         @foreach($categorias as $cat)
-                            <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                            <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="message-text" class="col-form-label">Devolución:</label>
-                    <select class="form-control form-control-sm selectpicker p-0" name="devolucion_edit" id="devolucion_edit" title="Devolución" required="">
+                    <select class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" name="devolucion_edit" id="devolucion_edit" title="Devolución" required="">
                         @foreach($categorias as $cat)
-                            <option value="{{$cat->id}}">{{$cat->nombre}}</option>
+                            <option value="{{$cat->id}}">{{$cat->nombre}} - {{$cat->codigo}}</option>
                         @endforeach
                     </select>
 
