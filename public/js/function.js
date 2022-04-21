@@ -3000,8 +3000,13 @@ function validateCountry(id){
 }
 
 function searchMunicipality(id, municipio = null) {
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/searchMunicipality';
+    }else{
+        var url='/searchMunicipality';
+    }
     $.ajax({
-        url: '/searchMunicipality',
+        url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'post',
         data: { departamento_id: id },
