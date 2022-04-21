@@ -61,6 +61,13 @@
 						<td>{{$plan->dhcp_server}}</td>
 					</tr>
 					@endif
+					<tr>
+						<th>Clientes Asociados</th>
+						<td>
+							<span class="badge badge-success">{{$plan->uso_state('enabled')}}</span> Habilitados<br>
+						    <span class="badge badge-danger mt-1">{{$plan->uso_state('disabled')}}</span> Deshabilitados
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

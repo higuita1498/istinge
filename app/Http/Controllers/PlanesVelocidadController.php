@@ -134,8 +134,12 @@ class PlanesVelocidadController extends Controller
             ->editColumn('tipo_plan', function (PlanesVelocidad $plan) {
                 return $plan->tipo();
             })
+            ->editColumn('nro_clientes', function (PlanesVelocidad $plan) {
+                return '<span class="badge badge-success">'.$plan->uso_state('enabled').'</span> Habilitados<br>
+                            <span class="badge badge-danger mt-1">'.$plan->uso_state('disabled').'</span> Deshabilitados';
+            })
             ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
-            ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik'])
+            ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik', 'nro_clientes'])
             ->toJson();
     }
     

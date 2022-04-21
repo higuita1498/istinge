@@ -87,4 +87,8 @@ class PlanesVelocidad extends Model
             return 'Corporativo';
         }
     }
+
+    public function uso_state($state){
+        return Contrato::where('plan_id', $this->id)->where('state', $state)->count();
+    }
 }
