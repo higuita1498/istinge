@@ -201,7 +201,11 @@ class ContratosController extends Controller
 
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
-                return $contrato->nro ? "<span class='badge badge-".$contrato->plug('true')."' data-toggle='tooltip' data-placement='top' title='".$contrato->plug()."' style='border-radius: 50% !important;padding: 0.3rem 0.4rem !important;'><i class='fa fa-plug'></i></span>   <a href=" . route('contratos.show', $contrato->id) . "><strong>$contrato->nro</strong></a>" : "";
+                if($contrato->ip){
+                    return $contrato->nro ? "<span class='badge badge-".$contrato->plug('true')."' data-toggle='tooltip' data-placement='top' title='".$contrato->plug()."' style='border-radius: 50% !important;padding: 0.3rem 0.4rem !important;'><i class='fa fa-plug'></i></span>   <a href=" . route('contratos.show', $contrato->id) . "><strong>$contrato->nro</strong></a>" : "";
+                }else{
+                    return $contrato->nro ? "<span class='badge badge-".$contrato->plug('true')."' data-toggle='tooltip' data-placement='top' title='".$contrato->plug()."' style='border-radius: 50% !important;padding: 0.3rem 0.4rem !important;'><i class='fas fa-tv'></i></span>   <a href=" . route('contratos.show', $contrato->id) . "><strong>$contrato->nro</strong></a>" : "";
+                }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
                 return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre}</a>";
@@ -219,17 +223,17 @@ class ContratosController extends Controller
                 return $contrato->c_barrio;
             })
             ->editColumn('plan', function (Contrato $contrato) {
-                //return $contrato->plan()->name;
-                return "<div class='elipsis-short-325'><a href=" . route(
-                    'planes-velocidad.show',
-                    $contrato->plan()->id
-                ) . " target='_blank'>{$contrato->plan()->name}</a></div>";
+                if($contrato->plan_id){
+                    return "<div class='elipsis-short-325'><a href=".route('planes-velocidad.show',$contrato->plan()->id)." target='_blank'>{$contrato->plan()->name}</a></div>";
+                }else{
+                    return 'PLAN';
+                }
             })
             ->editColumn('mac', function (Contrato $contrato) {
-                return $contrato->mac_address;
+                return ($contrato->mac_address) ? $contrato->mac_address : 'N/A';
             })
             ->editColumn('ip', function (Contrato $contrato) {
-                return '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>';
+                return ($contrato->ip) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {
                 return $contrato->grupo_corte('true');
@@ -238,19 +242,22 @@ class ContratosController extends Controller
                 return '<span class="text-'.$contrato->status('true').' font-weight-bold">'.$contrato->status().'</span>';
             })
             ->editColumn('pago', function (Contrato $contrato) {
-                return ($contrato->pago($contrato->c_id)) ? '<a href='.route('ingresos.show', $contrato->pago($contrato->c_id)->id).' target="_blank">Nro. '.$contrato->pago($contrato->c_id)->nro.' | '.date('d-m-Y', strtotime($contrato->pago($contrato->c_id)->fecha)).'</a>' : '- - - -';
+                return ($contrato->pago($contrato->c_id)) ? '<a href='.route('ingresos.show', $contrato->pago($contrato->c_id)->id).' target="_blank">Nro. '.$contrato->pago($contrato->c_id)->nro.' | '.date('d-m-Y', strtotime($contrato->pago($contrato->c_id)->fecha)).'</a>' : 'N/A';
             })
             ->editColumn('servicio', function (Contrato $contrato) {
-                return '- - - -';
+                return 'N/A';
             })
             ->editColumn('conexion', function (Contrato $contrato) {
-                return $contrato->conexion();
+                if($contrato->conexion){
+                    return $contrato->conexion();
+                }
+                return 'N/A';
             })
             ->editColumn('server_configuration_id', function (Contrato $contrato) {
-                return $contrato->servidor()->nombre;
+                return ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : 'N/A';
             })
             ->editColumn('interfaz', function (Contrato $contrato) {
-                return $contrato->interfaz;
+                return ($contrato->interfaz) ? $contrato->interfaz : 'N/A';
             })
             ->editColumn('nodo', function (Contrato $contrato) {
                 return ($contrato->nodo)?$contrato->nodo()->nombre:$contrato->nodo();
@@ -270,8 +277,11 @@ class ContratosController extends Controller
             ->editColumn('factura', function (Contrato $contrato) {
                 return $contrato->factura();
             })
+            ->editColumn('plan_tv', function (Contrato $contrato) {
+                return ($contrato->servicio_tv) ? '<a href='.route('inventario.show', $contrato->servicio_tv).' target="_blank">'.$contrato->plan('true')->producto.'</a>' : 'N/A';
+            })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'acciones'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones'])
             ->toJson();
     }
     
@@ -302,13 +312,27 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'client_id' => 'required',
-            'plan_id' => 'required',
-            'server_configuration_id' => 'required',
-            'ip' => 'required',
             'grupo_corte' => 'required',
-            'conexion' => 'required',
             'facturacion' => 'required',
+            'contrato_permanencia' => 'required',
         ]);
+
+        if(!$request->server_configuration_id && !$request->servicio_tv){
+            return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
+        }
+
+        if($request->server_configuration_id){
+            $request->validate([
+                'plan_id' => 'required',
+                'server_configuration_id' => 'required',
+                'ip' => 'required',
+                'conexion' => 'required',
+            ]);
+        }else if($request->servicio_tv){
+            $request->validate([
+                'servicio_tv' => 'required'
+            ]);
+        }
 
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
@@ -623,13 +647,82 @@ class ContratosController extends Controller
                 $mensaje='NO SE HA PODIDO CREAR EL CONTRATO DE SERVICIOS';
                 return redirect('empresa/contratos')->with('danger', $mensaje);
             }
+        }else{
+            $nro = Numeracion::where('empresa', 1)->first();
+            $nro_contrato = $nro->contrato;
+
+            while (true) {
+                $numero = Contrato::where('nro', $nro_contrato)->count();
+                if ($numero == 0) {
+                    break;
+                }
+                $nro_contrato++;
+            }
+
+            $contrato = new Contrato();
+            $contrato->nro                  = $nro_contrato;
+            $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$nro_contrato;
+            $contrato->client_id            = $request->client_id;
+            $contrato->grupo_corte          = $request->grupo_corte;
+            $contrato->facturacion          = $request->facturacion;
+            $contrato->empresa              = Auth::user()->empresa;
+            $contrato->latitude             = $request->latitude;
+            $contrato->longitude            = $request->longitude;
+            $contrato->contrato_permanencia = $request->contrato_permanencia;
+            $contrato->servicio_tv          = $request->servicio_tv;
+            if($request->factura_individual){
+                $contrato->factura_individual   = $request->factura_individual;
+            }
+
+            ### DOCUMENTOS ADJUNTOS ###
+
+            if($request->adjunto_a) {
+                $file = $request->file('adjunto_a');
+                $nombre =  $file->getClientOriginalName();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $contrato->adjunto_a = $nombre;
+                $contrato->referencia_a = $request->referencia_a;
+            }
+            if($request->adjunto_b) {
+                $file = $request->file('adjunto_b');
+                $nombre =  $file->getClientOriginalName();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $contrato->adjunto_b = $nombre;
+                $contrato->referencia_b = $request->referencia_b;
+            }
+            if($request->adjunto_c) {
+                $file = $request->file('adjunto_c');
+                $nombre =  $file->getClientOriginalName();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $contrato->adjunto_c = $nombre;
+                $contrato->referencia_c = $request->referencia_c;
+            }
+            if($request->adjunto_d) {
+                $file = $request->file('adjunto_d');
+                $nombre =  $file->getClientOriginalName();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $contrato->adjunto_d = $nombre;
+                $contrato->referencia_d = $request->referencia_d;
+            }
+
+            ### DOCUMENTOS ADJUNTOS ###
+
+            $contrato->creador = Auth::user()->nombres;
+            $contrato->save();
+
+            $nro->contrato = $nro_contrato + 1;
+            $nro->save();
+
+            return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
         }
     }
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan','p.price','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.serial_onu')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
-        $planes = PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
+        //join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
+        select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.serial_onu'/*,'p.name as plan','p.price'*/)->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        $planes = ($contrato->server_configuration_id) ? PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get() : PlanesVelocidad::where('status', 1)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $marcas = DB::table('marcas')->get();
@@ -648,20 +741,36 @@ class ContratosController extends Controller
     
     public function update(Request $request, $id){
         $this->getAllPermissions(Auth::user()->id);
+        $request->validate([
+            'grupo_corte' => 'required',
+            'facturacion' => 'required',
+            'contrato_permanencia' => 'required',
+        ]);
+
+        if(!$request->server_configuration_id && !$request->servicio_tv){
+            return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
+        }
+
+        if($request->server_configuration_id){
+            $request->validate([
+                'plan_id' => 'required',
+                'server_configuration_id' => 'required',
+                'ip' => 'required',
+                'conexion' => 'required',
+            ]);
+        }else if($request->servicio_tv){
+            $request->validate([
+                'servicio_tv' => 'required'
+            ]);
+        }
+
         $contrato = Contrato::find($id);
         $descripcion = '';
         $registro = false;
         $getall = '';
         if ($contrato) {
-            $request->validate([
-                'server_configuration_id' => 'required',
-                'plan_id' => 'required',
-                'ip' => 'required',
-                'grupo_corte' => 'required',
-            ]);
-            
             $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
-            $mikrotik = Mikrotik::where('id', $plan->mikrotik)->first();
+            $mikrotik = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;
             $cliente = $contrato->cliente();
             
             if ($mikrotik) {
@@ -771,7 +880,7 @@ class ContratosController extends Controller
                             "local-address"  => $request->ip,
                             "remote-address" => $request->ip,
                             "service"        => 'pppoe',
-                            "comment"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato
+                            "comment"        => $this->normaliza($cliente->nombre).'-'.$contrato->nro
                             )
                         );
 
@@ -787,7 +896,7 @@ class ContratosController extends Controller
                             if($request->simple_queue == 'dinamica'){
                                 $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address,
@@ -796,7 +905,7 @@ class ContratosController extends Controller
                                 );
                             }elseif ($request->simple_queue == 'estatica') {
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address
@@ -818,7 +927,7 @@ class ContratosController extends Controller
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
                                 "mac-address" => $request->mac_address
@@ -858,7 +967,7 @@ class ContratosController extends Controller
                             );
                         }else{
                             $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "name"            => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
@@ -898,10 +1007,10 @@ class ContratosController extends Controller
                     $descripcion .= ($contrato->fecha_suspension == $request->fecha_suspension) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Fecha de Suspensión Personalizada</b> a '.$request->fecha_suspension.'<br>';
                     $contrato->fecha_suspension = $request->fecha_suspension;
 
-                    $plan_old = PlanesVelocidad::find($contrato->plan_id);
+                    $plan_old = ($contrato->plan_id) ? PlanesVelocidad::find($contrato->plan_id)->name : 'Ninguno';
                     $plan_new = PlanesVelocidad::find($request->plan_id);
 
-                    $descripcion .= ($contrato->plan_id == $request->plan_id) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Plan</b> de '.$plan_old->name.' a '.$plan_new->name.'<br>';
+                    $descripcion .= ($contrato->plan_id == $request->plan_id) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Plan</b> de '.$plan_old.' a '.$plan_new->name.'<br>';
                     $contrato->plan_id = $request->plan_id;
 
                     $descripcion .= ($contrato->ip == $request->ip) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de IP</b> de '.$contrato->ip.' a '.$request->ip.'<br>';
@@ -959,10 +1068,11 @@ class ContratosController extends Controller
                     if($request->factura_individual){
                         $contrato->factura_individual = $request->factura_individual;
                     }
-                    $contrato->servicio_tv          = $request->servicio_tv;
-                    $contrato->contrato_permanencia = $request->contrato_permanencia;
-                    $contrato->serial_onu           = $request->serial_onu;
-                    $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$nro_contrato;
+                    $contrato->servicio_tv             = $request->servicio_tv;
+                    $contrato->contrato_permanencia    = $request->contrato_permanencia;
+                    $contrato->serial_onu              = $request->serial_onu;
+                    $contrato->servicio                = $this->normaliza($cliente->nombre).'-'.$contrato->nro;
+                    $contrato->server_configuration_id = $mikrotik->id;
 
                     ### DOCUMENTOS ADJUNTOS ###
 
@@ -1023,6 +1133,63 @@ class ContratosController extends Controller
                 }else{
                     return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA SIDO ACTUALIZADO');
                 }
+            }else{
+                $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$contrato->nro;
+                $contrato->grupo_corte          = $request->grupo_corte;
+                $contrato->facturacion          = $request->facturacion;
+                $contrato->latitude             = $request->latitude;
+                $contrato->longitude            = $request->longitude;
+                $contrato->contrato_permanencia = $request->contrato_permanencia;
+                $contrato->servicio_tv          = $request->servicio_tv;
+                $contrato->fecha_suspension     = $request->fecha_suspension;
+
+                if($request->factura_individual){
+                    $contrato->factura_individual   = $request->factura_individual;
+                }
+
+                ### DOCUMENTOS ADJUNTOS ###
+                if($request->referencia_a) {
+                    $contrato->referencia_a = $request->referencia_a;
+                    if($request->adjunto_a){
+                        $file = $request->file('adjunto_a');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_a = $nombre;
+                    }
+                }
+                if($request->referencia_b) {
+                    $contrato->referencia_b = $request->referencia_b;
+                    if($request->adjunto_b){
+                        $file = $request->file('adjunto_b');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_b = $nombre;
+                    }
+                }
+                if($request->referencia_c) {
+                    $contrato->referencia_c = $request->referencia_c;
+                    if($request->adjunto_c){
+                        $file = $request->file('adjunto_c');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_c = $nombre;
+                    }
+                }
+                if($request->referencia_d) {
+                    $contrato->referencia_d = $request->referencia_d;
+                    if($request->adjunto_d){
+                        $file = $request->file('adjunto_d');
+                        $nombre =  $file->getClientOriginalName();
+                        Storage::disk('documentos')->put($nombre, \File::get($file));
+                        $contrato->adjunto_d = $nombre;
+                    }
+                }
+                ### DOCUMENTOS ADJUNTOS ###
+
+                $contrato->creador = Auth::user()->nombres;
+                $contrato->save();
+
+                return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA ACTUALIZADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
             }
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
@@ -1032,7 +1199,9 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $inventario = false;
 
-        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'p.name as plan', 'p.price', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.serial_onu')->where('contracts.id', $id)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')
+        //->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')
+    ->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.serial_onu'/*, 'p.name as plan', 'p.price'*/)->where('contracts.id', $id)->first();
         
         if($contrato) {
             if($contrato->servicio_tv){

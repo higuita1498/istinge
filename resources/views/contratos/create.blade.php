@@ -74,10 +74,13 @@
 	    @csrf
 
         <div class="row card-description p-0">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-3">
                 <ul class="nav nav-pills" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="internet-tab" data-toggle="tab" href="#internet" role="tab" aria-controls="internet" aria-selected="false">SERVICIO DE INTERNET</a>
+                        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="false">INFORMACIÓN PRINCIPAL</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="internet-tab" data-toggle="tab" href="#internet" role="tab" aria-controls="internet" aria-selected="false">SERVICIO DE INTERNET</a>
                     </li>
                     @if(count($servicios)>0)
                     <li class="nav-item">
@@ -90,7 +93,7 @@
                 </ul>
                 <hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem 2rem;">
                 <div class="tab-content fact-table" id="myTabContent">
-                    <div class="tab-pane fade show active" id="internet" role="tabpanel" aria-labelledby="internet-tab">
+                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Cliente <span class="text-danger">*</span></label>
@@ -110,6 +113,76 @@
                                     <strong>{{ $errors->first('client_id') }}</strong>
                                 </span>
                             </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Grupo de Corte <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte_s" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        @foreach($grupos as $grupo)
+                                        <option value="{{$grupo->id}}">{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <a href="#" data-toggle="modal" data-target="#grupoModal" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-plus" style="margin: 2px;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('grupo_corte') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="1">Facturación Estándar</option>
+                                        <option value="3">Facturación Electrónica</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('facturacion') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group d-none" id="div_facturacion">
+                                <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="1">Si</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('grupo_corte') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="1">Si</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('contrato_permanencia') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly>
+                                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly>
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
+                                            <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">
+                        <div class="row">
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Servidor <span class="text-danger">*</span></label>
@@ -310,24 +383,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Grupo de Corte <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte_s" required="" title="Seleccione" data-live-search="true" data-size="5">
-                                        @foreach($grupos as $grupo)
-                                            <option value="{{$grupo->id}}">{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="input-group-append">
-                                        <a href="#" data-toggle="modal" data-target="#grupoModal" class="btn btn-outline-success btn-sm">
-                                            <i class="fas fa-plus" style="margin: 2px;"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('grupo_corte') }}</strong>
-                                </span>
-                            </div>
+
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Puerto de Conexión</label>
@@ -343,44 +399,7 @@
                                 </span>
                             </div>
 
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
-                                            <option value="1">Facturación Estándar</option>
-                                            <option value="3">Facturación Electrónica</option>
-                                    </select>
-                                </div>
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('facturacion') }}</strong>
-                                </span>
-                            </div>
 
-                            <div class="col-md-4 form-group d-none" id="div_facturacion">
-                                <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
-                                <div class="input-group">
-                                    <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
-                                            <option value="1">Si</option>
-                                            <option value="0">No</option>
-                                    </select>
-                                </div>
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('grupo_corte') }}</strong>
-                                </span>
-                            </div>
-
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly>
-                                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly>
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
-                                            <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="col-md-3 form-group d-none">
                                 <label class="control-label">Marca Router</label>
@@ -432,13 +451,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
-                                    <option value="1">Si</option>
-                                    <option value="0">No</option>
-                                </select>
-                            </div>
+
                         </div>
                     </div>
                     @if(count($servicios)>0)

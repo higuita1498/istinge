@@ -21,12 +21,14 @@
                     @if(isset($_SESSION['permisos']['406']))
                     <a href="{{ route('contratos.edit',$contrato->id )}}"  class="dropdown-item" title="Editar Contrato"><i class="fas fa-edit"></i></i> Editar Contrato</a>
                     @endif
+                    @if($contrato->plan_id)
                     @if(isset($_SESSION['permisos']['407']))
                     <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar Contrato" @else  class="dropdown-item" title="Habilitar Contrato" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Está seguro que desea @if($contrato->state == 'enabled') deshabilitar @else habilitar @endif contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
                     @endif
                     <a href="{{ route('contratos.grafica',$contrato->id )}}" class="dropdown-item" title="Gráfica de Conexión" onclick="cargando('true');"><i class="fas fa-chart-area"></i> Gráfica de Conexión</a>
                     <a href="{{ route('contratos.grafica_consumo',$contrato->id )}}" class="dropdown-item" title="Gráfica de Consumo" onclick="cargando('true');"><i class="fas fa-chart-line"></i> Gráfica de Consumo</a>
                     <a href="{{ route('contratos.conexion',$contrato->id )}}" class="dropdown-item" title="Ping de Conexión" onclick="cargando('true');"><i class="fas fa-plug"></i> Ping de Conexión</a>
+                    @endif
                     <a href="{{ route('contratos.log',$contrato->id )}}" class="dropdown-item" title="Log del Contrato" onclick="cargando('true');"><i class="fas fa-clipboard-list"></i> Log del Contrato</a>
                     @if(isset($_SESSION['permisos']['439']))
                     <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contrato{{$contrato->id}}', '¿Está seguro que desea eliminar el contrato?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar Contrato</button>
@@ -81,6 +83,7 @@
 	@endif
 	
 	<div class="row card-description">
+		@if($contrato->ip && $contrato->plan_id)
 		<div class="col-md-12">
 			<div class="table-responsive">
 				<table class="table table-striped table-bordered table-sm info">
@@ -195,11 +198,11 @@
 						@endif
 						<tr>
 							<th>Plan Contratado</th>
-							<td><a href="{{route('planes-velocidad.show',$contrato->plan_id)}}" target="_blank"><strong>{{ $contrato->plan }}</strong></a></td>
+							<td><a href="{{route('planes-velocidad.show',$contrato->plan_id)}}" target="_blank"><strong>{{ $contrato->plan()->name }}</strong></a></td>
 						</tr>
 						<tr>
 							<th>Precio Plan</th>
-							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->price) }}</td>
+							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->plan()->price) }}</td>
 						</tr>
 						@if($contrato->contrato_permanencia)
 						<tr>
@@ -252,11 +255,12 @@
 				</table>
 			</div>
 		</div>
+		@endif
 
 		@if($contrato->servicio_tv)
 		<div class="col-md-12">
 			<div class="table-responsive">
-				<table class="table table-striped table-bordered table-sm info mt-1">
+				<table class="table table-striped table-bordered table-sm info">
 					<tbody>
 						<tr>
 							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>SERVICIO DE TELEVISIÓN</strong></th>
