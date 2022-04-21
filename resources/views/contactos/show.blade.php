@@ -269,12 +269,12 @@
 								@endif
 								@if($contrato->plan_id)
 								<tr>
-									<th width="20%">Plan Contratado</th>
+									<th width="20%">Plan Internet Contratado</th>
 									<td>{{$contrato->plan()->name}}</td>
 								</tr>
 								@else
 								<tr>
-									<th width="20%">Plan Contratado</th>
+									<th width="20%">Plan TV Contratado</th>
 									<td>{{$contrato->plan('true')->producto}}</td>
 								</tr>
 								@endif
