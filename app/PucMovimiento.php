@@ -8,6 +8,7 @@ use App\Retencion;
 use App\Contacto;
 use App\FormaPago;
 use App\Puc;
+use DB;
 
 class PucMovimiento extends Model
 {
@@ -184,6 +185,13 @@ class PucMovimiento extends Model
                 return "";
                 break;
         }
+    }
+
+    public function totalDebito(){
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`debito`)) as total"))->first();
+    }
+    public function totalCredito(){
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`credito`)) as total"))->first();
     }
     
 

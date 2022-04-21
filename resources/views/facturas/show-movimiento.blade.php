@@ -228,6 +228,15 @@
                 </tr>
             @php $i++; @endphp
             @endforeach
+            <tr>
+                <td style="border:none;"></td>
+                <td style="border:none;"></td>
+                <td style="border:none;"></td>
+                <td style="border:none;"></td>
+                <td style="border:none;"></td>
+                <td>{{$mov->totalDebito()->total}}</td>
+                <td>{{$mov->totalCredito()->total}}</td>
+            </tr>
           </tbody>
         </table>
       </div>
