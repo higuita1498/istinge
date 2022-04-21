@@ -1302,7 +1302,7 @@ function rellenar(id, selected, producto=false){
                 }else{
                     $('#precio'+id).val(data.costo_unidad);
                 }
-            }else if (pathname.split("/")[3] === "facturas" || pathname.split("/")[3] === "notascredito") {
+            }else{
                 if (data.precio <= 0) {
                     $('#precio'+id).val('1');
                 }else{
