@@ -4179,7 +4179,7 @@ function getContracts(id){
     cargando(true);
 
     if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/api/getContracts'+id;
+        var url = '/software/api/getContracts/'+id;
     }else{
         var url = '/api/getContracts/'+id;
     }
