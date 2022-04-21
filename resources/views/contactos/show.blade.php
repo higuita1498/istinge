@@ -272,7 +272,8 @@
 									<th width="20%">Plan Internet Contratado</th>
 									<td>{{$contrato->plan()->name}}</td>
 								</tr>
-								@else
+								@endif
+								@if($contrato->servicio_tv)
 								<tr>
 									<th width="20%">Plan TV Contratado</th>
 									<td>{{$contrato->plan('true')->producto}}</td>
