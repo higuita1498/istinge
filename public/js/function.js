@@ -4216,6 +4216,7 @@ function getContracts(id){
 }
 
 $('#searchIP').click(function() {
+    cargando(true);
     let prefijo = $("#local_address").val().split('/');
     let mk = $("#server_configuration_id").val();
 
@@ -4259,7 +4260,7 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-                    console.log(data.software);
+                    /*console.log(data.software);
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++){
                             let ip = data.software[i].ip.replace(/\./g, '');
@@ -4274,7 +4275,24 @@ $('#searchIP').click(function() {
                             let ip = target[0].replace(/\./g, '');
                             $("#"+ip).remove();
                         }
+                    }*/
+                    if (data.mikrotik) {
+                        for (i = 0; i < data.mikrotik.length; i++){
+                            var target = data.mikrotik[i].target.split('/');
+
+                            var ip_mk_a = target[0].split('.');
+                            var ip_so_a = prefijo[0].split('.');
+
+                            var ip_mk =ip_mk_a[0]+`.`+ip_mk_a[1]+`.`+ip_mk_a[2];
+                            var ip_so =ip_so_a[0]+`.`+ip_so_a[1]+`.`+ip_so_a[2];
+
+                            if(ip_mk == ip_so){
+                                var ip = target[0].replace(/\./g, '');
+                                $("#"+ip).remove();
+                            }
+                        }
                     }
+                    cargando(false);
                 }
             });
             $('#modal-ips').modal('show');
