@@ -226,7 +226,7 @@ class ContratosController extends Controller
                 if($contrato->plan_id){
                     return "<div class='elipsis-short-325'><a href=".route('planes-velocidad.show',$contrato->plan()->id)." target='_blank'>{$contrato->plan()->name}</a></div>";
                 }else{
-                    return 'PLAN';
+                    return 'N/A';
                 }
             })
             ->editColumn('mac', function (Contrato $contrato) {
