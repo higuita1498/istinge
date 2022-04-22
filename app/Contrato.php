@@ -15,6 +15,7 @@ use App\GrupoCorte;
 use App\Puerto;
 use App\Ping;
 use App\PlanesVelocidad;
+use App\Model\Inventario\Inventario;
 
 class Contrato extends Model
 {
@@ -48,7 +49,10 @@ class Contrato extends Model
         return Contacto::where('id', $this->client_id)->first();
     }
 	
-	public function plan(){
+	public function plan($tv = false){
+        if($tv){
+            return Inventario::find($this->servicio_tv);
+        }
 		return PlanesVelocidad::where('id', $this->plan_id)->first();
 	}
     
@@ -106,14 +110,14 @@ class Contrato extends Model
         if($this->nodo){
             return Nodo::find($this->nodo);
         }
-        return '- - -';
+        return 'N/A';
     }
     
     public function ap(){
         if($this->ap){
             return AP::find($this->ap);
         }
-        return '- - -';
+        return 'N/A';
     }
     
     public function marca_antena(){
@@ -137,19 +141,25 @@ class Contrato extends Model
     }
     
     public function plug($class=false){
-
-        $ping = Ping::where('ip', $this->ip)->first();
-
-        if($ping){
-            if($class){
-                return 'danger';
+        if($this->ip){
+            $ping = Ping::where('ip', $this->ip)->first();
+            if($ping){
+                if($class){
+                    return 'danger';
+                }
+                return 'Desconectado';
+            }else{
+                if($class){
+                    return 'primary';
+                }
+                return 'Conectado';
             }
-            return 'Desconectado';
+        }
+
+        if($class){
+            return ($this->state == 'disabled') ? 'danger' : 'primary';
         }else{
-            if($class){
-                return 'primary';
-            }
-            return 'Conectado';
+            return ($this->state == 'disabled') ? 'Desconectado' : 'Conectado';
         }
     }
 
@@ -158,7 +168,7 @@ class Contrato extends Model
         if($factura){
             return "<a href=".route('facturas.show', $factura->nro)." target='_blank'>$factura->codigo</a>";
         }
-        return '- - - -';
+        return 'N/A';
     }
 
     public function puerto(){

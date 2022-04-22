@@ -267,10 +267,16 @@
 									</td>
 								</tr>
 								@endif
-								@if($contrato->plan()->name)
+								@if($contrato->plan_id)
 								<tr>
-									<th width="20%">Plan Contratado</th>
+									<th width="20%">Plan Internet Contratado</th>
 									<td>{{$contrato->plan()->name}}</td>
+								</tr>
+								@endif
+								@if($contrato->servicio_tv)
+								<tr>
+									<th width="20%">Plan TV Contratado</th>
+									<td>{{$contrato->plan('true')->producto}}</td>
 								</tr>
 								@endif
 								@if($contrato->factura_individual)

@@ -693,8 +693,7 @@ function notif(id){
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar=false, type = 1){
-    
-
+    var it = 1;
     if($("#facelectornica").val() != null){
         if($("#facelectornica").val() == 2){
             type = 2;
@@ -728,7 +727,7 @@ function contacto(selected, modificar=false, type = 1){
             }
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
-            if(data.plan == null && type ==1){
+            if(data.plan == null && type == 1 && data.servicio_tv == null){
                 if($("#dian").val() == null){
                     Swal.fire({
                         position: 'top-center',
@@ -751,12 +750,15 @@ function contacto(selected, modificar=false, type = 1){
                 $('#direccion').val(data.direccion);
                 $('#contrato').val(data.contrato);
                 if(type != 2){
-                    $('#item1').val(data.plan).selectpicker('refresh');
-                    rellenar(1, data.plan);
+                    if(data.plan){
+                        it++;
+                        $('#item1').val(data.plan).selectpicker('refresh');
+                        rellenar(1, data.plan);
+                    }
                     if(data.servicio_tv){
                         createRow();
-                        $('#item2').val(data.servicio_tv).selectpicker('refresh');
-                        rellenar(2, data.servicio_tv);
+                        $('#item'+it).val(data.servicio_tv).selectpicker('refresh');
+                        rellenar(it, data.servicio_tv);
                     }
                 }
             }
@@ -3000,8 +3002,13 @@ function validateCountry(id){
 }
 
 function searchMunicipality(id, municipio = null) {
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/searchMunicipality';
+    }else{
+        var url='/searchMunicipality';
+    }
     $.ajax({
-        url: '/searchMunicipality',
+        url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'post',
         data: { departamento_id: id },
@@ -4174,7 +4181,7 @@ function getContracts(id){
     cargando(true);
 
     if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/api/getContracts'+id;
+        var url = '/software/api/getContracts/'+id;
     }else{
         var url = '/api/getContracts/'+id;
     }
