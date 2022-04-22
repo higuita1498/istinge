@@ -236,6 +236,13 @@
                     document.getElementById("dvnit").style.display = "none"
                 }
             });
+
+            if($("#servidor").val() > 0){
+                getPlanes($("#servidor").val());
+                $("#conexion").val($("#conexion_bd").val());
+                $("#local_address").val($("#segmento_bd").val());
+                $("#local_address").selectpicker('refresh');
+            }
         });
 
         setTimeout(function () {

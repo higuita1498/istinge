@@ -318,7 +318,7 @@ class ContratosController extends Controller
         ]);
 
         if(!$request->server_configuration_id && !$request->servicio_tv){
-            return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
+            return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO')->withInput();
         }
 
         if($request->server_configuration_id){

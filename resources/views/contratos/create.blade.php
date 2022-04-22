@@ -100,7 +100,7 @@
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="client_id" id="client_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getContracts(this.value)">
                                         @foreach($clientes as $client)
-                                            <option value="{{$client->id}}" {{$cliente== $client->id?'selected':''}} >{{$client->nombre}} - {{$client->nit}}</option>
+                                            <option value="{{$client->id}}" {{old('client_id')==$client->id?'selected':''}} {{$cliente== $client->id?'selected':''}} >{{$client->nombre}} - {{$client->nit}}</option>
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">
@@ -118,7 +118,7 @@
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="grupo_corte" id="grupo_corte_s" required="" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($grupos as $grupo)
-                                        <option value="{{$grupo->id}}">{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
+                                        <option value="{{$grupo->id}}" {{old('grupo_corte')==$grupo->id?'selected':''}}>{{$grupo->nombre}} (Corte {{ $grupo->fecha_corte }} - Suspensión {{ $grupo->fecha_suspension }})</option>
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">
@@ -135,8 +135,8 @@
                                 <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
-                                        <option value="1">Facturación Estándar</option>
-                                        <option value="3">Facturación Electrónica</option>
+                                        <option value="1" {{old('facturacion')==1?'selected':''}}>Facturación Estándar</option>
+                                        <option value="3" {{old('facturacion')==3?'selected':''}}>Facturación Electrónica</option>
                                     </select>
                                 </div>
                                 <span class="help-block error">
@@ -147,20 +147,20 @@
                                 <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
-                                        <option value="1">Si</option>
-                                        <option value="0">No</option>
+                                        <option value="1" {{old('factura_individual')==1?'selected':''}}>Si</option>
+                                        <option value="0" {{old('factura_individual')==0?'selected':''}}>No</option>
                                     </select>
                                 </div>
                                 <span class="help-block error">
-                                    <strong>{{ $errors->first('grupo_corte') }}</strong>
+                                    <strong>{{ $errors->first('factura_individual') }}</strong>
                                 </span>
                             </div>
                             <div class="col-md-4 form-group">
                                 <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
-                                        <option value="1">Si</option>
-                                        <option value="0">No</option>
+                                        <option value="1" {{old('contrato_permanencia')==1?'selected':''}}>Si</option>
+                                        <option value="0" {{old('contrato_permanencia')==0?'selected':''}}>No</option>
                                     </select>
                                 </div>
                                 <span class="help-block error">
@@ -170,8 +170,8 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly>
-                                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly>
+                                    <input type="text" class="form-control" id="us2-lat" name="latitude" value="{{ old('latitude') }}" readonly >
+                                    <input type="text" class="form-control" id="us2-lon" name="longitude" value="{{ old('longitude') }}" readonly >
                                     <div class="input-group-prepend">
                                         <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
                                             <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
@@ -189,9 +189,10 @@
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
                                         @foreach($servidores as $servidor)
-                                            <option value="{{$servidor->id}}">{{$servidor->nombre}} - {{$servidor->ip}}</option>
+                                            <option value="{{$servidor->id}}" {{old('server_configuration_id')==$servidor->id?'selected':''}}>{{$servidor->nombre}} - {{$servidor->ip}}</option>
                                         @endforeach
                                     </select>
+                                    <input type="hidden" id="servidor" value="{{old('server_configuration_id')}}">
                                 </div>
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('server_configuration_id') }}</strong>
@@ -217,13 +218,14 @@
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo Conexión <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="conexion" name="conexion"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="interfazChange();">
-                                    <option value="1">PPPOE</option>
-                                    <option value="2">DHCP</option>
-                                    <option value="3">IP Estática</option>
-                                    <option value="4">VLAN</option>
+                                <select class="form-control selectpicker" id="conexion" name="conexion"  required="" title="Seleccione" data-live-search="true" data-size="4" onchange="interfazChange();">
+                                    <option value="1" {{old('conexion')==1?'selected':''}}>PPPOE</option>
+                                    <option value="2" {{old('conexion')==2?'selected':''}}>DHCP</option>
+                                    <option value="3" {{old('conexion')==3?'selected':''}}>IP Estática</option>
+                                    <option value="4" {{old('conexion')==4?'selected':''}}>VLAN</option>
                                 </select>
                                 <input type="hidden" name="amarre_mac" id="amarre_mac">
+                                <input type="hidden" name="conexion_bd" id="conexion_bd" value="{{old('conexion')}}">
                             </div>
 
                             <div class="col-md-4 form-group d-none" id="div_dhcp">
@@ -237,7 +239,7 @@
                             <div class="col-md-4 form-group d-none" id="div_name_vlan">
                                 <label class="control-label">Nombre VLAN <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="name_vlan" id="name_vlan">
+                                    <input type="text" class="form-control" name="name_vlan" id="name_vlan" value="{{ old('name_vlan') }}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('name_vlan') }}</strong>
                                     </span>
@@ -247,19 +249,20 @@
                             <div class="col-md-4 form-group d-none" id="div_id_vlan">
                                 <label class="control-label">ID VLAN <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" name="id_vlan" id="id_vlan" min="1" max="4095">
+                                    <input type="number" class="form-control" name="id_vlan" id="id_vlan" min="1" max="4095" value="{{ old('id_vlan') }}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('id_vlan') }}</strong>
                                     </span>
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group d-none" id="div_interfaz">
+                            <div class="col-md-4 form-group {{old('conexion')==3?'':'d-none'}}" id="div_interfaz">
                                 <label class="control-label">Interfaz de Conexión <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="interfaz" id="interfaz" required="" title="Seleccione" data-live-search="true" data-size="5">
 
                                     </select>
+                                    <input type="hidden" name="interfaz_bd" id="interfaz_bd" value="{{old('interfaz')}}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('interfaz') }}</strong>
                                     </span>
@@ -269,8 +272,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label" id="div_local_address">Segmento de IP <span class="text-danger">*</span></label>
                                   <div class="input-group">
-                                    {{--<input type="text" class="form-control" name="local_address" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">--}}
-                                    <input type="hidden" id="segmento_bd">
+                                    <input type="hidden" id="segmento_bd" name="segmento_bd" value="{{ old('segmento_bd') }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
 
                                     </select>
@@ -283,7 +285,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="ip" id="ip" required="" readonly onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
+                                    <input type="text" class="form-control" name="ip" id="ip" required="" readonly onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47" value="{{ old('ip') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-success btn-sm" type="button" id="searchIP" style="border-radius: 0 5px 5px 0;"><i class="fa fa-search" style="margin: 2px;"></i></button>
                                     </div>
@@ -301,7 +303,7 @@
                             <div class="col-md-4 form-group d-none" id="new_ip">
                                 <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46">
+                                    <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" value="{{ old('ip_new') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-success btn-sm" type="button" id="searchIP2"><i class="fa fa-search" style="margin: 2px;"></i></button>
                                     </div>
@@ -311,20 +313,20 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group" id="div_usuario">
+                            <div class="col-md-4 form-group {{old('conexion')==1?'':'d-none'}}" id="div_usuario">
                                 <label class="control-label">Usuario <span class="text-danger">*</span></label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="usuario" id="usuario">
+                                    <input type="text" class="form-control" name="usuario" id="usuario" value="{{ old('usuario') }}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('usuario') }}</strong>
                                     </span>
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group" id="div_password">
+                            <div class="col-md-4 form-group {{old('conexion')==1?'':'d-none'}}" id="div_password">
                                 <label class="control-label">Contraseña <span class="text-danger">*</span></label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="password" id="password">
+                                    <input type="text" class="form-control" name="password" id="password" value="{{ old('password') }}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('password') }}</strong>
                                     </span>
@@ -338,7 +340,7 @@
                                     <optgroup label="{{$nodo->nombre}}">
                                         @foreach($aps as $ap)
                                             @if($ap->nodo==$nodo->id)
-                                                <option id="{{$ap->id}}" value="{{$ap->id}}">{{$ap->nombre}}</option>
+                                                <option id="{{$ap->id}}" value="{{$ap->id}}" {{old('ap')==$ap->id?'selected':''}}>{{$ap->nombre}}</option>
                                             @endif
                                         @endforeach
                                     </optgroup>
@@ -376,21 +378,19 @@
                             <div class="col-md-4 form-group" id="div_mac">
                                 <label class="control-label">Dirección MAC</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address">
+                                    <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" value="{{old('mac_address')}}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('mac_address') }}</strong>
                                     </span>
                                 </div>
                             </div>
 
-
-
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Puerto de Conexión</label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="puerto_conexion" id="puerto_conexion" required="" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($puertos as $puerto)
-                                            <option value="{{$puerto->id}}">{{$puerto->nombre}}</option>
+                                            <option value="{{$puerto->id}}" {{old('puerto_conexion')==$puerto->id?'selected':''}}>{{$puerto->nombre}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -399,13 +399,11 @@
                                 </span>
                             </div>
 
-
-
                             <div class="col-md-3 form-group d-none">
                                 <label class="control-label">Marca Router</label>
                                 <select class="form-control selectpicker" id="marca_router" name="marca_router" title="Seleccione">
                                     @foreach($marcas as $marca)
-                                    <option value="{{$marca->id}}">{{$marca->nombre}}</option>
+                                    <option value="{{$marca->id}}" {{old('marca_router')==$marca->id?'selected':''}}>{{$marca->nombre}}</option>
                                     @endforeach
                                 </select>
                                 <span class="help-block error">
@@ -415,7 +413,7 @@
 
                             <div class="col-md-3 form-group d-none">
                                 <label class="control-label">Modelo Router</label>
-                                <input type="text" class="form-control"  id="modelo_router" name="modelo_router">
+                                <input type="text" class="form-control"  id="modelo_router" name="modelo_router" value="{{old('modelo_router')}}">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('modelo_router') }}</strong>
                                 </span>
@@ -425,7 +423,7 @@
                                 <label class="control-label">Marca Antena</label>
                                 <select class="form-control selectpicker" id="marca_antena" name="marca_antena" title="Seleccione">
                                     @foreach($marcas as $marca)
-                                    <option value="{{$marca->id}}">{{$marca->nombre}}</option>
+                                    <option value="{{$marca->id}}" {{old('marca_antena')==$marca->id?'selected':''}}>{{$marca->nombre}}</option>
                                     @endforeach
                                 </select>
                                 <span class="help-block error">
@@ -435,7 +433,7 @@
 
                             <div class="col-md-3 form-group d-none">
                                 <label class="control-label">Modelo Antena</label>
-                                <input type="text" class="form-control"  id="modelo_antena" name="modelo_antena">
+                                <input type="text" class="form-control"  id="modelo_antena" name="modelo_antena" value="{{old('modelo_antena')}}">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('modelo_antena') }}</strong>
                                 </span>
@@ -444,14 +442,12 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Serial ONU</label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="serial_onu" id="serial_onu">
+                                    <input type="text" class="form-control" name="serial_onu" id="serial_onu" value="{{old('serial_onu')}}">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('serial_onu') }}</strong>
                                     </span>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                     @if(count($servicios)>0)
@@ -461,7 +457,7 @@
                                 <label class="control-label">Servicio de Televisión</label>
                                 <select class="form-control selectpicker" name="servicio_tv" id="servicio_tv" title="Seleccione" data-live-search="true" data-size="5">
                                     @foreach($servicios as $servicio)
-                                        <option value="{{$servicio->id}}">{{$servicio->producto}}</option>
+                                        <option value="{{$servicio->id}}" {{old('servicio_tv')==$servicio->id?'selected':''}}>{{$servicio->producto}}</option>
                                     @endforeach
                                 </select>
                                 <span style="color: red;">

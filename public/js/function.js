@@ -3979,7 +3979,7 @@ function interfazChange(){
     }
     document.getElementById("interfaz").value = '';
     document.getElementById("simple_queue").value = '';
-    document.getElementById("mac_address").value = '';
+    //document.getElementById("mac_address").value = '';
     document.getElementById("name_vlan").value = '';
     document.getElementById("id_vlan").value = '';
     document.getElementById("usuario").value = '';
@@ -3993,6 +3993,10 @@ function interfazChange(){
             document.getElementById("mac_address").removeAttribute('required');
         }
     }
+
+    document.getElementById("mac_address").removeAttribute('required');
+    $("#conexion").selectpicker('refresh');
+    $("#conexion_bd").val(document.getElementById("conexion").value);
 }
 
 function modificarPromesa(id) {
@@ -4296,6 +4300,7 @@ $('#searchIP').click(function() {
                 }
             });
             $('#modal-ips').modal('show');
+            $("#segmento_bd").val($("#local_address").val());
         },
         error: function(data){
             Swal.fire({
