@@ -1217,113 +1217,60 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         if ($contrato) {
-            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+            if($contrato->server_configuration_id){
+                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
+                //$API->debug = true;
             
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
-            //$API->debug = true;
-            
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                if($contrato->conexion == 1){
-                    //OBTENEMOS AL CONTRATO MK
-                    $mk_user = $API->comm("/ppp/secret/getall", array(
-                        "?remote-address" => $contrato->ip,
-                        )
-                    );
-
-                    if($mk_user){
-                        // REMOVEMOS EL SECRET
-                        $API->comm("/ppp/secret/remove", array(
-                            ".id" => $mk_user[0][".id"],
-                            )
-                        );
-                    }
-
-                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                    $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?target" => $contrato->ip.'/32'
-                        )
-                    );
-
-                    if($id_simple){
-                        // REMOVEMOS LA COLA SIMPLE
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $id_simple[0][".id"],
-                            )
-                        );
-                    }
-                }
-                
-                if($contrato->conexion == 2){
-                    $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                            "?address" => $contrato->ip,
-                        )
-                    );
-
-                    if($name){
-                        // REMOVEMOS EL IP DHCP
-                        $API->comm("/ip/dhcp-server/lease/remove", array(
-                            ".id" => $name[0][".id"],
-                            )
-                        );
-                    }
-
-                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                    $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?target" => $contrato->ip.'/32'
-                        )
-                    );
-                    // REMOVEMOS LA COLA SIMPLE
-                    if($id_simple){
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $id_simple[0][".id"],
-                            )
-                        );
-                    }
-                }
-
-                if($contrato->conexion == 3){
-                    //OBTENEMOS AL CONTRATO MK
-                    $mk_user = $API->comm("/ip/arp/getall", array(
-                        "?address" => $contrato->ip,
-                        )
-                    );
-                    if($mk_user){
-                        // REMOVEMOS EL IP ARP
-                        $API->comm("/ip/arp/remove", array(
-                            ".id" => $mk_user[0][".id"],
-                            )
-                        );
-                    }
-                    //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
-                    $id_simple = $API->comm("/queue/simple/getall", array(
-                        "?target" => $contrato->ip.'/32'
-                        )
-                    );
-                    // REMOVEMOS LA COLA SIMPLE
-                    if($id_simple){
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $id_simple[0][".id"],
-                            )
-                        );
-                    }
-
-                    if($contrato->ip_new){
-                        $mk_user = $API->comm("/ip/arp/getall", array(
-                            "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    if($contrato->conexion == 1){
+                        //OBTENEMOS AL CONTRATO MK
+                        $mk_user = $API->comm("/ppp/secret/getall", array(
+                            "?remote-address" => $contrato->ip,
                             )
                         );
 
                         if($mk_user){
-                            // REMOVEMOS EL IP ARP
-                            $API->comm("/ip/arp/remove", array(
+                            // REMOVEMOS EL SECRET
+                            $API->comm("/ppp/secret/remove", array(
                                 ".id" => $mk_user[0][".id"],
                                 )
                             );
                         }
+
                         //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                         $id_simple = $API->comm("/queue/simple/getall", array(
-                            "?target" => $contrato->ip_new.'/32'
+                            "?target" => $contrato->ip.'/32'
+                            )
+                        );
+
+                        if($id_simple){
+                            // REMOVEMOS LA COLA SIMPLE
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
+                                )
+                            );
+                        }
+                    }
+
+                    if($contrato->conexion == 2){
+                        $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                                "?address" => $contrato->ip,
+                            )
+                        );
+
+                        if($name){
+                            // REMOVEMOS EL IP DHCP
+                            $API->comm("/ip/dhcp-server/lease/remove", array(
+                                ".id" => $name[0][".id"],
+                                )
+                            );
+                        }
+
+                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                        $id_simple = $API->comm("/queue/simple/getall", array(
+                            "?target" => $contrato->ip.'/32'
                             )
                         );
                         // REMOVEMOS LA COLA SIMPLE
@@ -1334,36 +1281,97 @@ class ContratosController extends Controller
                             );
                         }
                     }
+
+                    if($contrato->conexion == 3){
+                        //OBTENEMOS AL CONTRATO MK
+                        $mk_user = $API->comm("/ip/arp/getall", array(
+                            "?address" => $contrato->ip,
+                            )
+                        );
+                        if($mk_user){
+                            // REMOVEMOS EL IP ARP
+                            $API->comm("/ip/arp/remove", array(
+                                ".id" => $mk_user[0][".id"],
+                                )
+                            );
+                        }
+                        //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                        $id_simple = $API->comm("/queue/simple/getall", array(
+                            "?target" => $contrato->ip.'/32'
+                            )
+                        );
+                        // REMOVEMOS LA COLA SIMPLE
+                        if($id_simple){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $id_simple[0][".id"],
+                                )
+                            );
+                        }
+
+                        if($contrato->ip_new){
+                            $mk_user = $API->comm("/ip/arp/getall", array(
+                                "?comment" => $contrato->servicio.'-'.$contrato->nro,
+                                )
+                            );
+
+                            if($mk_user){
+                                // REMOVEMOS EL IP ARP
+                                $API->comm("/ip/arp/remove", array(
+                                    ".id" => $mk_user[0][".id"],
+                                    )
+                                );
+                            }
+                            //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
+                            $id_simple = $API->comm("/queue/simple/getall", array(
+                                "?target" => $contrato->ip_new.'/32'
+                                )
+                            );
+                            // REMOVEMOS LA COLA SIMPLE
+                            if($id_simple){
+                                $API->comm("/queue/simple/remove", array(
+                                    ".id" => $id_simple[0][".id"],
+                                    )
+                                );
+                            }
+                        }
+                    }
+
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
+
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
+
+                    if(count($ARRAYS)>0){
+                        //REMOVEMOS EL ID DE LA ADDRESS LIST
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+                    }
+
+                    $API->disconnect();
+                    Ping::where('contrato', $contrato->id)->delete();
+
+                    $cliente = Contacto::find($contrato->client_id);
+                    $cliente->fecha_contrato = Carbon::now();
+                    $cliente->save();
+                    $contrato->delete();
+
+                    $mensaje='SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
+                    return redirect('empresa/contratos')->with('success', $mensaje);
+                } else {
+                    $mensaje='NO SE HA PODIDO ELIMINAR EL CONTRATO DE SERVICIOS';
+                    return redirect('empresa/contratos')->with('danger', $mensaje);
                 }
-
-                $API->write('/ip/firewall/address-list/print', TRUE);
-                $ARRAYS = $API->read();
-
-                $API->write('/ip/firewall/address-list/print', false);
-                $API->write('?address='.$contrato->ip, false);
-                $API->write('=.proplist=.id');
-                $ARRAYS = $API->read();
-
-                if(count($ARRAYS)>0){
-                    //REMOVEMOS EL ID DE LA ADDRESS LIST
-                    $API->write('/ip/firewall/address-list/remove', false);
-                    $API->write('=.id='.$ARRAYS[0]['.id']);
-                    $READ = $API->read();
-                }
-
-                $API->disconnect();
-                Ping::where('contrato', $contrato->id)->delete();
-
+            }else{
                 $cliente = Contacto::find($contrato->client_id);
                 $cliente->fecha_contrato = Carbon::now();
                 $cliente->save();
                 $contrato->delete();
-                
                 $mensaje='SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
                 return redirect('empresa/contratos')->with('success', $mensaje);
-            } else {
-                $mensaje='NO SE HA PODIDO ELIMINAR EL CONTRATO DE SERVICIOS';
-                return redirect('empresa/contratos')->with('danger', $mensaje);
             }
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
