@@ -24,6 +24,7 @@ use App\Blacklist;
 use App\Mail\BlacklistMailable;
 use App\ServidorCorreo;
 use App\Integracion;
+use App\PlanesVelocidad;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -32,6 +33,7 @@ class CronController extends Controller
 {
     public static function CrearFactura(){
         $empresa = Empresa::find(1);
+
         if($empresa->factura_auto == 1){
             $i=0;
             $date = date('d') * 1;
@@ -42,10 +44,9 @@ class CronController extends Controller
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
             foreach($grupos_corte as $grupo_corte){
-                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->join('inventario as i', 'i.id', '=', 'p.item')->join('empresas as e', 'e.id', '=', 'i.empresa')->select('contracts.id','contracts.public_id','c.id as cliente','contracts.state','contracts.fecha_corte','contracts.fecha_suspension','contracts.facturacion','c.nombre','c.nit','c.celular','c.telefono1','p.name as plan', 'p.price','p.item','i.ref', 'i.id_impuesto', 'i.impuesto','e.terminos_cond','e.notas_fact','contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
 
                 $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
-
                 if($num){
                     $numero = $num->nro;
                 }else{
@@ -105,16 +106,25 @@ class CronController extends Controller
                     
                     $factura->save();
 
-                    $item_reg = new ItemsFactura;
-                    $item_reg->factura     = $factura->id;
-                    $item_reg->producto    = $contrato->item;
-                    $item_reg->ref         = $contrato->ref;
-                    $item_reg->precio      = $contrato->price;
-                    $item_reg->descripcion = $contrato->plan;
-                    $item_reg->id_impuesto = $contrato->id_impuesto;
-                    $item_reg->impuesto    = $contrato->impuesto;
-                    $item_reg->cant        = 1;
-                    $item_reg->save();
+                    ## Se carga el item a la factura (Plan de Internet) ##
+
+                    if($contrato->plan_id){
+                        $plan = PlanesVelocidad::find($contrato->plan_id);
+                        $item = Inventario::find($plan->item);
+
+                        $item_reg = new ItemsFactura;
+                        $item_reg->factura     = $factura->id;
+                        $item_reg->producto    = $item->id;
+                        $item_reg->ref         = $item->ref;
+                        $item_reg->precio      = $item->precio;
+                        $item_reg->descripcion = $plan->name;
+                        $item_reg->id_impuesto = $item->id_impuesto;
+                        $item_reg->impuesto    = $item->impuesto;
+                        $item_reg->cant        = 1;
+                        $item_reg->save();
+                    }
+
+                    ## Se carga el item a la factura (Plan de Televisión) ##
 
                     if($contrato->servicio_tv){
                         $item = Inventario::find($contrato->servicio_tv);
@@ -299,27 +309,27 @@ class CronController extends Controller
                     $API->write('/ip/firewall/address-list/print', TRUE);
                     $ARRAYS = $API->read();
                     if($contrato->state == 'enabled'){
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "comment" => $contrato->servicio,
-                            "list" => 'morosos'
-                            )
-                        );
+                        if($contrato->ip){
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "comment" => $contrato->servicio,
+                                "list" => 'morosos'
+                                )
+                            );
 
-                        #ELIMINAMOS DE IP_AUTORIZADAS#
-                        $API->write('/ip/firewall/address-list/print', false);
-                        $API->write('?address='.$contrato->ip, false);
-                        $API->write("?list=ips_autorizadas",false);
-                        $API->write('=.proplist=.id');
-                        $ARRAYS = $API->read();
-
-                        if(count($ARRAYS)>0){
-                            $API->write('/ip/firewall/address-list/remove', false);
-                            $API->write('=.id='.$ARRAYS[0]['.id']);
-                            $READ = $API->read();
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
+                            $API->write('/ip/firewall/address-list/print', false);
+                            $API->write('?address='.$contrato->ip, false);
+                            $API->write("?list=ips_autorizadas",false);
+                            $API->write('=.proplist=.id');
+                            $ARRAYS = $API->read();
+                            if(count($ARRAYS)>0){
+                                $API->write('/ip/firewall/address-list/remove', false);
+                                $API->write('=.id='.$ARRAYS[0]['.id']);
+                                $READ = $API->read();
+                            }
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
                         }
-                        #ELIMINAMOS DE IP_AUTORIZADAS#
-
                         $contrato->state = 'disabled';
                         $i++;
                     }
