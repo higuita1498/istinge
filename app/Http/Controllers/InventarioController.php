@@ -31,6 +31,9 @@ use ZipArchive;
 use PHPExcel_Shared_ZipArchive; 
 use App\Puc;
 use App\ProductoServicio;
+use App\ProductoCuenta;
+
+
 
 class InventarioController extends Controller{
     public $id;
@@ -332,7 +335,6 @@ class InventarioController extends Controller{
         $empresa = Auth::user()->empresa;
         $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('id','>',1)->get();
         $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
-        $categorias=Categoria::where('empresa',$empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $medidas=DB::table('medidas')->get();
         $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
         $unidades=DB::table('unidades_medida')->get();
@@ -352,7 +354,7 @@ class InventarioController extends Controller{
         ->whereRaw('length(codigo) > 6')
         ->get();
         $type = '';
-        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
+        return view('inventario.create')->with(compact('unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
     }
 
     public function television_create(){
@@ -463,6 +465,39 @@ class InventarioController extends Controller{
                         'inventario_id' => $inventario->id
                     ]);
             }
+        }
+
+        //introduccion de cuentas de productos y servicios (inv, costo, venta y dev).
+        if(isset($request->inventario)){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->inventario;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 1;
+            $pr->save();
+        }
+       
+        if(isset($request->costo)){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->costo;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 2;
+            $pr->save();
+        }
+
+        if(isset($request->venta)){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->venta;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 3;
+            $pr->save();
+        }
+
+        if(isset($request->devolucion)){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->devolucion;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 4;
+            $pr->save();
         }
         
         $inserts=array();
@@ -854,6 +889,26 @@ class InventarioController extends Controller{
             }else{
                 ProductosPrecios::where('empresa', Auth::user()->empresa)->where('producto', $inventario->id)->delete();
             }
+            
+            $services = array();
+            
+            if(isset($request->inventario)){
+                array_push($services,$request->inventario);
+            }
+
+            if(isset($request->costo)){
+                array_push($services,$request->costo);
+            }
+
+            if(isset($request->venta)){
+                array_push($services,$request->venta);
+            }
+            
+            if(isset($request->devolucion)){
+                array_push($services,$request->devolucion);
+            }
+
+            $request->cuentacontable = array_merge($request->cuentacontable, $services);
 
             //actualizando cuentas del inventario
             $insertsCuenta=array();
@@ -885,6 +940,39 @@ class InventarioController extends Controller{
                 DB::table('producto_cuentas')
                     ->where('inventario_id',$inventario->id)
                     ->delete();
+            }
+
+            //Actualizacion de cuentas contables por tipo
+            if(isset($request->inventario)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->inventario)->first();
+                if($inven){
+                    $inven->tipo = 1;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->costo)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->costo)->first();
+                if($inven){
+                    $inven->tipo = 2;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->venta)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->venta)->first();
+                if($inven){
+                    $inven->tipo = 3;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->devolucion)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->devolucion)->first();
+                if($inven){
+                    $inven->tipo = 4;
+                    $inven->save();
+                }
             }
             
             if ($request->tipo_producto==1) {

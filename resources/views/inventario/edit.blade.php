@@ -48,10 +48,6 @@
 		</div>
 
 		<div class="form-group col-md-4">
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group col-md-5">
 			<label class="control-label">Impuesto <span class="text-danger">*</span></label>
 
 			<select class="form-control selectpicker" name="impuesto" id="impuesto" required="" title="Seleccione">
@@ -63,18 +59,20 @@
 				<strong>{{ $errors->first('impuesto') }}</strong>
 			</span>
 		</div>
+	</div>
+	<div class="row">
+		<div class="form-group col-md-5">
+			<label class="control-label">Precio de Venta <span class="text-danger">*</span></label>
+			<input type="text" class="form-control " id="precio" name="precio" required="" maxlength="24" value="{{App\Funcion::precision($inventario->precio)}}" placeholder="{{Auth::user()->empresa()->moneda}}" min="0" @if($inventario->tipo_producto==1) @endif >
+			<span class="help-block error">
+				<strong>{{ $errors->first('precio') }}</strong>
+			</span>
+			<span class="litte">Use el punto (.) para colocar decimales</span>
+		</div>
 
 		<div class="form-group col-md-7 ">
 			<div class="row">
-				<div class="col-md-6 monetario">
-					<label class="control-label">Precio de Venta <span class="text-danger">*</span></label>
-					<input type="text" class="form-control " id="precio" name="precio" required="" maxlength="24" value="{{App\Funcion::precision($inventario->precio)}}" placeholder="{{Auth::user()->empresa()->moneda}}" min="0" @if($inventario->tipo_producto==1) @endif >
-					<span class="help-block error">
-						<strong>{{ $errors->first('precio') }}</strong>
-					</span>
-					<span class="litte">Use el punto (.) para colocar decimales</span>
-				</div>
-				<div class="col-md-6" style="padding-top: 6%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregarlista_precios();" @if(json_encode($listas)=='[]') disabled="" title="Usted no tiene lista de precios registrada" @endif><i class="fas fa-plus"></i> Agregar otra lista de precio</button></div>
+				<div class="col-md-6" style="padding-top: 6%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregarlista_precios();" @if(json_encode($listas)=='[]') disabled="" title="Usted no tiene lista de precios registrados" @endif><i class="fas fa-plus"></i> Agregar otra lista de precio</button></div>
 			</div>
 			<div class="row" id="lista_precios_inventario">
 				<div class="col-md-12">
@@ -106,7 +104,60 @@
 
 		</div>
 	</div>
-
+	<div class="row">
+		<div class="form-group col-md-3">
+			<label class="control-label">Inventario <span class="text-danger">*</span></label>
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario" required="" title="Seleccione">
+				@foreach($cuentas as $cuenta)
+					<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach 
+						value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
+					</option>
+				@endforeach
+			  </select>
+		  <span class="help-block error">
+			  <strong>{{ $errors->first('inventario') }}</strong>
+		  </span>
+		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Costo <span class="text-danger">*</span></label>
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo" required="" title="Seleccione">
+				@foreach($cuentas as $cuenta)
+				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach 
+					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
+				</option>				
+				@endforeach
+		  </select>
+		  <span class="help-block error">
+			  <strong>{{ $errors->first('costo') }}</strong>
+		  </span>
+		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Venta <span class="text-danger">*</span></label>
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta" required="" title="Seleccione">
+				@foreach($cuentas as $cuenta)
+				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach 
+					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
+				</option>
+				@endforeach
+		  </select>
+		  <span class="help-block error">
+			  <strong>{{ $errors->first('venta') }}</strong>
+		  </span>
+		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Devolución <span class="text-danger">*</span></label>
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion" required="" title="Seleccione">
+				@foreach($cuentas as $cuenta)
+				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach 
+					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
+				</option>
+				@endforeach
+		  </select>
+		  <span class="help-block error">
+			  <strong>{{ $errors->first('devolucion') }}</strong>
+		  </span>
+		</div>
+	  </div>
 	<div class="row">
 		<div class="form-group col-md-5">
 			  
@@ -123,6 +174,7 @@
 						<tbody>
 							@php $key2= 0; @endphp
 							@foreach($cuentasInventario as $cuenta)
+							@if($cuenta->tipo == null)
 							<tr id="tr_cuenta_{{($key2+1)}}">
 								<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">* {{$cuenta->nombreProductoServicio()}}</span></label></td>
 								<td width="30%">
@@ -135,6 +187,7 @@
 								</td>
 								<td width="5%"><button type="button" class="btn btn-link" onclick="eliminarCuenta('tr_cuenta_{{($key2+1)}}');">X</button></td>
 							</tr>
+							@endif
 							@php $key2++; @endphp
 							@endforeach
 
