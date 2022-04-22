@@ -217,6 +217,7 @@
                             <div class="col-md-4 form-group {{$contrato->conexion==3?'':'d-none'}}" id="div_interfaz">
                                 <label class="control-label">Interfaz de Conexión <span class="text-danger">*</span></label>
                                 <div class="input-group">
+                                    <input type="hidden" id="interfaz_bd" value="{{ $contrato->interfaz }}">
                                     <select class="form-control selectpicker" name="interfaz" id="interfaz" required="" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($interfaces as $interfaz)
                                         <option value="{{$interfaz->name}}" {{$interfaz->name==$contrato->interfaz?'selected':''}}>{{$interfaz->name}}</option>

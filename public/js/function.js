@@ -3835,6 +3835,9 @@ function getInterfaces(mikrotik) {
             });
 
             $select.selectpicker('refresh');
+
+            $('#interfaz').val($("#interfaz_bd").val());
+            $('#interfaz').selectpicker('refresh');
             getSegmentos(mikrotik);
         },
         error: function(data){
