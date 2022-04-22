@@ -18,6 +18,7 @@
 
         <input type="hidden" value="1" name="fact_prov" id="fact_prov">
         <input type="hidden" value="{{$factura->tipo == 2 ? '2' : '1'}}" name="facelectronica" id ="facelectornica">
+        <input type="hidden" value="1" name="editfactura" id ="editfactura">
         <!--Formulario Facturas-->
         <form method="POST" action="{{ route('facturas.update', $factura->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample"  id="form-factura" >
             {{ csrf_field() }}

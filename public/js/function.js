@@ -693,6 +693,7 @@ function notif(id){
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar=false, type = 1){
+
     var it = 1;
     if($("#facelectornica").val() != null){
         if($("#facelectornica").val() == 2){
@@ -750,16 +751,19 @@ function contacto(selected, modificar=false, type = 1){
                 $('#direccion').val(data.direccion);
                 $('#contrato').val(data.contrato);
                 if(type != 2){
-                    if(data.plan){
-                        it++;
-                        $('#item1').val(data.plan).selectpicker('refresh');
-                        rellenar(1, data.plan);
+                    if($("#editfactura").val() == null){
+                        if(data.plan){
+                            it++;
+                            $('#item1').val(data.plan).selectpicker('refresh');
+                            rellenar(1, data.plan);
+                        }
+                        if(data.servicio_tv){
+                            createRow();
+                            $('#item'+it).val(data.servicio_tv).selectpicker('refresh');
+                            rellenar(it, data.servicio_tv);
+                        }
                     }
-                    if(data.servicio_tv){
-                        createRow();
-                        $('#item'+it).val(data.servicio_tv).selectpicker('refresh');
-                        rellenar(it, data.servicio_tv);
-                    }
+                   
                 }
             }
             cargando(false);
