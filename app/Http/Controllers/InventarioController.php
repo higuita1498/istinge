@@ -908,7 +908,11 @@ class InventarioController extends Controller{
                 array_push($services,$request->devolucion);
             }
 
-            $request->cuentacontable = array_merge($request->cuentacontable, $services);
+            if($request->cuentacontable->length() > 0){
+                $request->cuentacontable = array_merge($request->cuentacontable, $services);
+            }else{
+                $request->cuentacontable = $services;
+            }
 
             //actualizando cuentas del inventario
             $insertsCuenta=array();

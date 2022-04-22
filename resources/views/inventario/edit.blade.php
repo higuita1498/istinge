@@ -166,7 +166,7 @@
 			  <div class="row">
 				  <div class="col-md-6 monetario">
 				  </div>
-				  <div class="col-md-6" style="padding-top: 1%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregar_cuenta();" @if(json_encode($cuentas)=='[]') title="Usted no tiene cuentas registradas" @endif><i class="fas fa-plus"></i> Agregar cuentas contables</button></div>
+				  <div class="col-md-6" style="padding-top: 1%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregar_cuenta();" @if(json_encode($cuentas)=='[]') title="Usted no tiene cuentas registradas" @endif><i class="fas fa-plus"></i> Agregar otras cuentas contables</button></div>
 			  </div>
 			  <div class="row" id="lista_cuentas">
 				  <div class="col-md-12">
