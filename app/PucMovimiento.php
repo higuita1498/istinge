@@ -41,30 +41,33 @@ class PucMovimiento extends Model
 
             //1ro. registramos los movimientos contables de los items.
             foreach($factura->itemsFactura as $item){
-
-            //iteramos sobre las cuentas contables a las que está asignado el producto.
-            foreach($item->cuentasContable() as $cuentaItem){
-
-                //si es tipo 3 (el tipo de producto o servicio que significa venta)
-                if($cuentaItem->tipo == 3){
-                    $mov = new PucMovimiento;
-                    $mov->tipo_comprobante = "03";
-                    $mov->consecutivo_comprobante = $factura->codigo;
-                    $mov->fecha_elaboracion = $factura->fecha;
-                    $mov->documento_id = $factura->id;
-                    $mov->codigo_cuenta = isset($cuentaItem->puc->codigo) ? $cuentaItem->puc->codigo : '';
-                    $mov->cuenta_id = isset($cuentaItem->puc->id) ? $cuentaItem->puc->id : '';
-                    $mov->identificacion_tercero = $factura->cliente()->nit;
-                    $mov->cliente_id = $factura->cliente()->id;
-                    $mov->prefijo = $factura->numeracionFactura->prefijo;
-                    $mov->consecutivo = $factura->codigo;
-                    $mov->fecha_vencimiento = $factura->vencimiento;
-                    $mov->descripcion = $item->descripcion;
-                    $mov->credito = $item->precio;
-                    $mov->enlace_a = 1;
-                    $mov->save();
-                }
-
+                
+                //iteramos sobre las cuentas contables a las que está asignado el producto.
+                foreach($item->cuentasContable() as $cuentaItem){
+                    
+                    //si es tipo 3 (el tipo de producto o servicio que significa venta)
+                    if($cuentaItem->tipo == 3 || $cuentaItem->tipo == 2 || $cuentaItem->tipo == 1){
+                        $mov = new PucMovimiento;
+                        $mov->tipo_comprobante = "03";
+                        $mov->consecutivo_comprobante = $factura->codigo;
+                        $mov->fecha_elaboracion = $factura->fecha;
+                        $mov->documento_id = $factura->id;
+                        $mov->codigo_cuenta = isset($cuentaItem->puc->codigo) ? $cuentaItem->puc->codigo : '';
+                        $mov->cuenta_id = isset($cuentaItem->puc->id) ? $cuentaItem->puc->id : '';
+                        $mov->identificacion_tercero = $factura->cliente()->nit;
+                        $mov->cliente_id = $factura->cliente()->id;
+                        $mov->prefijo = $factura->numeracionFactura->prefijo;
+                        $mov->consecutivo = $factura->codigo;
+                        $mov->fecha_vencimiento = $factura->vencimiento;
+                        $mov->descripcion = $item->descripcion;
+                        if($cuentaItem->tipo == 3){$mov->credito =  round($item->total());}
+                        if($cuentaItem->tipo == 2){$mov->debito = $item->totalCompra();}
+                        if($cuentaItem->tipo == 1){$mov->credito = $item->totalCompra();}
+                        $mov->enlace_a = 1;
+                        $mov->save();
+                    }
+                    //buscamos si el item en inventario el tipo_producto es inventariable (tipo 1).
+                    
             }
             }
 

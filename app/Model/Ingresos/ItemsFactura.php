@@ -34,6 +34,17 @@ class ItemsFactura extends Model
 
     }
 
+    public function totalCompra(){
+        
+        if($this->inventario->tipo_producto == 1){
+            $result=$this->inventario->costo_unidad*$this->cant;
+            $result = round($result);
+        }else{
+            $result = 0;
+        }
+        return $result;
+    }
+
     /**
      * Obtiene el monto total del item_factura con el impuesto aplicado
      * @return float|int
@@ -215,5 +226,9 @@ class ItemsFactura extends Model
 
     public function cuentasContable(){
         return ProductoCuenta::where('inventario_id',$this->producto)->get();
+    }
+
+    public function inventario(){
+        return $this->belongsTo(Inventario::class,'producto');
     }
 }
