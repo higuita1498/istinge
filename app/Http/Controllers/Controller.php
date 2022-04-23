@@ -961,7 +961,7 @@ class Controller extends BaseController
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
-        first();
+        get()->last();
 
         return json_encode($contrato);
     }
