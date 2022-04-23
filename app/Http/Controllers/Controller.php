@@ -954,8 +954,15 @@ class Controller extends BaseController
     }
     
     public function consultar_invoice($identificacion){
-        //$contrato = Contrato::join('contactos as c', 'c.UID', '=', 'contracts.client_id')->join('planes as p', 'p.id', '=', 'contracts.plan_id')->select('contracts.id','contracts.public_id','contracts.state', 'contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','c.email','p.name as plan','p.price')->where('c.nit', $identificacion)->first();
-        $contrato = Contrato::join('contactos as c', 'c.UID', '=', 'contracts.client_id')->join('planes as p', 'p.id', '=', 'contracts.plan_id')->join('factura as f','f.cliente','c.id')->join('items_factura as if','f.id','if.factura')->select('contracts.id','contracts.public_id','contracts.state', 'contracts.fecha_corte','contracts.fecha_suspension','c.nombre','c.nit','c.celular','c.telefono1','c.email','p.name as plan','f.fecha as emision','f.vencimiento','f.codigo as factura','if.precio as price')->where('c.nit', $identificacion)->where('estatus',1)->first();
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
+        join('factura as f','f.cliente','c.id')->
+        join('items_factura as if','f.id','if.factura')->
+        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.precio as price')->
+        where('c.nit', $identificacion)->
+        where('f.estatus',1)->
+        where('contracts.status',1)->
+        first();
+
         return json_encode($contrato);
     }
     
