@@ -660,6 +660,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('pdf/{id}/{name}', 'IngresosController@Imprimir')->name('ingresos.imprimir.nombre');
 		Route::get('/{id}/enviar', 'IngresosController@enviar')->name('ingresos.enviar');
 		Route::post('{id}/anular', 'IngresosController@anular')->name('ingresos.anular');
+        Route::get('efecty', 'IngresosController@efecty')->name('ingresos.efecty');
+        Route::post('efecty', 'IngresosController@efecty_store')->name('ingresos.efecty_store');
 	});
 
 	Route::resource('recurrentes', 'RecurrentesController');
