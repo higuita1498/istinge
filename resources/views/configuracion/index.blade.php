@@ -542,7 +542,7 @@
 		                url: url,
 		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 		                method: 'post',
-		                data: { status: $("#efectyid").val() },
+		                data: { efecty: $("#efectyid").val() },
 		                success: function (data) {
 		                    console.log(data);
 		                    if (data == 1) {
