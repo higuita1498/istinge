@@ -108,6 +108,13 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
+    		<div class="container-filtercolumn">
+    			@if(Auth::user()->empresa()->efecty == 1)
+    			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
+    			@endif
+			</div>
+		</div>
+		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
