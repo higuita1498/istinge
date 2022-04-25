@@ -6,6 +6,14 @@ use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
 use Mail;
+use Config;
+use ZipArchive;
+use QrCode;
+use File;
+use DOMDocument;
+use Barryvdh\DomPDF\Facade as PDF;
+use App\Funcion;
+use Illuminate\Support\Facades\Hash;
 
 use App\Model\Ingresos\Factura;
 use App\NumeracionFactura;
@@ -25,6 +33,7 @@ use App\Mail\BlacklistMailable;
 use App\ServidorCorreo;
 use App\Integracion;
 use App\PlanesVelocidad;
+use App\Model\Ingresos\FacturaRetencion;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -44,7 +53,7 @@ class CronController extends Controller
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
             foreach($grupos_corte as $grupo_corte){
-                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->take(2)->get();
 
                 $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
                 if($num){
@@ -147,6 +156,104 @@ class CronController extends Controller
                     $numero = str_replace(' ','',$numero);
 
                     array_push($numeros, '57'.$numero);
+
+                    ## ENVIO CORREO ##
+
+                    $empresa = Empresa::find($factura->empresa);
+                    $emails  = $factura->cliente()->email;
+                    $tipo    = 'Factura de venta original';
+                    view()->share(['title' => 'Imprimir Factura']);
+                    if ($factura) {
+                        $items = ItemsFactura::where('factura',$factura->id)->get();
+                        $itemscount=ItemsFactura::where('factura',$factura->id)->count();
+                        $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
+                        $resolucion = NumeracionFactura::where('empresa',$factura->empresa)->latest()->first();
+                        //---------------------------------------------//
+                        if($factura->emitida == 1){
+                            $impTotal = 0;
+                            foreach ($factura->total()->imp as $totalImp){
+                                if(isset($totalImp->total)){
+                                    $impTotal = $totalImp->total;
+                                }
+                            }
+
+                            $CUFEvr = $factura->info_cufe($factura->id, $impTotal);
+                            $infoEmpresa = Empresa::find($factura->empresa);
+                            $data['Empresa'] = $infoEmpresa->toArray();
+                            $infoCliente = Contacto::find($factura->cliente);
+                            $data['Cliente'] = $infoCliente->toArray();
+                            /*..............................
+                            Construcción del código qr a la factura
+                            ................................*/
+                            $impuesto = 0;
+                            foreach ($factura->total()->imp as $key => $imp) {
+                                if(isset($imp->total)){
+                                    $impuesto = $imp->total;
+                                }
+                            }
+
+                            $codqr = "NumFac:" . $factura->codigo . "\n" .
+                            "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                            "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                            "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                            "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+                            "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
+                            "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+                            "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                            "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n" .
+                            "CUFE:" . $CUFEvr;
+                            /*..............................
+                            Construcción del código qr a la factura
+                            ................................*/
+                            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'))->stream();
+                        }else{
+                            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'))->stream();
+                        }
+                        //-----------------------------------------------//
+
+                        // $data = array(
+                        //     'email'=> 'info@istingenieria.online',
+                        // );
+                        $total = Funcion::Parsear($factura->total()->total);
+                        $empresa = Empresa::find($factura->empresa);
+                        $key = Hash::make(date("H:i:s"));
+                        $toReplace = array('/', '$','.');
+                        $key = str_replace($toReplace, "", $key);
+                        $factura->nonkey = $key;
+                        $factura->save();
+                        $cliente = $factura->cliente()->nombre;
+                        $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
+                        $xmlPath = 'xml/empresa'.auth()->user()->empresa.'/FV/FV-'.$factura->codigo.'.xml';
+
+                        $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
+                        if($host){
+                            $existing = config('mail');
+                            $new =array_merge(
+                                $existing, [
+                                    'host' => $host->servidor,
+                                    'port' => $host->puerto,
+                                    'encryption' => $host->seguridad,
+                                    'username' => $host->usuario,
+                                    'password' => $host->password,
+                                    'from' => [
+                                        'address' => $host->address,
+                                        'name' => $host->name
+                                    ],
+                                ]
+                            );
+                            config(['mail'=>$new]);
+                        }
+
+                        Mail::send('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+                            $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+                            if(file_exists($xmlPath)){
+                                $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+                            }
+                            $message->to($emails)->subject($tituloCorreo);
+                        });
+                    }
+
+                    ## ENVIO CORREO ##
                 }
             }
 
