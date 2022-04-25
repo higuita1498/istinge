@@ -33,6 +33,8 @@ use App\Integracion;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class IngresosController extends Controller
 {
@@ -943,5 +945,214 @@ class IngresosController extends Controller
             return back()->with('success', $mensaje);
         }
         return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
+    }
+
+    public function efecty(){
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Carga de Archivos Efecty', 'icon' => 'fas fa-cloud-upload-alt']);
+
+        return view('ingresos.efecty');
+    }
+
+    public function efecty_store(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $request->validate([
+            'archivo_efecty' => 'required'
+        ]);
+
+        if($request->archivo_efecty){
+            $registros = [];
+            $mensaje = '';
+            $gestor = fopen($request->archivo_efecty, "r"); # Modo r, read
+            if (!$gestor) {
+                return back()->with('danger','ERROR: ALGO HA FALLADO EN LA CARGA DEL ARCHIVO, INTENTE NUEVAMENTE');
+            }
+            $tamanio_bufer = 130; # bytes
+            while (($lectura = fgets($gestor, $tamanio_bufer)) != false) {
+                $lectura = explode("|", $lectura);
+                if($lectura[0] == '01' || $lectura[0] == '"03"'){}else{
+                    array_push($registros, $lectura);
+                }
+            }
+            if (!feof($gestor)) {
+                return back()->with('danger','ERROR: ALGO HA FALLADO EN LA APERTURA Y LECTURA DEL ARCHIVO, INTENTE NUEVAMENTE');
+            }
+            fclose($gestor);
+
+            foreach ($registros as $registro) {
+                $codigo = substr($registro['8'],1,-3);
+                $precio = $registro['2'];
+                $factura = Factura::where('codigo', $codigo)->first();
+                if($factura){
+                    if($factura->estatus == 0){
+                        $mensaje .= 'FACTURA N° '.$factura->codigo.' YA SE ENCUENTRA PAGADA<br>';
+                    }elseif($factura->estatus == 1){
+                        $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+                        $caja = $nro->caja;
+
+                        while (true) {
+                            $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                            if ($numero == 0) {
+                                break;
+                            }
+                            $caja++;
+                        }
+
+                        $banco = Banco::where('empresa',Auth::user()->empresa)->where('nombre', 'EFECTY')->first();
+
+                        $ingreso              = new Ingreso;
+                        $ingreso->nro         = $caja;
+                        $ingreso->empresa     = Auth::user()->empresa;
+                        $ingreso->cliente     = $factura->cliente;
+                        $ingreso->cuenta      = $banco->id;
+                        $ingreso->metodo_pago = 1;
+                        $ingreso->notas       = 'Pago Realizado por Carga de Archivo';
+                        $ingreso->tipo        = 1;
+                        $ingreso->fecha       = Carbon::parse($request->fecha)->format('Y-m-d');
+                        $ingreso->created_by  = Auth::user()->id;
+                        $ingreso->save();
+
+                        $precio               = $this->precision($precio);
+                        $items                = new IngresosFactura;
+                        $items->ingreso       = $ingreso->id;
+                        $items->factura       = $factura->id;
+                        $items->pagado        = $factura->pagado();
+                        $items->pago          = $this->precision($precio);
+                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                            $factura->estatus = 0;
+                            $factura->save();
+                            CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+                            $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                            foreach ($crms as $crm) {
+                                $crm->delete();
+                            }
+                        }
+                        $items->save();
+
+                        ##SUMO A LAS NUMERACIONES EL RECIBO
+                        $nro->caja = $caja + 1;
+                        $nro->save();
+
+                        ##REGISTRO EL MOVIMIENTO
+                        $ingreso = Ingreso::find($ingreso->id);
+                        $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+
+                        // if ($factura->estatus == 0) {
+                        //     $cliente = Contacto::where('id', $factura->cliente)->first();
+                        //     $contrato = Contrato::where('client_id', $cliente->id)->first();
+                        //     $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+
+                        //     /* * * API MK * * */
+
+                        //     $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                        //     $API = new RouterosAPI();
+                        //     $API->port = $mikrotik->puerto_api;
+
+                        //     if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        //         $API->write('/ip/firewall/address-list/print', TRUE);
+                        //         $ARRAYS = $API->read();
+
+                        //         #ELIMINAMOS DE MOROSOS#
+                        //         $API->write('/ip/firewall/address-list/print', false);
+                        //         $API->write('?address='.$contrato->ip, false);
+                        //         $API->write("?list=morosos",false);
+                        //         $API->write('=.proplist=.id');
+                        //         $ARRAYS = $API->read();
+
+                        //         if(count($ARRAYS)>0){
+                        //             $API->write('/ip/firewall/address-list/remove', false);
+                        //             $API->write('=.id='.$ARRAYS[0]['.id']);
+                        //             $READ = $API->read();
+                        //         }
+                        //         #ELIMINAMOS DE MOROSOS#
+
+                        //         #AGREGAMOS A IP_AUTORIZADAS#
+                        //         $API->comm("/ip/firewall/address-list/add", array(
+                        //             "address" => $contrato->ip,
+                        //             "list" => 'ips_autorizadas'
+                        //             )
+                        //         );
+                        //         #AGREGAMOS A IP_AUTORIZADAS#
+
+                        //         $API->disconnect();
+
+                        //         $contrato->state = 'enabled';
+                        //         $contrato->save();
+                        //     }
+
+                        //     /* * * API MK * * */
+
+                        //     /* * * ENVÍO SMS * * */
+                        //     if($precio){
+                        //         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                        //         if($servicio){
+                        //             $numero = str_replace('+','',$cliente->celular);
+                        //             $numero = str_replace(' ','',$numero);
+                        //             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
+                        //             if($servicio->nombre == 'Hablame SMS'){
+                        //                 if($servicio->api_key && $servicio->user && $servicio->pass){
+                        //                     $post['toNumber'] = $numero;
+                        //                     $post['sms'] = $mensaje;
+
+                        //                     $curl = curl_init();
+                        //                     curl_setopt_array($curl, array(
+                        //                         CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        //                         CURLOPT_RETURNTRANSFER => true,
+                        //                         CURLOPT_ENCODING => '',
+                        //                         CURLOPT_MAXREDIRS => 10,
+                        //                         CURLOPT_TIMEOUT => 0,
+                        //                         CURLOPT_FOLLOWLOCATION => true,
+                        //                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        //                         CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                        //                         CURLOPT_HTTPHEADER => array(
+                        //                             'account: '.$servicio->user,
+                        //                             'apiKey: '.$servicio->api_key,
+                        //                             'token: '.$servicio->pass,
+                        //                             'Content-Type: application/json'
+                        //                         ),
+                        //                     ));
+                        //                     $result = curl_exec ($curl);
+                        //                     $err  = curl_error($curl);
+                        //                     curl_close($curl);
+                        //                 }
+                        //             }else{
+                        //                 if($servicio->user && $servicio->pass){
+                        //                     $post['to'] = array('57'.$numero);
+                        //                     $post['text'] = $mensaje;
+                        //                     $post['from'] = "";
+                        //                     $login = $servicio->user;
+                        //                     $password = $servicio->pass;
+
+                        //                     $ch = curl_init();
+                        //                     curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                        //                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        //                     curl_setopt($ch, CURLOPT_POST, 1);
+                        //                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        //                     curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        //                         array(
+                        //                             "Accept: application/json",
+                        //                             "Authorization: Basic ".base64_encode($login.":".$password)));
+                        //                     $result = curl_exec ($ch);
+                        //                     $err  = curl_error($ch);
+                        //                     curl_close($ch);
+                        //                 }
+                        //             }
+                        //         }
+                        //     }
+                        //     /* * * ENVÍO SMS * * */
+
+                        //     $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
+                        // }
+                        $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
+                    }
+                }else{
+                    $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
+                }
+            }
+            return back()->with('success', $mensaje);
+        }else{
+            return back()->with('danger','ERROR: EL ARCHIVO NO HA PODIDO SER CARGADO A LA PLATAFORMA, INTENTE NUEVAMENTE');
+        }
     }
 }
