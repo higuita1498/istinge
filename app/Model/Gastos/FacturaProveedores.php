@@ -13,6 +13,8 @@ use App\Retencion;
 use App\Model\Gastos\Ordenes_Compra; 
 use App\Model\Gastos\NotaDeditoFactura;
 use Carbon\Carbon;
+use App\FormaPago;
+use App\Puc;
 
 
 class FacturaProveedores extends Model
@@ -257,6 +259,19 @@ class FacturaProveedores extends Model
                 ->get()
                 ->last()->fecha
         ];
+    }
+
+    public function formaPago(){
+        $forma = FormaPago::find($this->cuenta_id);
+
+        if($forma){
+            return Puc::find($forma->cuenta_id); 
+        }
+    }
+
+    public function itemsFactura()
+    {
+        return $this->hasMany(ItemsFacturaProv::class,'factura');
     }
 
 }

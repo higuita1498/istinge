@@ -5,6 +5,7 @@ namespace App\Model\Gastos;
 use Illuminate\Database\Eloquent\Model;
 use App\Model\Inventario\Inventario; use App\Impuesto;  
 use DB; use Auth; use App\Categoria;  
+use App\ProductoCuenta;
 class ItemsFacturaProv extends Model
 {
     protected $table = "items_factura_proveedor";
@@ -94,6 +95,14 @@ class ItemsFacturaProv extends Model
 
         return null;
 
+    }
+
+    public function inventario(){
+        return $this->belongsTo(Inventario::class,'producto');
+    }
+
+    public function cuentasContable(){
+        return ProductoCuenta::where('inventario_id',$this->producto)->get();
     }
 
 }

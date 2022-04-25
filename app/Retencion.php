@@ -45,5 +45,9 @@ class Retencion extends Model
         return Puc::find($this->puc_venta);
     }
 
+    public function pucCompra(){
+        return Puc::find($this->puc_compra);
+    }
+
     
 }

@@ -731,6 +731,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/create_item/{producto}', 'FacturaspController@create_item')->name('facturasp.create_item');
 		Route::get('/datatable/producto/{producto}', 'FacturaspController@datatable_producto')->name('facturasp.datatable.producto');
 		Route::get('/datatable/cliente/{producto}', 'FacturaspController@datatable_cliente')->name('facturap.datatable.cliente');
+
+		Route::get('/movimiento/{id}', 'FacturaspController@showMovimiento')->name('facturasp.showmovimiento');
 	});
 
 
