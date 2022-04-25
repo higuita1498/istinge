@@ -75,16 +75,22 @@
 								<a href="{{route('usuarios.show',$usuario->id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 								@endif
 								@if(Auth::user()->rol >= 2 && $recarga == 0)
+								    @if(isset($_SESSION['permisos']['765']) || Auth::user()->rol == 3)
 								    <a href="{{route('usuarios.edit',$usuario->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
+								    @endif
 								    @if(Auth::user()->id!=$usuario->id)
 								        <form action="{{ route('usuarios.act_desc',$usuario->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-usuario{{$usuario->id}}">
 								            {{ csrf_field() }}
 								        </form>
 								        @if($usuario->user_status==1)
 								            @if($usuario->usado() == 0)
+								                @if(isset($_SESSION['permisos']['766']) || Auth::user()->rol == 3)
 			    						        <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-usuario{{$usuario->id}}', '¿Estas seguro que deseas eliminar el usuario?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+			    						        @endif
 			    						    @endif
+			    						    @if(isset($_SESSION['permisos']['767']) || Auth::user()->rol == 3)
 										    <button class="btn btn-outline-secondary  btn-icons" type="submit" title="Desactivar" onclick="confirmar('act_desc-usuario{{$usuario->id}}', '¿Estas seguro que deseas desactivar este usuario?');"><i class="fas fa-power-off"></i></button>
+										    @endif
 										    @if($usuario->usado() == 0)
 										        <form action="{{ route('usuarios.destroy',$usuario->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-usuario{{$usuario->id}}">
 			        						        {{ csrf_field() }}
@@ -92,17 +98,21 @@
 			    						        </form>
 			    						    @endif
 				                	    @else
+				                	        @if(isset($_SESSION['permisos']['767']) || Auth::user()->rol == 3)
 				                  	        <button class="btn btn-outline-success  btn-icons" type="submit" title="Activar" onclick="confirmar('act_desc-usuario{{$usuario->id}}', '¿Estas seguro que deseas activar este usuario?');"><i class="fas fa-power-off"></i></button>
+				                  	        @endif
 				                	    @endif
 				                    @endif
 				                @endif
 				                @if($recarga == 0)
-				                @if(Auth::user()->rol > 1)
-				                <button class="btn btn-outline-success  btn-icons permisos" idUsuario="{{$usuario->id}}" title="Permisos del Sistema"><i class="fas fa-lock"></i></button>
-				                @endif
-				                @if(Auth::user()->rol == 3)
-				                    <a title="Ingresar" class="btn btn-outline-danger btn-icons" href="{{route('usuario.ingresarR', $usuario->email)}}"><i class="fas fa-sign-in-alt"></i></a>
-				                @endif
+				                    @if(Auth::user()->rol > 1)
+				                        @if(isset($_SESSION['permisos']['768']) || Auth::user()->rol == 3)
+				                        <button class="btn btn-outline-success  btn-icons permisos" idUsuario="{{$usuario->id}}" title="Permisos del Sistema"><i class="fas fa-lock"></i></button>
+				                        @endif
+				                        @if(Auth::user()->rol == 3)
+				                        <a title="Ingresar" class="btn btn-outline-danger btn-icons" href="{{route('usuario.ingresarR', $usuario->email)}}"><i class="fas fa-sign-in-alt"></i></a>
+				                        @endif
+				                    @endif
 				                @if(Auth::user()->rol == 1)
 				                    <a title="Ingresar" class="btn btn-outline-danger btn-icons" href="{{route('usuario.ingresar', $usuario->email)}}"><i class="fas fa-sign-in-alt"></i></a>
 				                @endif

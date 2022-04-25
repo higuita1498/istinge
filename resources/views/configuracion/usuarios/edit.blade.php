@@ -67,6 +67,7 @@
   </div>
 
   <div id="pass" class="row" style="@if(!$errors->first('pass_actual')) display: none; @endif ">
+    @if($usuario->id == Auth::user()->id)
     <div class="form-group col-md-4">
       <label for="inputPassword" class="control-label">Contraseña Actual <span class="text-danger">*</span></label>
       <input type="password" class="form-control" name="pass_actual" id="pass_actual" required>
@@ -74,6 +75,7 @@
         <strong>{{ $errors->first('pass_actual') }}</strong>
       </span>
     </div>
+    @endif
     <div class="form-group col-md-4">
       <label for="inputPassword" class="control-label">Contraseña <span class="text-danger">*</span></label>
       <input type="password" class="form-control" name="password" id="password" >

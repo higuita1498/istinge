@@ -123,17 +123,17 @@ class UsuariosController extends Controller
             }
             
             if ($request->changepass) {
-                if (!Hash::check($request->pass_actual, $usuario->password)) {
+                /*if (!Hash::check($request->pass_actual, $usuario->password)) {
                     $errors->pass_actual='Error en la contraseña';
                     return back()->withErrors($errors)->withInput();
-                } 
+                }*/
                 $usuario->password  = bcrypt($request->password);
             } 
             
-            $usuario->nombres = $request->nombres;
-            $usuario->email = $request->email;
+            $usuario->nombres  = $request->nombres;
+            $usuario->email    = $request->email;
             $usuario->username = $request->username=strtolower($request->username);
-            $usuario->rol = $request->rol;
+            $usuario->rol      = $request->rol;
             if(isset($request->cuenta[0])){ $usuario->cuenta = $request->cuenta[0]; }else{ $usuario->cuenta = null; }
             if(isset($request->cuenta[1])){ $usuario->cuenta_1 = $request->cuenta[1]; }else{ $usuario->cuenta_1 = null; }
             if(isset($request->cuenta[2])){ $usuario->cuenta_2 = $request->cuenta[2]; }else{ $usuario->cuenta_2 = null; }
