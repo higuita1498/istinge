@@ -43,7 +43,7 @@
 					</button>
 					<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
 						@if($banco->estatus==1)
-						    @if(isset($_SESSION['permisos']['284']))
+						    @if(isset($_SESSION['permisos']['284']) && $banco->lectura==0)
 							<a class="dropdown-item" href="{{route('bancos.edit',$banco->nro)}}" target="_blank">Editar</a>
 							@endif
 						@endif

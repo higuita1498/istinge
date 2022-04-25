@@ -48,7 +48,7 @@
 							<a href="{{route('bancos.show',$banco->nro)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 							@if(Auth::user()->modo_lectura())
 							@else
-							    @if(isset($_SESSION['permisos']['284']))
+							    @if(isset($_SESSION['permisos']['284']) && $banco->lectura==0)
 								<a href="{{route('bancos.edit',$banco->nro)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
 								@endif
 								@if(!$banco->uso())
