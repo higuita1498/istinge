@@ -121,6 +121,9 @@
 	<div class="row card-description">
 		<div class="col-md-12">
     		<div class="container-filtercolumn">
+    			@if(Auth::user()->empresa()->efecty == 1)
+    			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
+    			@endif
                 <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
 			</div>
 		</div>
@@ -128,15 +131,6 @@
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						{{-- <th>Número</th>
-						<th>Cliente</th>
-						<th>Creación</th>
-						<th>Vencimiento</th>
-						<th>Total</th>
-						<th>IVA</th>
-						<th>Pagado</th>
-						<th>Por Pagar</th>
-						<th>Estado</th> --}}
 						@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach
