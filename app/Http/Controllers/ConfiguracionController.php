@@ -1949,17 +1949,29 @@ class ConfiguracionController extends Controller
   }
 
   public function actDescEfecty(Request $request){
-
     $empresa = Empresa::find(Auth::user()->empresa);
-
     if($empresa){
-        if($request->efecty == 0){
-          $empresa->efecty = 1;
-        }else{
-          $empresa->efecty = 0;
+      if($request->efecty == 0){
+        $empresa->efecty = 1;
+        $bancoA = Banco::where('empresa', Auth::user()->empresa)->where('nombre', 'EFECTY')->first();
+        if (!$bancoA) {
+          $nro = Banco::where('empresa', Auth::user()->empresa)->orderby('id', 'DESC')->take(1)->first()->nro + 1;
+          $banco              = new Banco;
+          $banco->nro         = $nro;
+          $banco->empresa     = Auth::user()->empresa;
+          $banco->tipo_cta    = 1;
+          $banco->nombre      = 'EFECTY';
+          $banco->nro_cta     = '';
+          $banco->saldo       = 0;
+          $banco->fecha       = Carbon::parse($request->fecha)->format('Y-m-d');
+          $banco->descripcion = 'Pagos por Efecty';
+          $banco->save();
         }
-        $empresa->save();
-        return $empresa->efecty;
+      }else{
+        $empresa->efecty = 0;
+      }
+      $empresa->save();
+      return $empresa->efecty;
     }
   }
 
