@@ -1960,6 +1960,7 @@ class ConfiguracionController extends Controller
           $banco->nro         = $nro;
           $banco->empresa     = Auth::user()->empresa;
           $banco->tipo_cta    = 1;
+          $banco->lectura     = 1;
           $banco->nombre      = 'EFECTY';
           $banco->nro_cta     = '';
           $banco->saldo       = 0;
