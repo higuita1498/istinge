@@ -515,7 +515,7 @@
 
 		function actDescEfecty() {
 			if (window.location.pathname.split("/")[1] === "software") {
-				var url='/softwareefecty';
+				var url='/software/efecty';
 			}else{
 				var url = '/efecty';
 			}
