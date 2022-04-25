@@ -37,7 +37,7 @@ class UsuariosController extends Controller
     
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
-        $roles = Roles::where('id_empresa','=', Auth::user()->empresa)->get();
+        $roles = Roles::where('id_empresa','=', Auth::user()->empresa)->where('id', '<>', 3)->get();
         $cuentas = DB::table('bancos')->where('empresa',Auth::user()->empresa)->get();
         view()->share(['title' => 'Nuevo Usuario']);
         return view('configuracion.usuarios.create')->with(compact('roles','cuentas')); 
@@ -89,7 +89,7 @@ class UsuariosController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $roles = Roles::where('id','>',1)->where('id_empresa', Auth::user()->empresa)->get();
+        $roles = Roles::where('id','>',1)->where('id_empresa', Auth::user()->empresa)->where('id', '<>', 3)->get();
         $usuario = User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $cuentas = DB::table('bancos')->where('empresa',Auth::user()->empresa)->get();
         if ($usuario) {        
