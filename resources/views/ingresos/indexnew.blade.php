@@ -87,16 +87,16 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
+    		<div class="container-filtercolumn">
+    			@if(Auth::user()->empresa()->efecty == 1)
+    			<a href="{{route('ingresos.efecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-upload"></i> Cargar Archivo Efecty</a>
+    			@endif
+			</div>
+		</div>
+		<div class="col-md-12">
 			<table class="table table-striped table-hover nowrap w-100" id="tabla-ingresos">
 				<thead class="thead-dark">
 					<tr>
-						{{-- <th>Número</th>
-						<th>Cliente</th>
-						<th>Detalle</th>
-						<th>Fecha</th>
-						<th>Cuenta</th>
-						<th>Estado</th>
-						<th>Monto</th> --}}
 						@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach
