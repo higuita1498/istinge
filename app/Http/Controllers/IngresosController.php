@@ -1037,114 +1037,113 @@ class IngresosController extends Controller
                         $ingreso = Ingreso::find($ingreso->id);
                         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
 
-                        // if ($factura->estatus == 0) {
-                        //     $cliente = Contacto::where('id', $factura->cliente)->first();
-                        //     $contrato = Contrato::where('client_id', $cliente->id)->first();
-                        //     $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+                        if ($factura->estatus == 0) {
+                            $cliente = Contacto::where('id', $factura->cliente)->first();
+                            $contrato = Contrato::where('client_id', $cliente->id)->first();
+                            $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
 
-                        //     /* * * API MK * * */
+                            /* * * API MK * * */
 
-                        //     $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
-                        //     $API = new RouterosAPI();
-                        //     $API->port = $mikrotik->puerto_api;
+                            $API = new RouterosAPI();
+                            $API->port = $mikrotik->puerto_api;
 
-                        //     if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                        //         $API->write('/ip/firewall/address-list/print', TRUE);
-                        //         $ARRAYS = $API->read();
+                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                $API->write('/ip/firewall/address-list/print', TRUE);
+                                $ARRAYS = $API->read();
 
-                        //         #ELIMINAMOS DE MOROSOS#
-                        //         $API->write('/ip/firewall/address-list/print', false);
-                        //         $API->write('?address='.$contrato->ip, false);
-                        //         $API->write("?list=morosos",false);
-                        //         $API->write('=.proplist=.id');
-                        //         $ARRAYS = $API->read();
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
 
-                        //         if(count($ARRAYS)>0){
-                        //             $API->write('/ip/firewall/address-list/remove', false);
-                        //             $API->write('=.id='.$ARRAYS[0]['.id']);
-                        //             $READ = $API->read();
-                        //         }
-                        //         #ELIMINAMOS DE MOROSOS#
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
 
-                        //         #AGREGAMOS A IP_AUTORIZADAS#
-                        //         $API->comm("/ip/firewall/address-list/add", array(
-                        //             "address" => $contrato->ip,
-                        //             "list" => 'ips_autorizadas'
-                        //             )
-                        //         );
-                        //         #AGREGAMOS A IP_AUTORIZADAS#
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
 
-                        //         $API->disconnect();
+                                $API->disconnect();
 
-                        //         $contrato->state = 'enabled';
-                        //         $contrato->save();
-                        //     }
+                                $contrato->state = 'enabled';
+                                $contrato->save();
+                            }
 
-                        //     /* * * API MK * * */
+                            /* * * API MK * * */
 
-                        //     /* * * ENVÍO SMS * * */
-                        //     if($precio){
-                        //         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                        //         if($servicio){
-                        //             $numero = str_replace('+','',$cliente->celular);
-                        //             $numero = str_replace(' ','',$numero);
-                        //             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
-                        //             if($servicio->nombre == 'Hablame SMS'){
-                        //                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                        //                     $post['toNumber'] = $numero;
-                        //                     $post['sms'] = $mensaje;
+                            /* * * ENVÍO SMS * * */
+                            if($precio){
+                                $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                                if($servicio){
+                                    $numero = str_replace('+','',$cliente->celular);
+                                    $numero = str_replace(' ','',$numero);
+                                    $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
+                                    if($servicio->nombre == 'Hablame SMS'){
+                                        if($servicio->api_key && $servicio->user && $servicio->pass){
+                                            $post['toNumber'] = $numero;
+                                            $post['sms'] = $mensaje;
 
-                        //                     $curl = curl_init();
-                        //                     curl_setopt_array($curl, array(
-                        //                         CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
-                        //                         CURLOPT_RETURNTRANSFER => true,
-                        //                         CURLOPT_ENCODING => '',
-                        //                         CURLOPT_MAXREDIRS => 10,
-                        //                         CURLOPT_TIMEOUT => 0,
-                        //                         CURLOPT_FOLLOWLOCATION => true,
-                        //                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        //                         CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                        //                         CURLOPT_HTTPHEADER => array(
-                        //                             'account: '.$servicio->user,
-                        //                             'apiKey: '.$servicio->api_key,
-                        //                             'token: '.$servicio->pass,
-                        //                             'Content-Type: application/json'
-                        //                         ),
-                        //                     ));
-                        //                     $result = curl_exec ($curl);
-                        //                     $err  = curl_error($curl);
-                        //                     curl_close($curl);
-                        //                 }
-                        //             }else{
-                        //                 if($servicio->user && $servicio->pass){
-                        //                     $post['to'] = array('57'.$numero);
-                        //                     $post['text'] = $mensaje;
-                        //                     $post['from'] = "";
-                        //                     $login = $servicio->user;
-                        //                     $password = $servicio->pass;
+                                            $curl = curl_init();
+                                            curl_setopt_array($curl, array(
+                                                CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                                CURLOPT_RETURNTRANSFER => true,
+                                                CURLOPT_ENCODING => '',
+                                                CURLOPT_MAXREDIRS => 10,
+                                                CURLOPT_TIMEOUT => 0,
+                                                CURLOPT_FOLLOWLOCATION => true,
+                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                                CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                                CURLOPT_HTTPHEADER => array(
+                                                    'account: '.$servicio->user,
+                                                    'apiKey: '.$servicio->api_key,
+                                                    'token: '.$servicio->pass,
+                                                    'Content-Type: application/json'
+                                                ),
+                                            ));
+                                            $result = curl_exec ($curl);
+                                            $err  = curl_error($curl);
+                                            curl_close($curl);
+                                        }
+                                    }else{
+                                        if($servicio->user && $servicio->pass){
+                                            $post['to'] = array('57'.$numero);
+                                            $post['text'] = $mensaje;
+                                            $post['from'] = "";
+                                            $login = $servicio->user;
+                                            $password = $servicio->pass;
 
-                        //                     $ch = curl_init();
-                        //                     curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                        //                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                        //                     curl_setopt($ch, CURLOPT_POST, 1);
-                        //                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                        //                     curl_setopt($ch, CURLOPT_HTTPHEADER,
-                        //                         array(
-                        //                             "Accept: application/json",
-                        //                             "Authorization: Basic ".base64_encode($login.":".$password)));
-                        //                     $result = curl_exec ($ch);
-                        //                     $err  = curl_error($ch);
-                        //                     curl_close($ch);
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        //     /* * * ENVÍO SMS * * */
+                                            $ch = curl_init();
+                                            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                            curl_setopt($ch, CURLOPT_POST, 1);
+                                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                            curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                                array(
+                                                    "Accept: application/json",
+                                                    "Authorization: Basic ".base64_encode($login.":".$password)));
+                                            $result = curl_exec ($ch);
+                                            $err  = curl_error($ch);
+                                            curl_close($ch);
+                                        }
+                                    }
+                                }
+                            }
+                            /* * * ENVÍO SMS * * */
 
-                        //     $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
-                        // }
-                        $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
+                            $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
+                        }
                     }
                 }else{
                     $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
