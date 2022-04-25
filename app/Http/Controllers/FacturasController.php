@@ -3241,4 +3241,42 @@ public function edit($id){
             }
         }
     }
+
+    public function downloadEfecty(){
+        $valor = 0;
+        $facturas = Factura::query()
+            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
+            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
+            ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+            ->select(
+                DB::raw('c.nit as referencia'),
+                DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as valor'),
+                'factura.created_at',
+                DB::raw('c.nombre as campo1'),
+                'factura.codigo as campo5')
+            ->groupBy('factura.id')
+            ->where('factura.estatus', 1)
+            ->take(50)
+            ->get();
+
+        $filePath = "efecty-".date('dmYHi').".txt";
+        $file = fopen($filePath, "w");
+        fputs($file, "01|REFERENCIA|VALOR|FECHA|CAMPO1|CAMPO2|CAMPO3|CAMPO4|CAMPO5".PHP_EOL);
+        foreach($facturas as $factura){
+            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->valor).'|'.$factura->created_at.'|"'.$factura->campo1.'"|"NA"|"NA"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
+            $valor += $factura->valor;
+        }
+        fputs($file, '"03"|'.count($facturas).'|'.round($valor).'|'.date('Y-m-d H:i:s').'|||||'.PHP_EOL);
+        fclose($file);
+
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.basename($filePath));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
+    }
 }
