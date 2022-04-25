@@ -1948,6 +1948,21 @@ class ConfiguracionController extends Controller
     }
   }
 
+  public function actDescEfecty(Request $request){
+
+    $empresa = Empresa::find(Auth::user()->empresa);
+
+    if($empresa){
+        if($request->efecty == 0){
+          $empresa->efecty = 1;
+        }else{
+          $empresa->efecty = 0;
+        }
+        $empresa->save();
+        return $empresa->efecty;
+    }
+  }
+
   // cambia el estado de la nomina electronica de una empresa
   public function estadoNomina()
   {

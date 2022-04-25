@@ -21,6 +21,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="row card-description configuracion">
 		<div class="col-sm-3">
 			<h4 class="card-title">Empresa</h4>
@@ -46,6 +47,8 @@
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
 			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
 			<input type="hidden" id="prorrateoid" value="{{Auth::user()->empresa()->prorrateo}}">
+			<a href="javascript:actDescEfecty()">{{ Auth::user()->empresa()->efecty == 0 ? 'Habilitar':'Deshabilitar' }} Efecty</a><br>
+			<input type="hidden" id="efectyid" value="{{Auth::user()->empresa()->efecty}}">
 		</div>
 
 		<div class="col-sm-3">
@@ -140,7 +143,6 @@
 		</div>
 		@endif
 
-
 		@if(isset($_SESSION['permisos']['762']) || isset($_SESSION['permisos']['763']) || isset($_SESSION['permisos']['764']))
 		<div class="col-sm-3">
 			<h4 class="card-title">Integraciones de Servicios</h4>
@@ -163,6 +165,7 @@
 			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
 		</div>
 	</div>
+
 	{{-- <div class="row card-description configuracion">
 		<div class="col-sm-3">
 			<h4 class="card-title">Campos Extras Inventario</h4>
@@ -270,314 +273,372 @@
 		</div>
 	</div>
 	{{-- /CANT REGISTRO --}}
-	@endsection
+@endsection
 
-	@section('scripts')
-	    <script>
-	    	function storePageLength(id) {
-	    		cargando(true);
-	    		if (window.location.pathname.split("/")[1] === "software") {
-	    			var url = `/software/empresa/configuracion/storePageLength`;
-	    		}else{
-	    			var url = `/empresa/configuracion/storePageLength`;
-	    		}
-	    		$.ajax({
-	    			url: url,
-	    			method: 'POST',
-	    			headers: {
-	    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	    			},
-	    			data: {
-	    				pageLength: $('#val_pageLength').val()
-	    			},
-	    			success: function(response) {
-	    				cargando(false);
-	    				swal({
-	    					title: 'NRO DE REGISTROS A MOSTRAR',
-	    					text: response.message,
-	    					type: response.type,
-	    					showConfirmButton: true,
-	    					confirmButtonColor: '#1A59A1',
-	    					confirmButtonText: 'ACEPTAR',
-	    				});
-	    				if (response.success == true) {
-	    					$("#nro_registro").modal('hide');
-	    					setTimeout(function(){
-	    						location.reload();
-	    					}, 1000);
-	    				}
-	    			}
-	    		});
-	    	}
-			function facturacionAutomatica() {
-				if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/configuracion_facturacionAutomatica';
-				}else{
-					var url = '/configuracion_facturacionAutomatica';
-				}
+@section('scripts')
+    <script>
+    	function storePageLength(id) {
+    		cargando(true);
+    		if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/empresa/configuracion/storePageLength`;
+    		}else{
+    			var url = `/empresa/configuracion/storePageLength`;
+    		}
+    		$.ajax({
+    			url: url,
+    			method: 'POST',
+    			headers: {
+    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			},
+    			data: {
+    				pageLength: $('#val_pageLength').val()
+    			},
+    			success: function(response) {
+    				cargando(false);
+    				swal({
+    					title: 'NRO DE REGISTROS A MOSTRAR',
+    					text: response.message,
+    					type: response.type,
+    					showConfirmButton: true,
+    					confirmButtonColor: '#1A59A1',
+    					confirmButtonText: 'ACEPTAR',
+    				});
+    				if (response.success == true) {
+    					$("#nro_registro").modal('hide');
+    					setTimeout(function(){
+    						location.reload();
+    					}, 1000);
+    				}
+    			}
+    		});
+    	}
 
-			    if ($("#facturaAuto").val() == 0) {
-			        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
-			    }
-
-			    if ($("#facturaAuto").val() == 1) {
-			        $titleswal = "¿Desea deshabilitar la facturación automática de los contratos?";
-			    }
-
-			    Swal.fire({
-			        title: $titleswal,
-			        type: 'warning',
-			        showCancelButton: true,
-			        confirmButtonColor: '#3085d6',
-			        cancelButtonColor: '#d33',
-			        cancelButtonText: 'Cancelar',
-			        confirmButtonText: 'Aceptar',
-			    }).then((result) => {
-			        if (result.value) {
-			            $.ajax({
-			                url: url,
-			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-			                method: 'post',
-			                data: { status: $("#facturaAuto").val() },
-			                success: function (data) {
-			                    console.log(data);
-			                    if (data == 1) {
-			                        Swal.fire({
-			                            type: 'success',
-			                            title: 'Factuación automática para los contratos habilitada',
-			                            showConfirmButton: false,
-			                            timer: 5000
-			                        })
-			                        $("#facturaAuto").val(1);
-			                    } else {
-			                        Swal.fire({
-			                            type: 'success',
-			                            title: 'Factuación automática para los contratos deshabilitada',
-			                            showConfirmButton: false,
-			                            timer: 5000
-			                        })
-			                        $("#facturaAuto").val(0);
-			                    }
-			                    setTimeout(function(){
-			                    	var a = document.createElement("a");
-			                    	a.href = window.location.pathname;
-			                    	a.click();
-			                    }, 1000);
-			                }
-			            });
-
-			        }
-			    })
+		function facturacionAutomatica() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_facturacionAutomatica';
+			}else{
+				var url = '/configuracion_facturacionAutomatica';
 			}
 
-			function limpiarCache() {
-				if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/configuracion_limpiarCache';
-				}else{
-					var url = '/configuracion_limpiarCache';
-				}
+		    if ($("#facturaAuto").val() == 0) {
+		        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
+		    }
 
-				var empresa = {{ Auth::user()->empresa()->id }};
-				var href = '{{route('home')}}';
+		    if ($("#facturaAuto").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar la facturación automática de los contratos?";
+		    }
 
-			    Swal.fire({
-			        title: '¿Desea limpiar los archivos temporales y la caché del sistema?',
-			        type: 'warning',
-			        showCancelButton: true,
-			        confirmButtonColor: '#3085d6',
-			        cancelButtonColor: '#d33',
-			        cancelButtonText: 'Cancelar',
-			        confirmButtonText: 'Aceptar',
-			    }).then((result) => {
-			        if (result.value) {
-			        	cargando(true);
-			            $.ajax({
-			                url: url,
-			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-			                method: 'post',
-			                data: { empresa: empresa },
-			                success: function (data) {
-			                	cargando(false);
-			                    Swal.fire({
-			                    	type: 'success',
-			                    	title: 'Limpieza realizada con éxito',
-			                    	showConfirmButton: false,
-			                    	timer: 5000
-			                    });
-			                    setTimeout(function(){
-			                    	var a = document.createElement("a");
-			                    	a.href = href;
-			                    	a.click();
-			                    }, 1000);
-			                }
-			            });
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { status: $("#facturaAuto").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Factuación automática para los contratos habilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#facturaAuto").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Factuación automática para los contratos deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#facturaAuto").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
 
-			        }
-			    })
+		        }
+		    })
+		}
+
+		function limpiarCache() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_limpiarCache';
+			}else{
+				var url = '/configuracion_limpiarCache';
 			}
 
-			function configuracionOLT() {
-				if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/configuracion_olt';
-				}else{
-					var url = '/configuracion_olt';
-				}
+			var empresa = {{ Auth::user()->empresa()->id }};
+			var href = '{{route('home')}}';
 
-	            $.ajax({
-	                url: url,
-	                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-	                method: 'post',
-	                data: {
-	                	smartOLT: $("#smartOLT").val(),
-	                	adminOLT: $("#adminOLT").val()
-	                },
-	                success: function (data) {
-	                	$("#config_olt").modal('hide');
-	                	Swal.fire({
-	                		type: 'success',
-	                		title: 'La configuración de la OLT ha sido registrada con éxito',
-	                		text: 'Recargando la página',
-	                		showConfirmButton: false,
-	                		timer: 5000
-	                	})
-	                    setTimeout(function(){
-	                    	var a = document.createElement("a");
-	                    	a.href = window.location.pathname;
-	                    	a.click();
-	                    }, 2000);
-	                }
-	            });
+		    Swal.fire({
+		        title: '¿Desea limpiar los archivos temporales y la caché del sistema?',
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		        	cargando(true);
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { empresa: empresa },
+		                success: function (data) {
+		                	cargando(false);
+		                    Swal.fire({
+		                    	type: 'success',
+		                    	title: 'Limpieza realizada con éxito',
+		                    	showConfirmButton: false,
+		                    	timer: 5000
+		                    });
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = href;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+		}
+
+		function configuracionOLT() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_olt';
+			}else{
+				var url = '/configuracion_olt';
 			}
 
-			function prorrateo(){
+            $.ajax({
+                url: url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                method: 'post',
+                data: {
+                	smartOLT: $("#smartOLT").val(),
+                	adminOLT: $("#adminOLT").val()
+                },
+                success: function (data) {
+                	$("#config_olt").modal('hide');
+                	Swal.fire({
+                		type: 'success',
+                		title: 'La configuración de la OLT ha sido registrada con éxito',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                	})
+                    setTimeout(function(){
+                    	var a = document.createElement("a");
+                    	a.href = window.location.pathname;
+                    	a.click();
+                    }, 2000);
+                }
+            });
+		}
 
-				if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/prorrateo';
-				}else{
-					var url = '/prorrateo';
-				}
+		function prorrateo(){
 
-			    if ($("#prorrateoid").val() == 0) {
-			        $titleswal = "¿Desea habilitar el prorrateo de las facturas?";
-					text = "La primer factura de los clientes se cobrará según los días de uso de los servicios.";
-			    }
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/prorrateo';
+			}else{
+				var url = '/prorrateo';
+			}
 
-			    if ($("#prorrateoid").val() == 1) {
-			        $titleswal = "¿Desea deshabilitar el prorrateo de las facturas?";
-					text = "";
-			    }
+		    if ($("#prorrateoid").val() == 0) {
+		        $titleswal = "¿Desea habilitar el prorrateo de las facturas?";
+				text = "La primer factura de los clientes se cobrará según los días de uso de los servicios.";
+		    }
 
-			    Swal.fire({
-			        title: $titleswal,
-			        type: 'warning',
-			        showCancelButton: true,
-			        confirmButtonColor: '#3085d6',
-			        cancelButtonColor: '#d33',
-			        cancelButtonText: 'Cancelar',
-			        confirmButtonText: 'Aceptar',
-					text: text
-			    }).then((result) => {
-			        if (result.value) {
-			            $.ajax({
-			                url: url,
-			                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-			                method: 'post',
-			                data: { prorrateo: $("#prorrateoid").val() },
-			                success: function (data) {
+		    if ($("#prorrateoid").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar el prorrateo de las facturas?";
+				text = "";
+		    }
 
-			                    if (data == 1) {
-			                        Swal.fire({
-			                            type: 'success',
-			                            title: 'Prorrateo para facturas ha sido habilitado.',
-			                            showConfirmButton: false,
-			                            timer: 5000
-			                        })
-			                        $("#prorrateoid").val(1);
-			                    } else {
-			                        Swal.fire({
-			                            type: 'success',
-			                            title: 'Prorrateo para facturas ha sido deshabilitado',
-			                            showConfirmButton: false,
-			                            timer: 5000
-			                        })
-			                        $("#prorrateoid").val(0);
-			                    }
-								location.reload();
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+				text: text
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { prorrateo: $("#prorrateoid").val() },
+		                success: function (data) {
+
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Prorrateo para facturas ha sido habilitado.',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#prorrateoid").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Prorrateo para facturas ha sido deshabilitado',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#prorrateoid").val(0);
+		                    }
+							location.reload();
+						}
+		            });
+		        }
+		    });
+		}
+
+		function actDescEfecty() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/softwareefecty';
+			}else{
+				var url = '/efecty';
+			}
+
+		    if ($("#efectyid").val() == 0) {
+		        $titleswal = "¿Desea habilitar la plataforma Efecty?";
+		    }
+
+		    if ($("#efectyid").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar la plataforma Efecty?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { status: $("#efectyid").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Plataforma Efecty habilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#efectyid").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Plataforma Efecty deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#efectyid").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+		}
+
+		function habilitarNomina() {
+			var estadoNomina = parseInt($('#estado_nomina').val());
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/empresa';
+			}else{
+				var url = '/empresa';
+			}
+			Swal.fire({
+				title: `¿${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'} nómina?`,
+				text: `${estadoNomina == 1 ? 'La nómina de su empresa será deshabilitada' : 'Recuerde que la nomina electrónica estará abilitada por 15 días de manera gratuita'} `,
+				type: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				cancelButtonText: 'Cancelar',
+				confirmButtonText: `${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'}`,
+			}).then((result) => {
+				if (result.value) {
+					$.ajax({
+						url: url + '/configuracion/estado/nomina',
+						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+						method: 'post',
+						success: function (response) {
+							console.log(response);
+							if (response.success) {
+								Swal.fire({
+									position: 'top-center',
+									type: 'success',
+									text: response.text,
+									title: response.message,
+									showConfirmButton: false,
+									timer: 5000
+								})
+								$("#estado_nomina").val(response.nomina);
+								$("#texto_nomina").text(response.nomina == 1 ? 'Deshabilitar nómina' : 'Habilitar nómina');
+								if (response.nomina == 1) {
+									$("#preferencia_pago").removeClass('d-none');
+									$("#nomina_numeracion").removeClass('d-none');
+									$("#nomina_calculos").removeClass('d-none');
+									$("#nomina").removeClass('d-none');
+									$('#div_nominaDIAN').removeClass('d-none');
+									$("#nomina").addClass('nav-item');
+									$("#nomina_asistente").removeClass('d-none');
+									$(".nomina").removeClass('d-none');
+									$("#planes_nomina").removeClass('d-none');
+									$("#nomina_asistentes").removeClass('d-none');
+									$("#alerta_nomina").addClass('d-none');
+								} else {
+									$("#preferencia_pago").addClass('d-none');
+									$("#nomina_numeracion").addClass('d-none');
+									$("#nomina_calculos").addClass('d-none');
+									$("#nomina").addClass('d-none');
+									$('#div_nominaDIAN').addClass('d-none');
+									$("#nomina_asistente").addClass('d-none');
+									$(".nomina").addClass('d-none');
+									$("#planes_nomina").addClass('d-none');
+									$("#nomina_asistentes").addClass('d-none');
+									$("#alerta_nomina").removeClass('d-none');
+								}
 							}
-			            });
-			        }
-			    });
-			}
-
-			function habilitarNomina() {
-
-var estadoNomina = parseInt($('#estado_nomina').val());
-
-if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-				}else{
-					var url = '/empresa';
+							location.reload()
+						}
+					});
 				}
-
-Swal.fire({
-	title: `¿${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'} nómina?`,
-	text: `${estadoNomina == 1 ? 'La nómina de su empresa será deshabilitada' : 'Recuerde que la nomina electrónica estará habilitada por 15 días de manera gratuita'} `,
-	type: 'question',
-	showCancelButton: true,
-	confirmButtonColor: '#3085d6',
-	cancelButtonColor: '#d33',
-	cancelButtonText: 'Cancelar',
-	confirmButtonText: `${estadoNomina == 1 ? 'Deshabilitar' : 'Habilitar'}`,
-}).then((result) => {
-	if (result.value) {
-		$.ajax({
-			url: url + '/configuracion/estado/nomina',
-			headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-			method: 'post',
-			success: function (response) {
-				console.log(response);
-				if (response.success) {
-					Swal.fire({
-						position: 'top-center',
-						type: 'success',
-						text: response.text,
-						title: response.message,
-						showConfirmButton: false,
-						timer: 5000
-					})
-					$("#estado_nomina").val(response.nomina);
-					$("#texto_nomina").text(response.nomina == 1 ? 'Deshabilitar nómina' : 'Habilitar nómina');
-					if (response.nomina == 1) {
-						$("#preferencia_pago").removeClass('d-none');
-						$("#nomina_numeracion").removeClass('d-none');
-						$("#nomina_calculos").removeClass('d-none');
-						$("#nomina").removeClass('d-none');
-						$('#div_nominaDIAN').removeClass('d-none');
-						$("#nomina").addClass('nav-item');
-						$("#nomina_asistente").removeClass('d-none');
-						$(".nomina").removeClass('d-none');
-						$("#planes_nomina").removeClass('d-none');
-						$("#nomina_asistentes").removeClass('d-none');
-						$("#alerta_nomina").addClass('d-none');
-					} else {
-						$("#preferencia_pago").addClass('d-none');
-						$("#nomina_numeracion").addClass('d-none');
-						$("#nomina_calculos").addClass('d-none');
-						$("#nomina").addClass('d-none');
-						$('#div_nominaDIAN').addClass('d-none');
-						$("#nomina_asistente").addClass('d-none');
-						$(".nomina").addClass('d-none');
-						$("#planes_nomina").addClass('d-none');
-						$("#nomina_asistentes").addClass('d-none');
-						$("#alerta_nomina").removeClass('d-none');
-					}
-				}
-				location.reload()
-			}
-		});
-
-	}
-})
-}
-	    </script>
-	@endsection
+			})
+		}
+    </script>
+@endsection

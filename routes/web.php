@@ -104,6 +104,7 @@ Route::post('configuracion_facturacionAutomatica', 'ConfiguracionController@fact
 Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache');
 Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
 Route::post('prorrateo', 'ConfiguracionController@actDescProrrateo');
+Route::post('efecty', 'ConfiguracionController@actDescEfecty');
 
 Route::post('configuracion_nominadian', 'ConfiguracionController@nominaDian');
 
@@ -409,6 +410,10 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/{tipo}/listado', 'FacturasController@indexNew')->name('facturas.tipo');
 
 		Route::get('/movimiento/{id}', 'FacturasController@showMovimiento')->name('facturas.showmovimiento');
+
+        Route::get('descarga-efecty', 'FacturasController@downloadEfecty')->name('facturas.downloadefecty');
+
+
 	});
 	Route::resource('facturas', 'FacturasController');
 
