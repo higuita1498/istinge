@@ -108,6 +108,7 @@
         									<a href="{{route('facturasp.imprimir.nombre', ['id' => $factura->id, 'name'=> 'Factura Proveedor No. '.$factura->nro.'.pdf'])}}"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>
         								@endif
         							@endif
+									<a href="{{route('facturasp.showmovimiento',$factura->id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
         						</td>
         					</tr>
         				@endforeach

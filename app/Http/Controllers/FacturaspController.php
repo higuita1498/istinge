@@ -25,6 +25,9 @@ use Validator; use Illuminate\Validation\Rule; use Auth;
 use Carbon\Carbon; use Mail; use DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use Session;
+use App\FormaPago;
+use App\PucMovimiento;
+
 class FacturaspController extends Controller
 {
     public function __construct(){
@@ -105,6 +108,10 @@ class FacturaspController extends Controller
             ->where('type', '<>', 'PLAN')
             ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
             ->get();
+
+        //obtiene las formas de pago relacionadas con este modulo (Facturas)
+        $relaciones = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
+
             
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
@@ -142,7 +149,7 @@ class FacturaspController extends Controller
         
         view()->share(['icon' =>'', 'title' => 'Nueva Factura de Compra', 'subseccion' => 'facturas_proveedores']);
         return view('facturasp.create')
-        ->with(compact('inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retenciones',
+        ->with(compact('relaciones','inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retenciones',
             'proveedor', 'producto','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas',
             'categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2',
             'tipos_empresa2', 'prefijos2', 'vendedores2', 'codigoFactura','terminos', 'extras'));
@@ -196,6 +203,7 @@ class FacturaspController extends Controller
         $factura->notas=mb_strtolower($request->notas);
         $factura->bodega=$request->bodega;
         $factura->codigo=$request->codigo;
+        $factura->cuenta_id    = $request->relacion;
         $factura->save();
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -261,6 +269,8 @@ class FacturaspController extends Controller
                 }
             }
         }
+
+        PucMovimiento::facturaCompra($factura,1);
         
         //Creo la variable para el mensaje final, y la variable print (imprimir)
         $mensaje='Se ha creado satisfactoriamente la factura';
@@ -318,6 +328,9 @@ class FacturaspController extends Controller
             if (!$bodega) {
                 $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
             }
+
+            //obtiene las formas de pago relacionadas con este modulo (Facturas)
+            $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
             
             $inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
                 ->where('empresa',Auth::user()->empresa)
@@ -352,7 +365,7 @@ class FacturaspController extends Controller
             $prefijos2 = $dataPro->prefijos;
             $vendedores2 = $dataPro->vendedores;
             view()->share(['title' => 'Modificar Factura de Proveedor: '.$factura->codigo, 'icon' =>'']);
-            return view('facturasp.edit')->with(compact('factura', 'items', 'inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras'));
+            return view('facturasp.edit')->with(compact('relaciones','factura', 'items', 'inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras'));
         }
         return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
     }
@@ -371,6 +384,7 @@ class FacturaspController extends Controller
                 $factura->term_cond=mb_strtolower($request->term_cond);
                 $factura->bodega=$request->bodega;
                 $factura->codigo=$request->codigo;
+                $factura->cuenta_id    = $request->relacion;
                 $factura->save();
                 
                 $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('id', $factura->bodega)->first();
@@ -463,6 +477,8 @@ class FacturaspController extends Controller
                 }else{
                     DB::table('factura_proveedores_retenciones')->where('factura', $factura->id)->delete();
                 }
+
+                PucMovimiento::facturaCompra($factura,2);
                 
                 $mensaje='Se ha modificado satisfactoriamente la factura de proveedor';
                 return redirect('empresa/facturasp')->with('success', $mensaje)->with('codigo', $factura->id);
@@ -764,4 +780,24 @@ class FacturaspController extends Controller
         }
 
     }
+
+    public function showMovimiento($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $factura = FacturaProveedores::find($id);
+    
+        /*
+            obtenemos los movimiento sque ha tenido este documento
+            sabemos que se trata de un tipo de movimiento 03
+        */
+    
+        $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',4)->get();
+    
+        if ($factura) {
+            view()->share(['title' => 'Detalle Movimiento ' .$factura->codigo]);
+            $items = ItemsFacturaProv::where('factura',$factura->id)->get();
+            return view('facturasp.show-movimiento')->with(compact('factura','movimientos'));
+        }
+    
+        return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
+      }
 }

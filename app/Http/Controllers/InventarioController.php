@@ -1010,7 +1010,7 @@ class InventarioController extends Controller{
                 ]);
                 if ($request->bodega) {
                     foreach ($request->bodega as $key => $value) {
-                        if ($request->bodegavalor[$key]) {
+                        if ($request->bodegavalor[$key] || $request->bodegavalor[$key] == 0) {
                             $bodega = new ProductosBodega;
                             $id = 'idbodega' . $key;
                             if ($request->$id) {

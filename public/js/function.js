@@ -248,7 +248,7 @@ function agregarbodega_inventario(){
         <td width="15%"><label class="control-label">Bodega <span class="text-danger">*</span></label></td>
         <td width="25%"><select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="bodega[]" id="bodega${nro}" required="" onchange="comprobar_bodegas(${nro}, this.value)"></select></td>
         <td width="25%" class="text-center"><label class="control-label">Cantidad Inicial <span class="text-danger">*</span></label></td>
-        <td width="25%" class="monetario"><input type="number" min="1" class="form-control form-control-sm" id="bodegavalor${nro}" name="bodegavalor[]" required="" maxlength="24" min="0"></td>
+        <td width="25%" class="monetario"><input type="number" min="0" class="form-control form-control-sm" id="bodegavalor${nro}" name="bodegavalor[]" required="" maxlength="24" min="0"></td>
         <td width="5%">`;
     //}
 
