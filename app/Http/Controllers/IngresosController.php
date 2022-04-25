@@ -980,7 +980,7 @@ class IngresosController extends Controller
             fclose($gestor);
 
             foreach ($registros as $registro) {
-                $codigo = substr($registro['8'],1,-3);
+                $codigo = substr($registro['8'],1,-2);
                 $precio = $registro['2'];
                 $factura = Factura::where('codigo', $codigo)->first();
                 if($factura){
