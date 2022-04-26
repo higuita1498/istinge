@@ -16,6 +16,7 @@ use App\Puerto;
 use App\Ping;
 use App\PlanesVelocidad;
 use App\Model\Inventario\Inventario;
+use App\Vendedor;
 
 class Contrato extends Model
 {
@@ -173,5 +174,9 @@ class Contrato extends Model
 
     public function puerto(){
         return Puerto::find($this->puerto_conexion)->nombre;
+    }
+
+    public function vendedor(){
+        return Vendedor::find($this->vendedor);
     }
 }

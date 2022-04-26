@@ -204,6 +204,12 @@
 							<th>Precio Plan</th>
 							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->plan()->price) }}</td>
 						</tr>
+						@if($contrato->descuento)
+						<tr>
+							<th>Descuento</th>
+							<td>{{ $contrato->descuento }}%</td>
+						</tr>
+						@endif
 						@if($contrato->contrato_permanencia)
 						<tr>
 							<th>Contrato de Permanencia</th>
@@ -240,7 +246,12 @@
 							<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank"><strong>Ver {{ $contrato->referencia_d }}</strong></a></td>
 						</tr>
 						@endif
-
+						@if($contrato->vendedor)
+						<tr>
+							<th>Vendedor</th>
+							<td>{{ $contrato->vendedor()->nombre }}</td>
+						</tr>
+						@endif
 						@if($contrato->creador)
 						<tr>
 							<th>Contrato Registrado por</th>
@@ -265,6 +276,12 @@
 						<tr>
 							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>SERVICIO DE TELEVISIÓN</strong></th>
 						</tr>
+						@if($contrato->vendedor)
+						<tr>
+							<th>Vendedor</th>
+							<td>{{ $contrato->vendedor()->nombre }}</td>
+						</tr>
+						@endif
 						<tr>
 							<th width="20%">Plan Contratado</th>
 							<td><a href="{{route('inventario.show',$contrato->servicio_tv)}}" target="_blank"><strong>{{ $inventario->producto }}</strong></a></td>
@@ -273,6 +290,12 @@
 							<th>Precio del Plan Contratado</th>
 							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($inventario->precio) }}</td>
 						</tr>
+						@if($contrato->descuento)
+						<tr>
+							<th>Descuento</th>
+							<td>{{ $contrato->descuento }}%</td>
+						</tr>
+						@endif
 					</tbody>
 				</table>
 			</div>
