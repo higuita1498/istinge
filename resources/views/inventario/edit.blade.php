@@ -107,7 +107,7 @@
 	<div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">Inventario <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario" required="" title="Seleccione">
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
 				@foreach($cuentas as $cuenta)
 					<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach 
 						value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
@@ -120,7 +120,7 @@
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Costo <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo" required="" title="Seleccione">
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
 				@foreach($cuentas as $cuenta)
 				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach 
 					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
@@ -133,7 +133,7 @@
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Venta <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta" required="" title="Seleccione">
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
 				@foreach($cuentas as $cuenta)
 				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach 
 					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
@@ -146,7 +146,7 @@
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Devolución <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion" required="" title="Seleccione">
+			<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
 				@foreach($cuentas as $cuenta)
 				<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach 
 					value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}

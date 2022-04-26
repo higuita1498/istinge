@@ -71,7 +71,7 @@
 		  <div class="row">
 			<div class="form-group col-md-3">
 				<label class="control-label">Inventario <span class="text-danger">*</span></label>
-				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario" required="" title="Seleccione">
+				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
 					@foreach($cuentas as $cuenta)
 						<option {{old('inventario')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 					@endforeach
@@ -82,7 +82,7 @@
 			</div>
 			<div class="form-group col-md-3">
 				<label class="control-label">Costo <span class="text-danger">*</span></label>
-				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo" required="" title="Seleccione">
+				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
 					@foreach($cuentas as $cuenta)
 						<option {{old('costo')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 					@endforeach
@@ -93,7 +93,7 @@
 			</div>
 			<div class="form-group col-md-3">
 				<label class="control-label">Venta <span class="text-danger">*</span></label>
-				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta" required="" title="Seleccione">
+				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
 					@foreach($cuentas as $cuenta)
 						<option {{old('venta')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 					@endforeach
@@ -104,7 +104,7 @@
 			</div>
 			<div class="form-group col-md-3">
 				<label class="control-label">Devolución <span class="text-danger">*</span></label>
-				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion" required="" title="Seleccione">
+				<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
 					@foreach($cuentas as $cuenta)
 						<option {{old('devolucion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 					@endforeach
