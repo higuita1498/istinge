@@ -33,7 +33,8 @@
 			<thead class="thead-dark">
 				<tr>
 	              <th>Nombre</th>
-	              <th>Credenciales</th>
+	              <th>Pago desde WEB</th>
+	              <th>Pago desde APP</th>
 	              <th>Estado</th>
 	              <th>Acciones</th>
 	          </tr>
@@ -42,7 +43,8 @@
 				@foreach($servicios as $servicio)
 				<tr @if($servicio->id==Session::get('id')) class="active_table" @endif >
 					<td>{{$servicio->nombre}}</td>
-					<td>{{$servicio->credenciales()}}</td>
+					<td>{{$servicio->web == 1?'SI':'NO'}}</td>
+					<td>{{$servicio->app == 1?'SI':'NO'}}</td>
 					<td class="font-weight-bold text-{{$servicio->status('true')}}">{{$servicio->status()}}</td>
 					<td>
 						<form action="{{ route('integracion-pasarelas.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">

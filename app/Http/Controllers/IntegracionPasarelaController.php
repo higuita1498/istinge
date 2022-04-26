@@ -58,6 +58,8 @@ class IntegracionPasarelaController extends Controller
             $servicio->api_key    = $request->api_key;
             $servicio->accountId  = $request->accountId;
             $servicio->merchantId = $request->merchantId;
+            $servicio->web        = $request->web;
+            $servicio->app        = $request->app;
             $servicio->updated_by = Auth::user()->id;
             $servicio->save();
 

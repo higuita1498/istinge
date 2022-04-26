@@ -78,6 +78,18 @@
 							<td>{{$servicio->merchantId}}</td>
 						</tr>
 						@endif
+						@if($servicio->web)
+						<tr>
+							<td class="bg-th">Pagos desde WEB</td>
+							<td>{{$servicio->web == 1?'SI':'NO'}}</td>
+						</tr>
+						@endif
+						@if($servicio->app)
+						<tr>
+							<td class="bg-th">Pagos desde APP</td>
+							<td>{{$servicio->app == 1?'SI':'NO'}}</td>
+						</tr>
+						@endif
 						@if($servicio->updated_by)
 						<tr>
 							<td class="bg-th">Actualizado por</td>
