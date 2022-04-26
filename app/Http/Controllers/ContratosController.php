@@ -73,7 +73,8 @@ class ContratosController extends Controller
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
+        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores'));
     }
 
     public function disabled(Request $request){
@@ -87,7 +88,8 @@ class ContratosController extends Controller
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
+        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores'));
     }
 
     public function enabled(Request $request){
@@ -101,7 +103,8 @@ class ContratosController extends Controller
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->where('empresa', Auth::user()->empresa)->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps'));
+        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores'));
     }
 
     public function contratos(Request $request, $nodo){
@@ -179,6 +182,11 @@ class ContratosController extends Controller
             if($request->c_email){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contactos.email', 'like', "%{$request->c_email}%");
+                });
+            }
+            if($request->vendedor){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.vendedor', $request->vendedor);
                 });
             }
         }
@@ -280,8 +288,11 @@ class ContratosController extends Controller
             ->editColumn('plan_tv', function (Contrato $contrato) {
                 return ($contrato->servicio_tv) ? '<a href='.route('inventario.show', $contrato->servicio_tv).' target="_blank">'.$contrato->plan('true')->producto.'</a>' : 'N/A';
             })
+            ->editColumn('vendedor', function (Contrato $contrato) {
+                return ($contrato->vendedor) ? $contrato->vendedor()->nombre : 'N/A';
+            })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones', 'vendedor'])
             ->toJson();
     }
     
