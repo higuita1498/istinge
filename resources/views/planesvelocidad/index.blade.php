@@ -129,6 +129,7 @@
 			responsive: true,
 			serverSide: true,
 			processing: true,
+			searching: false,
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
