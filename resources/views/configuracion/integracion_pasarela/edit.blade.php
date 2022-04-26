@@ -18,7 +18,7 @@
 	            </span>
 	        </div>
 
-	        <div class="col-md-4 form-group">
+	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}}">
 	            <label class="control-label">merchantId <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="merchantId" name="merchantId"  required="" value="{{$servicio->merchantId}}" maxlength="200">
 	            <span class="help-block error">
@@ -26,7 +26,7 @@
 	            </span>
 	        </div>
 
-	        <div class="col-md-4 form-group">
+	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}}">
 	            <label class="control-label">accountId <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="accountId" name="accountId"  required="" value="{{$servicio->accountId}}" maxlength="200">
 	            <span class="help-block error">

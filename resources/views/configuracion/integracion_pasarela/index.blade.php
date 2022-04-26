@@ -33,7 +33,7 @@
 			<thead class="thead-dark">
 				<tr>
 	              <th>Nombre</th>
-	              <th>Nro de Pruebas</th>
+	              <th>Credenciales</th>
 	              <th>Estado</th>
 	              <th>Acciones</th>
 	          </tr>
@@ -42,7 +42,7 @@
 				@foreach($servicios as $servicio)
 				<tr @if($servicio->id==Session::get('id')) class="active_table" @endif >
 					<td>{{$servicio->nombre}}</td>
-					<td>{{$servicio->numero}}</td>
+					<td>{{$servicio->credenciales()}}</td>
 					<td class="font-weight-bold text-{{$servicio->status('true')}}">{{$servicio->status()}}</td>
 					<td>
 						<form action="{{ route('integracion-pasarelas.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">
@@ -52,12 +52,9 @@
 						<a href="{{route('integracion-pasarelas.edit',$servicio->id)}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
 
 	                 	@if($servicio->status==1)
-		                  <button class="btn btn-outline-danger btn-icons" type="submit" title="Desactivar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea desactivar este servicio?', '');"><i class="fas fa-power-off"></i></button>
+		                  <button class="btn btn-outline-danger btn-icons" type="submit" title="Deshabilitar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea deshabilitar este servicio?', '');"><i class="fas fa-power-off"></i></button>
 		                @else
-		                  <button class="btn btn-outline-success btn-icons" type="submit" title="Activar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea activar este servicio?', '');"><i class="fas fa-power-off"></i></button>
-		                @endif
-		                @if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero || $servicio->user && $servicio->pass && $servicio->numero)
-		                    <a href="{{route('integracion-pasarelas.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-icons" title="Envío de SMS Prueba"><i class="far fa-comment-dots"></i></a>
+		                  <button class="btn btn-outline-success btn-icons" type="submit" title="Habilitar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea habilitar este servicio?', '');"><i class="fas fa-power-off"></i></button>
 		                @endif
 					</td>
 				</tr>

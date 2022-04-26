@@ -57,4 +57,13 @@ class Integracion extends Model
     public function updated_by(){
         return User::find($this->updated_by);
     }
+
+    public function credenciales(){
+        if($this->nombre == 'WOMPI'){
+            return 'Llave Pública: '.$this->api_key;
+        }
+        if($this->nombre == 'PayU'){
+            return 'API KEY: '.$this->api_key.' | merchantId: '.$this->merchantId.' | accountId: '.$this->accountId;
+        }
+    }
 }
