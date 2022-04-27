@@ -2656,7 +2656,7 @@ public function edit($id){
                         }
                         $factura->response = $msj;
                         $factura->save();
-                        return back()->with('danger', 'Envío Fallido: '.$msj);
+                        return back()->with('success', 'Envío Éxitoso: '.$msj);
                     }
                 }else{
                     $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
