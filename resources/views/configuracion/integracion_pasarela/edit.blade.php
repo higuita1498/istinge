@@ -18,7 +18,7 @@
 	            </span>
 	        </div>
 
-	        <div class="col-md-4 form-group">
+	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}}">
 	            <label class="control-label">merchantId <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="merchantId" name="merchantId"  required="" value="{{$servicio->merchantId}}" maxlength="200">
 	            <span class="help-block error">
@@ -26,12 +26,37 @@
 	            </span>
 	        </div>
 
-	        <div class="col-md-4 form-group">
+	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}}">
 	            <label class="control-label">accountId <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="accountId" name="accountId"  required="" value="{{$servicio->accountId}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('accountId') }}</strong>
 	            </span>
+	        </div>
+
+	        <div class="col-md-{{ $servicio->nombre == 'WOMPI' ? '3' : '4'}} form-group">
+	        	<label class="control-label">Permitir Pago desde la WEB <span class="text-danger">*</span></label>
+	        	<div class="input-group">
+	        		<select class="form-control selectpicker" name="web" id="web" required="" title="Seleccione" data-live-search="true" data-size="5">
+	        			<option value="1" {{old('web')==1?'selected':''}}>Si</option>
+	        			<option value="0" {{old('web')==0?'selected':''}}>No</option>
+	        		</select>
+	        	</div>
+	        	<span class="help-block error">
+	        		<strong>{{ $errors->first('web') }}</strong>
+	        	</span>
+	        </div>
+	        <div class="col-md-{{ $servicio->nombre == 'WOMPI' ? '3' : '4'}} form-group">
+	        	<label class="control-label">Permitir Pago desde la APP <span class="text-danger">*</span></label>
+	        	<div class="input-group">
+	        		<select class="form-control selectpicker" name="app" id="app" required="" title="Seleccione" data-live-search="true" data-size="5">
+	        			<option value="1" {{old('app')==1?'selected':''}}>Si</option>
+	        			<option value="0" {{old('app')==0?'selected':''}}>No</option>
+	        		</select>
+	        	</div>
+	        	<span class="help-block error">
+	        		<strong>{{ $errors->first('app') }}</strong>
+	        	</span>
 	        </div>
 	    </div>
 	    <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>

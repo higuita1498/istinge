@@ -597,7 +597,7 @@
         </p>
     </div>
 
-    @if($factura->contract()->contrato_permanencia)
+    @if($factura->contract()->contrato_permanencia && $factura->contract()->server_configuration_id)
     
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%;">

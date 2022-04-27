@@ -18,6 +18,32 @@
 @endsection
 
 @section('content')
+    @if(Session::has('success'))
+		<div class="alert alert-success" >
+			{{Session::get('success')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 5000);
+		</script>
+	@endif
+
+	@if(Session::has('danger'))
+		<div class="alert alert-danger" >
+			{{Session::get('danger')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 5000);
+		</script>
+	@endif
+
     <div class="row card-description">
 		<div class="col-md-12">
 			<div class="table-responsive">
@@ -36,7 +62,7 @@
 						</tr>
 						@if($servicio->api_key)
 						<tr>
-							<td class="bg-th">API Key</td>
+							<td class="bg-th">{{ $servicio->nombre == 'WOMPI' ? 'Llave pública' : 'API Key'}}</td>
 							<td>{{$servicio->api_key}}</td>
 						</tr>
 						@endif
@@ -50,6 +76,18 @@
 						<tr>
 							<td class="bg-th">merchantId</td>
 							<td>{{$servicio->merchantId}}</td>
+						</tr>
+						@endif
+						@if($servicio->web)
+						<tr>
+							<td class="bg-th">Pagos desde WEB</td>
+							<td>{{$servicio->web == 1?'SI':'NO'}}</td>
+						</tr>
+						@endif
+						@if($servicio->app)
+						<tr>
+							<td class="bg-th">Pagos desde APP</td>
+							<td>{{$servicio->app == 1?'SI':'NO'}}</td>
 						</tr>
 						@endif
 						@if($servicio->updated_by)

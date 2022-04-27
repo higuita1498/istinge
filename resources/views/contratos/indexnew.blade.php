@@ -148,12 +148,19 @@
     					</select>
     				</div>
     				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Access Point" class="form-control selectpicker" id="ap_s">
-    						@foreach ($aps as $ap)
-    						<option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
-    						@endforeach
-    					</select>
-    				</div>
+                        <select title="Access Point" class="form-control selectpicker" id="ap_s">
+                            @foreach ($aps as $ap)
+                            <option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 pl-1 pt-1">
+                        <select title="Vendedor" class="form-control selectpicker" id="vendedor">
+                            @foreach ($vendedores as $vendedor)
+                            <option value="{{ $vendedor->id }}">{{ $vendedor->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -253,6 +260,7 @@
             data.c_direccion = $("#direccion").val();
             data.c_celular = $("#celular").val();
             data.c_email = $("#email").val();
+            data.vendedor = $("#vendedor").val();
             data.filtro = true;
         });
         
@@ -306,6 +314,7 @@
         $('#direccion').val('');
         $('#celular').val('');
         $('#email').val('');
+        $("#vendedor").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

@@ -53,6 +53,11 @@
         }
         .readonly{ border: 0 !important; background-color: #f9f9f9 !important; }
         .dropdown-header > span{ font-weight: 500; }
+        .input-group-prepend .input-group-text {
+            background: #f9f9f9;
+            border-color: #dee4e6;
+            font-size: 0.9rem;
+        }
     </style>
 @endsection
 
@@ -109,6 +114,9 @@
                         <a class="nav-link" id="television-tab" data-toggle="tab" href="#television" role="tab" aria-controls="television" aria-selected="false">SERVICIO DE TELEVISIÓN</a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                        <a class="nav-link" id="adicionales-tab" data-toggle="tab" href="#adicionales" role="tab" aria-controls="adicionales" aria-selected="false">OPCIONES ADICIONALES</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" id="adjuntos-tab" data-toggle="tab" href="#adjuntos" role="tab" aria-controls="adjuntos" aria-selected="false">ARCHIVOS ADJUNTOS</a>
                     </li>
@@ -448,6 +456,35 @@
                                 <span style="color: red;">
                                     <strong>{{ $errors->first('adjunto_d') }}</strong>
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="adicionales" role="tabpanel" aria-labelledby="adicionales-tab">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Descuento <a><i data-tippy-content="El descuento que se indique, se reflejará en la facturación recurrente del contrato" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group mb-2">
+                                    <input type="number" class="form-control"  id="descuento" name="descuento"  required="" value="{{$contrato->descuento}}" onkeypress="return event.charCode >= 48 && event.charCode <=57" min="0" max="100">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text font-weight-bold"><i class="fas fa-percentage"></i></div>
+                                    </div>
+                                </div>
+                                <span style="color: red;">
+                                    <strong>{{ $errors->first('descuento') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group mb-2">
+                                    <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5" required>
+                                        @foreach($vendedores as $vendedor)
+                                        <option value="{{$vendedor->id}}" {{$contrato->vendedor==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
+                                        @endforeach
+                                    </select>
+                                    <span style="color: red;">
+                                        <strong>{{ $errors->first('vendedor') }}</strong>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

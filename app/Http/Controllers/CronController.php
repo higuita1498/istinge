@@ -53,9 +53,9 @@ class CronController extends Controller
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
             foreach($grupos_corte as $grupo_corte){
-                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
 
-                $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+                $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
                 if($num){
                     $numero = $num->nro;
                 }else{
@@ -130,6 +130,7 @@ class CronController extends Controller
                         $item_reg->id_impuesto = $item->id_impuesto;
                         $item_reg->impuesto    = $item->impuesto;
                         $item_reg->cant        = 1;
+                        $item_reg->desc        = $contrato->descuento;
                         $item_reg->save();
                     }
 
@@ -146,6 +147,7 @@ class CronController extends Controller
                         $item_reg->id_impuesto = $item->id_impuesto;
                         $item_reg->impuesto    = $item->impuesto;
                         $item_reg->cant        = 1;
+                        $item_reg->desc        = $contrato->descuento;
                         $item_reg->save();
                     }
 

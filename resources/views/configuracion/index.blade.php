@@ -150,7 +150,7 @@
 			@if(isset($_SESSION['permisos']['762']))
 			<a href="{{ route('integracion-sms.index') }}">Mensajería</a><br>
 			@endif
-			@if(isset($_SESSION['permisos']['763']) && Auth::user()->nombres == 'Desarrollo')
+			@if(isset($_SESSION['permisos']['763']))
 			<a href="{{ route('integracion-pasarelas.index') }}">Pasarelas de Pago</a><br>
 			@endif
 			@if(isset($_SESSION['permisos']['764']) && Auth::user()->nombres == 'Desarrollo')

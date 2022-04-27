@@ -25,13 +25,13 @@ class IntegracionSMSController extends Controller
 
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->get();
+        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->get();
         return view('configuracion.integracion_sms.index')->with(compact('servicios'));
     }
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             view()->share(['title' => $servicio->nombre, 'precice' => true]);
@@ -42,7 +42,7 @@ class IntegracionSMSController extends Controller
 
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             view()->share(['title' => $servicio->nombre, 'middel' => true]);
@@ -52,7 +52,7 @@ class IntegracionSMSController extends Controller
     }
 
     public function update(Request $request, $id){
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             $servicio->user       = $request->user;
@@ -70,8 +70,8 @@ class IntegracionSMSController extends Controller
     }
 
     public function act_desc(Request $request, $id){
-        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->where('id', '<>', $id)->count();
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('status', 1)->where('id', '<>', $id)->count();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicios >= 1) {
             return redirect('empresa/configuracion/integracion-sms')->with('danger', 'Ya existe un servicio de SMS habilitado, deshabilítelo para poder habilitar el servicio de '.$servicio->nombre)->with('id', $servicio->id);
@@ -93,7 +93,7 @@ class IntegracionSMSController extends Controller
     }
 
     public function envio_prueba($id){
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
         if($servicio->nombre == 'Hablame SMS'){
             if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero){

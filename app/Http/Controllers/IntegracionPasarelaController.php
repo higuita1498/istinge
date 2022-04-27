@@ -25,13 +25,13 @@ class IntegracionPasarelaController extends Controller
 
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->get();
+        $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('lectura', 1)->get();
         return view('configuracion.integracion_pasarela.index')->with(compact('servicios'));
     }
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             view()->share(['title' => 'Servicio: '.$servicio->nombre, 'precice' => true]);
@@ -42,7 +42,7 @@ class IntegracionPasarelaController extends Controller
 
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             view()->share(['title' => $servicio->nombre, 'middel' => true]);
@@ -52,12 +52,14 @@ class IntegracionPasarelaController extends Controller
     }
 
     public function update(Request $request, $id){
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('lectura', 1)->where('id', $id)->first();
 
         if ($servicio) {
             $servicio->api_key    = $request->api_key;
             $servicio->accountId  = $request->accountId;
             $servicio->merchantId = $request->merchantId;
+            $servicio->web        = $request->web;
+            $servicio->app        = $request->app;
             $servicio->updated_by = Auth::user()->id;
             $servicio->save();
 
@@ -68,7 +70,7 @@ class IntegracionPasarelaController extends Controller
     }
 
     public function act_desc(Request $request, $id){
-        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('id', $id)->first();
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'PASARELA')->where('lectura', 1)->where('id', $id)->first();
 
         if($servicio){
             if($servicio->status == 0){
@@ -79,6 +81,7 @@ class IntegracionPasarelaController extends Controller
                 $mensaje = 'SE HA DESHABILITADO EL SERVICIO CORRECTAMENTE';
             }
             $servicio->save();
+            return back()->with('success', $mensaje)->with('id', $servicio->id);
             return redirect('empresa/configuracion/integracion-pasarelas')->with('success', $mensaje)->with('id', $servicio->id);
         }else{
             return redirect('empresa/configuracion/integracion-pasarelas')->with('danger', 'SERVICIO NO ENCONTRADO, INTENTE NUEVAMENTE');

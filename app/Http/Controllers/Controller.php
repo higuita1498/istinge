@@ -1518,6 +1518,7 @@ class Controller extends BaseController
                 $API->disconnect();
             }
         }
+        foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
         return response()->json(['software' => $ips, 'mikrotik' => $ARRAY]);
     }
     
