@@ -365,7 +365,7 @@ class FacturasController extends Controller{
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
-            return $factura->nro ? "<a href=" . route('facturas.show', $factura->nro) . ">$factura->codigo</a>" : "";
+            return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
         })
         ->editColumn('cliente', function (Factura $factura) {
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente}</a>" : "";
@@ -464,7 +464,7 @@ class FacturasController extends Controller{
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
-            return $factura->nro ? "<a href=" . route('facturas.show', $factura->nro) . ">$factura->codigo</a>" : "";
+            return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
         })
         ->editColumn('cliente', function (Factura $factura) {
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente}</a>" : "";
@@ -992,7 +992,7 @@ class FacturasController extends Controller{
 public function edit($id){
     $this->getAllPermissions(Auth::user()->id);
     $this->url = back()->getTargetUrl();
-    $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
     $retencionesFacturas = FacturaRetencion::where('factura', $factura->id)->get();
     $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
 
@@ -1170,7 +1170,7 @@ public function edit($id){
   */
   public function show($id){
       $this->getAllPermissions(Auth::user()->id);
-    $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
     $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
 
     $limitDate   = (Carbon::parse($factura->created_at))->addDay();
@@ -1235,7 +1235,7 @@ public function edit($id){
     **/
 
 
-    $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+    $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
     $resolucion = NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
 
       if($factura->tipo == 1){
@@ -1284,7 +1284,7 @@ public function edit($id){
 
 
     $factura = ($especialFe) ? Factura::where('nonkey', $id)->first()
-        : Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        : Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
 
     if($factura->tipo == 1){
         view()->share(['title' => 'Imprimir Factura']);
@@ -1383,7 +1383,7 @@ public function edit($id){
          * toma en cuenta que para ver los mismos
          * datos debemos hacer la misma consulta
          **/
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if($factura->tipo == 1){
             view()->share(['title' => 'Imprimir Factura']);
             if ($tipo<>'original') {
@@ -1429,7 +1429,7 @@ public function edit($id){
         }
         
         view()->share(['title' => 'Imprimir Factura']);
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($factura) {
             if (!$emails) {
                 $emails=$factura->cliente()->email;
@@ -1583,7 +1583,7 @@ public function edit($id){
     }
 
     public function anular($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($factura) {
             if ($factura->estatus==1) {
                 $factura->estatus=2;
@@ -1602,7 +1602,7 @@ public function edit($id){
     }
 
     public function cerrar($id){
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('nro', $id)->first();
+        $factura = Factura::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('id', $id)->first();
         if ($factura) {
             if ($factura->estatus==1) {
                 $factura->estatus=0;
@@ -2735,7 +2735,7 @@ public function edit($id){
     }
     
     public function promesa_pago($id){
-        $factura = Factura::where('nro', $id)->first();
+        $factura = Factura::where('id', $id)->first();
         return json_encode($factura);
     }
     
@@ -2822,7 +2822,7 @@ public function edit($id){
          * * datos debemos hacer la misma consulta
          **/
          
-        $factura = ($especialFe) ? Factura::where('nonkey', $id)->first() : Factura::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        $factura = ($especialFe) ? Factura::where('nonkey', $id)->first() : Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         
         if($factura->tipo == 1){
             view()->share(['title' => 'Imprimir Factura']);

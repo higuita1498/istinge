@@ -1,26 +1,26 @@
 @if(Auth::user()->rol==8)
     @if($estatus==1)
-        <a href="{{route('ingresos.create_id', ['cliente'=>$cliente, 'factura'=>$nro])}}" class="btn btn-outline-primary btn-xl" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
+        <a href="{{route('ingresos.create_id', ['cliente'=>$cliente, 'factura'=>$id])}}" class="btn btn-outline-primary btn-xl" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
     @endif
     @if(Auth::user()->empresa()->tirilla && $estatus==0)
-        <a href="{{route('facturas.tirilla', ['id' => $nro, 'name'=> 'Factura No.'.$nro.'.pdf'])}}" target="_blank" class="btn btn-outline-warning btn-xl"title="Imprimir tirilla"><i class="fas fa-file-invoice"></i></a>
+        <a href="{{route('facturas.tirilla', ['id' => $id, 'name'=> 'Factura No.'.$id.'.pdf'])}}" target="_blank" class="btn btn-outline-warning btn-xl"title="Imprimir tirilla"><i class="fas fa-file-invoice"></i></a>
     @endif
 @else
-    <a href="{{route('facturas.show',$nro)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
-    <a href="{{route('facturas.imprimir',['id' => $nro, 'name'=> 'Factura No. '.$codigo.'.pdf'])}}" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a>
+    <a href="{{route('facturas.show',$id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
+    <a href="{{route('facturas.imprimir',['id' => $id, 'name'=> 'Factura No. '.$codigo.'.pdf'])}}" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a>
     @if($estatus==0)
-        <a href="{{route('facturas.tirilla', ['id' => $nro, 'name'=> 'Factura No.'.$nro.'.pdf'])}}" target="_blank" class="btn btn-outline-warning btn-icons"title="Imprimir tirilla"><i class="fas fa-file-invoice"></i></a>
+        <a href="{{route('facturas.tirilla', ['id' => $id, 'name'=> 'Factura No.'.$id.'.pdf'])}}" target="_blank" class="btn btn-outline-warning btn-icons"title="Imprimir tirilla"><i class="fas fa-file-invoice"></i></a>
     @endif
 	@if($estatus==1)
-		<a href="{{route('ingresos.create_id', ['cliente'=>$cliente, 'factura'=>$nro])}}" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
+		<a href="{{route('ingresos.create_id', ['cliente'=>$cliente, 'factura'=>$id])}}" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
 		@if($correo==0)
-        <a href="{{route('facturas.edit',$nro)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+        <a href="{{route('facturas.edit',$id)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
         @endif
         @if($promesa_pago==null)
-        <a href="javascript:modificarPromesa('{{$nro}}')" class="btn btn-outline-danger btn-icons promesa" idfactura="{{$nro}}" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>
+        <a href="javascript:modificarPromesa('{{$id}}')" class="btn btn-outline-danger btn-icons promesa" idfactura="{{$id}}" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>
         @endif
 	@endif
-	<form action="{{ route('factura.anular',$nro) }}" method="POST" class="delete_form" style="display: none;" id="anular-factura{{$id}}">
+	<form action="{{ route('factura.anular',$id) }}" method="POST" class="delete_form" style="display: none;" id="anular-factura{{$id}}">
 		{{ csrf_field() }}
 	</form>
 	@if(isset($_SESSION['permisos']['43']))
@@ -33,7 +33,7 @@
 	@if($emailcliente)
 	    @if($estatus==1)
             @if($correo==0)
-		        <a href="{{route('facturas.enviar',$nro)}}" class="btn btn-outline-success btn-icons" title="Enviar"><i class="far fa-envelope"></i></a>
+		        <a href="{{route('facturas.enviar',$id)}}" class="btn btn-outline-success btn-icons" title="Enviar"><i class="far fa-envelope"></i></a>
 	        @else
 		        <button class="btn btn-danger btn-icons disabled" title="Factura enviada por Correo"><i class="far fa-envelope"></i></button>
 	        @endif
