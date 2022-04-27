@@ -1446,7 +1446,7 @@ public function edit($id){
             }
 
             if (!$emails) {
-                return redirect('empresa/facturas/'.$factura->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
+                return redirect('empresa/facturas/'.$factura->id)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
             }
 
             $items = ItemsFactura::where('factura',$factura->id)->get();
