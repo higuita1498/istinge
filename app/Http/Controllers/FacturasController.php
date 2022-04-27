@@ -1543,7 +1543,7 @@ public function edit($id){
         $factura->observaciones = ' | Factura Enviada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
         $factura->save();
         if ($redireccionar) {
-            return redirect('empresa/facturas/'.$factura->nro)->with('success', 'Se ha enviado satisfactoriamente la factura por correo electrónico');
+            return redirect('empresa/facturas/'.$factura->id)->with('success', 'Se ha enviado satisfactoriamente la factura por correo electrónico');
             //return back()->with('success', 'Se ha enviado satisfactoriamente la factura por correo electrónico');
         }
         return "Enviado";
