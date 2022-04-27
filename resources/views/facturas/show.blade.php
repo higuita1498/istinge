@@ -31,26 +31,26 @@
                         @if(Auth::user()->empresa()->form_fe == 1 && $factura->emitida == 0 && Auth::user()->empresa()->estado_dian == 1 && Auth::user()->empresa()->technicalkey != null)
                             <a  href="#"  class="btn btn-outline-primary btn-sm"title="Emitir Factura" onclick="validateDian({{ $factura->id }}, '{{route('xml.factura',$factura->id)}}', '{{$factura->codigo}}')" ><i class="fas fa-sitemap"></i>Emitir</a>
                         @endif
-                        <a href="{{route('facturas.imprimir',['id' => $factura->nro, 'name'=> 'Factura No. '.$factura->codigo.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
+                        <a href="{{route('facturas.imprimir',['id' => $factura->id, 'name'=> 'Factura No. '.$factura->codigo.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
                         @if(Auth::user()->empresa()->tirilla == 1 && $factura->estatus==0 && $factura->total()->total == $factura->pagado())
-                            <a href="{{route('facturas.tirilla', ['id' => $factura->nro, 'name' => "Factura No. $factura->nro.pdf"])}}" class="btn btn-outline-warning btn-sm "title="Tirilla" target="_blank"><i class="fas fa-print"></i>Imprimir tirilla</a>
+                            <a href="{{route('facturas.tirilla', ['id' => $factura->id, 'name' => "Factura No. $factura->id.pdf"])}}" class="btn btn-outline-warning btn-sm "title="Tirilla" target="_blank"><i class="fas fa-print"></i>Imprimir tirilla</a>
                         @endif
-                        <a href="{{route('facturas.pdf',$factura->nro)}}" class="btn btn-outline-info btn-sm "title="Descargar"><i class="fas fa-download"></i> Descargar</a>
+                        <a href="{{route('facturas.pdf',$factura->id)}}" class="btn btn-outline-info btn-sm "title="Descargar"><i class="fas fa-download"></i> Descargar</a>
                         @if($factura->cliente()->email)
                             @if($factura->correo==0)
-                                <a href="{{route('facturas.enviar',$factura->nro)}}" class="btn btn-outline-success btn-sm "title="Enviar"><i class="far fa-envelope"></i> Enviar por Correo Al Cliente</a>
+                                <a href="{{route('facturas.enviar',$factura->id)}}" class="btn btn-outline-success btn-sm "title="Enviar"><i class="far fa-envelope"></i> Enviar por Correo Al Cliente</a>
                             @else
                                 <a href="#" class="btn btn-danger btn-sm disabled" title="Factura enviada por Correo"><i class="far fa-envelope"></i> Factura enviada por Correo</a>
                             @endif
                         @endif
                         @if($factura->estatus==1)
-                            <a href="{{route('ingresos.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->nro])}}" class="btn btn-outline-primary btn-sm" title="Agregar Pago"><i class="fas fa-plus"></i> Agregar Pago</a>
+                            <a href="{{route('ingresos.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->id])}}" class="btn btn-outline-primary btn-sm" title="Agregar Pago"><i class="fas fa-plus"></i> Agregar Pago</a>
                         @endif
                         @if($factura->emitida != 1)
-                            <a class="btn btn-outline-primary btn-sm" href="{{route('facturas.edit',$factura->nro)}}" target="_blank"><i class="fas fa-edit"></i> Editar</a>
+                            <a class="btn btn-outline-primary btn-sm" href="{{route('facturas.edit',$factura->id)}}" target="_blank"><i class="fas fa-edit"></i> Editar</a>
                         @endif
                         @if(Auth::user()->empresa()->estado_dian != 1)
-                            <form action="{{ route('factura.anular',$factura->nro) }}" method="POST" class="delete_form" style="display: none;" id="anular-factura{{$factura->id}}">
+                            <form action="{{ route('factura.anular',$factura->id) }}" method="POST" class="delete_form" style="display: none;" id="anular-factura{{$factura->id}}">
                                 {{ csrf_field() }}
                             </form>
                             @if(Auth::user()->rol == 3)
@@ -65,15 +65,15 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                     @if($factura->estatus==1)
-                                        <form action="{{ route('factura.cerrar',$factura->nro) }}" method="POST" class="delete_form" style="display: none;" id="cerrar-factura{{$factura->id}}">
+                                        <form action="{{ route('factura.cerrar',$factura->id) }}" method="POST" class="delete_form" style="display: none;" id="cerrar-factura{{$factura->id}}">
                                             {{ csrf_field() }}
                                         </form>
                                         @if(Auth::user()->rol == 3)
                                             <a class="dropdown-item" href="#" onclick="confirmar('cerrar-factura{{$factura->id}}', '¿Está seguro de que desea cerrar la factura?', ' ');">Cerrar sin pago</a>
                                         @endif
                                     @endif
-                                    <a class="dropdown-item" href="{{route('facturas.imprimircopia',$factura->nro)}}" target="_blank">Imprimir como Copia</a>
-                                    <a class="dropdown-item" href="{{route('facturas.copia',$factura->nro)}}" target="_blank">Descargar como Copia</a>
+                                    <a class="dropdown-item" href="{{route('facturas.imprimircopia',$factura->id)}}" target="_blank">Imprimir como Copia</a>
+                                    <a class="dropdown-item" href="{{route('facturas.copia',$factura->id)}}" target="_blank">Descargar como Copia</a>
                                 </div>
                             </div>
                         </div>
