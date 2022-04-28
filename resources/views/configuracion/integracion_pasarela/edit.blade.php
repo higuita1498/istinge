@@ -38,8 +38,8 @@
 	        	<label class="control-label">Permitir Pago desde la WEB <span class="text-danger">*</span></label>
 	        	<div class="input-group">
 	        		<select class="form-control selectpicker" name="web" id="web" required="" title="Seleccione" data-live-search="true" data-size="5">
-	        			<option value="1" {{old('web')==1?'selected':''}}>Si</option>
-	        			<option value="0" {{old('web')==0?'selected':''}}>No</option>
+	        			<option value="1" {{$servicio->web==1?'selected':''}}>Si</option>
+	        			<option value="0" {{$servicio->web==0?'selected':''}}>No</option>
 	        		</select>
 	        	</div>
 	        	<span class="help-block error">
@@ -50,8 +50,8 @@
 	        	<label class="control-label">Permitir Pago desde la APP <span class="text-danger">*</span></label>
 	        	<div class="input-group">
 	        		<select class="form-control selectpicker" name="app" id="app" required="" title="Seleccione" data-live-search="true" data-size="5">
-	        			<option value="1" {{old('app')==1?'selected':''}}>Si</option>
-	        			<option value="0" {{old('app')==0?'selected':''}}>No</option>
+	        			<option value="1" {{$servicio->app==1?'selected':''}}>Si</option>
+	        			<option value="0" {{$servicio->app==0?'selected':''}}>No</option>
 	        		</select>
 	        	</div>
 	        	<span class="help-block error">
