@@ -61,7 +61,20 @@
         <strong>{{ $errors->first('venta') }}</strong>
       </span>
     </div>
+    <div class="col-md-6 form-group">
+      <label class="control-label">Cuenta contable para compras<span class="text-danger">*</span></label>
+      <select class="form-control selectpicker"  id="compra" name="compra" title="Seleccione" data-live-search="true" data-size="5">
+          @foreach($cuentas as $cuenta)
+            <option value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+          @endforeach
+      </select>
+      <span class="help-block error">
+        <strong>{{ $errors->first('venta') }}</strong>
+      </span>
+    </div>
   </div>
+  </div>
+
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
 	<div class="row" >

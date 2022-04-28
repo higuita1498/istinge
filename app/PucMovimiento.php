@@ -81,8 +81,8 @@ class PucMovimiento extends Model
                         $mov->consecutivo_comprobante = $factura->codigo;
                         $mov->fecha_elaboracion = $factura->fecha;
                         $mov->documento_id = $factura->id;
-                        $mov->codigo_cuenta = isset($impuesto->puc()->codigo) ? $impuesto->puc()->codigo : '';
-                        $mov->cuenta_id = isset($impuesto->puc()->id) ? $impuesto->puc()->id : '';
+                        $mov->codigo_cuenta = isset($impuesto->pucVenta()->codigo) ? $impuesto->pucVenta()->codigo : '';
+                        $mov->cuenta_id = isset($impuesto->pucVenta()->id) ? $impuesto->pucVenta()->id : '';
                         $mov->identificacion_tercero = $factura->cliente()->nit;
                         $mov->cliente_id = $factura->cliente()->id;
                         $mov->prefijo = $factura->numeracionFactura->prefijo;
@@ -206,8 +206,8 @@ class PucMovimiento extends Model
                          $mov->consecutivo_comprobante = $factura->codigo;
                          $mov->fecha_elaboracion = $factura->fecha;
                          $mov->documento_id = $factura->id;
-                         $mov->codigo_cuenta = isset($impuesto->puc()->codigo) ? $impuesto->puc()->codigo : '';
-                         $mov->cuenta_id = isset($impuesto->puc()->id) ? $impuesto->puc()->id : '';
+                         $mov->codigo_cuenta = isset($impuesto->pucCompra()->codigo) ? $impuesto->pucCompra()->codigo : '';
+                         $mov->cuenta_id = isset($impuesto->pucCompra()->id) ? $impuesto->pucCompra()->id : '';
                          $mov->identificacion_tercero = $factura->cliente()->nit;
                          $mov->cliente_id = $factura->cliente()->id;
                          $mov->consecutivo = $factura->nro;

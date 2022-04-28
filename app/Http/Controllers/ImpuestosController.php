@@ -42,6 +42,7 @@ class ImpuestosController extends Controller
         $impuesto->tipo=$request->tipo;
         $impuesto->descripcion=$request->descripcion;
         $impuesto->puc_venta = $request->venta;
+        $impuesto->puc_compra = $request->compra;
         $impuesto->save();
 
         $mensaje='Se ha creado satisfactoriamente el tipo de impuesto';
@@ -72,6 +73,7 @@ class ImpuestosController extends Controller
             $impuesto->tipo=$request->tipo;
             $impuesto->descripcion=$request->descripcion;
             $impuesto->puc_venta = $request->venta;
+            $impuesto->puc_compra = $request->compra;
             $impuesto->save();
 
             $mensaje='Se ha modificado satisfactoriamente el tipo de impuesto';

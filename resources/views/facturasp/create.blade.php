@@ -27,7 +27,7 @@
     <div class="row text-right">
       <div class="col-md-5">
         <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Productor <span class="text-danger">*</span></label>
+          <label class="col-sm-4 col-form-label">Proveedor <span class="text-danger">*</span></label>
           <div class="col-sm-8">
             <div class="input-group">
               <select class="form-control selectpicker" name="proveedor" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value,false,2);">

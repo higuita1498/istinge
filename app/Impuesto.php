@@ -40,8 +40,12 @@ class Impuesto extends Model
         return $tipo;
     }
 
-    public function puc(){
+    public function pucVenta(){
         return Puc::find($this->puc_venta);
+    }
+
+    public function pucCompra(){
+        return Puc::find($this->puc_compra);
     }
 
     
