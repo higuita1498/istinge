@@ -46,7 +46,6 @@ class CronController extends Controller
         if($empresa->factura_auto == 1){
             $i=0;
             $date = date('d') * 1;
-            $date = 29;
             $numeros = [];
             $fail = 0;
             $succ = 0;
