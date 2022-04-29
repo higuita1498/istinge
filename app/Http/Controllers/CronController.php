@@ -14,6 +14,7 @@ use DOMDocument;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Funcion;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 use App\Model\Ingresos\Factura;
 use App\NumeracionFactura;
@@ -763,5 +764,9 @@ class CronController extends Controller
             fputs($file, "-----------------".PHP_EOL);
             fclose($file);
         }
+    }
+
+    public function eventosWompi(Request $request){
+        Log::info($request);
     }
 }
