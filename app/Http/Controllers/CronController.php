@@ -213,9 +213,6 @@ class CronController extends Controller
                         }
                         //-----------------------------------------------//
 
-                        // $data = array(
-                        //     'email'=> 'info@istingenieria.online',
-                        // );
                         $total = Funcion::Parsear($factura->total()->total);
                         $empresa = Empresa::find($factura->empresa);
                         $key = Hash::make(date("H:i:s"));
@@ -244,15 +241,15 @@ class CronController extends Controller
                                 ]
                             );
                             config(['mail'=>$new]);
-                        }
 
-                        Mail::send('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
-                            $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
-                            if(file_exists($xmlPath)){
-                                $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
-                            }
-                            $message->to($emails)->subject($tituloCorreo);
-                        });
+                            Mail::send('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+                                $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+                                if(file_exists($xmlPath)){
+                                    $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+                                }
+                                $message->to($emails)->subject($tituloCorreo);
+                            });
+                        }
                     }
 
                     ## ENVIO CORREO ##
