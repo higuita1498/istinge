@@ -304,6 +304,11 @@ class Factura extends Model
         //return abs($this->total()->total - $this->pagado() - $this->devoluciones() );
     }
 
+    public function porpagarAPI($empresa){
+        $porpagar = Funcion::precisionAPI($this->totalAPI($empresa)->total, $empresa);
+        return abs($porpagar - $this->pagado() - $this->devoluciones());
+    }
+
     public function devoluciones(){
         return NotaCreditoFactura::where('factura',$this->id)->sum('pago');
     }
@@ -581,6 +586,40 @@ public function forma_pago()
         
         $estadoCuenta['saldoMesActual'] = $saldoMesActual;
         
+        return (object) $estadoCuenta;
+    }
+
+    public function estadoCuentaAPI($empresa){
+
+        $estadoCuenta = array('saldoMesAnterior' => 0, 'saldoMesActual' => 0, 'equipoCuota' => 0, 'servicioAdicional' => 0, 'total' => 0);
+
+        $fechaActual = date("Y-m-d", strtotime(Carbon::now()));
+        $saldoMesAnterior=0;
+        $saldoMesActual=0;
+
+        /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Anterior <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+        //traemos todas las facturas que el vencimiento haya pasado la fecha actual.
+        $facturasVencidas = Factura::where('cliente',$this->cliente)->where('vencimiento','<',$fechaActual)->get();
+
+        //sumamos todo lo que deba el cliente despues de la fecha de vencimiento
+        foreach($facturasVencidas as $vencida){
+            $saldoMesAnterior+=$vencida->porpagarAPI($empresa);
+        }
+
+        $estadoCuenta['saldoMesAnterior'] = $saldoMesAnterior;
+
+        /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Actual <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+        $facturasActuales = Factura::where('cliente',$this->cliente)->where('vencimiento','>',$fechaActual)->get();
+
+        //sumamos todo lo que deba el cliente despues de la fecha de vencimiento
+        foreach($facturasActuales as $actual){
+            $saldoMesActual+=$actual->porpagarAPI($empresa);
+        }
+
+        $estadoCuenta['saldoMesActual'] = $saldoMesActual;
+
         return (object) $estadoCuenta;
     }
 
