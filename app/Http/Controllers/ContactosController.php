@@ -609,8 +609,10 @@ class ContactosController extends Controller
         }
 
         $contacto = Contacto::join('contracts as cs', 'contactos.id', '=', 'cs.client_id')->where('contactos.id', $id)->first();
-        if($contacto->plan_id){
-            $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, CS.facturacion, I.id as plan, GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.status = '1' AND C.status = '1' AND  C.id = '".$id."'");
+        if ($contacto) {
+            if($contacto->plan_id){
+                $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, CS.facturacion, I.id as plan, GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.status = '1' AND C.status = '1' AND  C.id = '".$id."'");
+            }
         }
 
         if ($contacto) {
