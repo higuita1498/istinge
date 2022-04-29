@@ -14,6 +14,7 @@
                     <li><a href="{{route('reportes.cajas')}}" >Reporte de Cajas</a></li>
                     <li><a href="{{route('reportes.instalacion')}}" >Reporte de Contratos con Instalación</a></li>
                     <li><a href="{{route('reportes.radicados')}}" >Reporte de Radicados</a></li>
+                    {{-- <li><a href="{{route('reportes.planes')}}" >Reporte de Planes</a></li> --}}
                 </ul>
             </div>
             <div class="col-md-5 offset-md-1 reportes">
