@@ -727,21 +727,36 @@ function contacto(selected, modificar=false, type = 1){
                 }
             }
 
+            console.log(data);
+
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
             if(data.plan == null && type == 1 && data.servicio_tv == null){
                 if($("#dian").val() == null){
                     Swal.fire({
                         position: 'top-center',
                         type: 'error',
-                        title: 'El cliente seleccionado no cuenta con nigun contrato asignado.',
-                        showConfirmButton: false,
-                        timer: 2500
+                        title: 'Cliente sin contrato.',
+                        text: 'El cliente seleccionado no cuenta con nigun contrato asignado',
+                        showConfirmButton: true,
                     });
                     $("#cliente").val("");
                     $('#cliente').selectpicker('refresh');
                     cargando(false);
                     return;
                 }
+            //referencia a que el cliente tiene un contrato por facturacion electrónica y no por estandar
+            }else if(type == 1 && data.facturacion == 3){
+                Swal.fire({
+                    position: 'top-center',
+                    type: 'error',
+                    title: 'Contrato con facturacion electrónica.',
+                    text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se peude realizar una factura estandar',
+                    showConfirmButton: true,
+                });
+                $("#cliente").val("");
+                $('#cliente').selectpicker('refresh');
+                cargando(false);
+                return;
             }
 
             if ($('#ident').length > 0) {
