@@ -17,7 +17,12 @@ class Funcion
     }
 
     public static function precision($valor){
-    	return round($valor, Auth::user()->empresa()->precision);
+        return round($valor, Auth::user()->empresa()->precision);
+    }
+
+    public static function precisionAPI($valor, $id){
+        $empresa = Empresa::find($id);
+        return round($valor, $empresa->precision);
     }
 
     /**
