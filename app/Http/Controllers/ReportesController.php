@@ -2278,4 +2278,80 @@ class ReportesController extends Controller
             ->with('cajas', $cajas);
     }
 
+    public function planes(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        DB::enableQueryLog();
+
+
+        $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
+        $cajas = Banco::where('estatus',1)->get();
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Planes Facturados', 'icon' =>'fas fa-chart-line']);
+        $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
+        if (!$request->orderby) {
+            $request->orderby=1; $request->order=1;
+        }
+        $orderby=$campos[$request->orderby];
+        $order=$request->order==1?'DESC':'ASC';
+
+        $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+            ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
+            ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
+            ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
+                'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'i.fecha as pagada','i.cuenta')
+            ->whereIn('factura.tipo', [1,2])
+            ->where('factura.empresa',Auth::user()->empresa)
+            ->where('factura.estatus',0)
+            ->groupBy('factura.id');
+        $example = $facturas->get()->last();
+
+        $dates = $this->setDateRequest($request);
+
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $facturas=$facturas->where('i.fecha','>=', $dates['inicio'])->where('i.fecha','<=', $dates['fin']);
+        }
+        if($request->caja){
+            $facturas=$facturas->where('i.cuenta',$request->caja);
+        }
+        $ides=array();
+        $facturas=$facturas->OrderBy($orderby, $order)->get();
+
+        foreach ($facturas as $factura) {
+            $ides[]=$factura->id;
+        }
+
+        foreach ($facturas as $invoice) {
+            $invoice->subtotal = $invoice->total()->subsub;
+            $invoice->iva = $invoice->impuestos_totales();
+            $invoice->retenido = $factura->retenido(true);
+            $invoice->total = $invoice->total()->total - $invoice->devoluciones();
+        }
+        if($request->orderby == 4 || $request->orderby == 5  || $request->orderby == 6 || $request->orderby == 7 ){
+            switch ($request->orderby){
+                case 4:
+                    $facturas = $request->order  ? $facturas->sortBy('subtotal') : $facturas = $facturas->sortByDesc('subtotal');
+                    break;
+                case 5:
+                    $facturas = $request->order ? $facturas->sortBy('iva') : $facturas = $facturas->sortByDesc('iva');
+                    break;
+                case 6:
+                    $facturas = $request->order ? $facturas->sortBy('retenido') : $facturas = $facturas->sortByDesc('retenido');
+                    break;
+                case 7:
+                    $facturas = $request->order ? $facturas->sortBy('total') : $facturas = $facturas->sortByDesc('total');
+                    break;
+            }
+        }
+        $facturas = $this->paginate($facturas, 15, $request->page, $request);
+
+
+        $subtotal=$total=0;
+        if ($ides) {
+            $result=DB::table('items_factura')->whereIn('factura', $ides)->select(DB::raw("SUM((`cant`*`precio`)) as 'total', SUM((precio*(`desc`/100)*`cant`)+0)  as 'descuento', SUM((precio-(precio*(if(`desc`,`desc`,0)/100)))*(`impuesto`/100)*cant) as 'impuesto'  "))->first();
+            $subtotal=$this->precision($result->total-$result->descuento);
+            $total=$this->precision((float)$subtotal+$result->impuesto);
+        }
+        return view('reportes.ventas.planes')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas'));
+    }
+
 }

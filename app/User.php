@@ -230,36 +230,44 @@ class User extends Authenticatable
      */
     public function modoLecturaNomina()
     {
-        $usuario = auth()->user();
-        $suscripcion = SuscripcionNomina::where('id_empresa',  $usuario->empresa)->first();
-
-        if (isset($suscripcion) && $usuario->rol >= 2) {
-            switch ($suscripcion) {
-                case $suscripcion->fec_corte < date('Y-m-d'):
-                    return [
-                        'success' => true,
-                        'message' => 'Tu plan actual ya ha finalizado'
-                    ];
-                    break;
-                case $this->personal():
-                    return [
-                        'success' => true,
-                        'message' => 'Ha alcanzado el límite de personas para el plan suscrito'
-                    ];
-                    break;
-                default:
-                    return [
-                        'success' => false,
-                        'message' => ''
-                    ];
-                    break;
+        if(1==1){
+            return [
+                'success' => false,
+                'message' => ''
+            ];
+        }else{
+            $usuario = auth()->user();
+            $suscripcion = SuscripcionNomina::where('id_empresa',  $usuario->empresa)->first();
+    
+            if (isset($suscripcion) && $usuario->rol >= 2) {
+                switch ($suscripcion) {
+                    case $suscripcion->fec_corte < date('Y-m-d'):
+                        return [
+                            'success' => true,
+                            'message' => 'Tu plan actual ya ha finalizado'
+                        ];
+                        break;
+                    case $this->personal():
+                        return [
+                            'success' => true,
+                            'message' => 'Ha alcanzado el límite de personas para el plan suscrito'
+                        ];
+                        break;
+                    default:
+                        return [
+                            'success' => false,
+                            'message' => ''
+                        ];
+                        break;
+                }
             }
+    
+            return [
+                'success' => false,
+                'message' => 'No existe ua suscripción activa'
+            ];
         }
-
-        return [
-            'success' => false,
-            'message' => 'No existe ua suscripción activa'
-        ];
+        
     }
 
       /**

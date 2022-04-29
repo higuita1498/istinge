@@ -2335,9 +2335,9 @@ class NominaController extends Controller
                 exit;
             }
 
-            $date = Carbon::create($request->year, $request->periodo, 1)->locale('es');
+            $date = Carbon::create($request->year, $request->periodo, 1);
             $arrayPost['success'] = true;
-            $arrayPost['nomina'] = ucfirst($date->monthName) . ' ' . $request->year;
+            $arrayPost['nomina'] = ucfirst(date("m", strtotime($date))) . ' ' . $request->year;
             $arrayPost['periodo'] = $request->periodo;
             $arrayPost['year'] = $request->year;
             $arrayPost['empleados'] = Nomina::where('periodo', $request->periodo)->where(
