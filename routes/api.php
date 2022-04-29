@@ -34,6 +34,8 @@ Route::get('getSegmentos/{mikrotik}', 'Controller@getSegmentos');
 Route::get('getContracts/{id}', 'Controller@getContracts');
 Route::get('getSubnetting/{ip_address}/{prefijo}', 'Controller@getSubnetting');
 
+/** EVENTOS WOMPI **/
+Route::post('pagos/wompi', 'CronController@eventosWompi');
 
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
