@@ -65,7 +65,8 @@
 							<td class="bg-th">{{ $servicio->nombre == 'WOMPI' ? 'Llave pública' : 'API Key'}}</td>
 							<td>{{$servicio->api_key}}</td>
 						</tr>
-						@endif@if($servicio->api_event)
+						@endif
+						@if($servicio->api_event)
 						<tr>
 							<td class="bg-th">API Eventos</td>
 							<td>{{$servicio->api_event}}</td>
