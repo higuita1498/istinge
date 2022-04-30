@@ -157,7 +157,7 @@
 				<tbody>
 					@foreach($items as $item)
 						<tr>
-							<td><a href="{{route('facturas.show', $item->factura()->nro)}}" target="_blank">{{$item->factura()->codigo}}</a></td>
+							<td><a href="{{route('facturas.show', $item->factura()->id)}}" target="_blank">{{$item->factura()->codigo}}</a></td>
 							<td>{{date('d-m-Y', strtotime($item->factura()->fecha))}}</td>
 
 							<td>{{date('d-m-Y', strtotime($item->factura()->vencimiento))}}</td>
