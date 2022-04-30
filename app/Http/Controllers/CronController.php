@@ -805,7 +805,7 @@ class CronController extends Controller
             $servicio = Integracion::where('nombre', 'WOMPI')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
 
             $cadena = $request->id.''.$request->status.''.$request->amount_in_cents.''.$timestamp.''.$servicio->api_event;
-            dd(hash("sha256", $cadena));
+            $hash = hash("sha256", $cadena);
 
             if($request->status == 'APPROVED'){
                 $factura = Factura::where('codigo', explode("-", $request->reference)[1])->first();
