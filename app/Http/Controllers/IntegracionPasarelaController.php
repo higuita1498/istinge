@@ -56,6 +56,7 @@ class IntegracionPasarelaController extends Controller
 
         if ($servicio) {
             $servicio->api_key    = $request->api_key;
+            $servicio->api_event  = $request->api_event;
             $servicio->accountId  = $request->accountId;
             $servicio->merchantId = $request->merchantId;
             $servicio->web        = $request->web;

@@ -27,6 +27,8 @@ Route::get('clear', function () {
     return redirect()->back();
 });
 
+
+
 /* IMPORTAR API*/
 Route::post('/import_puc','PucController@import_puc')->name('puc.import_puc');
 Route::get('/updatecontratofactura','FacturasController@updateContratoId');
@@ -43,9 +45,6 @@ Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
 Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
 Route::get('PagoVencimiento','CronController@PagoVencimiento')->name('PagoVencimiento');
-
-/** EVENTOS WOMPI **/
-Route::post('pagos/wompi', 'CronController@eventosWompi');
 
 /*PAYU*/
 

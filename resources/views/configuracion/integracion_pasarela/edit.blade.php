@@ -18,6 +18,14 @@
 	            </span>
 	        </div>
 
+	        <div class="col-md-6 form-group {{ $servicio->nombre == 'WOMPI' ? '' : 'd-none'}}">
+	            <label class="control-label">API Eventos <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control" id="api_event" name="api_event"  required="" value="{{$servicio->api_event}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('api_event') }}</strong>
+	            </span>
+	        </div>
+
 	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}}">
 	            <label class="control-label">merchantId <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="merchantId" name="merchantId"  required="" value="{{$servicio->merchantId}}" maxlength="200">

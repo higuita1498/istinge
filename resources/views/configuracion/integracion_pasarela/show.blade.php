@@ -66,6 +66,12 @@
 							<td>{{$servicio->api_key}}</td>
 						</tr>
 						@endif
+						@if($servicio->api_event)
+						<tr>
+							<td class="bg-th">API Eventos</td>
+							<td>{{$servicio->api_event}}</td>
+						</tr>
+						@endif
 						@if($servicio->accountId)
 						<tr>
 							<td class="bg-th">accountId</td>

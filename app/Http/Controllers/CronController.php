@@ -39,8 +39,38 @@ use App\Model\Ingresos\FacturaRetencion;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 
+
+use App\Numeracion;
+use App\Model\Ingresos\Ingreso;
+use App\Model\Ingresos\IngresosFactura;
+use App\Banco;
+use App\Movimiento;
+
 class CronController extends Controller
 {
+    public static function precisionAPI($valor, $id){
+        $empresa = Empresa::find($id);
+        return round($valor, $empresa->precision);
+    }
+
+    public function up_transaccion_($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion, $empresa){
+        $movimiento=new Movimiento;
+        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
+        if ($regis) {
+            $movimiento=$regis;
+        }
+        $movimiento->empresa=$empresa;
+        $movimiento->banco=$banco;
+        $movimiento->contacto=$contacto;
+        $movimiento->tipo=$tipo;
+        $movimiento->saldo=$saldo;
+        $movimiento->fecha=$fecha;
+        $movimiento->modulo=$modulo;
+        $movimiento->id_modulo=$id;
+        $movimiento->descripcion=$id;
+        $movimiento->save();
+    }
+
     public static function CrearFactura(){
         $empresa = Empresa::find(1);
 
@@ -767,6 +797,186 @@ class CronController extends Controller
     }
 
     public function eventosWompi(Request $request){
-        Log::info($request);
+        $request = (object) $request->all();
+
+        if($request->event == 'transaction.updated'){
+            $timestamp = $request->timestamp;
+            $request = (object) $request->data['transaction'];
+            $servicio = Integracion::where('nombre', 'WOMPI')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
+
+            $cadena = $request->id.''.$request->status.''.$request->amount_in_cents.''.$timestamp.''.$servicio->api_event;
+            dd(hash("sha256", $cadena));
+
+            if($request->status == 'APPROVED'){
+                $factura = Factura::where('codigo', explode("-", $request->reference)[1])->first();
+                if($factura->estatus == 1){
+                    $empresa = Empresa::find($factura->empresa);
+                    $nro = Numeracion::where('empresa', $empresa->id)->first();
+                    $caja = $nro->caja;
+
+                    while (true) {
+                        $numero = Ingreso::where('empresa', $empresa->id)->where('nro', $caja)->count();
+                        if ($numero == 0) {
+                            break;
+                        }
+                        $caja++;
+                    }
+
+                    $banco = Banco::where('nombre', 'WOMPI')->where('estatus', 1)->where('lectura', 1)->first();
+
+                    # REGISTRAMOS EL INGRESO
+                    $ingreso                = new Ingreso;
+                    $ingreso->nro           = $caja;
+                    $ingreso->empresa       = $empresa->id;
+                    $ingreso->cliente       = $factura->cliente;
+                    $ingreso->cuenta        = $banco->id;
+                    $ingreso->metodo_pago   = 9;
+                    $ingreso->tipo          = 1;
+                    $ingreso->fecha         = date('Y-m-d');
+                    $ingreso->observaciones = 'Pago Wompi ID: '.$request->id;
+                    $ingreso->save();
+
+                    # REGISTRAMOS EL INGRESO_FACTURA
+                    $precio         = $this->precisionAPI($request->amount_in_cents/100, $empresa->id);
+
+                    $items          = new IngresosFactura;
+                    $items->ingreso = $ingreso->id;
+                    $items->factura = $factura->id;
+                    $items->pagado  = $factura->pagado();
+                    $items->pago    = $precio;
+
+                    if ($precio == $this->precisionAPI($factura->porpagarAPI($empresa->id), $empresa->id)) {
+                        $factura->estatus = 0;
+                        $factura->save();
+
+                        CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                        $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                        foreach ($crms as $crm) {
+                            $crm->delete();
+                        }
+                    }
+
+                    $items->save();
+
+                    # AUMENTAMOS LA NUMERACIÓN DE PAGOS
+                    $nro->caja = $caja + 1;
+                    $nro->save();
+
+                    # REGISTRAMOS EL MOVIMIENTO
+                    $ingreso = Ingreso::find($ingreso->id);
+
+                    $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+
+                    # EJECUTAMOS COMANDOS EN MIKROTIK
+                    $cliente = Contacto::where('id', $factura->cliente)->first();
+                    $contrato = Contrato::where('client_id', $cliente->id)->first();
+                    $res = DB::table('contracts')->where('client_id', $cliente->id)->update(["state" => 'enabled']);
+
+                    # API MK
+
+                    if($contrato->server_configuration_id){
+                        $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                        $API = new RouterosAPI();
+                        $API->port = $mikrotik->puerto_api;
+
+                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                            $API->write('/ip/firewall/address-list/print', TRUE);
+                            $ARRAYS = $API->read();
+
+                            #ELIMINAMOS DE MOROSOS#
+                            $API->write('/ip/firewall/address-list/print', false);
+                            $API->write('?address='.$contrato->ip, false);
+                            $API->write("?list=morosos",false);
+                            $API->write('=.proplist=.id');
+                            $ARRAYS = $API->read();
+
+                            if(count($ARRAYS)>0){
+                                $API->write('/ip/firewall/address-list/remove', false);
+                                $API->write('=.id='.$ARRAYS[0]['.id']);
+                                $READ = $API->read();
+                            }
+                            #ELIMINAMOS DE MOROSOS#
+
+                            #AGREGAMOS A IP_AUTORIZADAS#
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "list" => 'ips_autorizadas'
+                                )
+                            );
+                            #AGREGAMOS A IP_AUTORIZADAS#
+
+                            $API->disconnect();
+
+                            $contrato->state = 'enabled';
+                            $contrato->save();
+                        }
+                    }
+
+                    # ENVÍO SMS
+                    if($precio){
+                        $servicio = Integracion::where('empresa', $empresa->id)->where('tipo', 'SMS')->where('status', 1)->first();
+                        if($servicio){
+                            $numero = str_replace('+','',$cliente->celular);
+                            $numero = str_replace(' ','',$numero);
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$this->ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                            if($servicio->nombre == 'Hablame SMS'){
+                                if($servicio->api_key && $servicio->user && $servicio->pass){
+                                    $post['toNumber'] = $numero;
+                                    $post['sms'] = $mensaje;
+
+                                    $curl = curl_init();
+                                    curl_setopt_array($curl, array(
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                        CURLOPT_HTTPHEADER => array(
+                                            'account: '.$servicio->user,
+                                            'apiKey: '.$servicio->api_key,
+                                            'token: '.$servicio->pass,
+                                            'Content-Type: application/json'
+                                        ),
+                                    ));
+                                    $result = curl_exec ($curl);
+                                    $err  = curl_error($curl);
+                                    curl_close($curl);
+                                }
+                            }else{
+                                if($servicio->user && $servicio->pass){
+                                    $post['to'] = array('57'.$numero);
+                                    $post['text'] = $mensaje;
+                                    $post['from'] = "";
+                                    $login = $servicio->user;
+                                    $password = $servicio->pass;
+
+                                    $ch = curl_init();
+                                    curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                    curl_setopt($ch, CURLOPT_POST, 1);
+                                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                        array(
+                                            "Accept: application/json",
+                                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                                    $result = curl_exec ($ch);
+                                    $err  = curl_error($ch);
+                                    curl_close($ch);
+                                }
+                            }
+                        }
+                    }
+                    return response('success', 200);
+                }
+                return response('false', 200);
+            }else{
+                return response('false', 200);
+            }
+        }
     }
 }
