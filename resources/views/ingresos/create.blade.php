@@ -78,6 +78,47 @@
         </span>
       </div> 
       <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Realizar un</label>
+        <div class="col-sm-8">
+          <select class="form-control selectpicker" name="realizar" id="realizar" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
+              <option value="1" selected>Pago a Factura o Categoría</option>
+              <option value="2" >Anticipo</option>
+          </select>
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('realizar') }}</strong>
+      </span>
+    </div> 
+    <div class="form-group row cls-realizar d-none" >
+       <div class="form-group row ">
+      <label class="col-sm-4 col-form-label">Donde ingresa el dinero</label>
+      <div class="col-sm-8">
+        <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5">
+          @foreach($categorias as $categoria)
+            <option value="{{$categoria->id}}" >{{$categoria->nombre}} {{$categoria->codigo}}</option>
+          @endforeach
+        </select>
+      </div>
+      
+    <span class="help-block error">
+          <strong>{{ $errors->first('puc') }}</strong>
+    </span>
+       </div>
+  </div> 
+    <div class="cls-realizar d-none" >
+      <div class="form-group row ">
+        <label class="col-sm-4 col-form-label">Valor Recibido</label>
+        <div class="col-sm-8">
+          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido">
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('valor_recibido') }}</strong>
+      </span>
+      </div>
+    </div> 
+      <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
           <input type="text" class="form-control datepicker"  id="fecha" value="{{date('d-m-Y')}}" name="fecha" disabled=""  >
@@ -156,7 +197,7 @@
   		</div>
 
     <h5>TIPO DE TRANSACCIÓN</h5>
-    <div class="row" style=" margin-top: 5%; text-align: center;">
+    <div class="row cls-realizar-inv" style=" margin-top: 5%; text-align: center;">
       <div class="col-md-12">
         <h6>¿Asociar este ingreso a una factura de venta existente? <a><i data-tippy-content="<font color='#d08f50'>Si</font> para cancelar o abonar facturas <br><font color='#d08f50'>No</font> para registrar otros ingresos" class="icono far fa-question-circle"></i></a></h6>
         <p>Recuerda que puedes registrar un ingreso sin necesidad de que esté asociado a una factura de venta</p>
@@ -335,18 +376,5 @@
 @endsection
 
 @section('scripts')
-    <script>
-        $(document).ready(function(){
-            
-        })
-
-        function saldoContacto(id){
-            var url= 'contacto/'+id;
-            var _token =   $('meta[name="csrf-token"]').attr('content');
-           
-            $.get(url,{_token:_token},function(data){
-                $('#total_saldo').val(data);
-            });
-        }
-    </script>
+<script src="{{asset('lowerScripts/ingreso/ingreso.js')}}"></script>
 @endsection

@@ -30,6 +30,7 @@ use App\Campos;
 use Config;
 use App\ServidorCorreo;
 use App\Integracion;
+use App\Puc;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -195,7 +196,12 @@ class IngresosController extends Controller
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-        return view('ingresos.create')->with(compact('clientes', 'inventario', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank'));
+         //Tomar las categorias del puc que no son transaccionables.
+         $categorias = Puc::where('empresa',auth()->user()->empresa)
+         ->whereRaw('length(codigo) > 6')
+         ->get();
+
+        return view('ingresos.create')->with(compact('clientes', 'inventario', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias'));
     }
 
     public function saldoContacto($id){
@@ -240,279 +246,62 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        if(auth()->user()->rol == 8){
-            $monto_pagar = 0;
-            foreach ($request->factura_pendiente as $key => $value) {
-                if ($request->precio[$key]) {
-                    $monto_pagar += $request->precio[$key];
-                }
-            }
-            
-            if($monto_pagar > auth()->user()->saldo){
-                $mensaje='UD. NO POSEE SALDO DISPONIBLE PARA CANCELAR LA FACTURA, LO INVITAMOS A REALIZAR UNA RECARGA';
-                return back()->with('danger', $mensaje)->withInput();
-            }
-        }
 
-        if ($request->tipo == 1) {
-            foreach ($request->factura_pendiente as $key => $value) {
-                $factura = Factura::find($request->factura_pendiente[$key]);
-                if($factura->estatus == 0){
-                    $mensaje='DISCULPE UD. ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
+        if($request->realizar == 2){
+            
+            $this->storeIngresoPuc($request);
+
+            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
+
+        }else{
+            if(auth()->user()->rol == 8){
+                $monto_pagar = 0;
+                foreach ($request->factura_pendiente as $key => $value) {
+                    if ($request->precio[$key]) {
+                        $monto_pagar += $request->precio[$key];
+                    }
+                }
+                
+                if($monto_pagar > auth()->user()->saldo){
+                    $mensaje='NO POSEE SALDO DISPONIBLE PARA CANCELAR LA FACTURA, LO INVITAMOS A REALIZAR UNA RECARGA';
                     return back()->with('danger', $mensaje)->withInput();
                 }
             }
-        }
-        
-        if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
-            Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
-            $sw = 1;
-            
-            foreach (Session::get('posttimer') as $key) {
-                if ($sw == 1) {
-                    $ultimoingreso = $key;
-                    $sw = 0;
-                }
-            }
-            
-            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-            
-            if ($diasDiferencia <= 10) {
-                $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
-                return back()->with('danger', $mensaje)->withInput();
-            }
-        }
-        
-        $request->validate([
-            'cuenta' => 'required|numeric'
-        ]);
-        
-        $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
-        $caja = $nro->caja;
-        
-        while (true) {
-            $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
-            if ($numero == 0) {
-                break;
-            }
-            $caja++;
-        }
-        
-        $ingreso = new Ingreso;
-        $ingreso->nro = $caja;
-        $ingreso->empresa = Auth::user()->empresa;
-        $ingreso->cliente = $request->cliente;
-        $ingreso->cuenta = $request->cuenta;
-        $ingreso->metodo_pago = $request->metodo_pago;
-        $ingreso->notas = $request->notas;
-        $ingreso->tipo = $request->tipo;
-        $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
-        $ingreso->observaciones = mb_strtolower($request->observaciones);
-        $ingreso->created_by = Auth::user()->id;
-        $ingreso->save();
-        
-        //Si el tipo de ingreso es de facturas
-        if ($ingreso->tipo == 1) {
-            foreach ($request->factura_pendiente as $key => $value) {
-                if ($request->precio[$key]) {
-                    $precio = $this->precision($request->precio[$key]);
+    
+            if ($request->tipo == 1) {
+                foreach ($request->factura_pendiente as $key => $value) {
                     $factura = Factura::find($request->factura_pendiente[$key]);
-                    $retencion = 'fact' . $factura->id . '_retencion';
-                    $precio_reten = 'fact' . $factura->id . '_precio_reten';
-                    if ($request->$retencion) {
-                        foreach ($request->$retencion as $key2 => $value2) {
-                            if ($request->$precio_reten[$key2]) {
-                                $retencion = Retencion::where('id', $value2)->first();
-                                $items = new IngresosRetenciones;
-                                $items->ingreso = $ingreso->id;
-                                $items->factura = $factura->id;
-                                $items->valor = $this->precision($request->$precio_reten[$key2]);
-                                $precio += $this->precision($request->$precio_reten[$key2]);
-                                $items->retencion = $retencion->porcentaje;
-                                $items->id_retencion = $retencion->id;
-                                $items->save();
-                            }
-                        }
+                    if($factura->estatus == 0){
+                        $mensaje='DISCULPE ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
+                        return back()->with('danger', $mensaje)->withInput();
                     }
-                    
-                    $items = new IngresosFactura;
-                    $items->ingreso = $ingreso->id;
-                    $items->factura = $factura->id;
-                    $items->pagado = $factura->pagado();
-                    $items->pago = $this->precision($request->precio[$key]);
-                    if ($this->precision($precio) == $this->precision($factura->porpagar())) {
-                        $factura->estatus = 0;
-                        $factura->save();
-
-                        CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
-
-                        $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
-                        foreach ($crms as $crm) {
-                            $crm->delete();
-                        }
-                    }
-                    $items->save();
-                }
-            }
-        } else { //Si el tipo de ingreso es de categorias
-            foreach ($request->categoria as $key => $value) {
-                if ($request->precio_categoria[$key]) {
-                    $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
-                    if (!$impuesto) {
-                        $impuesto = Impuesto::where('id', 0)->first();
-                    }
-                    
-                    $items = new IngresosCategoria;
-                    $items->valor = $this->precision($request->precio_categoria[$key]);
-                    $items->id_impuesto = $request->impuesto_categoria[$key];
-                    $items->ingreso = $ingreso->id;
-                    $items->categoria = $request->categoria[$key];
-                    $items->cant = $request->cant_categoria[$key];
-                    $items->descripcion = $request->descripcion_categoria[$key];
-                    $items->impuesto = $impuesto->porcentaje;
-                    $items->save();
-                }
-            }
-            if ($request->retencion) {
-                foreach ($request->retencion as $key => $value) {
-                    if ($request->precio_reten[$key]) {
-                        $retencion = Retencion::where('id', $request->retencion[$key])->first();
-                        $items = new IngresosRetenciones;
-                        $items->ingreso = $ingreso->id;
-                        $items->valor = $this->precision($request->precio_reten[$key]);
-                        $items->retencion = $retencion->porcentaje;
-                        $items->id_retencion = $retencion->id;
-                        $items->save();
-                    }
-                }
-            }
-        }
-        
-        //sumo a las numeraciones el recibo
-        $nro->caja = $caja + 1;
-        $nro->save();
-        
-        //Registro el Movimiento
-        $ingreso = Ingreso::find($ingreso->id);
-        //ingresos
-        $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
-        
-        if ($ingreso->tipo == 1) {
-            $cliente = Contacto::where('id', $request->cliente)->first();
-            $contrato = Contrato::where('client_id', $cliente->id)->first();
-            $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
-            
-            /* * * API MK * * */
-
-            if($contrato->server_configuration_id){
-                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                $API = new RouterosAPI();
-                $API->port = $mikrotik->puerto_api;
-
-                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    $API->write('/ip/firewall/address-list/print', TRUE);
-                    $ARRAYS = $API->read();
-
-                    #ELIMINAMOS DE MOROSOS#
-                    $API->write('/ip/firewall/address-list/print', false);
-                    $API->write('?address='.$contrato->ip, false);
-                    $API->write("?list=morosos",false);
-                    $API->write('=.proplist=.id');
-                    $ARRAYS = $API->read();
-
-                    if(count($ARRAYS)>0){
-                        $API->write('/ip/firewall/address-list/remove', false);
-                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                        $READ = $API->read();
-                    }
-                    #ELIMINAMOS DE MOROSOS#
-
-                    #AGREGAMOS A IP_AUTORIZADAS#
-                    $API->comm("/ip/firewall/address-list/add", array(
-                        "address" => $contrato->ip,
-                        "list" => 'ips_autorizadas'
-                        )
-                    );
-                    #AGREGAMOS A IP_AUTORIZADAS#
-
-                    $API->disconnect();
-
-                    $contrato->state = 'enabled';
-                    $contrato->save();
                 }
             }
             
-            /* * * API MK * * */
-            
-            /* * * ENVÍO SMS * * */
-            if($precio){
-                $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                if($servicio){
-                    $numero = str_replace('+','',$cliente->celular);
-                    $numero = str_replace(' ','',$numero);
-                    $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
-                    if($servicio->nombre == 'Hablame SMS'){
-                        if($servicio->api_key && $servicio->user && $servicio->pass){
-                            $post['toNumber'] = $numero;
-                            $post['sms'] = $mensaje;
-
-                            $curl = curl_init();
-                            curl_setopt_array($curl, array(
-                                CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING => '',
-                                CURLOPT_MAXREDIRS => 10,
-                                CURLOPT_TIMEOUT => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                                CURLOPT_HTTPHEADER => array(
-                                    'account: '.$servicio->user,
-                                    'apiKey: '.$servicio->api_key,
-                                    'token: '.$servicio->pass,
-                                    'Content-Type: application/json'
-                                ),
-                            ));
-                            $result = curl_exec ($curl);
-                            $err  = curl_error($curl);
-                            curl_close($curl);
-                        }
-                    }else{
-                        if($servicio->user && $servicio->pass){
-                            $post['to'] = array('57'.$numero);
-                            $post['text'] = $mensaje;
-                            $post['from'] = "";
-                            $login = $servicio->user;
-                            $password = $servicio->pass;
-
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                            curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                            curl_setopt($ch, CURLOPT_HTTPHEADER,
-                                array(
-                                    "Accept: application/json",
-                                    "Authorization: Basic ".base64_encode($login.":".$password)));
-                            $result = curl_exec ($ch);
-                            $err  = curl_error($ch);
-                            curl_close($ch);
-                        }
+            if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
+                Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
+                $sw = 1;
+                
+                foreach (Session::get('posttimer') as $key) {
+                    if ($sw == 1) {
+                        $ultimoingreso = $key;
+                        $sw = 0;
                     }
                 }
+                
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                
+                if ($diasDiferencia <= 10) {
+                    $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
+                    return back()->with('danger', $mensaje)->withInput();
+                }
             }
-            /* * * ENVÍO SMS * * */
-        }
-        
-        if(auth()->user()->rol == 8){
-            $user = User::find(auth()->user()->id);
-            $user->ganancia += 900;
-            $user->saldo -= $monto_pagar;
-            $user->save();
-        }
-        
-        if($request->cant_facturas > 1){
+            
+            $request->validate([
+                'cuenta' => 'required|numeric'
+            ]);
+            
             $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
             $caja = $nro->caja;
             
@@ -531,21 +320,88 @@ class IngresosController extends Controller
             $ingreso->cuenta = $request->cuenta;
             $ingreso->metodo_pago = $request->metodo_pago;
             $ingreso->notas = $request->notas;
-            $ingreso->tipo = 2;
+            $ingreso->tipo = $request->tipo;
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
-            $ingreso->observaciones = 'Ingreso por concepto de reconexión';
+            $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
             $ingreso->save();
             
-            $items = new IngresosCategoria;
-            $items->valor = $this->precision(10000);
-            $items->id_impuesto = 2;
-            $items->ingreso = $ingreso->id;
-            $items->categoria = 56;
-            $items->cant = 1;
-            $items->descripcion = 'Ingreso por concepto de reconexión';
-            $items->impuesto = 0;
-            $items->save();
+            //Si el tipo de ingreso es de facturas
+            if ($ingreso->tipo == 1) {
+                foreach ($request->factura_pendiente as $key => $value) {
+                    if ($request->precio[$key]) {
+                        $precio = $this->precision($request->precio[$key]);
+                        $factura = Factura::find($request->factura_pendiente[$key]);
+                        $retencion = 'fact' . $factura->id . '_retencion';
+                        $precio_reten = 'fact' . $factura->id . '_precio_reten';
+                        if ($request->$retencion) {
+                            foreach ($request->$retencion as $key2 => $value2) {
+                                if ($request->$precio_reten[$key2]) {
+                                    $retencion = Retencion::where('id', $value2)->first();
+                                    $items = new IngresosRetenciones;
+                                    $items->ingreso = $ingreso->id;
+                                    $items->factura = $factura->id;
+                                    $items->valor = $this->precision($request->$precio_reten[$key2]);
+                                    $precio += $this->precision($request->$precio_reten[$key2]);
+                                    $items->retencion = $retencion->porcentaje;
+                                    $items->id_retencion = $retencion->id;
+                                    $items->save();
+                                }
+                            }
+                        }
+                        
+                        $items = new IngresosFactura;
+                        $items->ingreso = $ingreso->id;
+                        $items->factura = $factura->id;
+                        $items->pagado = $factura->pagado();
+                        $items->pago = $this->precision($request->precio[$key]);
+                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                            $factura->estatus = 0;
+                            $factura->save();
+    
+                            CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+    
+                            $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                            foreach ($crms as $crm) {
+                                $crm->delete();
+                            }
+                        }
+                        $items->save();
+                    }
+                }
+            } else { //Si el tipo de ingreso es de categorias
+                foreach ($request->categoria as $key => $value) {
+                    if ($request->precio_categoria[$key]) {
+                        $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                        if (!$impuesto) {
+                            $impuesto = Impuesto::where('id', 0)->first();
+                        }
+                        
+                        $items = new IngresosCategoria;
+                        $items->valor = $this->precision($request->precio_categoria[$key]);
+                        $items->id_impuesto = $request->impuesto_categoria[$key];
+                        $items->ingreso = $ingreso->id;
+                        $items->categoria = $request->categoria[$key];
+                        $items->cant = $request->cant_categoria[$key];
+                        $items->descripcion = $request->descripcion_categoria[$key];
+                        $items->impuesto = $impuesto->porcentaje;
+                        $items->save();
+                    }
+                }
+                if ($request->retencion) {
+                    foreach ($request->retencion as $key => $value) {
+                        if ($request->precio_reten[$key]) {
+                            $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                            $items = new IngresosRetenciones;
+                            $items->ingreso = $ingreso->id;
+                            $items->valor = $this->precision($request->precio_reten[$key]);
+                            $items->retencion = $retencion->porcentaje;
+                            $items->id_retencion = $retencion->id;
+                            $items->save();
+                        }
+                    }
+                }
+            }
             
             //sumo a las numeraciones el recibo
             $nro->caja = $caja + 1;
@@ -554,20 +410,212 @@ class IngresosController extends Controller
             //Registro el Movimiento
             $ingreso = Ingreso::find($ingreso->id);
             //ingresos
-            $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+            $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
             
-            $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
-            if ($facturas) {
-                foreach ($facturas as $factura) {
-                    $factura->estatus = 0;
-                    $factura->save();
+            if ($ingreso->tipo == 1) {
+                $cliente = Contacto::where('id', $request->cliente)->first();
+                $contrato = Contrato::where('client_id', $cliente->id)->first();
+                $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+                
+                /* * * API MK * * */
+    
+                if($contrato->server_configuration_id){
+                    $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+    
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
+    
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        $API->write('/ip/firewall/address-list/print', TRUE);
+                        $ARRAYS = $API->read();
+    
+                        #ELIMINAMOS DE MOROSOS#
+                        $API->write('/ip/firewall/address-list/print', false);
+                        $API->write('?address='.$contrato->ip, false);
+                        $API->write("?list=morosos",false);
+                        $API->write('=.proplist=.id');
+                        $ARRAYS = $API->read();
+    
+                        if(count($ARRAYS)>0){
+                            $API->write('/ip/firewall/address-list/remove', false);
+                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                            $READ = $API->read();
+                        }
+                        #ELIMINAMOS DE MOROSOS#
+    
+                        #AGREGAMOS A IP_AUTORIZADAS#
+                        $API->comm("/ip/firewall/address-list/add", array(
+                            "address" => $contrato->ip,
+                            "list" => 'ips_autorizadas'
+                            )
+                        );
+                        #AGREGAMOS A IP_AUTORIZADAS#
+    
+                        $API->disconnect();
+    
+                        $contrato->state = 'enabled';
+                        $contrato->save();
+                    }
+                }
+                
+                /* * * API MK * * */
+                
+                /* * * ENVÍO SMS * * */
+                if($precio){
+                    $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                    if($servicio){
+                        $numero = str_replace('+','',$cliente->celular);
+                        $numero = str_replace(' ','',$numero);
+                        $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
+                        if($servicio->nombre == 'Hablame SMS'){
+                            if($servicio->api_key && $servicio->user && $servicio->pass){
+                                $post['toNumber'] = $numero;
+                                $post['sms'] = $mensaje;
+    
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                    CURLOPT_HTTPHEADER => array(
+                                        'account: '.$servicio->user,
+                                        'apiKey: '.$servicio->api_key,
+                                        'token: '.$servicio->pass,
+                                        'Content-Type: application/json'
+                                    ),
+                                ));
+                                $result = curl_exec ($curl);
+                                $err  = curl_error($curl);
+                                curl_close($curl);
+                            }
+                        }else{
+                            if($servicio->user && $servicio->pass){
+                                $post['to'] = array('57'.$numero);
+                                $post['text'] = $mensaje;
+                                $post['from'] = "";
+                                $login = $servicio->user;
+                                $password = $servicio->pass;
+    
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                    array(
+                                        "Accept: application/json",
+                                        "Authorization: Basic ".base64_encode($login.":".$password)));
+                                $result = curl_exec ($ch);
+                                $err  = curl_error($ch);
+                                curl_close($ch);
+                            }
+                        }
+                    }
+                }
+                /* * * ENVÍO SMS * * */
+            }
+            
+            if(auth()->user()->rol == 8){
+                $user = User::find(auth()->user()->id);
+                $user->ganancia += 900;
+                $user->saldo -= $monto_pagar;
+                $user->save();
+            }
+            
+            if($request->cant_facturas > 1){
+                $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+                $caja = $nro->caja;
+                
+                while (true) {
+                    $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                    if ($numero == 0) {
+                        break;
+                    }
+                    $caja++;
+                }
+                
+                $ingreso = new Ingreso;
+                $ingreso->nro = $caja;
+                $ingreso->empresa = Auth::user()->empresa;
+                $ingreso->cliente = $request->cliente;
+                $ingreso->cuenta = $request->cuenta;
+                $ingreso->metodo_pago = $request->metodo_pago;
+                $ingreso->notas = $request->notas;
+                $ingreso->tipo = 2;
+                $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+                $ingreso->observaciones = 'Ingreso por concepto de reconexión';
+                $ingreso->created_by = Auth::user()->id;
+                $ingreso->save();
+                
+                $items = new IngresosCategoria;
+                $items->valor = $this->precision(10000);
+                $items->id_impuesto = 2;
+                $items->ingreso = $ingreso->id;
+                $items->categoria = 56;
+                $items->cant = 1;
+                $items->descripcion = 'Ingreso por concepto de reconexión';
+                $items->impuesto = 0;
+                $items->save();
+                
+                //sumo a las numeraciones el recibo
+                $nro->caja = $caja + 1;
+                $nro->save();
+                
+                //Registro el Movimiento
+                $ingreso = Ingreso::find($ingreso->id);
+                //ingresos
+                $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+                
+                $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
+                if ($facturas) {
+                    foreach ($facturas as $factura) {
+                        $factura->estatus = 0;
+                        $factura->save();
+                    }
                 }
             }
+            
+            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
         }
-        
-        $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-        return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
     }
+
+    public function storeIngresoPuc($Request){
+
+        $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+            $caja = $nro->caja;
+            
+        while (true) {
+            $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+            if ($numero == 0) {
+                break;
+            }
+            $caja++;
+        }
+
+        $ingreso = new Ingreso;
+        $ingreso->nro = $caja;
+        $ingreso->empresa = Auth::user()->empresa;
+        $ingreso->cliente = $request->cliente;
+        $ingreso->cuenta = $request->cuenta;
+        $ingreso->metodo_pago = $request->metodo_pago;
+        $ingreso->notas = $request->notas;
+        $ingreso->tipo = $request->tipo;
+        $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+        $ingreso->observaciones = mb_strtolower($request->observaciones);
+        $ingreso->created_by = Auth::user()->id;
+        $ingreso->save();
+
+        //ingresos
+        $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+
+        PucMovimiento::facturaVenta($ingreso,1);        
+    } 
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);

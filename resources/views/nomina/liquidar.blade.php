@@ -126,7 +126,7 @@
                         <option {{$periodos->periodo == 0 ? 'selected readonly' : ''}} value={{$periodos->periodo}}>
                             {{Carbon\Carbon::parse($periodos->fecha_desde)->format('d')}} -
                             {{Carbon\Carbon::parse($periodos->fecha_hasta)->format('d')}} {{"de"}}
-                            {{Carbon\Carbon::parse($periodos->fecha_hasta)->monthName}}
+                            {{date("m", strtotime(Carbon::now($periodos->fecha_hasta)))}}
                             {{Carbon\Carbon::parse($periodos->fecha_desde)->format('Y')}}
                         </option>
                         @endforeach
