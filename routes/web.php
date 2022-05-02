@@ -855,6 +855,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/datos', 'ConfiguracionController@datos')->name('configuracion.datos');
 		Route::post('/datos/store', 'ConfiguracionController@datos_store')->name('datos.store');
 		Route::post('/vendedores/{id}/act_desc', 'VendedoresController@act_desc')->name('vendedores.act_desc');
+        Route::post('/canales/{id}/act_desc', 'CanalesController@act_desc')->name('canales.act_desc');
 		Route::post('/impuestos/{id}/act_desc', 'ImpuestosController@act_desc')->name('impuestos.act_desc');
 		Route::post('/retenciones/{id}/act_desc', 'RetencionesController@act_desc')->name('retenciones.act_desc');
 		Route::post('/usuarios/{id}/act_desc', 'UsuariosController@act_desc')->name('usuarios.act_desc');
@@ -885,6 +886,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::resource('retenciones', 'RetencionesController');
 		Route::resource('usuarios', 'UsuariosController');
 		Route::resource('tiposempresa', 'TiposEmpresaController');
+        Route::resource('canales', 'CanalesController');
+
 		Route::post('Typestoreback','TiposEmpresaController@storeback')->name('tiposempresa.storeback');
 
 		Route::get('/personalizar_inventario/organizar', 'CamposPersonalizadosInventarioController@organizar')->name('personalizar_inventario.organizar');

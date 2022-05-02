@@ -43,6 +43,9 @@
 			<a href="{{route('configuracion.numeraciones_dian')}}">Numeraciones DIAN</a><br>
 			<a href="{{route('configuracion.datos')}}">Datos generales</a><br>
 			<a href="{{route('vendedores.index')}}">Vendedores</a><br>
+			@if(isset($_SESSION['permisos']['769']))
+			<a href="{{route('canales.index')}}">Canales de Venta</a><br>
+			@endif
 			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
 			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
