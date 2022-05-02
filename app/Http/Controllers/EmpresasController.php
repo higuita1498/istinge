@@ -448,7 +448,7 @@ class EmpresasController extends Controller
     }
 
     public function storePageLength(Request $request) {
-        $empresa = Empresa::find(1);
+        $empresa = Empresa::find(Auth::user()->empresa);
         if ($empresa) {
             $empresa->pageLength = $request->pageLength;
             $empresa->save();
@@ -467,4 +467,26 @@ class EmpresasController extends Controller
         }
     }
 
+    public function storePeriodoFacturacion(Request $request) {
+        $empresa = Empresa::find(Auth::user()->empresa);
+        if ($empresa) {
+            $empresa->periodo_facturacion = $request->periodo_facturacion;
+            $empresa->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'CONFIGURACIÓN REALIZADA CON ÉXITO',
+                'message' => ($empresa->periodo_facturacion==1)?'PERIODO DE FACTURACIÓN - MES ANTICIPADO':'PERIODO DE FACTURACIÓN - MES VENCIDO',
+
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'title'   => 'CONFIGURACIÓN NO REALIZADA REALIZADA',
+                'message' => 'Ha ocurrido un error, intente de nuevo',
+            ]);
+        }
+    }
 }

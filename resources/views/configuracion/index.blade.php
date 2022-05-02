@@ -46,6 +46,7 @@
 			@if(isset($_SESSION['permisos']['769']))
 			<a href="{{route('canales.index')}}">Canales de Venta</a><br>
 			@endif
+			<a href="#" data-toggle="modal" data-target="#periodo_factura">Periodo de Facturación</a><br>
 			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
 			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
@@ -276,11 +277,69 @@
 		</div>
 	</div>
 	{{-- /CANT REGISTRO --}}
+
+	{{-- PERIODO FACTURACIÓN --}}
+	<div class="modal fade show" id="periodo_factura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Configurar Periodo de Facturación</h4>
+				</div>
+				<div class="modal-body">
+					<p>Indique el periodo de su facturación</p>
+					<div class="col-sm-6 offset-sm-3">
+						<select class="form-control selectpicker" name="periodo_facturacion" id="val_periodo_facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
+							<option value="1" {{ Auth::user()->empresa()->periodo_facturacion == 1 ? 'selected' : '' }}>Mes Anticipado</option>
+							<option value="2" {{ Auth::user()->empresa()->periodo_facturacion == 2 ? 'selected' : '' }}>Mes Vencido</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-success" onclick="storePeriodoFacturacion()">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /PERIODO FACTURACIÓN --}}
 @endsection
 
 @section('scripts')
     <script>
-    	function storePageLength(id) {
+    	function storePeriodoFacturacion() {
+    		cargando(true);
+    		if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/empresa/configuracion/storePeriodoFacturacion`;
+    		}else{
+    			var url = `/empresa/configuracion/storePeriodoFacturacion`;
+    		}
+    		$.ajax({
+    			url: url,
+    			method: 'POST',
+    			headers: {
+    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			},
+    			data: {
+    				periodo_facturacion: $('#val_periodo_facturacion').val()
+    			},
+    			success: function(response) {
+    				cargando(false);
+    				swal({
+    					title: response.title,
+    					text: response.message,
+    					type: response.type,
+    					showConfirmButton: true,
+    					confirmButtonColor: '#1A59A1',
+    					confirmButtonText: 'ACEPTAR',
+    				});
+    				if (response.success == true) {
+    					$("#periodo_factura").modal('hide');
+    				}
+    			}
+    		});
+    	}
+
+    	function storePageLength() {
     		cargando(true);
     		if (window.location.pathname.split("/")[1] === "software") {
     			var url = `/software/empresa/configuracion/storePageLength`;
