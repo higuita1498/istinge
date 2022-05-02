@@ -112,6 +112,7 @@
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
     			@endif
+                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
 			</div>
 		</div>
 		<div class="col-md-12">

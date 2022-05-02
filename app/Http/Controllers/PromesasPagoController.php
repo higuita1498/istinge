@@ -23,7 +23,7 @@ class PromesasPagoController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['seccion' => 'facturas', 'subseccion' => 'venta', 'title' => 'Promesas de Pago', 'icon' =>'fas fa-calendar']);
+        view()->share(['seccion' => 'facturas', 'subseccion' => 'promesaspago', 'title' => 'Promesas de Pago', 'icon' =>'fas fa-calendar']);
     }
 
     public function index(Request $request){
