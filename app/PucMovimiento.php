@@ -155,7 +155,7 @@ class PucMovimiento extends Model
         
     }
 
-    public static function facturaCompra($factura, $opcion){
+    public static function facturaCompra($ingreso, $opcion){
         
          //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
          $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
@@ -275,6 +275,36 @@ class PucMovimiento extends Model
              
          }
          
+    }
+
+    public static function ingreso($ingreso, $opcion){
+        //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
+        $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',1)->first();
+
+        if($opcion == 1 && !$isGuardar){
+            //ingresamos los valores del iva
+            $totalIngreso = $ingreso->total()->total;
+            // return response()->json($totalFactura->reten);    
+
+            //4to. Registramos el medio de pago de la factura.
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $factura->codigo;
+            $mov->fecha_elaboracion = $factura->fecha;
+            $mov->documento_id = $factura->id;
+            $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
+            $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
+            $mov->identificacion_tercero = $factura->cliente()->nit;
+            $mov->cliente_id = $factura->cliente()->id;
+            $mov->prefijo = $factura->numeracionFactura->prefijo;
+            $mov->consecutivo = $factura->codigo;
+            $mov->fecha_vencimiento = $factura->vencimiento;
+            $mov->descripcion = $factura->descripcion;
+            $mov->debito =  round($factura->total()->total);
+            $mov->enlace_a = 4;
+            $mov->save();
+        }
+
     }
 
     public function cliente(){
