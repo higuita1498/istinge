@@ -161,6 +161,13 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-3 pl-1 pt-1">
+                        <select title="Canal de Venta" class="form-control selectpicker" id="canal">
+                            @foreach ($canales as $canal)
+                            <option value="{{ $canal->id }}">{{ $canal->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -261,6 +268,7 @@
             data.c_celular = $("#celular").val();
             data.c_email = $("#email").val();
             data.vendedor = $("#vendedor").val();
+            data.canal = $("#canal").val();
             data.filtro = true;
         });
         
@@ -315,6 +323,7 @@
         $('#celular').val('');
         $('#email').val('');
         $("#vendedor").val('').selectpicker('refresh');
+        $("#canal").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

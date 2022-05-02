@@ -252,6 +252,12 @@
 							<td>{{ $contrato->vendedor()->nombre }}</td>
 						</tr>
 						@endif
+						@if($contrato->canal)
+						<tr>
+							<th>Canal de Venta</th>
+							<td>{{ $contrato->canal()->nombre }}</td>
+						</tr>
+						@endif
 						@if($contrato->creador)
 						<tr>
 							<th>Contrato Registrado por</th>
@@ -280,6 +286,12 @@
 						<tr>
 							<th>Vendedor</th>
 							<td>{{ $contrato->vendedor()->nombre }}</td>
+						</tr>
+						@endif
+						@if($contrato->canal)
+						<tr>
+							<th>Canal de Venta</th>
+							<td>{{ $contrato->canal()->nombre }}</td>
 						</tr>
 						@endif
 						<tr>

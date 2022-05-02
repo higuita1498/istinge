@@ -553,13 +553,26 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato" class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group mb-2">
-                                    <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5" required>
+                                    <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($vendedores as $vendedor)
                                         <option value="{{$vendedor->id}}" {{old('vendedor')==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
                                         @endforeach
                                     </select>
                                     <span style="color: red;">
                                         <strong>{{ $errors->first('vendedor') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Canal de Venta <a><i data-tippy-content="Seleccione el canal de venta del contrato" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group mb-2">
+                                    <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5">
+                                        @foreach($canales as $canal)
+                                        <option value="{{$canal->id}}" {{old('canal')==$canal->id?'selected':''}}>{{$canal->nombre}}</option>
+                                        @endforeach
+                                    </select>
+                                    <span style="color: red;">
+                                        <strong>{{ $errors->first('canal') }}</strong>
                                     </span>
                                 </div>
                             </div>

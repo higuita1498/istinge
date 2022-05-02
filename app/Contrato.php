@@ -17,6 +17,7 @@ use App\Ping;
 use App\PlanesVelocidad;
 use App\Model\Inventario\Inventario;
 use App\Vendedor;
+use App\Canal;
 
 class Contrato extends Model
 {
@@ -178,5 +179,9 @@ class Contrato extends Model
 
     public function vendedor(){
         return Vendedor::find($this->vendedor);
+    }
+
+    public function canal(){
+        return Canal::find($this->canal);
     }
 }
