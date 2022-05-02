@@ -144,6 +144,7 @@
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
         Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
+        Periodo: {{$factura->periodoCobrado('true')}}
         {{-- Creado por: {{ $ingreso->ingreso()->created_by()->nombres }}<br><br> --}}
     </div>
     

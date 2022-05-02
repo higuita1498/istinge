@@ -145,7 +145,10 @@
                 <ul class="nav flex-column sub-menu">
                     <?php if(isset($_SESSION['permisos']['40'])){ ?>
                         <li class="nav-item" id="venta">
-                            <a class="nav-link" href="{{route('facturas.index')}}" >Facturas de Venta</a>
+                            <a class="nav-link" href="{{route('facturas.index')}}" >Facturas Estandar</a>
+                        </li>
+                        <li class="nav-item" id="venta-electronica">
+                            <a class="nav-link" href="{{route('facturas.index-electronica')}}" >Facturas Electrónicas</a>
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['735'])){ ?>
