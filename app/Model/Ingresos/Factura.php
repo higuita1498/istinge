@@ -39,6 +39,25 @@ class Factura extends Model
         'nonkey', 'statusdian', 'observacionesdian', 'modificado','fecha_expedicion',
         'tipo_fac','tipo_operacion', 'promesa_pago', 'contrato_id'
     ];
+
+    protected $appends = ['session'];
+
+    public function getSessionAttribute(){
+        return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public function getAllPermissions($id){
+        if(Auth::user()->rol>=2){
+            if (DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->count() > 0 ) {
+                $permisos = DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->get();
+                foreach ($permisos as $key => $value) {
+                    $_SESSION['permisos'][$permisos[$key]->id_permiso] = '1';
+                }
+                return $_SESSION['permisos'];
+            }
+            else return null;
+        }
+    }
     
     public function parsear($valor)
     {

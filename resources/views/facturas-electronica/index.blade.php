@@ -12,7 +12,6 @@
     @else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
 		<a href="{{route('facturas.create-electronica')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura Electrónica</a>
-		<a href="{{route('facturas.index')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i>Facturas Estandar</a>
     @endif
 @endsection
 
@@ -112,7 +111,9 @@
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
     			@endif
+    			@if(isset($_SESSION['permisos']['774']))
                 <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
+                @endif
 			</div>
 		</div>
 		<div class="col-md-12">
