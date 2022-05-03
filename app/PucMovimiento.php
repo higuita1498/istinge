@@ -289,9 +289,9 @@ class PucMovimiento extends Model
             //4to. Registramos el medio de pago de la factura.
             $mov = new PucMovimiento;
             $mov->tipo_comprobante = "01";
-            $mov->consecutivo_comprobante = $factura->codigo;
-            $mov->fecha_elaboracion = $factura->fecha;
-            $mov->documento_id = $factura->id;
+            $mov->consecutivo_comprobante = $ingreso->nro;
+            $mov->fecha_elaboracion = $ingreso->fecha;
+            $mov->documento_id = $ingreso->id;
             $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
             $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
             $mov->identificacion_tercero = $factura->cliente()->nit;
@@ -299,8 +299,8 @@ class PucMovimiento extends Model
             $mov->prefijo = $factura->numeracionFactura->prefijo;
             $mov->consecutivo = $factura->codigo;
             $mov->fecha_vencimiento = $factura->vencimiento;
-            $mov->descripcion = $factura->descripcion;
-            $mov->debito =  round($factura->total()->total);
+            $mov->descripcion = $ingreso->observacion;
+            $mov->debito =  $totalIngreso;
             $mov->enlace_a = 4;
             $mov->save();
         }
