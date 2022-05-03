@@ -844,7 +844,11 @@ public function forma_pago()
     }
 
     public function contract(){
-        return Contrato::find($this->contrato_id);
+        
+        $contrato = Contrato::find($this->contrato_id);
+        if($contrato){
+            return $contrato;
+        }else return false;
     }
 
 }

@@ -73,7 +73,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel = new PHPExcel();
             $tituloReporte = "Reporte de Facturas electrónicas desde ".$request->fecha." hasta ".$request->hasta;
 
-            $titulosColumnas = array('Cliente', 'nit', 'fecha', 'vencimiento', 'producto','referencia','email','precio','impuesto','direccion','telefono','codigo');
+            $titulosColumnas = array('Cliente', 'nit', 'fecha', 'vencimiento', 'producto','referencia','email','precio','impuesto','direccion','telefono','codigo','Cantidad');
             $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
             $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
             ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
