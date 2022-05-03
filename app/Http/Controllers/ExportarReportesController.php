@@ -123,7 +123,7 @@ class ExportarReportesController extends Controller
             $ides=array();
             $factures=$facturas->get();
 
-            $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
+            $facturas=$facturas->OrderBy('factura.id', 'ASC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
 
             foreach ($factures as $factura) {
                 $ides[]=$factura->id;
