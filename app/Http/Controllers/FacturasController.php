@@ -557,6 +557,10 @@ class FacturasController extends Controller{
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
 
+        $title = "Nueva Factura de Venta";
+        $seccion = "facturas";
+        $subseccion = "venta";
+
         return view('facturas.create')->with(compact('clientes', 'tipo_documento',
             'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos',
             'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones',
@@ -626,6 +630,11 @@ class FacturasController extends Controller{
 
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Factura Electrónica', 'subseccion' => 'venta-electronica']);
+
+        $title = "Nueva Factura Electrónica";
+        $seccion = "facturas";
+        $subseccion = "venta-electronica";
+
         return view('facturas-electronica.create')->with(compact('clientes', 'tipo_documento', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos','cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2','unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion','extras'));
     }
 
