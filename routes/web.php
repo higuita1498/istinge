@@ -1017,6 +1017,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	//Exportar
 	Route::group(['prefix' => 'exportar'], function() {
 		Route::get('/ventas', 'ExportarReportesController@ventas')->name('exportar.ventas');
+		Route::get('/electronicas', 'ExportarReportesController@facturasElec');
 		Route::get('/ventasItem', 'ExportarReportesController@ventasItem')->name('exportar.ventasItem');
 		Route::get('/ventasCliente', 'ExportarReportesController@ventasCliente')->name('exportar.ventasCliente');
 		Route::get('/remisionesCliente', 'ExportarReportesController@remisionesCliente')->name('exportar.remisionesCliente');
