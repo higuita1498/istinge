@@ -153,7 +153,7 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[6].$i, $factura->cliente()->email)
                     ->setCellValue($letras[7].$i, $factura->itemsFactura->first()->precio)
                     ->setCellValue($letras[8].$i, $factura->cliente()->direccion)
-                    ->setCellValue($letras[9].$i, $factura->cliente()->telefono1)
+                    ->setCellValue($letras[9].$i, $factura->cliente()->celular)
                     ->setCellValue($letras[10].$i, $factura->codigo);
                 $i++;
             }
