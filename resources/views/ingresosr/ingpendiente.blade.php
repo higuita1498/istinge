@@ -32,7 +32,8 @@
 
         <input type="hidden" id="subfact{{$factura->id}}" value="{{App\Funcion::precision($factura->total()->subtotal)}}">
         <input type="hidden" id="totalfact{{$factura->id}}" value="{{App\Funcion::precision($pagar)}}">
-        </td>
+        <input type="hidden" id="descuento{{$factura->id}}" value="{{$factura->total()->descuento}}">  
+      </td>
         <td class="monetario" style="vertical-align: text-bottom;">
           <input type="text" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" max="{{App\Funcion::precision($pagar)}}" min="0" value="{{App\Funcion::precision($value)}}" onkeyup="totales_ingreso();"> 
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>

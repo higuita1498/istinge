@@ -59,6 +59,47 @@
         </span>
       </div> 
       <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Realizar un</label>
+        <div class="col-sm-8">
+          <select class="form-control selectpicker" name="realizar" id="realizar" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
+              <option value="1" selected>Pago a Factura o Categoría</option>
+              <option value="2" {{$ingreso->anticipo == 1 ? 'selected' : ''}}>Anticipo</option>
+          </select>
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('realizar') }}</strong>
+      </span>
+    </div> 
+    <div class="form-group row cls-realizar d-none" >
+       <div class="form-group row ">
+      <label class="col-sm-4 col-form-label">Donde ingresa el dinero</label>
+      <div class="col-sm-8">
+        <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5">
+          @foreach($categorias as $categoria)
+            <option value="{{$categoria->id}}" >{{$categoria->nombre}} {{$categoria->codigo}}</option>
+          @endforeach
+        </select>
+      </div>
+      
+    <span class="help-block error">
+          <strong>{{ $errors->first('puc') }}</strong>
+    </span>
+       </div>
+  </div> 
+    <div class="cls-realizar d-none" >
+      <div class="form-group row ">
+        <label class="col-sm-4 col-form-label">Valor Recibido</label>
+        <div class="col-sm-8">
+          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido">
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('valor_recibido') }}</strong>
+      </span>
+      </div>
+    </div> 
+      <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
           <input type="text" class="form-control datepicker"  id="fecha" value="{{date('d-m-Y', strtotime($ingreso->fecha))}}" name="fecha" disabled=""  >

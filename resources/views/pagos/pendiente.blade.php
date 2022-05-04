@@ -30,6 +30,7 @@
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->porpagar())}}
           <input type="hidden" id="subfact{{$factura->id}}" value="{{$factura->total()->subtotal}}">
           <input type="hidden" id="totalfact{{$factura->id}}" value="{{$factura->porpagar()}}">
+          <input type="hidden" id="descuento{{$factura->id}}" value="{{$factura->total()->descuento}}">
         </td>
         <td>
           <div id="retenciones_factura_{{$factura->id}}">
