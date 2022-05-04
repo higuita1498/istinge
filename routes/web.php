@@ -395,6 +395,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('{id}/anular', 'FacturasController@anular')->name('factura.anular');
 		Route::post('{id}/cerrar', 'FacturasController@cerrar')->name('factura.cerrar');
 		Route::get('/{id}/mensaje', 'FacturasController@mensaje')->name('facturas.mensaje');
+        Route::get('/{id}/whatsapp', 'FacturasController@whatsapp')->name('facturas.whatsapp');
 
 		Route::get('/productos', 'FacturasController@getItemsSelect');
 

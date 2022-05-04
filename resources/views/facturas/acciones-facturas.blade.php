@@ -48,6 +48,7 @@
             @else
                 <a href="#" class="btn btn-danger btn-icons disabled" disabled title="SMS Enviado"><i class="fas fa-mobile-alt"></i></a>
 	        @endif
+	        <a href="{{route('facturas.whatsapp',$id)}}" class="btn btn-outline-success btn-icons" title="Enviar Vía WhatsApp"><i class="fab fa-whatsapp"></i></a>
 	    @endif
 	@endif
 	@if($tipo == 2)
