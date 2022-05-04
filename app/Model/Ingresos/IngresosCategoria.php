@@ -4,6 +4,7 @@ namespace App\Model\Ingresos;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Categoria; use App\Impuesto; 
+use App\Puc;
 
 class IngresosCategoria extends Model
 {
@@ -20,9 +21,9 @@ class IngresosCategoria extends Model
 
     
     public function categoria($name=false){
-        $categoria = Categoria::where('id',$this->categoria)->first();
-        return $name ? Categoria::where('id',$this->categoria)->first()->nombre
-            : Categoria::where('id',$this->categoria)->first();
+        $categoria = Puc::where('id',$this->categoria)->first();
+        return $name ? Puc::where('id',$this->categoria)->first()->nombre
+            : Puc::where('id',$this->categoria)->first();
     }
 
     public function impuesto(){

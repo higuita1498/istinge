@@ -279,7 +279,7 @@ class PucMovimiento extends Model
 
     public static function ingreso($ingreso, $opcion){
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
-        $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',1)->first();
+        $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->first();
 
         if($opcion == 1 && !$isGuardar){
             //ingresamos los valores del iva
@@ -289,18 +289,18 @@ class PucMovimiento extends Model
             //4to. Registramos el medio de pago de la factura.
             $mov = new PucMovimiento;
             $mov->tipo_comprobante = "01";
-            $mov->consecutivo_comprobante = $factura->codigo;
-            $mov->fecha_elaboracion = $factura->fecha;
-            $mov->documento_id = $factura->id;
-            $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
-            $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
-            $mov->identificacion_tercero = $factura->cliente()->nit;
-            $mov->cliente_id = $factura->cliente()->id;
-            $mov->prefijo = $factura->numeracionFactura->prefijo;
-            $mov->consecutivo = $factura->codigo;
-            $mov->fecha_vencimiento = $factura->vencimiento;
-            $mov->descripcion = $factura->descripcion;
-            $mov->debito =  round($factura->total()->total);
+            $mov->consecutivo_comprobante = $ingreso->nro;
+            $mov->fecha_elaboracion = $ingreso->fecha;
+            $mov->documento_id = $ingreso->id;
+            $mov->codigo_cuenta = isset($ingreso->formaPago()->codigo) ? $ingreso->formaPago()->codigo : '';
+            $mov->cuenta_id = isset($ingreso->formaPago()->id) ? $ingreso->formaPago()->id : '';
+            $mov->identificacion_tercero = $ingreso->cliente()->nit;
+            $mov->cliente_id = $ingreso->cliente()->id;
+            $mov->prefijo = $ingreso->numeracionFactura->prefijo;
+            $mov->consecutivo = $ingreso->codigo;
+            $mov->fecha_vencimiento = $ingreso->vencimiento;
+            $mov->descripcion = $ingreso->observacion;
+            $mov->debito =  $totalIngreso;
             $mov->enlace_a = 4;
             $mov->save();
         }

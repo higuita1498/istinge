@@ -1755,7 +1755,10 @@ function retencion_calculate(id, reten, recursividad=true, pref='', seccion=null
             if (value.id==reten) {
                 if (pref) {
                     if(value.tipo != 1){
-                        total=( parseFloat($('#'+subtotal).val())*value.porcentaje)/100;
+                        var desc = $("#descuento" + seccion).val();
+                        //Se verifica que exista el descuento, sino se le coloca 0 para realizar el cálculo sin el error de NaN
+                        if (isNaN(desc)) { var desc = 0; }
+                        total = (parseFloat(($('#' + subtotal).val() - desc) * value.porcentaje)) / 100;
                     }else{
                         var number = $('#imp_total1').val();
                         var monto = number.replace(",", "");

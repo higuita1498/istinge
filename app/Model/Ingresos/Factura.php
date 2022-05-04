@@ -22,6 +22,7 @@ use DB;
 use App\GrupoCorte;
 use App\Puc;
 use App\FormaPago;
+use stdClass;
 class Factura extends Model
 {
     protected $table = "factura";
@@ -844,7 +845,16 @@ public function forma_pago()
     }
 
     public function contract(){
-        return Contrato::find($this->contrato_id);
+        
+        $contrato = Contrato::find($this->contrato_id);
+        if($contrato){
+            return $contrato;
+        }else {
+            $contrato = new stdClass;
+            $contrato->contrato_permanencia =false;
+            $contrato->server_configuration_id =false;
+            return $contrato;
+        };
     }
 
 }

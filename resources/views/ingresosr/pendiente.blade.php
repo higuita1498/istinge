@@ -22,7 +22,8 @@
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->porpagar())}}
         <input type="hidden" id="subfact{{$factura->id}}" value="{{$factura->total()->subtotal}}">
         <input type="hidden" id="totalfact{{$factura->id}}" value="{{App\Funcion::precision($factura->porpagar())}}">
-        </td>
+        <input type="hidden" id="descuento{{$factura->id}}" value="{{$factura->total()->descuento}}">  
+      </td>
         <td class="monetario" style="vertical-align: text-bottom;">
           <input type="number" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" max="{{App\Funcion::precision($factura->porpagar())}}" maxlength="24" min="0" onkeyup="pre_retencion_calculate({{$factura->id}});">
 

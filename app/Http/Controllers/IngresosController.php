@@ -31,6 +31,7 @@ use Config;
 use App\ServidorCorreo;
 use App\Integracion;
 use App\Puc;
+use App\PucMovimiento;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -252,7 +253,7 @@ class IngresosController extends Controller
             $this->storeIngresoPuc($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
+            return redirect('empresa/ingresos')->with('success', $mensaje);
 
         }else{
             if(auth()->user()->rol == 8){
@@ -585,7 +586,7 @@ class IngresosController extends Controller
         }
     }
 
-    public function storeIngresoPuc($Request){
+    public function storeIngresoPuc($request){
 
         $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
             $caja = $nro->caja;
@@ -598,6 +599,10 @@ class IngresosController extends Controller
             $caja++;
         }
 
+        //sumo a las numeraciones el recibo
+        $nro->caja = $caja + 1;
+        $nro->save();
+
         $ingreso = new Ingreso;
         $ingreso->nro = $caja;
         $ingreso->empresa = Auth::user()->empresa;
@@ -605,16 +610,29 @@ class IngresosController extends Controller
         $ingreso->cuenta = $request->cuenta;
         $ingreso->metodo_pago = $request->metodo_pago;
         $ingreso->notas = $request->notas;
-        $ingreso->tipo = $request->tipo;
+        $ingreso->tipo = 2;
         $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
         $ingreso->observaciones = mb_strtolower($request->observaciones);
         $ingreso->created_by = Auth::user()->id;
+        $ingreso->anticipo = 1;
         $ingreso->save();
+
+        $impuesto = Impuesto::where('porcentaje',0)->first();
+
+        //Registramos el ingreso de anticipo en una sola cuenta del puc.
+        $items = new IngresosCategoria;
+        $items->valor = $this->precision($request->valor_recibido);
+        $items->id_impuesto = $impuesto->id;
+        $items->impuesto = $impuesto->porcentaje;
+        $items->ingreso = $ingreso->id;
+        $items->categoria = $request->puc;
+        $items->cant = 1;
+        $items->save();
 
         //ingresos
         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
 
-        PucMovimiento::facturaVenta($ingreso,1);        
+        // PucMovimiento::ingreso($ingreso,1);        
     } 
 
     public function show($id){
