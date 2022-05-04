@@ -1,6 +1,34 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+	.scroll-y {
+		height: 200px;
+		overflow-y: scroll;
+		position:absolute;
+		width: 130vh;
+	}
+	.scroll-y::-webkit-scrollbar{
+        width: 8px;
+        height: 8px;
+    }
+    .scroll-y::-webkit-scrollbar-track{
+        background: #f1f1f1;
+        border-radius: 20px;
+    }
+    .scroll-y::-webkit-scrollbar-thumb{
+        background: #888;
+        border-radius: 20px;
+    }
+    .scroll-y::-webkit-scrollbar-thumb:hover{
+        background: #555;
+    }
+    @media all and (max-width: 768px) {
+		.scroll-y {
+			width: 28vh;
+		}
+	}
+   </style>
 <div class="row card-description">
 	<div class="col-md-12 text-center">
 	    @if($mikrotik->status == 0)
@@ -43,7 +71,6 @@
 	</div>
 </div>
 
-
 <div class="row card-description">
 	<div class="col-md-12">
 		<div class="table-responsive">
@@ -85,11 +112,13 @@
 						<th>Estado</th>
 						<td><span class="font-weight-bold text-{{$mikrotik->status('true')}}">{{ $mikrotik->status() }}</span></td>
 					</tr>
-					<tr>
+					<tr style="height: 200px;">
 						<th>Segmentos de IP</th>
-						<td>
-							<div class="table-responsive">
-								<table class="table table-striped text-center">
+						<td class="scroll-y">
+						    @foreach($segmentos as $segmento)
+						        {{$segmento->segmento}}<br>
+						    @endforeach
+						    {{-- <table class="table table-striped text-center">
 									<tr>
 										@php $i = 0; @endphp
 										@foreach($segmentos as $segmento)
@@ -102,8 +131,7 @@
 										    @endif
 										@endforeach
 								    </tr>
-								</table>
-							</div>
+								</table>--}}
 						</td>
 					</tr>
 					<tr>
