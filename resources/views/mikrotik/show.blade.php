@@ -88,9 +88,22 @@
 					<tr>
 						<th>Segmentos de IP</th>
 						<td>
-						    @foreach($segmentos as $segmento)
-						        {{$segmento->segmento}}<br>
-						    @endforeach
+							<div class="table-responsive">
+								<table class="table table-striped text-center">
+									<tr>
+										@php $i = 0; @endphp
+										@foreach($segmentos as $segmento)
+										    @if($i <= 6)
+										    <td style="font-size: 1em;">{{$segmento->segmento}}</td>
+										    @php $i++; @endphp
+										    @else
+										    <tr></tr>
+										    @php $i = 0; @endphp
+										    @endif
+										@endforeach
+								    </tr>
+								</table>
+							</div>
 						</td>
 					</tr>
 					<tr>
