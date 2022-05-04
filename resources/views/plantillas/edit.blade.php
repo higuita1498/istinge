@@ -17,6 +17,7 @@
         	    <select name="tipo" id="tipo" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
         	        <option value="0" {{$plantilla->tipo==0?'selected':''}} >SMS</option>
         	        <option value="1" {{$plantilla->tipo==1?'selected':''}} >EMAIL</option>
+        	        <option value="2" {{$plantilla->tipo==2?'selected':''}} >WHATSAPP</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('tipo') }}</strong>
@@ -29,6 +30,7 @@
         	        <option value="Bienvenida" {{$plantilla->clasificacion=='Bienvenida'?'selected':''}}>Bienvenida</option>
         	        <option value="Cobro" {{$plantilla->clasificacion=='Cobro'?'selected':''}}>Cobro</option>
         	        <option value="Notificacion" {{$plantilla->clasificacion=='Notificacion'?'selected':''}}>Notificación</option>
+        	        <option value="Facturacion" {{$plantilla->clasificacion=='Facturacion'?'selected':''}}>Facturación</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('clasificacion') }}</strong>
@@ -57,7 +59,7 @@
         		</div>
         	</div>
         	
-        	<div class="col-md-12 form-group {{$plantilla->tipo==0?'d-none':''}}" id="div_email">
+        	<div class="col-md-12 form-group {{$plantilla->tipo==0 || $plantilla->tipo==2?'d-none':''}}" id="div_email">
         	    <label class="control-label">Contenido <span class="text-danger">*</span></label>
         	    <textarea class="form-control ckeditor" name="contenido" id="contenido" rows="4">{{$plantilla->contenido}}</textarea>
         	    <span class="help-block error">
@@ -65,11 +67,19 @@
         	    </span>
         	</div>
 
-        	<div class="col-md-12 form-group {{$plantilla->tipo==1?'d-none':''}}" id="div_sms">
+        	<div class="col-md-12 form-group {{$plantilla->tipo==1 || $plantilla->tipo==2?'d-none':''}}" id="div_sms">
         	    <label class="control-label">Contenido (Máximo 120 caracteres)<span class="text-danger">*</span></label>
         	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="120">{{$plantilla->contenido}}</textarea>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('contenido_sms') }}</strong>
+        	    </span>
+        	</div>
+
+        	<div class="col-md-12 form-group {{$plantilla->tipo==0 || $plantilla->tipo==1?'d-none':''}}" id="div_whatsapp">
+        	    <label class="control-label">Contenido <span class="text-danger">*</span></label>
+        	    <textarea class="form-control" name="contenido_whatsapp" id="contenido_whatsapp" rows="2">{{$plantilla->contenido}}</textarea>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('contenido_whatsapp') }}</strong>
         	    </span>
         	</div>
         </div>
@@ -96,6 +106,9 @@
     	}else if($("#tipo").val() == 1){
     		$("#div_sms").addClass('d-none');
     		$("#div_email, #div_variables").removeClass('d-none');
+    	}else if($("#tipo").val() == 2){
+    		$("#div_email, #div_sms").addClass('d-none');
+    		$("#div_whatsapp, #div_variables").removeClass('d-none');
     	}
     });
 </script>

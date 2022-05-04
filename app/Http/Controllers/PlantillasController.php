@@ -51,8 +51,7 @@ class PlantillasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $request->validate([
             'title' => 'required',
             'tipo' => 'required',
@@ -70,7 +69,14 @@ class PlantillasController extends Controller
         $plantilla->tipo = $request->tipo;
         $plantilla->clasificacion = $request->clasificacion;
         $plantilla->title = $request->title;
-        $plantilla->contenido = ($request->tipo==0) ? strip_tags($request->contenido_sms):$request->contenido;
+
+        if($request->tipo==0){
+            $plantilla->contenido = strip_tags($request->contenido_sms);
+        }elseif($request->tipo==1){
+            $plantilla->contenido = $request->contenido;
+        }elseif($request->tipo==2){
+            $plantilla->contenido = $request->contenido_whatsapp;
+        }
 
         $plantilla->created_by = Auth::user()->id;
         $plantilla->status = 0;
@@ -148,7 +154,15 @@ class PlantillasController extends Controller
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
             $plantilla->title = $request->title;
-            $plantilla->contenido = ($request->tipo==0) ? strip_tags($request->contenido_sms):$request->contenido;
+
+            if($request->tipo==0){
+                $plantilla->contenido = strip_tags($request->contenido_sms);
+            }elseif($request->tipo==1){
+                $plantilla->contenido = $request->contenido;
+            }elseif($request->tipo==2){
+                $plantilla->contenido = $request->contenido_whatsapp;
+            }
+
             $plantilla->updated_by = Auth::user()->id;
             $plantilla->save();
 
