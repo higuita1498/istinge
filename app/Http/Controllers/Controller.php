@@ -1678,6 +1678,7 @@ class Controller extends BaseController
             'inicial'   => $ip_first_short,
             'final'     => $ip_last_short,
             'broadcast' => $ip_broadcast_short,
+            'i'         => $parte[3] + 1,
         ]);
     }
 }
