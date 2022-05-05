@@ -4,6 +4,7 @@ namespace App\Model\Gastos;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Categoria; use App\Impuesto; 
+use App\Puc;
 class GastosCategoria extends Model
 {
     protected $table = "gastos_categoria";
@@ -20,16 +21,16 @@ class GastosCategoria extends Model
     
     public function categoria($solo=false){
         if ($solo) {
-         return Categoria::where('id',$this->categoria)->first()->nombre;
+         return Puc::where('id',$this->categoria)->first()->nombre;
         }
 
-        $categoria=Categoria::where('id',$this->categoria)->first();  
+        $categoria=Puc::where('id',$this->categoria)->first();  
         
         $cat=$categoria->nombre;
        
         while (true) {
             if (!$categoria->asociado) {  $cat=$categoria->nombre.": ".$cat; break; }
-           $categoria=Categoria::where('nro',$categoria->asociado)->first();
+           $categoria=Puc::where('nro',$categoria->asociado)->first();
             $cat=$categoria->nombre." / ".$cat;
 
         }
@@ -58,7 +59,7 @@ class GastosCategoria extends Model
 
     public function detalleCat()
     {
-        return Categoria::where('id',$this->categoria)->first();
+        return Puc::where('id',$this->categoria)->first();
     }
 
 }
