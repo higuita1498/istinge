@@ -206,4 +206,8 @@ public function totalEmissions(){
         return $salario ? floatval($salario->valor) : 908526;
     }
 
+    public function suscripcion(){
+        return Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
+    }
+
 }

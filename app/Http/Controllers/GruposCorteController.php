@@ -22,7 +22,7 @@ class GruposCorteController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'grup_corte', 'title' => 'Grupos de Corte', 'icon' => 'fas fa-project-diagram']);
+        view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'grupo_corte', 'title' => 'Grupos de Corte', 'icon' => 'fas fa-project-diagram']);
     }
     
     public function index(Request $request){

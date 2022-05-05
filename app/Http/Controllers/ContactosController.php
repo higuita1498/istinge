@@ -55,7 +55,7 @@ class ContactosController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['invert' => true]);
+        view()->share(['middel' => true]);
         return view('contactos.indexnew');
     }
 
@@ -181,7 +181,7 @@ class ContactosController extends Controller
         $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
         $tipo_usuario = 0;
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['invert' => true]);
+        view()->share(['middel' => true]);
         return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario','tabla'));
     }
 
@@ -198,7 +198,7 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $tipo_usuario = 1;
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['invert' => true]);
+        view()->share(['middel' => true]);
         return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario','tabla'));
     }
     
@@ -259,7 +259,6 @@ class ContactosController extends Controller
     }
 
     public function show($id){
-        view()->share(['invertfalse' => true]);
         $this->getAllPermissions(Auth::user()->id);
 
         $contacto = Contacto::join('tipos_identificacion AS I','I.id','=','contactos.tip_iden')->where('contactos.id',$id)->where('contactos.empresa',Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
@@ -270,18 +269,6 @@ class ContactosController extends Controller
             }else{
                 view()->share(['title' => $contacto->nombre, 'subseccion' => 'proveedores', 'middel'=>true]);
             }
-
-            //$asociados=AsociadosContacto::where('contacto', $contacto->id)->get();
-            //$notasDebito = NotaDedito::where('empresa', Auth::user()->empresa)->where('proveedor', $id)->get();
-
-            //$facturas = Factura::join('items_factura as if','if.factura','=','factura.id')->select('factura.correo', 'factura.cliente','factura.id','factura.fecha','factura.nro','factura.codigo','factura.estatus','if.precio',DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->where('factura.cliente', $contacto->id)->groupBy('if.factura')->OrderBy('factura.fecha', 'desc')->get();
-            /*$ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
-                        ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
-                        ->join('bancos as b', 'b.id', '=', 'ingresos.cuenta')
-                        ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "") as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',DB::raw('(if(ingresos.tipo=1, (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)), if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))) as monto'))
-                        ->where('ingresos.cliente',$contacto->id)->groupBy( 'ingresos.id')
-                        ->OrderBy('ingresos.fecha', 'desc')
-                        ->get();*/
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
             $contratos = Contrato::where('client_id', $contacto->id)->where('status', 1)->get();

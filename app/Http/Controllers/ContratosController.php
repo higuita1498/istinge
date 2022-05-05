@@ -69,7 +69,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'invert' => true]);
+        view()->share(['title' => 'Contratos', 'middel' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -85,7 +85,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'invert' => true]);
+        view()->share(['title' => 'Contratos', 'middel' => true]);
         $tipo = 'disabled';
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -101,7 +101,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'invert' => true]);
+        view()->share(['title' => 'Contratos', 'middel' => true]);
         $tipo = 'enabled';
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->where('empresa', Auth::user()->empresa)->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -1236,6 +1236,7 @@ class ContratosController extends Controller
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
+        view()->share(['middel' => true]);
         $inventario = false;
 
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.serial_onu', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal')->where('contracts.id', $id)->first();
