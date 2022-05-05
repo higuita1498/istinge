@@ -5,23 +5,29 @@
 @endsection
 
 @section('boton')
-    @if($tipo_usuario == 0)
-    @if(isset($_SESSION['permisos']['411']))
-    <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
-    @endif
-    @if(isset($_SESSION['permisos']['201']))
-    <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
-    @endif
-    @endif
-
-    @if(isset($_SESSION['permisos']['5']))
-    @if($tipo_usuario == 0)
-    <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+    @if(auth()->user()->modo_lectura())
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+        </div>
     @else
-    <a href="{{route('contactos.createp')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Proveedor</a>
+        @if($tipo_usuario == 0)
+            @if(isset($_SESSION['permisos']['411']))
+                <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+            @endif
+            @if(isset($_SESSION['permisos']['201']))
+                <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+            @endif
+        @endif
+        @if(isset($_SESSION['permisos']['5']))
+            @if($tipo_usuario == 0)
+                <a href="{{route('contactos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+            @else
+                <a href="{{route('contactos.createp')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Proveedor</a>
+            @endif
+        @endif
+        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
-    @endif
-    <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
 @endsection
 
 @section('content')

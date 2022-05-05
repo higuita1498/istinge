@@ -1,8 +1,13 @@
  @extends('layouts.app')
-@section('boton')	
- <a href="{{route('tiposempresa.create')}}"  data-toggle="modal" data-target="#newtype" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Tipo de Contacto</a>
-	
-	
+@section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	<a href="{{route('tiposempresa.create')}}"  data-toggle="modal" data-target="#newtype" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Tipo de Contacto</a>
+	@endif
 @endsection		
 @section('content')
 	@if(Session::has('success'))
@@ -57,6 +62,8 @@
 						<td>{{$tipo->descripcion}}</td>
 						<td>{{$tipo->usado()}}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							<a href="{{route('tiposempresa.edit',$tipo->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
 							@if($tipo->usado()==0)
 								<form action="{{ route('tiposempresa.destroy',$tipo->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-tipo">
@@ -65,7 +72,7 @@
     						</form>
     						<button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-tipo', '¿Estas seguro que deseas eliminar el Tipo de Empresa?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 							@endif
-							
+							@endif
 						</td>
 					</tr>
 				@endforeach

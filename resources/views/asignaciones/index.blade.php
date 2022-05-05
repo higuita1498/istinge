@@ -1,17 +1,24 @@
 @extends('layouts.app')
 
 @section('boton')
-    @if(isset($_SESSION['permisos']['5']))
-	    <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
-    @endif
-    @if(isset($_SESSION['permisos']['411']))
-        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
-    @endif
-    @if(isset($_SESSION['permisos']['201']))
-        <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
-    @endif
-    @if(isset($_SESSION['permisos']['411']))
-	<a href="{{route('asignaciones.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Asignación</a>
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	    @if(isset($_SESSION['permisos']['5']))
+		    <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+	    @endif
+	    @if(isset($_SESSION['permisos']['411']))
+	        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+	    @endif
+	    @if(isset($_SESSION['permisos']['201']))
+	        <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+	    @endif
+	    @if(isset($_SESSION['permisos']['411']))
+		<a href="{{route('asignaciones.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Asignación</a>
+		@endif
 	@endif
 @endsection
 
@@ -59,8 +66,11 @@
 							<td>{{ $contrato->nit }}</td>
 							<td>{{date('d-m-Y', strtotime($contrato->fecha_isp))}}</td>
 							<td class="text-center">
+								@if(auth()->user()->modo_lectura())
+								@else
 								<a href="{{ route('contactos.show',$contrato->id )}}"  class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
 								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}"  class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></i></a>
+								@endif
 							</td>
 						</tr>
 					@endforeach

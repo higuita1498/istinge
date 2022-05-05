@@ -1,8 +1,15 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['263']))
 	    <a href="{{route('pagosrecurrentes.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Pago Recurrente</a>
+	@endif
 	@endif
 @endsection
 
@@ -73,6 +80,8 @@
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($gasto->total()->total)}} </td>
 						<td class="font-weight-bold text-{{$gasto->estado('true')}}">{{ $gasto->estado() }}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							@if(isset($_SESSION['permisos']['262']))
 							<a  href="{{route('pagosrecurrentes.show',$gasto->nro)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></i></a>
 							@endif
@@ -94,6 +103,7 @@
 						  		<input name="_method" type="hidden" value="DELETE">
 							</form>
 							<button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('eliminar-gasto{{$gasto->id}}', 'Estas seguro que deseas eliminar el pago recurrente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+							@endif
 							@endif
 						</td>
 					</tr> 

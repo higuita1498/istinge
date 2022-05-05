@@ -1,10 +1,17 @@
 @extends('layouts.app')
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['435']))
         <a href="{{route('planes-velocidad.create')}}" class="btn btn-outline-info btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
     @endif
     @if(isset($_SESSION['permisos']['432']))
     <a href="{{route('mikrotik.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Mikrotik</a>
+    @endif
     @endif
 @endsection
 
@@ -57,6 +64,8 @@
 						<td class="text-center">{{$mikrotik->puerto_api}}</td>
 						<td class="font-weight-bold text-center text-{{$mikrotik->status('true')}}">{{$mikrotik->status()}}</td>
 						<td class="text-center">
+							@if(auth()->user()->modo_lectura())
+							@else
 			                <form action="{{route('mikrotik.conectar',$mikrotik->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="conectar-{{$mikrotik->id}}">
 			                    @csrf
 			                </form>
@@ -93,6 +102,7 @@
 						        <button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik-{{$mikrotik->id}}', '¿Está seguro que deseas eliminar el Mikrotik {{$mikrotik->nombre}}?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i></button>
 						    @endif
 						    <a title="IP's Autorizadas" href="{{ route('mikrotik.ips-autorizadas',$mikrotik->id )}}" class="btn btn-outline-warning btn-icons"><i class="fas fa-project-diagram"></i></a>
+						    @endif
 						</td>
 					</tr>
 				@endforeach

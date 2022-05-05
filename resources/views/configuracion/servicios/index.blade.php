@@ -1,8 +1,13 @@
 @extends('layouts.app')
 @section('boton')
-
-		<a href="{{route('servicio.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Servicio</a>
-
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	<a href="{{route('servicio.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Servicio</a>
+	@endif
 @endsection
 @section('content')
 	@if(Session::has('success'))
@@ -48,6 +53,8 @@
 						<td>{{$servicio->tiempo}} minutos</td>
 						<td>{{$servicio->estatus()}}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							<a href="{{route('servicio.edit',$servicio->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
 							@if($servicio->usado()==0)
 								<form action="{{ route('servicio.destroy',$servicio->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-servicio">
@@ -56,7 +63,7 @@
     						</form>
     						<button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-servicio', '¿Estas seguro que deseas eliminar el servicio?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 							@endif
-
+							@endif
 						</td>
 					</tr>
 				@endforeach

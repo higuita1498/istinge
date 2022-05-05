@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
-
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if($plan->status == 0)
     <form action="{{ route('planes-velocidad.destroy',$plan->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-mikrotik">
         {{ csrf_field() }}
@@ -10,7 +15,7 @@
     <button class="btn btn-danger" type="submit" title="Eliminar" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i> Eliminar</button>
     @endif
     <a href="{{route('planes-velocidad.edit',$plan->id)}}" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
-
+    @endif
 @endsection
 
 @section('content')

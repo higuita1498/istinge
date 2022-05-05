@@ -47,6 +47,7 @@
 					<td>{{$servicio->app == 1?'SI':'NO'}}</td>
 					<td class="font-weight-bold text-{{$servicio->status('true')}}">{{$servicio->status()}}</td>
 					<td>
+						@if(auth()->user()->modo_lectura())@else
 						<form action="{{ route('integracion-pasarelas.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">
 							@csrf
 		                </form>
@@ -57,6 +58,7 @@
 		                  <button class="btn btn-outline-danger btn-icons" type="submit" title="Deshabilitar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea deshabilitar este servicio?', '');"><i class="fas fa-power-off"></i></button>
 		                @else
 		                  <button class="btn btn-outline-success btn-icons" type="submit" title="Habilitar" onclick="confirmar('act_desc{{$servicio->id}}', '¿Está seguro que desea habilitar este servicio?', '');"><i class="fas fa-power-off"></i></button>
+		                @endif
 		                @endif
 					</td>
 				</tr>

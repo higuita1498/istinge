@@ -5,12 +5,19 @@
 @endsection
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['757']))
     <a href="{{route('monitor-blacklist.api')}}" class="btn btn-success btn-sm"><i class="fas fa-cogs"></i> Configurar API</a>
     @endif
     <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @if (isset($_SESSION['permisos']['754']) && Auth::user()->empresa()->api_key_hetrixtools && Auth::user()->empresa()->id_contacto_hetrixtools)
         <a href="{{route('monitor-blacklist.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Monitor Blacklist</a>
+    @endif
     @endif
 @endsection
 

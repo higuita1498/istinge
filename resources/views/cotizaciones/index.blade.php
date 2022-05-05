@@ -1,12 +1,10 @@
 @extends('layouts.app')
 @section('boton')
-	@if(Auth::user()->modo_lectura())
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			<a>Esta en Modo Lectura si desea seguir disfrutando de Nuestros Servicios Cancelar Alguno de Nuestros Planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aqui.</b></a></a>
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+	@if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
 	@else
 	<a href="{{route('cotizaciones.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Cotización</a>
 	@endif
@@ -96,6 +94,8 @@
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total)}}</td>
 						<td class="text-{{$factura->estatus(true)}}">{{$factura->estatus()}}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							<a href="{{route('cotizaciones.show',$factura->cot_nro)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 							@if(Auth::user()->modo_lectura())
 							@else
@@ -108,6 +108,7 @@
 								</form>
 								<button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('eliminar-factura{{$factura->id}}', '¿Estas seguro que deseas eliminar la cotización?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 								@endif
+							@endif
 							@endif
 						</td>
 					</tr>

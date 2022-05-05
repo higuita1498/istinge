@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter">
     	<i class="far fa-question-circle"></i> Tutorial
     </button>
@@ -30,6 +36,7 @@
     		</div>
     	</div>
     </div>
+    @endif
 @endsection
 
 @section('content')
@@ -79,6 +86,8 @@
 					<td>{{$servicio->api_key}}</td>
 					<td class="font-weight-bold text-{{$servicio->status('true')}}">{{$servicio->status()}}</td>
 					<td>
+						@if(auth()->user()->modo_lectura())
+						@else
 						<form action="{{ route('integracion-whatsapp.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">
 							@csrf
 		                </form>
@@ -92,6 +101,7 @@
 		                @endif
 		                @if($servicio->api_key && $servicio->numero)
 		                    <a href="{{route('integracion-whatsapp.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-icons" title="Envío de SMS Prueba"><i class="far fa-comment-dots"></i></a>
+		                @endif
 		                @endif
 					</td>
 				</tr>

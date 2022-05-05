@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton') 
+@if(auth()->user()->modo_lectura())
+  <div class="alert alert-warning text-left" role="alert">
+    <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+    <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+  </div>
+@else
   <a href="{{route('factura.remision',$remision->nro)}}" class="btn btn-outline-primary btn-sm "title="Facturar" target="_blank"><i class="fas fa-"></i> Facturar</a>
   <a href="{{route('remisiones.edit',$remision->nro)}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-edit"></i> Editar</a>
   <a href="{{route('remisiones.imprimir',['id' => $remision->nro, 'name'=> 'Remision No. '.$remision->nro.'.pdf'])}}" target="_black" class="btn btn-outline-primary btn-sm" title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
@@ -16,7 +22,7 @@
       <i class="fas fa-unlock-alt"> Convertir a Abierta</i>
     </button>
     @endif
-    
+@endif
 @endsection   
 
 @section('content')

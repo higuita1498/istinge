@@ -1,14 +1,10 @@
 @extends('layouts.app')
 @section('boton')
-	@if(Auth::user()->modo_lectura())
-
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-
-			<a>Esta en Modo Lectura si desea seguir disfrutando de Nuestros Servicios Cancelar Alguno de Nuestros Planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aqui.</b></a></a>
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+	@if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
 	@else
 		<a href="{{route('remisiones.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Remisión</a>
 	@endif
@@ -115,6 +111,8 @@
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->porpagar())}}</td>
 						<td class="text-{{$factura->estatus(true, true)}}">{{$factura->estatus()}}</td> 
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							<a href="{{route('remisiones.show',$factura->id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a> 
 							<a href="{{route('remisiones.imprimir',['id' => $factura->nro, 'name'=> 'Remision No. '.$factura->nro.'.pdf'])}}" target="_black"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>
 							@if($factura->estatus==1)
@@ -132,7 +130,7 @@
 							<button class="btn btn-outline-success  btn-icons" type="submit" title="Abrir" onclick="confirmar('anular-factura{{$factura->id}}', '¿Está seguro de que desea abrir la remisión?', ' ');"><i class="fas fa-unlock-alt"></i></button>
 							@endif
 							@endif
-
+							@endif
 						</td> 
 					</tr>
 				@endforeach

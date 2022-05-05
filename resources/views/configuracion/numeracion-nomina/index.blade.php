@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('boton')
+  @if(auth()->user()->modo_lectura())
+      <div class="alert alert-warning text-left" role="alert">
+          <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+          <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+      </div>
+  @else
     <a href="{{route('numeraciones_nomina.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva numeración</a>
+  @endif
 @endsection
 
 @section('content')
@@ -54,7 +61,9 @@
               <td>{{$num->estado()}}</td>
               <td>{{$num->prefijo}}</td>
               <td>{{$num->inicio}}</td>
-              <td><a href="{{route('numeraciones_nomina.edit',$num->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
+              <td>
+                @if(auth()->user()->modo_lectura())
+                @else<a href="{{route('numeraciones_nomina.edit',$num->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
                 @if($num->usado()==0)
                   <form action="{{ route('numeraciones_nomina.destroy',$num->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-num{{$num->id}}">
                       @csrf
@@ -69,6 +78,7 @@
                     <button class="btn btn-outline-secondary  btn-icons" type="submit" title="Desactivar" onclick="confirmar('act_desc-num{{$num->id}}', '¿Estas seguro que deseas desactivar esta numeración?', 'No aparecera para seleccionar');"><i class="fas fa-power-off"></i></button>
                   @else
                     <button class="btn btn-outline-success  btn-icons" type="submit" title="Activar" onclick="confirmar('act_desc-num{{$num->id}}', '¿Estas seguro que deseas activar esta numeración?', 'Aparecera para seleccionar');"><i class="fas fa-power-off"></i></button>
+                  @endif
                   @endif
               </td>
             </tr>
