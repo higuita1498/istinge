@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('boton')
+@if(Auth::user()->rol >= 2)
     @if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
 	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
@@ -15,6 +16,7 @@
 		@endif
 	@endif
 	@endif
+@endif
 @endsection
 
 @section('content')
@@ -78,8 +80,6 @@
 							<td>{{$usuario->empresa()?$usuario->empresa()->nombre:'MASTER'}}</td>
 							@endif
 							<td class="text-center">
-								@if(auth()->user()->modo_lectura())
-								@else
 							    @if(Auth::user()->rol > 1 && $recarga == 0)
 								<a href="{{route('usuarios.show',$usuario->id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 								@endif
@@ -130,7 +130,6 @@
 				                    @if($recarga == 1)
 				                        <button class="btn btn-outline-info btn-icons saldo" idUser="{{$usuario->id}}" title="Recarga de Saldo"><i class="fas fa-dollar-sign"></i></button>
 				                    @endif
-				                @endif
 				                @endif
 							</td>
 						</tr>
