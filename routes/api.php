@@ -33,6 +33,7 @@ Route::get('getGrupo/{grupo}', 'Controller@getGrupo');
 Route::get('getSegmentos/{mikrotik}', 'Controller@getSegmentos');
 Route::get('getContracts/{id}', 'Controller@getContracts');
 Route::get('getSubnetting/{ip_address}/{prefijo}', 'Controller@getSubnetting');
+Route::get('habilitarContratos/{fecha}', 'CronController@habilitarContratos');
 
 /** EVENTOS WOMPI **/
 Route::post('pagos/wompi', 'CronController@eventosWompi');
