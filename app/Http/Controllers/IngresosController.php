@@ -326,6 +326,12 @@ class IngresosController extends Controller
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
             $ingreso->save();
+
+            //registramos el saldo a favor que se generó al pagar la factura
+            if($request->saldofavor > 0){
+                $contacto = Contacto::find($request->cliente);
+                $contacto->saldo_favor
+            }
             
             //Si el tipo de ingreso es de facturas
             if ($ingreso->tipo == 1) {
@@ -629,11 +635,30 @@ class IngresosController extends Controller
         $items->cant = 1;
         $items->save();
 
+        $contacto = Contacto::find($request->cliente);
+        $contacto->saldo_favor+=$request->valor_recibido;
+        $contacto->save(); 
+
         //ingresos
         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
 
-        // PucMovimiento::ingreso($ingreso,1);        
+        PucMovimiento::ingreso($ingreso,1);        
     } 
+
+    public function showMovimiento($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $ingreso = Ingreso::find($id);
+        /*
+        obtenemos los movimiento sque ha tenido este documento
+        sabemos que se trata de un tipo de movimiento 03
+        */
+        $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',1)->get();
+        if ($ingreso) {
+            view()->share(['title' => 'Detalle Movimiento ' .$ingreso->codigo]);
+            return view('ingresos.show-movimiento')->with(compact('ingreso','movimientos'));
+        }
+        return redirect('empresa/ingresos')->with('success', 'No existe un registro con ese id');
+    }
 
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
