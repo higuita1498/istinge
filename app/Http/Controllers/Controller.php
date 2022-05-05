@@ -1667,6 +1667,10 @@ class Controller extends BaseController
         $ip_first_short = long2ip($ip_first);
         $ip_last_short = long2ip($ip_last);
         $ip_broadcast_short = long2ip($ip_broadcast);
+
+        $parte = explode(".", $ip_address);
+        $ip_first_short = $parte[0].'.'.$parte[1].'.'.$parte[2].'.'.($parte[3] + 1);
+
         return response()->json([
             'address'   => $ip_address,
             'netmask'   => $ip_nmask,
