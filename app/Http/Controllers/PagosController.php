@@ -31,6 +31,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use App\Model\Ingresos\Ingreso;
 use Config;
 use App\ServidorCorreo;
+use App\Puc;
 
 class PagosController extends Controller
 {
@@ -85,7 +86,9 @@ class PagosController extends Controller
         $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $metodos_pago =DB::table('metodos_pago')->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->orWhere('empresa', 1)->whereNull('asociado')->get();
+        $categorias = Puc::where('empresa',auth()->user()->empresa)
+         ->whereRaw('length(codigo) > 6')
+         ->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         
         //Datos necesarios para hacer funcionar la ventana modal
@@ -279,7 +282,9 @@ class PagosController extends Controller
             $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
             $metodos_pago =DB::table('metodos_pago')->get();
             $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
-            $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
+            $categorias = Puc::where('empresa',auth()->user()->empresa)
+            ->whereRaw('length(codigo) > 6')
+            ->get();
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $items= $retencionesIngreso=array();
             $items = GastosFactura::where('gasto',$gasto->id)->get();

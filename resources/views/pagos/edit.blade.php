@@ -12,7 +12,6 @@
       }, 5000);
     </script>
 
-
   @endif 
   <form method="POST" action="{{ route('pagos.update', $gasto->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-ingreso" >
     {{ csrf_field() }} 
@@ -167,23 +166,7 @@
                     <input type="hidden" name="id_cate{{$cont}}" value="{{$item->id}}">                        
                       <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria{{$cont}}" required="" onchange="enabled({{$cont}});" >
                         @foreach($categorias as $categoria)
-                          <optgroup label="{{$categoria->nombre}}">
-                              @foreach($categoria->hijos(true) as $categoria1)
-                                <option {{old('categoria')==$categoria1->id?'selected':''}} value="{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}} {{$categoria1->id==$item->categoria?'selected':''}}>{{$categoria1->nombre}}</option>
-                                @foreach($categoria1->hijos(true) as $categoria2)
-                                    <option class="hijo" {{old('categoria')==$categoria2->id?'selected':''}} value="{{$categoria2->id}}" {{$categoria2->estatus==0?'disabled':''}} {{$categoria2->id==$item->categoria?'selected':''}}>{{$categoria2->nombre}}</option>
-                                  @foreach($categoria2->hijos(true) as $categoria3)
-                                    <option class="nieto" {{old('categoria')==$categoria3->id?'selected':''}} value="{{$categoria3->id}}" {{$categoria3->estatus==0?'disabled':''}} {{$categoria3->id==$item->categoria?'selected':''}}>{{$categoria3->nombre}}</option>
-                                    @foreach($categoria3->hijos(true) as $categoria4)
-                                      <option class="bisnieto" {{old('categoria')==$categoria4->id?'selected':''}} value="{{$categoria4->id}}" {{$categoria3->estatus==0?'disabled':''}} {{$categoria4->id==$item->categoria?'selected':''}}>{{$categoria4->nombre}}</option>
-
-                                    @endforeach
-
-                                  @endforeach
-
-                                @endforeach
-                              @endforeach
-                          </optgroup>
+                                <option {{old('categoria')==$categoria->id?'selected':''}} value="{{$categoria->id}}" {{$categoria->estatus==0?'disabled':''}} {{$categoria->id==$item->categoria?'selected':''}}>{{$categoria->nombre}}</option>
                         @endforeach
                       </select>
                     </div>
