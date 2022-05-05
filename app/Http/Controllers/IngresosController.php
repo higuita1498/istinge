@@ -195,7 +195,6 @@ class IngresosController extends Controller
         $metodos_pago =DB::table('metodos_pago')->whereIn('id',[1,2,3,4,5,6,9])->orderby('orden','asc')->get();
         $inventario = Inventario::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
          //Tomar las categorias del puc que no son transaccionables.
          $categorias = Puc::where('empresa',auth()->user()->empresa)
