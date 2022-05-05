@@ -330,7 +330,7 @@ class IngresosController extends Controller
             //registramos el saldo a favor que se generó al pagar la factura
             if($request->saldofavor > 0){
                 $contacto = Contacto::find($request->cliente);
-                $contacto->saldo_favor
+                $contacto->saldo_favor;
             }
             
             //Si el tipo de ingreso es de facturas
