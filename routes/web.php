@@ -662,6 +662,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('{id}/anular', 'IngresosController@anular')->name('ingresos.anular');
         Route::get('efecty', 'IngresosController@efecty')->name('ingresos.efecty');
         Route::post('efecty', 'IngresosController@efecty_store')->name('ingresos.efecty_store');
+		Route::get('/movimiento/{id}', 'IngresosController@showMovimiento')->name('ingresos.showmovimiento');
 	});
 
 	Route::resource('recurrentes', 'RecurrentesController');
