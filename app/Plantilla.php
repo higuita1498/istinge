@@ -41,6 +41,12 @@ class Plantilla extends Model
     
     public function tipo()
     {
-        return ($this->tipo == 0) ? 'SMS' : 'EMAIL';
+        if($this->tipo==0){
+            return 'SMS';
+        }elseif($this->tipo==1){
+            return 'EMAIL';
+        }elseif($this->tipo==2){
+            return 'WHATSAPP';
+        }
     }
 }

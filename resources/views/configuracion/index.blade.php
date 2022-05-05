@@ -157,6 +157,9 @@
 			@if(isset($_SESSION['permisos']['763']))
 			<a href="{{ route('integracion-pasarelas.index') }}">Pasarelas de Pago</a><br>
 			@endif
+			@if(isset($_SESSION['permisos']['777']))
+			<a href="{{ route('integracion-whatsapp.index') }}">WhatsApp (CallMEBot)</a><br>
+			@endif
 			@if(isset($_SESSION['permisos']['764']) && Auth::user()->nombres == 'Desarrollo')
 			<a href="#">Troncal SIP</a><br>
 			@endif

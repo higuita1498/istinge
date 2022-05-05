@@ -16,6 +16,7 @@
         	    <select name="tipo" id="tipo" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
         	        <option value="0">SMS</option>
         	        <option value="1">EMAIL</option>
+        	        <option value="2">WHATSAPP</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('tipo') }}</strong>
@@ -28,6 +29,7 @@
         	        <option value="Bienvenida">Bienvenida</option>
         	        <option value="Cobro">Cobro</option>
         	        <option value="Notificacion">Notificación</option>
+        	        <option value="Facturacion">Facturación</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('clasificacion') }}</strong>
@@ -71,6 +73,14 @@
         	        <strong>{{ $errors->first('contenido_sms') }}</strong>
         	    </span>
         	</div>
+
+        	<div class="col-md-12 form-group d-none" id="div_whatsapp">
+        	    <label class="control-label">Contenido <span class="text-danger">*</span></label>
+        	    <textarea class="form-control" name="contenido_whatsapp" id="contenido_whatsapp" rows="2">{{old('contenido_whatsapp')}}</textarea>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('contenido_whatsapp') }}</strong>
+        	    </span>
+        	</div>
         </div>
 	    
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
@@ -90,11 +100,14 @@
 <script type="text/javascript">
     $('#tipo').change(function() {
     	if($("#tipo").val() == 0){
-    		$("#div_email, #div_variables").addClass('d-none');
+    		$("#div_email, #div_whatsapp, #div_variables").addClass('d-none');
     		$("#div_sms").removeClass('d-none');
     	}else if($("#tipo").val() == 1){
-    		$("#div_sms").addClass('d-none');
+    		$("#div_sms, #div_whatsapp").addClass('d-none');
     		$("#div_email, #div_variables").removeClass('d-none');
+    	}else if($("#tipo").val() == 2){
+    		$("#div_email, #div_sms").addClass('d-none');
+    		$("#div_whatsapp, #div_variables").removeClass('d-none');
     	}
     });
 </script>

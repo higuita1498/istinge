@@ -395,6 +395,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('{id}/anular', 'FacturasController@anular')->name('factura.anular');
 		Route::post('{id}/cerrar', 'FacturasController@cerrar')->name('factura.cerrar');
 		Route::get('/{id}/mensaje', 'FacturasController@mensaje')->name('facturas.mensaje');
+        Route::get('/{id}/whatsapp', 'FacturasController@whatsapp')->name('facturas.whatsapp');
 
 		Route::get('/productos', 'FacturasController@getItemsSelect');
 
@@ -962,6 +963,13 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
             Route::get('/{id}/envio_prueba', 'IntegracionSMSController@envio_prueba')->name('integracion-sms.envio_prueba');
         });
         Route::resource('integracion-sms', 'IntegracionSMSController');
+
+        //INTEGRACION WHATSAPP
+        Route::group(['prefix' => 'integracion-whatsapp'], function() {
+            Route::post('/{id}/act_desc', 'IntegracionWhatsAppController@act_desc')->name('integracion-whatsapp.act_desc');
+            Route::get('/{id}/envio_prueba', 'IntegracionWhatsAppController@envio_prueba')->name('integracion-whatsapp.envio_prueba');
+        });
+        Route::resource('integracion-whatsapp', 'IntegracionWhatsAppController');
 
         //INTEGRACION PASARELAS DE PAGO
         Route::group(['prefix' => 'integracion-pasarelas'], function() {

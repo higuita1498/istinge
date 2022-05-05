@@ -65,5 +65,8 @@ class Integracion extends Model
         if($this->nombre == 'PayU'){
             return 'API KEY: '.$this->api_key.' | merchantId: '.$this->merchantId.' | accountId: '.$this->accountId;
         }
+        if($this->nombre == 'WhatsApp'){
+            return 'API KEY: '.$this->api_key.' | Nro: '.$this->numero;
+        }
     }
 }

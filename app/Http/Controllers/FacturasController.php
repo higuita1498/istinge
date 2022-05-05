@@ -48,6 +48,7 @@ use App\FormaPago;
 use ZipArchive;
 use App\Integracion;
 use App\PucMovimiento;
+use App\Plantilla;
 
 class FacturasController extends Controller{
 
@@ -3146,5 +3147,48 @@ class FacturasController extends Controller{
         header('Content-Length: ' . filesize($filePath));
         readfile($filePath);
         exit;
+    }
+
+    public function whatsapp($id){
+        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'WHATSAPP')->where('status', 1)->first();
+        if($servicio){
+            if($servicio->api_key && $servicio->numero){
+                $factura = Factura::find($id);
+                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+
+                if($plantilla){
+                    $mensaje = str_replace('{{ $company }}', Auth::user()->empresa()->nombre, $plantilla->contenido);
+                    $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
+                    $mensaje = str_replace('{{ $factura->codigo }}', $factura->codigo, $mensaje);
+                    $mensaje = str_replace('{{ $factura->parsear($factura->total()->total) }}', $factura->parsear($factura->total()->total), $mensaje);
+                }else{
+                    $mensaje = Auth::user()->empresa()->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+                }
+
+                $numero = str_replace('+','',$factura->cliente()->celular);
+                $numero = str_replace(' ','',$numero);
+                $url='https://api.callmebot.com/whatsapp.php?source=php&phone=+'.$numero.'&text='.urlencode($mensaje).'&apikey='.$servicio->api_key;
+
+                if($ch = curl_init($url)){
+                    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                    $html = curl_exec($ch);
+                    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+
+                    if($status == 200){
+                        return back()->with('success', 'EL MENSAJE VÍA WHATSAPP HA SIDO ENVIADO DE MANERA EXITOSA');
+                    }else{
+                        return back()->with('danger', 'EL MENSAJE VÍA WHATSAPP NO HA PODIDO SER ENVIADO');
+                    }
+                }else{
+                    return back()->with('danger', 'EL MENSAJE VÍA WHATSAPP NO HA PODIDO SER ENVIADO');
+                }
+            }else{
+                return back()->with('danger', 'DISCULPE, EL SERVICIO CALLMEBOT NO ESTÁ CONFIGURADO. POR FAVOR CONFIGURE PARA DISFRUTAR DEL SERVICIO');
+            }
+        }else{
+            return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE WHATSAPP HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
+        }
     }
 }
