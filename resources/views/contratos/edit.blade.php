@@ -177,6 +177,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-md-4 form-group" id="div_direccion">
+                                <label class="control-label">Dirección de Instalación</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="address_street" id="address_street" value="{{ $contrato->address_street }}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('address_street') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">

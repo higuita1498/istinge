@@ -187,6 +187,30 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-md-4 form-group d-none" id="div_direccion">
+                                <label class="control-label">¿Usar la misma dirección del contacto? <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" id="direccion" name="direccion"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getDireccion(this.value)" required="">
+                                        <option value="SI" {{old('direccion')=='SI'?'selected':''}}>Si</option>
+                                        <option value="NO" {{old('direccion')=='NO'?'selected':''}}>No</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('direccion') }}</strong>
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 form-group d-none" id="div_address_street">
+                                <label class="control-label">Dirección de Instalación <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="hidden" class="form-control" id="input_direccion">
+                                    <input type="text" class="form-control" name="address_street" id="address_street" value="{{ old('address_street') }}" required="">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('address_street') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">
@@ -676,6 +700,7 @@
         $("#formulario").submit(function () {
             return false;
         });
+
         $(document).on('change','input[type="file"]',function(){
             var fileName = this.files[0].name;
             var fileSize = this.files[0].size;

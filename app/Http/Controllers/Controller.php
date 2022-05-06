@@ -1528,8 +1528,11 @@ class Controller extends BaseController
     }
 
     public function getContracts($id){
-        $contratos = Contrato::where('client_id', $id)->get();
-        return response()->json($contratos);
+        $contratos = Contrato::join('contactos as c', 'contracts.client_id', '=', 'c.id')->where('contracts.client_id', $id)->get();
+        if(count($contratos)>0){
+            return response()->json($contratos);
+        }
+        return response()->json(Contacto::find($id));
     }
 
     public function addMovimientoPuc($id){

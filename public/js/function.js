@@ -4225,11 +4225,16 @@ function getContracts(id){
                 $("#div_facturacion").removeClass('d-none');
                 $('#factura_individual').val('').selectpicker('refresh');
                 document.getElementById("factura_individual").setAttribute('required', true);
+                $('#input_direccion').val(data[0].direccion);
             }else{
                 $("#div_facturacion").addClass('d-none');
                 $('#factura_individual').val('').selectpicker('refresh');
                 document.getElementById("factura_individual").removeAttribute('required');
+                $('#input_direccion').val(data.direccion);
             }
+            $('#direccion').val('').selectpicker('refresh');
+            $('#address_street').val('');
+            $("#div_direccion, #div_address_street").removeClass('d-none');
         },
         error: function(data){
             cargando(false);
@@ -4454,3 +4459,13 @@ function agregar_cuenta(){
 	function eliminarCuenta(id){
 		$("#" + id).remove();
 	}
+
+    function getDireccion(otp){
+        if(otp == 'NO'){
+            $("#div_address_street").removeClass('d-none');
+            $("#address_street").val('');
+            $("#address_street").focus();
+        }else{
+            $("#address_street").val('').val($("#input_direccion").val());
+        }
+    }
