@@ -95,9 +95,9 @@
             </div>
             <div class="col-md-4 form-group">
                 <label class="control-label font-weight-bold">Nro.Contrato</label>
-                <input type="text" class="form-control readonly"  id="contrato" name="contrato"  value="{{$contrato->nro}}" maxlength="200" readonly="">
+                <input type="text" class="form-control" id="nro" name="nro"  value="{{$contrato->nro}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57">
                 <span class="help-block error">
-                    <strong>{{ $errors->first('contrato') }}</strong>
+                    <strong>{{ $errors->first('nro') }}</strong>
                 </span>
             </div>
 

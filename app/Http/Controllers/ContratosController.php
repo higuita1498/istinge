@@ -778,7 +778,15 @@ class ContratosController extends Controller
             'grupo_corte' => 'required',
             'facturacion' => 'required',
             'contrato_permanencia' => 'required',
+            'nro' => 'required',
         ]);
+
+        $verificar = Contrato::where('empresa', Auth::user()->empresa)->where('nro', $request->nro)->where('id', '<>', $id)->first();
+
+        if($verificar){
+            return back()->with('danger', 'ESTÁ INTENTANDO REGISTRAR UN NRO DE CONTRATO QUE YA SE ENCUENTRA REGISTRADO');
+        }
+
 
         if(!$request->server_configuration_id && !$request->servicio_tv){
             return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
@@ -913,7 +921,7 @@ class ContratosController extends Controller
                             "local-address"  => $request->ip,
                             "remote-address" => $request->ip,
                             "service"        => 'pppoe',
-                            "comment"        => $this->normaliza($cliente->nombre).'-'.$contrato->nro
+                            "comment"        => $this->normaliza($cliente->nombre).'-'.$request->nro
                             )
                         );
 
@@ -929,7 +937,7 @@ class ContratosController extends Controller
                             if($request->simple_queue == 'dinamica'){
                                 $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address,
@@ -938,7 +946,7 @@ class ContratosController extends Controller
                                 );
                             }elseif ($request->simple_queue == 'estatica') {
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address
@@ -960,7 +968,7 @@ class ContratosController extends Controller
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
                                 "mac-address" => $request->mac_address
@@ -1000,7 +1008,7 @@ class ContratosController extends Controller
                             );
                         }else{
                             $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                "name"            => $this->normaliza($cliente->nombre).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
@@ -1104,11 +1112,12 @@ class ContratosController extends Controller
                     $contrato->servicio_tv             = $request->servicio_tv;
                     $contrato->contrato_permanencia    = $request->contrato_permanencia;
                     $contrato->serial_onu              = $request->serial_onu;
-                    $contrato->servicio                = $this->normaliza($cliente->nombre).'-'.$contrato->nro;
+                    $contrato->servicio                = $this->normaliza($cliente->nombre).'-'.$request->nro;
                     $contrato->server_configuration_id = $mikrotik->id;
                     $contrato->descuento               = $request->descuento;
                     $contrato->vendedor                = $request->vendedor;
                     $contrato->canal                   = $request->canal;
+                    $contrato->nro                     = $request->nro;
 
                     ### DOCUMENTOS ADJUNTOS ###
 
@@ -1170,7 +1179,7 @@ class ContratosController extends Controller
                     return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA SIDO ACTUALIZADO');
                 }
             }else{
-                $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$contrato->nro;
+                $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$request->nro;
                 $contrato->grupo_corte          = $request->grupo_corte;
                 $contrato->facturacion          = $request->facturacion;
                 $contrato->latitude             = $request->latitude;
@@ -1181,6 +1190,7 @@ class ContratosController extends Controller
                 $contrato->descuento            = $request->descuento;
                 $contrato->vendedor             = $request->vendedor;
                 $contrato->canal                = $request->canal;
+                $contrato->nro                  = $request->nro;
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
