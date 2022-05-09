@@ -365,11 +365,22 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
+                                    <option value="1">Fibra</option>
+                                    <option value="2">Inalámbrico</option>
+                                </select>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('tecnologia') }}</strong>
+                                </span>
+                            </div>
+
                             <div class="col-md-4 form-group d-none" id="div_ap">
                                 <label class="control-label">Access Point Asociado <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="ap" name="ap" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                <select class="form-control selectpicker" id="ap" name="ap" title="Seleccione" data-live-search="true" data-size="5">
                                     @foreach($nodos as $nodo)
-                                    <optgroup label="{{$nodo->nombre}}">
+                                    <optgroup label="NODO {{$nodo->nombre}}">
                                         @foreach($aps as $ap)
                                             @if($ap->nodo==$nodo->id)
                                                 <option id="{{$ap->id}}" value="{{$ap->id}}" {{old('ap')==$ap->id?'selected':''}}>{{$ap->nombre}}</option>

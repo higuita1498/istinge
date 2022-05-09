@@ -3916,8 +3916,6 @@ function interfazChange(){
         document.getElementById("div_id_vlan").classList.add('d-none');
         document.getElementById("div_usuario").classList.add('d-none');
         document.getElementById("div_password").classList.add('d-none');
-        document.getElementById("div_ap").classList.add('d-none');
-        document.getElementById("ap").removeAttribute('required');
         
         getInterfaces(document.getElementById("server_configuration_id").value);
         document.getElementById("div_usuario").classList.add('d-none');
@@ -4469,3 +4467,16 @@ function agregar_cuenta(){
             $("#address_street").val('').val($("#input_direccion").val());
         }
     }
+
+    $('#tecnologia').change(function() {
+        var tecnologia = $('#tecnologia').val();
+        if(tecnologia == 1){
+            $('#div_ap').addClass('d-none');
+            $('#ap').val('').selectpicker('refresh');
+            $('#ap').removeAttr('required');
+        }else if(tecnologia == 2){
+            $('#div_ap').removeClass('d-none');
+            $('#ap').val('').selectpicker('refresh');
+            $('#ap').attr('required','');
+        }
+    });

@@ -112,6 +112,12 @@
 							<td>{{ $contrato->serial_onu }}</td>
 						</tr>
 						@endif
+						@if($contrato->tecnologia)
+						<tr>
+							<th>Tecnología</th>
+							<td>{{ $contrato->tecnologia() }}</td>
+						</tr>
+						@endif
 						@if($contrato->conexion)
 						<tr>
 							<th>Tipo de Conexión</th>

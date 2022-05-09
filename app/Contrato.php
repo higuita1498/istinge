@@ -184,4 +184,14 @@ class Contrato extends Model
     public function canal(){
         return Canal::find($this->canal);
     }
+
+    public function tecnologia(){
+        if($this->tecnologia == 1){
+            return 'Fibra';
+        } elseif($this->tecnologia == 2){
+            return 'Inalámbrica';
+        } else{
+            return 'N/A';
+        }
+    }
 }
