@@ -163,6 +163,12 @@
 											<option value="2">Escalado / Pendiente</option>
 										</select>
 									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Creado" class="form-control rounded selectpicker" id="creado">
+											<option value="1">NetworkSoft</option>
+											<option value="2">App</option>
+										</select>
+									</div>
 
 									<div class="col-md-2 pl-1 pt-1">
 										<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -226,6 +232,12 @@
 										<select title="Estado" class="form-control rounded selectpicker" id="estatusG">
 											<option value="1">Solventado</option>
 											<option value="3">Escalado / Solventado</option>
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Creado" class="form-control rounded selectpicker" id="creadoG">
+											<option value="1">NetworkSoft</option>
+											<option value="2">App</option>
 										</select>
 									</div>
 
@@ -295,6 +307,7 @@
 			data.servicio  = $('#servicio').val();
 			data.direccion = $('#direccion').val();
 			data.estatus   = $('#estatus').val();
+			data.creado    = $('#creado').val();
 			data.filtro    = true;
 		});
 
@@ -353,6 +366,7 @@
 			data.servicio  = $('#servicioG').val();
 			data.direccion = $('#direccionG').val();
 			data.estatus   = $('#estatusG').val();
+			data.creado    = $('#creadoG').val();
 			data.filtro    = true;
 		});
 
@@ -398,6 +412,7 @@
 		$('#servicio').val('').selectpicker('refresh');
 		$('#direccion').val('');
 		$('#estatus').val('').selectpicker('refresh');
+		$('#creado').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -428,6 +443,7 @@
 		$('#servicioG').val('').selectpicker('refresh');
 		$('#direccionG').val('');
 		$('#estatusG').val('').selectpicker('refresh');
+		$('#creadoG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTableG();
