@@ -136,7 +136,7 @@
 
   		<div class="row">
 
-			<div class="form-group col-md-5">
+			<div class="form-group col-md-6">
 	  			<label class="control-label">Dirección <span class="text-danger">*</span></label>
 	  			<input type="text" class="form-control" id="direccion" name="direccion" required="" value="{{$empresa->direccion}}">
 				<span class="help-block error">
@@ -166,6 +166,29 @@
 		        </span>
 			</div>
 
+			<div class="form-group col-md-3">
+	  			<label class="control-label">WhatsApp <span class="text-danger">*</span></label>
+	  			<div class="row">
+	  				<div class="col-md-4 nopadding ">
+	  					<select class="form-control selectpicker prefijo" name="pref_w" id="pref_w" required="" title="Cod" data-size="5" data-live-search="true">
+			  				@foreach($prefijos as $prefijo)
+		                  		<option @if($empresa->whatsapp) {{'+'.$prefijo->phone_code==$empresa->whatsapp('pref')?'selected':''}}  @endif
+
+		                  		 	data-icon="flag-icon flag-icon-{{strtolower($prefijo->iso2)}}"
+
+		                  		 value="+{{$prefijo->phone_code}}" title="+{{$prefijo->phone_code}}" data-subtext="+{{$prefijo->phone_code}}">{{$prefijo->nombre}}</option>
+			  				@endforeach
+		                </select>
+	  				</div>
+	  				<div class="col-md-8" style="padding-left:0;">
+	  					<input type="text" class="form-control" id="whatsapp" name="whatsapp" required="" maxlength="15" value="{{$empresa->whatsapp()}}">
+	  				</div>
+	  			</div>
+				<span class="help-block error">
+		        	<strong>{{ $errors->first('whatsapp') }}</strong>
+		        </span>
+			</div>
+
 
 			<div class="form-group col-md-4">
 	  			<label class="control-label" for="email">Correo Electrónico <span class="text-danger">*</span></label>
@@ -173,6 +196,31 @@
 				<div class="help-block error with-errors"></div>
 				<span class="help-block error">
 					<strong>{{ $errors->first('email') }}</strong>
+				</span>
+			</div>
+
+			<div class="form-group col-md-3">
+	  			<label class="control-label">Moneda <span class="text-danger">*</span></label>
+				<input type="text" class="form-control" id="moneda" name="moneda" required="" data-error="Moneda inválida" maxlength="100"  value="{{$empresa->moneda}}">
+				<div class="help-block error with-errors"></div>
+				<span class="help-block error">
+					<strong>{{ $errors->first('moneda') }}</strong>
+				</span>
+			</div>
+
+			<div class="form-group col-md-3">
+	  			<label class="control-label">Código País <span class="text-danger">*</span></label>
+				<select class="form-control selectpicker" name="codigo" id="codigo" required="" title="Código" data-size="5" data-live-search="true">
+					@foreach($prefijos as $prefijo)
+					    <option @if($empresa->codigo) {{'+'.$prefijo->phone_code==$empresa->codigo?'selected':''}}  @endif
+					    	data-icon="flag-icon flag-icon-{{strtolower($prefijo->iso2)}}"
+					    	value="+{{$prefijo->phone_code}}" title="+{{$prefijo->phone_code}}" data-subtext="+{{$prefijo->phone_code}}">{{$prefijo->nombre}}
+					    </option>
+				  	@endforeach
+			    </select>
+				<div class="help-block error with-errors"></div>
+				<span class="help-block error">
+					<strong>{{ $errors->first('codigo') }}</strong>
 				</span>
 			</div>
   		</div>

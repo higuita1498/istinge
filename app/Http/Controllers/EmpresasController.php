@@ -392,6 +392,7 @@ class EmpresasController extends Controller
             $usuario->email = $request->email;
             $empresa->telefono=$request->telefono?$request->pref." ".$request->telefono:$request->telefono;
             $usuario->username = $request->username=strtolower($request->username);
+            $empresa->whatsapp=$request->whatsapp?$request->pref."".$request->whatsapp:$request->whatsapp;
             $usuario->updated_at  = Carbon::now();
             $usuario->save();
 
