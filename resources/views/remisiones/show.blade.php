@@ -26,7 +26,6 @@
 @endsection   
 
 @section('content')
-  <style type="text/css"> .card{ background: #f9f1ed !important;}</style>
   
   
   @if(Session::has('success') || Session::has('error'))
@@ -232,7 +231,7 @@
 
   </div>
 
-  <div class="row" style="padding: 0 1%;">
+  <div class="row" style="padding: 0 3.5%;">
      <div class="col-md-7" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
         <h6>Observaciones</h6>
         <p class="text-justify">
@@ -261,7 +260,7 @@
       </div>
   </div>
 
-  <div class="row" style="padding: 0 1%; margin-top: 2%;">
+  <div class="row" style="padding: 0 3.5%; margin-top: 2%; margin-bottom: 2%;">
      <div class="col-md-12" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
         <h5>Pagos recibidos 
           @if($remision->estatus==1)

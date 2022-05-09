@@ -206,7 +206,7 @@
 						@if($contrato->server_configuration_id)
 						<tr>
 							<th>Servidor Asociado</th>
-							<td>{{ $contrato->servidor()->nombre }}</td>
+							<td><a href="{{ route('mikrotik.show',$contrato->server_configuration_id )}}" target="_blank"><strong>{{ $contrato->servidor()->nombre }}</strong></a></td>
 						</tr>
 						@endif
 						<tr>
