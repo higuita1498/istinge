@@ -1343,6 +1343,7 @@ class FacturasController extends Controller{
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount'));
             $resolucion = NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
+            $ingreso = IngresosFactura::where('factura',$factura->id)->first();
             //---------------------------------------------//
             if($factura->emitida == 1){
                 $impTotal = 0;
@@ -1380,9 +1381,9 @@ class FacturasController extends Controller{
                 /*..............................
                 Construcción del código qr a la factura
                 ................................*/
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'))->stream();
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
             }else{
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'))->stream();
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
             }
             //-----------------------------------------------//
 
@@ -2716,7 +2717,7 @@ class FacturasController extends Controller{
             $items = ItemsFactura::where('factura',$factura->id)->get();
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-            
+            $ingreso = IngresosFactura::where('factura',$factura->id)->first();
             if($factura->emitida == 1){
                 $impTotal = 0;
                 foreach ($factura->total()->imp as $totalImp){
@@ -2757,7 +2758,7 @@ class FacturasController extends Controller{
                 Construcción del código qr a la factura
                 ................................*/
                 
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'));
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'));
             }else{
                 $fechaActual = date("Y-m-d", strtotime(Carbon::now()));
                 //traemos todas las facturas que el vencimiento haya pasado la fecha actual.
@@ -2781,7 +2782,7 @@ class FacturasController extends Controller{
                 "ValorOtrosImpuestos:" .  0.00 . "\n" .
                 "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n";
                 //   return view('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
             }
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
         }
