@@ -560,8 +560,14 @@
             })
         });
 
+        if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/empresa';
+        }else{
+            var url = '/empresa';
+        }
+
         $.ajax({
-            url: '/empresa/nominadian/proceso-habilitacion',
+            url: url+'/nominadian/proceso-habilitacion',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
