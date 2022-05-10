@@ -2221,4 +2221,93 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
+
+    public function state_lote($contratos, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $contratos = explode(",", $contratos);
+
+        for ($i=0; $i < count($contratos) ; $i++) {
+            $contrato=Contrato::find($contratos[$i]);
+
+            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+            //$API->debug = true;
+
+            if ($contrato) {
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
+
+                    if($state == 'disabled'){
+                        #AGREGAMOS A MOROSOS#
+                        $API->comm("/ip/firewall/address-list/add", array(
+                            "address" => $contrato->ip,
+                            "comment" => $contrato->servicio,
+                            "list" => 'morosos'
+                            )
+                        );
+                        #AGREGAMOS A MOROSOS#
+
+                        #ELIMINAMOS DE IP_AUTORIZADAS#
+                        $API->write('/ip/firewall/address-list/print', false);
+                        $API->write('?address='.$contrato->ip, false);
+                        $API->write("?list=ips_autorizadas",false);
+                        $API->write('=.proplist=.id');
+                        $ARRAYS = $API->read();
+
+                        if(count($ARRAYS)>0){
+                            $API->write('/ip/firewall/address-list/remove', false);
+                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                            $READ = $API->read();
+                        }
+                        #ELIMINAMOS DE IP_AUTORIZADAS#
+
+                        $contrato->state = $state;
+                    }else{
+                        #ELIMINAMOS DE MOROSOS#
+                        $API->write('/ip/firewall/address-list/print', false);
+                        $API->write('?address='.$contrato->ip, false);
+                        $API->write("?list=morosos",false);
+                        $API->write('=.proplist=.id');
+                        $ARRAYS = $API->read();
+
+                        if(count($ARRAYS)>0){
+                            $API->write('/ip/firewall/address-list/remove', false);
+                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                            $READ = $API->read();
+                        }
+                        #ELIMINAMOS DE MOROSOS#
+
+                        #AGREGAMOS A IP_AUTORIZADAS#
+                        $API->comm("/ip/firewall/address-list/add", array(
+                            "address" => $contrato->ip,
+                            "list" => 'ips_autorizadas'
+                            )
+                        );
+                        #AGREGAMOS A IP_AUTORIZADAS#
+
+                        $contrato->state = $state;
+                    }
+                    $API->disconnect();
+                    $contrato->save();
+
+                    $succ++;
+                } else {
+                    $fail++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
 }

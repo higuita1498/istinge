@@ -188,8 +188,10 @@
     <div class="row card-description">
     	<div class="col-md-12">
     		<div class="container-filtercolumn">
-                <a href="{{ route('pings.index') }}" class="btn btn-danger">Ver Pings Fallidos <i class="fa fa-plug"></i></a>
-    			<a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
+                <a href="{{ route('pings.index') }}" class="btn btn-primary">Pings Fallidos <i class="fa fa-plug"></i></a>
+                <a href="javascript:void(0)" class="btn btn-success" id="btn_enabled">Habilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
+                <a href="javascript:void(0)" class="btn btn-danger" id="btn_disabled">Deshabilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
+                <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
     			<ul class="options-search-columns"  id="columnOptions">
     				@foreach($tabla as $campo)
     				    <li><input type="button" class="btn btn-success btn-sm boton_ocultar_mostrar" value="{{$campo->nombre}}"></li>
@@ -228,6 +230,7 @@
 			serverSide: true,
 			processing: true,
 			searching: false,
+            select: true,
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -295,6 +298,14 @@
         	var columna = tbl.column(indice);
         	columna.visible(!columna.visible());
         });
+
+        $('#btn_enabled').click( function () {
+            states('enabled');
+        });
+
+        $('#btn_disabled').click( function () {
+            states('disabled');
+        });
     });
     
     function getDataTable() {
@@ -339,6 +350,68 @@
 	function exportar() {
 	    window.location.href = '{{config('app.url')}}/empresa/contratos/exportar?client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val();
 	}
+
+    function states(state){
+        var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        if(state === 'enabled'){
+            var states = 'habilitar';
+        }else{
+            var states = 'deshabilitar';
+        }
+
+        swal({
+            title: '¿Desea '+states+' '+nro+' contratos en lote?',
+            text: 'Esto puede demorar unos minutos. Al Aceptar no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
+                }else{
+                    var url = `/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
 
 	@if($tipo)
 	    $('#state').val('{{ $tipo }}').selectpicker('refresh');

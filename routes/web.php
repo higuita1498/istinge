@@ -1110,7 +1110,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/{archivo}/eliminar', 'ContratosController@eliminarAdjunto')->name('contratos.eliminarAdjunto');
         Route::post('{id}/enviar_mk', 'ContratosController@enviar_mk')->name('contratos.enviar_mk');
         Route::post('{id}/carga_adjuntos', 'ContratosController@carga_adjuntos')->name('contratos.carga_adjuntos');
+        Route::get('{contratos}/{state}/state_lote', 'ContratosController@state_lote')->name('contratos.state_lote');
 	});
+
 	Route::resource('contratos', 'ContratosController');
 	
 	//SERVIDORES
