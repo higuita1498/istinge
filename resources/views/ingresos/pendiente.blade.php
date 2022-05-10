@@ -46,7 +46,7 @@
         </td> 
         <td class="monetario text-center" style="vertical-align: text-bottom;"> 
           <input type="hidden" id="editmonto{{$factura->id}}" value="1">
-          <input type="number" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" max="{{$factura->total()->total}}" maxlength="24" onchange="totales_ingreso();" onkeyup="editmonto({{$factura->id}});" min="0" value="@if($count == 1){{$factura->total()->total}}@endif">
+          <input type="number" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" maxlength="24" onchange="totales_ingreso();" onkeyup="editmonto({{$factura->id}});" min="0" value="@if($count == 1){{$factura->total()->total}}@endif">
 
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>
 
@@ -90,6 +90,7 @@
           </tr>
         </table>
         @endif
+        <input type="hidden" name="saldofavor" id="saldofavor" value="0">
         <table class="text-right ingresos">
           <tr>
             <td width="75%">TOTAL</td>

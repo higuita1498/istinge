@@ -32,6 +32,7 @@ use App\ServidorCorreo;
 use App\Integracion;
 use App\Puc;
 use App\PucMovimiento;
+use App\Anticipo;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -201,7 +202,10 @@ class IngresosController extends Controller
          ->whereRaw('length(codigo) > 6')
          ->get();
 
-        return view('ingresos.create')->with(compact('clientes', 'inventario', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias'));
+        //obtiene los anticipos relacionados con este modulo (Ingresos)
+        $anticipos = Anticipo::where('relacion',1)->orWhere('relacion',3)->get();
+
+        return view('ingresos.create')->with(compact('clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos'));
     }
 
     public function saldoContacto($id){
@@ -330,6 +334,9 @@ class IngresosController extends Controller
             if($request->saldofavor > 0){
                 $contacto = Contacto::find($request->cliente);
                 $contacto->saldo_favor;
+                $contacto->save();
+
+                PucMovimiento::ingreso($ingreso,1,1);    
             }
             
             //Si el tipo de ingreso es de facturas
@@ -631,6 +638,7 @@ class IngresosController extends Controller
         $items->impuesto = $impuesto->porcentaje;
         $items->ingreso = $ingreso->id;
         $items->categoria = $request->puc;
+        $items->anticipo = $request->anticipo;
         $items->cant = 1;
         $items->save();
 
@@ -641,6 +649,7 @@ class IngresosController extends Controller
         //ingresos
         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
 
+        //mandamos por parametro el ingreso y el 1 (guardar)
         PucMovimiento::ingreso($ingreso,1);        
     } 
 

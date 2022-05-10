@@ -92,11 +92,11 @@
     </div> 
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
-      <label class="col-sm-4 col-form-label">Donde ingresa el dinero</label>
+      <label class="col-sm-4 col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
       <div class="col-sm-8">
-        <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5">
+        <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5" required>
           @foreach($categorias as $categoria)
-            <option value="{{$categoria->id}}" >{{$categoria->nombre}} {{$categoria->codigo}}</option>
+            <option value="{{$categoria->id}}" >{{$categoria->nombre}} - {{$categoria->codigo}}</option>
           @endforeach
         </select>
       </div>
@@ -106,11 +106,27 @@
     </span>
        </div>
   </div> 
+    <div class="form-group row cls-realizar d-none" >
+      <div class="form-group row ">
+    <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
+    <div class="col-sm-8">
+      <select class="form-control selectpicker" name="anticipo" id="anticipo" title="Seleccione" data-live-search="true" data-size="5" required>
+        @foreach($anticipos as $anticipo)
+          <option value="{{$anticipo->id}}" >{{$anticipo->nombre}} - {{$anticipo->codigo}}</option>
+        @endforeach
+      </select>
+    </div>
+    
+  <span class="help-block error">
+        <strong>{{ $errors->first('puc') }}</strong>
+  </span>
+      </div>
+  </div> 
     <div class="cls-realizar d-none" >
       <div class="form-group row ">
-        <label class="col-sm-4 col-form-label">Valor Recibido</label>
+        <label class="col-sm-4 col-form-label">Valor Recibido <span class="text-danger">*</span></label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido">
+          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido" required>
         </div>
         
       <span class="help-block error">
@@ -219,7 +235,7 @@
         </div>
       </div>
     </div>
-  		<div class="row">
+  		<div class="row cls-realizar-inv">
         <div class="col-md-12 fact-table" id="si" style="display: none;">
           <h5>FACTURAS DE VENTA PENDIENTES</h5>
           <div id="factura_pendiente"></div>

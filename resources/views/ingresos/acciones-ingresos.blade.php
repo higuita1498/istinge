@@ -26,4 +26,5 @@
     @if(Auth::user()->rol==45)
         <button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('eliminar-ingreso{{$id}}', '¿Está seguro que desea eliminar el ingreso?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
+    <a href="{{route('ingresos.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
 @endif

@@ -827,6 +827,13 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::post('/formapago/delete', 'FormaPagoController@delete')->name('formapago.delete');
 	Route::resource('puc', 'PucController');
 
+	// ANTICIPOS
+	Route::get('/anticipo', 'AnticipoController@index')->name('anticipo.index');
+	Route::post('/anticipo/store', 'AnticipoController@store')->name('anticipo.store');
+	Route::get('/anticipo/edit', 'AnticipoController@edit')->name('anticipo.edit');
+	Route::post('/anticipo/update', 'AnticipoController@update')->name('anticipo.update');
+	Route::post('/anticipo/delete', 'AnticipoController@delete')->name('anticipo.delete');
+
 	// PRODUCTOS Y SERVICIOS
 	Route::get('/productoservicio', 'ProductoServicioController@index')->name('productoservicio.index');
 	Route::post('/productoservicio/store', 'ProductoServicioController@store')->name('productoservicio.store');

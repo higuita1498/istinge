@@ -277,34 +277,69 @@ class PucMovimiento extends Model
          
     }
 
-    public static function ingreso($ingreso, $opcion){
-        //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
+    // el tipo 1 significa cuando es un pago a una factura y se paga un poco mas.
+    // opcion 1 es para guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    public static function ingreso($ingreso, $opcion, $tipo=0){
+
         $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->first();
+        
+        $totalIngreso = 0;
+        
+        if($opcion == 1 && !$isGuardar && $tipo == 0){  
 
-        if($opcion == 1 && !$isGuardar){
-            //ingresamos los valores del iva
-            $totalIngreso = $ingreso->total()->total;
-            // return response()->json($totalFactura->reten);    
-
-            //4to. Registramos el medio de pago de la factura.
+            foreach($ingreso->ingresosCategorias() as $cat){
+                $totalIngreso+=$cat->valor;
+            }
+            
+            //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
             $mov->documento_id = $ingreso->id;
-            $mov->codigo_cuenta = isset($ingreso->formaPago()->codigo) ? $ingreso->formaPago()->codigo : '';
-            $mov->cuenta_id = isset($ingreso->formaPago()->id) ? $ingreso->formaPago()->id : '';
+            $mov->codigo_cuenta = isset($ingreso->ingresoPuc()->codigo) ? $ingreso->ingresoPuc()->codigo : '';
+            $mov->cuenta_id = isset($ingreso->ingresoPuc()->id) ? $ingreso->ingresoPuc()->id : '';
             $mov->identificacion_tercero = $ingreso->cliente()->nit;
             $mov->cliente_id = $ingreso->cliente()->id;
-            $mov->prefijo = $ingreso->numeracionFactura->prefijo;
-            $mov->consecutivo = $ingreso->codigo;
-            $mov->fecha_vencimiento = $ingreso->vencimiento;
-            $mov->descripcion = $ingreso->observacion;
+            $mov->consecutivo = $ingreso->nro;
+            $mov->descripcion = $ingreso->observaciones;
+            $mov->debito =  $totalIngreso;
+            $mov->enlace_a = 4;
+            $mov->save();
+
+            //2do. Registramos el anticipo del cliente.
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $ingreso->nro;
+            $mov->fecha_elaboracion = $ingreso->fecha;
+            $mov->documento_id = $ingreso->id;
+            $mov->codigo_cuenta = isset($ingreso->ingresoAnticipo()->codigo) ? $ingreso->ingresoAnticipo()->codigo : '';
+            $mov->cuenta_id = isset($ingreso->ingresoAnticipo()->codigo) ? $ingreso->ingresoAnticipo()->codigo : '';
+            $mov->identificacion_tercero = $ingreso->cliente()->nit;
+            $mov->cliente_id = $ingreso->cliente()->id;
+            $mov->consecutivo = $ingreso->nro;
+            $mov->descripcion = $ingreso->observaciones;
+            $mov->credito =  $totalIngreso;
+            $mov->enlace_a = 5;
+            $mov->save();
+        }
+        else if($opcion == 1 && !$isGuardar && $tipo == 1){
+            //1to. Registramos la forma de pago (caja o banco).
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $ingreso->nro;
+            $mov->fecha_elaboracion = $ingreso->fecha;
+            $mov->documento_id = $ingreso->id;
+            $mov->codigo_cuenta = isset($ingreso->ingresoPuc()->codigo) ? $ingreso->ingresoPuc()->codigo : '';
+            $mov->cuenta_id = isset($ingreso->ingresoPuc()->id) ? $ingreso->ingresoPuc()->id : '';
+            $mov->identificacion_tercero = $ingreso->cliente()->nit;
+            $mov->cliente_id = $ingreso->cliente()->id;
+            $mov->consecutivo = $ingreso->nro;
+            $mov->descripcion = $ingreso->observaciones;
             $mov->debito =  $totalIngreso;
             $mov->enlace_a = 4;
             $mov->save();
         }
-
     }
 
     public function cliente(){
@@ -334,6 +369,10 @@ class PucMovimiento extends Model
                 break;
             case 4:
                 return "Asociado a un medio de pago.";
+                break;
+
+            case 5:
+                return "Asociado a un anticipo del cliente.";
                 break;
             
             default:

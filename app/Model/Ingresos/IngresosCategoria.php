@@ -5,6 +5,7 @@ namespace App\Model\Ingresos;
 use Illuminate\Database\Eloquent\Model;
 use App\Categoria; use App\Impuesto; 
 use App\Puc;
+use App\Anticipo;
 
 class IngresosCategoria extends Model
 {
@@ -44,5 +45,9 @@ class IngresosCategoria extends Model
    public function pago(){
         return $this->total();
     } 
+
+    public function anticipo(){
+        return $this->belongsTo(Anticipo::class, 'puc_anticipo', 'id');
+    }
 
 }

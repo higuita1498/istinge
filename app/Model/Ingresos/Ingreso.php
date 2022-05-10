@@ -14,6 +14,7 @@ use App\Impuesto;
 use App\Movimiento; 
 use DB; use Auth;
 use App\User;
+use App\Puc;
 class Ingreso extends Model
 {
     protected $table = "ingresos";
@@ -222,5 +223,27 @@ class Ingreso extends Model
 
     public function updated_by(){
         return User::find($this->updated_by);
+    }
+
+    public function ingresoAnticipo(){
+        $anticipo = IngresosCategoria::join('anticipo as an','an.id','=','ingresos_categoria.anticipo')
+        ->where('ingresos_categoria.ingreso',$this->id)->select('an.*')->first();
+
+        if($anticipo){
+            return $anticipo;
+        }
+    }
+    
+    public function ingresoPuc(){
+        $puc = IngresosCategoria::join('puc as p','p.id','=','ingresos_categoria.categoria')
+        ->where('ingresos_categoria.ingreso',$this->id)->select('p.*')->first();
+
+        if($puc){
+            return $puc;
+        }
+    }
+
+    public function ingresosCategorias(){
+        return IngresosCategoria::where('ingreso',$this->id)->get();
     }
 }
