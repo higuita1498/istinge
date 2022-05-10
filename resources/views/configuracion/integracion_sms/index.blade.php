@@ -45,6 +45,8 @@
 					<td>{{$servicio->numero}}</td>
 					<td class="font-weight-bold text-{{$servicio->status('true')}}">{{$servicio->status()}}</td>
 					<td>
+						@if(auth()->user()->modo_lectura())
+						@else
 						<form action="{{ route('integracion-sms.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">
 							@csrf
 		                </form>
@@ -58,6 +60,7 @@
 		                @endif
 		                @if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero || $servicio->user && $servicio->pass && $servicio->numero)
 		                    <a href="{{route('integracion-sms.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-icons" title="Envío de SMS Prueba"><i class="far fa-comment-dots"></i></a>
+		                @endif
 		                @endif
 					</td>
 				</tr>

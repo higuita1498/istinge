@@ -89,4 +89,8 @@ class Radicado extends Model
         $temp += Radicado::where('cliente', $this->cliente)->count();
         return $temp;
     }
+
+    public function creado(){
+        return ($this->creado == 1) ? 'NetworkSoft' : 'APP';
+    }
 }

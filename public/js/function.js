@@ -3910,8 +3910,6 @@ function interfazChange(){
         document.getElementById("div_id_vlan").classList.add('d-none');
         document.getElementById("div_usuario").classList.add('d-none');
         document.getElementById("div_password").classList.add('d-none');
-        document.getElementById("div_ap").classList.add('d-none');
-        document.getElementById("ap").removeAttribute('required');
         
         getInterfaces(document.getElementById("server_configuration_id").value);
         document.getElementById("div_usuario").classList.add('d-none');
@@ -4219,11 +4217,16 @@ function getContracts(id){
                 $("#div_facturacion").removeClass('d-none');
                 $('#factura_individual').val('').selectpicker('refresh');
                 document.getElementById("factura_individual").setAttribute('required', true);
+                $('#input_direccion').val(data[0].direccion);
             }else{
                 $("#div_facturacion").addClass('d-none');
                 $('#factura_individual').val('').selectpicker('refresh');
                 document.getElementById("factura_individual").removeAttribute('required');
+                $('#input_direccion').val(data.direccion);
             }
+            $('#direccion').val('').selectpicker('refresh');
+            $('#address_street').val('');
+            $("#div_direccion, #div_address_street").removeClass('d-none');
         },
         error: function(data){
             cargando(false);
@@ -4254,7 +4257,7 @@ $('#searchIP').click(function() {
             var ini = ip_ini['3'];
             var fin = ip_fin['3'];
 
-            for (i = ini; i <= fin; i++) {
+            for (i = data.i; i <= fin; i++) {
                 var div =`
                 <div class="col-md-2 text-center mb-1" id="`+ip_ini['0']+``+ip_ini['1']+``+ip_ini['2']+``+i+`">
                     <a href="javascript:selectIP('`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`</a>
@@ -4448,3 +4451,26 @@ function agregar_cuenta(){
 	function eliminarCuenta(id){
 		$("#" + id).remove();
 	}
+
+    function getDireccion(otp){
+        if(otp == 'NO'){
+            $("#div_address_street").removeClass('d-none');
+            $("#address_street").val('');
+            $("#address_street").focus();
+        }else{
+            $("#address_street").val('').val($("#input_direccion").val());
+        }
+    }
+
+    $('#tecnologia').change(function() {
+        var tecnologia = $('#tecnologia').val();
+        if(tecnologia == 1){
+            $('#div_ap').addClass('d-none');
+            $('#ap').val('').selectpicker('refresh');
+            $('#ap').removeAttr('required');
+        }else if(tecnologia == 2){
+            $('#div_ap').removeClass('d-none');
+            $('#ap').val('').selectpicker('refresh');
+            $('#ap').attr('required','');
+        }
+    });

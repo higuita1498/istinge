@@ -108,6 +108,11 @@ class RadicadosController extends Controller{
                     $query->orWhere('radicados.estatus', $request->estatus);
                 });
             }
+            if($request->creado){
+                $radicados->where(function ($query) use ($request) {
+                    $query->orWhere('radicados.creado', $request->creado);
+                });
+            }
         }
 
         if(auth()->user()->rol == 4){
@@ -152,8 +157,11 @@ class RadicadosController extends Controller{
         ->addColumn('nro_radicados', function (Radicado $radicado) {
             return $radicado->nro_radicados();
         })
+        ->editColumn('creado', function (Radicado $radicado) {
+            return  $radicado->creado();
+        })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
-        ->rawColumns(['codigo', 'estatus', 'acciones'])
+        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado'])
         ->toJson();
     }
 

@@ -1,4 +1,31 @@
 @extends('layouts.app')
+
+@section('style')
+<style>
+	@if(count($segmentos)>40)
+	.select2-container{
+		height: 200px!important;
+		overflow-y: scroll!important;
+	}
+	.select2-container::-webkit-scrollbar{
+        width: 8px;
+        height: 8px;
+    }
+    .select2-container::-webkit-scrollbar-track{
+        background: #f1f1f1;
+        border-radius: 20px;
+    }
+    .select2-container::-webkit-scrollbar-thumb{
+        background: #888;
+        border-radius: 20px;
+    }
+    .select2-container::-webkit-scrollbar-thumb:hover{
+        background: #555;
+    }
+	@endif
+</style>
+@endsection
+
 @section('content')
 	<form method="POST" action="{{ route('mikrotik.update', $mikrotik->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-retencion" >
 	    @csrf

@@ -22,11 +22,9 @@
 
 @section('boton')
     @if(auth()->user()->modo_lectura())
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aquí.</b></a></a>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
         </div>
     @else
         @if(isset($_SESSION['permisos']['5']))
@@ -168,6 +166,12 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-3 pl-1 pt-1">
+                        <select title="Tipo de Tecnología" class="form-control selectpicker" id="tecnologia_s">
+                            <option value="1">Fibra</option>
+                            <option value="2">Inalámbrica</option>
+                        </select>
+                    </div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -269,6 +273,7 @@
             data.c_email = $("#email").val();
             data.vendedor = $("#vendedor").val();
             data.canal = $("#canal").val();
+            data.tecnologia = $("#tecnologia_s").val();
             data.filtro = true;
         });
         
@@ -324,6 +329,7 @@
         $('#email').val('');
         $("#vendedor").val('').selectpicker('refresh');
         $("#canal").val('').selectpicker('refresh');
+        $("#tecnologia_s").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

@@ -1528,8 +1528,11 @@ class Controller extends BaseController
     }
 
     public function getContracts($id){
-        $contratos = Contrato::where('client_id', $id)->get();
-        return response()->json($contratos);
+        $contratos = Contrato::join('contactos as c', 'contracts.client_id', '=', 'c.id')->where('contracts.client_id', $id)->get();
+        if(count($contratos)>0){
+            return response()->json($contratos);
+        }
+        return response()->json(Contacto::find($id));
     }
 
     public function addMovimientoPuc($id){
@@ -1667,6 +1670,10 @@ class Controller extends BaseController
         $ip_first_short = long2ip($ip_first);
         $ip_last_short = long2ip($ip_last);
         $ip_broadcast_short = long2ip($ip_broadcast);
+
+        $parte = explode(".", $ip_address);
+        $ip_first_short = $parte[0].'.'.$parte[1].'.'.$parte[2].'.'.($parte[3] + 1);
+
         return response()->json([
             'address'   => $ip_address,
             'netmask'   => $ip_nmask,
@@ -1674,6 +1681,7 @@ class Controller extends BaseController
             'inicial'   => $ip_first_short,
             'final'     => $ip_last_short,
             'broadcast' => $ip_broadcast_short,
+            'i'         => $parte[3] + 1,
         ]);
     }
 }

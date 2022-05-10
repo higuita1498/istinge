@@ -361,7 +361,6 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
     
     <div style="">
@@ -385,6 +384,10 @@
             <tr>
                 <th class="right smalltd">PERIODO COBRADO</th>
                 <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobrado()}}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd">ESTADO FACTURA</th>
+                <td style="border-bottom: 2px solid #ccc; text-transform: uppercase;">{{$factura->estatus()}}</td>
             </tr>
         </table>
     </div>
@@ -767,4 +770,51 @@
             </tbody>
         </table>
     </div>
+
+    @if($ingreso)
+    <div class="margin-docpdf">
+         <table style="width:100%;margin:5px 0px;margin-left: -3px;">
+            <tbody>
+                <tr>
+                <td style="width:14%;border:none;">
+                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                        DATOS DEL PAGO
+                    </div>
+                </td>
+                <td style="width:25%;border:none;padding-left:30%;">
+                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                        RECIBO DE PAGO
+                    </div>
+                </td>
+                <td style="border:1px solid {{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$ingreso->ingreso()->nro}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="">
+        <table border="0" class="titulo">
+            <tr>
+                <th width="23.5%" class="right smalltd">REFERENCIA DEL PAGO</th>
+                <td colspan="1" style="">Nro. {{ $ingreso->ingreso()->nro }}</td>
+            </tr>
+            <tr>
+                <th width="23.5%" class="right smalltd">FECHA DEL PAGO</th>
+                <td colspan="1" style="">{{ date('d-m-Y', strtotime($ingreso->ingreso()->fecha)) }}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd" width="10%">CUENTA</th>
+                <td colspan="">{{ $ingreso->ingreso()->cuenta()->nombre }}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd">MÉTODO DE PAGO</th>
+                <td colspan="">{{ $ingreso->ingreso()->metodo_pago() }}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd">MONTO PAGADO</th>
+                <td colspan="">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($ingreso->ingreso()->pago())}}</td>
+            </tr>
+        </table>
+    </div>
+    @endif
 @endsection

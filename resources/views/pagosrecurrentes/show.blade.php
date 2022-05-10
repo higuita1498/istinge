@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
-@section('boton') 
+@section('boton')
+@if(auth()->user()->modo_lectura())
+      <div class="alert alert-warning text-left" role="alert">
+          <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+          <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+      </div>
+  @else
     <a href="{{route('pagosrecurrentes.edit',$gasto->nro)}}" class="btn btn-outline-primary btn-sm " title="Editar" target="_blank"><i class="fas fa-edit"></i> Editar</a>
     @if($gasto->estado==1)
     <a  href="{{route('pagosR.ingreso', $gasto->id)}}" class="btn btn-outline-primary btn-sm" title="Agregar pago"><i class="fas fa-money-bill"></i> Agregar pago</a>
@@ -11,6 +17,7 @@
         </form>
         <button class="btn btn-outline-success btn-sm negative_paging" type="submit" title="Aprobar" onclick="confirmar('aprobar-gasto{{$gasto->id}}', '¿Está seguro que deseas aprobar el pago pago recurrente?', '');"><i class="fas fa-check"></i> Aprobar</button>
               @endif
+    @endif
     @endif
 @endsection
 

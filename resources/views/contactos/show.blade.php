@@ -55,57 +55,64 @@
 @endsection
 
 @section('boton')
-    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-        <div class="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Acciones del Contacto {{ $contacto->contrato }}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            	@if(count($contratos)>0)
-            	{{-- <form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
-            		{{ csrf_field() }}
-            	</form> --}}
-
-            	<form action="{{ route('contactos.desasociar', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="desasociar-contacto{{$contacto->id}}">
-            		{{ csrf_field() }}
-                </form>
-                @endif
-
-                <form action="{{ route('contactos.destroy', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contacto{{$contacto->id}}">
-                	{{ csrf_field() }}
-                	<input name="_method" type="hidden" value="DELETE">
-                </form>
-
-            	@if($contacto->status==1)
-            	    @if(isset($_SESSION['permisos']['6']))
-            	        <a href="{{route('contactos.edit',$id)}}" class="dropdown-item"><i class="fas fa-edit"></i> Editar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</a>
-            	    @endif
-            	    {{-- @if(!$contrato && $contacto->tipo_contacto !=1) --}}
-            	    <a href="{{route('contratos.create_cliente',$id)}}" class="dropdown-item"><i class="fas fa-file-contract"></i> Crear Contrato</a>
-            	    {{-- @endif --}}
-            	    @if(isset($_SESSION['permisos']['201']) && $contacto->tipo_contacto !=1)
-            	        <a href="{{route('radicados.create_cliente', $id)}}" class="dropdown-item"><i class="far fa-life-ring"></i> Crear Radicado</a>
-            	    @endif
-
-            	    @if(count($contratos)>0)
-            	        {{-- @if(isset($_SESSION['permisos']['407']))
-            	            <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar" @else class="btn btn-outline-success" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
-            	        @endif --}}
-            	        @if($user_app && isset($_SESSION['permisos']['730']))
-            	            <button class="dropdown-item" type="submit" title="Desasociar de APP" onclick="confirmar('desasociar-contacto{{$contacto->id}}', '¿Está seguro que desea desasociar el cliente de la APP?', 'Se borrara de forma permanente');"><i class="fas fa-mobile-alt"></i> Desasociar de APP</button>
-            	        @endif
-            	    @endif
-
-            	    @if(isset($_SESSION['permisos']['7']))
-            	        <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que desea eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</button>
-            	    @endif
-            	@endif
-            	@if ($contacto->email && $contacto->contract != 'N/A')
-            	<a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="dropdown-item"><i class="fas fa-envelope-open-text"></i> Enviar Notificación por EMAIL</a>
-            	@endif
-            </div>
+    @if(auth()->user()->modo_lectura())
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
         </div>
-    </div>
+    @else
+	    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+	        <div class="btn-group" role="group">
+	            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                Acciones del Contacto {{ $contacto->contrato }}
+	            </button>
+	            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+	            	@if(count($contratos)>0)
+	            	{{-- <form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
+	            		{{ csrf_field() }}
+	            	</form> --}}
+
+	            	<form action="{{ route('contactos.desasociar', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="desasociar-contacto{{$contacto->id}}">
+	            		{{ csrf_field() }}
+	                </form>
+	                @endif
+
+	                <form action="{{ route('contactos.destroy', $id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contacto{{$contacto->id}}">
+	                	{{ csrf_field() }}
+	                	<input name="_method" type="hidden" value="DELETE">
+	                </form>
+
+	            	@if($contacto->status==1)
+	            	    @if(isset($_SESSION['permisos']['6']))
+	            	        <a href="{{route('contactos.edit',$id)}}" class="dropdown-item"><i class="fas fa-edit"></i> Editar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</a>
+	            	    @endif
+	            	    {{-- @if(!$contrato && $contacto->tipo_contacto !=1) --}}
+	            	    <a href="{{route('contratos.create_cliente',$id)}}" class="dropdown-item"><i class="fas fa-file-contract"></i> Crear Contrato</a>
+	            	    {{-- @endif --}}
+	            	    @if(isset($_SESSION['permisos']['201']) && $contacto->tipo_contacto !=1)
+	            	        <a href="{{route('radicados.create_cliente', $id)}}" class="dropdown-item"><i class="far fa-life-ring"></i> Crear Radicado</a>
+	            	    @endif
+
+	            	    @if(count($contratos)>0)
+	            	        {{-- @if(isset($_SESSION['permisos']['407']))
+	            	            <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar" @else class="btn btn-outline-success" title="Habilitar" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Estas seguro que deseas cambiar el estatus del contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
+	            	        @endif --}}
+	            	        @if($user_app && isset($_SESSION['permisos']['730']))
+	            	            <button class="dropdown-item" type="submit" title="Desasociar de APP" onclick="confirmar('desasociar-contacto{{$contacto->id}}', '¿Está seguro que desea desasociar el cliente de la APP?', 'Se borrara de forma permanente');"><i class="fas fa-mobile-alt"></i> Desasociar de APP</button>
+	            	        @endif
+	            	    @endif
+
+	            	    @if(isset($_SESSION['permisos']['7']))
+	            	        <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que desea eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar {{$contacto->tipo_contacto==0?'cliente':'proveedor'}}</button>
+	            	    @endif
+	            	@endif
+	            	@if ($contacto->email && $contacto->contract != 'N/A')
+	            	<a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="dropdown-item"><i class="fas fa-envelope-open-text"></i> Enviar Notificación por EMAIL</a>
+	            	@endif
+	            </div>
+	        </div>
+	    </div>
+	@endif
 	<div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>

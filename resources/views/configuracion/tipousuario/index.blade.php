@@ -1,8 +1,13 @@
 @extends('layouts.app')
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
 	<a href="{{route('roles.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Tipo Usuario</a>
-
-
+	@endif
 @endsection
 @section('content')
 	@if(Session::has('success'))
@@ -35,11 +40,12 @@
 						<td>{{$rol->nro}}</td>
 						<td>{{$rol->rol}}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())
+							@else
 							<a href="{{route('roles.edit',$rol->id)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
-
 							<button class="btn btn-outline-danger  btn-icons eliminar" idRol="{{$rol->id}}" title="Eliminar" titulo="Estas Seguro?"
 							mensaje="Esta seguro de que desea eliminar este tipo de usuario?!" boton="Si,Eliminar"><i class="fas fa-times"></i></button>
-						
+							@endif
 						</td>
 					</tr>
 				@endforeach

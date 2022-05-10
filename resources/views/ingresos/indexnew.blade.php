@@ -1,13 +1,11 @@
 @extends('layouts.app')
 @section('boton')
-    @if(Auth::user()->modo_lectura())
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    	<a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aquí.</b></a></a>
-    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    		<span aria-hidden="true">&times;</span>
-    	</button>
-    </div>
-    @else
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
         <a href="{{route('ingresos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Ingreso</a>
     @endif

@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     <form action="{{ route('integracion-pasarelas.act_desc',$servicio->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc{{$servicio->id}}">
     	@csrf
     </form>
@@ -14,6 +20,7 @@
 
     @if($servicio->api_key && $servicio->user && $servicio->pass && $servicio->numero || $servicio->user && $servicio->pass && $servicio->numero)
         <a href="{{route('integracion-pasarelas.envio_prueba',$servicio->id)}}" class="btn btn-outline-success btn-sm" title="Editar"><i class="far fa-comment-dots"></i> SMS de Prueba</a>
+    @endif
     @endif
 @endsection
 

@@ -5,10 +5,17 @@
 @endsection
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     <?php if (isset($_SESSION['permisos']['738'])) { ?>
         <a href="{{route('tipos-gastos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Tipo de Gasto</a>
     <?php } ?>
+    @endif
 @endsection
 
 @section('content')

@@ -65,14 +65,12 @@
 @endsection
 
 @section('boton')
-    @if(Auth::user()->modo_lectura())
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        	<a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aquí.</b></a></a>
-        	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        		<span aria-hidden="true">&times;</span>
-        	</button>
-        </div>
-    @else
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
         @if(isset($_SESSION['permisos']['5']))
 	        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
 	    @endif
@@ -165,6 +163,12 @@
 											<option value="2">Escalado / Pendiente</option>
 										</select>
 									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Creado" class="form-control rounded selectpicker" id="creado">
+											<option value="1">NetworkSoft</option>
+											<option value="2">App</option>
+										</select>
+									</div>
 
 									<div class="col-md-2 pl-1 pt-1">
 										<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -228,6 +232,12 @@
 										<select title="Estado" class="form-control rounded selectpicker" id="estatusG">
 											<option value="1">Solventado</option>
 											<option value="3">Escalado / Solventado</option>
+										</select>
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<select title="Creado" class="form-control rounded selectpicker" id="creadoG">
+											<option value="1">NetworkSoft</option>
+											<option value="2">App</option>
 										</select>
 									</div>
 
@@ -297,6 +307,7 @@
 			data.servicio  = $('#servicio').val();
 			data.direccion = $('#direccion').val();
 			data.estatus   = $('#estatus').val();
+			data.creado    = $('#creado').val();
 			data.filtro    = true;
 		});
 
@@ -355,6 +366,7 @@
 			data.servicio  = $('#servicioG').val();
 			data.direccion = $('#direccionG').val();
 			data.estatus   = $('#estatusG').val();
+			data.creado    = $('#creadoG').val();
 			data.filtro    = true;
 		});
 
@@ -400,6 +412,7 @@
 		$('#servicio').val('').selectpicker('refresh');
 		$('#direccion').val('');
 		$('#estatus').val('').selectpicker('refresh');
+		$('#creado').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -430,6 +443,7 @@
 		$('#servicioG').val('').selectpicker('refresh');
 		$('#direccionG').val('');
 		$('#estatusG').val('').selectpicker('refresh');
+		$('#creadoG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTableG();

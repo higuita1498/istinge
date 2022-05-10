@@ -1,45 +1,52 @@
 @extends('layouts.app')
 
 @section('boton')
-    @if($contrato->cs_status==1)
-        <form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
-	       @csrf
-	    </form>
-	    <form action="{{ route('contratos.destroy',$contrato->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contrato{{$contrato->id}}">
-	        @csrf
-	        <input name="_method" type="hidden" value="DELETE">
-	    </form>
-	    <form action="{{ route('contratos.destroy_to_mk',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="eliminar-contrato-mk{{$contrato->id}}">
-	       @csrf
-	    </form>
-        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-            <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Acciones del Contrato
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    @if(isset($_SESSION['permisos']['406']))
-                    <a href="{{ route('contratos.edit',$contrato->id )}}"  class="dropdown-item" title="Editar Contrato"><i class="fas fa-edit"></i></i> Editar Contrato</a>
-                    @endif
-                    @if($contrato->plan_id)
-                    @if(isset($_SESSION['permisos']['407']))
-                    <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar Contrato" @else  class="dropdown-item" title="Habilitar Contrato" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Está seguro que desea @if($contrato->state == 'enabled') deshabilitar @else habilitar @endif contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
-                    @endif
-                    <a href="{{ route('contratos.grafica',$contrato->id )}}" class="dropdown-item" title="Gráfica de Conexión" onclick="cargando('true');"><i class="fas fa-chart-area"></i> Gráfica de Conexión</a>
-                    <a href="{{ route('contratos.grafica_consumo',$contrato->id )}}" class="dropdown-item" title="Gráfica de Consumo" onclick="cargando('true');"><i class="fas fa-chart-line"></i> Gráfica de Consumo</a>
-                    <a href="{{ route('contratos.conexion',$contrato->id )}}" class="dropdown-item" title="Ping de Conexión" onclick="cargando('true');"><i class="fas fa-plug"></i> Ping de Conexión</a>
-                    @endif
-                    <a href="{{ route('contratos.log',$contrato->id )}}" class="dropdown-item" title="Log del Contrato" onclick="cargando('true');"><i class="fas fa-clipboard-list"></i> Log del Contrato</a>
-                    @if(isset($_SESSION['permisos']['439']))
-                    <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contrato{{$contrato->id}}', '¿Está seguro que desea eliminar el contrato?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar Contrato</button>
-                    @endif
-                    @if(isset($_SESSION['permisos']['440']))
-                    <button class="dropdown-item d-none" type="submit" title="Eliminar del Mikrotik" onclick="confirmar('eliminar-contrato-mk{{$contrato->id}}', '¿Está seguro que desea eliminar el contrato del Mikrotik?', 'Se borrara de forma permanente');"><i class="fas fa-times-circle"></i> Eliminar Contrato del Mikrotik</button>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endif
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	    @if($contrato->cs_status==1)
+	        <form action="{{ route('contratos.state',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-state{{$contrato->id}}">
+		       @csrf
+		    </form>
+		    <form action="{{ route('contratos.destroy',$contrato->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-contrato{{$contrato->id}}">
+		        @csrf
+		        <input name="_method" type="hidden" value="DELETE">
+		    </form>
+		    <form action="{{ route('contratos.destroy_to_mk',$contrato->id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="eliminar-contrato-mk{{$contrato->id}}">
+		       @csrf
+		    </form>
+	        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+	            <div class="btn-group" role="group">
+	                <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                    Acciones del Contrato
+	                </button>
+	                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+	                    @if(isset($_SESSION['permisos']['406']))
+	                    <a href="{{ route('contratos.edit',$contrato->id )}}"  class="dropdown-item" title="Editar Contrato"><i class="fas fa-edit"></i></i> Editar Contrato</a>
+	                    @endif
+	                    @if($contrato->plan_id)
+	                    @if(isset($_SESSION['permisos']['407']))
+	                    <button @if($contrato->state == 'enabled') class="dropdown-item" title="Deshabilitar Contrato" @else  class="dropdown-item" title="Habilitar Contrato" @endif type="submit" onclick="confirmar('cambiar-state{{$contrato->id}}', '¿Está seguro que desea @if($contrato->state == 'enabled') deshabilitar @else habilitar @endif contrato?', '');"><i class="fas fa-file-signature"></i>@if($contrato->state == 'enabled') Deshabilitar Contrato @else Habilitar Contrato @endif</button>
+	                    @endif
+	                    <a href="{{ route('contratos.grafica',$contrato->id )}}" class="dropdown-item" title="Gráfica de Conexión" onclick="cargando('true');"><i class="fas fa-chart-area"></i> Gráfica de Conexión</a>
+	                    <a href="{{ route('contratos.grafica_consumo',$contrato->id )}}" class="dropdown-item" title="Gráfica de Consumo" onclick="cargando('true');"><i class="fas fa-chart-line"></i> Gráfica de Consumo</a>
+	                    <a href="{{ route('contratos.conexion',$contrato->id )}}" class="dropdown-item" title="Ping de Conexión" onclick="cargando('true');"><i class="fas fa-plug"></i> Ping de Conexión</a>
+	                    @endif
+	                    <a href="{{ route('contratos.log',$contrato->id )}}" class="dropdown-item" title="Log del Contrato" onclick="cargando('true');"><i class="fas fa-clipboard-list"></i> Log del Contrato</a>
+	                    @if(isset($_SESSION['permisos']['439']))
+	                    <button class="dropdown-item" type="submit" title="Eliminar" onclick="confirmar('eliminar-contrato{{$contrato->id}}', '¿Está seguro que desea eliminar el contrato?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar Contrato</button>
+	                    @endif
+	                    @if(isset($_SESSION['permisos']['440']))
+	                    <button class="dropdown-item d-none" type="submit" title="Eliminar del Mikrotik" onclick="confirmar('eliminar-contrato-mk{{$contrato->id}}', '¿Está seguro que desea eliminar el contrato del Mikrotik?', 'Se borrara de forma permanente');"><i class="fas fa-times-circle"></i> Eliminar Contrato del Mikrotik</button>
+	                    @endif
+	                </div>
+	            </div>
+	        </div>
+	    @endif
+	@endif
 @endsection
 
 @section('content')
@@ -105,6 +112,12 @@
 							<td>{{ $contrato->serial_onu }}</td>
 						</tr>
 						@endif
+						@if($contrato->tecnologia)
+						<tr>
+							<th>Tecnología</th>
+							<td>{{ $contrato->tecnologia() }}</td>
+						</tr>
+						@endif
 						@if($contrato->conexion)
 						<tr>
 							<th>Tipo de Conexión</th>
@@ -133,6 +146,12 @@
 							<th>Dirección IP</th>
 							<td><a href="http://{{ $contrato->ip }}" target="_blank">{{ $contrato->ip }} <i class="fas fa-external-link-alt"></i></a></td>
 						</tr>
+						@if($contrato->address_street)
+						<tr>
+							<th>Dirección de Instalación</th>
+							<td>{{ $contrato->address_street }}</td>
+						</tr>
+						@endif
 						@if($contrato->latitude && $contrato->longitude)
 						@php
 						    $url = 'https://www.google.com/maps/search/'.$contrato->latitude.','.$contrato->longitude.'?hl=es';
@@ -193,7 +212,7 @@
 						@if($contrato->server_configuration_id)
 						<tr>
 							<th>Servidor Asociado</th>
-							<td>{{ $contrato->servidor()->nombre }}</td>
+							<td><a href="{{ route('mikrotik.show',$contrato->server_configuration_id )}}" target="_blank"><strong>{{ $contrato->servidor()->nombre }}</strong></a></td>
 						</tr>
 						@endif
 						<tr>

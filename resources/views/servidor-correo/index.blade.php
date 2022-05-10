@@ -28,6 +28,13 @@
     	LA CONFIGURACIÓN DEL SERVIDOR SE ENCUENTRA <strong>{{ $servidor->estado() }}</strong>
     </div>
 
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@endif
+
 	<form method="POST" action="{{ route('servidor-correo.update', $servidor->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-banco">
 	    @csrf
 	    <input name="_method" type="hidden" value="PATCH">
@@ -100,7 +107,10 @@
 	    <div class="row" >
 	        <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 	            <a href="{{route('configuracion.index')}}" class="btn btn-outline-secondary">Cancelar</a>
+	            @if(auth()->user()->modo_lectura())
+	            @else
 	            <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
+	            @endif
 	        </div>
 	    </div>
 	</form>

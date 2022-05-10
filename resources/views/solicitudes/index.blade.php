@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['5']))
 	    <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
     @endif
@@ -9,6 +15,7 @@
     @endif
     @if(isset($_SESSION['permisos']['201']))
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
+    @endif
     @endif
 @endsection
 

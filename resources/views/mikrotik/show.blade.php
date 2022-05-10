@@ -30,6 +30,12 @@
 	}
    </style>
 <div class="row card-description">
+	@if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
 	<div class="col-md-12 text-center">
 	    @if($mikrotik->status == 0)
         <form action="{{route('mikrotik.conectar',$mikrotik->id)}}" method="get" class="delete_form" style="margin:  0;display: inline-block;" id="conectar-{{$mikrotik->id}}">
@@ -69,6 +75,7 @@
 	    <button title="Eliminar" class="btn btn-outline-danger" type="submit" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i> Eliminar Mikrotik</button>
 	    @endif
 	</div>
+	@endif
 </div>
 
 <div class="row card-description">

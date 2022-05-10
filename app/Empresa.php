@@ -68,6 +68,32 @@ class Empresa extends Model
         return $campo;
     }
 
+    public function whatsapp($parte = 'tlfno')
+    {
+        $campo = $this->whatsapp;
+        $partes = explode(' ', $campo);
+        if (count($partes) > 1) {
+            $prefijo = $partes[0];
+            $campo = '';
+            foreach ($partes as $key => $value) {
+                if ($key > 0) {
+                    $campo .= $value;
+                }
+            }
+
+            if ($parte <> 'tlfno') {
+                $codigo = explode('+', $prefijo)[1];
+                $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
+                if (!$codigo) {
+                    $prefijo = Auth::user()->empresaObj->codigo;
+                }
+                return $prefijo;
+            }
+        }
+
+        return $campo;
+    }
+
     public function tipo_persona(){
         return $this->tipo_persona=='n'?'Natural':'Jurídica';
 
@@ -204,6 +230,10 @@ public function totalEmissions(){
     {
         $salario = NominaConfiguracionCalculos::where('fk_idempresa', $this->id)->where('nro', 4)->first();
         return $salario ? floatval($salario->valor) : 908526;
+    }
+
+    public function suscripcion(){
+        return Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
     }
 
 }

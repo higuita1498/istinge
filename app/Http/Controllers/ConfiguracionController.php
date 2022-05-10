@@ -166,13 +166,14 @@ class ConfiguracionController extends Controller
       $empresa->codigo = $request->codigo;
       $empresa->web = $request->web;
       $empresa->precision = $request->precision;
-      $empresa->sep_dec = $request->sep_dec;
+      //$empresa->sep_dec = $request->sep_dec;
       $empresa->tipo_persona = $request->tipo_persona;
       $empresa->tip_iden = $request->tip_iden;
       $empresa->direccion = $request->direccion;
       $empresa->email = $request->email=strtolower($request->email);
       $empresa->sms_gateway = $request->sms_gateway;
       $empresa->device_id = $request->device_id;
+      $empresa->whatsapp=$request->whatsapp?$request->pref_w." ".$request->whatsapp:$request->whatsapp;
       $empresa->updated_at  = Carbon::now();
       
       $empresa->dv = $request->dvoriginal;

@@ -36,6 +36,12 @@
 	    }
 	</style>
 	
+	@if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
 	@if(isset($_SESSION['permisos']['706']))
 	<div class="row card-description mb-5">
 		<div class="col-md-4 offset-md-2">
@@ -57,5 +63,6 @@
 		    </a>
 		</div>
 	</div>
+	@endif
 	@endif
 @endsection

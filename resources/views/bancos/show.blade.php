@@ -23,7 +23,11 @@
 		    </select>
 		</div>
 		<div class="col-md-8 nopadding">
-			@if(Auth::user()->modo_lectura())
+			@if(auth()->user()->modo_lectura())
+			<div class="alert alert-warning text-left" role="alert">
+				<h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+				<p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+			</div>
 			@else
 				@if($banco->estatus==1)
 				    @if(isset($_SESSION['permisos']['732']))

@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable; use App\Empresa;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Auth; use DB;
+use App\Contrato;
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -68,6 +70,7 @@ class User extends Authenticatable
         }
 
         if (Auth::user()->rol >= 2){
+            return ($suscripcion->fec_corte < date('Y-m-d') || ($this->contratos()));
             return ($suscripcion->fec_corte < date('Y-m-d')) || ($this->facturasHechas()) || ($this->ingresosMaximos() || ($this->rechazado())) ;
         }
 
@@ -280,4 +283,15 @@ class User extends Authenticatable
         return (SuscripcionNomina::where('id_empresa', Auth::user()->empresa)->get()->last())->personal();
     }
 
+    public function contratos($nro = false){
+        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
+        if($suscripcion->ilimitado == 0){
+            return false;
+        }
+        $contratos = Contrato::where('empresa', Auth::user()->empresa)->where('status', 1)->count();
+        if($nro){
+            return ($contratos > 1500) ? true : false;
+        }
+        return $contratos;
+    }
 }

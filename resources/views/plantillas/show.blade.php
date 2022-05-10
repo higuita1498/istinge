@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['703']))
         <form action="{{ route('plantillas.destroy',$plantilla->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-plantilla-{{$plantilla->id}}">
             @csrf
@@ -31,6 +37,7 @@
             </div>
         </div>
     </div>
+    @endif
 @endsection
 
 @section('content')

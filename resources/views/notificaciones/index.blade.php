@@ -1,8 +1,15 @@
 @extends('layouts.app')
 
 @section('boton')
-    @if(isset($_SESSION['permisos']['423']))
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	@if(isset($_SESSION['permisos']['423']))
 	    <a href="{{route('notificaciones.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Notificación</a>
+    @endif
     @endif
 @endsection
 
@@ -36,6 +43,8 @@
 						<td>{{$notificacion->mensaje}}</td>
 						<td class="text-center font-weight-bold {{$notificacion->status(true)}} ">{{$notificacion->status()}}</td>
 						<td class="text-center">
+							@if(auth()->user()->modo_lectura())
+							@else
 						    @if(isset($_SESSION['permisos']['425']))
 							<form action="{{ route('notificaciones.destroy',$notificacion->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-{{$notificacion->id}}">
 							    {{ csrf_field() }}
@@ -48,6 +57,7 @@
 							@endif
 							@if(isset($_SESSION['permisos']['425']))
 							<button class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$notificacion->id}}', '¿Está seguro que desea eliminar la notificación?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+							@endif
 							@endif
 						</td>
 					</tr>

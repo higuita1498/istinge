@@ -1,13 +1,11 @@
 @extends('layouts.app')
 
 @section('boton')
-  @if(Auth::user()->modo_lectura())
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <a>Esta en Modo Lectura si desea seguir disfrutando de Nuestros Servicios Cancelar Alguno de Nuestros Planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aqui.</b></a></a>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
+  @if(auth()->user()->modo_lectura())
+      <div class="alert alert-warning text-left" role="alert">
+          <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+          <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+      </div>
   @else
     <a href="{{route('notascredito.imprimir.nombre',['id' => $nota->nro, 'name'=> 'Nota Credito No. '.$nota->nro.'.pdf'])}}" target="_blanck" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
     <a href="{{route('notascredito.enviar',$nota->nro)}}" class="btn btn-outline-primary btn-sm "title="Enviar"><i class="far fa-envelope"></i> Enviar por Correo Al Cliente</a>

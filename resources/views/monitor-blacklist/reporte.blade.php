@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     <a href="{{ route('monitor-blacklist.index')}}"  class="btn btn-danger" title="Regresar"><i class="fas fa-step-backward"></i></i> Regresar al Listado</a>
+    @endif
 @endsection
 
 @section('content')

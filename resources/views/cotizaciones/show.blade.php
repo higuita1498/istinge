@@ -1,8 +1,12 @@
 @extends('layouts.app')
 
 @section('boton')
-  @if(Auth::user()->modo_lectura())
-    @else
+  @if(auth()->user()->modo_lectura())
+      <div class="alert alert-warning text-left" role="alert">
+          <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+          <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+      </div>
+  @else
     <a href="{{route('cotizaciones.edit',$factura->cot_nro)}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-edit"></i> Editar</a>
     @if($factura->estatus!=2)
       <a href="{{route('cotizaciones.imprimir.nombre',['id' => $factura->cot_nro, 'name'=> 'Cotizacion No. '.$factura->cot_nro.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>

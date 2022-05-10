@@ -1,8 +1,13 @@
  @extends('layouts.app')
-@section('boton')	
-		<a href="{{route('impuestos.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Tipo de Impuesto</a>
-	
-	
+@section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
+	<a href="{{route('impuestos.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Tipo de Impuesto</a>
+	@endif
 @endsection		
 @section('content')
 	@if(Session::has('success'))
@@ -39,6 +44,7 @@
 						<td>{{$impuesto->tipo()}}</td>
 						<td>{{$impuesto->descripcion}}</td>
 						<td>
+							@if(auth()->user()->modo_lectura())@else
 							@if($impuesto->empresa)
 
 							<form action="{{ route('impuestos.act_desc',$impuesto->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-impuesto">
@@ -57,6 +63,7 @@
 			                	 @else
 			                  	<button class="btn btn-outline-success  btn-icons" type="submit" title="Activar" onclick="confirmar('act_desc-impuesto', '¿Estas seguro que deseas activar este tipo de impuesto?', 'Aparecera para seleccionar en las facturas y/o inventario');"><i class="fas fa-power-off"></i></button>
 			                	@endif
+							@endif
 							@endif
 
 						</td>

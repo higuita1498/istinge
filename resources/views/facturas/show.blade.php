@@ -13,16 +13,10 @@
         }
     </style>
     
-    @if(Auth::user()->modo_lectura())
-        <div class="row" style="    margin: -2% 0 0 2%;">
-            <div class="col-md-12">
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <a>Esta en Modo Lectura si desea seguir disfrutando de Nuestros Servicios Cancelar Alguno de Nuestros Planes <a class="text-black" href="{{route('PlanesPagina.index')}}"> <b>Click Aqui.</b></a></a>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
+    @if(auth()->user()->modo_lectura())
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
         </div>
     @else
         @if(auth()->user()->rol <> 8)
@@ -373,8 +367,11 @@
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#pagos_recibidos" role="tab" aria-controls="pagos_recibidos-tab" aria-selected="false" style="font-size: 1.1em; display: inline-block;">Pagos recibidos  
+                        @if(auth()->user()->modo_lectura())
+                        @else
                         @if($factura->estatus==1)
                             <a href="{{route('ingresos.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->nro])}}" class="btn btn-secondary btn-sm btn-rounded text-center" target="_blank" title="Agregar Pagos"><i style="margin: 0; display: inline-block;" class="fas fa-plus"></i></a>
+                        @endif
                         @endif
                     </a>
                 </li>
@@ -408,12 +405,15 @@
                         </tr>
                         @endforeach                
                     @else
+                        @if(auth()->user()->modo_lectura())
+                        @else
                         @if($factura->estatus==1)
                         <tr>
                             <td colspan="6">
                                 <p class="text-center lead" style="margin-top: 5%"> Tu factura aún no tiene pagos recibidos  <a href="{{route('ingresos.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->nro])}}" class="btn btn-secondary btn-sm" ><i class="fas fa-plus"></i> Agregar Pagos</a></p>
                             </td>
                         </tr>
+                        @endif
                         @endif
                     @endif
                 </tbody>

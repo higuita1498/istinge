@@ -137,6 +137,12 @@
     						<th>Dirección</th>
     						<td>{{$radicado->direccion}}</td>
     					</tr>
+    					@if($radicado->creado)
+    					<tr>
+    						<th>Creado desde</th>
+    						<td>{{$radicado->creado()}}</td>
+    					</tr>
+    					@endif
     					<tr>
     						<th>Tipo de Servicio</th>
     						<td>{{$radicado->servicio()->nombre}}</td>

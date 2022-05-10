@@ -60,7 +60,11 @@
               <td>{{$calculo->simbolo}}</td>
               <td id="tdvalor-{{$calculo->id}}">{{$calculo->valor()}}</td>
               <td width="30%" title="{{$calculo->observaciones}}"><div class="elipsis-short-325">{{$calculo->observaciones}}</div></td>
-              <td ><a href="javascript:modificarValor({{$calculo->id}})" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
+              <td >
+                @if(auth()->user()->modo_lectura())
+                @else
+                <a href="javascript:modificarValor({{$calculo->id}})" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
+                @endif
                 {{-- <form action="{{ route('numeraciones_nomina.act_desc',$calculo->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-num{{$calculo->id}}">
                       @csrf
                   </form>

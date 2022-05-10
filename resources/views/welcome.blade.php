@@ -99,8 +99,17 @@
 @endsection
 
 @section('content')
+    @if(auth()->user()->modo_lectura())
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+        </div>
+    @endif
+
     @if(isset($_SESSION['permisos']['113']) && Auth::user()->rol != 8)
         <div class="row card-description">
+            @if(auth()->user()->modo_lectura())
+            @else
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
@@ -156,6 +165,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
             <div class="col-md-12">
                 <div class="card-body">

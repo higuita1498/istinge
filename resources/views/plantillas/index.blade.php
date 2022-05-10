@@ -1,8 +1,15 @@
 @extends('layouts.app')
 
 @section('boton')
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(isset($_SESSION['permisos']['701']))
         <a href="{{route('plantillas.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Plantilla</a>
+    @endif
     @endif
 @endsection
 
@@ -55,6 +62,8 @@
     	                <td class="text-center">{{ $plantilla->clasificacion }}</td>
     	                <td class="text-center text-{{$plantilla->status('true')}}">{{ $plantilla->status() }}</td>
     	                <td class="text-center">
+    	                	@if(auth()->user()->modo_lectura())
+    	                	@else
     	                    @if(isset($_SESSION['permisos']['703']))
     						<form action="{{ route('plantillas.destroy',$plantilla->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-plantilla-{{$plantilla->id}}">
     							@csrf
@@ -78,6 +87,7 @@
     						@endif
     						@if(isset($_SESSION['permisos']['705']))
     						    <button class="btn @if($plantilla->status == 0) btn-outline-success @else btn-outline-danger @endif btn-icons" type="submit" title="@if($plantilla->status == 0) Activar @else Desactivar @endif" onclick="confirmar('act-desc-{{$plantilla->id}}', '¿Está seguro que desea @if($plantilla->status == 0) activar @else desactivar @endif la plantilla?', '');"><i class="fas fa-power-off"></i></button>
+    						@endif
     						@endif
     	                </td>
     	            </tr>

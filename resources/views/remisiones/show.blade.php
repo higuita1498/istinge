@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('boton') 
+@if(auth()->user()->modo_lectura())
+  <div class="alert alert-warning text-left" role="alert">
+    <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+    <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+  </div>
+@else
   <a href="{{route('factura.remision',$remision->nro)}}" class="btn btn-outline-primary btn-sm "title="Facturar" target="_blank"><i class="fas fa-"></i> Facturar</a>
   <a href="{{route('remisiones.edit',$remision->nro)}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-edit"></i> Editar</a>
   <a href="{{route('remisiones.imprimir',['id' => $remision->nro, 'name'=> 'Remision No. '.$remision->nro.'.pdf'])}}" target="_black" class="btn btn-outline-primary btn-sm" title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
@@ -16,11 +22,10 @@
       <i class="fas fa-unlock-alt"> Convertir a Abierta</i>
     </button>
     @endif
-    
+@endif
 @endsection   
 
 @section('content')
-  <style type="text/css"> .card{ background: #f9f1ed !important;}</style>
   
   
   @if(Session::has('success') || Session::has('error'))
@@ -226,7 +231,7 @@
 
   </div>
 
-  <div class="row" style="padding: 0 1%;">
+  <div class="row" style="padding: 0 3.5%;">
      <div class="col-md-7" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
         <h6>Observaciones</h6>
         <p class="text-justify">
@@ -255,7 +260,7 @@
       </div>
   </div>
 
-  <div class="row" style="padding: 0 1%; margin-top: 2%;">
+  <div class="row" style="padding: 0 3.5%; margin-top: 2%; margin-bottom: 2%;">
      <div class="col-md-12" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
         <h5>Pagos recibidos 
           @if($remision->estatus==1)

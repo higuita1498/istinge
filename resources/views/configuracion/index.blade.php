@@ -12,7 +12,10 @@
 			<span class="text-primary">Tipo de Persona:</span>  {{Auth::user()->empresa()->tipo_persona()}}<br>
 			<span class="text-primary">Teléfono:</span>  {{Auth::user()->empresa()->telefono}}<br>
 			<span class="text-primary">Dirección:</span>  {{Auth::user()->empresa()->direccion}}<br>
-			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}</p>
+			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}<br>
+			@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
+			<span class="text-primary">Suscripción NetworkSoft:</span> {{date('d-m-Y', strtotime(Auth::user()->empresa()->suscripcion()->fec_corte))}}</p>
+			@endif
 		</div>
 		<div class="col-sm-8 offset-md-2 {{$empresa->nomina ? 'd-none' : ''}}" id="alerta_nomina">
 			<div class="alert alert-info" role="alert" style="color: #d08f50;background-color: #d08f5026;border-color: #d08f50;">
@@ -21,6 +24,13 @@
 			</div>
 		</div>
 	</div>
+
+	@if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@endif
 
 	<div class="row card-description configuracion">
 		<div class="col-sm-3">
@@ -172,6 +182,19 @@
 			<p>Limpia los archivos temporales y caché del sistema.</p>
 			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
 		</div>
+
+		@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
+		<div class="col-sm-3">
+			<h4 class="card-title">Planes</h4>
+			<p>Elige el plan que quieres tener y configura cómo quieres pagarlo.</p>
+			<a href="{{route('listadoPagos.index')}}">Pagos de Suscripcion</a> <br>
+            {{-- @if($personalPlan)
+                <a href="{{route('planes.personalizado')}}">Plan personalizado</a> <br>
+            @endif
+			<a href="{{route('PlanesPagina.index')}}">Planes</a> <br>
+			<a href="{{route('PlanesPagina.index')}}">Metodos de pago</a> <br> --}}
+		</div>
+		@endif
 	</div>
 
 	{{-- <div class="row card-description configuracion">

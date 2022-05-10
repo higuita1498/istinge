@@ -95,9 +95,9 @@
             </div>
             <div class="col-md-4 form-group">
                 <label class="control-label font-weight-bold">Nro.Contrato</label>
-                <input type="text" class="form-control readonly"  id="contrato" name="contrato"  value="{{$contrato->nro}}" maxlength="200" readonly="">
+                <input type="text" class="form-control" id="nro" name="nro"  value="{{$contrato->nro}}" maxlength="200" onkeypress="return event.charCode >= 48 && event.charCode <=57">
                 <span class="help-block error">
-                    <strong>{{ $errors->first('contrato') }}</strong>
+                    <strong>{{ $errors->first('nro') }}</strong>
                 </span>
             </div>
 
@@ -175,6 +175,16 @@
                                             <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 form-group" id="div_direccion">
+                                <label class="control-label">Dirección de Instalación</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="address_street" id="address_street" value="{{ $contrato->address_street }}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('address_street') }}</strong>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -294,11 +304,23 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-md-4 form-group d-none">
+
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
+                                    <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
+                                    <option value="2" {{$contrato->tecnologia==2?'selected':''}}>Inalámbrico</option>
+                                </select>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('tecnologia') }}</strong>
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 form-group {{$contrato->tecnologia==2?'':'d-none'}}" id="div_ap">
                                 <label class="control-label">Access Point Asociado <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="ap" name="ap" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                <select class="form-control selectpicker" id="ap" name="ap" title="Seleccione" data-live-search="true" data-size="5">
                                     @foreach($nodos as $nodo)
-                                    <optgroup label="{{$nodo->nombre}}">
+                                    <optgroup label="NODO {{$nodo->nombre}}">
                                         @foreach($aps as $ap)
                                             @if($ap->nodo==$nodo->id)
                                             <option id="{{$ap->id}}" value="{{$ap->id}}" {{$ap->id==$contrato->ap?'selected':''}}>{{$ap->nombre}}</option>

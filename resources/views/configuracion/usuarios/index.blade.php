@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('boton')
+@if(Auth::user()->rol >= 2)
+    @if(auth()->user()->modo_lectura())
+	    <div class="alert alert-warning text-left" role="alert">
+	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+	    </div>
+	@else
     @if(Auth::user()->rol >= 2 && $recarga == 0 )
 		<a href="{{route('usuarios.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Usuario</a>
 	@endif
@@ -8,6 +15,8 @@
 		<a href="{{route('reportes.recargas')}}" class="btn btn-success btn-sm" ><i class="fas fa-file-excel"></i>Ver Reporte de Recargas</a>
 		@endif
 	@endif
+	@endif
+@endif
 @endsection
 
 @section('content')
