@@ -1729,7 +1729,7 @@ function max_value_valor_recibido(id, ides=null, pref=null ){
         $('#precio'+id).val(number_format(total,false));
         $('#precio'+id).trigger("change");
     }
-    $("#precio"+id).attr('max', number_format(total,false));
+    // $("#precio"+id).attr('max', number_format(total,false));
 
 
     if (number_format(total,false)<0) {
@@ -1798,19 +1798,42 @@ function retencion_calculate(id, reten, recursividad=true, pref='', seccion=null
 }
 
 function totales_ingreso(input=true){
-    var total=0; var reten_may=0;
+    var total=0; var reten_may=0; 
+    let saldoFavor = 0; //este es el saldo sobrante cuando el cliente paga una factura y paga de mas.
 
     $('#table-facturas  tbody tr').each(function() {
         id=$(this).attr('id');
         var precio=$('#precio'+id).val();
         if (precio) {
             total+=parseFloat(precio);
+
+            //si es mator el valor agregado que lo que hay que paar en la factura sumamos esa diferencia al salfo a favor
+            if(precio > $("#totalfact"+id).val()){
+                saldoFavor+=saldoFavor+(precio - $("#totalfact"+id).val());
+            }
+
         }
 
         if (!max_value_valor_recibido(id)) {return false;}
         else{$('#button-guardar').removeAttr("disabled");}
 
     });
+
+    //notificamos el saldo a favor
+    if(saldoFavor > 0){
+
+    //seteamos el input type hidden del saldo a favor
+    $("#saldofavor").val(100000);
+
+        swal({
+            title: 'SALDO A FAVOR',
+            html: 'Tienes acumulado un saldo a favor de: ' + '<strong>$'+saldoFavor+' pesos</strong>' + ' en este ingreso que estas generando.',
+            type: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#1A59A1',
+            confirmButtonText: 'ACEPTAR',
+        });
+    }
 
     var retenciones = JSON.parse($('#retenciones').val());
     $.each( retenciones, function( key, value ){
@@ -1865,34 +1888,8 @@ function totales_ingreso(input=true){
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function editmonto(id){
+    
     if ($('#precio'+id).val()) {
 
         $('#editmonto'+id).val(0);
@@ -1906,9 +1903,6 @@ function editmonto(id){
 function reduccion_precio(){
 
 }
-
-
-
 
 function enabled(id){
     if($("#precio_categoria"+id).attr('disabled')){

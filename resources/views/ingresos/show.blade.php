@@ -188,7 +188,6 @@
 	</div>
 </div>
 
-
 @elseif($ingreso->tipo==2 || $ingreso->tipo==4)
 <div class="row card-description">
 	<div class="col-md-12">
