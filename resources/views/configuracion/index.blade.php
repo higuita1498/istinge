@@ -74,6 +74,7 @@
 			{{-- <a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br> --}}
 			<a href="{{route('puc.index')}}">Gestionar PUC</a> <br>
 			<a href="{{route('formapago.index')}}">Formas de Pago</a> <br>
+			<a href="{{route('anticipo.index')}}">Anticipos</a> <br>
 			<a href="{{route('productoservicio.index')}}">Productos y Servicios</a> <br>
 		</div>
 		@endif
@@ -134,7 +135,7 @@
 			<a id="nomina_calculos" href="{{ route('configuraicon.calculosnomina') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Cálculos fijos</a> <br>
 			{{-- <a href="#" onclick="nominaDIAN()" id="div_nominaDIAN"  class="{{$empresa->nomina ? '' : 'd-none'}}">{{ Auth::user()->empresaObj->nomina_dian == 0 ? 'Activar' : 'Desactivar' }} Nómina Electrónica por la DIAN</a><br> --}}
 			<input type="hidden" id="nominaDIAN" value="{{Auth::user()->empresaObj->nomina_dian}}">
-			{{-- <a id="nomina_asistentes" href="{{ route('nomina-dian.asistente') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Asistente de habilitación DIAN</a> <br> --}}
+			<a id="nomina_asistentes" href="{{ route('nomina-dian.asistente') }}" class="{{$empresa->nomina ? '' : 'd-none'}}">Asistente de habilitación DIAN</a> <br>
 			<hr class="nomina {{$empresa->nomina ? '' : 'd-none'}}">
 			<a id="planes_nomina" href="{{route('nomina.suscripciones')}}" class="{{$empresa->nomina ? '' : 'd-none'}}">Planes de Suscripción</a> <br>
 		</div>
