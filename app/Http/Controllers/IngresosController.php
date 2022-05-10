@@ -253,7 +253,7 @@ class IngresosController extends Controller
 
         if($request->realizar == 2){
             
-            $this->storeIngresoPuc($request);
+            $this->storeIngresoPucCategoria($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
@@ -329,15 +329,6 @@ class IngresosController extends Controller
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
             $ingreso->save();
-
-            //registramos el saldo a favor que se generó al pagar la factura
-            if($request->saldofavor > 0){
-                $contacto = Contacto::find($request->cliente);
-                $contacto->saldo_favor;
-                $contacto->save();
-
-                PucMovimiento::ingreso($ingreso,1,1);    
-            }
             
             //Si el tipo de ingreso es de facturas
             if ($ingreso->tipo == 1) {
@@ -367,6 +358,9 @@ class IngresosController extends Controller
                         $items->ingreso = $ingreso->id;
                         $items->factura = $factura->id;
                         $items->pagado = $factura->pagado();
+                        $items->puc_factura = $factura->cuenta_id;
+                        $items->puc_banco = $request->puc_banco;
+                        $items->anticipo = $request->anticipo_factura;
                         $items->pago = $this->precision($request->precio[$key]);
                         if ($this->precision($precio) == $this->precision($factura->porpagar())) {
                             $factura->estatus = 0;
@@ -414,6 +408,19 @@ class IngresosController extends Controller
                         }
                     }
                 }
+            }
+
+            //registramos el saldo a favor que se generó al pagar la factura
+            if($request->saldofavor > 0){
+                $contacto = Contacto::find($request->cliente);
+                $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
+                $contacto->save();
+
+                $ingreso->saldoFavorIngreso = $request->saldofavor;
+                $ingreso->puc_banco = $request->puc_banco;
+                $ingreso->anticipo = $request->anticipo_factura;
+
+                PucMovimiento::ingreso($ingreso,1,1);    
             }
             
             //sumo a las numeraciones el recibo
@@ -598,7 +605,7 @@ class IngresosController extends Controller
         }
     }
 
-    public function storeIngresoPuc($request){
+    public function storeIngresoPucCategoria($request){
 
         $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
             $caja = $nro->caja;

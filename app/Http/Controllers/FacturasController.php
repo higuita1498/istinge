@@ -575,6 +575,10 @@ class FacturasController extends Controller{
         //echo $cliente;die;
         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
         $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
+
+        //obtiene las formas de pago relacionadas con este modulo (Facturas)
+        $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
         if (!$nro) {
             $mensaje='Debes crear una numeración para facturas de venta preferida';
             return redirect('empresa/configuracion/numeraciones/dian')->with('error', $mensaje);
@@ -636,7 +640,7 @@ class FacturasController extends Controller{
         $seccion = "facturas";
         $subseccion = "venta-electronica";
 
-        return view('facturas-electronica.create')->with(compact('clientes', 'tipo_documento', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos','cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2','unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion','extras'));
+        return view('facturas-electronica.create')->with(compact('clientes', 'tipo_documento', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos','cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2','unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion','extras','relaciones'));
     }
 
     public function create_cliente($cliente){

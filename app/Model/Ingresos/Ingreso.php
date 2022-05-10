@@ -225,6 +225,17 @@ class Ingreso extends Model
         return User::find($this->updated_by);
     }
 
+    public function ingresosCategorias(){
+        return IngresosCategoria::where('ingreso',$this->id)->get();
+    }
+    
+
+    public function ingresosFacturas(){
+        return IngresosFactura::where('ingreso',$this->id)->get();
+    }
+
+
+    /* * * * Asociados a una categoria * * */
     public function ingresoAnticipo(){
         $anticipo = IngresosCategoria::join('anticipo as an','an.id','=','ingresos_categoria.anticipo')
         ->where('ingresos_categoria.ingreso',$this->id)->select('an.*')->first();
@@ -243,7 +254,24 @@ class Ingreso extends Model
         }
     }
 
-    public function ingresosCategorias(){
-        return IngresosCategoria::where('ingreso',$this->id)->get();
+    /* * * * Asociados a una(s) facturas * * */
+    public function ingresoAnticipoFactura(){
+        $anticipo = IngresosFactura::join('anticipo as an','an.id','=','ingresos_factura.anticipo')
+        ->where('ingresos_factura.ingreso',$this->id)->select('an.*')->first();
+
+        if($anticipo){
+            return $anticipo;
+        }
     }
+    
+    public function ingresoPucBanco(){
+        $puc = IngresosFactura::join('puc as p','p.id','=','ingresos_factura.puc_banco')
+        ->where('ingresos_factura.ingreso',$this->id)->select('p.*')->first();
+
+        if($puc){
+            return $puc;
+        }
+    }
+    
+
 }

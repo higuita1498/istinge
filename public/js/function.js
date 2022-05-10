@@ -1806,9 +1806,9 @@ function totales_ingreso(input=true){
         var precio=$('#precio'+id).val();
         if (precio) {
             total+=parseFloat(precio);
-
+            
             //si es mator el valor agregado que lo que hay que paar en la factura sumamos esa diferencia al salfo a favor
-            if(precio > $("#totalfact"+id).val()){
+            if(precio > parseFloat($("#totalfact"+id).val())){
                 saldoFavor+=saldoFavor+(precio - $("#totalfact"+id).val());
             }
 
@@ -1823,7 +1823,7 @@ function totales_ingreso(input=true){
     if(saldoFavor > 0){
 
     //seteamos el input type hidden del saldo a favor
-    $("#saldofavor").val(100000);
+    $("#saldofavor").val(saldoFavor);
 
         swal({
             title: 'SALDO A FAVOR',
@@ -1833,6 +1833,12 @@ function totales_ingreso(input=true){
             confirmButtonColor: '#1A59A1',
             confirmButtonText: 'ACEPTAR',
         });
+
+        $(".cls-anticipo").addClass('d-block');
+        $(".cls-anticipo").removeClass('d-none');
+    }else{
+        $(".cls-anticipo").addClass('d-none');
+        $(".cls-anticipo").removeClass('d-block');
     }
 
     var retenciones = JSON.parse($('#retenciones').val());
