@@ -1,4 +1,3 @@
-
 @php $noIva = 0; $contNoIva = 0; $swIva=0; @endphp
 @if(!isset($impuestoItem))
 @if($FacturaVenta->total()->imp && $isImpuesto)
