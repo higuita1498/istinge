@@ -389,6 +389,8 @@
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.value) {
+                cargando(true);
+
                 if (window.location.pathname.split("/")[1] === "software") {
                     var url = `/software/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
                 }else{
@@ -400,6 +402,7 @@
                     method: 'GET',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function(data) {
+                        cargando(false);
                         swal({
                             title: 'PROCESO REALIZADO',
                             html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
