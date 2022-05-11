@@ -9,7 +9,9 @@
 	    </div>
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-        <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
+        @if(isset($_SESSION['permisos']['258']))
+        <a href="{{route('facturasp.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Factura de Proveedores</a>
+        @endif
     @endif
 @endsection
 
@@ -70,12 +72,15 @@
 			<div class="card-body py-0">
 				<div class="row">
 					<div class="col-md-1 pl-1 pt-1">
-						<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
+						<input type="text" placeholder="Nro" id="nro" class="form-control rounded">
 					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
-							@foreach ($clientes as $cliente)
-								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+					<div class="col-md-1 pl-1 pt-1">
+						<input type="text" placeholder="Factura" id="codigo" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Proveedor" class="form-control rounded selectpicker" id="proveedor" data-size="5" data-live-search="true">
+							@foreach ($proveedores as $proveedor)
+								<option value="{{ $proveedor->id}}">{{ $proveedor->nombre}} - {{ $proveedor->nit}}</option>
 							@endforeach
 						</select>
 					</div>
@@ -92,12 +97,6 @@
 							<option value="2">Anuladas</option>
 						</select>
 					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
-							<option value="1">Si</option>
-							<option value="A">No</option>
-						</select>
-					</div>
 					
 
 					<div class="col-md-1 pl-1 pt-1">
@@ -111,17 +110,7 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
-    		<div class="container-filtercolumn">
-    			@if(Auth::user()->empresa()->efecty == 1)
-    			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
-    			@endif
-                @if(isset($_SESSION['permisos']['774']))
-                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
-                @endif
-			</div>
-		</div>
-		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-facturas">
+			<table class="table table-striped table-hover w-100" id="tabla-facturasp">
 				<thead class="thead-dark">
 					<tr>
 						@foreach($tabla as $campo)
@@ -133,27 +122,13 @@
 			</table>
 		</div>
 	</div>
-	
-	<div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">GENERAR PROMESA DE PAGO</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div id="div_promesa"></div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
 <script>
 	var tabla = null;
 	window.addEventListener('load', function() {
-		$('#tabla-facturas').DataTable({
+		$('#tabla-facturasp').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -162,10 +137,10 @@
 				'url': '/vendors/DataTables/es.json'
 			},
 			order: [
-				[2, "DESC"],[0, "DESC"]
+				[0, "DESC"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{url("/facturas")}}',
+			ajax: '{{url("/facturasp")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
@@ -177,17 +152,14 @@
 			]
 		});
 
-		tabla = $('#tabla-facturas');
+		tabla = $('#tabla-facturasp');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
+			data.nro = $('#nro').val();
 			data.codigo = $('#codigo').val();
-			data.corte = $('#corte').val();
-			data.cliente = $('#cliente').val();
-			data.vendedor = $('#vendedor').val();
+			data.proveedor = $('#proveedor').val();
 			data.creacion = $('#creacion').val();
 			data.vencimiento = $('#vencimiento').val();
-			data.comparador = $('#comparador').val();
-			data.total = $('#total').val();
 			data.estado = $('#estado').val();
 			data.filtro = true;
 		});
@@ -232,14 +204,11 @@
 	}
 
 	function cerrarFiltrador() {
+		$('#nro').val('');
 		$('#codigo').val('');
-		$('#corte').val('').selectpicker('refresh');
-		$('#cliente').val('').selectpicker('refresh');
-		$('#vendedor').val('').selectpicker('refresh');
+		$('#proveedor').val('').selectpicker('refresh');
 		$('#creacion').val('');
 		$('#vencimiento').val('');
-		$('#comparador').val('').selectpicker('refresh');
-		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

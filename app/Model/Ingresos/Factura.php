@@ -60,8 +60,7 @@ class Factura extends Model
         }
     }
     
-    public function parsear($valor)
-    {
+    public function parsear($valor){
         return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
     }
 

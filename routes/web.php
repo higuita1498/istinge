@@ -62,6 +62,7 @@ Route::get('/factura/{identificacion}', 'Controller@consultar_invoice')->name('i
 Route::get('contratos/{nodo?}', 'ContratosController@contratos');
 Route::get('nodos', 'NodosController@nodos');
 Route::get('facturas', 'FacturasController@facturas');
+Route::get('facturasp', 'FacturaspController@facturasp');
 Route::get('facturas-electronicas','FacturasController@facturas_electronica');
 Route::get('ingresos', 'IngresosController@ingresos');
 //Route::get('contactos', 'ContactosController@contactos');
