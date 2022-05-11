@@ -1679,7 +1679,7 @@ class FacturasController extends Controller{
         $data = array();
         foreach ($facturas as $factura) {
             $nestedData = array();
-            $nestedData[] = '<a href="'.route('facturas.show',$factura->nro).'">'.$factura->codigo.'</a>';
+            $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
             $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blanck">'.$factura->nombrecliente.'</a>';
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
             if(date('Y-m-d') > $factura->vencimiento && $factura->estatus==1){
@@ -1691,19 +1691,19 @@ class FacturasController extends Controller{
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->pagado());
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->porpagar());
             $nestedData[] = '<spam class="text-'.$factura->estatus(true).'">'.$factura->estatus().'</spam>';
-            $boton = '<a href="'.route('facturas.show',$factura->nro).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
-            <a href="'.route('facturas.imprimir',['id' => $factura->nro, 'name'=> 'Factura No. '.$factura->codigo.'.pdf']).'" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a> ';
+            $boton = '<a href="'.route('facturas.show',$factura->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
+            <a href="'.route('facturas.imprimir',['id' => $factura->id, 'name'=> 'Factura No. '.$factura->codigo.'.pdf']).'" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a> ';
 
             if($factura->estatus==1){
-              $boton .= '<a  href="'.route('ingresos.create_id', ['cliente'=>$factura->cliente, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
+              $boton .= '<a  href="'.route('ingresos.create_id', ['cliente'=>$factura->cliente, 'factura'=>$factura->id]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
               <a href="'.route('facturas.edit',$factura->nro).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>';
             }
 
             if($factura->estatus==1 && $factura->promesa_pago==null){
-                $boton .= '<a href="javascript:modificarPromesa('.$factura->nro.')" class="btn btn-outline-danger btn-icons promesa ml-1" idfactura="'.$factura->nro.'" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>';
+                $boton .= '<a href="javascript:modificarPromesa('.$factura->id.')" class="btn btn-outline-danger btn-icons promesa ml-1" idfactura="'.$factura->nro.'" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>';
             }
 
-            $boton.=' <form action="'.route('factura.anular',$factura->nro).'" method="POST" class="delete_form" style="display: none;" id="anular-factura'.$factura->id.'">'.csrf_field().'</form>';
+            $boton.=' <form action="'.route('factura.anular',$factura->id).'" method="POST" class="delete_form" style="display: none;" id="anular-factura'.$factura->id.'">'.csrf_field().'</form>';
             if($factura->estatus==1){
                 $boton .= '<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar('."'anular-factura".$factura->id."', '¿Está seguro de que desea anular la factura de venta?', ' ');".'"><i class="fas fa-minus"></i></button> ';
             }else if($factura->estatus==2){
