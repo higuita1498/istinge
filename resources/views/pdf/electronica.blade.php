@@ -771,7 +771,7 @@
         </table>
     </div>
 
-    @if($ingreso)
+    @if(isset($ingreso))
     <div class="margin-docpdf">
          <table style="width:100%;margin:5px 0px;margin-left: -3px;">
             <tbody>
