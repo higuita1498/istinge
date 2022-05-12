@@ -370,6 +370,7 @@ class ContratosController extends Controller
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
+        $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
 
         if ($mikrotik) {
             $API = new RouterosAPI();
@@ -414,12 +415,12 @@ class ContratosController extends Controller
                         "local-address"  => $request->ip,
                         "remote-address" => $request->ip,
                         "service"        => 'pppoe',
-                        "comment"        => $this->normaliza($cliente->nombre).'-'.$nro_contrato
+                        "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
                     
                     $API->comm("/queue/simple/add", array(
-                        "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                        "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                         "target"          => $request->ip,
                         "max-limit"       => $plan->upload.'/'.$plan->download,
                         "burst-limit"     => $burst_limit,
@@ -438,7 +439,7 @@ class ContratosController extends Controller
                             $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
 
                             $API->comm("/ip/dhcp-server/lease/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "comment"     => $this->normaliza($servicio).'-'.$nro_contrato,
                                 "address"     => $request->ip,
                                 "server"      => $plan->dhcp_server,
                                 "mac-address" => $request->mac_address,
@@ -447,12 +448,12 @@ class ContratosController extends Controller
                             );
 
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                "?comment" => $this->normaliza($cliente->nombre).'-'.$nro_contrato
+                                "?comment" => $this->normaliza($servicio).'-'.$nro_contrato
                                 )
                             );
                         }elseif ($request->simple_queue == 'estatica') {
                             $API->comm("/ip/dhcp-server/lease/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "comment"     => $this->normaliza($servicio).'-'.$nro_contrato,
                                 "address"     => $request->ip,
                                 "server"      => $plan->dhcp_server,
                                 "mac-address" => $request->mac_address
@@ -460,14 +461,14 @@ class ContratosController extends Controller
                             );
 
                             $name = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                "?comment" => $this->normaliza($cliente->nombre).'-'.$nro_contrato
+                                "?comment" => $this->normaliza($servicio).'-'.$nro_contrato
                                 )
                             );
 
                             if($name){
                                 $registro = true;
                                 $API->comm("/queue/simple/add", array(
-                                    "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                    "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                                     "target"          => $request->ip,
                                     "max-limit"       => $plan->upload.'/'.$plan->download,
                                     "burst-limit"     => $burst_limit,
@@ -493,7 +494,7 @@ class ContratosController extends Controller
                         ]);
 
                         $API->comm("/ip/arp/add", array(
-                            "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                            "comment"     => $this->normaliza($servicio).'-'.$nro_contrato,
                             "address"     => $request->ip,
                             "interface"   => $request->interfaz,
                             "mac-address" => $request->mac_address
@@ -502,7 +503,7 @@ class ContratosController extends Controller
                     }
 
                     $API->comm("/queue/simple/add", array(
-                        "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                        "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                         "target"          => $request->ip,
                         "max-limit"       => $plan->upload.'/'.$plan->download,
                         "burst-limit"     => $burst_limit,
@@ -525,7 +526,7 @@ class ContratosController extends Controller
                     if($request->ip_new){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "comment"     => $this->normaliza($servicio).'-'.$nro_contrato,
                                 "address"     => $request->ip_new,
                                 "interface"   => $request->interfaz,
                                 "mac-address" => $request->mac_address
@@ -534,7 +535,7 @@ class ContratosController extends Controller
                         }
 
                         $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                                "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
@@ -563,7 +564,7 @@ class ContratosController extends Controller
                     );
 
                     $API->comm("/queue/simple/add", array(
-                            "name"            => $this->normaliza($cliente->nombre).'-'.$nro_contrato,
+                            "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                             "target"          => $request->ip,
                             "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
@@ -587,7 +588,7 @@ class ContratosController extends Controller
                 $contrato = new Contrato();
                 $contrato->plan_id                 = $request->plan_id;
                 $contrato->nro                     = $nro_contrato;
-                $contrato->servicio                = $this->normaliza($cliente->nombre).'-'.$nro_contrato;
+                $contrato->servicio                = $this->normaliza($servicio).'-'.$nro_contrato;
                 $contrato->client_id               = $request->client_id;
                 $contrato->server_configuration_id = $request->server_configuration_id;
                 $contrato->ip                      = $request->ip;
@@ -699,7 +700,7 @@ class ContratosController extends Controller
 
             $contrato = new Contrato();
             $contrato->nro                  = $nro_contrato;
-            $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$nro_contrato;
+            $contrato->servicio             = $this->normaliza($servicio).'-'.$nro_contrato;
             $contrato->client_id            = $request->client_id;
             $contrato->grupo_corte          = $request->grupo_corte;
             $contrato->facturacion          = $request->facturacion;
@@ -798,7 +799,6 @@ class ContratosController extends Controller
             return back()->with('danger', 'ESTÁ INTENTANDO REGISTRAR UN NRO DE CONTRATO QUE YA SE ENCUENTRA REGISTRADO');
         }
 
-
         if(!$request->server_configuration_id && !$request->servicio_tv){
             return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
         }
@@ -824,6 +824,7 @@ class ContratosController extends Controller
             $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
             $mikrotik = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;
             $cliente = $contrato->cliente();
+            $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
             
             if ($mikrotik) {
                 $API = new RouterosAPI();
@@ -932,7 +933,7 @@ class ContratosController extends Controller
                             "local-address"  => $request->ip,
                             "remote-address" => $request->ip,
                             "service"        => 'pppoe',
-                            "comment"        => $this->normaliza($cliente->nombre).'-'.$request->nro
+                            "comment"        => $this->normaliza($servicio).'-'.$request->nro
                             )
                         );
 
@@ -948,7 +949,7 @@ class ContratosController extends Controller
                             if($request->simple_queue == 'dinamica'){
                                 $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
+                                    "comment"     => $this->normaliza($servicio).'-'.$request->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address,
@@ -957,7 +958,7 @@ class ContratosController extends Controller
                                 );
                             }elseif ($request->simple_queue == 'estatica') {
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
+                                    "comment"     => $this->normaliza($servicio).'-'.$request->nro,
                                     "address"     => $request->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $request->mac_address
@@ -979,7 +980,7 @@ class ContratosController extends Controller
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$request->nro,
+                                "comment"     => $this->normaliza($servicio).'-'.$request->nro,
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
                                 "mac-address" => $request->mac_address
@@ -1019,7 +1020,7 @@ class ContratosController extends Controller
                             );
                         }else{
                             $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre).'-'.$request->nro,
+                                "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
@@ -1123,7 +1124,7 @@ class ContratosController extends Controller
                     $contrato->servicio_tv             = $request->servicio_tv;
                     $contrato->contrato_permanencia    = $request->contrato_permanencia;
                     $contrato->serial_onu              = $request->serial_onu;
-                    $contrato->servicio                = $this->normaliza($cliente->nombre).'-'.$request->nro;
+                    $contrato->servicio                = $this->normaliza($servicio).'-'.$request->nro;
                     $contrato->server_configuration_id = $mikrotik->id;
                     $contrato->descuento               = $request->descuento;
                     $contrato->vendedor                = $request->vendedor;
@@ -1192,7 +1193,7 @@ class ContratosController extends Controller
                     return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA SIDO ACTUALIZADO');
                 }
             }else{
-                $contrato->servicio             = $this->normaliza($cliente->nombre).'-'.$request->nro;
+                $contrato->servicio             = $this->normaliza($servicio).'-'.$request->nro;
                 $contrato->grupo_corte          = $request->grupo_corte;
                 $contrato->facturacion          = $request->facturacion;
                 $contrato->latitude             = $request->latitude;
@@ -2016,6 +2017,7 @@ class ContratosController extends Controller
             $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
             $mikrotik = Mikrotik::where('id', $plan->mikrotik)->first();
             $cliente = $contrato->cliente();
+            $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
 
             if ($mikrotik) {
                 $API = new RouterosAPI();
@@ -2047,7 +2049,7 @@ class ContratosController extends Controller
                             "local-address"  => $contrato->ip,
                             "remote-address" => $contrato->ip,
                             "service"        => 'pppoe',
-                            "comment"        => $this->normaliza($cliente->nombre).'-'.$contrato->nro
+                            "comment"        => $this->normaliza($servicio).'-'.$contrato->nro
                             )
                         );
 
@@ -2063,7 +2065,7 @@ class ContratosController extends Controller
                             if($contrato->simple_queue == 'dinamica'){
                                 $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                    "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
                                     "address"     => $contrato->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $contrato->mac_address,
@@ -2072,7 +2074,7 @@ class ContratosController extends Controller
                                 );
                             }elseif ($contrato->simple_queue == 'estatica') {
                                 $API->comm("/ip/dhcp-server/lease/add", array(
-                                    "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                    "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
                                     "address"     => $contrato->ip,
                                     "server"      => $plan->dhcp_server,
                                     "mac-address" => $contrato->mac_address
@@ -2094,7 +2096,7 @@ class ContratosController extends Controller
                     if($contrato->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
-                                "comment"     => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
                                 "address"     => $contrato->ip,
                                 "interface"   => $contrato->interfaz,
                                 "mac-address" => $contrato->mac_address
@@ -2134,7 +2136,7 @@ class ContratosController extends Controller
                             );
                         }else{
                             $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($cliente->nombre).'-'.$contrato->nro,
+                                "name"            => $this->normaliza($servicio).'-'.$contrato->nro,
                                 "target"          => $contrato->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
