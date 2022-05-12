@@ -32,6 +32,7 @@ use App\Model\Ingresos\Ingreso;
 use Config;
 use App\ServidorCorreo;
 use App\Puc;
+use App\Campos;
 
 class PagosController extends Controller
 {
@@ -39,8 +40,87 @@ class PagosController extends Controller
         $this->middleware('auth');
         view()->share(['seccion' => 'gastos', 'title' => 'Pagos / Egresos', 'icon' =>'fas fa-minus', 'subseccion' => 'pagos']);
     }
-    
+
     public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $empresaActual = auth()->user()->empresa;
+
+        $beneficiarios = Contacto::join('gastos as g', 'contactos.id', '=', 'g.beneficiario')->where('contactos.status', 1)->where('g.empresa', $empresaActual)->groupBy('g.beneficiario')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $cuentas = Banco::where('empresa', $empresaActual)->get();
+
+        view()->share(['middel' => true]);
+        $tipo = false;
+        $tabla = Campos::where('modulo', 7)->where('estado', 1)->where('empresa', $empresaActual)->orderBy('orden', 'asc')->get();
+
+        return view('pagos.indexnew', compact('beneficiarios','tipo','tabla','cuentas'));
+    }
+
+    public function pagos(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $identificadorEmpresa = auth()->user()->empresa;
+        $moneda = auth()->user()->empresa()->moneda;
+        $empresaNombre = auth()->user()->empresa()->nombre;
+
+        $gastos = Gastos::query()
+            ->where('empresa', $identificadorEmpresa);
+
+        if ($request->filtro == true) {
+            if($request->nro){
+                $gastos->where(function ($query) use ($request) {
+                    $query->orWhere('nro', 'like', "%{$request->nro}%");
+                });
+            }
+            if($request->beneficiario){
+                $gastos->where(function ($query) use ($request) {
+                    $query->orWhere('beneficiario', $request->beneficiario);
+                });
+            }
+            if($request->creacion){
+                $gastos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha', $request->creacion);
+                });
+            }
+            if($request->estatus){
+                $estatus = ($request->estatus == 'A') ? 0 : $request->estatus;
+                $gastos->where(function ($query) use ($request, $estatus) {
+                    $query->orWhere('estatus', $estatus);
+                });
+            }
+            if($request->cuenta){
+                $gastos->where(function ($query) use ($request) {
+                    $query->orWhere('cuenta', $request->cuenta);
+                });
+            }
+        }
+
+        return datatables()->eloquent($gastos)
+        ->editColumn('nro', function (Gastos $gasto) {
+            return $gasto->id ? "<a href=" . route('pagos.show', $gasto->id) . ">$gasto->nro</a>" : "";
+        })
+        ->editColumn('beneficiario', function (Gastos $gasto) use ($empresaNombre) {
+            return  $gasto->beneficiario ? "<a href=" . route('contactos.show', $gasto->beneficiario) . "><div class='elipsis-short'>{$gasto->beneficiario()->nombre}</div></a>" : "<div class='elipsis-short'>{$empresaNombre}</div>";
+        })
+        ->editColumn('fecha', function (Gastos $gasto) {
+            return date('d-m-Y', strtotime($gasto->fecha));
+        })
+        ->editColumn('detalle', function (Gastos $gasto) use ($moneda) {
+            return "<div class='elipsis-short'>{$gasto->detalle()}</div>";
+        })
+        ->editColumn('cuenta', function (Gastos $gasto) use ($moneda) {
+            return "{$gasto->cuenta()->nombre}";
+        })
+        ->editColumn('pago', function (Gastos $gasto) use ($moneda) {
+            return "{$moneda} {$gasto->parsear($gasto->pago())}";
+        })
+        ->editColumn('estatus', function (Gastos $gasto) {
+            return   '<span class="text-' . $gasto->estatus(true) . '">' . $gasto->estatus(). '</span>';
+        })
+        ->editColumn('acciones', $modoLectura ?  "" : "pagos.acciones")
+        ->rawColumns(['nro','beneficiario','fecha','detalle','estatus','acciones'])
+        ->toJson();
+    }
+
+    public function indexOLD(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $busqueda = false;
         $gastos = Gastos::where('empresa',Auth::user()->empresa);

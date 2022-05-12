@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('boton')
     @if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
@@ -9,10 +8,29 @@
 	    </div>
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-        @if(isset($_SESSION['permisos']['258']))
-        <a href="{{route('facturasp.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Factura de Proveedores</a>
+        @if(isset($_SESSION['permisos']['253']))
+            <a href="{{route('pagos.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Pago</a>
         @endif
     @endif
+@endsection
+
+@section('style')
+    <style>
+    	td .elipsis-short {
+	    	width: 250px;
+	    	overflow: hidden;
+	    	white-space: nowrap;
+	    	text-overflow: ellipsis;
+	    }
+	    @media all and (max-width: 768px){
+	    	td .elipsis-short {
+	    		width: 150px;
+	    		overflow: hidden;
+	    		white-space: nowrap;
+	    		text-overflow: ellipsis;
+	    	}
+	    }
+    </style>
 @endsection
 
 @section('content')
@@ -71,34 +89,34 @@
 		<div class="card shadow-sm border-0">
 			<div class="card-body py-0">
 				<div class="row">
-					<div class="col-md-1 pl-1 pt-1">
+					<div class="col-md-2 pl-1 pt-1">
 						<input type="text" placeholder="Nro" id="nro" class="form-control rounded">
 					</div>
-					<div class="col-md-1 pl-1 pt-1">
-						<input type="text" placeholder="Factura" id="codigo" class="form-control rounded">
-					</div>
 					<div class="col-md-3 pl-1 pt-1">
-						<select title="Proveedor" class="form-control rounded selectpicker" id="proveedor" data-size="5" data-live-search="true">
-							@foreach ($proveedores as $proveedor)
-								<option value="{{ $proveedor->id}}">{{ $proveedor->nombre}} - {{ $proveedor->nit}}</option>
+						<select title="Beneficiario" class="form-control rounded selectpicker" id="beneficiario" data-size="5" data-live-search="true">
+							@foreach ($beneficiarios as $beneficiario)
+								<option value="{{ $beneficiario->id}}">{{ $beneficiario->nombre}} - {{ $beneficiario->nit}}</option>
 							@endforeach
 						</select>
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
+						<input type="text" placeholder="Fecha" id="creacion" class="form-control rounded creacion" autocomplete="off">
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
+						<select title="Cuenta" class="form-control rounded selectpicker" id="cuenta" data-size="5" data-live-search="true">
+							@foreach ($cuentas as $cuenta)
+								<option value="{{ $cuenta->id}}">{{ $cuenta->nombre}}</option>
+							@endforeach
+						</select>
 					</div>
 					<div class="col-md-2 pl-1 pt-1">
-						<select title="Estado" class="form-control rounded selectpicker" id="estado">
-							<option value="1">Abiertas</option>
-							<option value="A">Cerradas</option>
-							<option value="2">Anuladas</option>
+						<select title="Estado" class="form-control rounded selectpicker" id="estatus">
+							<option value="1">Anulado</option>
+							<option value="2">Consolidado</option>
+							<option value="A">No consolidado</option>
 						</select>
 					</div>
 					
-
 					<div class="col-md-1 pl-1 pt-1">
 						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
 						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -110,7 +128,7 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-facturasp">
+			<table class="table table-striped table-hover w-100" id="tabla-pagos">
 				<thead class="thead-dark">
 					<tr>
 						@foreach($tabla as $campo)
@@ -128,7 +146,7 @@
 <script>
 	var tabla = null;
 	window.addEventListener('load', function() {
-		$('#tabla-facturasp').DataTable({
+		$('#tabla-pagos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -140,7 +158,7 @@
 				[0, "DESC"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{url("/facturasp")}}',
+			ajax: '{{url("/pagos")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
@@ -152,15 +170,14 @@
 			]
 		});
 
-		tabla = $('#tabla-facturasp');
+		tabla = $('#tabla-pagos');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
 			data.nro = $('#nro').val();
-			data.codigo = $('#codigo').val();
-			data.proveedor = $('#proveedor').val();
+			data.beneficiario = $('#beneficiario').val();
 			data.creacion = $('#creacion').val();
-			data.vencimiento = $('#vencimiento').val();
-			data.estado = $('#estado').val();
+			data.estatus = $('#estatus').val();
+			data.cuenta = $('#cuenta').val();
 			data.filtro = true;
 		});
 
@@ -205,20 +222,13 @@
 
 	function cerrarFiltrador() {
 		$('#nro').val('');
-		$('#codigo').val('');
-		$('#proveedor').val('').selectpicker('refresh');
+		$('#beneficiario').val('').selectpicker('refresh');
 		$('#creacion').val('');
-		$('#vencimiento').val('');
-		$('#estado').val('').selectpicker('refresh');
+		$('#estatus').val('').selectpicker('refresh');
+		$('#cuenta').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
-
-	@if($tipo)
-	    $('#estado').val('{{ $tipo }}').selectpicker('refresh');
-	    abrirFiltrador();
-	    getDataTable();
-	@endif
 </script>
 @endsection

@@ -83,6 +83,7 @@ Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
 Route::get('blacklist', 'BlacklistController@blacklist');
+Route::get('pagos', 'PagosController@pagos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
