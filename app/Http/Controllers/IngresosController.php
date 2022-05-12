@@ -106,7 +106,7 @@ class IngresosController extends Controller
         $empresa = auth()->user()->empresa;
         $modoLectura = auth()->user()->modo_lectura();
         $ingresos = Ingreso::query()
-        ->select('ingresos.*','contactos.nombre','bancos.nombre as banco')
+        ->select('ingresos.*','contactos.nombre','contactos.apellido1','contactos.apellido2','bancos.nombre as banco')
         ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
         ->leftjoin('contactos', 'contactos.id', '=', 'ingresos.cliente')
         ->join('bancos', 'bancos.id', '=', 'ingresos.cuenta');
@@ -151,7 +151,7 @@ class IngresosController extends Controller
                 return isset($ingreso->nro) ? "<a href=" . route('ingresos.show', $ingreso->id) . ">{$ingreso->nro}</div></a>" : '';
             })
             ->editColumn('cliente', function (Ingreso $ingreso) {
-                return isset($ingreso->nombre) ? "<a href=" . route('contactos.show', $ingreso->cliente) . ">{$ingreso->nombre}</div></a>" : auth()->user()->empresa()->nombre;
+                return isset($ingreso->nombre) ? "<a href=" . route('contactos.show', $ingreso->cliente) . ">{$ingreso->nombre} {$ingreso->apellido1} {$ingreso->apellido2}</div></a>" : auth()->user()->empresa()->nombre;
             })
             ->addColumn('detalle', function (Ingreso $ingreso) {
                 return $ingreso->detalle();

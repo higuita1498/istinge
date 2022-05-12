@@ -67,7 +67,7 @@ class NotascreditoController extends Controller
         $facturas = NotaCredito::leftjoin('contactos as c', 'c.id', '=', 'notas_credito.cliente')
         ->join('items_notas as if', 'notas_credito.id', '=', 'if.nota')
 
-        ->select('notas_credito.*', 'c.nombre as nombrecliente', DB::raw('SUM(
+        ->select('notas_credito.*', 'c.nombre as nombrecliente', 'c.apellido1 as ape1cliente', 'c.apellido2 as ape2cliente', DB::raw('SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
         DB::raw('(SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - if(

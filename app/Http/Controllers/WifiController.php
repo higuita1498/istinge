@@ -35,8 +35,7 @@ class WifiController extends Controller
         return view('wifi.indexnew')->with(compact('clientes'));
     }
     
-    public function solicitudes(Request $request)
-    {
+    public function solicitudes(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $solicitudes = Wifi::query()
             ->where('empresa', Auth::user()->empresa);
@@ -59,7 +58,7 @@ class WifiController extends Controller
                 return $solicitud->id;
             })
             ->editColumn('id_cliente', function (Wifi $solicitud) {
-                return "<a href=" . route('contactos.show', $solicitud->id_cliente) . ">{$solicitud->cliente()->nombre}</div></a>";
+                return "<a href=" . route('contactos.show', $solicitud->id_cliente) . ">{$solicitud->cliente()->nombre} {$solicitud->cliente()->apellidos()}</div></a>";
             })
             ->editColumn('red_antigua', function (Wifi $solicitud) {
                 return "{$solicitud->red_antigua}";
@@ -114,7 +113,7 @@ class WifiController extends Controller
                 $solicitud->save();
                 
                 $datos = array(
-                    'nombres' => $solicitud->cliente()->nombre,
+                    'nombres' => $solicitud->cliente()->nombre.' '.$solicitud->cliente()->apellidos(),
                     'red_nueva' => $solicitud->red_nueva,
                     'pass_nueva' => $solicitud->pass_nueva,
                     'oculta' => $solicitud->oculta(),
@@ -142,7 +141,6 @@ class WifiController extends Controller
                     config(['mail'=>$new]);
                 }
                 Mail::to($solicitud->cliente()->email)->send($correo);
-        
             } else {
                 $mensaje = 'Cambio de contraseña cancelada';
                 $solicitud->status = 1;

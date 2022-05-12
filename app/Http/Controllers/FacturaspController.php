@@ -106,7 +106,7 @@ class FacturaspController extends Controller
             return $factura->id ? "<a href=" . route('facturasp.showid', $factura->id) . ">$factura->codigo</a>" : "";
         })
         ->editColumn('proveedor', function (FacturaProveedores $factura) {
-            return  $factura->proveedor ? "<a href=" . route('contactos.show', $factura->proveedor) . ">{$factura->nombreproveedor}</a>" : "";
+            return  $factura->proveedor ? "<a href=" . route('contactos.show', $factura->proveedor) . ">{$factura->nombreproveedor} {$factura->proveedor()->apellidos()}</a>" : "";
         })
         ->editColumn('creacion', function (FacturaProveedores $factura) {
             return date('d-m-Y', strtotime($factura->fecha_factura));
@@ -212,7 +212,7 @@ class FacturaspController extends Controller
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
         $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
-        $clientes = Contacto::select('contactos.id','contactos.nombre','contactos.nit')->where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
+        $clientes = Contacto::select('contactos.id','contactos.nombre','contactos.nit', 'contactos.apellido1', 'contactos.apellido2')->where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $categorias= Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -243,7 +243,7 @@ class FacturaspController extends Controller
         $prefijos2 = $dataPro->prefijos;
         $vendedores2 = $dataPro->vendedores;
         
-        view()->share(['icon' =>'', 'title' => 'Nueva Factura de Compra', 'subseccion' => 'facturas_proveedores']);
+        view()->share(['icon' =>'', 'title' => 'Nueva Factura de Compra', 'subseccion' => 'facturas_proveedores', 'seccion' => 'gastos']);
         return view('facturasp.create')
         ->with(compact('relaciones','inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retenciones',
             'proveedor', 'producto','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas',
@@ -460,7 +460,7 @@ class FacturaspController extends Controller
             $tipos_empresa2 = $dataPro->tipos_empresa;
             $prefijos2 = $dataPro->prefijos;
             $vendedores2 = $dataPro->vendedores;
-            view()->share(['title' => 'Modificar Factura de Proveedor: '.$factura->codigo, 'icon' =>'']);
+            view()->share(['title' => 'Modificar Factura de Proveedor: '.$factura->codigo, 'icon' =>'','subseccion' => 'facturas_proveedores', 'seccion' => 'gastos']);
             return view('facturasp.edit')->with(compact('relaciones','factura', 'items', 'inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras'));
         }
         return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
@@ -622,7 +622,7 @@ class FacturaspController extends Controller
         );
         $facturas=FacturaProveedores::leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
             ->join('items_factura_proveedor as if', 'factura_proveedores.id', '=', 'if.factura')
-            ->select('factura_proveedores.*', DB::raw('c.nombre as nombrecliente'),
+            ->select('factura_proveedores.*', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),
             DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id)) as pagado'),
             DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select if(SUM(pago), SUM(pago), 0) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id))  as porpagar'))
@@ -673,7 +673,7 @@ class FacturaspController extends Controller
         foreach ($facturas as $factura) {
             $nestedData = array();
             $nestedData[] = '<a href="'.route('facturasp.showid',$factura->id).'">'.($factura->codigo?$factura->codigo:$factura->nro).'</a>';
-            $nestedData[] = '<a href="'.route('contactos.show',$factura->proveedor).'" target="_blanck">'.$factura->nombrecliente.'</a>';
+            $nestedData[] = '<a href="'.route('contactos.show',$factura->proveedor).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha_factura));
             $nestedData[] = date('d-m-Y', strtotime($factura->vencimiento_factura));
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->total()->total);
@@ -713,7 +713,7 @@ class FacturaspController extends Controller
         );
         $facturas=FacturaProveedores::leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
             ->join('items_factura_proveedor as if', 'factura_proveedores.id', '=', 'if.factura')
-            ->select('factura_proveedores.*', DB::raw('c.nombre as nombrecliente'),
+            ->select('factura_proveedores.*', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
                 DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id)) as pagado'),
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select if(SUM(pago), SUM(pago), 0) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id))  as porpagar'))
@@ -768,7 +768,7 @@ class FacturaspController extends Controller
         foreach ($facturas as $factura) {
             $nestedData = array();
             $nestedData[] = '<a href="'.route('facturasp.showid',$factura->id).'">'.($factura->codigo?$factura->codigo:$factura->nro).'</a>';
-            $nestedData[] = '<a href="'.route('contactos.show',$factura->proveedor).'" target="_blanck">'.$factura->nombrecliente.'</a>';
+            $nestedData[] = '<a href="'.route('contactos.show',$factura->proveedor).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha_factura));
             $nestedData[] = date('d-m-Y', strtotime($factura->vencimiento_factura));
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->total);

@@ -98,7 +98,7 @@ class PagosController extends Controller
             return $gasto->id ? "<a href=" . route('pagos.show', $gasto->id) . ">$gasto->nro</a>" : "";
         })
         ->editColumn('beneficiario', function (Gastos $gasto) use ($empresaNombre) {
-            return  $gasto->beneficiario ? "<a href=" . route('contactos.show', $gasto->beneficiario) . "><div class='elipsis-short'>{$gasto->beneficiario()->nombre}</div></a>" : "<div class='elipsis-short'>{$empresaNombre}</div>";
+            return  $gasto->beneficiario ? "<a href=" . route('contactos.show', $gasto->beneficiario) . "><div class='elipsis-short'>{$gasto->beneficiario()->nombre} {$gasto->beneficiario()->apellidos()}</div></a>" : "<div class='elipsis-short'>{$empresaNombre}</div>";
         })
         ->editColumn('fecha', function (Gastos $gasto) {
             return date('d-m-Y', strtotime($gasto->fecha));

@@ -80,7 +80,7 @@ class DescuentosController extends Controller
                 return "<a href=" . route('descuentos.show', $descuento->id) . ">{$descuento->id}</div></a>";
             })
             ->editColumn('cliente', function (Descuento $descuento) {
-                return $descuento->factura()->cliente()->nombre;
+                return $descuento->factura()->cliente()->nombre.' '.$descuento->factura()->cliente()->apellidos();
             })
             ->editColumn('factura', function (Descuento $descuento) {
                 return "<a href=" . route('facturas.show', $descuento->factura) . ">{$descuento->factura()->codigo}</div></a>";

@@ -107,17 +107,18 @@ class RemisionesController extends Controller
   */
 
   public function create(){
-      $this->getAllPermissions(Auth::user()->id);
+    $this->getAllPermissions(Auth::user()->id);
     $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
     $inventario =
-        Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
-            DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
-            ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
-            ->where('empresa',Auth::user()->empresa)->where('status', 1)
-            ->where('descripcion', '!=','caterpillar')
-            ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
-            ->orderBy('inventario.producto', 'asc')
-            ->get();
+      Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
+        DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
+      ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
+      ->where('empresa',Auth::user()->empresa)->where('status', 1)
+      ->where('descripcion', '!=','caterpillar')
+      ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
+      ->orderBy('inventario.producto', 'asc')
+      ->get();
+
     $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
     $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
     $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -126,27 +127,23 @@ class RemisionesController extends Controller
     $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
     $nro=Numeracion::where('empresa',Auth::user()->empresa)->first();
 
-      $categorias=Categoria::where('empresa',Auth::user()->empresa)
-          ->orWhere('empresa', 1)
-          ->whereNull('asociado')->get();
+    $categorias=Categoria::where('empresa',Auth::user()->empresa)->orWhere('empresa', 1)->whereNull('asociado')->get();
 
-      $dataPro = (new InventarioController)->create();
-      $categorias2 = $dataPro->categorias;
-      $unidades2 = $dataPro->unidades;
-      $medidas2 = $dataPro->medidas;
-      $impuestos2 = $dataPro->impuestos;
-      $extras2 = $dataPro->extras;
-      $listas2 = $dataPro->listas;
-      $bodegas2 = $dataPro->bodegas;
-      $identificaciones = $dataPro->identificaciones;
-      $tipos_empresa = $dataPro->tipos_empresa;
-      $prefijos = $dataPro->prefijos;
-      $vendedores = $dataPro->vendedores;
-      view()->share(['icon' =>'', 'title' => 'Nueva Remisión']);
+    $dataPro = (new InventarioController)->create();
+    $categorias2 = $dataPro->categorias;
+    $unidades2 = $dataPro->unidades;
+    $medidas2 = $dataPro->medidas;
+    $impuestos2 = $dataPro->impuestos;
+    $extras2 = $dataPro->extras;
+    $listas2 = $dataPro->listas;
+    $bodegas2 = $dataPro->bodegas;
+    $identificaciones = $dataPro->identificaciones;
+    $tipos_empresa = $dataPro->tipos_empresa;
+    $prefijos = $dataPro->prefijos;
+    $vendedores = $dataPro->vendedores;
+    view()->share(['icon' =>'', 'title' => 'Nueva Remisión', 'seccion' => 'facturas', 'subseccion' => 'remisiones']);
 
-    return view('remisiones.create')->with(compact('clientes', 'inventario', 'vendedores',
-        'impuestos', 'nro', 'bodegas', 'listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2',
-        'listas2', 'bodegas2', 'identificaciones','tipos_empresa', 'prefijos', 'vendedores','categorias', 'extras'));
+    return view('remisiones.create')->with(compact('clientes', 'inventario', 'vendedores', 'impuestos', 'nro', 'bodegas', 'listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones','tipos_empresa', 'prefijos', 'vendedores','categorias', 'extras'));
   }
 
   public function create_item($item){

@@ -69,7 +69,7 @@ class CRMController extends Controller
     public function cartera(Request $request, $tipo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = CRM::query()
-			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
+			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
@@ -142,7 +142,7 @@ class CRMController extends Controller
         
         return datatables()->eloquent($contratos)
             ->editColumn('nombre', function (CRM $crm) {
-                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre}</div></a>";
+                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre} {$crm->c_apellido1} {$crm->c_apellido2}</div></a>";
             })
             ->editColumn('nit', function (CRM $crm) {
                 return "<center>".$crm->c_nit."</center>";
@@ -170,7 +170,7 @@ class CRMController extends Controller
     public function reporte(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = CRM::query()
-			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
+			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
@@ -234,7 +234,7 @@ class CRMController extends Controller
         
         return datatables()->eloquent($contratos)
             ->editColumn('nombre', function (CRM $crm) {
-                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre}</div></a>";
+                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre} {$crm->c_apellido1} {$crm->c_apellido2}</div></a>";
             })
             ->editColumn('nit', function (CRM $crm) {
                 return "<center>".$crm->c_nit."</center>";

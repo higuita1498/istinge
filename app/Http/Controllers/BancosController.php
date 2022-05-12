@@ -165,7 +165,7 @@ class BancosController extends Controller
         );
         $requestData =  $request;
         $movimientos=Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')    
-        ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+        ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'), DB::raw('if(movimientos.contacto,c.apellido1,"") as nombrecliente'))
         ->where('movimientos.empresa',Auth::user()->empresa);
         
         if ($contacto) { $movimientos=$movimientos->where('movimientos.contacto', $contacto); }
@@ -237,7 +237,7 @@ class BancosController extends Controller
         );
         
         $movimientos=Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')    
-        ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+        ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'), DB::raw('if(movimientos.contacto,c.apellido1,"") as apellido1cliente'), DB::raw('if(movimientos.contacto,c.apellido2,"") as apellido2cliente'))
         ->where('movimientos.empresa',Auth::user()->empresa);
         
         if ($banco) { $movimientos=$movimientos->where('banco', $banco); }
@@ -269,7 +269,7 @@ class BancosController extends Controller
         foreach ($movimientos as $movimiento) {
             $nestedData = array();
             $nestedData[] = '<a href="'.$movimiento->show_url().'">'.date('d-m-Y', strtotime($movimiento->fecha)).'</a>';
-            $nestedData[] = ($movimiento->nombrecliente) ? $movimiento->nombrecliente : auth()->user()->empresa()->nombre;
+            $nestedData[] = ($movimiento->nombrecliente) ? $movimiento->nombrecliente.' '.$movimiento->apellido1cliente.' '.$movimiento->apellido2cliente : auth()->user()->empresa()->nombre;
             $nestedData[] = $movimiento->conciliado();
             $nestedData[] = $movimiento->categoria();
             $nestedData[] = '<spam class="text-'.$movimiento->estatus(true).'">'.$movimiento->estatus()."</spam>";
