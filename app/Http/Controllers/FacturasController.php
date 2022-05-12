@@ -3128,6 +3128,8 @@ class FacturasController extends Controller{
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as valor'),
                 'factura.created_at',
                 DB::raw('c.nombre as campo1'),
+                DB::raw('c.apellido1 as campo2'),
+                DB::raw('c.apellido2 as campo3'),
                 'factura.codigo as campo5')
             ->groupBy('factura.id')
             ->where('factura.estatus', 1)
@@ -3136,9 +3138,13 @@ class FacturasController extends Controller{
 
         $filePath = "efecty-".date('dmYHi').".txt";
         $file = fopen($filePath, "w");
-        fputs($file, "01|REFERENCIA|VALOR|FECHA|CAMPO1|CAMPO2|CAMPO3|CAMPO4|CAMPO5".PHP_EOL);
+        fputs($file, "01|REFERENCIA|VALOR|FECHA|NOMBRE|APELLIDO1|APELLIDO2|CAMPO4|FACTURA INTERNA".PHP_EOL);
         foreach($facturas as $factura){
-            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->valor).'|'.$factura->created_at.'|"'.$factura->campo1.'"|"NA"|"NA"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
+            $campo1 = ($factura->campo1) ? $factura->campo1 : 'NA';
+            $campo2 = ($factura->campo2) ? $factura->campo2 : 'NA';
+            $campo3 = ($factura->campo3) ? $factura->campo3 : 'NA';
+
+            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->valor).'|'.$factura->created_at.'|"'.$campo1.'"|"'.$campo2.'"|"'.$campo3.'"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
             $valor += $factura->valor;
         }
         fputs($file, '"03"|'.count($facturas).'|'.round($valor).'|'.date('Y-m-d H:i:s').'|||||'.PHP_EOL);
