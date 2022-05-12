@@ -27,7 +27,7 @@ class Contacto extends Model
      * @var array
      */
     protected $fillable = [
-        'empresa', 'nombre', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'estrato', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
+        'empresa', 'nombre', 'apellido1', 'apellido2', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'estrato', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
         'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD', 'fecha_contrato'
     ];
     
@@ -43,6 +43,10 @@ class Contacto extends Model
 
     public function getDetailsAttribute(){
         return $this->details();
+    }
+
+    public function apellidos(){
+        return $this->apellido1.' '.$this->apellido2;
     }
 
     public function lista_precios(){
