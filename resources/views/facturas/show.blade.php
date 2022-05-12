@@ -188,9 +188,9 @@
                         <tr>
                             <td width="10%">Cliente</td>
                             @if(auth()->user()->rol == 8)
-                            <th width="60%">{{$factura->cliente()->nombre}}</th>
+                            <th width="60%">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</th>
                             @else
-                            <th width="60%"><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></th>
+                            <th width="60%"><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></th>
                             @endif
                             <td width="10%">Creación</td>
                             <th width="10%">{{date('d-m-Y', strtotime($factura->fecha))}}</th>
@@ -236,7 +236,7 @@
           <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td>@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blanck">{{$item->producto()}}</a>@endif</td>
+                    <td>@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blank">{{$item->producto()}}</a>@endif</td>
                     <td><div class="elipsis-short">{{$item->ref}}</div></td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->precio)}}</td>
                     <td>{{$item->desc?$item->desc:0}}%</td>

@@ -83,13 +83,13 @@
 				@foreach($facturas as $factura) 
 					<tr @if($factura->id==Session::get('codigo')) class="active" @endif>
 						<td><a href="{{route('cotizaciones.show',$factura->cot_nro)}}" >{{$factura->cot_nro}}</a> </td>
-						<td>@if($factura->cliente)
-							<a href="{{route('contactos.show',$factura->cliente)}}" target="_blanck">{{$factura->nombrecliente}}</a>
+						<td>
+							@if($factura->cliente)
+							    <a href="{{route('contactos.show',$factura->cliente)}}" target="_blank">{{$factura->cliente()->nombre}} {{ $factura->cliente()->apellidos() }}</a>
 							@else
 								{{$factura->nombrecliente}}
 							@endif
-
-							</td>
+						</td>
 						<td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total)}}</td>
 						<td class="text-{{$factura->estatus(true)}}">{{$factura->estatus()}}</td>
@@ -101,7 +101,7 @@
 							@else
 								<a href="{{route('cotizaciones.edit',$factura->cot_nro)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
 								@if($factura->estatus!=2)
-								<a href="{{route('cotizaciones.imprimir.nombre',['id' => $factura->cot_nro, 'name'=> 'Cotizacion No. '.$factura->cot_nro.'.pdf'])}}" target="_blanck"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>
+								<a href="{{route('cotizaciones.imprimir.nombre',['id' => $factura->cot_nro, 'name'=> 'Cotizacion No. '.$factura->cot_nro.'.pdf'])}}" target="_blank"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>
 								<form action="{{ route('cotizaciones.destroy',$factura->cot_nro) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-factura{{$factura->id}}">
 								{{ csrf_field() }}
 								<input name="_method" type="hidden" value="DELETE">

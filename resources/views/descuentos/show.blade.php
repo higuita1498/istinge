@@ -37,7 +37,7 @@
                         </tr>
                         <tr>
                             <th>Cliente</th>
-                            <td>{{$descuento->factura()->cliente()->nombre}}</td>
+                            <td>{{$descuento->factura()->cliente()->nombre}} {{$descuento->factura()->cliente()->apellidos()}}</td>
                         </tr>
                         <tr>
                             <th>Estado</th>

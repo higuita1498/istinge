@@ -80,7 +80,7 @@
 					<div class="col-md-3 pl-1 pt-1">
 						<select title="Proveedor" class="form-control rounded selectpicker" id="proveedor" data-size="5" data-live-search="true">
 							@foreach ($proveedores as $proveedor)
-								<option value="{{ $proveedor->id}}">{{ $proveedor->nombre}} - {{ $proveedor->nit}}</option>
+								<option value="{{ $proveedor->id}}">{{$proveedor->nombre}} {{$proveedor->apellido1}} {{$proveedor->apellido2}} - {{ $proveedor->nit}}</option>
 							@endforeach
 						</select>
 					</div>

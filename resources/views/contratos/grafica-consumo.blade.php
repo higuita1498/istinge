@@ -32,7 +32,7 @@
     					</tr>
     					<tr class="text-center">
     						<td>{{ $contrato->nro }}</td>
-    						<td>{{ $contrato->cliente()->nombre }}</td>
+    						<td>{{ $contrato->cliente()->nombre }} {{ $contrato->cliente()->apellido1 }} {{ $contrato->cliente()->apellido2 }}</td>
     						<td>{{ $contrato->ip }}</td>
     						<td>{{ $contrato->interfaz }}</td>
     						<td>{{ $contrato->servidor()->nombre }}</td>

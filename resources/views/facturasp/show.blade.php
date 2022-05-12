@@ -45,7 +45,7 @@
 					</tr>
 					<tr>
 						<th>Proveedor</th> 
-						<td><a href="{{route('contactos.show',$factura->proveedor()->id)}}" target="_blanck">{{$factura->proveedor()->nombre}}</a></td>
+						<td><a href="{{route('contactos.show',$factura->proveedor()->id)}}" target="_blank">{{$factura->proveedor()->nombre}} {{$factura->proveedor()->apellidos()}}</a></td>
 					</tr>
 					<tr>
 						<th>Bodega</th>
@@ -111,7 +111,7 @@
             @foreach($items as $item)
                 <tr>
                 	@if($item->tipo_item==1)
-                		<td><a href="{{route('inventario.show',$item->producto)}}" target="_blanck">{{$item->producto()}}</a></td>
+                		<td><a href="{{route('inventario.show',$item->producto)}}" target="_blank">{{$item->producto()}}</a></td>
                 	@else
                 		<td><a >{{$item->producto()}}</a></td>
                 	@endif

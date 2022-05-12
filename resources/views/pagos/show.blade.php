@@ -92,7 +92,7 @@
     					</tr>
     					<tr>
     						<th>Beneficiario</th>
-    						<td>@if($gasto->beneficiario())<a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blank"> {{$gasto->beneficiario()->nombre}}</a>@else {{Auth::user()->empresa()->nombre}} @endif</td>
+    						<td>@if($gasto->beneficiario())<a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blank">{{$gasto->beneficiario()->nombre}} {{$gasto->beneficiario()->apellidos()}}</a>@else {{Auth::user()->empresa()->nombre}} @endif</td>
     					</tr>
     					<tr>
     						<th>Fecha</th>

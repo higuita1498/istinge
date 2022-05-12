@@ -81,7 +81,7 @@
         <div class="row card-description p-0">
             <div class="col-md-4 form-group">
                 <label class="control-label font-weight-bold">Nombre del Cliente</label>
-                <input type="text" class="form-control readonly"  id="nombre" name="nombre"  required="" value="{{$contrato->nombre}}" maxlength="200" readonly="">
+                <input type="text" class="form-control readonly"  id="nombre" name="nombre"  required="" value="{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}}" maxlength="200" readonly="">
                 <span class="help-block error">
                     <strong>{{ $errors->first('nombre') }}</strong>
                 </span>

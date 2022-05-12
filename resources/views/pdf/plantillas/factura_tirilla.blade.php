@@ -126,7 +126,7 @@
     </div>
     <div style="width: 100%;">
         <div style="width: 100%; text-align: center; display: inline-block;">
-            Señor(es): {{$factura->cliente()->nombre}}<br>
+            Señor(es): {{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}<br>
             @if($factura->cliente()->direccion) Dirección: {{$factura->cliente()->direccion}}<br>@endif
             @if($factura->cliente()->ciudad) Ciudad: {{$factura->cliente()->ciudad}}<br>@endif
             @if($factura->cliente()->telefono1) Teléfono: {{$factura->cliente()->telefono1}}<br>@endif

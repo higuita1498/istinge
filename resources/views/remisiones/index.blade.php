@@ -102,7 +102,7 @@
 				@foreach($facturas as $factura)
 					<tr @if($factura->id==Session::get('remision_id')) class="active_table" @endif>
 						<td><a href="{{route('remisiones.show',$factura->id)}}" >{{$factura->nro}}</a></td>
-						<td><div class="elipsis-short-325"><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></div></td>
+						<td><div class="elipsis-short-325"><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></div></td>
 						<td>{{$factura->nombreVendedor}}</td>
 						<td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
 						<td class="@if($factura->vencimiento<date('Y-m-d') && $factura->estatus==1) text-danger @endif">{{date('d-m-Y', strtotime($factura->vencimiento))}} </td>

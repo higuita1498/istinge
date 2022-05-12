@@ -176,14 +176,14 @@
                             <a class="nav-link" href="{{route('cotizaciones.index')}}" >Cotizaciones</a>
                         </li>
                     <?php } ?>
-                    <?php if(isset($_SESSION['permisos']['60'])){ ?>
-                        <li class="nav-item" id="ingresosr">
-                            <a class="nav-link" href="{{route('ingresosr.index')}}" >Pagos Recibidos R</a>
-                        </li>
-                    <?php } ?>
                     <?php if(isset($_SESSION['permisos']['65'])){ ?>
                         <li class="nav-item" id="remisiones">
                             <a class="nav-link" href="{{route('remisiones.index')}}" >Remisiones</a>
+                        </li>
+                    <?php } ?>
+                    <?php if(isset($_SESSION['permisos']['60'])){ ?>
+                        <li class="nav-item" id="ingresosr">
+                            <a class="nav-link" href="{{route('ingresosr.index')}}" >Pagos Recibidos R</a>
                         </li>
                     <?php } ?>
                 </ul>

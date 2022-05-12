@@ -42,16 +42,16 @@
             <th>Tipo de nota crédito</th> <td>{{$nota->tipo()}}</td>
           </tr>
           <tr>
-            <th>Cliente</th> <td><a href="{{route('contactos.show',$nota->cliente()->id)}}" target="_blanck">{{$nota->cliente()->nombre}}</a></td>
+            <th>Cliente</th> <td><a href="{{route('contactos.show',$nota->cliente()->id)}}" target="_blanck">{{$nota->cliente()->nombre}} {{$nota->cliente()->apellidos()}}</a></td>
           </tr>
           <tr>
             <th>Creación</th> <td>{{date('d/m/Y', strtotime($nota->fecha))}}</td>
           </tr>
           <tr>
-            <th>Total</th> <td>{{Auth::user()->empresa()->moneda}} {{$nota->total()->total}}</td>
+            <th>Total</th> <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($nota->total()->total)}}</td>
           </tr>
           <tr>
-            <th>Por aplicar</th> <td>{{Auth::user()->empresa()->moneda}}{{$nota->por_aplicar()}}</td>
+            <th>Por aplicar</th> <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($nota->por_aplicar())}}</td>
           </tr>
           <tr>
             <th>Observaciones </th> <td>{{$nota->observaciones}}</td>

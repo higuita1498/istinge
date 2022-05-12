@@ -50,7 +50,7 @@
 					<div class="col-md-2 pl-1 pt-1">
 					    <select id="cliente" class="form-control rounded selectpicker" title="Cliente" data-live-search="true" data-size="5">
 	                        @foreach($clientes as $cliente)
-	                            <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
+	                            <option value="{{$cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
 	                        @endforeach
 	                    </select>
 					</div>
@@ -88,13 +88,6 @@
 			<table class="table table-striped table-hover w-100" id="tabla-descuento">
 				<thead class="thead-dark">
 					<tr>
-					    {{-- <th>Nro</th>
-					    <th>Cliente</th>
-					    <th>Factura</th>
-					    <th>Descuento</th>
-					    <th>Estado</th>
-					    <th>Creado por</th>
-					    <th>Aprobado por</th> --}}
 					    @foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach

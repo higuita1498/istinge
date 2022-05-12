@@ -96,7 +96,7 @@
 				@foreach($facturas as $factura) 
 					<tr @if($factura->id==Session::get('nota_id')) class="active_table" @endif>
 						<td><a href="{{route('notascredito.show',$factura->nro)}}" >{{$factura->nro}}</a> </td>
-						<td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></td>
+						<td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
 						<td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </td>
 						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->por_aplicar())}} </td> 
