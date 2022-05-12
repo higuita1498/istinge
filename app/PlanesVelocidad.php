@@ -28,6 +28,10 @@ class PlanesVelocidad extends Model
         return $this->uso();
     }
 
+    public function parsear($valor){
+        return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
+    }
+
     public function updated_by(){
         return User::where('id', $this->updated_by)->first();
     }
