@@ -256,4 +256,42 @@ class Gastos extends Model
     public function updated_by(){
         return User::find($this->updated_by);
     }
+
+    /* * * * Asociados a una categoria * * */
+    public function gastoAnticipo(){
+        $anticipo = IngresosCategoria::join('anticipo as an','an.id','=','gastos_categoria.anticipo')
+        ->where('gastos_categoria.gasto',$this->id)->select('an.*')->first();
+
+        if($anticipo){
+            return $anticipo;
+        }
+    }
+    
+    public function gastoPuc(){
+        $puc = IngresosCategoria::join('puc as p','p.id','=','gastos_categoria.categoria')
+        ->where('gastos_categoria.gasto',$this->id)->select('p.*')->first();
+
+        if($puc){
+            return $puc;
+        }
+    }
+
+    /* * * * Asociados a una(s) facturas * * */
+    public function gastoAnticipoFactura(){
+        $anticipo = IngresosFactura::join('anticipo as an','an.id','=','gastos_factura.anticipo')
+        ->where('gastos_factura.gasto',$this->id)->select('an.*')->first();
+
+        if($anticipo){
+            return $anticipo;
+        }
+    }
+    
+    public function gastoPucBanco(){
+        $puc = IngresosFactura::join('puc as p','p.id','=','gastos_factura.puc_banco')
+        ->where('gastos_factura.gasto',$this->id)->select('p.*')->first();
+
+        if($puc){
+            return $puc;
+        }
+    }
 }

@@ -1805,11 +1805,12 @@ function totales_ingreso(input=true){
         id=$(this).attr('id');
         var precio=$('#precio'+id).val();
         if (precio) {
+
             total+=parseFloat(precio);
             
-            //si es mator el valor agregado que lo que hay que paar en la factura sumamos esa diferencia al salfo a favor
+            //si es mayor el valor agregado que lo que hay que pagar en la factura sumamos esa diferencia al salfo a favor
             if(precio > parseFloat($("#totalfact"+id).val())){
-                saldoFavor+=saldoFavor+(precio - $("#totalfact"+id).val());
+                saldoFavor+=(precio - parseFloat($("#totalfact"+id).val()));
             }
 
         }
@@ -3345,6 +3346,14 @@ function validateDian(id,rutasuccess,codigo)
              else if(validate.cliente.fk_idpais == null)
              {
                 $mensaje = "Para emitir a la Dian se debe tener un país asociado al cliente.";
+                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
+                $img     = "pais.png";
+                messageValidateDian($mensaje, $footer, $img);
+            }
+
+            else if(validate.cliente.telefono == null)
+             {
+                $mensaje = "Para emitir a la Dian se debe tener un telefono asociado al cliente.";
                 $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
                 $img     = "pais.png";
                 messageValidateDian($mensaje, $footer, $img);

@@ -144,7 +144,7 @@ class IngresosController extends Controller
             }
         }
         
-        $ingresos->where('ingresos.empresa', $empresa);
+        $ingresos->where('ingresos.empresa', $empresa)->groupBy('ingresos.id');
 
         return datatables()->eloquent($ingresos)
             ->editColumn('nro', function (Ingreso $ingreso) {
@@ -250,7 +250,7 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-
+        
         if($request->realizar == 2){
             
             $this->storeIngresoPucCategoria($request);

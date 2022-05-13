@@ -382,6 +382,111 @@ class PucMovimiento extends Model
         }
     }
 
+    // el tipo 1 significa cuando es un pago a una factura y se paga un poco mas.
+    // opcion 1 es para guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    public static function gasto($gasto, $opcion, $tipo=0){
+
+        $isGuardar = PucMovimiento::where('documento_id',$gasto->id)->where('tipo_comprobante',2)->first();
+        
+        $totalIngreso = 0;
+        
+        //TIPO 0.
+        if($opcion == 1 && !$isGuardar && $tipo == 0){  
+
+            foreach($gasto->ingresosCategorias() as $cat){
+                $totalIngreso+=$cat->valor;
+            }
+            
+            //1to. Registramos la forma de pago (caja o banco).
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "02";
+            $mov->consecutivo_comprobante = $gasto->nro;
+            $mov->fecha_elaboracion = $gasto->fecha;
+            $mov->documento_id = $gasto->id;
+            $mov->codigo_cuenta = isset($gasto->ingresoPuc()->codigo) ? $gasto->ingresoPuc()->codigo : '';
+            $mov->cuenta_id = isset($gasto->ingresoPuc()->id) ? $gasto->ingresoPuc()->id : '';
+            $mov->identificacion_tercero = $gasto->cliente()->nit;
+            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->consecutivo = $gasto->nro;
+            $mov->descripcion = $gasto->observaciones;
+            $mov->debito =  $totalIngreso;
+            $mov->enlace_a = 4;
+            $mov->save();
+
+            //2do. Registramos el anticipo del cliente.
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "02";
+            $mov->consecutivo_comprobante = $gasto->nro;
+            $mov->fecha_elaboracion = $gasto->fecha;
+            $mov->documento_id = $gasto->id;
+            $mov->codigo_cuenta = isset($gasto->ingresoAnticipo()->codigo) ? $gasto->ingresoAnticipo()->codigo : '';
+            $mov->cuenta_id = isset($gasto->ingresoAnticipo()->id) ? $gasto->ingresoAnticipo()->id : '';
+            $mov->identificacion_tercero = $gasto->cliente()->nit;
+            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->consecutivo = $gasto->nro;
+            $mov->descripcion = $gasto->observaciones;
+            $mov->credito =  $totalIngreso;
+            $mov->enlace_a = 5;
+            $mov->save();
+        }
+
+        //TIPO 1
+        else if($opcion == 1 && !$isGuardar && $tipo == 1){
+
+            foreach($gasto->ingresosFacturas() as $gastoFactura){
+                $totalIngreso+=$gastoFactura->pago;
+
+                $mov = new PucMovimiento;
+                $mov->tipo_comprobante = "02";
+                $mov->consecutivo_comprobante = $gasto->nro;
+                $mov->fecha_elaboracion = $gasto->fecha;
+                $mov->documento_id = $gasto->id;
+                $mov->codigo_cuenta = isset($gastoFactura->factura()->formaPago()->codigo) ? $gastoFactura->factura()->formaPago()->codigo : '';
+                $mov->cuenta_id = isset($gastoFactura->factura()->formaPago()->id) ? $gastoFactura->factura()->formaPago()->id : '';
+                $mov->identificacion_tercero = $gasto->cliente()->nit;
+                $mov->cliente_id = $gasto->cliente()->id;
+                $mov->consecutivo = $gasto->nro;
+                $mov->descripcion = $gasto->observaciones;
+                $mov->credito =  $gastoFactura->factura()->total()->total;
+                $mov->enlace_a = 6;
+                $mov->save();
+            }
+            
+            //1to. Registramos la forma de pago (caja o banco).
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $gasto->nro;
+            $mov->fecha_elaboracion = $gasto->fecha;
+            $mov->documento_id = $gasto->id;
+            $mov->codigo_cuenta = isset($gasto->ingresoPucBanco()->codigo) ? $gasto->ingresoPucBanco()->codigo : '';
+            $mov->cuenta_id = isset($gasto->ingresoPucBanco()->id) ? $gasto->ingresoPucBanco()->id : '';
+            $mov->identificacion_tercero = $gasto->cliente()->nit;
+            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->consecutivo = $gasto->nro;
+            $mov->descripcion = $gasto->observaciones;
+            $mov->debito =  $totalIngreso;
+            $mov->enlace_a = 4;
+            $mov->save();
+
+            //2do. Registramos el anticipo del cliente.
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $gasto->nro;
+            $mov->fecha_elaboracion = $gasto->fecha;
+            $mov->documento_id = $gasto->id;
+            $mov->codigo_cuenta = isset($gasto->ingresoAnticipoFactura()->codigo) ? $gasto->ingresoAnticipoFactura()->codigo : '';
+            $mov->cuenta_id = isset($gasto->ingresoAnticipoFactura()->id) ? $gasto->ingresoAnticipoFactura()->id : '';
+            $mov->identificacion_tercero = $gasto->cliente()->nit;
+            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->consecutivo = $gasto->nro;
+            $mov->descripcion = $gasto->observaciones;
+            $mov->credito =  $gasto->saldoFavorIngreso;
+            $mov->enlace_a = 5;
+            $mov->save();
+            
+        }
+    }
+
     public function cliente(){
         return $this->belongsTo(Contacto::class,'cliente_id');
     }
@@ -426,10 +531,12 @@ class PucMovimiento extends Model
     }
 
     public function totalDebito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`debito`)) as total"))->first();
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+        ->select(DB::raw("SUM((`debito`)) as total"))->first();
     }
     public function totalCredito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`credito`)) as total"))->first();
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+        ->select(DB::raw("SUM((`credito`)) as total"))->first();
     }
     
 
