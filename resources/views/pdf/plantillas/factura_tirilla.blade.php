@@ -145,7 +145,7 @@
         Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
         Periodo: {{$factura->periodoCobrado('true')}}<br>
-        Notas: {{ $ingreso->ingreso()->notas }}
+        @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
     </div>
     
     <br>
