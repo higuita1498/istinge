@@ -190,18 +190,18 @@
     		<div class="container-filtercolumn form-inline">
                 <a href="{{ route('pings.index') }}" class="btn btn-danger mr-1">Pings Fallidos <i class="fa fa-plug"></i></a>
 
+                @if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
-                        @if(isset($_SESSION['permisos']['778']))
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
-                        @endif
                     </div>
                 </div>
+                @endif
 
                 <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
     			<ul class="options-search-columns"  id="columnOptions">
