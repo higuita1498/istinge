@@ -3177,7 +3177,7 @@ class FacturasController extends Controller{
 
                 $numero = str_replace('+','',$factura->cliente()->celular);
                 $numero = str_replace(' ','',$numero);
-                $url='https://api.callmebot.com/whatsapp.php?source=php&phone=+'.$numero.'&text='.urlencode($mensaje).'&apikey='.$servicio->api_key;
+                $url='https://api.callmebot.com/whatsapp.php?source=php&phone='.Auth::user()->empresa()->codigo.''.$numero.'&text='.urlencode($mensaje).'&apikey='.$servicio->api_key;
 
                 if($ch = curl_init($url)){
                     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
