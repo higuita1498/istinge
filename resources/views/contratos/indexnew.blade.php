@@ -215,12 +215,6 @@
     		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
     				<tr>
-    					{{-- <th>Nro</th>
-    					<th>Cliente</th>
-    					<th>Plan</th>
-    					<th class="text-center">IP</th>
-    					<th class="text-center">Estado</th>
-    					<th class="text-center">Grupo de Corte</th> --}}
     					@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach
@@ -254,16 +248,13 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
+            select: {
+                style: 'multi',
+            },
 			columns: [
 			    @foreach($tabla as $campo)
                 {data: '{{$campo->campo}}'},
                 @endforeach
-			    /*{ data: 'nro' },
-				{ data: 'client_id' },
-				{ data: 'plan' },
-				{ data: 'ip' },
-				{ data: 'state' },
-				{ data: 'grupo_corte' },*/
 				{ data: 'acciones' },
 			]
 		});
