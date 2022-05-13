@@ -135,7 +135,7 @@
     </div>
     
     <div style="width: 100%; text-align: center; display: inline-block;">
-        @if($factura->tipo == 1)Factura de Venta @elseif($factura->tipo == 3) Cuenta de Cobro @endif: No. {{$factura->codigo}}<br>
+        @if($factura->tipo == 1 || $factura->tipo == 2) Factura de Venta: @elseif($factura->tipo == 3) Cuenta de Cobro: @endif No. {{$factura->codigo}}<br>
         Fecha Expedición: {{date('d/m/Y', strtotime($factura->fecha))}}<br>
         Fecha Vencimiento: {{date('d/m/Y', strtotime($factura->vencimiento))}}<br>
         Estado: @if($factura->estatus == 0) Cerrada @endif @if($factura->estatus == 1) Abierta @endif @if($factura->estatus == 2) Anulada @endif<br><br>
@@ -144,8 +144,8 @@
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
         Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
-        Periodo: {{$factura->periodoCobrado('true')}}
-        {{-- Creado por: {{ $ingreso->ingreso()->created_by()->nombres }}<br><br> --}}
+        Periodo: {{$factura->periodoCobrado('true')}}<br>
+        Notas: {{ $ingreso->ingreso()->notas }}
     </div>
     
     <br>
