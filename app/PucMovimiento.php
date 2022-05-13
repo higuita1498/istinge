@@ -426,10 +426,12 @@ class PucMovimiento extends Model
     }
 
     public function totalDebito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`debito`)) as total"))->first();
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+        ->select(DB::raw("SUM((`debito`)) as total"))->first();
     }
     public function totalCredito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->select(DB::raw("SUM((`credito`)) as total"))->first();
+        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+        ->select(DB::raw("SUM((`credito`)) as total"))->first();
     }
     
 

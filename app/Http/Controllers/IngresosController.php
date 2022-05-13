@@ -144,7 +144,7 @@ class IngresosController extends Controller
             }
         }
         
-        $ingresos->where('ingresos.empresa', $empresa);
+        $ingresos->where('ingresos.empresa', $empresa)->groupBy('ingresos.id');
 
         return datatables()->eloquent($ingresos)
             ->editColumn('nro', function (Ingreso $ingreso) {
