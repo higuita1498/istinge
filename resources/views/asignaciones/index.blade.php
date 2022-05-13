@@ -62,7 +62,7 @@
 				<tbody>
 					@foreach($contratos as $contrato)
 						<tr>
-							<td><a href="{{ route('contactos.show',$contrato->id )}}"  title="Ver">{{ $contrato->nombre }}</a></td>
+							<td><a href="{{ route('contactos.show',$contrato->id )}}"  title="Ver">{{ $contrato->nombre }} {{ $contrato->apellido1 }} {{ $contrato->apellido2 }}</a></td>
 							<td>{{ $contrato->nit }}</td>
 							<td>{{date('d-m-Y', strtotime($contrato->fecha_isp))}}</td>
 							<td class="text-center">

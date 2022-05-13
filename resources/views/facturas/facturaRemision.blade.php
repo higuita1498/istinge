@@ -43,9 +43,9 @@
 
                                     @foreach($clientes as $client)
                                         @if(isset($remision))
-                                            <option {{$remision->cliente==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}}</option>
+                                            <option {{$remision->cliente==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{ $client->nit }}</option>
                                         @else
-                                            <option {{old('cliente') == $client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombre}}</option>
+                                            <option {{old('cliente') == $client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{ $client->nit }}</option>
                                         @endif
                                     @endforeach
                                 </select>

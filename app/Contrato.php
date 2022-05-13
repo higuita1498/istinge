@@ -168,7 +168,7 @@ class Contrato extends Model
     public function factura(){
         $factura = Factura::where('cliente', $this->c_id)->get()->last();
         if($factura){
-            return "<a href=".route('facturas.show', $factura->nro)." target='_blank'>$factura->codigo</a>";
+            return "<a href=".route('facturas.show', $factura->id)." target='_blank'>$factura->codigo</a>";
         }
         return 'N/A';
     }

@@ -23,8 +23,8 @@
           <input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}">
           <a href="{{route('facturasp.show',$factura->id)}}" target="_blank">{{$factura->codigo?$factura->codigo:'Factura: '.date('d-m-Y', strtotime($factura->fecha_factura))}}</a>
         </td>
-        <td>{{$factura->fecha_factura}}</td>
-        <td>{{$factura->vencimiento_factura}}</td>
+        <td>{{date('d-m-Y', strtotime($factura->fecha_factura))}}</td>
+        <td>{{date('d-m-Y', strtotime($factura->vencimiento_factura))}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->pagado())}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->porpagar())}}

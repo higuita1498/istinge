@@ -73,6 +73,8 @@ class ContactosController extends Controller
             if($request->nombre){
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                    $query->orWhere('apellido1', 'like', "%{$request->nombre}%");
+                    $query->orWhere('apellido2', 'like', "%{$request->nombre}%");
                 });
             }
             if($request->celular){
@@ -129,7 +131,7 @@ class ContactosController extends Controller
                 return $contacto->serial_onu;
             })
             ->editColumn('nombre', function (Contacto $contacto) {
-                return "<a href=" . route('contactos.show', $contacto->id) . ">{$contacto->nombre}</div></a>";
+                return "<a href=" . route('contactos.show', $contacto->id) . ">{$contacto->nombre} {$contacto->apellidos()}</div></a>";
             })
             ->editColumn('nit', function (Contacto $contacto) {
                 return "{$contacto->tip_iden('mini')} {$contacto->nit}";
@@ -265,9 +267,9 @@ class ContactosController extends Controller
 
         if ($contacto) {
             if($contacto->tipo_contacto==0){
-                view()->share(['title' => $contacto->nombre, 'subseccion' => 'clientes', 'middel'=>true]);
+                view()->share(['title' => $contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'clientes', 'middel'=>true]);
             }else{
-                view()->share(['title' => $contacto->nombre, 'subseccion' => 'proveedores', 'middel'=>true]);
+                view()->share(['title' => $contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'proveedores', 'middel'=>true]);
             }
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
@@ -350,6 +352,8 @@ class ContactosController extends Controller
         $contacto->dv = $request->dvoriginal;
         $contacto->nit=$request->nit;
         $contacto->nombre=$request->nombre;
+        $contacto->apellido1=$request->apellido1;
+        $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
         $contacto->direccion=$request->direccion;
@@ -405,6 +409,8 @@ class ContactosController extends Controller
         $contacto->dv = $request->dvoriginal;
         $contacto->nit=$request->nit;
         $contacto->nombre=$request->nombre;
+        $contacto->apellido1=$request->apellido1;
+        $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
         $contacto->direccion=$request->direccion;
@@ -462,9 +468,9 @@ class ContactosController extends Controller
             session(['url_search' => url()->previous()]);
             
             if($contacto->tipo_contacto==0){
-                view()->share(['title' => 'Editar: '.$contacto->nombre, 'subseccion' => 'clientes', 'middel'=>true, 'icon' => '']);
+                view()->share(['title' => 'Editar: '.$contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'clientes', 'middel'=>true, 'icon' => '']);
             }else{
-                view()->share(['title' => 'Editar: '.$contacto->nombre, 'subseccion' => 'proveedores', 'middel'=>true, 'icon' => '']);
+                view()->share(['title' => 'Editar: '.$contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'proveedores', 'middel'=>true, 'icon' => '']);
             }
             return view('contactos.edit')->with(compact('contacto', 'identificaciones', 'paises', 'departamentos', 'vendedores', 'listas', 'tipos_empresa'));
         }
@@ -480,6 +486,8 @@ class ContactosController extends Controller
             $contacto->nit=$request->nit;
             $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
             $contacto->nombre=$request->nombre;
+            $contacto->apellido1=$request->apellido1;
+            $contacto->apellido2=$request->apellido2;
             $contacto->barrio=$request->barrio;
             $contacto->direccion=$request->direccion;
             $contacto->email=mb_strtolower($request->email);
@@ -598,7 +606,7 @@ class ContactosController extends Controller
         $contacto = Contacto::join('contracts as cs', 'contactos.id', '=', 'cs.client_id')->where('contactos.id', $id)->first();
         if(isset($contacto->plan_id)){
             if($contacto->plan_id){
-                $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, CS.facturacion, I.id as plan, GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.status = '1' AND C.status = '1' AND  C.id = '".$id."'");
+                $contacto = DB::select("SELECT C.id, C.nombre, C.apellido1, C.apellido2, C.nit, C.tip_iden, C.telefono1, C.celular, C.estrato, CS.public_id as contrato, CS.facturacion, I.id as plan, GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id) INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)  INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.status = '1' AND C.status = '1' AND  C.id = '".$id."'");
             }
         }
 
@@ -741,7 +749,7 @@ class ContactosController extends Controller
      * @param Request $request
      * @return redirect
      */
-        public function cargando(Request $request){
+    public function cargando(Request $request){
         $request->validate([
             'archivo' => 'required|mimes:xlsx',
         ],[
@@ -1006,7 +1014,7 @@ class ContactosController extends Controller
     * Retorna una archivo xml con las columnas especificas
     * para cargar
     */
-       public function ejemplo(){
+    public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contactos de ".Auth::user()->empresa()->nombre;
         $titulosColumnas = array('Nombres', 'Tipo de identificacion', 'Identificacion','DV','Pais','Departamento','Municipio',
@@ -1110,13 +1118,9 @@ class ContactosController extends Controller
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
-
-
     }
 
-
     public function contactoModal(){
-
         $identificaciones = TipoIdentificacion::all();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -1125,128 +1129,66 @@ class ContactosController extends Controller
         $paises  =DB::table('pais')->get();
         $departamentos = DB::table('departamentos')->get();
 
-
         return view('contactos.modal.modal')->with(compact('identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas'));
     }
 
-    public function searchMunicipality(Request $request)
-        {
-            $municipios = DB::table('municipios')->where('departamento_id',$request->departamento_id)->get();
-
-            return response()->json($municipios);
-        }
-
-         public function getDataClient($id)
-        {
-            $identificaciones = TipoIdentificacion::all();
-            $contacto =Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
-            $paises  =DB::table('pais')->get();
-            $departamentos = DB::table('departamentos')->get();
-            return view('contactos.modal.updatedatos',compact('contacto','paises','departamentos','identificaciones'));
-        }
-
-        public function updatedirection(Request $request){
-
-           $contacto =Contacto::where('id',$request->cliente_id)->where('empresa',Auth::user()->empresa)->first();
-
-            if($request->cod_postal != null)
-            {
-                $contacto->cod_postal = $request->cod_postal;
-            }
-
-            if($request->pais != null)
-            {
-                $contacto->fk_idpais = $request->pais;
-            }
-
-            if($request->departamento != null)
-            {
-                $contacto->fk_iddepartamento = $request->departamento;
-            }
-
-            if($request->municipio != null)
-            {
-                $contacto->fk_idmunicipio    = $request->municipio;
-            }
-
-            if($request->direccion != null){
-                $contacto->direccion         = $request->direccion;
-            }
-
-            if($request->nit != null){
-                $contacto->nit               = $request->nit;
-            }
-
-            if($request->dv != null){
-                $contacto->dv                = $request->dv;
-            }
-
-           if ($contacto->email == null) {
-               $contacto->email = $request->email;
-           }
-
-           if ($contacto->tip_iden != 6) { //-- Si es diferente del nit entra
-               if ($request->responsable == "") {
-             $contacto->tipo_persona      = 1; //-- Persona Natural
-            $contacto->responsableiva    = 2; //-- No responsable de iva
-        }
-    }else{
-
-        if($request->tipo_persona != null)
-        {
-            $contacto->tipo_persona      = $request->tipo_persona;
-        }
-
-        if($request->responsable != null){
-            $contacto->responsableiva    = $request->responsable;
-        }
-
-
+    public function searchMunicipality(Request $request){
+        $municipios = DB::table('municipios')->where('departamento_id',$request->departamento_id)->get();
+        return response()->json($municipios);
     }
 
-    $contacto->save();
+    public function getDataClient($id){
+        $identificaciones = TipoIdentificacion::all();
+        $contacto =Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
+        $paises  =DB::table('pais')->get();
+        $departamentos = DB::table('departamentos')->get();
+        return view('contactos.modal.updatedatos',compact('contacto','paises','departamentos','identificaciones'));
+    }
 
-    return response()->json($contacto);
-}
+    public function updatedirection(Request $request){
+        $contacto =Contacto::where('id',$request->cliente_id)->where('empresa',Auth::user()->empresa)->first();
+        if($request->cod_postal != null){
+            $contacto->cod_postal = $request->cod_postal;
+        }
+        if($request->pais != null){
+            $contacto->fk_idpais = $request->pais;
+        }
+        if($request->departamento != null){
+            $contacto->fk_iddepartamento = $request->departamento;
+        }
+        if($request->municipio != null){
+            $contacto->fk_idmunicipio    = $request->municipio;
+        }
+        if($request->direccion != null){
+            $contacto->direccion         = $request->direccion;
+        }
+        if($request->nit != null){
+            $contacto->nit               = $request->nit;
+        }
+        if($request->dv != null){
+            $contacto->dv                = $request->dv;
+        }
+        if ($contacto->email == null) {
+            $contacto->email = $request->email;
+        }
+        if ($contacto->tip_iden != 6) { //-- Si es diferente del nit entra
+            if ($request->responsable == "") {
+                $contacto->tipo_persona      = 1; //-- Persona Natural
+                $contacto->responsableiva    = 2; //-- No responsable de iva
+            }
+        }else{
+            if($request->tipo_persona != null){
+                $contacto->tipo_persona      = $request->tipo_persona;
+            }
+            if($request->responsable != null){
+                $contacto->responsableiva    = $request->responsable;
+            }
+        }
+        $contacto->save();
+        return response()->json($contacto);
+    }
 
-// public function pdfmariano()
-// {
-//     $alumnos = DB::table('mariano')->where('estado', 0)->orderBy('id', 'asc')->take(50)->get();
-//      return $alumnos;
-
-//     foreach($alumnos as $alumno){
-
-
-//         if($alumno->estado == 0)
-//         {
-//               $pdf = PDF::loadView('pdf.mariano', compact('alumno'))->stream();
-
-
-//             Mail::send('emails.mariano', compact('alumno'), function($message) use ($pdf,$alumno)
-//               {
-
-//                  $message->attachData($pdf, 'Permiso.pdf', ['mime' => 'application/pdf']);
-//                  $message->from('jguzman@ismm.edu.co', 'Mariano');
-//                  $message->to($alumno->email)->subject('Permiso de movilización estudiantes');
-//               });
-
-//               $alumno->estado = 1;
-
-//               DB::table('mariano')
-//                 ->where('id',$alumno->id)
-//                 ->update([
-//                     'estado' => 1,
-//             ]);
-
-//         }
-//     }
-
-//     return "ok";
-
-// }
-
-    public function modalGuiaEnvio($facturaid,$clienteid)
-    {
+    public function modalGuiaEnvio($facturaid,$clienteid){
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->get();

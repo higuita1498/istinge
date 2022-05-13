@@ -16,7 +16,7 @@
       <tr id="{{$factura->id}}" @if($factura->nro==$id) class="active_table" @endif>
         <td><input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}">
           {{$factura->nro}}</td>
-          <td>{{$factura->fecha}}</td>
+          <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->pagado())}}</td>
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->porpagar())}}

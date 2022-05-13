@@ -68,7 +68,7 @@
 					</tr>
 					<tr>
 						<th>Beneficiario</th>
-						<td>@if($ingreso->cliente()) <a href="{{route('contactos.show',$ingreso->cliente()->id)}}" target="_blanck">{{$ingreso->cliente()->nombre}}</a >@endif</td>
+						<td>@if($ingreso->cliente()) <a href="{{route('contactos.show',$ingreso->cliente()->id)}}" target="_blank">{{$ingreso->cliente()->nombre}} {{$ingreso->cliente()->apellidos()}}</a >@endif</td>
 					</tr>
 					<tr>
 						<th>Fecha</th>
@@ -76,7 +76,7 @@
 					</tr>
 					<tr>
 						<th>Cuenta</th>
-						<td><a href="{{route('bancos.show',$ingreso->cuenta()->nro)}}" target="_blanck">{{$ingreso->cuenta()->nombre}}</a></td>
+						<td><a href="{{route('bancos.show',$ingreso->cuenta()->nro)}}" target="_blank">{{$ingreso->cuenta()->nombre}}</a></td>
 					</tr> 
 					<tr>
 						<th>Observaciones</th>
@@ -122,9 +122,9 @@
 				<tbody>
 					@foreach($items as $item)
 						<tr>
-							<td><a href="{{route('remisiones.show', $item->remision)}}" target="_blanck">{{$item->remision()->nro}}</a></td>
-							<td>{{$item->remision()->fecha}}</td>
-							<td>{{$item->remision()->vencimiento}}</td>
+							<td><a href="{{route('remisiones.show', $item->remision)}}" target="_blank">{{$item->remision()->nro}}</a></td>
+							<td>{{date('d-m-Y', strtotime($item->remision()->fecha))}}</td>
+							<td>{{date('d-m-Y', strtotime($item->remision()->vencimiento))}}</td>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->remision()->total()->total)}}</td>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->pagado)}}</td>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear(($item->remision()->total()->total - $item->pago))}}</td>

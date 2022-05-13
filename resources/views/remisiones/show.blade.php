@@ -122,7 +122,7 @@
           <tbody>
             <tr>
               <td width="10%">Cliente</td>
-              <th width="60%"><a href="{{route('contactos.show',$remision->cliente()->id)}}" target="_blanck">{{$remision->cliente()->nombre}}</a></th>
+              <th width="60%"><a href="{{route('contactos.show',$remision->cliente()->id)}}" target="_blank">{{$remision->cliente()->nombre}} {{$remision->cliente()->apellidos()}}</a></th>
               <td width="10%">Creación</td>
               <th width="10%">{{date('d/m/Y', strtotime($remision->fecha))}}</th>
             </tr>
@@ -134,7 +134,7 @@
             </tr>
             <tr>
               <td>Teléfono</td>
-              <th>{{$remision->cliente()->telefono1}}</th>
+              <th>{{$remision->cliente()->celular}}</th>
               <td>Tipo de documento</td>
               <th>{{$remision->documento}}</th>
             </tr>
@@ -163,7 +163,7 @@
           <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td><a href="{{route('inventario.show',$item->producto)}}" target="_blanck">{{$item->producto()}}</a></td>
+                    <td><a href="{{route('inventario.show',$item->producto)}}" target="_blank">{{$item->producto()}}</a></td>
                     <td>{{$item->ref}}</td>
                     <td>{{Auth::user()->empresa()->moneda}}{{$item->precio}}</td>
                     <td>{{$item->desc?$item->desc:0}}%</td>

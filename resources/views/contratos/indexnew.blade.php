@@ -187,10 +187,22 @@
     
     <div class="row card-description">
     	<div class="col-md-12">
-    		<div class="container-filtercolumn">
-                <a href="{{ route('pings.index') }}" class="btn btn-primary">Pings Fallidos <i class="fa fa-plug"></i></a>
-                <a href="javascript:void(0)" class="btn btn-success" id="btn_enabled">Habilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
-                <a href="javascript:void(0)" class="btn btn-danger" id="btn_disabled">Deshabilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
+    		<div class="container-filtercolumn form-inline">
+                <a href="{{ route('pings.index') }}" class="btn btn-danger mr-1">Pings Fallidos <i class="fa fa-plug"></i></a>
+
+                @if(isset($_SESSION['permisos']['778']))
+                <div class="dropdown mr-1">
+                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones en Lote
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
+                    </div>
+                </div>
+                @endif
+
                 <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
     			<ul class="options-search-columns"  id="columnOptions">
     				@foreach($tabla as $campo)
@@ -203,12 +215,6 @@
     		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
     				<tr>
-    					{{-- <th>Nro</th>
-    					<th>Cliente</th>
-    					<th>Plan</th>
-    					<th class="text-center">IP</th>
-    					<th class="text-center">Estado</th>
-    					<th class="text-center">Grupo de Corte</th> --}}
     					@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach
@@ -242,16 +248,13 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
+            select: {
+                style: 'multi',
+            },
 			columns: [
 			    @foreach($tabla as $campo)
                 {data: '{{$campo->campo}}'},
                 @endforeach
-			    /*{ data: 'nro' },
-				{ data: 'client_id' },
-				{ data: 'plan' },
-				{ data: 'ip' },
-				{ data: 'state' },
-				{ data: 'grupo_corte' },*/
 				{ data: 'acciones' },
 			]
 		});
@@ -305,6 +308,10 @@
 
         $('#btn_disabled').click( function () {
             states('disabled');
+        });
+
+        $('#btn_mk').click( function () {
+            mk_lote();
         });
     });
     
@@ -378,7 +385,7 @@
 
         swal({
             title: '¿Desea '+states+' '+nro+' contratos en lote?',
-            text: 'Esto puede demorar unos minutos. Al Aceptar no podrá cancelar el proceso',
+            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
             type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#00ce68',
@@ -387,6 +394,8 @@
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.value) {
+                cargando(true);
+
                 if (window.location.pathname.split("/")[1] === "software") {
                     var url = `/software/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
                 }else{
@@ -398,6 +407,75 @@
                     method: 'GET',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
+
+    function mk_lote(){
+        var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if(nro>25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar 25 contratos por lotes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
+            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/contratos/`+contratos+`/enviar_mk_lote`;
+                }else{
+                    var url = `/empresa/contratos/`+contratos+`/enviar_mk_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
                         swal({
                             title: 'PROCESO REALIZADO',
                             html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',

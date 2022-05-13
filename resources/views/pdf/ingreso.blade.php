@@ -151,7 +151,7 @@
         <table border="1" class="titulo">
             <tr>
                 <th width="10%" class="right smalltd">SEÑOR(ES)</th>
-                <td colspan="3" style="border-top: 2px solid #ccc;">@if($ingreso->cliente()){{$ingreso->cliente()->nombre}}@endif</td>
+                <td colspan="3" style="border-top: 2px solid #ccc;">@if($ingreso->cliente()){{$ingreso->cliente()->nombre}} {{$ingreso->cliente()->apellidos()}}@endif</td>
                 <th width="22%" class="center" style="font-size: 8px"><b>FECHA(DD/MM/AA)</b></th>
             </tr>
             <tr>

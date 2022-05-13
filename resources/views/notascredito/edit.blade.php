@@ -26,7 +26,7 @@
                     <div class="col-sm-8">
                         <select class="form-control form-control-sm selectpicker" name="cliente" id="cliente" title="Seleccione" data-live-search="true" data-size="5" required="" onchange="contacto(this.value); getFacturas(this.value)">
                             @foreach($clientes as $cliente)
-                                <option {{$nota->cliente==$cliente->id?'selected':''}} value="{{$cliente->id}}">{{$cliente->nombre}} - {{$cliente->nit}}</option>
+                                <option {{$nota->cliente==$cliente->id?'selected':''}} value="{{$cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
                             @endforeach
                         </select>
                     </div>

@@ -42,7 +42,7 @@
             <div class="col-sm-8">
               <select class="form-control selectpicker" name="beneficiario" id="cliente" title="Seleccione" data-live-search="true" data-size="5" onchange="factura_proveedor_pendiente();">
               @foreach($clientes as $clien)
-                      <option {{old('cliente')==$clien->id?'selected':''}} {{$cliente==$clien->id?'selected':''}}  value="{{$clien->id}}">{{$clien->nombre}} - {{$clien->nit}}</option>
+                      <option {{old('cliente')==$clien->id?'selected':''}} {{$cliente==$clien->id?'selected':''}}  value="{{$clien->id}}">{{$clien->nombre}} {{$clien->apellido1}} {{$clien->apellido2}} - {{$clien->nit}}</option>
               @endforeach
               </select>
                 <p class="text-left nomargin d-none">

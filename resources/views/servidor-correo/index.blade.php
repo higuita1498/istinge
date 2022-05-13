@@ -41,7 +41,7 @@
 	    <div class="row">
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Servidor</label>
-	            <input type="text" class="form-control"  id="servidor" name="servidor"   value="{{$servidor->servidor}}" maxlength="200">
+	            <input type="text" class="form-control" id="servidor" name="servidor" value="{{$servidor->servidor}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('servidor') }}</strong>
 	            </span>
@@ -58,35 +58,35 @@
 	        </div>
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Usuario</label>
-	            <input type="text" class="form-control"  id="usuario" name="usuario"   value="{{$servidor->usuario}}" maxlength="200">
+	            <input type="text" class="form-control" id="usuario" name="usuario" value="{{$servidor->usuario}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('usuario') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Password</label>
-	            <input type="text" class="form-control"  id="password" name="password"   value="{{$servidor->password}}" maxlength="200">
+	            <input type="text" class="form-control" id="password" name="password" value="{{$servidor->password}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('password') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Puerto</label>
-	            <input type="number" class="form-control"  id="puerto" name="puerto"   value="{{$servidor->puerto}}" maxlength="200" min="0">
+	            <input type="number" class="form-control" id="puerto" name="puerto" value="{{$servidor->puerto}}" maxlength="200" min="0">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('puerto') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Enviar como (Nombre)</label>
-	            <input type="text" class="form-control"  id="name" name="name"   value="{{$servidor->name}}" maxlength="200">
+	            <input type="text" class="form-control" id="name" name="name" value="{{$servidor->name}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('name') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">Enviar como (Correo)</label>
-	            <input type="text" class="form-control"  id="address" name="address"   value="{{$servidor->address}}" maxlength="200">
+	            <input type="text" class="form-control" id="address" name="address" value="{{$servidor->address}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('address') }}</strong>
 	            </span>

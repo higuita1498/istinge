@@ -74,7 +74,7 @@ class AvisosController extends Controller
         
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 0)->get();
-        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)
             ->where('contracts.empresa', Auth::user()->empresa);
@@ -94,7 +94,7 @@ class AvisosController extends Controller
         
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 1)->get();
-        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->where('contracts.status', 1)
             ->where('contracts.empresa', Auth::user()->empresa);
@@ -149,7 +149,7 @@ class AvisosController extends Controller
                     $datos = array(
                         'titulo'  => $plantilla->title,
                         'archivo' => $plantilla->archivo,
-                        'cliente' => $contrato->cliente()->nombre,
+                        'cliente' => $contrato->cliente()->nombre.' '.$contrato->cliente()->apellidos(),
                         'empresa' => Auth::user()->empresa()->nombre,
                         'nit' => Auth::user()->empresa()->nit.'-'.Auth::user()->empresa()->dv,
                         'date' => date('d-m-Y'),

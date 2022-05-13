@@ -35,13 +35,27 @@
       				<strong>{{ $errors->first('dv') }}</strong>
       			</span>
       		</div>
-      		<div class="form-group col-md-5">
-      			<label class="control-label">Nombre <span class="text-danger">*</span></label>
-      			<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{old('nombre')}}">
-      			<span class="help-block error">
-      				<strong>{{ $errors->first('nombre') }}</strong>
-      			</span>
-      		</div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Nombres <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{old('nombre')}}">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('nombre') }}</strong>
+                </span>
+            </div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Apellido 1 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="apellido1" id="apellido1" required="" maxlength="200" value="{{old('apellido1')}}">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('apellido1') }}</strong>
+                </span>
+            </div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Apellido 2</label>
+                <input type="text" class="form-control" name="apellido2" id="apellido2" maxlength="200" value="{{old('apellido2')}}">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('apellido2') }}</strong>
+                </span>
+            </div>
       	</div>
     
       	<div class="row">

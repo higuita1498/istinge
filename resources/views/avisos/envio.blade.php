@@ -39,7 +39,7 @@
         	        <optgroup label="{{$estado['nombre']}}">
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
-        	                    <option class="{{$contrato->state}}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} - {{$contrato->c_nit}}</option>
+        	                    <option class="{{$contrato->state}}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }} {{ $contrato->c_apellido2 }} - {{$contrato->c_nit}}</option>
         	                @endif
         	            @endforeach
         	        </optgroup>

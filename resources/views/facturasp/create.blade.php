@@ -32,7 +32,7 @@
             <div class="input-group">
               <select class="form-control selectpicker" name="proveedor" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value,false,2);">
                 @foreach($clientes as $client)
-                  <option {{old('productor')==$client->id?'selected':''}} {{$proveedor==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}} - {{$client->nit}}</option>
+                  <option {{old('productor')==$client->id?'selected':''}} {{$proveedor==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                 @endforeach
               </select>
             </div>

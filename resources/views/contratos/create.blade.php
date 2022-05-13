@@ -108,7 +108,7 @@
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="client_id" id="client_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getContracts(this.value)">
                                         @foreach($clientes as $client)
-                                            <option value="{{$client->id}}" {{old('client_id')==$client->id?'selected':''}} {{$cliente== $client->id?'selected':''}} >{{$client->nombre}} - {{$client->nit}}</option>
+                                            <option value="{{$client->id}}" {{old('client_id')==$client->id?'selected':''}} {{$cliente== $client->id?'selected':''}} >{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">

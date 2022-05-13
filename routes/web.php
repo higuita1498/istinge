@@ -62,6 +62,7 @@ Route::get('/factura/{identificacion}', 'Controller@consultar_invoice')->name('i
 Route::get('contratos/{nodo?}', 'ContratosController@contratos');
 Route::get('nodos', 'NodosController@nodos');
 Route::get('facturas', 'FacturasController@facturas');
+Route::get('facturasp', 'FacturaspController@facturasp');
 Route::get('facturas-electronicas','FacturasController@facturas_electronica');
 Route::get('ingresos', 'IngresosController@ingresos');
 //Route::get('contactos', 'ContactosController@contactos');
@@ -82,6 +83,7 @@ Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
 Route::get('blacklist', 'BlacklistController@blacklist');
+Route::get('pagos', 'PagosController@pagos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -1111,6 +1113,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::post('{id}/enviar_mk', 'ContratosController@enviar_mk')->name('contratos.enviar_mk');
         Route::post('{id}/carga_adjuntos', 'ContratosController@carga_adjuntos')->name('contratos.carga_adjuntos');
         Route::get('{contratos}/{state}/state_lote', 'ContratosController@state_lote')->name('contratos.state_lote');
+        Route::get('{contratos}/enviar_mk_lote', 'ContratosController@enviar_mk_lote')->name('contratos.enviar_mk_lote');
 	});
 
 	Route::resource('contratos', 'ContratosController');

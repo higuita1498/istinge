@@ -25,7 +25,7 @@
                             <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value);">
                                 @foreach($clientes as $client)
                                     @if(isset($cotizacion))
-                                        <option {{$cotizacion->cliente==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}}</option>
+                                        <option {{$cotizacion->cliente==$client->id?'selected':''}} value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                                     @else
                                         <option {{old('cliente') == $client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombre}}</option>
                                     @endif

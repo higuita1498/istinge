@@ -141,7 +141,7 @@
         <table border="1" class="titulo">
             <tr>
                 <th width="10%" class="right smalltd">SEÑOR(ES)</th>
-                <td colspan="3" style="border-top: 2px solid #ccc;">@if($gasto->beneficiario()){{$gasto->beneficiario()->nombre}}@else{{Auth::user()->empresa()->nombre}}@endif</td>
+                <td colspan="3" style="border-top: 2px solid #ccc;">@if($gasto->beneficiario()){{$gasto->beneficiario()->nombre}} {{$gasto->beneficiario()->apellidos()}}@else{{Auth::user()->empresa()->nombre}}@endif</td>
                 <th width="22%" class="center" style="font-size: 8px"><b>FECHA(DD/MM/AA)</b></th>
             </tr>
             <tr>

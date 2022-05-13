@@ -10,18 +10,23 @@
         @if($gasto->tipo!=4)
     	<a href="{{route('pagos.imprimir.nombre',['id' => $gasto->id, 'name'=> 'Pago No. '.$gasto->nro.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
     	@endif
+        @if(isset($_SESSION['permisos']['254']))
     	@if($gasto->nro && $gasto->estatus>0 && $gasto->tipo!=3)
     		<a href="{{route('pagos.edit',$gasto->id)}}" class="btn btn-outline-info btn-sm "title="Editar"><i class="fas fa-edit"></i> Editar</a>
     	@endif
+        @endif
     	@if($gasto->beneficiario())
         	<a href="{{route('pagos.enviar',$gasto->id)}}" class="btn btn-outline-primary btn-sm "title="Enviar"><i class="far fa-envelope"></i> Enviar por Correo Al Cliente</a>
         @endif
     	@if($gasto->tipo!=3)
+            @if(isset($_SESSION['permisos']['255']))
     		<form action="{{ route('pagos.destroy',$gasto->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-gasto{{$gasto->id}}">
     		{{ csrf_field() }}
     		<input name="_method" type="hidden" value="DELETE">
     		</form>
     		<button class="btn btn-outline-danger btn-sm" type="submit" title="Eliminar" onclick="confirmar('eliminar-gasto{{$gasto->id}}', '¿Estas seguro que deseas eliminar el gasto?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar</button>
+            @endif
+            @if(isset($_SESSION['permisos']['254']))
     		<form action="{{ route('pagos.anular',$gasto->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="anular-gasto{{$gasto->id}}">
     		{{ csrf_field() }}
     		</form>
@@ -30,6 +35,7 @@
     		@else
     		<button class="btn btn-outline-success btn-sm" type="submit" title="Abrir" onclick="confirmar('anular-gasto{{$gasto->id}}', '¿Está seguro de que desea abrir el gasto?', ' ');"><i class="fas fa-unlock-alt"></i> Abrir</button>
     		@endif
+            @endif
     	@endif
     @endif
 
@@ -86,7 +92,7 @@
     					</tr>
     					<tr>
     						<th>Beneficiario</th>
-    						<td>@if($gasto->beneficiario())<a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blank"> {{$gasto->beneficiario()->nombre}}</a>@else {{Auth::user()->empresa()->nombre}} @endif</td>
+    						<td>@if($gasto->beneficiario())<a href="{{route('contactos.show',$gasto->beneficiario()->id)}}" target="_blank">{{$gasto->beneficiario()->nombre}} {{$gasto->beneficiario()->apellidos()}}</a>@else {{Auth::user()->empresa()->nombre}} @endif</td>
     					</tr>
     					<tr>
     						<th>Fecha</th>

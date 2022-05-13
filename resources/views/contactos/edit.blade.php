@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-	<form method="POST" action="{{ route('contactos.update',$contacto->id) }}"" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+	<form method="POST" action="{{ route('contactos.update',$contacto->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
   		<input name="_method" type="hidden" value="PATCH">
   		{{ csrf_field() }}
   		<input type="hidden"  id="idmunicipio" value="{{ $contacto->fk_idmunicipio }}">
@@ -35,17 +35,30 @@
 				<strong>{{ $errors->first('dv') }}</strong>
 			</span>
 		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Nombres <span class="text-danger">*</span></label>
+			<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{$contacto->nombre}}">
+			<span class="help-block error">
+				<strong>{{ $errors->first('nombre') }}</strong>
+			</span>
+		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Apellido 1 @if($contacto->tipo_contacto == 0) <span class="text-danger">*</span> @endif</label>
+			<input type="text" class="form-control" name="apellido1" id="apellido1" {{ $contacto->tipo_contacto == 0 ? 'required' : '' }} maxlength="200" value="{{$contacto->apellido1}}">
+			<span class="help-block error">
+				<strong>{{ $errors->first('apellido1') }}</strong>
+			</span>
+		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">Apellido 2</label>
+			<input type="text" class="form-control" name="apellido2" id="apellido2" maxlength="200" value="{{$contacto->apellido2}}">
+			<span class="help-block error">
+				<strong>{{ $errors->first('apellido2') }}</strong>
+			</span>
+		</div>
+  	</div>
 
-			<div class="form-group col-md-5">
-	  			<label class="control-label">Nombre <span class="text-danger">*</span></label>
-				<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{$contacto->nombre}}">
-				<span class="help-block error">
-		        	<strong>{{ $errors->first('nombre') }}</strong>
-		        </span>
-			</div>
-  		</div>
 	<div class="row">
-
 		<div class="form-group col-md-3">
 			<label class="control-label">País <span class="text-danger">*</span></label>
 			<select class="form-control selectpicker" name="pais" id="pais" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validateCountry(this.value)">

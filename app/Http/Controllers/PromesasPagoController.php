@@ -62,7 +62,7 @@ class PromesasPagoController extends Controller
             return $promesa->nro;
         })
         ->editColumn('cliente', function (PromesaPago $promesa) {
-            return  "<a href=" . route('contactos.show', $promesa->cliente) . ">{$promesa->cliente()->nombre}</a>";
+            return  "<a href=" . route('contactos.show', $promesa->cliente) . ">{$promesa->cliente()->nombre} {$promesa->cliente()->apellidos()}</a>";
         })
         ->editColumn('factura', function (PromesaPago $promesa) {
             return  "<a href=" . route('facturas.show', $promesa->factura()->id) . ">{$promesa->factura()->codigo}</a>";

@@ -25,7 +25,7 @@
                 <div class="input-group" id="selectApi">
                     <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="busqueda_detalles(this.value);">
                         @foreach($clientes as $client)
-                        <option value="{{$client->id}}" {{$cliente== $client->id?'selected':''}}>{{$client->nombre}} - {{$client->nit}}</option>
+                        <option value="{{$client->id}}" {{$cliente== $client->id?'selected':''}}>{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -179,7 +179,7 @@
                     $("#telefono").val('').val(data.cliente.celular);
                     $("#correo").val('').val(data.cliente.email);
                     $("#direccion").val('').val(data.cliente.direccion);
-                    $("#nombre").val('').val(data.cliente.nombre);
+                    $("#nombre").val('').val(data.cliente.nombre+' '+data.cliente.apellido1+' '+data.cliente.apellido2);
                     if(data.contrato){
                         $(".contract").removeClass('d-none');
                         $("#contrato").val('').val(data.contrato.nro);

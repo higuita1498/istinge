@@ -34,7 +34,7 @@
 					</tr>
 					<tr>
 						<th>Proveedor</th> 
-						<td><a href="{{route('contactos.show',$factura->proveedor()->id)}}" target="_blanck">{{$factura->proveedor()->nombre}}</a></td>
+						<td><a href="{{route('contactos.show',$factura->proveedor()->id)}}" target="_blanck">{{$factura->proveedor()->nombre}} {{ $factura->proveedor()->apellidos() }}</a></td>
 					</tr>
 					<tr>
 						<th>Bodega</th>

@@ -55,7 +55,7 @@
     }
 
     .process-step {
-        background: #1a59a1;
+        background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         text-align: center;
         width: 80%;
         margin: 0 auto;
@@ -73,7 +73,7 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        border: 8px solid #1a59a1;
+        border: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         box-shadow: 0 0 0px 4px #5c5c5c;
         margin: auto 0;
         position: absolute;
@@ -98,7 +98,7 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        border: 8px solid #1a59a1;
+        border: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         box-shadow: 0 0 0px 4px #5c5c5c;
         margin: auto 0;
         position: absolute;
@@ -138,9 +138,9 @@
     .process-step:after {
         content: "";
         border-top: 8px solid #04889800;
-        border-bottom: 8px solid #1a59a1;
+        border-bottom: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         border-left: 8px solid #04889800;
-        border-right: 8px solid #1a59a1;
+        border-right: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         display: inline-grid;
         position: absolute;
         left: -16px;
@@ -150,8 +150,8 @@
     .process-step:before {
         content: "";
         border-top: 8px solid #ff000000;
-        border-bottom: 8px solid #1a59a1;
-        border-left: 8px solid #1a59a1;
+        border-bottom: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-left: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         border-right: 8px solid #ff000000;
         display: inline-grid;
         position: absolute;
@@ -278,7 +278,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify"><small>Haz clic en el botón <strong>“Participantes”</strong> y luego en la opción <strong>“Otros documentos”</strong>.</small></p>
+                            <p class="text-justify"><small>Haz clic en el botón <strong>“Registro y habilitación”</strong> y luego en la opción <strong>“documentos electrónicos”</strong>.</small></p>
                         </div>
                     </div>
 
@@ -298,7 +298,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify pr-2"><small>Selecciona la opción <strong>“Nómina Electrónica y Nómina de Ajuste”</strong>.</small></p>
+                            <p class="text-justify pr-2"><small>Selecciona la opción <strong>“Nómina Electrónica”</strong>.</small></p>
                         </div>
                     </div>
                 </div>
@@ -319,10 +319,9 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify"><small>Haz clic en el botón <strong>“Aceptar”</strong> para confirmar que desea iniciar el proceso de habilitación para Nómina Electrónica y Nómina Ajuste.</small></p>
+                            <p class="text-justify pr-2"><small>Selecciona la opción <strong>“Nómina Electrónica y Nómina de Ajuste”</strong>.</small></p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -339,7 +338,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify pr-2"><small>Haz clic en el botón <strong>“Emisor”</strong> de la ventana de <strong>“Participantes”.</strong>.</small></p>
+                            <p class="text-justify pr-2"><small>Haz clic en el botón <strong>“Emisor”</strong>.</small></p>
                         </div>
                     </div>
                 </div>
@@ -360,7 +359,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify"><small>Selecciona la opción <strong>“Aceptar”</strong> para confirmar que deseas iniciar el proceso como Emisor.</small></p>
+                            <p class="text-justify"><small>En el cuadro de <strong>“Seleccionar modo de operación”</strong> selecciona la opción <strong>“Software de un proveedor tecnológico”</strong> y luego haz clic en el botón <strong>“Asociar”</strong>.</small></p>
                         </div>
                     </div>
 
@@ -380,7 +379,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify pr-2"><small>En el cuadro de <strong>“Configurar Modos de operación”</strong> selecciona la opción <strong>“Software de un proveedor tecnológico”</strong> y luego haz clic en el botón <strong>“Aceptar”</strong>.</small></p>
+                            <p class="text-justify pr-2"><small>Configura el modo de operación completando los datos solicitados por el sistema:<br><br>En <strong>“Nombre de empresa proveedora”</strong> elige a <strong>“Cadena S.A”</strong> y en campo correspondiente al <strong>“Nombre de Software”</strong> elige <strong>“e-Nómina”</strong>.</small></p>
                         </div>
                     </div>
                 </div>
@@ -401,7 +400,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify"><small>Configura el modo de operación completando los datos solicitados por el sistema:<br><br>En <strong>“Nombre de empresa proveedora”</strong> elige a <strong>“Cadena SAS”</strong> y en campo correspondiente al <strong>“Nombre de Software”</strong> elige <strong>“Nómina electrónica”</strong>.</small></p>
+                            <p class="text-justify"><small>Haz clic en el botón <strong>“Asociar”</strong>.</small></p>
                         </div>
                     </div>
 
@@ -421,7 +420,7 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify pr-2"><small>Haz clic en el botón <strong>“Adicionar”</strong>.</small></p>
+                            <p class="text-justify pr-2"><small>En la sección de listados de modos de operación asociados, podrás ver el proveedor tecnológico asociado y la opción de consultar el <strong>set de pruebas</strong>.</small></p>
                         </div>
                     </div>
                 </div>
@@ -442,15 +441,14 @@
                         </div>
                         <div class="col-md-7">
                             <h5>&nbsp;</h5>
-                            <p class="text-justify"><small>En la sección de listados de modos de operación asociados, podrás ver el proveedor tecnológico asociado y la opción de consultar el <strong>set de pruebas</strong>.</small><br><br><a href="{{asset('images/asistente_nomina_a.png')}}" target="_blank"><img src="{{asset('images/asistente_nomina_a.png')}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain;"></a></p>
+                            <p class="text-justify"><small>Debes copiar el código del set de pruebas que encuentras en el detalle del set para usarlo en el siguiente paso.</small></p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row d-none">
             <div class="col-md-6">
                 <div class="process-box process-left" data-aos="fade-right" data-aos-duration="1000">
                     <div class="row">
@@ -560,14 +558,8 @@
             })
         });
 
-        if (window.location.pathname.split("/")[1] === "software") {
-        var url='/software/empresa';
-        }else{
-            var url = '/empresa';
-        }
-
         $.ajax({
-            url: url+'/nominadian/proceso-habilitacion',
+            url: '/empresa/nominadian/proceso-habilitacion',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

@@ -118,7 +118,7 @@
     				<div class="col-md-2 offset-md-1 pl-0 pt-1">
     					<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
 							@foreach ($clientes as $cliente)
-								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+								<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
 							@endforeach
 						</select>
     				</div>

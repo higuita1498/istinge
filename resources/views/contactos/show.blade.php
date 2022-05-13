@@ -148,7 +148,7 @@
 					@endif
 					<tr>
 						<th width="20%">Nombre</th>
-						<td>{{$contacto->nombre}}</td>
+						<td>{{$contacto->nombre}} {{$contacto->apellidos()}}</td>
 					</tr>
 					<tr>
 						<th width="20%">Tipo de Identificación</th>

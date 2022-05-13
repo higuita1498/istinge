@@ -144,7 +144,7 @@
         <table border="1" class="titulo">
             <tr>
                 <th width="10%" class="right smalltd">SEÑOR(ES)</th>
-                <td colspan="3" style="border-top: 2px solid #ccc;">{{$remision->cliente()->nombre}}</td>
+                <td colspan="3" style="border-top: 2px solid #ccc;">{{$remision->cliente()->nombre}} {{$remision->cliente()->apellidos()}}</td>
                 <th width="22%" class="center" style="font-size: 8px"><b>FECHA DE EXPEDICIÓN (DD/MM/AA)</b></th>
             </tr>
             <tr>

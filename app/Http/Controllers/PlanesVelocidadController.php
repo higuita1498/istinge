@@ -113,7 +113,7 @@ class PlanesVelocidadController extends Controller
                 return "<div class='elipsis-short-300'><a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</a></div>";
             })
             ->editColumn('price', function (PlanesVelocidad $plan) use ($moneda) {
-                return "{$moneda} {$plan->price}";
+                return "{$moneda} {$plan->parsear($plan->price)}";
             })
             ->editColumn('download', function (PlanesVelocidad $plan) {
                 return $plan->download;

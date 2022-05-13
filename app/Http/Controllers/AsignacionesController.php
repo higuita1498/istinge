@@ -38,7 +38,7 @@ class AsignacionesController extends Controller
 
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
-    $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
+    $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->get();
     view()->share(['middel' => true]);
 
     return view('asignaciones.index')->with(compact('contratos'));

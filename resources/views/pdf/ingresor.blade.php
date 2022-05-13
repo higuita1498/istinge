@@ -152,7 +152,7 @@
         <table border="1" class="titulo">
             <tr>
                 <th width="10%" class="right smalltd">SEÑOR(ES)</th>
-                <td colspan="3" style="border-top: 2px solid #ccc;">{{$ingreso->cliente()->nombre}}</td>
+                <td colspan="3" style="border-top: 2px solid #ccc;">{{$ingreso->cliente()->nombre}} {{$ingreso->cliente()->apellidos()}}</td>
                 <th width="22%" class="center" style="font-size: 8px"><b>FECHA(DD/MM/AA)</b></th>
             </tr>
             <tr>

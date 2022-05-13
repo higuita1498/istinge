@@ -342,7 +342,7 @@
 						</tr>
 						<tr>
 							<th width="20%">Nombre Cliente</th>
-							<td><a href="{{ route('contactos.show',$contrato->id_cliente )}}" target="_blank"><strong>{{ $contrato->nombre }}</strong></a></td></td>
+							<td><a href="{{ route('contactos.show',$contrato->id_cliente )}}" target="_blank"><strong>{{ $contrato->nombre }} {{ $contrato->apellido1 }} {{ $contrato->apellido2 }}</strong></a></td></td>
 						</tr>
 						@if($contrato->nit)
 						<tr>

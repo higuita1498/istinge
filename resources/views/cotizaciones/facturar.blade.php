@@ -33,7 +33,7 @@
             <div class="input-group">
               <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value);">
                 @foreach($clientes as $client)
-                  <option @if($cotizacion->cliente) {{$cotizacion->cliente==$client->id?'selected':''}}  @endif value="{{$client->id}}">{{$client->nombre}}</option>
+                  <option @if($cotizacion->cliente) {{$cotizacion->cliente==$client->id?'selected':''}}  @endif value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                 @endforeach
               </select> 
             </div>

@@ -96,7 +96,7 @@
 				@foreach($ingresos as $ingreso)
 					<tr @if($ingreso->nro==Session::get('ingreso_id')) class="active_table" @endif>
 						<td><a href="{{route('ingresosr.show',$ingreso->id)}}" >{{$ingreso->nro}}</a></td>
-						<td><a href="{{route('contactos.show',$ingreso->cliente()->id)}}" target="_blanck">{{$ingreso->cliente()->nombre}}</a> </td>
+						<td><a href="{{route('contactos.show',$ingreso->cliente()->id)}}" target="_blank">{{$ingreso->cliente()->nombre}} {{$ingreso->cliente()->apellidos()}}</a> </td>
 						<td>{{$ingreso->detalle()}} </td>
 						<td>{{date('d-m-Y', strtotime($ingreso->fecha))}}</td>
 						<td>{{$ingreso->cuenta()->nombre}} </td>
