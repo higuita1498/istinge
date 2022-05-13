@@ -190,6 +190,9 @@
     		<div class="container-filtercolumn">
                 <a href="{{ route('pings.index') }}" class="btn btn-primary">Pings Fallidos <i class="fa fa-plug"></i></a>
                 @if(isset($_SESSION['permisos']['778']))
+                <a href="javascript:void(0)" class="btn btn-warning" id="btn_mk">Habilitar en Lote<i class="fas fa-server" style="margin-left:4px; "></i></a>
+                @endif
+                @if(isset($_SESSION['permisos']['778']))
                 <a href="javascript:void(0)" class="btn btn-success" id="btn_enabled">Habilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
                 <a href="javascript:void(0)" class="btn btn-danger" id="btn_disabled">Deshabilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
                 @endif
@@ -308,6 +311,10 @@
         $('#btn_disabled').click( function () {
             states('disabled');
         });
+
+        $('#btn_mk').click( function () {
+            mk_lote();
+        });
     });
     
     function getDataTable() {
@@ -380,7 +387,7 @@
 
         swal({
             title: '¿Desea '+states+' '+nro+' contratos en lote?',
-            text: 'Esto puede demorar unos minutos. Al Aceptar no podrá cancelar el proceso',
+            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
             type: 'question',
             showCancelButton: true,
             confirmButtonColor: '#00ce68',
@@ -395,6 +402,74 @@
                     var url = `/software/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
                 }else{
                     var url = `/empresa/contratos/`+contratos+`/`+state+`/state_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
+
+    function mk_lote(){
+        var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if(nro>=25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar 25 contratos por lotes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
+            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/contratos/`+contratos+`/enviar_mk_lote`;
+                }else{
+                    var url = `/empresa/contratos/`+contratos+`/enviar_mk_lote`;
                 }
 
                 $.ajax({
