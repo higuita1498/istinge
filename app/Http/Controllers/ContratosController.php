@@ -2162,6 +2162,7 @@ class ContratosController extends Controller
                 if($registro){
                     $contrato->mk = 1;
                     $contrato->state = 'enabled';
+                    $contrato->servicio = $this->normaliza($servicio).'-'.$contrato->nro;
                     $contrato->save();
                     $mensaje='SE HA REGISTRADO SATISFACTORIAMENTE EN EL MIKROTIK EL CONTRATO DE SERVICIOS';
                     return redirect('empresa/contratos/'.$id)->with('success', $mensaje);
@@ -2474,6 +2475,7 @@ class ContratosController extends Controller
                         if($registro){
                             $contrato->mk = 1;
                             $contrato->state = 'enabled';
+                            $contrato->servicio = $this->normaliza($servicio).'-'.$contrato->nro;
                             $contrato->save();
                             $succ++;
                         }
