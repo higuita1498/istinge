@@ -3133,12 +3133,11 @@ class FacturasController extends Controller{
                 'factura.codigo as campo5')
             ->groupBy('factura.id')
             ->where('factura.estatus', 1)
-            ->take(50)
             ->get();
 
         $filePath = "efecty-".date('dmYHi').".txt";
         $file = fopen($filePath, "w");
-        fputs($file, "01|REFERENCIA|VALOR|FECHA|NOMBRE|APELLIDO1|APELLIDO2|CAMPO4|FACTURA INTERNA".PHP_EOL);
+        fputs($file, '"01"|REFERENCIA|VALOR|FECHA|CAMPO1|CAMPO2|CAMPO3|CAMPO4|CAMPO5'.PHP_EOL);
         foreach($facturas as $factura){
             $campo1 = ($factura->campo1) ? $factura->campo1 : 'NA';
             $campo2 = ($factura->campo2) ? $factura->campo2 : 'NA';
