@@ -2317,7 +2317,7 @@ class ContratosController extends Controller
     public function enviar_mk_lote($contratos){
         $this->getAllPermissions(Auth::user()->id);
 
-        $succ = 0; $fail = 0;
+        $succ = 0; $fail = 0; $registro = false;
 
         $contratos = explode(",", $contratos);
 
