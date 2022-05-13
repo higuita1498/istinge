@@ -2324,158 +2324,162 @@ class ContratosController extends Controller
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
             if ($contrato) {
-                $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
-                $mikrotik = Mikrotik::where('id', $plan->mikrotik)->first();
-                $cliente = $contrato->cliente();
-                $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
+                if($contrato->mk==0){
+                    $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
+                    $mikrotik = Mikrotik::where('id', $plan->mikrotik)->first();
+                    $cliente = $contrato->cliente();
+                    $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
 
-                if ($mikrotik) {
-                    $API = new RouterosAPI();
-                    $API->port = $mikrotik->puerto_api;
-                    //$API->debug = true;
+                    if ($mikrotik) {
+                        $API = new RouterosAPI();
+                        $API->port = $mikrotik->puerto_api;
+                        //$API->debug = true;
 
-                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                        $rate_limit      = '';
-                        $priority        = $plan->prioridad;
-                        $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
-                        $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
-                        $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
-                        $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada : '';
-                        $max_limit       = $plan->upload.'/'.$plan->download;
+                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                            $rate_limit      = '';
+                            $priority        = $plan->prioridad;
+                            $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                            $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                            $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
+                            $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada : '';
+                            $max_limit       = $plan->upload.'/'.$plan->download;
 
-                        if($max_limit){ $rate_limit .= $max_limit; }
-                        if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
-                        if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
-                        if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
-                        if($priority){ $rate_limit .= ' '.$priority; }
-                        if($limit_at){ $rate_limit .= ' '.$limit_at; }
+                            if($max_limit){ $rate_limit .= $max_limit; }
+                            if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
+                            if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
+                            if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
+                            if($priority){ $rate_limit .= ' '.$priority; }
+                            if($limit_at){ $rate_limit .= ' '.$limit_at; }
 
-                        /*PPPOE*/
-                        if($contrato->conexion == 1){
-                            $API->comm("/ppp/secret/add", array(
-                                "name"           => $contrato->usuario,
-                                "password"       => $contrato->password,
-                                "profile"        => 'default',
-                                "local-address"  => $contrato->ip,
-                                "remote-address" => $contrato->ip,
-                                "service"        => 'pppoe',
-                                "comment"        => $this->normaliza($servicio).'-'.$contrato->nro
-                                )
-                            );
+                            /*PPPOE*/
+                            if($contrato->conexion == 1){
+                                $API->comm("/ppp/secret/add", array(
+                                    "name"           => $contrato->usuario,
+                                    "password"       => $contrato->password,
+                                    "profile"        => 'default',
+                                    "local-address"  => $contrato->ip,
+                                    "remote-address" => $contrato->ip,
+                                    "service"        => 'pppoe',
+                                    "comment"        => $this->normaliza($servicio).'-'.$contrato->nro
+                                    )
+                                );
 
-                            $getall = $API->comm("/ppp/secret/getall", array(
-                                "?local-address" => $contrato->ip
-                                )
-                            );
-                        }
+                                $getall = $API->comm("/ppp/secret/getall", array(
+                                    "?local-address" => $contrato->ip
+                                    )
+                                );
+                            }
 
-                        /*DHCP*/
-                        if($contrato->conexion == 2){
-                            if(isset($plan->dhcp_server)){
-                                if($contrato->simple_queue == 'dinamica'){
-                                    $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
-                                    $API->comm("/ip/dhcp-server/lease/add", array(
-                                        "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
-                                        "address"     => $contrato->ip,
-                                        "server"      => $plan->dhcp_server,
-                                        "mac-address" => $contrato->mac_address,
-                                        "rate-limit"  => $rate_limit
+                            /*DHCP*/
+                            if($contrato->conexion == 2){
+                                if(isset($plan->dhcp_server)){
+                                    if($contrato->simple_queue == 'dinamica'){
+                                        $API->comm("/ip/dhcp-server/set\n=name=".$plan->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$plan->parenta);
+                                        $API->comm("/ip/dhcp-server/lease/add", array(
+                                            "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
+                                            "address"     => $contrato->ip,
+                                            "server"      => $plan->dhcp_server,
+                                            "mac-address" => $contrato->mac_address,
+                                            "rate-limit"  => $rate_limit
+                                            )
+                                        );
+                                    }elseif ($contrato->simple_queue == 'estatica') {
+                                        $API->comm("/ip/dhcp-server/lease/add", array(
+                                            "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
+                                            "address"     => $contrato->ip,
+                                            "server"      => $plan->dhcp_server,
+                                            "mac-address" => $contrato->mac_address
+                                            )
+                                        );
+                                    }
+
+                                    $getall = $API->comm("/ip/dhcp-server/lease/getall", array(
+                                        "?address" => $contrato->ip
                                         )
                                     );
-                                }elseif ($contrato->simple_queue == 'estatica') {
-                                    $API->comm("/ip/dhcp-server/lease/add", array(
+                                }else{
+                                    $mensaje='NO SE HA PODIDO EDITAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
+                                    return redirect('empresa/contratos')->with('danger', $mensaje);
+                                }
+                            }
+
+                            /*IP ESTÁTICA*/
+                            if($contrato->conexion == 3){
+                                if($mikrotik->amarre_mac == 1){
+                                    $API->comm("/ip/arp/add", array(
                                         "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
                                         "address"     => $contrato->ip,
-                                        "server"      => $plan->dhcp_server,
+                                        "interface"   => $contrato->interfaz,
                                         "mac-address" => $contrato->mac_address
                                         )
                                     );
-                                }
 
-                                $getall = $API->comm("/ip/dhcp-server/lease/getall", array(
-                                    "?address" => $contrato->ip
+                                    $getall = $API->comm("/ip/arp/getall", array(
+                                        "?address" => $contrato->ip
+                                        )
+                                    );
+                                }
+                            }
+
+                            /*VLAN*/
+                            if($contrato->conexion == 4){
+
+                            }
+
+                            $registro = true;
+                            $queue = $API->comm("/queue/simple/getall", array(
+                                "?target" => $contrato->ip.'/32'
+                                )
+                            );
+
+                            if($queue){
+                                $API->comm("/queue/simple/set", array(
+                                    ".id"             => $queue[0][".id"],
+                                    "target"          => $contrato->ip,
+                                    "max-limit"       => $plan->upload.'/'.$plan->download,
+                                    "burst-limit"     => $burst_limit,
+                                    "burst-threshold" => $burst_threshold,
+                                    "burst-time"      => $burst_time,
+                                    "priority"        => $priority,
+                                    "limit-at"        => $limit_at
                                     )
                                 );
                             }else{
-                                $mensaje='NO SE HA PODIDO EDITAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
-                                return redirect('empresa/contratos')->with('danger', $mensaje);
-                            }
-                        }
-
-                        /*IP ESTÁTICA*/
-                        if($contrato->conexion == 3){
-                            if($mikrotik->amarre_mac == 1){
-                                $API->comm("/ip/arp/add", array(
-                                    "comment"     => $this->normaliza($servicio).'-'.$contrato->nro,
-                                    "address"     => $contrato->ip,
-                                    "interface"   => $contrato->interfaz,
-                                    "mac-address" => $contrato->mac_address
-                                    )
-                                );
-
-                                $getall = $API->comm("/ip/arp/getall", array(
-                                    "?address" => $contrato->ip
+                                $API->comm("/queue/simple/add", array(
+                                    "name"            => $this->normaliza($servicio).'-'.$contrato->nro,
+                                    "target"          => $contrato->ip,
+                                    "max-limit"       => $plan->upload.'/'.$plan->download,
+                                    "burst-limit"     => $burst_limit,
+                                    "burst-threshold" => $burst_threshold,
+                                    "burst-time"      => $burst_time,
+                                    "priority"        => $priority,
+                                    "limit-at"        => $limit_at
                                     )
                                 );
                             }
-                        }
 
-                        /*VLAN*/
-                        if($contrato->conexion == 4){
-
-                        }
-
-                        $registro = true;
-                        $queue = $API->comm("/queue/simple/getall", array(
-                            "?target" => $contrato->ip.'/32'
-                            )
-                        );
-
-                        if($queue){
-                            $API->comm("/queue/simple/set", array(
-                                ".id"             => $queue[0][".id"],
-                                "target"          => $contrato->ip,
-                                "max-limit"       => $plan->upload.'/'.$plan->download,
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold,
-                                "burst-time"      => $burst_time,
-                                "priority"        => $priority,
-                                "limit-at"        => $limit_at
+                            #AGREGAMOS A IP_AUTORIZADAS#
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "list" => 'ips_autorizadas'
                                 )
                             );
+                            #AGREGAMOS A IP_AUTORIZADAS#
                         }else{
-                            $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($servicio).'-'.$contrato->nro,
-                                "target"          => $contrato->ip,
-                                "max-limit"       => $plan->upload.'/'.$plan->download,
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold,
-                                "burst-time"      => $burst_time,
-                                "priority"        => $priority,
-                                "limit-at"        => $limit_at
-                                )
-                            );
+                            $fail++;
                         }
 
-                        #AGREGAMOS A IP_AUTORIZADAS#
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "list" => 'ips_autorizadas'
-                            )
-                        );
-                        #AGREGAMOS A IP_AUTORIZADAS#
-                    }else{
-                        $fail++;
-                    }
+                        $API->disconnect();
 
-                    $API->disconnect();
-
-                    if($registro){
-                        $contrato->mk = 1;
-                        $contrato->state = 'enabled';
-                        $contrato->save();
-                        $succ++;
+                        if($registro){
+                            $contrato->mk = 1;
+                            $contrato->state = 'enabled';
+                            $contrato->save();
+                            $succ++;
+                        }
                     }
+                }else{
+                    $fail++;
                 }
             }
         }
