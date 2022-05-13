@@ -1,11 +1,40 @@
 @extends('layouts.app')
-@section('content')
-	@if($servicio->nombre == 'WOMPI')
-	    <div class="alert alert-info" role="alert">
-	    	Para obtener tu <i>Llave pública</i> de WOMPI, sólo debes registrarte en el <a href="https://comercios.wompi.co/" class="alert-link">dashboard de Comercios</a> e ingresar a la sección de <strong>desarrolladores</strong>.
-	    </div>
-	@endif
 
+@section('boton')
+	@if($servicio->nombre == 'WOMPI')
+	    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter">
+	    	<i class="far fa-question-circle"></i> Tutorial
+	    </button>
+
+	    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	    	<div class="modal-dialog modal-dialog-centered" role="document">
+	    		<div class="modal-content">
+	    			<div class="modal-header">
+	    				<h5 class="modal-title" id="exampleModalLongTitle">TUTORIAL WOMPI</h5>
+	    				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	    					<span aria-hidden="true">&times;</span>
+	    				</button>
+	    			</div>
+	    			<div class="modal-body">
+	    				<p class="text-justify">Para obtener las credenciales necesarias, sólo debes registrarte en el <a href="https://comercios.wompi.co/" class="alert-link">Dashboard de Comercios</a>.</p>
+	    				<p class="text-justify">- Ingresar a la sección de <strong>desarrolladores</strong>.</p>
+	    				<p class="text-justify">- En la sección <strong>Seguimiento de transacciones</strong>, debe indicar en <i>URL de Eventos</i> lo siguiente: <strong>{{ Request::root() }}/software/api/pagos/wompi</strong></p>
+	    				<center><img src="{{ asset('images/wompi_a.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify">- En la sección de <strong>Llaves del API para integración técnica</strong>, copiar la Llave pública y pegarlo acá en la configuración.</p>
+	    				<center><img src="{{ asset('images/wompi_b.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify">- En la sección de <strong>Secretos para integración técnica</strong>, dar clic en mostrar y copiar Eventos y pegarlo acá en la configuración</p>
+	    				<center><img src="{{ asset('images/wompi_c.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    			</div>
+	    			<div class="modal-footer">
+	    				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+    @endif
+@endsection
+
+@section('content')
 	<form method="POST" action="{{ route('integracion-pasarelas.update', $servicio->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-banco" >
 	    @csrf
 	    <input name="_method" type="hidden" value="PATCH">
@@ -19,7 +48,7 @@
 	        </div>
 
 	        <div class="col-md-6 form-group {{ $servicio->nombre == 'WOMPI' ? '' : 'd-none'}}">
-	            <label class="control-label">API Eventos <span class="text-danger">*</span></label>
+	            <label class="control-label">Eventos <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="api_event" name="api_event"  required="" value="{{$servicio->api_event}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('api_event') }}</strong>

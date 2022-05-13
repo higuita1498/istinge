@@ -48,7 +48,7 @@
 	        @endif
 
 	        <div class="col-md-4 form-group">
-	            <label class="control-label">Nro Celular Asociado <span class="text-danger">*</span> <a><i data-tippy-content="Indique el número de celular, de ser un destino en Colombia, indíquelo sin el código de país (3XXXXXXXXX)" class="icono far fa-question-circle"></i></a></label>
+	            <label class="control-label">Nro Celular Asociado <span class="text-danger">*</span> <a><i data-tippy-content="Indique el número de celular, de ser un destino en Colombia, indíquelo con el código de país sin el signo + (57XXXXXXXX)" class="icono far fa-question-circle"></i></a></label>
 	            <input type="number" class="form-control" id="numero" name="numero"  required="" value="{{$servicio->numero}}" maxlength="200" min="0">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('numero') }}</strong>
