@@ -438,7 +438,7 @@
             return false;
         }
 
-        if(nro>=25){
+        if(nro>25){
             swal({
                 title: 'ERROR',
                 html: 'Sólo se permite ejecutar 25 contratos por lotes',
