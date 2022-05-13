@@ -250,7 +250,7 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-
+        
         if($request->realizar == 2){
             
             $this->storeIngresoPucCategoria($request);
