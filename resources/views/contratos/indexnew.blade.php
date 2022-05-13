@@ -187,15 +187,22 @@
     
     <div class="row card-description">
     	<div class="col-md-12">
-    		<div class="container-filtercolumn">
-                <a href="{{ route('pings.index') }}" class="btn btn-primary">Pings Fallidos <i class="fa fa-plug"></i></a>
-                @if(isset($_SESSION['permisos']['778']))
-                <a href="javascript:void(0)" class="btn btn-warning" id="btn_mk">Habilitar en Lote<i class="fas fa-server" style="margin-left:4px; "></i></a>
-                @endif
-                @if(isset($_SESSION['permisos']['778']))
-                <a href="javascript:void(0)" class="btn btn-success" id="btn_enabled">Habilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
-                <a href="javascript:void(0)" class="btn btn-danger" id="btn_disabled">Deshabilitar en Lote<i class="fas fa-file-signature" style="margin-left:4px; "></i></a>
-                @endif
+    		<div class="container-filtercolumn form-inline">
+                <a href="{{ route('pings.index') }}" class="btn btn-danger mr-1">Pings Fallidos <i class="fa fa-plug"></i></a>
+
+                <div class="dropdown mr-1">
+                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones en Lote
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
+                        @if(isset($_SESSION['permisos']['778']))
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
+                        @endif
+                    </div>
+                </div>
+
                 <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
     			<ul class="options-search-columns"  id="columnOptions">
     				@foreach($tabla as $campo)
