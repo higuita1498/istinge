@@ -114,7 +114,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -230,7 +230,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
