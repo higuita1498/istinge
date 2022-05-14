@@ -1080,7 +1080,7 @@ class IngresosController extends Controller
             $tamanio_bufer = 130; # bytes
             while (($lectura = fgets($gestor, $tamanio_bufer)) != false) {
                 $lectura = explode("|", $lectura);
-                if($lectura[0] == '01' || $lectura[0] == '"03"'){}else{
+                if($lectura[0] == '01' || $lectura[0] == '03'){}else{
                     array_push($registros, $lectura);
                 }
             }
