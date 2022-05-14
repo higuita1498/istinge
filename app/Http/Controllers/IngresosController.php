@@ -1258,7 +1258,9 @@ class IngresosController extends Controller
                         }
                     }
                 }else{
-                    $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
+                    if($codigo){
+                        $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
+                    }
                 }
             }
             return back()->with('success', $mensaje);
