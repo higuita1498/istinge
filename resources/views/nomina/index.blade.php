@@ -171,7 +171,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <a href="{{ route('nomina-dian.emitir', ['periodo' => $periodo->periodo, 'year'=> $periodo->year]) }}" title="Emitir Nómina"><i class="fas fa-sitemap color"></i></a> --}}
+                            <a href="{{ route('nomina-dian.emitir', ['periodo' => $periodo->periodo, 'year'=> $periodo->year]) }}" title="Emitir Nómina"><i class="fas fa-sitemap color"></i></a>
                         </td>
                     </tr>
                     @endforeach

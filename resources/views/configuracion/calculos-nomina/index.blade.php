@@ -93,8 +93,14 @@
     var valor;
     var tipo;
 
+    if (window.location.pathname.split("/")[1] === "software") {
+      var url='/software/empresa';
+    }else{
+        var url = '/empresa';
+    }
+
 		$.ajax({
-			url: `/empresa/configuracion/calculos_nomina/editcalculo/${id}`,
+			url: url+`/configuracion/calculos_nomina/editcalculo/${id}`,
 			method: 'GET',
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -166,8 +172,14 @@
           }
         }
 
+        if (window.location.pathname.split("/")[1] === "software") {
+        var url='/software/empresa';
+      }else{
+          var url = '/empresa';
+      }
+
         $.ajax({
-          url: `/empresa/configuracion/calculos_nomina/storecalculo`,
+          url: url+`/configuracion/calculos_nomina/storecalculo`,
           method: 'POST',
           beforeSend: function() {
             cargando(true);
