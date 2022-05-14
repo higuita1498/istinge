@@ -1153,7 +1153,6 @@ class IngresosController extends Controller
                             $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
 
                             /* * * API MK * * */
-
                             if($contrato->server_configuration_id){
                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
@@ -1192,7 +1191,6 @@ class IngresosController extends Controller
                                     $contrato->save();
                                 }
                             }
-
                             /* * * API MK * * */
 
                             /* * * ENVÍO SMS * * */
@@ -1258,9 +1256,7 @@ class IngresosController extends Controller
                         }
                     }
                 }else{
-                    if($codigo){
-                        $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
-                    }
+                    $mensaje .= '(FACTURA N° '.$codigo.') NO ENCONTRADA<br>';
                 }
             }
             return back()->with('success', $mensaje);
