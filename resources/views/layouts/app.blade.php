@@ -203,6 +203,10 @@
             .form-group label {
                 font-weight: 500;
             }
+            .btn-none, .btn-none: hover{
+                background-color: transparent;
+                border-color: transparent;
+            }
         </style>
         @yield('style')
     </head>

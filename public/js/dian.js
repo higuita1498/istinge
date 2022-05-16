@@ -1,11 +1,5 @@
 $(document).ready(function(){
 	//validateTechnicalKeyDian();
-
-	if (window.location.pathname === "/empresa") {
-		notificacionRadicado();
-		notificacionPing();
-		notificacionWifi();
-	}
     $('.precio').mask('000.000.000.000.000', {reverse: true});
 })
 

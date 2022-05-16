@@ -3738,16 +3738,19 @@ function notificacionRadicado(){
                 data=JSON.parse(data);
 
                 if (data.length > 0 && $("#nro_notificacionesR").val() < data.length) {
-                    $('html, body').animate({scrollTop:90}, 'slow');
-                    $('#modalNotificacionR').modal({
-                        show: true,
-                        keyboard: false,
-                        backdrop: 'static'
-                    });
-                    $('#modal-bodyR').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen '+ data.length +' caso(s) de radicados pendientes por solventar.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                    $('html, body').animate({scrollTop:0}, 'slow');
-                    $("#play_notificacion")[0].play();
-                    $("#nro_notificacionesR").val(data.length);
+                    if (window.location.pathname === "/empresa" || window.location.pathname === "/software/empresa") {
+                        $('html, body').animate({scrollTop:90}, 'slow');
+                        $('#modalNotificacionR').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                        $('#modal-bodyR').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen '+ data.length +' caso(s) de radicados pendientes por solventar.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                        $('html, body').animate({scrollTop:0}, 'slow');
+                        $("#play_notificacion")[0].play();
+                        $("#nro_notificacionesR").val(data.length);
+                    }
+                    $("#nro_R").html('<span class="badge badge-danger">'+data.length+'</span>');
                 }
 
                 if (data.length == 0){
@@ -3778,16 +3781,19 @@ function notificacionPing(){
             url: url,
             success: function(data){
                 if (data.length > 0 && $("#nro_notificacionesP").val() < data.length) {
-                    $('html, body').animate({scrollTop:90}, 'slow');
-                    $('#modalNotificacionP').modal({
-                        show: true,
-                        keyboard: false,
-                        backdrop: 'static'
-                    });
-                    $('#modal-bodyP').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>En los últimos minutos se han realizado pings y se han encontrado pings fallidos.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                    $('html, body').animate({scrollTop:0}, 'slow');
-                    $("#play_notificacion")[0].play();
-                    $("#nro_notificacionesP").val(data.length);
+                    if (window.location.pathname === "/empresa" || window.location.pathname === "/software/empresa") {
+                        $('html, body').animate({scrollTop:90}, 'slow');
+                        $('#modalNotificacionP').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                        $('#modal-bodyP').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>En los últimos minutos se han realizado pings y se han encontrado pings fallidos.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                        $('html, body').animate({scrollTop:0}, 'slow');
+                        $("#play_notificacion")[0].play();
+                        $("#nro_notificacionesP").val(data.length);
+                    }
+                    $("#nro_P").html('<span class="badge badge-danger">'+data.length+'</span>');
                 }
 
                 if (data.length == 0){
@@ -3820,16 +3826,19 @@ function notificacionWifi(){
                 data=JSON.parse(data);
 
                 if (data.length > 0 && $("#nro_notificacionesW").val() < data.length) {
-                    $('html, body').animate({scrollTop:90}, 'slow');
-                    $('#modalNotificacionW').modal({
-                        show: true,
-                        keyboard: false,
-                        backdrop: 'static'
-                    });
-                    $('#modal-bodyW').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen solicitudes de cambio de contraseña WIFI.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                    $('html, body').animate({scrollTop:0}, 'slow');
-                    $("#play_notificacion")[0].play();
-                    $("#nro_notificacionesW").val(data.length);
+                    if (window.location.pathname === "/empresa" || window.location.pathname === "/software/empresa") {
+                        $('html, body').animate({scrollTop:90}, 'slow');
+                        $('#modalNotificacionW').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                        $('#modal-bodyW').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen solicitudes de cambio de contraseña WIFI.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                        $('html, body').animate({scrollTop:0}, 'slow');
+                        $("#play_notificacion")[0].play();
+                        $("#nro_notificacionesW").val(data.length);
+                    }
+                    $("#nro_W").html('<span class="badge badge-danger">'+data.length+'</span>');
                 }
 
                 if (data.length == 0){

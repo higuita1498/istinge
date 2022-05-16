@@ -113,54 +113,59 @@
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
-                        <h4>ATAJOS</h4>
-                        <hr>
+                        <h4 class="float-left">ATAJOS</h4>
+                        <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeAtajos" role="button" aria-expanded="false" aria-controls="welcomeAtajos" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                            <i class="fas fa-angle-double-up"></i>
+                        </a>
+                        <hr class="mt-4">
                     </div>
-                    <div class="row">
-                        <div class="col-md-2 offset-md-1">
-                            <a href="{{route('contactos.create')}}">
-                            <div class="card-counter success">
-                                <i class="fas fa-users"></i>
-                                <span class="count-numbers">Crear</span>
-                                <span class="count-name">Cliente</span>
+                    <div class="collapse show" id="welcomeAtajos">
+                        <div class="row">
+                            <div class="col-md-2 offset-md-1">
+                                <a href="{{route('contactos.create')}}">
+                                <div class="card-counter success">
+                                    <i class="fas fa-users"></i>
+                                    <span class="count-numbers">Crear</span>
+                                    <span class="count-name">Cliente</span>
+                                </div>
+                                </a>
                             </div>
-                            </a>
-                        </div>
-                        <div class="col-md-2">
-                            <a href="{{route('contratos.create')}}">
-                            <div class="card-counter success">
-                                <i class="fas fa-file-contract"></i>
-                                <span class="count-numbers">Crear</span>
-                                <span class="count-name">Contrato</span>
+                            <div class="col-md-2">
+                                <a href="{{route('contratos.create')}}">
+                                <div class="card-counter success">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">Crear</span>
+                                    <span class="count-name">Contrato</span>
+                                </div>
+                                </a>
                             </div>
-                            </a>
-                        </div>
-                        <div class="col-md-2">
-                            <a href="{{route('radicados.create')}}">
-                            <div class="card-counter success">
-                                <i class="fas fa-ticket-alt"></i>
-                                <span class="count-numbers">Crear</span>
-                                <span class="count-name">Radicado</span>
+                            <div class="col-md-2">
+                                <a href="{{route('radicados.create')}}">
+                                <div class="card-counter success">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span class="count-numbers">Crear</span>
+                                    <span class="count-name">Radicado</span>
+                                </div>
+                                </a>
                             </div>
-                            </a>
-                        </div>
-                        <div class="col-md-2">
-                            <a href="{{route('facturas.create')}}">
-                            <div class="card-counter success">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="count-numbers">Crear</span>
-                                <span class="count-name">Factura</span>
+                            <div class="col-md-2">
+                                <a href="{{route('facturas.create')}}">
+                                <div class="card-counter success">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span class="count-numbers">Crear</span>
+                                    <span class="count-name">Factura</span>
+                                </div>
+                                </a>
                             </div>
-                            </a>
-                        </div>
-                        <div class="col-md-2">
-                            <a href="{{route('facturas.create-electronica')}}">
-                            <div class="card-counter success">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="count-numbers">Crear</span>
-                                <span class="count-name" style="right: 20px;font-size: 13px;top: 70px;">Factura Electrónica</span>
+                            <div class="col-md-2">
+                                <a href="{{route('facturas.create-electronica')}}">
+                                <div class="card-counter success">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span class="count-numbers">Crear</span>
+                                    <span class="count-name" style="right: 20px;font-size: 13px;top: 70px;">Factura Electrónica</span>
+                                </div>
+                                </a>
                             </div>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -170,75 +175,42 @@
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
-                        <h4>CONTRATOS</h4>
-                        <hr>
+                        <h4 class="float-left">CONTRATOS</h4>
+                        <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeContratos" role="button" aria-expanded="false" aria-controls="welcomeContratos" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                            <i class="fas fa-angle-double-up"></i>
+                        </a>
+                        <hr class="mt-4">
                     </div>
-                    <div class="row">
-                        <div class="col-md-3 offset-md-1">
-                            <a href="{{route('contratos.index')}}">
-                			<div class="card-counter primary">
-                                <i class="fas fa-file-contract"></i>
-                                <span class="count-numbers">{{ $contra_ena + $contra_disa }}</span>
-                			    <span class="count-name">Registrados</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                		    <a href="{{route('contratos.enabled')}}">
-                			<div class="card-counter success">
-                                <i class="fas fa-file-contract"></i>
-                                <span class="count-numbers">{{ $contra_ena }}</span>
-                			    <span class="count-name">Habilitados</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                		    <a href="{{route('contratos.disabled')}}">
-                			<div class="card-counter danger">
-                                <i class="fas fa-file-contract"></i>
-                                <span class="count-numbers">{{ $contra_disa }}</span>
-                			    <span class="count-name">Deshabilitados</span>
-                			</div>
-                			</a>
-                		</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-12">
-                <div class="card-body">
-                    <div class="notice notice-info">
-                        <h4>FACTURACIÓN</h4>
-                        <hr>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 offset-md-1">
-                		    <a href="{{route('facturas.index')}}">
-                			<div class="card-counter primary">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="count-numbers">{{ $factura }}</span>
-                			    <span class="count-name">Generados</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                		    <a href="{{ route('facturas.tipo', 'cerradas') }}">
-                			<div class="card-counter success">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="count-numbers">{{ $factura_cerrada }}</span>
-                			    <span class="count-name">Cerradas</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                		    <a href="{{ route('facturas.tipo', 'abiertas') }}">
-                			<div class="card-counter danger">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="count-numbers">{{ $factura_abierta }}</span>
-                			    <span class="count-name">Abiertas</span>
-                			</div>
-                			</a>
-                		</div>
+                    <div class="collapse show" id="welcomeContratos">
+                        <div class="row">
+                            <div class="col-md-3 offset-md-1">
+                                <a href="{{route('contratos.index')}}">
+                    			<div class="card-counter primary">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contra_ena + $contra_disa }}</span>
+                    			    <span class="count-name">Registrados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    		    <a href="{{route('contratos.enabled')}}">
+                    			<div class="card-counter success">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contra_ena }}</span>
+                    			    <span class="count-name">Habilitados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    		    <a href="{{route('contratos.disabled')}}">
+                    			<div class="card-counter danger">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contra_disa }}</span>
+                    			    <span class="count-name">Deshabilitados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,37 +218,85 @@
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
-                        <h4>RADICADOS</h4>
-                        <hr>
+                        <h4 class="float-left">FACTURACION</h4>
+                        <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeFacturacion" role="button" aria-expanded="false" aria-controls="welcomeFacturacion" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                            <i class="fas fa-angle-double-up"></i>
+                        </a>
+                        <hr class="mt-4">
                     </div>
-                    <div class="row">
-                        <div class="col-md-3 offset-md-1">
-                			<a href="{{route('radicados.index')}}">
-                			<div class="card-counter primary">
-                                <i class="fas fa-ticket-alt"></i>
-                                <span class="count-numbers">{{ $radicados }}</span>
-                			    <span class="count-name">Generados</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                			<a href="{{route('radicados.index')}}">
-                			<div class="card-counter success">
-                                <i class="fas fa-ticket-alt"></i>
-                                <span class="count-numbers">{{ $radicados_solventado }}</span>
-                			    <span class="count-name">Solventados</span>
-                			</div>
-                			</a>
-                		</div>
-                		<div class="col-md-3">
-                			<a href="{{route('radicados.index')}}">
-                			<div class="card-counter danger">
-                                <i class="fas fa-ticket-alt"></i>
-                                <span class="count-numbers">{{ $radicados_pendiente }}</span>
-                			    <span class="count-name">Pendientes</span>
-                			</div>
-                			</a>
-                		</div>
+                    <div class="collapse show" id="welcomeFacturacion">
+                        <div class="row">
+                            <div class="col-md-3 offset-md-1">
+                    		    <a href="{{route('facturas.index')}}">
+                    			<div class="card-counter primary">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span class="count-numbers">{{ $factura }}</span>
+                    			    <span class="count-name">Generados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    		    <a href="{{ route('facturas.tipo', 'cerradas') }}">
+                    			<div class="card-counter success">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span class="count-numbers">{{ $factura_cerrada }}</span>
+                    			    <span class="count-name">Cerradas</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    		    <a href="{{ route('facturas.tipo', 'abiertas') }}">
+                    			<div class="card-counter danger">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span class="count-numbers">{{ $factura_abierta }}</span>
+                    			    <span class="count-name">Abiertas</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="notice notice-info">
+                        <h4 class="float-left">RADICADOS</h4>
+                        <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeRadicados" role="button" aria-expanded="false" aria-controls="welcomeRadicados" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                            <i class="fas fa-angle-double-up"></i>
+                        </a>
+                        <hr class="mt-4">
+                    </div>
+                    <div class="collapse show" id="welcomeRadicados">
+                        <div class="row">
+                            <div class="col-md-3 offset-md-1">
+                    			<a href="{{route('radicados.index')}}">
+                    			<div class="card-counter primary">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span class="count-numbers">{{ $radicados }}</span>
+                    			    <span class="count-name">Generados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    			<a href="{{route('radicados.index')}}">
+                    			<div class="card-counter success">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span class="count-numbers">{{ $radicados_solventado }}</span>
+                    			    <span class="count-name">Solventados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                    			<a href="{{route('radicados.index')}}">
+                    			<div class="card-counter danger">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span class="count-numbers">{{ $radicados_pendiente }}</span>
+                    			    <span class="count-name">Pendientes</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                        </div>
                     </div>
                 </div>
             </div>

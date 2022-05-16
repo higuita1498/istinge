@@ -74,6 +74,9 @@
                             <a class="nav-link" href="{{route('asignaciones.index')}}" >Asignaciones</a>
                         </li>
                     @endif
+                    <li class="nav-item" id="listado">
+                        <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
+                    </li>
                 </ul>
             </div>
         </li>
@@ -274,12 +277,12 @@
                 <ul class="nav flex-column sub-menu">
                     @if(isset($_SESSION['permisos']['427']))
                     <li class="nav-item" id="wifi">
-                        <a class="nav-link" href="{{route('wifi.index')}}">Contraseñas Wifi</a>
+                        <a class="nav-link" href="{{route('wifi.index')}}">Contraseñas Wifi&nbsp;&nbsp;<e id="nro_W"></e></a>
                     </li>
                     @endif
                     @if(isset($_SESSION['permisos']['200']))
                     <li class="nav-item" id="radicados">
-                        <a class="nav-link" href="{{route('radicados.index')}}">Radicados</a>
+                        <a class="nav-link" href="{{route('radicados.index')}}">Radicados&nbsp;&nbsp;<e id="nro_R"></e></a>
                     </li>
                     @endif
                     @if(isset($_SESSION['permisos']['500']))

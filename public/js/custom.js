@@ -97,6 +97,9 @@ function notabletable(id){
 }
 
 $(document).ready(function() {
+  notificacionRadicado();
+  notificacionPing();
+  notificacionWifi();
   $('[data-toggle="tooltip"]').tooltip();
   $('.precio').mask('000.000.000.000.000', {reverse: true});
   if ($('#table-general').length > 0) {
