@@ -393,7 +393,7 @@ class PucMovimiento extends Model
         //TIPO 0.
         if($opcion == 1 && !$isGuardar && $tipo == 0){  
 
-            foreach($gasto->ingresosCategorias() as $cat){
+            foreach($gasto->gastosCategorias() as $cat){
                 $totalIngreso+=$cat->valor;
             }
             
@@ -403,13 +403,13 @@ class PucMovimiento extends Model
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
-            $mov->codigo_cuenta = isset($gasto->ingresoPuc()->codigo) ? $gasto->ingresoPuc()->codigo : '';
-            $mov->cuenta_id = isset($gasto->ingresoPuc()->id) ? $gasto->ingresoPuc()->id : '';
-            $mov->identificacion_tercero = $gasto->cliente()->nit;
-            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->codigo_cuenta = isset($gasto->gastoPuc()->codigo) ? $gasto->gastoPuc()->codigo : '';
+            $mov->cuenta_id = isset($gasto->gastoPuc()->id) ? $gasto->gastoPuc()->id : '';
+            $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+            $mov->cliente_id = $gasto->beneficiario()->id;
             $mov->consecutivo = $gasto->nro;
             $mov->descripcion = $gasto->observaciones;
-            $mov->debito =  $totalIngreso;
+            $mov->credito =  $totalIngreso;
             $mov->enlace_a = 4;
             $mov->save();
 
@@ -419,13 +419,13 @@ class PucMovimiento extends Model
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
-            $mov->codigo_cuenta = isset($gasto->ingresoAnticipo()->codigo) ? $gasto->ingresoAnticipo()->codigo : '';
-            $mov->cuenta_id = isset($gasto->ingresoAnticipo()->id) ? $gasto->ingresoAnticipo()->id : '';
-            $mov->identificacion_tercero = $gasto->cliente()->nit;
-            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->codigo_cuenta = isset($gasto->gastoAnticipo()->codigo) ? $gasto->gastoAnticipo()->codigo : '';
+            $mov->cuenta_id = isset($gasto->gastoAnticipo()->id) ? $gasto->gastoAnticipo()->id : '';
+            $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+            $mov->cliente_id = $gasto->beneficiario()->id;
             $mov->consecutivo = $gasto->nro;
             $mov->descripcion = $gasto->observaciones;
-            $mov->credito =  $totalIngreso;
+            $mov->debito =  $totalIngreso;
             $mov->enlace_a = 5;
             $mov->save();
         }
@@ -433,7 +433,7 @@ class PucMovimiento extends Model
         //TIPO 1
         else if($opcion == 1 && !$isGuardar && $tipo == 1){
 
-            foreach($gasto->ingresosFacturas() as $gastoFactura){
+            foreach($gasto->gastosFacturas() as $gastoFactura){
                 $totalIngreso+=$gastoFactura->pago;
 
                 $mov = new PucMovimiento;
@@ -443,11 +443,11 @@ class PucMovimiento extends Model
                 $mov->documento_id = $gasto->id;
                 $mov->codigo_cuenta = isset($gastoFactura->factura()->formaPago()->codigo) ? $gastoFactura->factura()->formaPago()->codigo : '';
                 $mov->cuenta_id = isset($gastoFactura->factura()->formaPago()->id) ? $gastoFactura->factura()->formaPago()->id : '';
-                $mov->identificacion_tercero = $gasto->cliente()->nit;
-                $mov->cliente_id = $gasto->cliente()->id;
+                $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+                $mov->cliente_id = $gasto->beneficiario()->id;
                 $mov->consecutivo = $gasto->nro;
                 $mov->descripcion = $gasto->observaciones;
-                $mov->credito =  $gastoFactura->factura()->total()->total;
+                $mov->debito =  $gastoFactura->factura()->total()->total;
                 $mov->enlace_a = 6;
                 $mov->save();
             }
@@ -458,13 +458,13 @@ class PucMovimiento extends Model
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
-            $mov->codigo_cuenta = isset($gasto->ingresoPucBanco()->codigo) ? $gasto->ingresoPucBanco()->codigo : '';
-            $mov->cuenta_id = isset($gasto->ingresoPucBanco()->id) ? $gasto->ingresoPucBanco()->id : '';
-            $mov->identificacion_tercero = $gasto->cliente()->nit;
-            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->codigo_cuenta = isset($gasto->gastoPucBanco()->codigo) ? $gasto->gastoPucBanco()->codigo : '';
+            $mov->cuenta_id = isset($gasto->gastoPucBanco()->id) ? $gasto->gastoPucBanco()->id : '';
+            $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+            $mov->cliente_id = $gasto->beneficiario()->id;
             $mov->consecutivo = $gasto->nro;
             $mov->descripcion = $gasto->observaciones;
-            $mov->debito =  $totalIngreso;
+            $mov->credito =  $totalIngreso;
             $mov->enlace_a = 4;
             $mov->save();
 
@@ -474,13 +474,13 @@ class PucMovimiento extends Model
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
-            $mov->codigo_cuenta = isset($gasto->ingresoAnticipoFactura()->codigo) ? $gasto->ingresoAnticipoFactura()->codigo : '';
-            $mov->cuenta_id = isset($gasto->ingresoAnticipoFactura()->id) ? $gasto->ingresoAnticipoFactura()->id : '';
-            $mov->identificacion_tercero = $gasto->cliente()->nit;
-            $mov->cliente_id = $gasto->cliente()->id;
+            $mov->codigo_cuenta = isset($gasto->gastoAnticipoFactura()->codigo) ? $gasto->gastoAnticipoFactura()->codigo : '';
+            $mov->cuenta_id = isset($gasto->gastoAnticipoFactura()->id) ? $gasto->gastoAnticipoFactura()->id : '';
+            $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+            $mov->cliente_id = $gasto->beneficiario()->id;
             $mov->consecutivo = $gasto->nro;
             $mov->descripcion = $gasto->observaciones;
-            $mov->credito =  $gasto->saldoFavorIngreso;
+            $mov->debito =  $gasto->saldoFavorIngreso;
             $mov->enlace_a = 5;
             $mov->save();
             

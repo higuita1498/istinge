@@ -93,6 +93,63 @@
         </span>
       </div> 
       <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Realizar un</label>
+        <div class="col-sm-8">
+          <select class="form-control selectpicker" name="realizar" id="realizar" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
+              <option value="1" selected>Pago a Factura o Categoría</option>
+              <option value="2" >Anticipo</option>
+          </select>
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('realizar') }}</strong>
+      </span>
+    </div>
+    <div class="form-group row cls-realizar d-none" >
+      <div class="form-group row ">
+     <label class="col-sm-4 col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
+     <div class="col-sm-8">
+       <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5" required>
+         @foreach($categorias as $categoria)
+           <option value="{{$categoria->id}}" >{{$categoria->nombre}} - {{$categoria->codigo}}</option>
+         @endforeach
+       </select>
+     </div>
+     
+   <span class="help-block error">
+         <strong>{{ $errors->first('puc') }}</strong>
+   </span>
+      </div>
+    </div> 
+      <div class="form-group row cls-realizar d-none" >
+        <div class="form-group row ">
+      <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
+      <div class="col-sm-8">
+        <select class="form-control selectpicker" name="anticipo" id="anticipo" title="Seleccione" data-live-search="true" data-size="5" required>
+          @foreach($anticipos as $anticipo)
+            <option value="{{$anticipo->id}}" >{{$anticipo->nombre}} - {{$anticipo->codigo}}</option>
+          @endforeach
+        </select>
+      </div>
+      
+    <span class="help-block error">
+          <strong>{{ $errors->first('anticipo') }}</strong>
+    </span>
+        </div>
+    </div>
+    <div class="cls-realizar d-none" >
+      <div class="form-group row ">
+        <label class="col-sm-4 col-form-label">Valor Recibido <span class="text-danger">*</span></label>
+        <div class="col-sm-8">
+          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido" required>
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('valor_recibido') }}</strong>
+      </span>
+      </div>
+    </div>  
+      <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
           <input type="text" class="form-control datepicker"  id="fecha" value="{{date('d-m-Y')}}" name="fecha" disabled=""  >
@@ -124,7 +181,7 @@
       </div>
 
     <h5>TIPO DE TRANSACCIÓN</h5>
-    <div class="row" style=" margin-top: 5%; text-align: center;">
+    <div class="row cls-realizar-inv" style=" margin-top: 5%; text-align: center;">
       <div class="col-md-12">
         <h6>¿Asociar este ingreso a una  factura de compra existente? <a><i data-tippy-content="<font color='#d08f50'>Si</font> para cancelar o abonar facutras <br><font color='#d08f50'>No</font> para registrar otros gastos" class="icono far fa-question-circle"></i></a></h6>
         <p>Recuerda que puedes registrar un ingreso sin necesidad de que esté asociado a una factura de compra</p>
@@ -146,7 +203,7 @@
         </div>
       </div>
     </div>
-      <div class="row">
+      <div class="row cls-realizar-inv">
         <div class="col-md-12" id="si" style="display: none;">
           <h5>FACTURAS DE COMPRAS PENDIENTES</h5>
           <div id="factura_pendiente"></div>
@@ -344,4 +401,8 @@
 
   </script>
 
+@endsection
+
+@section('scripts')
+<script src="{{asset('lowerScripts/pago/pago.js')}}"></script>
 @endsection

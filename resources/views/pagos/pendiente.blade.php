@@ -40,7 +40,7 @@
         </td> 
         <td class="monetario" style="vertical-align: text-bottom;"> 
           <input type="hidden" id="editmonto{{$factura->id}}" value="1">
-          <input type="number" class="form-control form-control-sm precio" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" max="{{$factura->total()->total}}" maxlength="24" onchange="totales_ingreso();" onkeyup=" editmonto({{$factura->id}});" min="0">
+          <input type="number" class="form-control form-control-sm precio" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" maxlength="24" onchange="totales_ingreso();" onkeyup=" editmonto({{$factura->id}});" min="0">
 
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>
 
@@ -68,6 +68,7 @@
           <tr>
             <td width="40%">TOTAL</td>
             <td>{{Auth::user()->empresa()->moneda}} <span id="total">{{App\Funcion::Parsear(0)}}</span></td>
+            <input type="hidden" name="saldofavor" id="saldofavor" value="0">
           </tr>
         </table>
       </div>

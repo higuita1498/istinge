@@ -21,4 +21,5 @@
 	<input name="_method" type="hidden" value="DELETE">
 </form>
 <button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('eliminar-gasto{{$id}}', '¿Está seguro que desea eliminar el gasto?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+<a href="{{route('pagos.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
 @endif

@@ -410,9 +410,9 @@
                         <a class="nav-link" href="{{ route('contabilidad.index') }}">Contabilidad
                         </a>
                     </li>
-                    <li class="nav-item" id="planes-nomina">
+                    {{-- <li class="nav-item" id="planes-nomina">
                         <a class="nav-link" href="{{ route('nomina.planes') }}">Planes</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item" id="asisente-habilitacion">
                         <a id="nomina_asistente" href="{{ route('nomina-dian.asistente') }}" class="{{auth()->user()->empresaObj->nomina ? 'nav-link' : 'd-none'}}">Asistente de habilitación</a>
                     </li>

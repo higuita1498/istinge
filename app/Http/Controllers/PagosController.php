@@ -33,6 +33,8 @@ use Config;
 use App\ServidorCorreo;
 use App\Puc;
 use App\Campos;
+use App\Anticipo;
+use App\PucMovimiento;
 
 class PagosController extends Controller
 {
@@ -177,8 +179,11 @@ class PagosController extends Controller
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
+
+        //obtiene los anticipos relacionados con este modulo (Egresos o pagos)
+        $anticipos = Anticipo::where('relacion',2)->orWhere('relacion',3)->get();
         
-        return view('pagos.create')->with(compact('clientes', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones', 'banco', 'identificaciones', 'vendedores', 'listas', 'tipos_empresa','prefijos'));
+        return view('pagos.create')->with(compact('clientes', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones', 'banco', 'identificaciones', 'vendedores', 'listas', 'tipos_empresa','prefijos','anticipos'));
     }
     
     public function pendiente($proveedor, $id=false){
@@ -189,28 +194,135 @@ class PagosController extends Controller
     }
     
     public function store(Request $request){
-        if( Gastos::where('empresa',auth()->user()->empresa)->count() > 0){
-            Session::put('posttimer', Gastos::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
-            $sw = 1;
-            foreach (Session::get('posttimer') as $key) {
-                if ($sw == 1) {
-                    $ultimoingreso = $key;
-                    $sw=0;
+
+        if($request->realizar == 2){
+            
+            $this->storePagoPucCategoria($request);
+
+            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+            return redirect('empresa/pagos')->with('success', $mensaje);
+
+        }else{
+            if( Gastos::where('empresa',auth()->user()->empresa)->count() > 0){
+                Session::put('posttimer', Gastos::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+                $sw = 1;
+                foreach (Session::get('posttimer') as $key) {
+                    if ($sw == 1) {
+                        $ultimoingreso = $key;
+                        $sw=0;
+                    }
+                }
+                //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                //Si el tiempo es de menos de 30 segundos mandamos al listado general
+                if ($diasDiferencia <= 10) {
+                    $mensaje = "El formulario ya ha sido enviado.";
+                    return redirect('empresa/pagos')->with('success', $mensaje);
                 }
             }
-            //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-            //Si el tiempo es de menos de 30 segundos mandamos al listado general
-            if ($diasDiferencia <= 10) {
-                $mensaje = "El formulario ya ha sido enviado.";
-                return redirect('empresa/pagos')->with('success', $mensaje);
+            
+            $request->validate([
+                'cuenta' => 'required|numeric'
+            ]);
+            
+            if (Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()) {
+                $nroGasto = Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()->nro + 1;
+            } else {
+                $nroGasto = 1;
             }
+
+            $gasto = new Gastos();
+            $gasto->nro           = $nroGasto;
+            $gasto->empresa       = Auth::user()->empresa;
+            $gasto->beneficiario  = $request->beneficiario;
+            $gasto->cuenta        = $request->cuenta;
+            $gasto->metodo_pago   = $request->metodo_pago;
+            $gasto->notas         = $request->notas;
+            $gasto->tipo          = $request->tipo;
+            $gasto->fecha         = Carbon::parse($request->fecha)->format('Y-m-d');
+            $gasto->observaciones = mb_strtolower($request->observaciones);
+            $gasto->created_by    = Auth::user()->id;
+            $gasto->save();
+            
+            //Registrar los pagos por factura
+            if ($gasto->tipo==1) {
+                foreach ($request->factura_pendiente as $key => $value) {
+                    if ($request->precio[$key]) {
+                        $precio=$this->precision($request->precio[$key]);
+                        $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
+                        if (!$factura) { continue; }
+                        $retencion='fact'.$factura->id.'_retencion';
+                        $precio_reten='fact'.$factura->id.'_precio_reten';
+                        //Retenciones
+                        if ($request->$retencion) {
+                            foreach ($request->$retencion as $key2 => $value2) {
+                                if ($request->$precio_reten[$key2]) {
+                                    $retencion = Retencion::where('id', $value2)->first();
+                                    $items = new FacturaProveedoresRetenciones;
+                                    $items->factura=$factura->id;
+                                    $items->valor=$this->precision($request->$precio_reten[$key2]);
+                                    $items->retencion=$retencion->porcentaje;
+                                    $items->id_retencion=$retencion->id;
+                                    $items->save();
+                                }
+                            }
+                        }
+
+                        $items = new GastosFactura;
+                        $items->gasto=$gasto->id;
+                        $items->factura=$factura->id;
+                        $items->pagado=$factura->pagado();
+                        $items->pago=$this->precision($request->precio[$key]);
+                        $items->save();
+
+                        if ($this->precision($factura->porpagar())<=0) {
+                            $factura->estatus=0;
+                            $factura->save();
+                        }
+                    }
+                }
+            }else{
+                foreach ($request->categoria as $key => $value) {
+                    if ($request->precio_categoria[$key]) {
+                        $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                        if (!$impuesto) {
+                            $impuesto = Impuesto::where('id', 0)->first();
+                        }
+                        $items = new GastosCategoria;
+                        $items->valor=$this->precision($request->precio_categoria[$key]);
+                        $items->id_impuesto=$request->impuesto_categoria[$key];
+                        $items->gasto=$gasto->id;
+                        $items->categoria=$request->categoria[$key];
+                        $items->cant=$request->cant_categoria[$key];
+                        $items->descripcion=$request->descripcion_categoria[$key];
+                        $items->impuesto=$impuesto->porcentaje;
+                        $items->save();
+                    }
+                }
+                if ($request->retencion) {
+                    foreach ($request->retencion as $key => $value) {
+                        if ($request->precio_reten[$key]) {
+                            $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                            $items = new GastosRetenciones;
+                            $items->gasto=$gasto->id;
+                            $items->valor=$this->precision($request->precio_reten[$key]);
+                            $items->retencion=$retencion->porcentaje;
+                            $items->id_retencion=$retencion->id;
+                            $items->save();
+                        }
+                    }
+                }
+            }
+            $gasto=Gastos::find($gasto->id);
+            //Pagos
+            $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
+            $mensaje='Se ha creado satisfactoriamente el pago';
+            return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
         }
-        
-        $request->validate([
-            'cuenta' => 'required|numeric'
-        ]);
-        
+    }
+
+    public function storePagoPucCategoria($request){
+
         if (Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()) {
             $nroGasto = Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()->nro + 1;
         } else {
@@ -229,81 +341,44 @@ class PagosController extends Controller
         $gasto->observaciones = mb_strtolower($request->observaciones);
         $gasto->created_by    = Auth::user()->id;
         $gasto->save();
-        
-        //Registrar los pagos por factura
-        if ($gasto->tipo==1) {
-            foreach ($request->factura_pendiente as $key => $value) {
-                if ($request->precio[$key]) {
-                    $precio=$this->precision($request->precio[$key]);
-                    $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
-                    if (!$factura) { continue; }
-                    $retencion='fact'.$factura->id.'_retencion';
-                    $precio_reten='fact'.$factura->id.'_precio_reten';
-                    //Retenciones
-                    if ($request->$retencion) {
-                        foreach ($request->$retencion as $key2 => $value2) {
-                            if ($request->$precio_reten[$key2]) {
-                                $retencion = Retencion::where('id', $value2)->first();
-                                $items = new FacturaProveedoresRetenciones;
-                                $items->factura=$factura->id;
-                                $items->valor=$this->precision($request->$precio_reten[$key2]);
-                                $items->retencion=$retencion->porcentaje;
-                                $items->id_retencion=$retencion->id;
-                                $items->save();
-                            }
-                        }
-                    }
 
-                    $items = new GastosFactura;
-                    $items->gasto=$gasto->id;
-                    $items->factura=$factura->id;
-                    $items->pagado=$factura->pagado();
-                    $items->pago=$this->precision($request->precio[$key]);
-                    $items->save();
+        $impuesto = Impuesto::where('porcentaje',0)->first();
 
-                    if ($this->precision($factura->porpagar())<=0) {
-                        $factura->estatus=0;
-                        $factura->save();
-                    }
-                }
-            }
-        }else{
-            foreach ($request->categoria as $key => $value) {
-                if ($request->precio_categoria[$key]) {
-                    $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
-                    if (!$impuesto) {
-                        $impuesto = Impuesto::where('id', 0)->first();
-                    }
-                    $items = new GastosCategoria;
-                    $items->valor=$this->precision($request->precio_categoria[$key]);
-                    $items->id_impuesto=$request->impuesto_categoria[$key];
-                    $items->gasto=$gasto->id;
-                    $items->categoria=$request->categoria[$key];
-                    $items->cant=$request->cant_categoria[$key];
-                    $items->descripcion=$request->descripcion_categoria[$key];
-                    $items->impuesto=$impuesto->porcentaje;
-                    $items->save();
-                }
-            }
-            if ($request->retencion) {
-                foreach ($request->retencion as $key => $value) {
-                    if ($request->precio_reten[$key]) {
-                        $retencion = Retencion::where('id', $request->retencion[$key])->first();
-                        $items = new GastosRetenciones;
-                        $items->gasto=$gasto->id;
-                        $items->valor=$this->precision($request->precio_reten[$key]);
-                        $items->retencion=$retencion->porcentaje;
-                        $items->id_retencion=$retencion->id;
-                        $items->save();
-                    }
-                }
-            }
-        }
-        $gasto=Gastos::find($gasto->id);
-        //ingresos
+        //Registramos el ingreso de anticipo en una sola cuenta del puc.
+        $items = new GastosCategoria;
+        $items->valor = $this->precision($request->valor_recibido);
+        $items->id_impuesto=$impuesto->id;
+        $items->gasto=$gasto->id;
+        $items->categoria = $request->puc;
+        $items->anticipo = $request->anticipo;
+        $items->cant = 1;
+        $items->impuesto=$impuesto->porcentaje;
+        $items->save();
+
+        $contacto = Contacto::find($request->beneficiario);
+        $contacto->saldo_favor2+=$request->valor_recibido;
+        $contacto->save(); 
+
+        //pagos
         $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
-        $mensaje='Se ha creado satisfactoriamente el pago';
-        return redirect('empresa/pagos')->with('success', $mensaje)->with('gasto_id', $gasto->id);
+
+        //mandamos por parametro el gasto y el 1 (guardar)
+        PucMovimiento::gasto($gasto,1);        
+    } 
+
+    public function showMovimiento($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $gasto = Gasto::find($id);
+        /*
+        obtenemos los movimiento sque ha tenido este documento
+        sabemos que se trata de un tipo de movimiento 03
+        */
+        $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',2)->get();
+        if ($gasto) {
+            view()->share(['title' => 'Detalle Movimiento ' .$gasto->codigo]);
+            return view('pagos.show-movimiento')->with(compact('pago','movimientos'));
+        }
+        return redirect('empresa/pasgos')->with('success', 'No existe un registro con ese id');
     }
   
     public function show($id){

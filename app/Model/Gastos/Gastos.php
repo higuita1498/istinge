@@ -259,7 +259,7 @@ class Gastos extends Model
 
     /* * * * Asociados a una categoria * * */
     public function gastoAnticipo(){
-        $anticipo = IngresosCategoria::join('anticipo as an','an.id','=','gastos_categoria.anticipo')
+        $anticipo = GastosCategoria::join('anticipo as an','an.id','=','gastos_categoria.anticipo')
         ->where('gastos_categoria.gasto',$this->id)->select('an.*')->first();
 
         if($anticipo){
@@ -268,7 +268,7 @@ class Gastos extends Model
     }
     
     public function gastoPuc(){
-        $puc = IngresosCategoria::join('puc as p','p.id','=','gastos_categoria.categoria')
+        $puc = GastosCategoria::join('puc as p','p.id','=','gastos_categoria.categoria')
         ->where('gastos_categoria.gasto',$this->id)->select('p.*')->first();
 
         if($puc){
@@ -278,7 +278,7 @@ class Gastos extends Model
 
     /* * * * Asociados a una(s) facturas * * */
     public function gastoAnticipoFactura(){
-        $anticipo = IngresosFactura::join('anticipo as an','an.id','=','gastos_factura.anticipo')
+        $anticipo = GastosFactura::join('anticipo as an','an.id','=','gastos_factura.anticipo')
         ->where('gastos_factura.gasto',$this->id)->select('an.*')->first();
 
         if($anticipo){
@@ -287,11 +287,15 @@ class Gastos extends Model
     }
     
     public function gastoPucBanco(){
-        $puc = IngresosFactura::join('puc as p','p.id','=','gastos_factura.puc_banco')
+        $puc = GastosFactura::join('puc as p','p.id','=','gastos_factura.puc_banco')
         ->where('gastos_factura.gasto',$this->id)->select('p.*')->first();
 
         if($puc){
             return $puc;
         }
+    }
+
+    public function gastosCategorias(){
+        return GastosCategoria::where('gasto',$this->id)->get();
     }
 }

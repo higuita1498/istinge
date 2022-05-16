@@ -720,6 +720,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('pdf/{id}/{name}', 'PagosController@Imprimir')->name('pagos.imprimir.nombre');
 		Route::get('/{id}/enviar', 'PagosController@enviar')->name('pagos.enviar');
 		Route::post('{id}/anular', 'PagosController@anular')->name('pagos.anular');
+		Route::get('/movimiento/{id}', 'PagosController@showMovimiento')->name('pagos.showmovimiento');
+
 	});
 
 
