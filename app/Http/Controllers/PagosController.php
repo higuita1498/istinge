@@ -314,6 +314,20 @@ class PagosController extends Controller
                 }
             }
             $gasto=Gastos::find($gasto->id);
+
+            //registramos el saldo a favor que se generó al pagar la factura
+            if($request->saldofavor > 0){
+                $contacto = Contacto::find($request->beneficiario);
+                $contacto->saldo_favor2 = $contacto->saldo_favor2+$request->saldofavor;
+                $contacto->save();
+
+                $gasto->saldoFavorIngreso = $request->saldofavor;
+                $gasto->puc_banco = $request->puc_banco;
+                $gasto->anticipo = $request->anticipo_factura;
+
+                PucMovimiento::gasto($gasto,1,1);    
+            }
+
             //Pagos
             $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
             $mensaje='Se ha creado satisfactoriamente el pago';

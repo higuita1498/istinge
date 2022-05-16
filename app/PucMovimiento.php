@@ -382,8 +382,8 @@ class PucMovimiento extends Model
         }
     }
 
-    // el tipo 1 significa cuando es un pago a una factura y se paga un poco mas.
-    // opcion 1 es para guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    // el tipo 1 significa cuando es un pago a una factura de proveedor y se paga un poco mas.
+    // opcion 1 es para guardar el movimiento, y miramos que no exista ningun movimiento sobre este documento
     public static function gasto($gasto, $opcion, $tipo=0){
 
         $isGuardar = PucMovimiento::where('documento_id',$gasto->id)->where('tipo_comprobante',2)->first();
