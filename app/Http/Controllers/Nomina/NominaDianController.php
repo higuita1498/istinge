@@ -1088,7 +1088,7 @@ class NominaDianController extends Controller
 
         view()->share([
             'seccion' => 'nomina',
-            'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
+            'title' => 'Emitir Nómina | ' . ucfirst(Nomina::monthName($date)) . ' ' . $date->format('Y'),
             'icon' => 'fas fa-sitemap'
         ]);
         $i = 0;
