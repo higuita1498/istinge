@@ -1105,10 +1105,16 @@ class ContratosController extends Controller
 
                     if($contrato->nodo){
                         $nodo_old = Nodo::find($contrato->nodo);
-                        $nodo_new = Nodo::find($ap_new->nodo);
+
+                        if(isset($ap_new->nodo)){
+                            $nodo_new = Nodo::find($ap_new->nodo);
+                        }
 
                         $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new->nombre.'<br>';
-                        $contrato->nodo = $ap_new->nodo;
+                        
+                        if(isset($ap_new->nodo)){
+                            $contrato->nodo = $ap_new->nodo;
+                        }
                     }
 
                     $contrato->puerto_conexion    = $request->puerto_conexion;
