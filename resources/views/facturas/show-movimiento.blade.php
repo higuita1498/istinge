@@ -188,7 +188,6 @@
         </div>
         <!--Cliente-->
         
-        
         <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
@@ -198,45 +197,45 @@
         <div class="row" style="padding: 2% 6%;">
             <div class="col-md-12 fact-table">
                 <div class="table-responsive">
-                <table class="table table-striped table-bordered table-sm pagos"  width="100%">
-                <thead>
-                <tr>
-                    <th>Nro</th>
-                    <th width="20%">Cuenta contable</th>
-                    <th width="20%">tecrero</th>
-                    <th width="20%">Detalle</th>
-                    <th width="20%">Descripción</th>
-                    <th width="10%">Débito</th>
-                    <th width="10%">Crédito</th>
-                </tr>
-                </thead>
-          <tbody>
-              @php $i = 1 @endphp
-            @foreach($movimientos as $mov)
-                <tr>
-                    <td>{{$i}}</td>
-                    <td>{{$mov->codigo_cuenta}}</td>
-                    <td>{{$mov->cliente->nombre}}</td>
-                    <td>{{$mov->asociadoA()}}</td>
-                    <td>{{$mov->descripcion}}</td>
-                    <td>{{$mov->debito}}</td>
-                    <td>{{$mov->credito}}</td>
-                </tr>
-            @php $i++; @endphp
-            @endforeach
-            <tr>
-                <td style="border:none;"></td>
-                <td style="border:none;"></td>
-                <td style="border:none;"></td>
-                <td style="border:none;"></td>
-                <td style="border:none;">Total:</td>
-                <td>{{$mov->totalDebito()->total}}</td>
-                <td>{{$mov->totalCredito()->total}}</td>
-            </tr>
-          </tbody>
-        </table>
+                    <table class="table table-striped table-bordered table-sm pagos"  width="100%">
+                        <thead>
+                            <tr>
+                                <th>Nro</th>
+                                <th width="20%">Cuenta contable</th>
+                                <th width="20%">tecrero</th>
+                                <th width="20%">Detalle</th>
+                                <th width="20%">Descripción</th>
+                                <th width="10%">Débito</th>
+                                <th width="10%">Crédito</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $i = 1 @endphp
+                            @foreach($movimientos as $mov)
+                                <tr>
+                                    <td>{{$i}}</td>
+                                    <td>{{$mov->codigo_cuenta}}</td>
+                                    <td>{{$mov->cliente->nombre}}</td>
+                                    <td>{{$mov->asociadoA()}}</td>
+                                    <td>{{$mov->descripcion}}</td>
+                                    <td>{{$mov->debito}}</td>
+                                    <td>{{$mov->credito}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:none;"></td>
+                                    <td style="border:none;"></td>
+                                    <td style="border:none;"></td>
+                                    <td style="border:none;"></td>
+                                    <td style="border:none;">Total:</td>
+                                    <td>{{$mov->totalDebito()->total}}</td>
+                                    <td>{{$mov->totalCredito()->total}}</td>
+                                </tr>
+                                @php $i++; @endphp
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 @endsection

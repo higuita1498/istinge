@@ -179,7 +179,15 @@
                     $("#telefono").val('').val(data.cliente.celular);
                     $("#correo").val('').val(data.cliente.email);
                     $("#direccion").val('').val(data.cliente.direccion);
-                    $("#nombre").val('').val(data.cliente.nombre+' '+data.cliente.apellido1+' '+data.cliente.apellido2);
+                    $("#nombre").val('').val(data.cliente.nombre);
+
+                    if(data.cliente.apellido1){
+                        $("#nombre").val('').val(data.cliente.nombre+' '+data.cliente.apellido1);
+                    }
+                    if(data.cliente.apellido2){
+                        $("#nombre").val('').val(data.cliente.nombre+' '+data.cliente.apellido1+' '+data.cliente.apellido2);
+                    }
+
                     if(data.contrato){
                         $(".contract").removeClass('d-none');
                         $("#contrato").val('').val(data.contrato.nro);

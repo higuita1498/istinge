@@ -229,7 +229,7 @@ class RadicadosController extends Controller{
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
         if ($radicado) {
-            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Modificar Radicado: '.$radicado->codigo]);
+            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Modificar: N° '.$radicado->codigo, 'middel' => true]);
             return view('radicados.edit')->with(compact('radicado','servicios','tecnicos'));
         }
         return redirect('empresa/radicados')->with('success', 'No existe un registro con ese id');
@@ -279,7 +279,7 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
-            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles Radicado: '.$radicado->codigo]);
+            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles: N° '.$radicado->codigo, 'middel' => true]);
             $inicio = Carbon::parse($radicado->tiempo_ini);
             $cierre = Carbon::parse($radicado->tiempo_fin);
             $duracion = $inicio->diffInMinutes($cierre);
@@ -328,7 +328,7 @@ class RadicadosController extends Controller{
     public function imprimir($id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id',$id)->first();
         if($radicado) {
-            view()->share(['title' => 'Caso Radicado #'.$radicado->codigo]);
+            view()->share(['title' => 'Caso Radicado N° '.$radicado->codigo]);
             $pdf = PDF::loadView('pdf.radicados', compact('radicado'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
@@ -337,7 +337,7 @@ class RadicadosController extends Controller{
     public function firmar($id){
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-        view()->share(['icon'=>'far fa-life-ring', 'title' => 'Firma Radicado: '.$radicado->codigo]);
+        view()->share(['icon'=>'far fa-life-ring', 'title' => 'Firma Radicado: N° '.$radicado->codigo, 'middel' => true]);
         return view('radicados.firma')->with(compact('radicado'));
     }
 
@@ -352,8 +352,8 @@ class RadicadosController extends Controller{
         return redirect('empresa/radicados')->with('success', 'No existe un registro con ese id');
     }
 
-    public function notificacion(){
-        $radicado=Radicado::where('tecnico',Auth::user()->id)->where('estatus',2)->get();
+    public function notificacionRadicado(){
+        $radicado=Radicado::whereIn('estatus', [0,2])->where('creado', 2)->get();
         return json_encode($radicado);
     }
   

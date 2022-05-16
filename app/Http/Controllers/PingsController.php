@@ -86,4 +86,9 @@ class PingsController extends Controller
     public function act_des($id){
 
     }
+
+    public function notificacionPing(){
+        $notificaciones = Ping::where('fecha', date('Y-m-d'))->get();
+        return response()->json($notificaciones);
+    }
 }

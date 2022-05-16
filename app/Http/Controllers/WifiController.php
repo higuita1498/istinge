@@ -153,12 +153,7 @@ class WifiController extends Controller
     }
     
     public function notificacionWifi(){
-        if(Auth::user()->id == 7){ 
-            $notificaciones = Wifi::where('status', 1)->get();
-            return json_encode($notificaciones);
-        }else{
-            $notificaciones = '';
-            return json_encode($notificaciones);
-        }
-  }
+        $notificaciones = Wifi::where('status', 1)->get();
+        return json_encode($notificaciones);
+    }
 }
