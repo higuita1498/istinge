@@ -3722,122 +3722,128 @@ function check_regla(){
     }
 }
 
-function notificacion(){
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/empresa/radicados/notificacionRadicado';
-        var route = '/software/empresa/radicados';
-    }else{
-        var url = '/empresa/radicados/notificacionRadicado';
-        var route = '/empresa/radicados';
-    }
-
-    $.ajax({
-        url: url,
-        success: function(data){
-            data=JSON.parse(data);
-
-            if (data.length > 0 && $("#nro_notificaciones").val() < data.length) {
-                $('html, body').animate({scrollTop:90}, 'slow');
-                $('#modalNotificacion').modal({
-                    show: true,
-                    keyboard: false,
-                    backdrop: 'static'
-                });
-                $('#modal-bodyc').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Ud tiene '+ data.length +' caso(s) radicados asignados.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                $('html, body').animate({scrollTop:0}, 'slow');
-                $("#play_notificacion")[0].play();
-                $("#nro_notificaciones").val(data.length);
-            }
-
-            if (data.length == 0){
-                $('#modalNotificacion').modal('hide');
-            }
-
-            //setTimeout(function(){ notificacion(); }, 3000);
-        },
-        error: function(data){
-            console.log(data);
-            cargando(false);
+function notificacionRadicado(){
+    if($("#notificacionRadicados").val() == 1){
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa/radicados/notificacionRadicado';
+            var route = '/software/empresa/radicados';
+        }else{
+            var url = '/empresa/radicados/notificacionRadicado';
+            var route = '/empresa/radicados';
         }
-    });
+
+        $.ajax({
+            url: url,
+            success: function(data){
+                data=JSON.parse(data);
+
+                if (data.length > 0 && $("#nro_notificacionesR").val() < data.length) {
+                    $('html, body').animate({scrollTop:90}, 'slow');
+                    $('#modalNotificacionR').modal({
+                        show: true,
+                        keyboard: false,
+                        backdrop: 'static'
+                    });
+                    $('#modal-bodyR').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen '+ data.length +' caso(s) de radicados pendientes por solventar.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                    $('html, body').animate({scrollTop:0}, 'slow');
+                    $("#play_notificacion")[0].play();
+                    $("#nro_notificacionesR").val(data.length);
+                }
+
+                if (data.length == 0){
+                    $('#modalNotificacionR').modal('hide');
+                }
+
+                //setTimeout(function(){ notificacion(); }, 3000);
+            },
+            error: function(data){
+                console.log(data);
+                cargando(false);
+            }
+        });
+    }
 }
 
 function notificacionPing(){
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/empresa/notificacionPing';
-        var route = '/software/empresa/pings';
-    }else{
-        var url = '/empresa/notificacionPing';
-        var route = '/empresa/pings';
-    }
-
-    $.ajax({
-        url: url,
-        success: function(data){
-            if (data.length > 0 && $("#nro_notificaciones").val() < data.length) {
-                $('html, body').animate({scrollTop:90}, 'slow');
-                $('#modalNotificacion').modal({
-                    show: true,
-                    keyboard: false,
-                    backdrop: 'static'
-                });
-                $('#modal-bodyc').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>En los últimos minutos se han realizado pings y se han encontrado pings fallidos.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                $('html, body').animate({scrollTop:0}, 'slow');
-                $("#play_notificacion")[0].play();
-                $("#nro_notificaciones").val(data.length);
-            }
-
-            if (data.length == 0){
-                $('#modalNotificacion').modal('hide');
-            }
-
-            //setTimeout(function(){ notificacion(); }, 3000);
-        },
-        error: function(data){
-            console.log(data);
-            cargando(false);
+    if($("#notificacionPings").val() == 1){
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa/notificacionPing';
+            var route = '/software/empresa/pings';
+        }else{
+            var url = '/empresa/notificacionPing';
+            var route = '/empresa/pings';
         }
-    });
+
+        $.ajax({
+            url: url,
+            success: function(data){
+                if (data.length > 0 && $("#nro_notificacionesP").val() < data.length) {
+                    $('html, body').animate({scrollTop:90}, 'slow');
+                    $('#modalNotificacionP').modal({
+                        show: true,
+                        keyboard: false,
+                        backdrop: 'static'
+                    });
+                    $('#modal-bodyP').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>En los últimos minutos se han realizado pings y se han encontrado pings fallidos.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                    $('html, body').animate({scrollTop:0}, 'slow');
+                    $("#play_notificacion")[0].play();
+                    $("#nro_notificacionesP").val(data.length);
+                }
+
+                if (data.length == 0){
+                    $('#modalNotificacionP').modal('hide');
+                }
+
+                //setTimeout(function(){ notificacion(); }, 3000);
+            },
+            error: function(data){
+                console.log(data);
+                cargando(false);
+            }
+        });
+    }
 }
 
 function notificacionWifi(){
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/empresa/notificacionWifi';
-        var route = '/software/empresa/wifi';
-    }else{
-        var url = '/empresa/notificacionWifi';
-        var route = '/empresa/wifi';
-    }
-
-    $.ajax({
-        url: url,
-        success: function(data){
-            data=JSON.parse(data);
-
-            if (data.length > 0 && $("#nro_notificaciones").val() < data.length) {
-                $('html, body').animate({scrollTop:90}, 'slow');
-                $('#modalNotificacion').modal({
-                    show: true,
-                    keyboard: false,
-                    backdrop: 'static'
-                });
-                $('#modal-bodyc').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen solicitudes de cambio de contraseña WIFI.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
-                $('html, body').animate({scrollTop:0}, 'slow');
-                $("#play_notificacion")[0].play();
-                $("#nro_notificaciones").val(data.length);
-            }
-
-            if (data.length == 0){
-                $('#modalNotificacion').modal('hide');
-            }
-
-            //setTimeout(function(){ notificacion(); }, 3000);
-        },
-        error: function(data){
-            console.log(data);
-            cargando(false);
+    if($("#notificacionWifi").val() == 1){
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa/notificacionWifi';
+            var route = '/software/empresa/wifi';
+        }else{
+            var url = '/empresa/notificacionWifi';
+            var route = '/empresa/wifi';
         }
-    });
+
+        $.ajax({
+            url: url,
+            success: function(data){
+                data=JSON.parse(data);
+
+                if (data.length > 0 && $("#nro_notificacionesW").val() < data.length) {
+                    $('html, body').animate({scrollTop:90}, 'slow');
+                    $('#modalNotificacionW').modal({
+                        show: true,
+                        keyboard: false,
+                        backdrop: 'static'
+                    });
+                    $('#modal-bodyW').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Existen solicitudes de cambio de contraseña WIFI.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado</a></center>');
+                    $('html, body').animate({scrollTop:0}, 'slow');
+                    $("#play_notificacion")[0].play();
+                    $("#nro_notificacionesW").val(data.length);
+                }
+
+                if (data.length == 0){
+                    $('#modalNotificacionW').modal('hide');
+                }
+
+                //setTimeout(function(){ notificacion(); }, 3000);
+            },
+            error: function(data){
+                console.log(data);
+                cargando(false);
+            }
+        });
+    }
 }
 
 function getInterfaces(mikrotik) {

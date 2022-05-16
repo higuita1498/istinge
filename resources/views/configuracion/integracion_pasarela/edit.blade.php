@@ -18,7 +18,7 @@
 	    			<div class="modal-body">
 	    				<p class="text-justify">Para obtener las credenciales necesarias, sólo debes registrarte en el <a href="https://comercios.wompi.co/" class="alert-link">Dashboard de Comercios</a>.</p>
 	    				<p class="text-justify">- Ingresar a la sección de <strong>desarrolladores</strong>.</p>
-	    				<p class="text-justify">- En la sección <strong>Seguimiento de transacciones</strong>, debe indicar en <i>URL de Eventos</i> lo siguiente: <strong>{{ Request::root() }}/api/pagos/wompi</strong></p>
+	    				<p class="text-left">- En la sección <strong>Seguimiento de transacciones</strong>, debe indicar en <i>URL de Eventos</i> lo siguiente: <strong>{{ Request::root() }}/api/pagos/wompi</strong></p>
 	    				<center><img src="{{ asset('images/wompi_a.png') }}" class="img-fluid mb-3 border-dark border"></center>
 	    				<p class="text-justify">- En la sección de <strong>Llaves del API para integración técnica</strong>, copiar la Llave pública y pegarlo acá en la configuración.</p>
 	    				<center><img src="{{ asset('images/wompi_b.png') }}" class="img-fluid mb-3 border-dark border"></center>

@@ -1078,7 +1078,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/{id}/firmar', 'RadicadosController@firmar')->name('radicados.firmar');
         	Route::post('/{id}/storefirma', 'RadicadosController@storefirma')->name('radicados.storefirma');
         	Route::get('/datatable/cliente/{cliente}', 'RadicadosController@datatable_cliente')->name('radicados.datatable.cliente');
-        	Route::get('/notificacionRadicado', 'RadicadosController@notificacion')->name('radicados.notificacion');
+        	Route::get('/notificacionRadicado', 'RadicadosController@notificacionRadicado')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
         	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
         });
@@ -1231,7 +1231,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    Route::resource('access-point', 'APController');
 	    
 	//PING
-	    Route::get('/notificacionPing', 'Controller@getNotificaciones')->name('pings.notificacion');
+	    Route::get('/notificacionPing', 'PingsController@notificacionPing')->name('pings.notificacion');
 	    Route::resource('pings', 'PingsController');
 	    
     // GRUPOS DE CORTE
