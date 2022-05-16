@@ -98,7 +98,7 @@
 					<tr>
 						<th>Cuenta</th>
 						<td><a href="{{route('bancos.show',$gasto->cuenta()->nro)}}" target="_blank">{{$gasto->cuenta()->nombre}}</a></td>
-					</tr>
+					</tr>php
 					<tr>
 						<th>Observaciones</th>
 						<td>{{$gasto->observaciones}}</td>

@@ -336,7 +336,7 @@ class PagosController extends Controller
         $gasto->cuenta        = $request->cuenta;
         $gasto->metodo_pago   = $request->metodo_pago;
         $gasto->notas         = $request->notas;
-        $gasto->tipo          = $request->tipo;
+        $gasto->tipo          = 2;
         $gasto->fecha         = Carbon::parse($request->fecha)->format('Y-m-d');
         $gasto->observaciones = mb_strtolower($request->observaciones);
         $gasto->created_by    = Auth::user()->id;
