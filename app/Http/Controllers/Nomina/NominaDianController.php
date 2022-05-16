@@ -832,7 +832,7 @@ class NominaDianController extends Controller
         foreach ($nomina->nominaperiodos as $nominaPeriodo) {
             $total_sueldo += $nominaPeriodo->valor_total;
             $TiempoLaborado += $nominaPeriodo->diasTrabajados();
-            $date = Carbon::parse($nominaPeriodo->fecha_hasta)->locale('es');
+            $date = Carbon::parse($nominaPeriodo->fecha_hasta);
         }
 
         $empresa = Auth::user()->empresa();
@@ -1089,7 +1089,7 @@ class NominaDianController extends Controller
         $preferencia = NominaPreferenciaPago::where('empresa', $usuario->empresa)->first();
 
         $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
-        $date = Carbon::create($year, $periodo, 1)->locale('es');
+        $date = Carbon::create($year, $periodo, 1);
 
         view()->share([
             'seccion' => 'nomina',
