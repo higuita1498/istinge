@@ -1080,7 +1080,7 @@ class IngresosController extends Controller
             $tamanio_bufer = 130; # bytes
             while (($lectura = fgets($gestor, $tamanio_bufer)) != false) {
                 $lectura = explode("|", $lectura);
-                if($lectura[0] == '01' || $lectura[0] == '"03"'){}else{
+                if($lectura[0] == '01' || $lectura[0] == '03'){}else{
                     array_push($registros, $lectura);
                 }
             }
@@ -1090,7 +1090,7 @@ class IngresosController extends Controller
             fclose($gestor);
 
             foreach ($registros as $registro) {
-                $codigo = substr($registro['8'],1,-2);
+                $codigo = substr($registro['8'],1,-3);
                 $precio = $registro['2'];
                 $factura = Factura::where('codigo', $codigo)->first();
                 if($factura){
@@ -1153,7 +1153,6 @@ class IngresosController extends Controller
                             $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
 
                             /* * * API MK * * */
-
                             if($contrato->server_configuration_id){
                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
@@ -1192,7 +1191,6 @@ class IngresosController extends Controller
                                     $contrato->save();
                                 }
                             }
-
                             /* * * API MK * * */
 
                             /* * * ENVÍO SMS * * */

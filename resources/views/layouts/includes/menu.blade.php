@@ -513,4 +513,8 @@
             <span class="menu-title"></span>
         </a>
     </li>
+
+    <input type="hidden" id="notificacionWifi" value="{{ isset($_SESSION['permisos']['779']) ? 1 : 0 }}">
+    <input type="hidden" id="notificacionRadicados" value="{{ isset($_SESSION['permisos']['780']) ? 1 : 0 }}">
+    <input type="hidden" id="notificacionPings" value="{{ isset($_SESSION['permisos']['781']) ? 1 : 0 }}">
 @endif

@@ -513,7 +513,7 @@ class ContactosController extends Controller
 
             if($contrato){
                 $mikrotik = Mikrotik::find($contrato->server_configuration_id);
-                $servicio = $this->normaliza($contacto->nombre);
+                $servicio = $this->normaliza($contacto->nombre.' '.$contacto->apellido1.' '.$contacto->apellido2).'-'.$contrato->nro;
 
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
