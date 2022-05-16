@@ -376,7 +376,7 @@ class PagosController extends Controller
         $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',2)->get();
         if ($gasto) {
             view()->share(['title' => 'Detalle Movimiento ' .$gasto->codigo]);
-            return view('pagos.show-movimiento')->with(compact('pago','movimientos'));
+            return view('pagos.show-movimiento')->with(compact('gasto','movimientos'));
         }
         return redirect('empresa/pasgos')->with('success', 'No existe un registro con ese id');
     }
