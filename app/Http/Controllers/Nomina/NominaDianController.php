@@ -732,8 +732,8 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
-        // $response['statusCode'] = 200;
+        // $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina')); Linea se comenta mientras se soluciona el error de versionamiento
+        $response['statusCode'] = 200;
 
 
         if (isset($response['statusCode'])) {
@@ -832,7 +832,7 @@ class NominaDianController extends Controller
         foreach ($nomina->nominaperiodos as $nominaPeriodo) {
             $total_sueldo += $nominaPeriodo->valor_total;
             $TiempoLaborado += $nominaPeriodo->diasTrabajados();
-            $date = Carbon::parse($nominaPeriodo->fecha_hasta);
+            $date = Carbon::parse($nominaPeriodo->fecha_hasta)->locale('es');
         }
 
         $empresa = Auth::user()->empresa();
@@ -1015,7 +1015,13 @@ class NominaDianController extends Controller
         $this->getAllPermissions($usuario->id);
         $empresa = auth()->user()->empresaObj;
 
-        $guiasVistas = [];
+        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+            ->select('tips_modulo_usuario.*')
+            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+            ->where('permisos_modulo.nombre_modulo', 'Nomina')
+            ->where('fk_idusuario', $usuario->id)
+            ->get();
+
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
         quincenales <<< */
@@ -1083,11 +1089,11 @@ class NominaDianController extends Controller
         $preferencia = NominaPreferenciaPago::where('empresa', $usuario->empresa)->first();
 
         $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
-        $date = Carbon::create($year, $periodo, 1);
+        $date = Carbon::create($year, $periodo, 1)->locale('es');
 
         view()->share([
             'seccion' => 'nomina',
-            'title' => 'Emitir Nómina | ' . ucfirst(Nomina::monthName($date)) . ' ' . $date->format('Y'),
+            'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
             'icon' => 'fas fa-sitemap'
         ]);
         $i = 0;
@@ -2129,11 +2135,8 @@ class NominaDianController extends Controller
     public function enviarJsonDianApi($json, $tipo = 2)
     {
         $testId = Auth::user()->empresaObj->test_nomina;
-        if($tipo == null){
-            $tipo = 2;
-        }
 
-        switch ($tipo){
+        switch ($tipo) {
             case 1:
                 $url = "https://apine.efacturacadena.com/v1/ne/documentos/proceso/sincrono";
                 $nominaToken = "01cff6f2-ae91-4a58-b606-fbce231dcb66";
@@ -2153,28 +2156,18 @@ class NominaDianController extends Controller
 
         try {
 
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://apine.efacturacadena.com/staging/ne/documentos/proceso/sincrono",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>$json,
-            CURLOPT_HTTPHEADER => array(
-                'nominaAuthorizationToken: 42e5b496-d882-4041-97ec-e3e91750805f990ef12f-36ff-454b-b020-fb19e953c37397478011-edaf-4f66-9945-81b691a718b118213614-da33-4e7b-9c22-ce78e0d55cf0',
-                'nitAlianza: 1128464945',
-                'Content-Type: application/json'
-            ),
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
+            if ($tipo == 3) {
+                $response = Http::withHeaders([
+                    "nominaAuthorizationToken" => $nominaToken,
+                    "nitAlianza" => "1128464945",
+                    "Set-Test-Id " => $testId,
+                ])->post($url, $json)->json();
+            } else {
+                $response = Http::withHeaders([
+                    "nominaAuthorizationToken" => $nominaToken,
+                    "nitAlianza" => "1128464945",
+                ])->post($url, $json)->json();
+            }
 
             return $response;
         } catch (Exception $e) {
