@@ -298,4 +298,8 @@ class Gastos extends Model
     public function gastosCategorias(){
         return GastosCategoria::where('gasto',$this->id)->get();
     }
+
+    public function gastosFacturas(){
+        return GastosFactura::where('gasto',$this->id)->get();
+    }
 }
