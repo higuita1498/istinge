@@ -368,7 +368,7 @@ class PagosController extends Controller
 
     public function showMovimiento($id){
         $this->getAllPermissions(Auth::user()->id);
-        $gasto = Gasto::find($id);
+        $gasto = Gastos::find($id);
         /*
         obtenemos los movimiento sque ha tenido este documento
         sabemos que se trata de un tipo de movimiento 03
