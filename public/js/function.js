@@ -3351,7 +3351,7 @@ function validateDian(id,rutasuccess,codigo)
                 messageValidateDian($mensaje, $footer, $img);
             }
 
-            else if(validate.cliente.telefono == null)
+            else if(validate.cliente.telefono1 == null)
              {
                 $mensaje = "Para emitir a la Dian se debe tener un telefono asociado al cliente.";
                 $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
