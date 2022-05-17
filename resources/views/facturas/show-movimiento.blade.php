@@ -221,17 +221,17 @@
                                     <td>{{$mov->debito}}</td>
                                     <td>{{$mov->credito}}</td>
                                 </tr>
-                                <tr>
-                                    <td style="border:none;"></td>
-                                    <td style="border:none;"></td>
-                                    <td style="border:none;"></td>
-                                    <td style="border:none;"></td>
-                                    <td style="border:none;">Total:</td>
-                                    <td>{{$mov->totalDebito()->total}}</td>
-                                    <td>{{$mov->totalCredito()->total}}</td>
-                                </tr>
                                 @php $i++; @endphp
                             @endforeach
+                            <tr>
+                                <td style="border:none;"></td>
+                                <td style="border:none;"></td>
+                                <td style="border:none;"></td>
+                                <td style="border:none;"></td>
+                                <td style="border:none;">Total:</td>
+                                <td>{{$mov->totalDebito()->total}}</td>
+                                <td>{{$mov->totalCredito()->total}}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
