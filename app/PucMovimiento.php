@@ -343,7 +343,7 @@ class PucMovimiento extends Model
                 $mov->consecutivo = $ingreso->nro;
                 $mov->descripcion = $ingreso->observaciones;
                 $mov->credito =  $ingresoFactura->factura()->total()->total;
-                $mov->enlace_a = 6;
+                $mov->enlace_a = 1;
                 $mov->save();
             }
             
@@ -448,7 +448,7 @@ class PucMovimiento extends Model
                 $mov->consecutivo = $gasto->nro;
                 $mov->descripcion = $gasto->observaciones;
                 $mov->debito =  $gastoFactura->factura()->total()->total;
-                $mov->enlace_a = 6;
+                $mov->enlace_a = 1;
                 $mov->save();
             }
             
