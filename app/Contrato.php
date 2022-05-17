@@ -194,4 +194,14 @@ class Contrato extends Model
             return 'N/A';
         }
     }
+
+    public function facturacion(){
+        if($this->facturacion == 1){
+            return 'Estándar';
+        } elseif($this->facturacion == 3){
+            return 'Electrónica';
+        } else{
+            return 'N/A';
+        }
+    }
 }
