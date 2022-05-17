@@ -38,6 +38,9 @@ Route::get('habilitarContratos/{fecha}', 'CronController@habilitarContratos');
 /** EVENTOS WOMPI **/
 Route::post('pagos/wompi', 'CronController@eventosWompi');
 
+/** EVENTOS PAYU **/
+Route::post('pagos/payu', 'CronController@eventosPayu');
+
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
  * facturasController@enviar
