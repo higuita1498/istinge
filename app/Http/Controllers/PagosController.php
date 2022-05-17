@@ -195,6 +195,8 @@ class PagosController extends Controller
     
     public function store(Request $request){
 
+        return $request;
+
         if($request->realizar == 2){
             
             $this->storePagoPucCategoria($request);
@@ -248,8 +250,19 @@ class PagosController extends Controller
             if ($gasto->tipo==1) {
                 foreach ($request->factura_pendiente as $key => $value) {
                     if ($request->precio[$key]) {
-                        $precio=$this->precision($request->precio[$key]);
+
                         $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
+
+                        /*
+                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos 
+                        sobre el total de la factura por que el resto es saldo a favor. 
+                        */
+                        if($factura->total()->total < $request->precio[$key]){
+                            $precio=$this->precision($factura->total()->total);
+                        }else{
+                            $precio=$this->precision($request->precio[$key]);
+                        }
+
                         if (!$factura) { continue; }
                         $retencion='fact'.$factura->id.'_retencion';
                         $precio_reten='fact'.$factura->id.'_precio_reten';
@@ -272,7 +285,7 @@ class PagosController extends Controller
                         $items->gasto=$gasto->id;
                         $items->factura=$factura->id;
                         $items->pagado=$factura->pagado();
-                        $items->pago=$this->precision($request->precio[$key]);
+                        $items->pago = $precio;
                         $items->save();
 
                         if ($this->precision($factura->porpagar())<=0) {

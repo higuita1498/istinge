@@ -361,7 +361,17 @@ class IngresosController extends Controller
                         $items->puc_factura = $factura->cuenta_id;
                         $items->puc_banco = $request->puc_banco;
                         $items->anticipo = $request->anticipo_factura;
-                        $items->pago = $this->precision($request->precio[$key]);
+                        
+                        /*
+                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos 
+                        sobre el total de la factura por que el resto es saldo a favor. 
+                        */
+                        if($factura->total()->total < $request->precio[$key]){
+                            $items->pago = $factura->total()->total;
+                        }else{
+                            $items->pago=$this->precision($request->precio[$key]);
+                        }
+
                         if ($this->precision($precio) == $this->precision($factura->porpagar())) {
                             $factura->estatus = 0;
                             $factura->save();
@@ -373,6 +383,7 @@ class IngresosController extends Controller
                                 $crm->delete();
                             }
                         }
+
                         $items->save();
                     }
                 }

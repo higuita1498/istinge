@@ -454,7 +454,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
-            $mov->tipo_comprobante = "01";
+            $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
@@ -470,7 +470,7 @@ class PucMovimiento extends Model
 
             //2do. Registramos el anticipo del cliente.
             $mov = new PucMovimiento;
-            $mov->tipo_comprobante = "01";
+            $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
             $mov->documento_id = $gasto->id;
