@@ -87,8 +87,8 @@
 		tabla.DataTable().ajax.reload();
 	}
 	function aplicar_cambios() {
-		if ($('#tabla-ips').DataTable().data().count() > 100) {
-			$("#contador_t").val('100');
+		if ($('#tabla-ips').DataTable().data().count() > 15) {
+			$("#contador_t").val('15');
 			var contador_t = $("#contador_t").val();
 		}else{
 			$("#contador_t").val($('#tabla-ips').DataTable().data().count());
