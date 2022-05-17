@@ -1036,6 +1036,7 @@ class CronController extends Controller
 
     public function eventosPayu(Request $request){
         $request = (object) $request->all();
+        Log::debug($request);
         dd($request);
 
         if($request->event == 'transaction.updated'){
