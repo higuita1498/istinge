@@ -1036,7 +1036,6 @@ class CronController extends Controller
     }
 
     public function eventosPayu(Request $request){
-        Log::debug($request);
         if($request->state_pol == 4){
             $timestamp = $request->timestamp;
             $payu = Integracion::where('nombre', 'PayU')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
