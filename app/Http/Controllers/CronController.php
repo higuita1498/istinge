@@ -1044,7 +1044,8 @@ class CronController extends Controller
             $hash = md5($payu->api_key.'~'.$request->merchant_id.'~'.$request->reference_sale.'~'.$request->value.'~'.$request->currency.'~'.$request->state_pol);
 
             if($request->sign == $hash){
-                $factura = Factura::where('codigo', explode("-", $request->reference)[1])->first();
+                $factura = Factura::where('codigo', substr($request->reference_sale, 4))->first();
+
                 if($factura->estatus == 1){
                     $empresa = Empresa::find($factura->empresa);
                     $nro = Numeracion::where('empresa', $empresa->id)->first();
@@ -1058,7 +1059,7 @@ class CronController extends Controller
                         $caja++;
                     }
 
-                    $banco = Banco::where('nombre', 'WOMPI')->where('estatus', 1)->where('lectura', 1)->first();
+                    $banco = Banco::where('nombre', 'PAYU')->where('estatus', 1)->where('lectura', 1)->first();
 
                     # REGISTRAMOS EL INGRESO
                     $ingreso                = new Ingreso;
@@ -1069,11 +1070,11 @@ class CronController extends Controller
                     $ingreso->metodo_pago   = 9;
                     $ingreso->tipo          = 1;
                     $ingreso->fecha         = date('Y-m-d');
-                    $ingreso->observaciones = 'Pago Wompi ID: '.$request->id;
+                    $ingreso->observaciones = 'Pago PayU ID: '.$request->transaction_id;
                     $ingreso->save();
 
                     # REGISTRAMOS EL INGRESO_FACTURA
-                    $precio         = $this->precisionAPI($request->amount_in_cents/100, $empresa->id);
+                    $precio         = $this->precisionAPI($request->value, $empresa->id);
 
                     $items          = new IngresosFactura;
                     $items->ingreso = $ingreso->id;
@@ -1207,9 +1208,9 @@ class CronController extends Controller
                             }
                         }
                     }
-                    return response('success', 200);
+                    return abort(200);
                 }
-                return abort(200);
+                return abort(400);
             }else{
                 return abort(400);
             }
