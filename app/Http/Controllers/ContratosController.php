@@ -203,6 +203,11 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.tecnologia', $request->tecnologia);
                 });
             }
+            if($request->facturacion){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.facturacion', $request->facturacion);
+                });
+            }
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
@@ -310,6 +315,9 @@ class ContratosController extends Controller
             })
             ->editColumn('tecnologia', function (Contrato $contrato) {
                 return ($contrato->tecnologia) ? $contrato->tecnologia() : 'N/A';
+            })
+            ->editColumn('facturacion', function (Contrato $contrato) {
+                return ($contrato->facturacion) ? $contrato->facturacion() : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])

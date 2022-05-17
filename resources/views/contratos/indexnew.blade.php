@@ -172,6 +172,12 @@
                             <option value="2">Inalámbrica</option>
                         </select>
                     </div>
+                    <div class="col-md-3 pl-1 pt-1">
+                        <select title="Tipo de Facturción" class="form-control selectpicker" id="facturacion_s">
+                            <option value="1">Estándar</option>
+                            <option value="3">Electrónica</option>
+                        </select>
+                    </div>
     				
     				<div class="col-md-2 pl-1 pt-1">
     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -280,6 +286,7 @@
             data.vendedor = $("#vendedor").val();
             data.canal = $("#canal").val();
             data.tecnologia = $("#tecnologia_s").val();
+            data.facturacion = $("#facturacion_s").val();
             data.filtro = true;
         });
         
@@ -348,6 +355,7 @@
         $("#vendedor").val('').selectpicker('refresh');
         $("#canal").val('').selectpicker('refresh');
         $("#tecnologia_s").val('').selectpicker('refresh');
+        $("#facturacion_s").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

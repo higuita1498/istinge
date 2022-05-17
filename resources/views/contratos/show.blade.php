@@ -216,6 +216,10 @@
 						</tr>
 						@endif
 						<tr>
+							<th>Tipo de Facturación</th>
+							<td>{{ $contrato->facturacion() }}</td>
+						</tr>
+						<tr>
 							<th>Plan Contratado</th>
 							<td><a href="{{route('planes-velocidad.show',$contrato->plan_id)}}" target="_blank"><strong>{{ $contrato->plan()->name }}</strong></a></td>
 						</tr>
