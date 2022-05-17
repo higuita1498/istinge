@@ -469,7 +469,7 @@ class MikrotikController extends Controller
     public function autorizar_ips($contratos){
         $this->getAllPermissions(Auth::user()->id);
 
-        $succ = $contratos; $fail = $contratos;
+        $succ = 0; $fail = 0;
 
         $contratos = explode(",", $contratos);
 
