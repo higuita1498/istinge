@@ -459,7 +459,7 @@ class MikrotikController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('ip_autorizada', 0)->get();
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('ip_autorizada', 0)->where('status', 1)->where('state', 'enabled')->get();
             view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
             return view('mikrotik.ips-autorizadas')->with(compact('contratos', 'mikrotik'));
         }
