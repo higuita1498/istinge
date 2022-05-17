@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use StdClass;
 use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
@@ -1035,19 +1036,14 @@ class CronController extends Controller
     }
 
     public function eventosPayu(Request $request){
-        $request = (object) $request->all();
         Log::debug($request);
-        dd($request);
-
-        if($request->event == 'transaction.updated'){
+        if($request->state_pol == 4){
             $timestamp = $request->timestamp;
-            $request = (object) $request->data['transaction'];
-            $servicio = Integracion::where('nombre', 'WOMPI')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
+            $payu = Integracion::where('nombre', 'PayU')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
 
-            $cadena = $request->id.''.$request->status.''.$request->amount_in_cents.''.$timestamp.''.$servicio->api_event;
-            $hash = hash("sha256", $cadena);
+            $hash = md5($payu->api_key.'~'.$request->merchant_id.'~'.$request->reference_sale.'~'.$request->value.'~'.$request->currency.'~'.$request->state_pol);
 
-            if($request->status == 'APPROVED'){
+            if($request->sign == $hash){
                 $factura = Factura::where('codigo', explode("-", $request->reference)[1])->first();
                 if($factura->estatus == 1){
                     $empresa = Empresa::find($factura->empresa);
@@ -1213,10 +1209,11 @@ class CronController extends Controller
                     }
                     return response('success', 200);
                 }
-                return response('false', 200);
+                return abort(200);
             }else{
-                return response('false', 200);
+                return abort(400);
             }
         }
+        return abort(400);
     }
 }
