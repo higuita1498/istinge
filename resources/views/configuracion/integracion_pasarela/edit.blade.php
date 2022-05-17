@@ -10,7 +10,7 @@
 	    	<div class="modal-dialog modal-dialog-centered" role="document">
 	    		<div class="modal-content">
 	    			<div class="modal-header">
-	    				<h5 class="modal-title" id="exampleModalLongTitle">TUTORIAL WOMPI</h5>
+	    				<h5 class="modal-title text-uppercase" id="exampleModalLongTitle">TUTORIAL {{ $servicio->nombre }}</h5>
 	    				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	    					<span aria-hidden="true">&times;</span>
 	    				</button>
@@ -24,6 +24,37 @@
 	    				<center><img src="{{ asset('images/wompi_b.png') }}" class="img-fluid mb-3 border-dark border"></center>
 	    				<p class="text-justify">- En la sección de <strong>Secretos para integración técnica</strong>, dar clic en mostrar y copiar Eventos y pegarlo acá en la configuración</p>
 	    				<center><img src="{{ asset('images/wompi_c.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    			</div>
+	    			<div class="modal-footer">
+	    				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+    @endif
+
+    @if($servicio->nombre == 'PayU')
+	    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter">
+	    	<i class="far fa-question-circle"></i> Tutorial
+	    </button>
+
+	    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	    	<div class="modal-dialog modal-dialog-centered" role="document">
+	    		<div class="modal-content">
+	    			<div class="modal-header">
+	    				<h5 class="modal-title text-uppercase" id="exampleModalLongTitle">TUTORIAL {{ $servicio->nombre }}</h5>
+	    				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	    					<span aria-hidden="true">&times;</span>
+	    				</button>
+	    			</div>
+	    			<div class="modal-body">
+	    				<p class="text-justify">Para obtener las credenciales necesarias, sólo debes ingresar en el <a href="https://merchants.payulatam.com/login/auth" class="alert-link">Dashboard de PayU</a>.</p>
+	    				<p class="text-justify">- En la parte superior izquierda podemos encontrar los datos de <strong>1. merchantId</strong> y de <strong>2. accountId </strong>.</p>
+	    				<center><img src="{{ asset('images/payu_a.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify">- Ingresar a la sección de <strong>Configuración > Configuración técnica</strong>. En la parte derecha conseguiremos el <strong>3. API KEY</strong>.</p>
+	    				<center><img src="{{ asset('images/payu_b.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify">- En la misma sección de <strong>Configuración técnica</strong>, en la parte central conseguiremos el <strong>4. URL de confirmación</strong>, donde deberá colocar la siguiente URL <strong>{{ Request::root() }}/api/pagos/payu</strong></p>
+	    				<center><img src="{{ asset('images/payu_c.png') }}" class="img-fluid mb-3 border-dark border"></center>
 	    			</div>
 	    			<div class="modal-footer">
 	    				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
