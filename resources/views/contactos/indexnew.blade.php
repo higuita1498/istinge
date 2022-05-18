@@ -68,7 +68,7 @@
 					</div>
 					@endif
 					<div class="col-md-3 pl-1 pt-1">
-						<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
+						<input type="text" placeholder="Nombres/Apellidos" id="nombre" class="form-control rounded">
 					</div>
 					<div class="col-md-3 pl-1 pt-1">
 						<input type="number" placeholder="Identificación" id="identificacion" class="form-control rounded">
