@@ -47,7 +47,7 @@ use App\ServidorCorreo;
 use App\FormaPago;
 use ZipArchive;
 use App\Integracion;
-use App\PucMovimiento;
+use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
 
 class FacturasController extends Controller{
@@ -503,6 +503,7 @@ class FacturasController extends Controller{
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+        
         if (!$nro) {
             $mensaje='Debes crear una numeración para facturas de venta preferida';
             return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
@@ -548,7 +549,9 @@ class FacturasController extends Controller{
         $extras2 = $dataPro->extras;
         $listas2 = $dataPro->listas;
         $bodegas2 = $dataPro->bodegas;
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->orWhere('empresa', 1)->whereNull('asociado')->get();
+        $categorias = Puc::where('empresa',auth()->user()->empresa)
+         ->whereRaw('length(codigo) > 6')
+         ->get();
         $identificaciones=TipoIdentificacion::all();
         //$vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
         //$listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();

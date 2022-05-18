@@ -287,7 +287,9 @@ class Gastos extends Model
     }
     
     public function gastoPucBanco(){
-        $puc = GastosFactura::join('puc as p','p.id','=','gastos_factura.puc_banco')
+        $puc = GastosFactura::
+        join('forma_pago as fp','fp.id','=','gastos_factura.puc_banco')
+        ->join('puc as p','p.id','=','fp.cuenta_id')
         ->where('gastos_factura.gasto',$this->id)->select('p.*')->first();
 
         if($puc){

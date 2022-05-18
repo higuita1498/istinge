@@ -182,8 +182,11 @@ class PagosController extends Controller
 
         //obtiene los anticipos relacionados con este modulo (Egresos o pagos)
         $anticipos = Anticipo::where('relacion',2)->orWhere('relacion',3)->get();
-        
-        return view('pagos.create')->with(compact('clientes', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones', 'banco', 'identificaciones', 'vendedores', 'listas', 'tipos_empresa','prefijos','anticipos'));
+
+        //tomamos las formas de pago cuando no es un recibo de caja por anticipo
+        $formas = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
+
+        return view('pagos.create')->with(compact('clientes', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones', 'banco', 'identificaciones', 'vendedores', 'listas', 'tipos_empresa','prefijos','anticipos','formas'));
     }
     
     public function pendiente($proveedor, $id=false){
@@ -284,6 +287,9 @@ class PagosController extends Controller
                         $items->factura=$factura->id;
                         $items->pagado=$factura->pagado();
                         $items->pago = $precio;
+                        $items->puc_factura = $factura->cuenta_id;
+                        $items->puc_banco = $request->saldofavor > 0 ? $request->puc_banco : $request->forma_pago;
+                        $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
                         $items->save();
 
                         if ($this->precision($factura->porpagar())<=0) {
@@ -337,6 +343,9 @@ class PagosController extends Controller
                 $gasto->anticipo = $request->anticipo_factura;
 
                 PucMovimiento::gasto($gasto,1,1);    
+            }else{
+                $gasto->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
+                PucMovimiento::gasto($gasto,1,2);   
             }
 
             //Pagos
@@ -374,7 +383,7 @@ class PagosController extends Controller
         $items->valor = $this->precision($request->valor_recibido);
         $items->id_impuesto=$impuesto->id;
         $items->gasto=$gasto->id;
-        $items->categoria = $request->puc;
+        $items->categoria = $request->puc_banco;
         $items->anticipo = $request->anticipo;
         $items->cant = 1;
         $items->impuesto=$impuesto->porcentaje;

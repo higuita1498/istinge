@@ -246,8 +246,15 @@ class Ingreso extends Model
     }
     
     public function ingresoPuc(){
-        $puc = IngresosCategoria::join('puc as p','p.id','=','ingresos_categoria.categoria')
-        ->where('ingresos_categoria.ingreso',$this->id)->select('p.*')->first();
+
+        if($this->tipo == 1){
+            $puc = IngresosFactura::join('puc as p','p.id','=','ingresos_factura.puc_factura')
+            ->where('ingresos_factura.ingreso',$this->id)->select('p.*')->first();
+        }else if($this->tipo == 2){
+            $puc = IngresosCategoria::join('puc as p','p.id','=','ingresos_categoria.categoria')
+            ->where('ingresos_categoria.ingreso',$this->id)->select('p.*')->first();
+        }
+        
 
         if($puc){
             return $puc;
@@ -264,8 +271,11 @@ class Ingreso extends Model
         }
     }
     
+    //la variable puc_banco de ingresos_categoria guarda el id de la forma de pago, entonces debemos obtener la cuenta_id del puc.
     public function ingresoPucBanco(){
-        $puc = IngresosFactura::join('puc as p','p.id','=','ingresos_factura.puc_banco')
+        $puc = IngresosFactura::
+        join('forma_pago as fp','fp.id','=','ingresos_factura.puc_banco')
+        ->join('puc as p','p.id','=','fp.cuenta_id')
         ->where('ingresos_factura.ingreso',$this->id)->select('p.*')->first();
 
         if($puc){

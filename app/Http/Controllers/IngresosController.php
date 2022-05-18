@@ -33,6 +33,7 @@ use App\Integracion;
 use App\Puc;
 use App\PucMovimiento;
 use App\Anticipo;
+use App\FormaPago;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -205,7 +206,10 @@ class IngresosController extends Controller
         //obtiene los anticipos relacionados con este modulo (Ingresos)
         $anticipos = Anticipo::where('relacion',1)->orWhere('relacion',3)->get();
 
-        return view('ingresos.create')->with(compact('clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos'));
+        //tomamos las formas de pago cuando no es un recibo de caja por anticipo
+        $formas = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
+        return view('ingresos.create')->with(compact('clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas'));
     }
 
     public function saldoContacto($id){
@@ -359,8 +363,8 @@ class IngresosController extends Controller
                         $items->factura = $factura->id;
                         $items->pagado = $factura->pagado();
                         $items->puc_factura = $factura->cuenta_id;
-                        $items->puc_banco = $request->puc_banco;
-                        $items->anticipo = $request->anticipo_factura;
+                        $items->puc_banco = $request->saldofavor > 0 ? $request->puc_banco : $request->forma_pago;
+                        $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
                         
                         /*
                         Validacion cuando se recibe un valor mayor a la factura. entonces guardamos 
@@ -427,12 +431,16 @@ class IngresosController extends Controller
                 $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
                 $contacto->save();
 
-                $ingreso->saldoFavorIngreso = $request->saldofavor;
-                $ingreso->puc_banco = $request->puc_banco;
-                $ingreso->anticipo = $request->anticipo_factura;
+                $ingreso->puc_banco = $request->puc_banco; //cuenta de forma de pago genérico del ingreso. (en memoria)
+                $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
+                $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
                 PucMovimiento::ingreso($ingreso,1,1);    
+            }else{
+                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
+                PucMovimiento::ingreso($ingreso,1,2);   
             }
+            
             
             //sumo a las numeraciones el recibo
             $nro->caja = $caja + 1;

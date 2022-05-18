@@ -277,8 +277,16 @@ class PucMovimiento extends Model
          
     }
 
-    // el tipo 1 significa cuando es un pago a una factura y se paga un poco mas.
-    // opcion 1 es para guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    /* 
+        TIPO:
+        0: cuando es un anticipo a una categoria
+        1: cuando es un pago a una factura y se paga un poco mas.
+        2: cuando es el proceso normal, sin saldos a favores ni anticipos
+
+        OPCION:
+        0: Actualizar el movimiento y borrar el anterior.
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    */
     public static function ingreso($ingreso, $opcion, $tipo=0){
 
         $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->first();
@@ -380,10 +388,58 @@ class PucMovimiento extends Model
             $mov->save();
             
         }
+
+        //TIPO 2
+        else if($opcion == 1 && !$isGuardar && $tipo == 2){
+
+            foreach($ingreso->ingresosFacturas() as $ingresoFactura){
+                $totalIngreso+=$ingresoFactura->pago;
+
+                $mov = new PucMovimiento;
+                $mov->tipo_comprobante = "01";
+                $mov->consecutivo_comprobante = $ingreso->nro;
+                $mov->fecha_elaboracion = $ingreso->fecha;
+                $mov->documento_id = $ingreso->id;
+                $mov->codigo_cuenta = isset($ingresoFactura->factura()->formaPago()->codigo) ? $ingresoFactura->factura()->formaPago()->codigo : '';
+                $mov->cuenta_id = isset($ingresoFactura->factura()->formaPago()->id) ? $ingresoFactura->factura()->formaPago()->id : '';
+                $mov->identificacion_tercero = $ingreso->cliente()->nit;
+                $mov->cliente_id = $ingreso->cliente()->id;
+                $mov->consecutivo = $ingreso->nro;
+                $mov->descripcion = $ingreso->observaciones;
+                $mov->credito =  $ingresoFactura->factura()->total()->total;
+                $mov->enlace_a = 1;
+                $mov->save();
+            }
+            
+            //1to. Registramos la forma de pago (caja o banco).
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "01";
+            $mov->consecutivo_comprobante = $ingreso->nro;
+            $mov->fecha_elaboracion = $ingreso->fecha;
+            $mov->documento_id = $ingreso->id;
+            $mov->codigo_cuenta = isset($ingreso->ingresoPucBanco()->codigo) ? $ingreso->ingresoPucBanco()->codigo : '';
+            $mov->cuenta_id = isset($ingreso->ingresoPucBanco()->id) ? $ingreso->ingresoPucBanco()->id : '';
+            $mov->identificacion_tercero = $ingreso->cliente()->nit;
+            $mov->cliente_id = $ingreso->cliente()->id;
+            $mov->consecutivo = $ingreso->nro;
+            $mov->descripcion = $ingreso->observaciones;
+            $mov->debito =  $totalIngreso;
+            $mov->enlace_a = 4;
+            $mov->save();            
+        }
+        
     }
 
-    // el tipo 1 significa cuando es un pago a una factura de proveedor y se paga un poco mas.
-    // opcion 1 es para guardar el movimiento, y miramos que no exista ningun movimiento sobre este documento
+   /* 
+        TIPO:
+        0: cuando es un anticipo a una categoria
+        1: cuando es un pago a una factura y se paga un poco mas.
+        2: cuando es el proceso normal, sin saldos a favores ni anticipos
+
+        OPCION:
+        0: Actualizar el movimiento y borrar el anterior.
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    */
     public static function gasto($gasto, $opcion, $tipo=0){
 
         $isGuardar = PucMovimiento::where('documento_id',$gasto->id)->where('tipo_comprobante',2)->first();
@@ -482,6 +538,46 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->debito =  $gasto->saldoFavorIngreso;
             $mov->enlace_a = 5;
+            $mov->save();
+            
+        }
+
+        //TIPO 2
+        else if($opcion == 1 && !$isGuardar && $tipo == 2){
+
+            foreach($gasto->gastosFacturas() as $gastoFactura){
+                $totalIngreso+=$gastoFactura->pago;
+
+                $mov = new PucMovimiento;
+                $mov->tipo_comprobante = "02";
+                $mov->consecutivo_comprobante = $gasto->nro;
+                $mov->fecha_elaboracion = $gasto->fecha;
+                $mov->documento_id = $gasto->id;
+                $mov->codigo_cuenta = isset($gastoFactura->factura()->formaPago()->codigo) ? $gastoFactura->factura()->formaPago()->codigo : '';
+                $mov->cuenta_id = isset($gastoFactura->factura()->formaPago()->id) ? $gastoFactura->factura()->formaPago()->id : '';
+                $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+                $mov->cliente_id = $gasto->beneficiario()->id;
+                $mov->consecutivo = $gasto->nro;
+                $mov->descripcion = $gasto->observaciones;
+                $mov->debito =  $gastoFactura->factura()->total()->total;
+                $mov->enlace_a = 1;
+                $mov->save();
+            }
+            
+            //1to. Registramos la forma de pago (caja o banco).
+            $mov = new PucMovimiento;
+            $mov->tipo_comprobante = "02";
+            $mov->consecutivo_comprobante = $gasto->nro;
+            $mov->fecha_elaboracion = $gasto->fecha;
+            $mov->documento_id = $gasto->id;
+            $mov->codigo_cuenta = isset($gasto->gastoPucBanco()->codigo) ? $gasto->gastoPucBanco()->codigo : '';
+            $mov->cuenta_id = isset($gasto->gastoPucBanco()->id) ? $gasto->gastoPucBanco()->id : '';
+            $mov->identificacion_tercero = $gasto->beneficiario()->nit;
+            $mov->cliente_id = $gasto->beneficiario()->id;
+            $mov->consecutivo = $gasto->nro;
+            $mov->descripcion = $gasto->observaciones;
+            $mov->credito =  $totalIngreso;
+            $mov->enlace_a = 4;
             $mov->save();
             
         }

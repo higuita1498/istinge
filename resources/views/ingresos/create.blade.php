@@ -90,6 +90,22 @@
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
     </div> 
+    <div class="cls-realizar-inv">
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Forma de pago</label>
+      <div class="col-sm-8">
+        <select class="form-control selectpicker" name="forma_pago" id="forma_pago" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
+          @foreach($formas as $f)
+          <option value="{{$f->id}}">{{$f->codigo}} - {{$f->nombre}}</option>
+          @endforeach
+        </select>
+      </div>
+      
+    <span class="help-block error">
+          <strong>{{ $errors->first('realizar') }}</strong>
+    </span>
+  </div> 
+</div>
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
       <label class="col-sm-4 col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
@@ -363,8 +379,8 @@
 
             
                 <select class="form-control selectpicker" name="puc_banco" id="puc_banco" title="Seleccione" data-live-search="true" data-size="5" required>
-                  @foreach($categorias as $categoria)
-                    <option value="{{$categoria->id}}" >{{$categoria->nombre}} - {{$categoria->codigo}}</option>
+                  @foreach($formas as $f)
+                    <option value="{{$f->id}}" >{{$f->nombre}} - {{$f->codigo}}</option>
                   @endforeach
                 </select>
               
