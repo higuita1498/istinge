@@ -59,6 +59,12 @@ class IntegracionPasarelaController extends Controller
             $servicio->api_event  = $request->api_event;
             $servicio->accountId  = $request->accountId;
             $servicio->merchantId = $request->merchantId;
+
+            if($servicio->nombre=='ePayco'){
+                $servicio->p_cust_id_cliente = $request->p_cust_id_cliente;
+                $servicio->p_key = $request->p_key;
+            }
+
             $servicio->web        = $request->web;
             $servicio->app        = $request->app;
             $servicio->updated_by = Auth::user()->id;
