@@ -91,6 +91,18 @@
 							<td>{{$servicio->merchantId}}</td>
 						</tr>
 						@endif
+						@if($servicio->p_cust_id_cliente)
+						<tr>
+							<td class="bg-th">p_cust_id_cliente</td>
+							<td>{{$servicio->p_cust_id_cliente}}</td>
+						</tr>
+						@endif
+						@if($servicio->p_key)
+						<tr>
+							<td class="bg-th">p_key</td>
+							<td>{{$servicio->p_key}}</td>
+						</tr>
+						@endif
 						@if($servicio->web)
 						<tr>
 							<td class="bg-th">Pagos desde WEB</td>

@@ -115,7 +115,7 @@
 	            </span>
 	        </div>
 
-	        <div class="col-md-6 form-group {{ $servicio->nombre == 'WOMPI' ? '' : 'd-none'}} {{ $servicio->nombre == 'ePayco' ? '' : 'd-none'}}">
+	        <div class="col-md-6 form-group {{ $servicio->nombre == 'WOMPI' ? '' : 'd-none'}}">
 	            <label class="control-label">Eventos <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="api_event" name="api_event"  required="" value="{{$servicio->api_event}}" maxlength="200">
 	            <span class="help-block error">
