@@ -304,6 +304,9 @@ class RadicadosController extends Controller{
     public function destroy($id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
+            if($radicado->adjunto){
+                Storage::disk('documentos')->delete($radicado->adjunto);
+            }
             $radicado->delete();
         }
         return redirect('empresa/radicados')->with('success', 'El radicado ha sido eliminado satisfactoriamente');
@@ -441,5 +444,27 @@ class RadicadosController extends Controller{
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function eliminarAdjunto($id){
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        if($radicado){
+            Storage::disk('documentos')->delete($radicado->adjunto);
+            $radicado->adjunto = NULL;
+            $radicado->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'type'    => 'error',
+            'title'   => 'Archivo no eliminado',
+            'text'    => 'Inténtelo Nuevamente'
+        ]);
     }
 }

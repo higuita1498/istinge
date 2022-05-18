@@ -1083,6 +1083,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/notificacionRadicado', 'RadicadosController@notificacionRadicado')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
         	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
+            Route::get('/{id}/eliminarAdjunto', 'RadicadosController@eliminarAdjunto')->name('radicados.eliminarAdjunto');
         });
 		Route::resource('radicados', 'RadicadosController');
 

@@ -36,9 +36,7 @@
         @endif
 	@endif
 
-	@if(!$radicado->adjunto)
-	    <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm">Adjuntar Archivo</a>
-	@endif
+	<a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto">Adjuntar Archivo</a>
 @endsection
 
 @section('content')
@@ -205,10 +203,11 @@
     						</tr>
     					@endif
     					@if($radicado->adjunto)
-    					    <tr>
+    					    <tr id="tr_adjunto">
     							<th>Archivo Adjunto</th>
     							<td>
-    								<a href="{{asset('../adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="font-weight-bold">Ver Adjunto</a>
+    								<a href="{{asset('../adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>
+    								<a href="javascript:eliminar('{{$radicado->id}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto"><i class="fas fa-times"></i></a>
     	                        </td>
     						</tr>
     					@endif
@@ -238,37 +237,92 @@
     	</div>
     </div>
 
-    @if(!$radicado->adjunto)
-	    <div class="modal fade" id="modalAdjunto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	    	<div class="modal-dialog modal-dialog-centered">
-	    		<div class="modal-content">
-	    			<div class="modal-header">
-	    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
-	    				<button type="button" class="close" data-dismiss="modal">&times;</button>
-	    			</div>
-	    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
-	    			<div class="modal-body">
-	    				<input name="_method" type="hidden" value="PATCH">
-	    				<input name="id" type="hidden" value="{{ $radicado->id }}">
-	    				<div class="row">
-	    					@if(!$radicado->adjunto)
-	    					<div class="col-md-12 form-group">
-	    						<label class="control-label"></label>
-	    						<input type="file" class="form-control"  id="adjunto" name="adjunto" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
-	    						<span style="color: red;">
-	    							<strong>{{ $errors->first('adjunto') }}</strong>
-	    						</span>
-	    					</div>
-	    					@endif
-	    				</div>
-	    			</div>
-	    			<div class="modal-footer">
-	    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-	    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
-	    			</div>
-	    			</form>
-	    		</div>
-	    	</div>
-	    </div>
-	@endif
+    <div class="modal fade" id="modalAdjunto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+    						<input type="file" class="form-control"  id="adjunto" name="adjunto" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        function eliminar(id){
+        	swal({
+        		title: '¿Está seguro de eliminar el archivo adjunto del sistema?',
+        		text: 'Se borrara de forma permanente',
+        		type: 'question',
+        		showCancelButton: true,
+        		confirmButtonColor: '#00ce68',
+        		cancelButtonColor: '#d33',
+        		confirmButtonText: 'Aceptar',
+        		cancelButtonText: 'Cancelar',
+        	}).then((result) => {
+        		if (result.value) {
+        			if (window.location.pathname.split("/")[1] === "software") {
+        				var url = '/software/empresa/radicados/'+id+'/eliminarAdjunto';
+        			}else{
+        				var url = '/empresa/radicados/'+id+'/eliminarAdjunto';
+        			}
+
+        			$.ajax({
+        				url: url,
+        				beforeSend: function(){
+        					cargando(true);
+        				},
+        				success: function(data){
+        				    Swal.fire({
+        						type:  data.type,
+        						title: data.title,
+        						text:  data.text,
+        						showConfirmButton: false,
+        						timer: 5000
+        					});
+        					if(data.success == true){
+        						$("#tr_adjunto").remove();
+        						$("#btn_adjunto").removeClass('d-none');
+        						// setTimeout(function(){
+        						// 	location.reload();
+        						// }, 1000);
+        					}
+        					cargando(false);
+        				},
+        				error: function(data){
+        					cargando(false);
+        					Swal.fire({
+        						type:  'error',
+        						title: 'Disculpe, estamos presentando problemas al tratar de enviar el formulario.',
+        						text:  'intentelo mas tarde',
+        						showConfirmButton: false,
+        						timer: 2500
+        					})
+        				}
+        			});
+        		}
+        	})
+        }
+    </script>
 @endsection
