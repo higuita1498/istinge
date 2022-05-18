@@ -62,6 +62,10 @@
 			serverSide: false,
 			processing: true,
 			searching: true,
+            select: true,
+            select: {
+                style: 'multi',
+            },
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -87,73 +91,71 @@
 		tabla.DataTable().ajax.reload();
 	}
 	function aplicar_cambios() {
-		if ($('#tabla-ips').DataTable().data().count() > 100) {
-			$("#contador_t").val('100');
-			var contador_t = $("#contador_t").val();
-		}else{
-			$("#contador_t").val($('#tabla-ips').DataTable().data().count());
-			var contador_t = $("#contador_t").val();
-		}
+		var contratos = [];
 
-		swal({
-			title: '¿Está seguro que desea aplicar la regla?',
-			html: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que estén registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio<br><br><b>LOS CAMBIOS SE APLICARÁN A LOS PRIMEROS '+contador_t+' REGISTROS<br><span style="color:red;">(EL PROCESO PUEDE DEMORAR UNOS MINUTOS)</span></b>',
-			type: 'question',
-			showCancelButton: true,
-			confirmButtonColor: '#00ce68',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Aceptar',
-			cancelButtonText: 'Cancelar',
-		}).then((result) => {
-			if (result.value) {
-				cargando(true);
+        var table = $('#tabla-ips').DataTable();
+        var nro = table.rows('.selected').data().length;
 
-				$('#tabla-ips tbody tr td.sorting_1 a strong').each(function() {
-					var nro = $(this).text();
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
 
-					if (window.location.pathname.split("/")[1] === "software") {
-						var url='/software/empresa/mikrotik/'+nro+'/autorizar-ips';
-					}else{
-						var url = '/empresa/mikrotik/'+nro+'/autorizar-ips';
+        if(nro>25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 25 contratos y ha seleccionado '+nro,
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+        	title: '¿Está seguro que desea aplicar la regla a '+nro+' contratos?',
+            html: 'Al aplicar la regla se creara un address list en {{ $mikrotik->nombre }} tomando en cuentas las ip que estén registradas en la plataforma, de no estar declaradas esas ip quedaran sin servicio<br><br><span style="color:red;">(EL PROCESO PUEDE DEMORAR UNOS MINUTOS)</span></b>',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/empresa/mikrotik/'+contratos+'/autorizar-ips';
+				}else{
+					var url = '/empresa/mikrotik/'+contratos+'/autorizar-ips';
+				}
+
+				$.ajax({
+					url: url,
+					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+					method: 'GET',
+					success: function(data){
+						cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
 					}
-
-					$.ajax({
-	                    url: url,
-	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-	                    method: 'get',
-	                    success: function(data){
-	                        if(data.success){
-	                        	var opt = parseInt($("#contador_s").val())+parseInt(1);
-	                        	$("#contador_s").val(opt);
-	                        }else{
-	                        	var opt = parseInt($("#contador_f").val())+parseInt(1);
-	                        	$("#contador_f").val(opt);
-	                        }
-	                        verificar();
-	                    },
-	                    error: function(data){
-
-	                    }
-	                });
 				});
-			}
-		})
-	}
-
-	function verificar() {
-		var total = parseInt($("#contador_s").val()) + parseInt($("#contador_f").val());
-		var opt   = parseInt($("#contador_t").val());
-		if(total == opt){
-			Swal.fire({
-				type: 'success',
-				title: 'PROCESO DE ACTUALIZACIÓN FINALIZADO',
-				showConfirmButton: false
-			});
-			cargando(false);
-			$("#btn_cambios").addClass('d-none');
-			$("#btn_salir").text('Volver al listado');
-			tabla.DataTable().ajax.reload();
-		}
+            }
+        })
 	}
 </script>
 @endsection

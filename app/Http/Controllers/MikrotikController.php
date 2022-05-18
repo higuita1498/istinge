@@ -459,74 +459,76 @@ class MikrotikController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('ip_autorizada', 0)->get();
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('ip_autorizada', 0)->where('status', 1)->where('state', 'enabled')->get();
             view()->share(['title' => "IP's Autorizadas", 'icon' =>'fas fa-project-diagram', 'middel' => true]);
             return view('mikrotik.ips-autorizadas')->with(compact('contratos', 'mikrotik'));
         }
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function autorizar_ips($nro){
+    public function autorizar_ips($contratos){
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
 
-        if ($contrato) {
-            $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+        $succ = 0; $fail = 0;
 
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
+        $contratos = explode(",", $contratos);
 
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                if($mikrotik->regla_ips_autorizadas == 0){
-                    $API->comm("/interface/list/add\n=name=LAN_NETWORK_SOFT");
-                    $API->comm("/interface/list/add\n=interface=$mikrotik->interfaz_lan\n=list=LAN_NETWORK_SOFT");
+        for ($i=0; $i < count($contratos) ; $i++) {
+            $contrato=Contrato::find($contratos[$i]);
 
-                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept\n=comment=IPS-AUTORIZADAS-NETWORK");
-                    $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop\n=comment=IPS-NO-AUTORIZADAS-NETWORK");
+            if ($contrato) {
+                $mikrotik = Mikrotik::find($contrato->server_configuration_id);
 
-                    $mikrotik->regla_ips_autorizadas = 1;
-                    $mikrotik->save();
-                }
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
 
-                $API->write('/ip/firewall/address-list/print', TRUE);
-                $ARRAYS = $API->read();
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    if($mikrotik->regla_ips_autorizadas == 0){
+                        $API->comm("/interface/list/add\n=name=LAN_NETWORK_SOFT");
+                        $API->comm("/interface/list/add\n=interface=$mikrotik->interfaz_lan\n=list=LAN_NETWORK_SOFT");
+                        $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=ips_autorizadas\n=action=accept\n=comment=IPS-AUTORIZADAS-NETWORK");
+                        $API->comm("/ip/firewall/filter/add\n=chain=forward\n=src-address-list=!ips_autorizadas\n=action=drop\n=comment=IPS-NO-AUTORIZADAS-NETWORK");
+                        $mikrotik->regla_ips_autorizadas = 1;
+                        $mikrotik->save();
+                    }
 
-                $API->write('/ip/firewall/address-list/print', false);
-                $API->write('?address='.$contrato->ip, false);
-                $API->write("?list=ips_autorizadas",false);
-                $API->write('=.proplist=.id');
-                $ARRAYS = $API->read();
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
 
-                if(count($ARRAYS)>0){
-                    $contrato->ip_autorizada = 1;
-                    $contrato->save();
-                    return response()->json([
-                        'success'  => true,
-                        'servicio' => $contrato->servicio,
-                        'repetido' => $existe,
-                    ]);
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=ips_autorizadas",false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
+
+                    if(count($ARRAYS)>0){
+                        $contrato->ip_autorizada = 1;
+                        $contrato->save();
+                        $succ++;
+                    }else{
+                        $API->comm("/ip/firewall/address-list/add", array(
+                            "address" => $contrato->ip,
+                            "comment" => $contrato->servicio,
+                            "list" => 'ips_autorizadas'
+                            )
+                        );
+                        $contrato->ip_autorizada = 1;
+                        $contrato->save();
+                        $succ++;
+                    }
+                    $API->disconnect();
                 }else{
-                    $API->comm("/ip/firewall/address-list/add", array(
-                        "address" => $contrato->ip,
-                        "comment" => $contrato->servicio,
-                        "list" => 'ips_autorizadas'
-                        )
-                    );
-
-                    $contrato->ip_autorizada = 1;
-                    $contrato->save();
-                    return response()->json([
-                        'success'  => true,
-                        'servicio' => $contrato->servicio,
-                    ]);
+                    $fail++;
                 }
-                $API->disconnect();
             } else {
-                return response()->json([
-                    'success'  => false,
-                    'servicio' => $contrato->servicio,
-                ]);
+                $fail++;
             }
         }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ
+        ]);
     }
 }

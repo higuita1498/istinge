@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use StdClass;
 use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
@@ -1035,20 +1036,15 @@ class CronController extends Controller
     }
 
     public function eventosPayu(Request $request){
-        $request = (object) $request->all();
-        Log::debug($request);
-        dd($request);
-
-        if($request->event == 'transaction.updated'){
+        if($request->state_pol == 4){
             $timestamp = $request->timestamp;
-            $request = (object) $request->data['transaction'];
-            $servicio = Integracion::where('nombre', 'WOMPI')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
+            $payu = Integracion::where('nombre', 'PayU')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
 
-            $cadena = $request->id.''.$request->status.''.$request->amount_in_cents.''.$timestamp.''.$servicio->api_event;
-            $hash = hash("sha256", $cadena);
+            $hash = md5($payu->api_key.'~'.$request->merchant_id.'~'.$request->reference_sale.'~'.$request->value.'~'.$request->currency.'~'.$request->state_pol);
 
-            if($request->status == 'APPROVED'){
-                $factura = Factura::where('codigo', explode("-", $request->reference)[1])->first();
+            if($request->sign == $hash){
+                $factura = Factura::where('codigo', substr($request->reference_sale, 4))->first();
+
                 if($factura->estatus == 1){
                     $empresa = Empresa::find($factura->empresa);
                     $nro = Numeracion::where('empresa', $empresa->id)->first();
@@ -1062,7 +1058,7 @@ class CronController extends Controller
                         $caja++;
                     }
 
-                    $banco = Banco::where('nombre', 'WOMPI')->where('estatus', 1)->where('lectura', 1)->first();
+                    $banco = Banco::where('nombre', 'PAYU')->where('estatus', 1)->where('lectura', 1)->first();
 
                     # REGISTRAMOS EL INGRESO
                     $ingreso                = new Ingreso;
@@ -1073,11 +1069,11 @@ class CronController extends Controller
                     $ingreso->metodo_pago   = 9;
                     $ingreso->tipo          = 1;
                     $ingreso->fecha         = date('Y-m-d');
-                    $ingreso->observaciones = 'Pago Wompi ID: '.$request->id;
+                    $ingreso->observaciones = 'Pago PayU ID: '.$request->transaction_id;
                     $ingreso->save();
 
                     # REGISTRAMOS EL INGRESO_FACTURA
-                    $precio         = $this->precisionAPI($request->amount_in_cents/100, $empresa->id);
+                    $precio         = $this->precisionAPI($request->value, $empresa->id);
 
                     $items          = new IngresosFactura;
                     $items->ingreso = $ingreso->id;
@@ -1211,12 +1207,13 @@ class CronController extends Controller
                             }
                         }
                     }
-                    return response('success', 200);
+                    return abort(200);
                 }
-                return response('false', 200);
+                return abort(400);
             }else{
-                return response('false', 200);
+                return abort(400);
             }
         }
+        return abort(400);
     }
 }

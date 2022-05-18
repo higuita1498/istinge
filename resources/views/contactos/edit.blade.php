@@ -192,7 +192,7 @@
   		<div class="row">
   			<div class="form-group col-md-3">
                 <label class="control-label">Estrato</label>
-                <select class="form-control selectpicker" id="estrato" name="estrato"  title="Seleccione" data-live-search="true" data-size="5">
+                <select class="form-control selectpicker" id="estrato" name="estrato" title="Seleccione" data-live-search="true" data-size="5">
                     <option value="1" {{ $contacto->estrato == 1 ? 'selected':'' }}>1</option>
                     <option value="2" {{ $contacto->estrato == 2 ? 'selected':'' }}>2</option>
                     <option value="3" {{ $contacto->estrato == 3 ? 'selected':'' }}>3</option>
