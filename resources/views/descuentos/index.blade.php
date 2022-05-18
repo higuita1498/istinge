@@ -41,46 +41,49 @@
     @endif
 
 	<div class="container-fluid d-none" id="form-filter">
-		<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
-			<div class="card-body py-0">
-				<div class="row">
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Factura" id="factura" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-					    <select id="cliente" class="form-control rounded selectpicker" title="Cliente" data-live-search="true" data-size="5">
-	                        @foreach($clientes as $cliente)
-	                            <option value="{{$cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
-	                        @endforeach
-	                    </select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-					    <select title="Estado" class="form-control rounded selectpicker" id="estado">
-					        <option value="1">Aprobado</option>
-							<option value="2">Sin Aprobar</option>
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-					    <select id="created_by" class="form-control rounded selectpicker" title="Creado por" data-live-search="true" data-size="5">
-	                        @foreach($usuarios as $usuario)
-	                            <option value="{{$usuario->id}}">{{$usuario->nombres}}</option>
-	                        @endforeach
-	                    </select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-					    <select id="updated_by" class="form-control rounded selectpicker" title="Aprobado por" data-live-search="true" data-size="5">
-	                        @foreach($usuarios as $usuario)
-	                            <option value="{{$usuario->id}}">{{$usuario->nombres}}</option>
-	                        @endforeach
-	                    </select>
-					</div>
-					<div class="col-md-1 pl-1 pt-1 text-left">
-						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+		<fieldset>
+            <legend>Filtro de Búsqueda</legend>
+			<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
+				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+					<div class="row">
+						<div class="col-md-2 pl-1 pt-1">
+							<input type="text" placeholder="Factura" id="factura" class="form-control rounded">
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+						    <select id="cliente" class="form-control rounded selectpicker" title="Cliente" data-live-search="true" data-size="5">
+		                        @foreach($clientes as $cliente)
+		                            <option value="{{$cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
+		                        @endforeach
+		                    </select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+						    <select title="Estado" class="form-control rounded selectpicker" id="estado">
+						        <option value="1">Aprobado</option>
+								<option value="2">Sin Aprobar</option>
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+						    <select id="created_by" class="form-control rounded selectpicker" title="Creado por" data-live-search="true" data-size="5">
+		                        @foreach($usuarios as $usuario)
+		                            <option value="{{$usuario->id}}">{{$usuario->nombres}}</option>
+		                        @endforeach
+		                    </select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+						    <select id="updated_by" class="form-control rounded selectpicker" title="Aprobado por" data-live-search="true" data-size="5">
+		                        @foreach($usuarios as $usuario)
+		                            <option value="{{$usuario->id}}">{{$usuario->nombres}}</option>
+		                        @endforeach
+		                    </select>
+						</div>
+						<div class="col-md-1 pl-1 pt-1 text-left">
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</fieldset>
 	</div>
 
 	<div class="row card-description">

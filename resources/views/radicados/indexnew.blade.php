@@ -128,55 +128,58 @@
     			    </div>
 
     			    <div class="container-fluid d-none" id="form-filter">
-						<div class="card shadow-sm border-0">
-							<div class="card-body py-0">
-								<div class="row">
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Fecha" id="fecha" name="fecha" class="form-control rounded creacion" autocomplete="off">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Contrato" id="contrato" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
-											@foreach ($clientes as $cliente)
-												<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
-											@endforeach
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Celular" id="telefono" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Servicio" class="form-control rounded selectpicker" id="servicio" data-size="5" data-live-search="true">
-											@foreach ($servicios as $servicio)
-												<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
-											@endforeach
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Estado" class="form-control rounded selectpicker" id="estatus">
-											<option value="A">Pendiente</option>
-											<option value="2">Escalado / Pendiente</option>
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Creado" class="form-control rounded selectpicker" id="creado">
-											<option value="1">NetworkSoft</option>
-											<option value="2">App</option>
-										</select>
-									</div>
+    			    	<fieldset>
+    			    		<legend>Filtro de Búsqueda</legend>
+							<div class="card shadow-sm border-0">
+								<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+									<div class="row">
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Fecha" id="fecha" name="fecha" class="form-control rounded creacion" autocomplete="off">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Contrato" id="contrato" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+												@foreach ($clientes as $cliente)
+													<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+												@endforeach
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Celular" id="telefono" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Servicio" class="form-control rounded selectpicker" id="servicio" data-size="5" data-live-search="true">
+												@foreach ($servicios as $servicio)
+													<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
+												@endforeach
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Estado" class="form-control rounded selectpicker" id="estatus">
+												<option value="A">Pendiente</option>
+												<option value="2">Escalado / Pendiente</option>
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Creado" class="form-control rounded selectpicker" id="creado">
+												<option value="1">NetworkSoft</option>
+												<option value="2">App</option>
+											</select>
+										</div>
 
-									<div class="col-md-2 pl-1 pt-1">
-										<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-										<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+										<div class="col-md-2 pl-1 pt-1">
+											<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+											<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</fieldset>
 					</div>
 
     				<div class="table-responsive mt-3">
@@ -199,55 +202,58 @@
     			    </div>
 
     			    <div class="container-fluid d-none" id="form-filterG">
-						<div class="card shadow-sm border-0">
-							<div class="card-body py-0">
-								<div class="row">
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Nro" id="codigoG" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Fecha" id="fechaG" name="fecha" class="form-control rounded creacion" autocomplete="off">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Contrato" id="contratoG" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Cliente" class="form-control rounded selectpicker" id="clienteG" data-size="5" data-live-search="true">
-											@foreach ($clientes as $cliente)
-												<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
-											@endforeach
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<input type="text" placeholder="Celular" id="telefonoG" class="form-control rounded">
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Servicio" class="form-control rounded selectpicker" id="servicioG" data-size="5" data-live-search="true">
-											@foreach ($servicios as $servicio)
-												<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
-											@endforeach
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Estado" class="form-control rounded selectpicker" id="estatusG">
-											<option value="1">Solventado</option>
-											<option value="3">Escalado / Solventado</option>
-										</select>
-									</div>
-									<div class="col-md-2 pl-1 pt-1">
-										<select title="Creado" class="form-control rounded selectpicker" id="creadoG">
-											<option value="1">NetworkSoft</option>
-											<option value="2">App</option>
-										</select>
-									</div>
+    			    	<fieldset>
+    			    		<legend>Filtro de Búsqueda</legend>
+							<div class="card shadow-sm border-0">
+								<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+									<div class="row">
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Nro" id="codigoG" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Fecha" id="fechaG" name="fecha" class="form-control rounded creacion" autocomplete="off">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Contrato" id="contratoG" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Cliente" class="form-control rounded selectpicker" id="clienteG" data-size="5" data-live-search="true">
+												@foreach ($clientes as $cliente)
+													<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+												@endforeach
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<input type="text" placeholder="Celular" id="telefonoG" class="form-control rounded">
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Servicio" class="form-control rounded selectpicker" id="servicioG" data-size="5" data-live-search="true">
+												@foreach ($servicios as $servicio)
+													<option value="{{ $servicio->id}}">{{ $servicio->nombre}}</option>
+												@endforeach
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Estado" class="form-control rounded selectpicker" id="estatusG">
+												<option value="1">Solventado</option>
+												<option value="3">Escalado / Solventado</option>
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Creado" class="form-control rounded selectpicker" id="creadoG">
+												<option value="1">NetworkSoft</option>
+												<option value="2">App</option>
+											</select>
+										</div>
 
-									<div class="col-md-2 pl-1 pt-1">
-										<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-										<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+										<div class="col-md-2 pl-1 pt-1">
+											<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+											<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</fieldset>
 					</div>
 
     				<div class="table-responsive mt-3">

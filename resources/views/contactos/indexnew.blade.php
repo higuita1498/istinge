@@ -57,57 +57,60 @@
     @endif
 
 <div class="container-fluid d-none" id="form-filter">
-	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
-		<div class="card-body py-0">
-			<div class="row">
-				@if($tipo_usuario == 0)
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Serial ONU" id="serial_onu" class="form-control rounded">
-				</div>
-				@endif
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="number" placeholder="Identificación" id="identificacion" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="number" placeholder="Teléfono" id="telefono" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Email" id="email" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Dirección" id="direccion" class="form-control rounded">
-				</div>
-				@if($tipo_usuario == 0)
-				<div class="col-md-3 pl-1 pt-1">
-					<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<select title="Contratos" class="form-control rounded selectpicker" id="t_contrato" data-size="5" data-live-search="true">
-						<option value="2" >Con contratos</option>
-						<option value="1" >Sin contratos</option>
-					</select>
-				</div>
-				<div class="col-md-3 pl-1 pt-1">
-					<select title="Estrato" class="form-control rounded selectpicker" id="estrato" data-size="5" data-live-search="true">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-					</select>
-				</div>
-				@endif
-				<div class="col-md-1 pl-1 pt-1 text-left">
-					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+	<fieldset>
+		<legend>Filtro de Búsqueda</legend>
+		<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
+			<div class="card-body py-0">
+				<div class="row">
+					@if($tipo_usuario == 0)
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Serial ONU" id="serial_onu" class="form-control rounded">
+					</div>
+					@endif
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="number" placeholder="Identificación" id="identificacion" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="number" placeholder="Teléfono" id="telefono" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Email" id="email" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Dirección" id="direccion" class="form-control rounded">
+					</div>
+					@if($tipo_usuario == 0)
+					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Contratos" class="form-control rounded selectpicker" id="t_contrato" data-size="5" data-live-search="true">
+							<option value="2" >Con contratos</option>
+							<option value="1" >Sin contratos</option>
+						</select>
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
+						<select title="Estrato" class="form-control rounded selectpicker" id="estrato" data-size="5" data-live-search="true">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+						</select>
+					</div>
+					@endif
+					<div class="col-md-1 pl-1 pt-1 text-left">
+						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</fieldset>
 </div>
 
 <div class="row card-description">

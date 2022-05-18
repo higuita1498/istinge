@@ -61,41 +61,44 @@
 	@endif
 
 	<div class="container-fluid d-none" id="form-filter">
-		<div class="card shadow-sm border-0">
-			<div class="card-body py-0">
-				<div class="row">
-					<div class="col-md-3 pl-1 pt-1">
-						<select title="Usuarios" class="form-control rounded selectpicker" id="updated_by" data-size="5" data-live-search="true">
-							@foreach ($usuarios as $usuario)
-								<option value="{{ $usuario->id}}">{{ $usuario->nombres}}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-3 pl-1 pt-1">
-						<select title="Solicitud" class="form-control rounded selectpicker" id="solicitud" data-size="5" data-live-search="true">
-							<option value="Peticiones">Peticiones</option>
-							<option value="Quejas">Quejas</option>
-							<option value="Reclamos">Reclamos</option>
-							<option value="Sugerencias">Sugerencias</option>
-						</select>
-					</div>
-					<div class="col-md-3 pl-1 pt-1">
-						<input type="text" placeholder="Fecha" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select title="Estado" class="form-control rounded selectpicker" id="estatus">
-							<option value="1">Por Atender</option>
-							<option value="0">Atendido</option>
-						</select>
-					</div>
+		<fieldset>
+			<legend>Filtro de Búsqueda</legend>
+			<div class="card shadow-sm border-0">
+				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+					<div class="row">
+						<div class="col-md-3 pl-1 pt-1">
+							<select title="Usuarios" class="form-control rounded selectpicker" id="updated_by" data-size="5" data-live-search="true">
+								@foreach ($usuarios as $usuario)
+									<option value="{{ $usuario->id}}">{{ $usuario->nombres}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-3 pl-1 pt-1">
+							<select title="Solicitud" class="form-control rounded selectpicker" id="solicitud" data-size="5" data-live-search="true">
+								<option value="Peticiones">Peticiones</option>
+								<option value="Quejas">Quejas</option>
+								<option value="Reclamos">Reclamos</option>
+								<option value="Sugerencias">Sugerencias</option>
+							</select>
+						</div>
+						<div class="col-md-3 pl-1 pt-1">
+							<input type="text" placeholder="Fecha" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<select title="Estado" class="form-control rounded selectpicker" id="estatus">
+								<option value="1">Por Atender</option>
+								<option value="0">Atendido</option>
+							</select>
+						</div>
 
-					<div class="col-md-1 pl-1 pt-1">
-						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+						<div class="col-md-1 pl-1 pt-1">
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</fieldset>
 	</div>
 
 	<div class="row card-description">
