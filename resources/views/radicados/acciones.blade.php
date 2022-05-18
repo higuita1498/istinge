@@ -1,18 +1,17 @@
+@if($estatus==0)
+    @if(isset($session['204']))
+        <form action="{{ route('radicados.destroy',$id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-{{$id}}">
+            {{ csrf_field() }}
+            <input name="_method" type="hidden" value="DELETE">
+        </form>
+    @endif
+@endif
+
 <a href="{{route('radicados.show',$id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 
 @if($estatus==0 || $estatus==2)
     @if(isset($session['203']))
         <a href="{{route('radicados.edit',$id)}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
-    @endif
-@endif
-
-@if($estatus==0)
-    @if(isset($session['204']))
-        <form action="{{ route('radicados.destroy',$id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-{{$id}}">
-        	{{ csrf_field() }}
-        	<input name="_method" type="hidden" value="DELETE">
-        </form>
-        <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$id}}', '¿Estas seguro que deseas eliminar el radicado?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
 @endif
 
@@ -30,6 +29,12 @@
 @if($estatus==2 && !$firma)
     @if(isset($session['209']))
         <a href="{{route('radicados.firmar', $id)}}"  class="btn btn-outline-success btn-icons" title="Firmar" target="_blank"><i class="fas fa-file-signature"></i></a>
+    @endif
+@endif
+
+@if($estatus==0)
+    @if(isset($session['204']))
+        <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$id}}', '¿Estas seguro que deseas eliminar el radicado?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
 @endif
 

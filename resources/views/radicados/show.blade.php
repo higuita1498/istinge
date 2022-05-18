@@ -2,15 +2,15 @@
 
 @section('boton')
     <form action="{{ route('radicados.escalar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="escalar{{$radicado->id}}">
-      	{{ csrf_field() }}
+      	@csrf
     </form>
 
     <form action="{{ route('radicados.solventar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="solventar{{$radicado->id}}">
-      	{{ csrf_field() }}
+      	@csrf
     </form>
     
     <form action="{{ route('radicados.proceder',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="proceder{{$radicado->id}}">
-      	{{ csrf_field() }}
+      	@csrf
     </form>
     
     @if($radicado->estatus==0 || $radicado->estatus==2)
@@ -34,6 +34,10 @@
                 <a href="#" onclick="confirmar('solventar{{$radicado->id}}', '¿Está seguro de que desea solventar el caso?');" class="btn btn-outline-success btn-sm "title="Solventar Caso">Solventar Caso</a>
             @endif
         @endif
+	@endif
+
+	@if(!$radicado->adjunto)
+	    <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm">Adjuntar Archivo</a>
 	@endif
 @endsection
 
@@ -200,13 +204,21 @@
     	                        </td>
     						</tr>
     					@endif
+    					@if($radicado->adjunto)
+    					    <tr>
+    							<th>Archivo Adjunto</th>
+    							<td>
+    								<a href="{{asset('../adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="font-weight-bold">Ver Adjunto</a>
+    	                        </td>
+    						</tr>
+    					@endif
     				</tbody>
     			</table>
     		</div>
     		@if($radicado->reporte=='' && $radicado->estatus > 1)
     			@if(isset($_SESSION['permisos']['210']))
     				<form method="POST" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-radicado" >
-    					{{ csrf_field() }}
+    					@csrf
     					<input name="_method" type="hidden" value="PATCH">
     					<div class="col-md-12 form-group">
     						<label class="control-label">Observaciones del Técnico</label>
@@ -225,4 +237,38 @@
     		@endif
     	</div>
     </div>
+
+    @if(!$radicado->adjunto)
+	    <div class="modal fade" id="modalAdjunto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	    	<div class="modal-dialog modal-dialog-centered">
+	    		<div class="modal-content">
+	    			<div class="modal-header">
+	    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+	    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+	    			</div>
+	    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+	    			<div class="modal-body">
+	    				<input name="_method" type="hidden" value="PATCH">
+	    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+	    				<div class="row">
+	    					@if(!$radicado->adjunto)
+	    					<div class="col-md-12 form-group">
+	    						<label class="control-label"></label>
+	    						<input type="file" class="form-control"  id="adjunto" name="adjunto" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+	    						<span style="color: red;">
+	    							<strong>{{ $errors->first('adjunto') }}</strong>
+	    						</span>
+	    					</div>
+	    					@endif
+	    				</div>
+	    			</div>
+	    			<div class="modal-footer">
+	    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+	    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+	    			</div>
+	    			</form>
+	    		</div>
+	    	</div>
+	    </div>
+	@endif
 @endsection
