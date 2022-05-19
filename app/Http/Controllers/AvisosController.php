@@ -198,7 +198,7 @@ class AvisosController extends Controller
                         }else{
                             $succ++;
                         }
-                        return redirect('empresa/configuracion/integracion-sms')->with($respuesta, $msj)->with('id', $servicio->id);
+                        return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado. SMS Enviados: '.$fail.' - SMS Fallidos: '.$succ);
                     }else{
                         $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                         return redirect('empresa/avisos')->with('danger', $mensaje);
