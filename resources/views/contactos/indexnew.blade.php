@@ -55,7 +55,7 @@
             }, 5000);
         </script>
     @endif
-
+@if($tipo_usuario == 1 && isset($_SESSION['permisos']['3']) || $tipo_usuario == 0 && isset($_SESSION['permisos']['2']))
 <div class="container-fluid d-none" id="form-filter">
 	<fieldset>
 		<legend>Filtro de Búsqueda</legend>
@@ -133,6 +133,7 @@
 		</table>
 	</div>
 </div>
+@endif
 @endsection
 
 @section('scripts')

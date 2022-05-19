@@ -25,13 +25,7 @@
         </a>
     </li>
 @elseif(Auth::user()->rol >= 2 )
-    @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']))
-        {{--<li class="nav-item" id="contactos">
-            <a class="nav-link" href="{{route('contactos.index')}}">
-                <i class="menu-icon fas fa-users"></i>
-                <span class="menu-title">Clientes</span>
-            </a>
-        </li>--}}
+    @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
         <li class="nav-item" id="contactos">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <i class="menu-icon fas fa-users"></i>
@@ -40,18 +34,16 @@
             </a>
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
-                    <?php if (isset($_SESSION['permisos']['2'])) { ?>
+                    @if(isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
                         <li class="nav-item" id="clientes">
                             <a class="nav-link" href="{{route('contactos.clientes')}}">Clientes</a>
                         </li>
-                    <?php } ?>
-                    <?php if (isset($_SESSION['permisos']['3'])) { ?>
+                    @endif
+                    @if(isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
                         <li class="nav-item" id="proveedores">
-        
                             <a class="nav-link" href="{{route('contactos.proveedores')}}">Proveedores</a>
-        
                         </li>
-                    <?php } ?>
+                    @endif
                 </ul>
             </div>
         </li>
