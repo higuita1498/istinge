@@ -341,9 +341,9 @@
                     </li>
                     @endif
                     @if(isset($_SESSION['permisos']['723']))
-                    <li class="nav-item" id="mapa_red">
+                    {{-- <li class="nav-item" id="mapa_red">
                         <a class="nav-link" href="javascript:;">Mapa de Red</a>
-                    </li>
+                    </li> --}}
                     @endif
                     @if(isset($_SESSION['permisos']['724']))
                     <li class="nav-item" id="grupo_corte">

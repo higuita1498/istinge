@@ -33,9 +33,11 @@
                 </button>
             </div>
             @else
+            @if(isset($_SESSION['permisos']['793']))
             <button class="btn btn-rounded float-right mb-2 mr-2" style="background-color: #D08F50; color: white;" data-toggle="modal" data-target="#modalCCStore">
                 <i class="fas fa-plus-circle"></i>
                 Añadir centro de costos</button>
+            @endif
             @endif
             <div class="table-responsive">
                 <table class="table table-light table-striped table-hover w-100" style="border: 1px solid #e9ecef;">
@@ -56,8 +58,12 @@
                             <td>{{ $ccosto->codigo_contable }}</td>
                             <td>{{$ccosto->personas()->count()}}</td>
                             <td>
+                                @if(isset($_SESSION['permisos']['794']))
                                 <button class="btn btn-outline-primary btn-icons editCC" idCC="{{$ccosto->id}}" title="Editar Centro de Costo"><i class="fas fa-edit"></i></button>
+                                @endif
+                                @if(isset($_SESSION['permisos']['795']))
                                 <button class="btn btn-outline-danger btn-icons destroyCC" idCC="{{$ccosto->id}}" title="Eliminar Centro de Costo"><i class="fas fa-times"></i></button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -144,7 +150,9 @@
                                                     <td>{{ $asociado->codigo }}</td>
                                                     <td></td>
                                                     <td>
+                                                        @if(isset($_SESSION['permisos']['796']))
                                                         <button class="btn btn-outline-primary btn-icons editCta" idCta="{{$asociado->id}}" title="Editar Cta. Contable"><i class="fas fa-edit"></i></button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                                 @endforeach
