@@ -197,8 +197,8 @@
     <div class="row card-description">
     	<div class="col-md-12">
     		<div class="container-filtercolumn form-inline">
-                <a href="{{ route('pings.index') }}" class="btn btn-danger mr-1">Pings Fallidos <i class="fa fa-plug"></i></a>
-
+                @if(auth()->user()->modo_lectura())
+                @else
                 @if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -210,6 +210,7 @@
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
                     </div>
                 </div>
+                @endif
                 @endif
 
                 <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
