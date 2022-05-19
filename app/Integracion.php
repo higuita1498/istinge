@@ -21,7 +21,7 @@ class Integracion extends Model
      * @var array
      */
     protected $fillable = [
-        'empresa', 'tipo', 'nombre', 'status', 'api_key', 'user', 'pass', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'empresa', 'tipo', 'nombre', 'status', 'api_key', 'user', 'pass', 'latitude', 'longitude', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
     
     protected $appends = ['session'];

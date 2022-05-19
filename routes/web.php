@@ -988,6 +988,16 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         });
         Route::resource('integracion-pasarelas', 'IntegracionPasarelaController');
 
+        //INTEGRACION GMAPS
+        Route::group(['prefix' => 'integracion-gmaps'], function() {
+
+        });
+        Route::resource('integracion-gmaps', 'IntegracionGmapsController');
+
+
+
+
+
         Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
         Route::post('/storePeriodoFacturacion', 'EmpresasController@storePeriodoFacturacion')->name('empresas.storePeriodoFacturacion');
 
