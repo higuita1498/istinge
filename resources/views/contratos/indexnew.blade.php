@@ -94,7 +94,7 @@
                         <div class="col-md-3 pl-1 pt-1">
                             <select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
                                 @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->nit }}</option>
+                                <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
                                 @endforeach
                             </select>
                         </div>
