@@ -198,8 +198,8 @@
     <script>
         $('#us2').locationpicker({
             location: {
-                latitude: {{ $servicio->latitude }},
-                longitude: {{ $servicio->longitude }}
+                latitude: {{ $gmaps->latitude }},
+                longitude: {{ $gmaps->longitude }}
             },
             zoom: 6,
             radius: 300,

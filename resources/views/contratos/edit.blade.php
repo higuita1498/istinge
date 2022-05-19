@@ -587,8 +587,8 @@
     <script>
         $('#us2').locationpicker({
             location: {
-                latitude: {{ $contrato->latitude ? $contrato->latitude : $servicio->latitude }},
-                longitude: {{ $contrato->longitude ? $contrato->longitude : $servicio->longitude }}
+                latitude: {{ $contrato->latitude ? $contrato->latitude : $gmaps->latitude }},
+                longitude: {{ $contrato->longitude ? $contrato->longitude : $gmaps->longitude }}
             },
             zoom: 6,
             radius: 300,
