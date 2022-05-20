@@ -30,7 +30,7 @@
         @if(isset($_SESSION['permisos']['5']))
         <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
         @endif
-        @if(isset($_SESSION['permisos']['201']))
+        @if(isset($_SESSION['permisos']['202']))
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
         @endif
 
@@ -193,7 +193,7 @@
         	</div>
         </fieldset>
     </div>
-    
+    @if(isset($_SESSION['permisos']['405']))
     <div class="row card-description">
     	<div class="col-md-12">
     		<div class="container-filtercolumn form-inline">
@@ -234,6 +234,7 @@
     		</table>
     	</div>
     </div>
+    @endif
 @endsection
 
 @section('scripts')

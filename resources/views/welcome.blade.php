@@ -143,7 +143,7 @@
                                 </a>
                             </div>
                             @endif
-                            @if(isset($_SESSION['permisos']['201']))
+                            @if(isset($_SESSION['permisos']['202']))
                             <div class="col-md-2">
                                 <a href="{{route('radicados.create')}}">
                                 <div class="card-counter success">
