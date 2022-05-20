@@ -100,6 +100,37 @@
 	    	</div>
 	    </div>
     @endif
+
+    @if($servicio->nombre == 'ComboPay')
+	    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter">
+	    	<i class="far fa-question-circle"></i> Tutorial
+	    </button>
+
+	    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	    	<div class="modal-dialog modal-dialog-centered" role="document">
+	    		<div class="modal-content">
+	    			<div class="modal-header">
+	    				<h5 class="modal-title text-uppercase" id="exampleModalLongTitle">TUTORIAL {{ $servicio->nombre }}</h5>
+	    				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	    					<span aria-hidden="true">&times;</span>
+	    				</button>
+	    			</div>
+	    			<div class="modal-body">
+	    				<p class="text-justify">Para utilizar la <strong>API de Combopay</strong>, es necesario llenar la información solitada para generar los token de autorización.</p>
+	    				<p class="text-justify">Las credenciales de acceso se encuentran disponibles en el módulo de <strong>Perfil</strong>, apartado <strong>Claves API</strong> del <a href="https://app.combopay.co/profile/api-keys" target="_blank">Dashboard ComboPay</a>.</p>
+	    				<center><img src="{{ asset('images/combopay_a.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify">Ingrese al módulo de <strong>Perfil</strong>, apartado <strong>Actualizar comercio</strong>, campo <strong>URL de notificación hook</strong>, en el <a href="https://app.combopay.co/profile/company-edit" target="_blank">Dashboard</a>.</p>
+	    				<p class="text-justify ml-3">- En <strong>URL de notificación hook</strong>, deberá colocar la siguiente URL <strong>{{ Request::root() }}/api/pagos/combopay</strong></p>
+	    				<center><img src="{{ asset('images/combopay_b.png') }}" class="img-fluid mb-3 border-dark border"></center>
+	    				<p class="text-justify ml-3">- Luego botón <strong>Actualizar</strong>.</p>
+	    			</div>
+	    			<div class="modal-footer">
+	    				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+    @endif
 @endsection
 
 @section('content')
@@ -107,7 +138,22 @@
 	    @csrf
 	    <input name="_method" type="hidden" value="PATCH">
 	    <div class="row">
-	        <div class="col-md-{{ $servicio->nombre == 'WOMPI' ? '6' : '4'}} form-group">
+	    	<div class="col-md-4 form-group {{ $servicio->nombre == 'ComboPay' ? '':'d-none'}}">
+	            <label class="control-label">Usuario <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control" id="user" name="user"  required="" value="{{$servicio->user}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('user') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-4 form-group {{ $servicio->nombre == 'ComboPay' ? '':'d-none'}}">
+	            <label class="control-label">Contraseña <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control" id="pass" name="pass"  required="" value="{{$servicio->pass}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('pass') }}</strong>
+	            </span>
+	        </div>
+
+	        <div class="col-md-{{ $servicio->nombre == 'WOMPI' ? '6' : '4'}} form-group {{ $servicio->nombre == 'ComboPay' ? 'd-none':''}}">
 	            <label class="control-label">{{ $servicio->nombre == 'WOMPI' ? 'Llave pública' : ''}}{{ $servicio->nombre == 'PayU' ? 'API Key' : ''}}{{ $servicio->nombre == 'ePayco' ? 'PUBLIC_KEY' : ''}} <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="api_key" name="api_key"  required="" value="{{$servicio->api_key}}" maxlength="200">
 	            <span class="help-block error">
@@ -124,7 +170,7 @@
 	        </div>
 
 	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}} {{ $servicio->nombre == 'ePayco' ? 'd-none' : ''}}">
-	            <label class="control-label">merchantId <span class="text-danger">*</span></label>
+	            <label class="control-label">{{ $servicio->nombre == 'ComboPay' ? 'Clave secreta':'merchantId'}} <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="merchantId" name="merchantId"  required="" value="{{$servicio->merchantId}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('merchantId') }}</strong>
@@ -132,7 +178,7 @@
 	        </div>
 
 	        <div class="col-md-4 form-group {{ $servicio->nombre == 'WOMPI' ? 'd-none' : ''}} {{ $servicio->nombre == 'ePayco' ? 'd-none' : ''}}">
-	            <label class="control-label">accountId <span class="text-danger">*</span></label>
+	            <label class="control-label">{{ $servicio->nombre == 'ComboPay' ? 'ID de cliente':'accountId'}} <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="accountId" name="accountId"  required="" value="{{$servicio->accountId}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('accountId') }}</strong>

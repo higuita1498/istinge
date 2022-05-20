@@ -65,6 +65,11 @@ class IntegracionPasarelaController extends Controller
                 $servicio->p_key = $request->p_key;
             }
 
+            if($servicio->nombre=='ComboPay'){
+                $servicio->user = $request->user;
+                $servicio->pass = $request->pass;
+            }
+
             $servicio->web        = $request->web;
             $servicio->app        = $request->app;
             $servicio->updated_by = Auth::user()->id;
