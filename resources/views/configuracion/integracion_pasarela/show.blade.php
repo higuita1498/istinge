@@ -93,13 +93,13 @@
 						@endif
 						@if($servicio->accountId)
 						<tr>
-							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'Clave secreta':'merchantId'}}</td>
+							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'ID de cliente':'merchantId'}}</td>
 							<td>{{$servicio->accountId}}</td>
 						</tr>
 						@endif
 						@if($servicio->merchantId)
 						<tr>
-							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'ID de cliente':'accountId'}} </td>
+							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'Clave secreta':'accountId'}} </td>
 							<td>{{$servicio->merchantId}}</td>
 						</tr>
 						@endif
