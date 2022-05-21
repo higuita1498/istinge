@@ -84,6 +84,7 @@ Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
 Route::get('blacklist', 'BlacklistController@blacklist');
 Route::get('pagos', 'PagosController@pagos');
+Route::get('ventas-externas', 'VentasExternasController@ventas');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -1294,6 +1295,13 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/reporte/{id}', 'BlacklistController@reporte')->name('monitor-blacklist.reporte');
 	    });
 		Route::resource('monitor-blacklist', 'BlacklistController');
+
+    //VENTAS EXTERNAS
+        Route::group(['prefix' => 'ventas-externas'], function() {
+            Route::get('/aprobar/{id}', 'VentasExternasController@aprobar')->name('ventas-externas.aprobar');
+        });
+        Route::resource('ventas-externas', 'VentasExternasController');
+
 
 
 });

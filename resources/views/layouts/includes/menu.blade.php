@@ -25,6 +25,15 @@
         </a>
     </li>
 @elseif(Auth::user()->rol >= 2 )
+    @if(isset($_SESSION['permisos']['800']) || isset($_SESSION['permisos']['801']) || isset($_SESSION['permisos']['802']) || isset($_SESSION['permisos']['803']))
+        <li class="nav-item" id="ventas-externas">
+            <a  class="nav-link" href="{{route('ventas-externas.index')}}">
+                <i class="menu-icon fas fa-hand-holding-usd"></i>
+                <span class="menu-title">Ventas Externas</span>
+            </a>
+        </li>
+    @endif
+
     @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
         <li class="nav-item" id="contactos">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
