@@ -58,7 +58,7 @@
         </li>
     @endif
 
-    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']))
+    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) || isset($_SESSION['permisos']['804']))
         <li class="nav-item" id="contratos">
             <a class="nav-link" data-toggle="collapse" href="#ui-contrato" aria-expanded="false" aria-controls="ui-contrato">
                 <i class="menu-icon fas fa-file-contract"></i>
@@ -77,9 +77,11 @@
                             <a class="nav-link" href="{{route('asignaciones.index')}}" >Asignaciones</a>
                         </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['804']))
                     <li class="nav-item" id="listado">
                         <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
                     </li>
+                    @endif
                 </ul>
             </div>
         </li>
