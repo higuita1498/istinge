@@ -79,8 +79,23 @@ class IntegracionSMSController extends Controller
 
         if($servicio){
             if($servicio->status == 0){
-                $servicio->status = 1;
-                $mensaje = 'SE HA HABILITADO EL SERVICIO CORRECTAMENTE';
+                if($servicio->nombre == 'Hablame SMS'){
+                    if($servicio->api_key && $servicio->user && $servicio->pass){
+                        $servicio->status = 1;
+                        $mensaje = 'SE HA HABILITADO EL SERVICIO CORRECTAMENTE';
+                    }else{
+                        $mensaje = 'EL SERVICIO DE '.$servicio->nombre.' NO SE PUEDE HABILITAR POR FALTA DE INFORMACIÓN DE AUTENTICACIÓN';
+                        return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
+                    }
+                }elseif($servicio->nombre == 'Colombia RED' || $servicio->nombre == 'SmsEasySms'){
+                    if($servicio->user && $servicio->pass){
+                        $servicio->status = 1;
+                        $mensaje = 'SE HA HABILITADO EL SERVICIO CORRECTAMENTE';
+                    }else{
+                        $mensaje = 'EL SERVICIO DE '.$servicio->nombre.' NO SE PUEDE HABILITAR POR FALTA DE INFORMACIÓN DE AUTENTICACIÓN';
+                        return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
+                    }
+                }
             }else{
                 $servicio->status = 0;
                 $mensaje = 'SE HA DESHABILITADO EL SERVICIO CORRECTAMENTE';
