@@ -66,11 +66,17 @@ class VentasExternas extends Model
     }
 
     public function vendedor_externa(){
-        return Vendedor::where('id',$this->vendedor_externa)->first()->nombre;
+        if($this->vendedor_externa){
+            return Vendedor::where('id',$this->vendedor_externa)->first()->nombre;
+        }
+        return 'N/A';
     }
 
     public function canal_externa(){
-        return Canal::where('id',$this->canal_externa)->first()->nombre;
+        if($this->canal_externa){
+            return Canal::where('id',$this->canal_externa)->first()->nombre;
+        }
+        return 'N/A';
     }
 
     public function municipio(){
