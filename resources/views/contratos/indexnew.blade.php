@@ -37,7 +37,9 @@
         @if(Auth::user()->id == 3)
             <a href="{{route('contratos.exportar')}}" class="btn btn-success btn-sm d-none" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
         @endif
+        @if(isset($_SESSION['permisos']['411']))
         <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+        @endif
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
 @endsection
