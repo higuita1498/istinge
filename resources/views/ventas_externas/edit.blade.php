@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-	<form method="POST" action="{{ route('ventas-externas.update', $contacto->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+	<form method="POST" action="{{ route('ventas-externas.update', $contacto->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-contacto">
   		<input name="_method" type="hidden" value="PATCH">
   		{{ csrf_field() }}
   		<input type="hidden"  id="idmunicipio" value="{{ $contacto->fk_idmunicipio }}">
@@ -175,7 +175,7 @@
             <div class="col-md-3 form-group">
 	            <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
-	                <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5">
+	                <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($vendedores as $vendedor)
 	                    <option value="{{$vendedor->id}}" {{$contacto->vendedor_externa==$vendedor->id?'selected':''}} {{old('vendedor')==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
 	                    @endforeach
@@ -188,7 +188,7 @@
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Canal de Venta <a><i data-tippy-content="Seleccione el canal de venta del contrato" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
-	                <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5">
+	                <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($canales as $canal)
 	                    <option value="{{$canal->id}}" {{$contacto->canal_externa==$canal->id?'selected':''}} {{old('canal')==$canal->id?'selected':''}}>{{$canal->nombre}}</option>
 	                    @endforeach

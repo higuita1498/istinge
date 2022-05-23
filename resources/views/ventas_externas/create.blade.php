@@ -13,7 +13,7 @@
         </script>
     @endif
 
-    <form method="POST" action="{{ route('ventas-externas.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+    <form method="POST" action="{{ route('ventas-externas.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-contacto">
     	@csrf
     	<input type="hidden" name="tipo_contacto" id="tipo_contacto" value="0">
     	<div class="row">
@@ -21,7 +21,7 @@
     			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
     			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
     				@foreach($identificaciones as $identificacion)
-    				<option @if($identificacion->id == 3) ? selected : ''  @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
+    				<option @if($identificacion->id == 3) ? selected @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
     				@endforeach
     			</select>
     			<span class="help-block error">
@@ -168,7 +168,7 @@
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
-	                <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5">
+	                <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($vendedores as $vendedor)
 	                    <option value="{{$vendedor->id}}" {{old('vendedor')==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
 	                    @endforeach
@@ -181,7 +181,7 @@
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Canal de Venta <a><i data-tippy-content="Seleccione el canal de venta del contrato" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
-	                <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5">
+	                <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($canales as $canal)
 	                    <option value="{{$canal->id}}" {{old('canal')==$canal->id?'selected':''}}>{{$canal->nombre}}</option>
 	                    @endforeach
