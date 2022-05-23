@@ -921,7 +921,7 @@ class CronController extends Controller
                         if($servicio){
                             $numero = str_replace('+','',$cliente->celular);
                             $numero = str_replace(' ','',$numero);
-                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$this->ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
                                     $post['toNumber'] = $numero;
@@ -1156,7 +1156,7 @@ class CronController extends Controller
                         if($servicio){
                             $numero = str_replace('+','',$cliente->celular);
                             $numero = str_replace(' ','',$numero);
-                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$this->ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
                                     $post['toNumber'] = $numero;
@@ -1392,7 +1392,7 @@ class CronController extends Controller
                     if($servicio){
                         $numero = str_replace('+','',$cliente->celular);
                         $numero = str_replace(' ','',$numero);
-                        $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$this->ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                        $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                         if($servicio->nombre == 'Hablame SMS'){
                             if($servicio->api_key && $servicio->user && $servicio->pass){
                                 $post['toNumber'] = $numero;
