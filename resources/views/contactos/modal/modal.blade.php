@@ -13,7 +13,7 @@
       			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
       			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
       				@foreach($identificaciones as $identificacion)
-      				  <option @if($identificacion->id == 3) ? selected : ''  @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
+      				  <option @if($identificacion->id == 3) ? selected @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
       				@endforeach
       			</select>
       			<span class="help-block error">
@@ -161,16 +161,16 @@
     			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
     			<div class="form-check form-check-flat">
     				<label class="form-check-label">
-    					<input type="checkbox" class="form-check-input" name="contacto[]" value="0" checked=""> Cliente
+    					<input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="0" checked=""> Cliente
     					<i class="input-helper"></i></label>
     			</div>
     			<div class="form-check form-check-flat">
     				<label class="form-check-label">
-    					<input type="checkbox" class="form-check-input" name="contacto[]" value="1"> Proveedor
+    					<input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="1"> Proveedor
     					<i class="input-helper"></i></label>
     			</div>
     			<span class="help-block error">
-    				<strong>{{ $errors->first('contacto') }}</strong>
+    				<strong>{{ $errors->first('tipo_contacto') }}</strong>
     			</span>
     		</div>
       		<div class="form-group col-md-12">
