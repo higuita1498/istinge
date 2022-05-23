@@ -173,7 +173,7 @@
                 </span>
             </div>
             <div class="col-md-3 form-group">
-	            <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato" class="icono far fa-question-circle"></i></a></label>
+	            <label class="control-label">Vendedor <a><i data-tippy-content="Seleccione el vendedor del contrato. Para agregar otros vendedores ingrese al <a href='{{ route('vendedores.index') }}' target='_blank'>módulo de vendedores</a>" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
 	                <select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($vendedores as $vendedor)
@@ -186,7 +186,7 @@
 	            </div>
 	        </div>
 	        <div class="col-md-3 form-group">
-	            <label class="control-label">Canal de Venta <a><i data-tippy-content="Seleccione el canal de venta del contrato" class="icono far fa-question-circle"></i></a></label>
+	            <label class="control-label">Canal de Ventas <a><i data-tippy-content="Seleccione el canal de venta. Para agregar otros vendedores ingrese al <a href='{{ route('canales.index') }}' target='_blank'>módulo de canales de venta</a>" class="icono far fa-question-circle"></i></a></label>
 	            <div class="input-group mb-2">
 	                <select class="form-control selectpicker" name="canal" id="canal" title="Seleccione" data-live-search="true" data-size="5" required>
 	                    @foreach($canales as $canal)
