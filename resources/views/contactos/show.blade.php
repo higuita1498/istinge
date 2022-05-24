@@ -212,6 +212,12 @@
 						<td>{{$contacto->direccion}}</td>
 					</tr>
 					@endif
+					@if($contacto->vereda)
+					<tr>
+						<th width="20%">Corregimiento/Vereda</th>
+						<td>{{$contacto->vereda}}</td>
+					</tr>
+					@endif
 					@if($contacto->barrio)
 					<tr>
 						<th width="20%">Pueblo/Barrio/Vereda</th>
