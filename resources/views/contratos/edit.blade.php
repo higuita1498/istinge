@@ -166,7 +166,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas.<br>(Por defecto el mapa está centrado en Colombia)" class="icono far fa-question-circle"></i></a></label>
+                                <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas." class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="us2-lat" name="latitude" readonly value="{{ $contrato->latitude }}">
                                     <input type="text" class="form-control" id="us2-lon" name="longitude" readonly value="{{ $contrato->longitude }}">
@@ -562,7 +562,7 @@
                 <div class="modal-body px-0">
                     <div class="row" style="text-align: center;">
                         <div class="col-md-12">
-                            <p><span class="font-weight-bold text-uppercase">Arrastre el pin para indicar las coordenadas deseadas.</span><br>(Por defecto el mapa está centrado en Colombia)</p>
+                            <p><span class="font-weight-bold text-uppercase">Arrastre el pin para indicar las coordenadas deseadas.</span></p>
                         </div>
                     </div>
                     <div class="row" style="text-align: center;">
@@ -587,8 +587,8 @@
     <script>
         $('#us2').locationpicker({
             location: {
-                latitude: {{ $contrato->latitude }},
-                longitude: {{ $contrato->longitude }}
+                latitude: {{ $contrato->latitude ? $contrato->latitude : $gmaps->latitude }},
+                longitude: {{ $contrato->longitude ? $contrato->longitude : $gmaps->longitude }}
             },
             zoom: 6,
             radius: 300,

@@ -25,13 +25,16 @@
         </a>
     </li>
 @elseif(Auth::user()->rol >= 2 )
-    @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']))
-        {{--<li class="nav-item" id="contactos">
-            <a class="nav-link" href="{{route('contactos.index')}}">
-                <i class="menu-icon fas fa-users"></i>
-                <span class="menu-title">Clientes</span>
+    @if(isset($_SESSION['permisos']['800']) || isset($_SESSION['permisos']['801']) || isset($_SESSION['permisos']['802']) || isset($_SESSION['permisos']['803']))
+        <li class="nav-item" id="ventas-externas">
+            <a  class="nav-link" href="{{route('ventas-externas.index')}}">
+                <i class="menu-icon fas fa-hand-holding-usd"></i>
+                <span class="menu-title">Ventas Externas</span>
             </a>
-        </li>--}}
+        </li>
+    @endif
+
+    @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
         <li class="nav-item" id="contactos">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <i class="menu-icon fas fa-users"></i>
@@ -40,24 +43,22 @@
             </a>
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
-                    <?php if (isset($_SESSION['permisos']['2'])) { ?>
+                    @if(isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
                         <li class="nav-item" id="clientes">
                             <a class="nav-link" href="{{route('contactos.clientes')}}">Clientes</a>
                         </li>
-                    <?php } ?>
-                    <?php if (isset($_SESSION['permisos']['3'])) { ?>
+                    @endif
+                    @if(isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))
                         <li class="nav-item" id="proveedores">
-        
                             <a class="nav-link" href="{{route('contactos.proveedores')}}">Proveedores</a>
-        
                         </li>
-                    <?php } ?>
+                    @endif
                 </ul>
             </div>
         </li>
     @endif
 
-    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['411']))
+    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) || isset($_SESSION['permisos']['804']))
         <li class="nav-item" id="contratos">
             <a class="nav-link" data-toggle="collapse" href="#ui-contrato" aria-expanded="false" aria-controls="ui-contrato">
                 <i class="menu-icon fas fa-file-contract"></i>
@@ -66,17 +67,21 @@
             </a>
             <div class="collapse" id="ui-contrato">
                 <ul class="nav flex-column sub-menu">
+                    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['411']))
                     <li class="nav-item" id="listado">
                         <a class="nav-link" href="{{route('contratos.index')}}">Listado</a>
                     </li>
-                    @if(isset($_SESSION['permisos']['410']) && isset($_SESSION['permisos']['411']))
+                    @endif
+                    @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
                         <li class="nav-item" id="asignaciones">
                             <a class="nav-link" href="{{route('asignaciones.index')}}" >Asignaciones</a>
                         </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['804']))
                     <li class="nav-item" id="listado">
                         <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
                     </li>
+                    @endif
                 </ul>
             </div>
         </li>
@@ -349,9 +354,9 @@
                     </li>
                     @endif
                     @if(isset($_SESSION['permisos']['723']))
-                    <li class="nav-item" id="mapa_red">
+                    {{-- <li class="nav-item" id="mapa_red">
                         <a class="nav-link" href="javascript:;">Mapa de Red</a>
-                    </li>
+                    </li> --}}
                     @endif
                     @if(isset($_SESSION['permisos']['724']))
                     <li class="nav-item" id="grupo_corte">
@@ -388,7 +393,7 @@
     @endif
 
     <li id="nomina" class="nav-item">
-        @if(auth()->user()->empresaObj->nomina)
+        @if(auth()->user()->empresaObj->nomina && isset($_SESSION['permisos']['782']) || isset($_SESSION['permisos']['783']) || isset($_SESSION['permisos']['784']) || isset($_SESSION['permisos']['785']) || isset($_SESSION['permisos']['786']) || isset($_SESSION['permisos']['787']) || isset($_SESSION['permisos']['788']) || isset($_SESSION['permisos']['789']) || isset($_SESSION['permisos']['790']) || isset($_SESSION['permisos']['791']) || isset($_SESSION['permisos']['792']) || isset($_SESSION['permisos']['793']) || isset($_SESSION['permisos']['794']) || isset($_SESSION['permisos']['795']) || isset($_SESSION['permisos']['796']) || isset($_SESSION['permisos']['797']))
         <a class="nav-link" data-toggle="collapse" href="#ui-nomina" aria-expanded="false" aria-controls="ui-nomina">
             <i class="menu-icon far fa-money-bill-alt"></i>
             <span class="menu-title">Nómina
@@ -398,36 +403,30 @@
         </a>
         <div class="collapse" id="ui-nomina">
             <ul class="nav flex-column sub-menu">
-                        <li class="nav-item" id="personas-nomina">
-                            <a class="nav-link" href="{{ route('personas.index') }}">Personas</a>
-                        </li>
-
-                        <li class="nav-item" id="liquidar-nomina">
-                            <a class="nav-link" href="{{ route('nomina.index') }}" id="liquidar-nomina-anchor">Liquidar Nómina</a>
-                        </li>
- 
-                    {{-- <li class="nav-item" id="historial-periodos">
-                        <a class="nav-link" href="{{ route('historial.periodos') }}">Historial de periodos</a>
-                    </li> --}}
+                @if(isset($_SESSION['permisos']['782']) || isset($_SESSION['permisos']['783']) || isset($_SESSION['permisos']['784']) || isset($_SESSION['permisos']['785']) || isset($_SESSION['permisos']['786']) || isset($_SESSION['permisos']['787']))
+                    <li class="nav-item" id="personas-nomina">
+                        <a class="nav-link" href="{{ route('personas.index') }}">Personas</a>
+                    </li>
+                @endif
+                @if(isset($_SESSION['permisos']['788']) || isset($_SESSION['permisos']['789']) || isset($_SESSION['permisos']['790']) || isset($_SESSION['permisos']['791']) || isset($_SESSION['permisos']['792']))
+                    <li class="nav-item" id="liquidar-nomina">
+                        <a class="nav-link" href="{{ route('nomina.index') }}" id="liquidar-nomina-anchor">Liquidar Nómina</a>
+                    </li>
+                @endif
+                @if(isset($_SESSION['permisos']['793']) || isset($_SESSION['permisos']['794']) || isset($_SESSION['permisos']['795']) || isset($_SESSION['permisos']['796']))
                     <li class="nav-item" id="contabilidad">
                         <a class="nav-link" href="{{ route('contabilidad.index') }}">Contabilidad
                         </a>
                     </li>
-                    {{-- <li class="nav-item" id="planes-nomina">
-                        <a class="nav-link" href="{{ route('nomina.planes') }}">Planes</a>
-                    </li> --}}
+                @endif
+
+                @if(isset($_SESSION['permisos']['797']))
                     <li class="nav-item" id="asisente-habilitacion">
                         <a id="nomina_asistente" href="{{ route('nomina-dian.asistente') }}" class="{{auth()->user()->empresaObj->nomina ? 'nav-link' : 'd-none'}}">Asistente de habilitación</a>
                     </li>
+                @endif
             </ul>
         </div>
-        @else
-        <a class="nav-link" href="{{route('configuracion.index')}}">
-            <i class="menu-icon far fa-money-bill-alt"></i>
-            <span class="menu-title">Nómina
-                <span class="badge badge-info ml-1">Nuevo</span>
-            </span>
-        </a>
         @endif
     </li>
 

@@ -35,6 +35,7 @@ use App\Puc;
 use App\Campos;
 use App\Anticipo;
 use App\PucMovimiento;
+use App\FormaPago;
 
 class PagosController extends Controller
 {

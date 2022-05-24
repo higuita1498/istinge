@@ -30,14 +30,16 @@
         @if(isset($_SESSION['permisos']['5']))
         <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
         @endif
-        @if(isset($_SESSION['permisos']['201']))
+        @if(isset($_SESSION['permisos']['202']))
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
         @endif
 
         @if(Auth::user()->id == 3)
             <a href="{{route('contratos.exportar')}}" class="btn btn-success btn-sm d-none" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
         @endif
+        @if(isset($_SESSION['permisos']['411']))
         <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
+        @endif
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
 @endsection
@@ -68,134 +70,137 @@
     @endif
 
     <div class="container-fluid d-none mb-3" id="form-filter">
-    	<div class="card shadow-sm border-0">
-    		<div class="card-body py-0">
-    			<div class="row">
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
-    						@foreach ($clientes as $cliente)
-    						<option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->nit }}</option>
-    						@endforeach
-    					</select>
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="celular" placeholder="Celular">
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="email" placeholder="Email">
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="direccion" placeholder="Dirección">
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="barrio" placeholder="Barrio">
-    				</div>
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Planes" class="form-control selectpicker" id="plan" data-size="5" data-live-search="true">
-    						@foreach ($planes as $plan)
-    						<option value="{{ $plan->id }}">{{ $plan->name }}</option>
-    						@endforeach
-    					</select>
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="ip" placeholder="Dirección IP">
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control" id="mac" placeholder="MAC">
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<select title="Estado" class="form-control selectpicker" id="state">
-    						<option value="enabled">Habilitado</option>
-    						<option value="disabled">Deshabilitado</option>
-    					</select>
-    				</div>
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Grupo de Corte" class="form-control selectpicker" id="grupo_cort">
-    						@foreach ($grupos as $grupo)
-    						<option value="{{ $grupo->id }}">{{ $grupo->nombre }}</option>
-    						@endforeach
-    					</select>
-    				</div>
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Conexión" class="form-control selectpicker" id="conexion_s">
-    						<option value="1">PPPOE</option>
-    						<option value="2">DHCP</option>
-    						<option value="3">IP Estática</option>
-    						<option value="4">VLAN</option>
-    					</select>
-    				</div>
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s">
-    						@foreach ($servidores as $servidor)
-    						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
-    						@endforeach
-    					</select>
-    				</div>
-    				{{-- <div class="col-md-3 pl-1 pt-1">
-    					<select title="Interfaz" class="form-control selectpicker" id="interfaz_s">
-    						@foreach ($interfaces as $interfaz)
-    						<option value="{{ $interfaz->id }}">{{ $interfaz->nombre }}</option>
-    						@endforeach
-    					</select>
-    				</div> --}}
-    				<div class="col-md-3 pl-1 pt-1">
-    					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
-    						@foreach ($nodos as $nodo)
-    						<option value="{{ $nodo->id }}">{{ $nodo->nombre }}</option>
-    						@endforeach
-    					</select>
-    				</div>
-    				<div class="col-md-3 pl-1 pt-1">
-                        <select title="Access Point" class="form-control selectpicker" id="ap_s">
-                            @foreach ($aps as $ap)
-                            <option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 pl-1 pt-1">
-                        <select title="Vendedor" class="form-control selectpicker" id="vendedor">
-                            @foreach ($vendedores as $vendedor)
-                            <option value="{{ $vendedor->id }}">{{ $vendedor->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 pl-1 pt-1">
-                        <select title="Canal de Venta" class="form-control selectpicker" id="canal">
-                            @foreach ($canales as $canal)
-                            <option value="{{ $canal->id }}">{{ $canal->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 pl-1 pt-1">
-                        <select title="Tipo de Tecnología" class="form-control selectpicker" id="tecnologia_s">
-                            <option value="1">Fibra</option>
-                            <option value="2">Inalámbrica</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 pl-1 pt-1">
-                        <select title="Tipo de Facturción" class="form-control selectpicker" id="facturacion_s">
-                            <option value="1">Estándar</option>
-                            <option value="3">Electrónica</option>
-                        </select>
-                    </div>
-    				
-    				<div class="col-md-2 pl-1 pt-1">
-    					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-    					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
-    					@if(Auth::user()->id == 3)
-    					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
-    					@endif
-    				</div>
-    			</div>
-    		</div>
-    	</div>
+        <fieldset>
+            <legend>Filtro de Búsqueda</legend>
+        	<div class="card shadow-sm border-0">
+        		<div class="card-body py-3" style="background: #f9f9f9;">
+        			<div class="row">
+        				<div class="col-md-2 pl-1 pt-1">
+        					<input type="text" class="form-control" id="celular" placeholder="Celular">
+        				</div>
+        				<div class="col-md-2 pl-1 pt-1">
+        					<input type="text" class="form-control" id="email" placeholder="Email">
+        				</div>
+        				<div class="col-md-2 pl-1 pt-1">
+        					<input type="text" class="form-control" id="direccion" placeholder="Dirección">
+        				</div>
+        				<div class="col-md-2 pl-1 pt-1">
+        					<input type="text" class="form-control" id="barrio" placeholder="Barrio">
+        				</div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" class="form-control" id="ip" placeholder="Dirección IP">
+                        </div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" class="form-control" id="mac" placeholder="MAC">
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
+                                @foreach ($clientes as $cliente)
+                                <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Planes" class="form-control selectpicker" id="plan" data-size="5" data-live-search="true">
+        						@foreach ($planes as $plan)
+        						<option value="{{ $plan->id }}">{{ $plan->name }}</option>
+        						@endforeach
+        					</select>
+        				</div>
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Estado" class="form-control selectpicker" id="state">
+        						<option value="enabled">Habilitado</option>
+        						<option value="disabled">Deshabilitado</option>
+        					</select>
+        				</div>
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Grupo de Corte" class="form-control selectpicker" id="grupo_cort">
+        						@foreach ($grupos as $grupo)
+        						<option value="{{ $grupo->id }}">{{ $grupo->nombre }}</option>
+        						@endforeach
+        					</select>
+        				</div>
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Conexión" class="form-control selectpicker" id="conexion_s">
+        						<option value="1">PPPOE</option>
+        						<option value="2">DHCP</option>
+        						<option value="3">IP Estática</option>
+        						<option value="4">VLAN</option>
+        					</select>
+        				</div>
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s">
+        						@foreach ($servidores as $servidor)
+        						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
+        						@endforeach
+        					</select>
+        				</div>
+        				{{-- <div class="col-md-3 pl-1 pt-1">
+        					<select title="Interfaz" class="form-control selectpicker" id="interfaz_s">
+        						@foreach ($interfaces as $interfaz)
+        						<option value="{{ $interfaz->id }}">{{ $interfaz->nombre }}</option>
+        						@endforeach
+        					</select>
+        				</div> --}}
+        				<div class="col-md-3 pl-1 pt-1">
+        					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
+        						@foreach ($nodos as $nodo)
+        						<option value="{{ $nodo->id }}">{{ $nodo->nombre }}</option>
+        						@endforeach
+        					</select>
+        				</div>
+        				<div class="col-md-3 pl-1 pt-1">
+                            <select title="Access Point" class="form-control selectpicker" id="ap_s">
+                                @foreach ($aps as $ap)
+                                <option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Vendedor" class="form-control selectpicker" id="vendedor">
+                                @foreach ($vendedores as $vendedor)
+                                <option value="{{ $vendedor->id }}">{{ $vendedor->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Canal de Venta" class="form-control selectpicker" id="canal">
+                                @foreach ($canales as $canal)
+                                <option value="{{ $canal->id }}">{{ $canal->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Tipo de Tecnología" class="form-control selectpicker" id="tecnologia_s">
+                                <option value="1">Fibra</option>
+                                <option value="2">Inalámbrica</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Tipo de Facturción" class="form-control selectpicker" id="facturacion_s">
+                                <option value="1">Estándar</option>
+                                <option value="3">Electrónica</option>
+                            </select>
+                        </div>
+
+        				<div class="col-md-2 pl-1 pt-1">
+        					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+        					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+        					@if(isset($_SESSION['permisos']['799']))
+        					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
+        					@endif
+        				</div>
+        			</div>
+        		</div>
+        	</div>
+        </fieldset>
     </div>
-    
+    @if(isset($_SESSION['permisos']['405']))
     <div class="row card-description">
     	<div class="col-md-12">
     		<div class="container-filtercolumn form-inline">
-                <a href="{{ route('pings.index') }}" class="btn btn-danger mr-1">Pings Fallidos <i class="fa fa-plug"></i></a>
-
+                @if(auth()->user()->modo_lectura())
+                @else
                 @if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -207,6 +212,7 @@
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
                     </div>
                 </div>
+                @endif
                 @endif
 
                 <a  onclick="filterOptions()" class="btn btn-secondary" value="0" id="buttonfilter">Filtrar  Campos<i class="fas fa-filter" style="margin-left:4px; "></i></a>
@@ -230,6 +236,7 @@
     		</table>
     	</div>
     </div>
+    @endif
 @endsection
 
 @section('scripts')

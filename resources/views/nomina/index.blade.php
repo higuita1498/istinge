@@ -88,9 +88,11 @@
 </div>
 @else
 {{--@if(isset($_SESSION['permisos']['159']) || auth()->user()->username == 'gestordepartes')--}}
+@if(isset($_SESSION['permisos']['789']))
 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new-nomina" id="btn-generar-nomina">
     <i class="fas fa-plus"></i> Generar Nueva Nómina
 </button>
+@endif
 {{--@endif--}}
 @endif
 @endsection
@@ -117,6 +119,7 @@
 
 {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([9])->diff(auth()->user()->guiasVistas()->keyBy('nro_tip')->keys())->all()]) --}}
 
+@if(isset($_SESSION['permisos']['788']))
 <div class="row card-description">
     <div class="col-md-12">
         <div class="table-responsive">
@@ -142,7 +145,9 @@
                         <td>{{$periodo->estadosNomina()->rechazadas}}</td>
                         <td>{{ $periodo->estadosNomina()->aceptadas == $periodo->empleados() ? 'Finalizado' : 'En Proceso' }}</td>
                         <td>
+                            @if(isset($_SESSION['permisos']['791']))
                             <a href="{{ route('nomina.liquidar', ['periodo' => $periodo->periodo, 'year'=> $periodo->year]) }}" title="Detalle de Nómina"><i class="far fa-eye color"></i></a>
+                            @endif
                             <a href="#" data-toggle="modal" data-target="#reiniciar-{{$periodo->id}}" ><i data-tippy-content="Reinicia el periodo con los datos calculados y refresca la lista de personas ingresadas en el periodo" class="icono fas fa-redo color"></i></a>
 
                             <div class="modal" tabindex="-1" role="dialog" id="reiniciar-{{$periodo->id}}">
@@ -171,7 +176,9 @@
                                     </div>
                                 </div>
                             </div>
+                            @if(isset($_SESSION['permisos']['792']))
                             <a href="{{ route('nomina-dian.emitir', ['periodo' => $periodo->periodo, 'year'=> $periodo->year]) }}" title="Emitir Nómina"><i class="fas fa-sitemap color"></i></a>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -180,6 +187,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <div class="modal fade bd-example-modal-lg" id="new-nomina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

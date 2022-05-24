@@ -21,6 +21,8 @@ use Carbon\Carbon;
 use Session;
 use App\Campos;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class RadicadosController extends Controller{
     public function __construct(){
@@ -238,10 +240,21 @@ class RadicadosController extends Controller{
     public function update(Request $request, $id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
+            if($request->adjunto){
+                $radicado->adjunto = $request->adjunto;
+                $file = $request->file('adjunto');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto = $nombre;
+                $radicado->save();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
             if ($request->reporte) {
                 $radicado->reporte = $request->reporte;
                 $radicado->save();
-                $mensaje='Se ha registrado el reporte del técnico satisfactoriamente.';
+                $mensaje='SE HA REGISTRADO EL REPORTE DEL TÉCNICO SATISFACTORIAMENTE.';
                 return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
             }
             $request->validate([
@@ -279,7 +292,7 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
-            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles: N° '.$radicado->codigo, 'middel' => true]);
+            view()->share(['icon'=>'far fa-life-ring', 'title' => 'Detalles: N° '.$radicado->codigo, 'precice' => true]);
             $inicio = Carbon::parse($radicado->tiempo_ini);
             $cierre = Carbon::parse($radicado->tiempo_fin);
             $duracion = $inicio->diffInMinutes($cierre);
@@ -291,6 +304,9 @@ class RadicadosController extends Controller{
     public function destroy($id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
+            if($radicado->adjunto){
+                Storage::disk('documentos')->delete($radicado->adjunto);
+            }
             $radicado->delete();
         }
         return redirect('empresa/radicados')->with('success', 'El radicado ha sido eliminado satisfactoriamente');
@@ -428,5 +444,27 @@ class RadicadosController extends Controller{
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('danger', 'No existe un registro con ese id');
+    }
+
+    public function eliminarAdjunto($id){
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        if($radicado){
+            Storage::disk('documentos')->delete($radicado->adjunto);
+            $radicado->adjunto = NULL;
+            $radicado->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'type'    => 'error',
+            'title'   => 'Archivo no eliminado',
+            'text'    => 'Inténtelo Nuevamente'
+        ]);
     }
 }

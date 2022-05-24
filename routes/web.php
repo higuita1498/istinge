@@ -84,6 +84,7 @@ Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
 Route::get('blacklist', 'BlacklistController@blacklist');
 Route::get('pagos', 'PagosController@pagos');
+Route::get('ventas-externas', 'VentasExternasController@ventas');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -988,6 +989,16 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         });
         Route::resource('integracion-pasarelas', 'IntegracionPasarelaController');
 
+        //INTEGRACION GMAPS
+        Route::group(['prefix' => 'integracion-gmaps'], function() {
+
+        });
+        Route::resource('integracion-gmaps', 'IntegracionGmapsController');
+
+
+
+
+
         Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
         Route::post('/storePeriodoFacturacion', 'EmpresasController@storePeriodoFacturacion')->name('empresas.storePeriodoFacturacion');
 
@@ -1083,6 +1094,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('/notificacionRadicado', 'RadicadosController@notificacionRadicado')->name('radicados.notificacion');
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
         	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
+            Route::get('/{id}/eliminarAdjunto', 'RadicadosController@eliminarAdjunto')->name('radicados.eliminarAdjunto');
         });
 		Route::resource('radicados', 'RadicadosController');
 
@@ -1283,6 +1295,13 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/reporte/{id}', 'BlacklistController@reporte')->name('monitor-blacklist.reporte');
 	    });
 		Route::resource('monitor-blacklist', 'BlacklistController');
+
+    //VENTAS EXTERNAS
+        Route::group(['prefix' => 'ventas-externas'], function() {
+            Route::get('/aprobar/{id}', 'VentasExternasController@aprobar')->name('ventas-externas.aprobar');
+        });
+        Route::resource('ventas-externas', 'VentasExternasController');
+
 
 
 });

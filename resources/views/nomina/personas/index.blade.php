@@ -7,7 +7,9 @@
             <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
         </div>
     @else
-    <a id="crear-persona-empleado" href="{{route('personas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Persona</a>
+        @if(isset($_SESSION['permisos']['783']))
+        <a id="crear-persona-empleado" href="{{route('personas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Persona</a>
+        @endif
     @endif
 @endsection
 
@@ -160,35 +162,32 @@
                         @endif
                     </td>
                     <td>
-                    
-                        <a href="{{route('personas.show', $persona->id)}}" class="btn btn-outline-info btn-icons" title="Ver Detalles"><i class="far fa-eye"></i>
-                        </a>
+                        @if(isset($_SESSION['permisos']['785']))
+                            <a href="{{route('personas.show', $persona->id)}}" class="btn btn-outline-info btn-icons" title="Ver Detalles"><i class="far fa-eye"></i></a>
+                        @endif
                         @if($modoLectura->success)
                         @else
-                       
-                        <a href="{{route('personas.edit', $persona->id)}}" class="btn btn-outline-primary btn-icons" title="Editar Persona"><i class="fas fa-edit"></i></a>
-                      
-                        @if(!$persona->uso())
-                        <form action="{{ route('personas.destroy',$persona->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-persona-{{$persona->id}}">
-                            @csrf
-                            <input name="_method" type="hidden" value="DELETE">
-                        </form>
-                        <button class="btn btn-outline-danger btn-icons" title="Eliminar" onclick="confirmar('eliminar-persona-{{$persona->id}}', '¿Está seguro que deseas eliminar a la persona?', 'Se borrara de forma permanente');">
-                            <i class="fas fa-times"></i></button>
-                        @endif
-                        
-                        @endif
-                        @if(!$persona->is_liquidado)
-                        <form action="{{ route('personas.act_des',$persona->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$persona->id}}">
-                            @csrf
-                        </form>
-                        @if($persona->status==1)
-                        <button type="button" class="btn btn-outline-danger negative_paging btn-icons" type="submit" title="Deshabilitar" onclick="confirmar('act_desc-{{$persona->id}}', '¿Estas seguro que deseas deshabilitar esta persona?', 'No aparecera para seleccionar en la creación de nomina');">
-                            <i class="fas fa-power-off"></i></button>
-                        @else
-                        <button type="button" class="btn btn-outline-success negative_paging btn-icons" type="submit" title="Habilitar" onclick="confirmar('act_desc-{{$persona->id}}', '¿Estas seguro que deseas habilitar esta persona?', 'Aparecera para seleccionar en la creación de nomina');">
-                            <i class="fas fa-power-off"></i></button>
-                        @endif
+                            @if(isset($_SESSION['permisos']['784']))
+                                <a href="{{route('personas.edit', $persona->id)}}" class="btn btn-outline-primary btn-icons" title="Editar Persona"><i class="fas fa-edit"></i></a>
+                            @endif
+                            @if(!$persona->uso())
+                                @if(isset($_SESSION['permisos']['784']))
+                                <form action="{{ route('personas.destroy',$persona->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-persona-{{$persona->id}}">@csrf<input name="_method" type="hidden" value="DELETE">
+                                </form>
+                                <button class="btn btn-outline-danger btn-icons" title="Eliminar" onclick="confirmar('eliminar-persona-{{$persona->id}}', '¿Está seguro que deseas eliminar a la persona?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+                                @endif
+                            @endif
+                            @if(!$persona->is_liquidado)
+                                @if(isset($_SESSION['permisos']['787']))
+                                    <form action="{{ route('personas.act_des',$persona->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$persona->id}}">@csrf
+                                    </form>
+                                    @if($persona->status==1)
+                                        <button type="button" class="btn btn-outline-danger negative_paging btn-icons" type="submit" title="Deshabilitar" onclick="confirmar('act_desc-{{$persona->id}}', '¿Estas seguro que deseas deshabilitar esta persona?', 'No aparecera para seleccionar en la creación de nomina');"><i class="fas fa-power-off"></i></button>
+                                    @else
+                                        <button type="button" class="btn btn-outline-success negative_paging btn-icons" type="submit" title="Habilitar" onclick="confirmar('act_desc-{{$persona->id}}', '¿Estas seguro que deseas habilitar esta persona?', 'Aparecera para seleccionar en la creación de nomina');"><i class="fas fa-power-off"></i></button>
+                                    @endif
+                                @endif
+                            @endif
                         @endif
                     </td>
                 </tr>

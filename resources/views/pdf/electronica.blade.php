@@ -329,6 +329,14 @@
                 <td colspan="1" style="">{{$factura->cliente()->nombre}}</td>
             </tr>
             <tr>
+                <th class="right smalltd">NIT O C.C</th>
+                <td style="border-bottom: 2px solid #ccc;">{{$factura->cliente()->nit}}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd" width="10%">CELULAR</th>
+                <td colspan="">{{$factura->cliente()->celular}}</td>
+            </tr>
+            <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
                 <td colspan="">{{$factura->cliente()->direccion}}</td>
             </tr>
@@ -337,8 +345,8 @@
                 <td colspan="">{{$factura->cliente()->municipio()->nombre}}</td>
             </tr>
             <tr>
-                <th class="right smalltd">NIT O C.C</th>
-                <td style="border-bottom: 2px solid #ccc;">{{$factura->cliente()->nit}}</td>
+                <th class="right smalltd" width="10%">EMAIL</th>
+                <td colspan="">{{$factura->cliente()->email}}</td>
             </tr>
         </table>
     </div>
