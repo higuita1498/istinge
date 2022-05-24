@@ -1,59 +1,21 @@
 <IfModule mod_rewrite.c>
-<IfModule mod_negotiation.c>
-Options -MultiViews
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
 </IfModule>
-
-RewriteEngine On
-
-# Redirect Trailing Slashes...
-RewriteRule ^(.*)/$ /$1 [L,R=301]
-
-# Handle Front Controller...
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
-</IfModule>
-
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
-RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
-RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# BEGIN cPanel-generated php ini directives, do not edit
-# Manual editing of this file may result in unexpected behavior.
-# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
-# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
-<IfModule php7_module>
-   php_flag display_errors On
-   php_value max_execution_time 180
-   php_value max_input_time 60
-   php_value max_input_vars 1000
-   php_value memory_limit 768M
-   php_value post_max_size 64M
-   php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php71"
-   php_value upload_max_filesize 64M
-   php_flag zlib.output_compression On
-</IfModule>
-<IfModule lsapi_module>
-   php_flag display_errors On
-   php_value max_execution_time 180
-   php_value max_input_time 60
-   php_value max_input_vars 1000
-   php_value memory_limit 768M
-   php_value post_max_size 64M
-   php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php71"
-   php_value upload_max_filesize 64M
-   php_flag zlib.output_compression On
-</IfModule>
-# END cPanel-generated php ini directives, do not edit
-
-# php -- BEGIN cPanel-generated handler, do not edit
-# Configure el paquete “ea-php73” como el lenguaje de programación predeterminado “PHP”.
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php73 .php .php7 .phtml
-</IfModule>
-# php -- END cPanel-generated handler, do not edit
