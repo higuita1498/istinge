@@ -630,7 +630,7 @@ class FacturaspController extends Controller
             ->where('factura_proveedores.tipo',1)
             ->groupBy('if.factura');
             
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $facturas=$facturas->where(function ($query) use ($requestData) {
                 $query->where('factura_proveedores.codigo', 'like', '%'.$requestData->search['value'].'%')->orwhere('c.nombre', 'like', '%'.$requestData->search['value'].'%');
@@ -722,7 +722,7 @@ class FacturaspController extends Controller
             ->groupBy('if.factura')
             ->where('factura_proveedores.proveedor', $contacto);
             
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $facturas=$facturas->where(function ($query) use ($requestData) {
                 $query->where('factura_proveedores.codigo', 'like', '%'.$requestData->search['value'].'%')->orwhere('c.nombre', 'like', '%'.$requestData->search['value'].'%');
