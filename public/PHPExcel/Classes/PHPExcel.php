@@ -32,7 +32,6 @@ if (!defined('PHPEXCEL_ROOT')) {
  * @version    ##VERSION##, ##DATE##
  */
 class PHPExcel
-
 {
     /**
      * Unique ID

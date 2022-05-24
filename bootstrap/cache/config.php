@@ -1,15 +1,15 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'Laravel',
+    'name' => 'NETWORK SOFT S.A.S.',
     'api_key' => NULL,
-    'env' => 'local',
+    'env' => 'production',
     'debug' => true,
-    'url' => 'http://localhost',
+    'url' => 'https://networksoft.online/software',
     'timezone' => 'America/Bogota',
     'locale' => 'es',
     'fallback_locale' => 'es',
-    'key' => 'base64:IqZcplw3jZa7ZuCVQ4w2ItgNHl+5drolh4XQgECAZ2A=',
+    'key' => 'base64:xq3H3kLYW6wL6EI9JWYNoyORPJl1e8AjwkNNjP+WUsU=',
     'cipher' => 'AES-256-CBC',
     'providers' => 
     array (
@@ -178,7 +178,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\framework/cache/data',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -208,7 +208,7 @@
         'connection' => 'default',
       ),
     ),
-    'prefix' => 'laravel_cache',
+    'prefix' => 'network_soft_sas_cache',
   ),
   'database' => 
   array (
@@ -218,7 +218,7 @@
       'sqlite' => 
       array (
         'driver' => 'sqlite',
-        'database' => 'networks_root',
+        'database' => 'istingen_root',
         'prefix' => '',
       ),
       'mysql' => 
@@ -226,7 +226,7 @@
         'driver' => 'mysql',
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'networks_root',
+        'database' => 'istingen_root',
         'username' => 'root',
         'password' => '',
         'unix_socket' => '',
@@ -245,7 +245,7 @@
         'driver' => 'pgsql',
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'networks_root',
+        'database' => 'istingen_root',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -258,7 +258,7 @@
         'driver' => 'sqlsrv',
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'networks_root',
+        'database' => 'istingen_root',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -336,25 +336,25 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\storage\\app',
+        'root' => 'C:\\laragon\\www\\istingen\\storage\\app',
       ),
       'documentos' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\public\\../../public_html/adjuntos/documentos',
+        'root' => 'C:\\laragon\\www\\istingen\\public\\../../public_html/adjuntos/documentos',
         'visibility' => 'public',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\storage\\app/public',
-        'url' => 'http://localhost/storage',
+        'root' => 'C:\\laragon\\www\\istingen\\storage\\app/public',
+        'url' => 'https://networksoft.online/software/storage',
         'visibility' => 'public',
       ),
       'emails' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\laragon\\www\\istinge\\public\\../resources/views/emails/plantillas',
+        'root' => 'C:\\laragon\\www\\istingen\\public\\../resources/views/emails/plantillas',
         'visibility' => 'public',
       ),
       's3' => 
@@ -382,9 +382,24 @@
       'time' => 2,
     ),
   ),
+  'ignition' => 
+  array (
+    'editor' => 'phpstorm',
+    'theme' => 'light',
+    'enable_share_button' => false,
+    'register_commands' => false,
+    'ignored_solution_providers' => 
+    array (
+      0 => 'Facade\\Ignition\\SolutionProviders\\MissingPackageSolutionProvider',
+    ),
+    'enable_runnable_solutions' => NULL,
+    'remote_sites_path' => '',
+    'local_sites_path' => '',
+    'housekeeping_endpoint_prefix' => '_ignition',
+  ),
   'log-viewer' => 
   array (
-    'storage-path' => 'C:\\laragon\\www\\istinge\\storage\\logs',
+    'storage-path' => 'C:\\laragon\\www\\istingen\\storage\\logs',
     'pattern' => 
     array (
       'prefix' => 'laravel-',
@@ -450,7 +465,7 @@
   ),
   'logging' => 
   array (
-    'default' => 'stack',
+    'default' => 'daily',
     'channels' => 
     array (
       'stack' => 
@@ -464,13 +479,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\logs/laravel.log',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\laragon\\www\\istinge\\storage\\logs/laravel.log',
+        'path' => 'C:\\laragon\\www\\istingen\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 7,
       ),
@@ -506,23 +521,23 @@
   'mail' => 
   array (
     'driver' => 'smtp',
-    'host' => 'smtp.mailtrap.io',
-    'port' => '2525',
+    'host' => 'mail.networksoft.online',
+    'port' => '465',
     'from' => 
     array (
-      'address' => '',
-      'name' => '',
+      'address' => 'info@networksoft.online',
+      'name' => 'NETWORK SOFT S.A.S',
     ),
-    'encryption' => NULL,
-    'username' => NULL,
-    'password' => NULL,
+    'encryption' => 'ssl',
+    'username' => 'info@networksoft.online',
+    'password' => 'networks_root',
     'sendmail' => '/usr/sbin/sendmail -bs',
     'markdown' => 
     array (
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\laragon\\www\\istinge\\resources\\views/vendor/mail',
+        0 => 'C:\\laragon\\www\\istingen\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -609,7 +624,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\laragon\\www\\istinge\\storage\\framework/sessions',
+    'files' => 'C:\\laragon\\www\\istingen\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -618,7 +633,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'laravel_session',
+    'cookie' => 'network_soft_sas_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => NULL,
@@ -629,9 +644,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\laragon\\www\\istinge\\resources\\views',
+      0 => 'C:\\laragon\\www\\istingen\\resources\\views',
     ),
-    'compiled' => 'C:\\laragon\\www\\istinge\\storage\\framework\\views',
+    'compiled' => 'C:\\laragon\\www\\istingen\\storage\\framework\\views',
   ),
   'dompdf' => 
   array (
@@ -639,10 +654,10 @@
     'orientation' => 'portrait',
     'defines' => 
     array (
-      'font_dir' => 'C:\\laragon\\www\\istinge\\storage\\fonts/',
-      'font_cache' => 'C:\\laragon\\www\\istinge\\storage\\fonts/',
-      'temp_dir' => 'C:\\Users\\Juankno\\AppData\\Local\\Temp',
-      'chroot' => 'C:\\laragon\\www\\istinge',
+      'font_dir' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
+      'font_cache' => 'C:\\laragon\\www\\istingen\\storage\\fonts/',
+      'temp_dir' => 'C:\\Users\\57300\\AppData\\Local\\Temp',
+      'chroot' => 'C:\\laragon\\www\\istingen',
       'enable_font_subsetting' => false,
       'pdf_backend' => 'CPDF',
       'default_media_type' => 'screen',
@@ -681,20 +696,31 @@
       0 => 'password',
     ),
   ),
-  'ignition' => 
+  'cors' => 
   array (
-    'editor' => 'phpstorm',
-    'theme' => 'light',
-    'enable_share_button' => true,
-    'register_commands' => false,
-    'ignored_solution_providers' => 
+    'paths' => 
     array (
-      0 => 'Facade\\Ignition\\SolutionProviders\\MissingPackageSolutionProvider',
     ),
-    'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => '',
-    'local_sites_path' => '',
-    'housekeeping_endpoint_prefix' => '_ignition',
+    'allowed_methods' => 
+    array (
+      0 => '*',
+    ),
+    'allowed_origins' => 
+    array (
+      0 => '*',
+    ),
+    'allowed_origins_patterns' => 
+    array (
+    ),
+    'allowed_headers' => 
+    array (
+      0 => '*',
+    ),
+    'exposed_headers' => 
+    array (
+    ),
+    'max_age' => 0,
+    'supports_credentials' => false,
   ),
   'image' => 
   array (
@@ -805,7 +831,7 @@
     ),
     'temporary_files' => 
     array (
-      'local_path' => 'C:\\laragon\\www\\istinge\\storage\\framework/cache/laravel-excel',
+      'local_path' => 'C:\\laragon\\www\\istingen\\storage\\framework/cache/laravel-excel',
       'remote_disk' => NULL,
       'remote_prefix' => NULL,
       'force_resync_remote' => NULL,
