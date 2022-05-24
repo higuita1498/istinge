@@ -29,7 +29,7 @@ class PucMovimiento extends Model
        'mes_cierre', 'documento_id', 'cliente_id','cuenta_id','created_at', 'updated_at'
     ];
 
-    public static function facturaVenta($factura, $opcion){
+    public static function facturaVenta($factura, $opcion, $request){
 
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->first();
@@ -125,23 +125,35 @@ class PucMovimiento extends Model
             }          
 
             //4to. Registramos el medio de pago de la factura.
-            $mov = new PucMovimiento;
-            $mov->tipo_comprobante = "03";
-            $mov->consecutivo_comprobante = $factura->codigo;
-            $mov->fecha_elaboracion = $factura->fecha;
-            $mov->documento_id = $factura->id;
-            $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
-            $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
-            $mov->identificacion_tercero = $factura->cliente()->nit;
-            $mov->cliente_id = $factura->cliente()->id;
-            $mov->prefijo = $factura->numeracionFactura->prefijo;
-            $mov->consecutivo = $factura->codigo;
-            $mov->fecha_vencimiento = $factura->vencimiento;
-            $mov->descripcion = $factura->descripcion;
-            $mov->debito =  round($factura->total()->total);
-            $mov->enlace_a = 4;
-            $mov->save();
+            $i =0;
+            foreach($request->formapago as $forma => $key){
+                
+                $idIngreso = null;
+                if(isset($request->selectanticipo[$i])){
+                    $idIngreso = $request->selectanticipo[$i];
+                }
 
+                $mov = new PucMovimiento;
+                $mov->tipo_comprobante = "03";
+                $mov->consecutivo_comprobante = $factura->codigo;
+                $mov->fecha_elaboracion = $factura->fecha;
+                $mov->documento_id = $factura->id;
+                $mov->codigo_cuenta = isset($factura->formaPagoRequest($key,$idIngreso)->codigo) ? $factura->formaPagoRequest($key,$idIngreso)->codigo : '';
+                $mov->cuenta_id = isset($factura->formaPagoRequest($key,$idIngreso)->id) ? $factura->formaPagoRequest($key,$idIngreso)->id : '';
+                $mov->identificacion_tercero = $factura->cliente()->nit;
+                $mov->cliente_id = $factura->cliente()->id;
+                $mov->prefijo = $factura->numeracionFactura->prefijo;
+                $mov->consecutivo = $factura->codigo;
+                $mov->fecha_vencimiento = $factura->vencimiento;
+                $mov->descripcion = $factura->descripcion;
+                $mov->debito =  round($request->precioformapago[$i]);
+                $mov->enlace_a = 4;
+                $mov->formapago_id = $key;
+                $mov->recibocaja_id = $request->selectanticipo[$i];
+                $mov->save();
+
+                $i++;
+            }
         }
 
         //opcion 2 es para actualizar el movimiento
@@ -155,7 +167,7 @@ class PucMovimiento extends Model
         
     }
 
-    public static function facturaCompra($ingreso, $opcion){
+    public static function facturaCompra($ingreso, $opcion, $request){
         
          //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
          $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();

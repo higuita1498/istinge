@@ -727,7 +727,8 @@ function contacto(selected, modificar=false, type = 1){
                 }
             }
 
-            console.log(data);
+            //seteamos un posoble saldo a favor que tenga el cliente
+            $("#saldofavorcliente").val(data.saldo_favor);
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
             if(data.plan == null && type == 1 && data.servicio_tv == null){
@@ -750,11 +751,11 @@ function contacto(selected, modificar=false, type = 1){
                     position: 'top-center',
                     type: 'error',
                     title: 'Contrato con facturacion electrónica.',
-                    text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se peude realizar una factura estandar',
+                    text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se puede realizar una factura estandar',
                     showConfirmButton: true,
                 });
-                $("#cliente").val("");
-                $('#cliente').selectpicker('refresh');
+                // $("#cliente").val("");
+                // $('#cliente').selectpicker('refresh');
                 cargando(false);
                 return;
             }
@@ -1617,6 +1618,39 @@ function totalall(){
     }
 }
 
+function total_linea_formapago(nro){
+    let total = 0;
+
+    $('#table-formaspago tbody tr').each(function() {
+        var id=$(this).attr('fila');
+        id=$("#precioformapago"+id);
+        var totalLinea=id.val();
+        if (totalLinea) {
+            total+=parseFloat(totalLinea);
+        }
+
+    });
+
+    let totalFactura = document.getElementById('total'); 
+    totalFactura = totalFactura.textContent;
+    totalFactura = parseFloat(totalFactura.replace(/[$.]/g,''));
+    console.log(totalFactura);
+
+
+    if(total > totalFactura){
+        swal({
+            title: 'Error',
+            html: 'El total de las formas de pago no puede superar el total de la factura.',
+            type: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#1A59A1',
+            confirmButtonText: 'ACEPTAR',
+        });
+        // id.val(0);
+    }
+    $('#anticipototal').html(number_format(total));
+}
+
 /* Saca los impuestos para el total */
 function create_imp(total, key, name){
     if ($('#imp'+key).length > 0) {
@@ -1647,6 +1681,11 @@ function Eliminar(i) {
     if($('#table-form').length > 0 && $('#totalesreten').length==0){
         totalall();
     }
+}
+
+function Eliminar_forma(i){
+    $("#" + i).remove();
+    total_linea_formapago();
 }
 
 function Chequeado(input, descheck){
@@ -2162,8 +2201,6 @@ function crearDivRetention(id){
 
 }
 
-
-
 function CrearFilaRetencion(){
 
     var nro=$('#table-retencion tbody tr').length +1 ;
@@ -2202,6 +2239,102 @@ function CrearFilaRetencion(){
     $('#retencion'+nro).selectpicker('refresh');
     $('.precio').mask('0000000000.00', {reverse: true});
     $("#precio_reten"+nro).attr("disabled", "disabled");
+}
+
+function CrearFilaFormaPago(){
+
+    var nro=$('#table-formaspago tbody tr').length +1 ;
+    if ($('#forma'+nro).length > 0) {
+        for (i = 1; i <= nro; i++) {
+            if ($('#forma'+i).length == 0) {
+                nro=i;
+                break;
+            }
+        }
+    }
+
+    let cliente = null;
+    if($("#cliente").val() != null){
+        cliente = $("#cliente").val();
+    }
+
+    var formasPago = JSON.parse($('#formaspago').val());
+
+    $('#table-formaspago tbody').append(
+        `<tr  id="forma${nro}" fila="${nro}">` +
+        `
+        <td  class="no-padding">
+          <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="formapago[]" id="formapago${nro}" onchange="llenarSelectAnticipo(this.value, ${cliente});" required="" >
+
+          </select>
+        </td>
+        <td  class="no-padding" id="tdanticipo${nro}">
+            <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo${nro}">
+
+            </select>
+        </td>
+        <td class="monetario">
+          <input type="hidden" value='0' id="lock_forma${nro}">
+          <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm" maxlength="24" id="precioformapago${nro}" name="precioformapago[]" placeholder="Valor anticipo" onkeyup="total_linea_formapago()" required="" min="0">
+        </td>
+      <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma${nro}');">X</button></td>
+    ` +
+        `</tr>`
+    );
+
+     //Añadimos una nueva opcion al select si el cliente tiene un saldo a favor disponible para usar en facturas.
+     var saldoFavorCliente = $("#saldofavorcliente").val();
+     if(saldoFavorCliente > 0){
+         $('#formapago'+nro).append($('<option>',
+             {
+                 value: 0,
+                 text : "Agregar un anticipo"
+             }));
+     }
+
+    $.each( formasPago, function( key, value ){
+        $('#formapago'+nro).append($('<option>',
+            {
+                value: value.id,
+                text : value.codigo+" - "+ value.nombre+""
+            }));
+    });
+
+    $('#formapago'+nro).selectpicker('refresh');
+    $('#selectanticipo'+nro).selectpicker('refresh');
+
+}
+
+function llenarSelectAnticipo(value,cliente){
+    
+    var formasPago = JSON.parse($('#formaspago').val());
+    if(value == 0){
+
+        /* >>> Cpnosulta par atraer los recibos de caja con saldo a favor <<< */
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url='/software/empresa/ingresos/recibosanticipo';
+        }else{
+            var url='/empresa/ingresos/recibosanticipo';
+        }
+        $.ajax({
+            url: url,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            method: 'get',
+            data: { cliente: cliente, recibo: value },
+            success: function(recibos) {
+                 //Recibos de caja relacionados que tienene un saldo a favor
+            $.each( recibos, function( key, value ){
+                $('#selectanticipo'+nro).append($('<option>',
+                    {
+                        value: value.id,
+                        text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
+                    }));
+            });
+
+            $('#selectanticipo'+nro).selectpicker('refresh');
+            }
+        })
+    }
 }
 
 

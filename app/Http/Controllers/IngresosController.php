@@ -332,6 +332,8 @@ class IngresosController extends Controller
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
+            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : '';
+            $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
             $ingreso->save();
             
             //Si el tipo de ingreso es de facturas
@@ -655,6 +657,7 @@ class IngresosController extends Controller
         $ingreso->observaciones = mb_strtolower($request->observaciones);
         $ingreso->created_by = Auth::user()->id;
         $ingreso->anticipo = 1;
+        $ingreso->valor_anticipo = $request->valor_recibido;
         $ingreso->save();
 
         $impuesto = Impuesto::where('porcentaje',0)->first();
@@ -1282,5 +1285,17 @@ class IngresosController extends Controller
         }else{
             return back()->with('danger','ERROR: EL ARCHIVO NO HA PODIDO SER CARGADO A LA PLATAFORMA, INTENTE NUEVAMENTE');
         }
+    }
+
+    //metodo que calcula que recibos de caja tiene un anticipo para poder cruzar en una forma de pago.
+    public function recibosAnticipo(Request $request){
+
+        //obtenemos los ingresos que tiene un anticpo vigente.
+        $ingresos = Ingreso::where('cliente',$request->cliente)
+        ->where('anticipo',1)
+        ->where('valor_anticipo','>',0)
+        ->get();
+
+        return response()->json($ingresos);
     }
 }

@@ -11,6 +11,7 @@ use App\Impuesto; use App\Vendedor;
 use App\Funcion; use Auth;
 use App\TerminosPago;
 use App\Banco;
+use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\ItemsFactura;
 use App\Model\Ingresos\IngresosFactura;
 use App\Model\Ingresos\NotaCreditoFactura;
@@ -21,6 +22,7 @@ use Carbon\Carbon;
 use DB;
 use App\GrupoCorte;
 use App\Puc;
+use App\PucMovimiento;
 use App\FormaPago;
 use stdClass;
 class Factura extends Model
@@ -835,12 +837,33 @@ public function forma_pago()
         return $this->belongsTo('App\NumeracionFactura','numeracion');
     }
 
+    //metodo que asigna al request (guardar o editar) de una factura
+    public function formaPagoRequest($cuenta_id,$idIngreso=null){
+
+        if($idIngreso == null){
+            $forma = FormaPago::find($cuenta_id);
+    
+            if($forma){
+                return Puc::find($forma->cuenta_id); 
+            }
+        //si es igual a cero es por que se trata de un anticipo.
+        }else{
+            //buscamos la cuenta contable que tiene asociada el ingreso
+            $pm= PucMovimiento::where('documento_id',$idIngreso)->where('tipo_comprobante',1)->where('enlace_a',5)->first();
+
+            if($pm){
+                return Puc::find($pm->cuenta_id);
+            }
+        }
+    }
+
+    //metodo que busca la 
     public function formaPago(){
         $forma = FormaPago::find($this->cuenta_id);
 
         if($forma){
             return Puc::find($forma->cuenta_id); 
-        }
+        }    
     }
 
     public function contract(){
@@ -854,6 +877,16 @@ public function forma_pago()
             $contrato->server_configuration_id =false;
             return $contrato;
         };
+    }
+
+    public function recibosAnticipo(){
+        //obtenemos los ingresos que tiene un anticpo vigente.
+        $ingresos = Ingreso::where('cliente',$this->cliente)
+        ->where('anticipo',1)
+        ->where('valor_anticipo','>',0)
+        ->get();
+
+        return $ingresos;
     }
 
 }

@@ -282,6 +282,11 @@ class Ingreso extends Model
             return $puc;
         }
     }
+
+
+    public function totalAnticipo(){
+        dd("Hola");
+    }
     
 
 }

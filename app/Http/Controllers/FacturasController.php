@@ -889,7 +889,7 @@ class FacturasController extends Controller{
             $nro->save();
         }
 
-        PucMovimiento::facturaVenta($factura,1);
+        PucMovimiento::facturaVenta($factura,1, $request);
 
         //Creo la variable para el mensaje final, y la variable print (imprimir)
         $mensaje='Se ha creado satisfactoriamente la factura';
@@ -936,6 +936,7 @@ class FacturasController extends Controller{
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+        $formasPago = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->where('enlace_a',4)->get();
 
         if ($factura) {
             if ($factura->estatus==1) {
@@ -975,7 +976,7 @@ class FacturasController extends Controller{
                     view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
                 }
 
-                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones'));
+                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones','formasPago'));
             }
             return redirect('empresa/facturas')->with('success', 'La factura de venta '.$factura->codigo.' ya esta cerrada');
         }
