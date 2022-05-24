@@ -214,7 +214,7 @@
 					@endif
 					@if($contacto->barrio)
 					<tr>
-						<th width="20%">Barrio</th>
+						<th width="20%">Pueblo/Barrio/Vereda</th>
 						<td>{{$contacto->barrio}}</td>
 					</tr>
 					@endif

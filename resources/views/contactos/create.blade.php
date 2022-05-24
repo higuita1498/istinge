@@ -105,7 +105,7 @@
   			</span>
   		</div>
   		<div class="form-group col-md-3">
-  			<label class="control-label">Barrio </label>
+  			<label class="control-label">Pueblo/Barrio/Vereda</label>
   			<input type="text" name="barrio" class="form-control" value="{{old('barrio')}}">
   			<span class="help-block error">
   				<strong>{{ $errors->first('barrio') }}</strong>

@@ -102,7 +102,7 @@
 			</span>
 		</div>
 		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
-			<label class="control-label">Barrio</label>
+			<label class="control-label">Pueblo/Barrio/Vereda</label>
 			<input type="text" class="form-control" id="barrio" name="barrio" maxlength="200"  value="{{$contacto->barrio}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('barrio') }}</strong>

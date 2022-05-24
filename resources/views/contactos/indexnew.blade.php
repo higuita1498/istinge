@@ -84,7 +84,7 @@
 					</div>
 					@if($tipo_usuario == 0)
 					<div class="col-md-3 pl-1 pt-1">
-						<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
+						<input type="text" placeholder="Pueblo/Barrio/Vereda" id="barrio" class="form-control rounded">
 					</div>
 					<div class="col-md-3 pl-1 pt-1">
 						<select title="Contratos" class="form-control rounded selectpicker" id="t_contrato" data-size="5" data-live-search="true">
