@@ -17,7 +17,6 @@
 
   <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
   	{{ csrf_field() }}
-  	<input type="hidden" name="tipo_contacto[]" id="tipo_contacto" value="0">
   	<div class="row">
   		<div class="form-group col-md-3">
   			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
