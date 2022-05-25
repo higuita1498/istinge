@@ -1086,7 +1086,7 @@ class FacturasController extends Controller{
                     $descuento->save();
                 }
 
-                PucMovimiento::facturaVenta($factura,2);
+                PucMovimiento::facturaVenta($factura,2,$request);
                 $mensaje='Se ha modificado satisfactoriamente la factura';
                 return redirect($request->page)->with('success', $mensaje)->with('codigo', $factura->id);
             }
