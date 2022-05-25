@@ -23,6 +23,12 @@ use App\Campos;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use App\MovimientoLOG;
+
+use Mail;
+use App\Mail\RadicadosMailable;
+use Config;
+use App\ServidorCorreo;
 
 class RadicadosController extends Controller{
     public function __construct(){
@@ -35,17 +41,19 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
 
         $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tipo = '';
         $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos'));
     }
 
     public function indexNew(Request $request, $tipo){
         $this->getAllPermissions(Auth::user()->id);
 
         $clientes = Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         if($tipo == 'solventados'){
@@ -57,7 +65,7 @@ class RadicadosController extends Controller{
         }
 
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos'));
     }
 
     public function radicados(Request $request, $estado){
@@ -115,6 +123,16 @@ class RadicadosController extends Controller{
                     $query->orWhere('radicados.creado', $request->creado);
                 });
             }
+            if($request->prioridad){
+                $radicados->where(function ($query) use ($request) {
+                    $query->orWhere('radicados.prioridad', $request->prioridad);
+                });
+            }
+            if($request->tecnico){
+                $radicados->where(function ($query) use ($request) {
+                    $query->orWhere('radicados.tecnico', $request->tecnico);
+                });
+            }
         }
 
         if(auth()->user()->rol == 4){
@@ -162,8 +180,14 @@ class RadicadosController extends Controller{
         ->editColumn('creado', function (Radicado $radicado) {
             return  $radicado->creado();
         })
+        ->editColumn('prioridad', function (Radicado $radicado) {
+            return  $radicado->prioridad();
+        })
+        ->editColumn('tecnico', function (Radicado $radicado) {
+            return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
+        })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
-        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado'])
+        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico'])
         ->toJson();
     }
 
@@ -214,12 +238,23 @@ class RadicadosController extends Controller{
         $radicado->tecnico = $request->tecnico;
         $radicado->estatus = $request->estatus;
         $radicado->codigo = rand(0, 99999);
+        $radicado->prioridad = $request->prioridad;
         $radicado->mac_address = $request->mac_address;
         $radicado->ip = $request->ip;
         $radicado->empresa = Auth::user()->empresa;
         $radicado->responsable = Auth::user()->id;
         $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
         $radicado->save();
+
+        if($request->contrato){
+            $movimiento = new MovimientoLOG;
+            $movimiento->contrato    = $request->contrato;
+            $movimiento->modulo      = 5;
+            $movimiento->descripcion = '<i class="fas fa-check text-success"></i> <b>Generación de Radicado</b> Servicio '.$radicado->servicio()->nombre.' N° '.$radicado->codigo;
+            $movimiento->created_by  = Auth::user()->id;
+            $movimiento->empresa     = Auth::user()->empresa;
+            $movimiento->save();
+        }
 
         $mensaje='Se ha creado satisfactoriamente el radicado bajo el código #'.$radicado->codigo;
         return redirect('empresa/radicados')->with('success', $mensaje);
@@ -278,6 +313,7 @@ class RadicadosController extends Controller{
             $radicado->servicio = $request->servicio;
             $radicado->tecnico = $request->tecnico;
             $radicado->estatus = $request->estatus;
+            $radicado->prioridad = $request->prioridad;
             $radicado->responsable = Auth::user()->id;
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->save();
@@ -334,8 +370,32 @@ class RadicadosController extends Controller{
             }else if ($radicado->estatus==2) {
                 $radicado->estatus=3;
             }
-            $mensaje='Se ha resuelto el caso radicado';
+            $mensaje = 'SE HA RESUELTO EL CASO RADICADO';
             $radicado->save();
+
+            $datos = $radicado;
+
+            $correo = new RadicadosMailable($datos);
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                        'from' => [
+                            'address' => $host->address,
+                            'name' => $host->name
+                        ],
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
+            Mail::to($radicado->correo)->send($correo);
+
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('success', 'No existe un registro con ese id');
@@ -353,7 +413,7 @@ class RadicadosController extends Controller{
     public function firmar($id){
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-        view()->share(['icon'=>'far fa-life-ring', 'title' => 'Firma Radicado: N° '.$radicado->codigo, 'middel' => true]);
+        view()->share(['icon'=>'far fa-life-ring', 'title' => 'Firma Radicado: N° '.$radicado->codigo, 'invertfalse' => true]);
         return view('radicados.firma')->with(compact('radicado'));
     }
 
@@ -466,5 +526,22 @@ class RadicadosController extends Controller{
             'title'   => 'Archivo no eliminado',
             'text'    => 'Inténtelo Nuevamente'
         ]);
+    }
+
+    public function reabrir($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        if ($radicado) {
+            if ($radicado->estatus == 1) {
+                $radicado->estatus = 0;
+            }else if ($radicado->estatus == 3) {
+                $radicado->estatus = 2;
+            }
+
+            $mensaje = 'EL RADICADO HA SIDO REABIERTO SATISFACTORIAMENTE';
+            $radicado->save();
+            return back()->with('success', $mensaje);
+        }
+        return back('empresa/radicados')->with('success', 'NO EXISTE UN REGISTRO CON ESE ID');
     }
 }
