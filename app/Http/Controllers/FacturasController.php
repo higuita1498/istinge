@@ -3206,4 +3206,29 @@ class FacturasController extends Controller{
             return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE WHATSAPP HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
         }
     }
+
+    public function convertirelEctronica($facturaId){
+        $factura = Factura::find($facturaId);
+        $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+
+        if($num){
+            $numero = $num->nro + 1;
+        }else{
+            $numero = 1;
+        }
+        
+        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+
+        //Actualiza el nro de inicio para la numeracion seleccionada
+        $inicio = $nro->inicio;
+        $nro->inicio += 1;
+        $nro->save();
+
+        $factura->codigo=$nro->prefijo.$inicio;
+        $factura->nro = $numero;
+        $factura->numeracion = $nro->id;
+        $factura->save();
+
+        return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
+    }
 }
