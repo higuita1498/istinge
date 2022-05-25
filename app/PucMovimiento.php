@@ -664,10 +664,14 @@ class PucMovimiento extends Model
 
             if($ingreso){
                 $ingreso->valor_anticipo=$ingreso->valor_anticipo - $valorUsado;
-            }
+                $ingreso->save();
+            }   
 
             $contacto = Contacto::find($this->cliente_id);
-            $contacto->saldo_favor = $saldo_favor - $valorUsado;
+            if($contacto){
+                $contacto->saldo_favor = $contacto->saldo_favor - $valorUsado;
+                $contacto->save();
+            }
         }
     }
 
