@@ -133,6 +133,14 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Prioridad <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="prioridad" id="prioridad" required="" title="Seleccione">
+                    <option value="1">Baja</option>
+                    <option value="2">Media</option>
+                    <option value="3">Alta</option>
+                </select>
+            </div>
             <div class="col-md-12 form-group">
                 <label class="control-label">Observaciones</label>
                 <textarea  class="form-control form-control-sm min_max_100" id="desconocido" required="" name="desconocido"></textarea>
