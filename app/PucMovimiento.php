@@ -157,7 +157,6 @@ class PucMovimiento extends Model
                     if($idIngreso){
                         $mov->restarAnticipo();
                     }
-    
                     $i++;
                 }
             }
@@ -656,16 +655,40 @@ class PucMovimiento extends Model
     
     public function restarAnticipo(){
 
-        // if($this->debito > 0){$valorUsado = $this->debito;}
-        // else{$valorUsado = $this->credito;}
+        if($this->debito > 0){$valorUsado = $this->debito;}
+        else{$valorUsado = $this->credito;}
 
-        // if($this->recibocaja_id != null || $this->recibocaja_id != 0){
-        //     $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
+        if($this->recibocaja_id != null || $this->recibocaja_id != 0){
+            $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
 
-        //     if($ingreso){
-        //         $ingreso->valor
-        //     }
-        // }
+            if($ingreso){
+                $ingreso->valor_anticipo=$ingreso->valor_anticipo - $valorUsado;
+            }
+
+            $contacto = Contacto::find($this->cliente_id);
+            $contacto->saldo_favor = $saldo_favor - $valorUsado;
+        }
+    }
+
+    public function sumarAnticipo(){
+
+        if($this->debito > 0){$valorUsado = $this->debito;}
+        else{$valorUsado = $this->credito;}
+
+        if($this->recibocaja_id != null || $this->recibocaja_id != 0){
+            $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
+
+            if($ingreso){
+                $ingreso->valor_anticipo=$ingreso->valor_anticipo + $valorUsado;
+                $ingreso->save();
+            }
+
+            $contacto = Contacto::find($this->cliente_id);
+            if($contacto){
+                $contacto->saldo_favor = $saldo_favor + $valorUsado;
+                $contacto->save();
+            }
+        }
     }
 
 }
