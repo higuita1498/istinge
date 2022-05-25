@@ -409,23 +409,30 @@
         </div>
       </div>
 
-  		<div class="row" >
-        
-        <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
+      <div class="row">
+        <div class="col-md-2 offset-md-10">
+          <div class="form-check form-check-flat">
+            <label class="form-check-label">
+              <input type="checkbox" class="form-check-input" name="print" value="1">Imprimir Tirilla
+              <i class="input-helper"></i>
+            </label>
+          </div>
+        </div>
+      </div>
 
+  		<div class="row">
+        <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
           <a href="{{route('ingresos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success" id="button-guardar">Guardar</button>
         </div>
   		</div>
-
-
   	</form>
   	<input type="hidden" id="url" value="{{url('/')}}">
-  <input type="hidden" id="impuestos" value="{{json_encode($impuestos)}}">
-  <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
-  <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
+    <input type="hidden" id="impuestos" value="{{json_encode($impuestos)}}">
+    <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
+    <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
 
-  <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
+    <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
   <optgroup label="{{$categoria->nombre}}">
       @foreach($categoria->hijos(true) as $categoria1)
         <option {{old('categoria')==$categoria1->id?'selected':''}} value="{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}}>{{$categoria1->nombre}}</option>

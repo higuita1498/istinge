@@ -256,12 +256,10 @@ class IngresosController extends Controller
     public function store(Request $request){
         
         if($request->realizar == 2){
-            
             $this->storeIngresoPucCategoria($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
-
         }else{
             if(auth()->user()->rol == 8){
                 $monto_pagar = 0;
@@ -440,8 +438,7 @@ class IngresosController extends Controller
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 PucMovimiento::ingreso($ingreso,1,2);   
             }
-            
-            
+
             //sumo a las numeraciones el recibo
             $nro->caja = $caja + 1;
             $nro->save();
@@ -641,9 +638,14 @@ class IngresosController extends Controller
                     }
                 }
             }
+
+            $print = false;
+            if ($request->print) {
+                $print = true;
+            }
             
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('print', $print);
         }
     }
 
@@ -732,7 +734,8 @@ class IngresosController extends Controller
             }
             view()->share(['icon' =>'', 'title' => $titulo, 'middel'=>true]);
             $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
-            return view('ingresos.show')->with(compact('ingreso', 'items', 'retenciones'));
+            $print = false;
+            return view('ingresos.show')->with(compact('ingreso', 'items', 'retenciones', 'print'));
         }
         return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
     }
