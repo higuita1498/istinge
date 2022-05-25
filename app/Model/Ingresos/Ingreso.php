@@ -265,7 +265,8 @@ class Ingreso extends Model
     /* * * * Asociados a una(s) facturas * * */
     public function ingresoAnticipoFactura(){
         $anticipo = IngresosFactura::join('anticipo as an','an.id','=','ingresos_factura.anticipo')
-        ->where('ingresos_factura.ingreso',$this->id)->select('an.*')->first();
+        ->join('puc as p','p.id','=','an.cuenta_id')
+        ->where('ingresos_factura.ingreso',$this->id)->select('p.*')->first();
 
         if($anticipo){
             return $anticipo;
