@@ -170,7 +170,7 @@ class BancosController extends Controller
         
         if ($contacto) { $movimientos=$movimientos->where('movimientos.contacto', $contacto); }
         //Busca los campos saldo, fecha y nombre del cliente
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $movimientos=$movimientos->where(function ($query) use ($requestData) {
                 $query->where('movimientos.saldo', 'like', '%'.$requestData->search['value'].'%')
@@ -243,7 +243,7 @@ class BancosController extends Controller
         if ($banco) { $movimientos=$movimientos->where('banco', $banco); }
         
         //Busca los campos saldo, fecha y nombre del cliente
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $movimientos=$movimientos->where(function ($query) use ($requestData) {
                 $query->where('movimientos.saldo', 'like', '%'.$requestData->search['value'].'%')

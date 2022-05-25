@@ -13,10 +13,10 @@
 	    @if(isset($_SESSION['permisos']['411']))
 	        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
 	    @endif
-	    @if(isset($_SESSION['permisos']['201']))
+	    @if(isset($_SESSION['permisos']['202']))
 	        <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
 	    @endif
-	    @if(isset($_SESSION['permisos']['411']))
+	    @if(isset($_SESSION['permisos']['402']))
 		<a href="{{route('asignaciones.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Asignación</a>
 		@endif
 	@endif
@@ -28,25 +28,32 @@
 			{{Session::get('success')}}
 		</div>
 	@endif
-@if(Session::has('message_denied'))
-<div class="alert alert-danger" role="alert">
-	{{Session::get('message_denied')}}
-	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
-	@if(count(Session::get('errorReason')) > 0)
-	@php $cont = 0 @endphp
-	@foreach(Session::get('errorReason') as $error)
-	@php $cont = $cont + 1; @endphp
-	{{$cont}} - {{$error}} <br>
-	@endforeach
-	@else
-	{{ Session::get('errorReason') }}
+	@if(Session::has('danger'))
+		<div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
+			{{Session::get('danger')}}
+		</div>
 	@endif
+	@if(Session::has('message_denied'))
+	    <div class="alert alert-danger" role="alert">
+	    	{{Session::get('message_denied')}}
+	    	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
+	    	@if(count(Session::get('errorReason')) > 0)
+	    	    @php $cont = 0 @endphp
+	    	    @foreach(Session::get('errorReason') as $error)
+	    	        @php $cont = $cont + 1; @endphp
+	    	        {{$cont}} - {{$error}} <br>
+	    	    @endforeach
+	    	@else
+	    	    {{ Session::get('errorReason') }}
+	    	@endif
+	    	@endif
+	    	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    		<span aria-hidden="true">&times;</span>
+	    	</button>
+	    </div>
 	@endif
-	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		<span aria-hidden="true">&times;</span>
-	</button>
-</div>
-@endif
+
+	@if(isset($_SESSION['permisos']['410']))
 
 	<div class="row card-description">
 		<div class="col-md-12">
@@ -69,7 +76,8 @@
 								@if(auth()->user()->modo_lectura())
 								@else
 								<a href="{{ route('contactos.show',$contrato->id )}}"  class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
-								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}"  class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></i></a>
+								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}"  class="btn btn-outline-danger btn-icons d-none" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
+								<a href="{{ route('asignaciones.enviar',$contrato->id )}}"  class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
 								@endif
 							</td>
 						</tr>
@@ -84,6 +92,8 @@
 	    	$("#name_1,#name_2,#name_3,#name_4,#name_5,#name_6").val('').selectpicker('refresh');
 	    }
     </script>
+
+    @endif
 
 
 @endsection

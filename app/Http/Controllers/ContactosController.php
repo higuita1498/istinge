@@ -92,6 +92,11 @@ class ContactosController extends Controller
                     $query->orWhere('barrio', 'like', "%{$request->barrio}%");
                 });
             }
+            if($request->vereda){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('vereda', 'like', "%{$request->vereda}%");
+                });
+            }
             if($request->email){
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('email', 'like', "%{$request->email}%");
@@ -147,6 +152,9 @@ class ContactosController extends Controller
             })
             ->editColumn('barrio', function (Contacto $contacto) {
                 return $contacto->barrio;
+            })
+            ->editColumn('vereda', function (Contacto $contacto) {
+                return $contacto->vereda;
             })
             ->editColumn('contrato', function (Contacto $contacto) {
                 return $contacto->contract();
@@ -339,8 +347,11 @@ class ContactosController extends Controller
     }
     
     public function store(Request $request){
+        $request->validate([
+            'tipo_contacto' => 'required'
+        ]);
         $contacto = Contacto::where('nit', $request->nit)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($contacto) {
             $errors= (object) array();
             $errors->nit='La Identificación esta registrada para otro contacto';
@@ -356,6 +367,7 @@ class ContactosController extends Controller
         $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
+        $contacto->vereda=$request->vereda;
         $contacto->direccion=$request->direccion;
         $contacto->email=mb_strtolower($request->email);
         $contacto->telefono1=$request->telefono1;
@@ -364,7 +376,7 @@ class ContactosController extends Controller
         $contacto->celular=$request->celular;
         $contacto->estrato=$request->estrato;
         $contacto->observaciones=$request->observaciones;
-        $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
+        $contacto->tipo_contacto = count($request->tipo_contacto) == 2 ? 2 : $request->tipo_contacto[0];
 
         $contacto->fk_idpais = $request->pais;
         $contacto->fk_iddepartamento = $request->departamento;
@@ -402,6 +414,13 @@ class ContactosController extends Controller
             echo json_encode($arrayPost);
             exit;
         }
+
+        if (!$request->tipo_contacto) {
+            $arrayPost['status'] = 'error';
+            $arrayPost['mensaje'] = 'El Tipo de Contacto es requerido';
+            echo json_encode($arrayPost);
+            exit;
+        }
         
         $contacto = new Contacto;
         $contacto->empresa=Auth::user()->empresa;
@@ -413,6 +432,7 @@ class ContactosController extends Controller
         $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
+        $contacto->vereda=$request->vereda;
         $contacto->direccion=$request->direccion;
         $contacto->email=mb_strtolower($request->email);
         $contacto->telefono1=$request->telefono1;
@@ -420,7 +440,7 @@ class ContactosController extends Controller
         $contacto->fax=$request->fax;
         $contacto->celular=$request->celular;
         $contacto->estrato=$request->estrato;
-        $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
+        $contacto->tipo_contacto = count($request->tipo_contacto) == 2 ? 2 : $request->tipo_contacto[0];
         $contacto->observaciones=$request->observaciones;
 
         $contacto->fk_idpais = $request->pais;
@@ -478,6 +498,9 @@ class ContactosController extends Controller
     }
 
     public function update(Request $request, $id){
+        $request->validate([
+            'tipo_contacto' => 'required'
+        ]);
         $contacto = Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
         if ($contacto) {
             $contacto->empresa=Auth::user()->empresa;
@@ -489,6 +512,7 @@ class ContactosController extends Controller
             $contacto->apellido1=$request->apellido1;
             $contacto->apellido2=$request->apellido2;
             $contacto->barrio=$request->barrio;
+            $contacto->vereda=$request->vereda;
             $contacto->direccion=$request->direccion;
             $contacto->email=mb_strtolower($request->email);
             $contacto->telefono1=$request->telefono1;
@@ -498,7 +522,7 @@ class ContactosController extends Controller
             $contacto->estrato=$request->estrato;
             $contacto->observaciones=$request->observaciones;
             $contacto->serial_onu=$request->serial_onu;
-            $contacto->tipo_contacto = count($request->contacto) == 2 ? 2 : $request->contacto[0];
+            $contacto->tipo_contacto = count($request->tipo_contacto) == 2 ? 2 : $request->tipo_contacto[0];
             $contacto->fk_idpais = $request->pais;
             $contacto->fk_iddepartamento = $request->departamento;
             $contacto->fk_idmunicipio    = $request->municipio;

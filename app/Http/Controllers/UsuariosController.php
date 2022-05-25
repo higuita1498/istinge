@@ -172,7 +172,7 @@ class UsuariosController extends Controller
     
     public function verPermisos(Request $request){
         $idUsuario = $request->idUsuario;
-        $modulos = DB::table('permisos_modulo')->select('id','nombre_modulo')->where('status',1)->get();
+        $modulos = DB::table('permisos_modulo')->select('id','nombre_modulo')->where('status',1)->orderBy('orden', 'asc')->get();
         
         $permisosUsuario = DB::select("SELECT
                                         b.id,b.id_modulo,b.nombre_permiso,p.id_permiso,p.id_usuario

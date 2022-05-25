@@ -77,7 +77,7 @@
     @if(isset($_SESSION['permisos']['411']))
         <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
     @endif
-    @if(isset($_SESSION['permisos']['201']))
+    @if(isset($_SESSION['permisos']['202']))
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
     @endif
 
@@ -112,72 +112,75 @@
     @endif
     
     <div class="container-fluid d-none" id="form-filter">
-    	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
-    		<div class="card-body py-0">
-    			<div class="row">
-    				<div class="col-md-2 offset-md-1 pl-0 pt-1">
-    					<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
-							@foreach ($clientes as $cliente)
-								<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
-							@endforeach
-						</select>
-    				</div>
-    				<div class="col-md-2 pl-0 pt-1">
-    					<select title="Gestionado" class="form-control rounded selectpicker" id="created_by" data-size="5" data-live-search="true">
-							@foreach ($usuarios as $usuario)
-								<option value="{{ $usuario->id}}">{{ $usuario->nombres}}</option>
-							@endforeach
-						</select>
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    				    <select title="Servidor" class="form-control rounded selectpicker" id="servidor" data-size="5" data-live-search="true">
-                			@foreach ($servidores as $servidor)
-                			<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
-                			@endforeach
-                		</select>
-                    </div>
-                    <div class="col-md-2 pl-1 pt-1">
-                        <select title="Grupo Corte" class="form-control rounded selectpicker" id="grupo_corte_q" data-size="5" data-live-search="true">
-                			@foreach ($grupos_corte as $grupo_corte)
-								<option value="{{ $grupo_corte->id}}">{{ $grupo_corte->nombre}}</option>
-							@endforeach
-                		</select>
-                    </div>
-    				<div class="col-md-2 pl-0 pt-1 d-none">
-    					<select title="Factura" class="form-control rounded selectpicker" id="estatus" data-size="5" data-live-search="true">
-							<option value="A">Cerrada (Pagada)</option>
-							<option value="1">Abierta (Sin Pagar)</option>
-						</select>
-    				</div>
-    				
-    				{{--<div class="col-md-2 offset-md-1 pl-0 pt-1">--}}
-    				<div class="col-md-2 pl-0 pt-1">
-    					<select title="Estado" class="form-control rounded selectpicker" id="estado" data-size="5" data-live-search="true">
-							{{--<option value="A">Sin Gestionar</option>--}}
-							<option value="1">Gestionado</option>
-							<option value="3">Gestionado/Sin Contestar</option>
-							<option value="6">Gestionado / Nro Equivocado</option>
-							<option value="2">Promesa Incumplida</option>
-							<option value="4">Retirado</option>
-							<option value="5">Retirado Total</option>
-						</select>
-    				</div>
-    				
-    				{{--<div class="col-md-2 pl-1 pt-1">--}}
-    				<div class="col-md-2 offset-md-1 pl-0 pt-1">
-    					<input type="text" class="form-control datepicker"  id="desde" value="{{$ini}}" name="fecha" required="" >
-    				</div>
-    				<div class="col-md-2 pl-1 pt-1">
-    					<input type="text" class="form-control datepickerinput" id="hasta" value="{{$fin}}" name="hasta" required="">
-    				</div>
-    				<div class="col-md-2 pl-0 pt-1 text-left">
-    					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-    					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
-    					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
-    				</div>
-    			</div>
-    		</div>
-    	</div>
+    	<fieldset>
+            <legend>Filtro de Búsqueda</legend>
+	    	<div class="card shadow-sm border-0">
+	    		<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+	    			<div class="row">
+	    				<div class="col-md-3 pl-0 pt-1">
+	    					<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+								@foreach ($clientes as $cliente)
+									<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+								@endforeach
+							</select>
+	    				</div>
+	    				<div class="col-md-3 pl-0 pt-1">
+	    					<select title="Gestionado" class="form-control rounded selectpicker" id="created_by" data-size="5" data-live-search="true">
+								@foreach ($usuarios as $usuario)
+									<option value="{{ $usuario->id}}">{{ $usuario->nombres}}</option>
+								@endforeach
+							</select>
+	    				</div>
+	    				<div class="col-md-3 pl-1 pt-1">
+	    				    <select title="Servidor" class="form-control rounded selectpicker" id="servidor" data-size="5" data-live-search="true">
+	                			@foreach ($servidores as $servidor)
+	                			<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
+	                			@endforeach
+	                		</select>
+	                    </div>
+	                    <div class="col-md-3 pl-1 pt-1">
+	                        <select title="Grupo Corte" class="form-control rounded selectpicker" id="grupo_corte_q" data-size="5" data-live-search="true">
+	                			@foreach ($grupos_corte as $grupo_corte)
+									<option value="{{ $grupo_corte->id}}">{{ $grupo_corte->nombre}}</option>
+								@endforeach
+	                		</select>
+	                    </div>
+	    				<div class="col-md-3 pl-0 pt-1 d-none">
+	    					<select title="Factura" class="form-control rounded selectpicker" id="estatus" data-size="5" data-live-search="true">
+								<option value="A">Cerrada (Pagada)</option>
+								<option value="1">Abierta (Sin Pagar)</option>
+							</select>
+	    				</div>
+
+	    				{{--<div class="col-md-3 pl-0 pt-1">--}}
+	    				<div class="col-md-3 pl-0 pt-1">
+	    					<select title="Estado" class="form-control rounded selectpicker" id="estado" data-size="5" data-live-search="true">
+								{{--<option value="A">Sin Gestionar</option>--}}
+								<option value="1">Gestionado</option>
+								<option value="3">Gestionado/Sin Contestar</option>
+								<option value="6">Gestionado / Nro Equivocado</option>
+								<option value="2">Promesa Incumplida</option>
+								<option value="4">Retirado</option>
+								<option value="5">Retirado Total</option>
+							</select>
+	    				</div>
+
+	    				{{--<div class="col-md-3 pl-1 pt-1">--}}
+	    				<div class="col-md-3 pl-0 pt-1">
+	    					<input type="text" class="form-control datepicker"  id="desde" value="{{$ini}}" name="fecha" required="" >
+	    				</div>
+	    				<div class="col-md-3 pl-1 pt-1">
+	    					<input type="text" class="form-control datepickerinput" id="hasta" value="{{$fin}}" name="hasta" required="">
+	    				</div>
+	    				<div class="col-md-2 pl-0 pt-1 text-left">
+	    					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+	    					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+	    					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
+	    				</div>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </fieldset>
     </div>
     
     <div class="row card-description">

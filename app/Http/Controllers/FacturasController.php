@@ -1533,7 +1533,7 @@ class FacturasController extends Controller{
 
 
 
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
           // if there is a search parameter, $requestData['search']['value'] contains search parameter
            $facturas=$facturas->where(function ($query) use ($requestData) {
               $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
@@ -1667,7 +1667,7 @@ class FacturasController extends Controller{
             ->where('factura.cliente',$contacto)
             ->groupBy('if.factura');
 
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
           // if there is a search parameter, $requestData['search']['value'] contains search parameter
            $facturas=$facturas->where(function ($query) use ($requestData) {
               $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
@@ -2534,6 +2534,72 @@ class FacturasController extends Controller{
                         $factura->response = $msj;
                         $factura->save();
                         return back()->with('success', 'Envío Éxitoso: '.$msj);
+                    }
+                }else{
+                    $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
+                    return back()->with('danger', $mensaje);
+                }
+            }elseif($servicio->nombre == 'SmsEasySms'){
+                if($servicio->user && $servicio->pass){
+                    $post['to'] = array('57'.$numero);
+                    $post['text'] = $mensaje;
+                    $post['from'] = "";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                    array(
+                        "Accept: application/json",
+                        "Authorization: Basic ".base64_encode($login.":".$password)));
+                    $result = curl_exec ($ch);
+                    $err  = curl_error($ch);
+                    curl_close($ch);
+
+                    if ($err) {
+
+                    }else{
+                        $response = json_decode($result, true);
+                        if(isset($response['error'])){
+                            if($response['error']['code'] == 102){
+                                $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                            }else if($response['error']['code'] == 103){
+                                $msj = "Nombre de usuario o contraseña desconocidos";
+                            }else if($response['error']['code'] == 104){
+                                $msj = "Falta el mensaje de texto";
+                            }else if($response['error']['code'] == 105){
+                                $msj = "Mensaje de texto demasiado largo";
+                            }else if($response['error']['code'] == 106){
+                                $msj = "Falta el remitente";
+                            }else if($response['error']['code'] == 107){
+                                $msj = "Remitente demasiado largo";
+                            }else if($response['error']['code'] == 108){
+                                $msj = "No hay fecha y hora válida para enviar";
+                            }else if($response['error']['code'] == 109){
+                                $msj = "URL de notificación incorrecta";
+                            }else if($response['error']['code'] == 110){
+                                $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                            }else if($response['error']['code'] == 111){
+                                $msj = "Crédito/Saldo insuficiente";
+                            }else if($response['error']['code'] == 112){
+                                $msj = "Dirección IP no permitida";
+                            }else if($response['error']['code'] == 113){
+                                $msj = "Codificación no válida";
+                            }else{
+                                $msj = $response['error']['description'];
+                            }
+                            $factura->response = $msj;
+                            $factura->save();
+                            return back()->with('danger', 'Envío Fallido: '.$msj);
+                        }else{
+                            $factura->response = 'Mensaje enviado correctamente.';
+                            $factura->save();
+                            return back()->with('success', 'Mensaje enviado correctamente.');
+                        }
                     }
                 }else{
                     $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';

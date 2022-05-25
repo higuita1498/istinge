@@ -164,7 +164,7 @@ class MikrotikController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik) {
-            view()->share(['title' => 'Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server']);
+            view()->share(['title' => 'Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server', 'middel' => true]);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
             return view('mikrotik.show')->with(compact('mikrotik', 'segmentos'));
         }

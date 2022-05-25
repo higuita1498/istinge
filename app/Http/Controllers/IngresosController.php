@@ -256,12 +256,10 @@ class IngresosController extends Controller
     public function store(Request $request){
         
         if($request->realizar == 2){
-            
             $this->storeIngresoPucCategoria($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
-
         }else{
             if(auth()->user()->rol == 8){
                 $monto_pagar = 0;
@@ -440,8 +438,7 @@ class IngresosController extends Controller
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 PucMovimiento::ingreso($ingreso,1,2);   
             }
-            
-            
+
             //sumo a las numeraciones el recibo
             $nro->caja = $caja + 1;
             $nro->save();
@@ -534,6 +531,27 @@ class IngresosController extends Controller
                                 $err  = curl_error($curl);
                                 curl_close($curl);
                             }
+                        }elseif($servicio->nombre == 'SmsEasySms'){
+                            if($servicio->user && $servicio->pass){
+                                $post['to'] = array('57'.$numero);
+                                $post['text'] = $mensaje;
+                                $post['from'] = "";
+                                $login = $servicio->user;
+                                $password = $servicio->pass;
+
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                    array(
+                                        "Accept: application/json",
+                                        "Authorization: Basic ".base64_encode($login.":".$password)));
+                                $result = curl_exec ($ch);
+                                $err  = curl_error($ch);
+                                curl_close($ch);
+                            }
                         }else{
                             if($servicio->user && $servicio->pass){
                                 $post['to'] = array('57'.$numero);
@@ -620,9 +638,14 @@ class IngresosController extends Controller
                     }
                 }
             }
+
+            $print = false;
+            if ($request->print) {
+                $print = true;
+            }
             
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id);
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('print', $print);
         }
     }
 
@@ -711,7 +734,8 @@ class IngresosController extends Controller
             }
             view()->share(['icon' =>'', 'title' => $titulo, 'middel'=>true]);
             $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
-            return view('ingresos.show')->with(compact('ingreso', 'items', 'retenciones'));
+            $print = false;
+            return view('ingresos.show')->with(compact('ingreso', 'items', 'retenciones', 'print'));
         }
         return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
     }
@@ -1244,6 +1268,27 @@ class IngresosController extends Controller
                                             $result = curl_exec ($curl);
                                             $err  = curl_error($curl);
                                             curl_close($curl);
+                                        }
+                                    }elseif($servicio->nombre == 'SmsEasySms'){
+                                        if($servicio->user && $servicio->pass){
+                                            $post['to'] = array('57'.$numero);
+                                            $post['text'] = $mensaje;
+                                            $post['from'] = "";
+                                            $login = $servicio->user;
+                                            $password = $servicio->pass;
+
+                                            $ch = curl_init();
+                                            curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                            curl_setopt($ch, CURLOPT_POST, 1);
+                                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                            curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                                array(
+                                                    "Accept: application/json",
+                                                    "Authorization: Basic ".base64_encode($login.":".$password)));
+                                            $result = curl_exec ($ch);
+                                            $err  = curl_error($ch);
+                                            curl_close($ch);
                                         }
                                     }else{
                                         if($servicio->user && $servicio->pass){

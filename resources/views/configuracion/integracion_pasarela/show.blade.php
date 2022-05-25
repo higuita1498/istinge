@@ -79,16 +79,40 @@
 							<td>{{$servicio->api_event}}</td>
 						</tr>
 						@endif
+						@if($servicio->user)
+						<tr>
+							<td class="bg-th">Usuario</td>
+							<td>{{$servicio->user}}</td>
+						</tr>
+						@endif
+						@if($servicio->pass)
+						<tr>
+							<td class="bg-th">Contraseña</td>
+							<td>{{$servicio->pass}}</td>
+						</tr>
+						@endif
 						@if($servicio->accountId)
 						<tr>
-							<td class="bg-th">accountId</td>
+							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'ID de cliente':'merchantId'}}</td>
 							<td>{{$servicio->accountId}}</td>
 						</tr>
 						@endif
 						@if($servicio->merchantId)
 						<tr>
-							<td class="bg-th">merchantId</td>
+							<td class="bg-th">{{ $servicio->nombre == 'ComboPay' ? 'Clave secreta':'accountId'}} </td>
 							<td>{{$servicio->merchantId}}</td>
+						</tr>
+						@endif
+						@if($servicio->p_cust_id_cliente)
+						<tr>
+							<td class="bg-th">p_cust_id_cliente</td>
+							<td>{{$servicio->p_cust_id_cliente}}</td>
+						</tr>
+						@endif
+						@if($servicio->p_key)
+						<tr>
+							<td class="bg-th">p_key</td>
+							<td>{{$servicio->p_key}}</td>
 						</tr>
 						@endif
 						@if($servicio->web)

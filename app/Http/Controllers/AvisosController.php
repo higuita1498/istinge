@@ -198,7 +198,43 @@ class AvisosController extends Controller
                         }else{
                             $succ++;
                         }
-                        return redirect('empresa/configuracion/integracion-sms')->with($respuesta, $msj)->with('id', $servicio->id);
+                        return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado. SMS Enviados: '.$fail.' - SMS Fallidos: '.$succ);
+                    }else{
+                        $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
+                        return redirect('empresa/avisos')->with('danger', $mensaje);
+                    }
+                }elseif($servicio->nombre == 'SmsEasySms'){
+                    if($servicio->user && $servicio->pass){
+                        $post['to'] = $numeros;
+                        $post['text'] = $plantilla->contenido;
+                        $post['from'] = "";
+                        $login = $servicio->user;
+                        $password = $servicio->pass;
+
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                        $result = curl_exec ($ch);
+                        $err  = curl_error($ch);
+                        curl_close($ch);
+
+                        if ($err) {
+                            return redirect('empresa/avisos')->with('danger', 'Respuesta API SmsEasySms: '.$err);
+                        }else{
+                            $response = json_decode($result, true);
+
+                            if(isset($response['error'])){
+                                $fail++;
+                            }else{
+                                $succ++;
+                            }
+                        }
                     }else{
                         $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                         return redirect('empresa/avisos')->with('danger', $mensaje);

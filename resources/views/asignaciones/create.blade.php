@@ -194,8 +194,8 @@
         var clearButton = wrapper.querySelector("[data-action=clear]");
         var changeColorButton = wrapper.querySelector("[data-action=change-color]");
         var savePNGButton = wrapper.querySelector("[data-action=save-png]");
-        var saveJPGButton = wrapper.querySelector("[data-action=save-jpg]");
-        var saveSVGButton = wrapper.querySelector("[data-action=save-svg]");
+        // var saveJPGButton = wrapper.querySelector("[data-action=save-jpg]");
+        // var saveSVGButton = wrapper.querySelector("[data-action=save-svg]");
         var canvas = wrapper.querySelector("canvas");
         var signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgb(255, 255, 255)'
@@ -252,26 +252,26 @@
                 //document.getElementById("submitcheck").click();
             }
         });
-        saveJPGButton.addEventListener("click", function (event) {
-            if (signaturePad.isEmpty()) {
-                alert("Ingrese la firma del cliente.");
-                return false;
-            } else {
-                var dataURL = signaturePad.toDataURL("image/jpeg");
-                document.getElementById("dataImg").value = dataURL;
-                document.getElementById("submitcheck").click();
-            }
-        });
-        saveSVGButton.addEventListener("click", function (event) {
-            if (signaturePad.isEmpty()) {
-                alert("Ingrese la firma del cliente.");
-                return false;
-            } else {
-                var dataURL = signaturePad.toDataURL('image/svg+xml');
-                document.getElementById("dataImg").value = dataURL;
-                document.getElementById("submitcheck").click();
-            }
-        });
+        // saveJPGButton.addEventListener("click", function (event) {
+        //     if (signaturePad.isEmpty()) {
+        //         alert("Ingrese la firma del cliente.");
+        //         return false;
+        //     } else {
+        //         var dataURL = signaturePad.toDataURL("image/jpeg");
+        //         document.getElementById("dataImg").value = dataURL;
+        //         document.getElementById("submitcheck").click();
+        //     }
+        // });
+        // saveSVGButton.addEventListener("click", function (event) {
+        //     if (signaturePad.isEmpty()) {
+        //         alert("Ingrese la firma del cliente.");
+        //         return false;
+        //     } else {
+        //         var dataURL = signaturePad.toDataURL('image/svg+xml');
+        //         document.getElementById("dataImg").value = dataURL;
+        //         document.getElementById("submitcheck").click();
+        //     }
+        // });
     </script>
 @endsection
 

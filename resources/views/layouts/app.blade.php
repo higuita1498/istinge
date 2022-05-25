@@ -207,6 +207,20 @@
                 background-color: transparent;
                 border-color: transparent;
             }
+            fieldset {
+                border-width: 1px;
+                border-style: double;
+                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+            }
+            legend {
+                width: auto;
+                padding: 0% 2%;
+                font-size: 1rem;
+                color: #fff;
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border-radius: 5px;
+                text-transform: uppercase;
+            }
         </style>
         @yield('style')
     </head>

@@ -41,6 +41,12 @@ Route::post('pagos/wompi', 'CronController@eventosWompi');
 /** EVENTOS PAYU **/
 Route::post('pagos/payu', 'CronController@eventosPayu');
 
+/** EVENTOS EPAYCO **/
+Route::post('pagos/epayco', 'CronController@eventosEpayco');
+
+/** EVENTOS COMBOPAY **/
+Route::post('pagos/combopay', 'CronController@eventosCombopay');
+
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
  * facturasController@enviar

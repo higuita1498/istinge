@@ -102,6 +102,13 @@
 			</span>
 		</div>
 		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
+			<label class="control-label">Corregimiento/Vereda</label>
+			<input type="text" class="form-control" id="vereda" name="vereda" maxlength="200"  value="{{$contacto->vereda}}">
+			<span class="help-block error">
+				<strong>{{ $errors->first('vereda') }}</strong>
+			</span>
+		</div>
+		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
 			<label class="control-label">Barrio</label>
 			<input type="text" class="form-control" id="barrio" name="barrio" maxlength="200"  value="{{$contacto->barrio}}">
 			<span class="help-block error">
@@ -208,16 +215,16 @@
 	  			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
 				<div class="form-check form-check-flat">
                     <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" name="contacto[]" value="0" @if($contacto->tipo_contacto==0  ||  $contacto->tipo_contacto==2 ) checked="" @endif> Cliente
+                      <input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="0" @if($contacto->tipo_contacto==0  ||  $contacto->tipo_contacto==2 ) checked="" @endif> Cliente
                     <i class="input-helper"></i></label>
                   </div>
                   <div class="form-check form-check-flat">
                     <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" name="contacto[]" value="1" @if($contacto->tipo_contacto==1 ||  $contacto->tipo_contacto==2 ) checked="" @endif> Proveedor
+                      <input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="1" @if($contacto->tipo_contacto==1 ||  $contacto->tipo_contacto==2 ) checked="" @endif> Proveedor
                     <i class="input-helper"></i></label>
                   </div>
                   <span class="help-block error">
-					<strong>{{ $errors->first('contacto') }}</strong>
+					<strong>{{ $errors->first('tipo_contacto') }}</strong>
 				</span>
 			</div>
   			<div class="form-group col-md-12">

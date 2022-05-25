@@ -13,7 +13,7 @@
       			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
       			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
       				@foreach($identificaciones as $identificacion)
-      				  <option @if($identificacion->id == 3) ? selected : ''  @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
+      				  <option @if($identificacion->id == 3) ? selected @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
       				@endforeach
       			</select>
       			<span class="help-block error">
@@ -94,6 +94,13 @@
       				<strong>{{ $errors->first('direccion') }}</strong>
       			</span>
       		</div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Corregimiento/Vereda</label>
+                <input type="text" name="vereda" class="form-control" value="{{old('vereda')}}">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('vereda') }}</strong>
+                </span>
+            </div>
       		<div class="form-group col-md-3">
       			<label class="control-label">Barrio </label>
       			<input type="text" name="barrio" class="form-control" value="{{old('barrio')}}">
@@ -161,16 +168,16 @@
     			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
     			<div class="form-check form-check-flat">
     				<label class="form-check-label">
-    					<input type="checkbox" class="form-check-input" name="contacto[]" value="0" checked=""> Cliente
+    					<input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="0" checked=""> Cliente
     					<i class="input-helper"></i></label>
     			</div>
     			<div class="form-check form-check-flat">
     				<label class="form-check-label">
-    					<input type="checkbox" class="form-check-input" name="contacto[]" value="1"> Proveedor
+    					<input type="checkbox" class="form-check-input" name="tipo_contacto[]" value="1"> Proveedor
     					<i class="input-helper"></i></label>
     			</div>
     			<span class="help-block error">
-    				<strong>{{ $errors->first('contacto') }}</strong>
+    				<strong>{{ $errors->first('tipo_contacto') }}</strong>
     			</span>
     		</div>
       		<div class="form-group col-md-12">
@@ -198,8 +205,8 @@
     <script>
         $('#us2').locationpicker({
             location: {
-                latitude: 3.619790333228524,
-                longitude: -73.79701780434284
+                latitude: {{ $gmaps->latitude }},
+                longitude: {{ $gmaps->longitude }}
             },
             zoom: 6,
             radius: 300,

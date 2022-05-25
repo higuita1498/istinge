@@ -4,7 +4,7 @@
 	    @csrf
 	    <input name="_method" type="hidden" value="PATCH">
 	    <div class="row">
-	        @if($servicio->nombre == 'Colombia RED' || $servicio->nombre == 'Hablame SMS')
+	        @if($servicio->nombre == 'Colombia RED' || $servicio->nombre == 'Hablame SMS' || $servicio->nombre == 'SmsEasySms')
 	        <div class="col-md-4 form-group">
 	            <label class="control-label">{{ $servicio->nombre == 'Hablame SMS' ? 'Account' : 'Nombre de Usuario'}} <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" id="user" name="user"  required="" value="{{$servicio->user}}" maxlength="200">

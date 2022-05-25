@@ -130,7 +130,9 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
+						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
+						@endif
 						@endif
 					</div>
 				</div>
@@ -196,7 +198,9 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
+						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
+						@endif
 						@endif
 					</div>
 				</div>
@@ -232,7 +236,9 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
+						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
+						@endif
 						@endif
 					</div>
 				</div>
@@ -264,7 +270,9 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
+						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
+						@endif
 						@endif
 					</div>
 				</div>
@@ -316,7 +324,9 @@
 					</div>
 					<div class="col-md-4">
 						@if (!$modoLectura->success)
+						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
+						@endif
 						@endif
 					</div>
 				</div>

@@ -121,6 +121,7 @@
                     </div>
                     <div class="collapse show" id="welcomeAtajos">
                         <div class="row">
+                            @if(isset($_SESSION['permisos']['2']))
                             <div class="col-md-2 offset-md-1">
                                 <a href="{{route('contactos.create')}}">
                                 <div class="card-counter success">
@@ -130,6 +131,8 @@
                                 </div>
                                 </a>
                             </div>
+                            @endif
+                            @if(isset($_SESSION['permisos']['411']))
                             <div class="col-md-2">
                                 <a href="{{route('contratos.create')}}">
                                 <div class="card-counter success">
@@ -139,6 +142,8 @@
                                 </div>
                                 </a>
                             </div>
+                            @endif
+                            @if(isset($_SESSION['permisos']['202']))
                             <div class="col-md-2">
                                 <a href="{{route('radicados.create')}}">
                                 <div class="card-counter success">
@@ -148,6 +153,8 @@
                                 </div>
                                 </a>
                             </div>
+                            @endif
+                            @if(isset($_SESSION['permisos']['42']))
                             <div class="col-md-2">
                                 <a href="{{route('facturas.create')}}">
                                 <div class="card-counter success">
@@ -157,6 +164,8 @@
                                 </div>
                                 </a>
                             </div>
+                            @endif
+                            @if(isset($_SESSION['permisos']['420']))
                             <div class="col-md-2">
                                 <a href="{{route('facturas.create-electronica')}}">
                                 <div class="card-counter success">
@@ -166,6 +175,7 @@
                                 </div>
                                 </a>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -184,7 +194,7 @@
                     <div class="collapse show" id="welcomeContratos">
                         <div class="row">
                             <div class="col-md-3 offset-md-1">
-                                <a href="{{route('contratos.index')}}">
+                                <a href="{{ isset($_SESSION['permisos']['411']) ? route('contratos.index') : 'javascript:void' }}">
                     			<div class="card-counter primary">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contra_ena + $contra_disa }}</span>
@@ -193,7 +203,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    		    <a href="{{route('contratos.enabled')}}">
+                                <a href="{{ isset($_SESSION['permisos']['411']) ? route('contratos.enabled') : 'javascript:void' }}">
                     			<div class="card-counter success">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contra_ena }}</span>
@@ -202,7 +212,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    		    <a href="{{route('contratos.disabled')}}">
+                                <a href="{{ isset($_SESSION['permisos']['411']) ? route('contratos.disabled') : 'javascript:void' }}">
                     			<div class="card-counter danger">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contra_disa }}</span>
@@ -227,7 +237,7 @@
                     <div class="collapse show" id="welcomeFacturacion">
                         <div class="row">
                             <div class="col-md-3 offset-md-1">
-                    		    <a href="{{route('facturas.index')}}">
+                    		    <a href="{{ isset($_SESSION['permisos']['40']) ? route('facturas.index') : 'javascript:void' }}">
                     			<div class="card-counter primary">
                                     <i class="fas fa-file-invoice-dollar"></i>
                                     <span class="count-numbers">{{ $factura }}</span>
@@ -236,7 +246,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    		    <a href="{{ route('facturas.tipo', 'cerradas') }}">
+                                <a href="{{ isset($_SESSION['permisos']['40']) ? route('facturas.tipo', 'cerradas') : 'javascript:void' }}">
                     			<div class="card-counter success">
                                     <i class="fas fa-file-invoice-dollar"></i>
                                     <span class="count-numbers">{{ $factura_cerrada }}</span>
@@ -245,7 +255,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    		    <a href="{{ route('facturas.tipo', 'abiertas') }}">
+                                <a href="{{ isset($_SESSION['permisos']['40']) ? route('facturas.tipo', 'abiertas') : 'javascript:void' }}">
                     			<div class="card-counter danger">
                                     <i class="fas fa-file-invoice-dollar"></i>
                                     <span class="count-numbers">{{ $factura_abierta }}</span>
@@ -270,7 +280,7 @@
                     <div class="collapse show" id="welcomeRadicados">
                         <div class="row">
                             <div class="col-md-3 offset-md-1">
-                    			<a href="{{route('radicados.index')}}">
+                                <a href="{{ isset($_SESSION['permisos']['201']) ? route('radicados.index') : 'javascript:void' }}">
                     			<div class="card-counter primary">
                                     <i class="fas fa-ticket-alt"></i>
                                     <span class="count-numbers">{{ $radicados }}</span>
@@ -279,7 +289,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    			<a href="{{route('radicados.index')}}">
+                                <a href="{{ isset($_SESSION['permisos']['201']) ? route('radicados.index') : 'javascript:void' }}">
                     			<div class="card-counter success">
                                     <i class="fas fa-ticket-alt"></i>
                                     <span class="count-numbers">{{ $radicados_solventado }}</span>
@@ -288,7 +298,7 @@
                     			</a>
                     		</div>
                     		<div class="col-md-3">
-                    			<a href="{{route('radicados.index')}}">
+                                <a href="{{ isset($_SESSION['permisos']['201']) ? route('radicados.index') : 'javascript:void' }}">
                     			<div class="card-counter danger">
                                     <i class="fas fa-ticket-alt"></i>
                                     <span class="count-numbers">{{ $radicados_pendiente }}</span>

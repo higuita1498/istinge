@@ -37,50 +37,53 @@
     @endif
 
 	<div class="container-fluid d-none" id="form-filter">
-		<div class="card shadow-sm border-0">
-			<div class="card-body py-0">
-				<div class="row">
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Número" id="numero" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select class="form-control rounded selectpicker" id="cliente" title="Cliente" data-size="5" data-live-search="true">
-							@foreach ($clientes as $cliente)
-							<option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit }}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<input type="text" placeholder="Fecha" id="fecha-pago" class="form-control rounded">
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select id="banco" class="form-control rounded selectpicker m-0 p-0" title="Cuenta" data-width="150px" data-size="5" data-live-search="true">
-							@php $tipos_cuentas=\App\Banco::tipos();@endphp
-							@foreach($tipos_cuentas as $tipo_cuenta)
-								<optgroup label="{{$tipo_cuenta['nombre']}}">
-									@foreach($bancos as $cuenta)
-									    @if($cuenta->tipo_cta==$tipo_cuenta['nro'])
-									        <option value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
-									    @endif
-									@endforeach
-								</optgroup>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<select class="form-control rounded selectpicker" id="metodo" title="Método de Pago" data-size="5" data-live-search="true">
-							@foreach($metodos as $metodo)
-							    <option value="{{$metodo->id}}">{{$metodo->metodo}}</option>
-							@endforeach
-						</select>
-					</div>
-					<div class="col-md-2 pl-1 pt-1">
-						<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-						<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+		<fieldset>
+            <legend>Filtro de Búsqueda</legend>
+			<div class="card shadow-sm border-0">
+				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+					<div class="row">
+						<div class="col-md-2 pl-1 pt-1">
+							<input type="text" placeholder="Número" id="numero" class="form-control rounded">
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<select class="form-control rounded selectpicker" id="cliente" title="Cliente" data-size="5" data-live-search="true">
+								@foreach ($clientes as $cliente)
+								<option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<input type="text" placeholder="Fecha" id="fecha-pago" class="form-control rounded">
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<select id="banco" class="form-control rounded selectpicker m-0 p-0" title="Cuenta" data-width="150px" data-size="5" data-live-search="true">
+								@php $tipos_cuentas=\App\Banco::tipos();@endphp
+								@foreach($tipos_cuentas as $tipo_cuenta)
+									<optgroup label="{{$tipo_cuenta['nombre']}}">
+										@foreach($bancos as $cuenta)
+										    @if($cuenta->tipo_cta==$tipo_cuenta['nro'])
+										        <option value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
+										    @endif
+										@endforeach
+									</optgroup>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<select class="form-control rounded selectpicker" id="metodo" title="Método de Pago" data-size="5" data-live-search="true">
+								@foreach($metodos as $metodo)
+								    <option value="{{$metodo->id}}">{{$metodo->metodo}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</fieldset>
 	</div>
 
 	<div class="row card-description">
