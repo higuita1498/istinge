@@ -152,6 +152,11 @@ class PucMovimiento extends Model
                     $mov->formapago_id = $key;
                     $mov->recibocaja_id = $request->selectanticipo[$i];
                     $mov->save();
+
+                    //si hay un rc. Descontamos el saldo a favor tanto del cliente como del recibo de caja.
+                    if($idIngreso){
+                        $mov->restarAnticipo();
+                    }
     
                     $i++;
                 }
@@ -647,6 +652,20 @@ class PucMovimiento extends Model
     public function totalCredito(){
         return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
         ->select(DB::raw("SUM((`credito`)) as total"))->first();
-    }    
+    } 
+    
+    public function restarAnticipo(){
+
+        // if($this->debito > 0){$valorUsado = $this->debito;}
+        // else{$valorUsado = $this->credito;}
+
+        // if($this->recibocaja_id != null || $this->recibocaja_id != 0){
+        //     $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
+
+        //     if($ingreso){
+        //         $ingreso->valor
+        //     }
+        // }
+    }
 
 }
