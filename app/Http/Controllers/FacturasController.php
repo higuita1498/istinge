@@ -1534,7 +1534,7 @@ class FacturasController extends Controller{
 
 
 
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
           // if there is a search parameter, $requestData['search']['value'] contains search parameter
            $facturas=$facturas->where(function ($query) use ($requestData) {
               $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
@@ -1668,7 +1668,7 @@ class FacturasController extends Controller{
             ->where('factura.cliente',$contacto)
             ->groupBy('if.factura');
 
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
           // if there is a search parameter, $requestData['search']['value'] contains search parameter
            $facturas=$facturas->where(function ($query) use ($requestData) {
               $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
@@ -3272,5 +3272,30 @@ class FacturasController extends Controller{
         }else{
             return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE WHATSAPP HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
         }
+    }
+
+    public function convertirelEctronica($facturaId){
+        $factura = Factura::find($facturaId);
+        $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+
+        if($num){
+            $numero = $num->nro + 1;
+        }else{
+            $numero = 1;
+        }
+        
+        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+
+        //Actualiza el nro de inicio para la numeracion seleccionada
+        $inicio = $nro->inicio;
+        $nro->inicio += 1;
+        $nro->save();
+
+        $factura->codigo=$nro->prefijo.$inicio;
+        $factura->nro = $numero;
+        $factura->numeracion = $nro->id;
+        $factura->save();
+
+        return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
     }
 }

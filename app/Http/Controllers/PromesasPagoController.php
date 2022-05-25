@@ -94,7 +94,7 @@ class PromesasPagoController extends Controller
         select('promesa_pago.*')->
         where('promesa_pago.cliente', $id);
         
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $promesas=$promesas->where(function ($query) use ($requestData) {
                 $query->where('factura.codigo', 'like', '%'.$requestData->search['value'].'%');

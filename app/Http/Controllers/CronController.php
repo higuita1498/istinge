@@ -192,97 +192,95 @@ class CronController extends Controller
                     array_push($numeros, '57'.$numero);
 
                     ## ENVIO CORREO ##
+                    // $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
+                    // if($host){
+                    //     $existing = config('mail');
+                    //     $new =array_merge(
+                    //         $existing, [
+                    //             'host' => $host->servidor,
+                    //             'port' => $host->puerto,
+                    //             'encryption' => $host->seguridad,
+                    //             'username' => $host->usuario,
+                    //             'password' => $host->password,
+                    //             'from' => [
+                    //                 'address' => $host->address,
+                    //                 'name' => $host->name
+                    //             ],
+                    //         ]
+                    //     );
+                    //     config(['mail'=>$new]);
 
-                    $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
-                    if($host){
-                        $existing = config('mail');
-                        $new =array_merge(
-                            $existing, [
-                                'host' => $host->servidor,
-                                'port' => $host->puerto,
-                                'encryption' => $host->seguridad,
-                                'username' => $host->usuario,
-                                'password' => $host->password,
-                                'from' => [
-                                    'address' => $host->address,
-                                    'name' => $host->name
-                                ],
-                            ]
-                        );
-                        config(['mail'=>$new]);
+                    //     $empresa = Empresa::find($factura->empresa);
+                    //     $emails  = $factura->cliente()->email;
+                    //     $tipo    = 'Factura de venta original';
+                    //     view()->share(['title' => 'Imprimir Factura']);
+                    //     if ($factura) {
+                    //         $items = ItemsFactura::where('factura',$factura->id)->get();
+                    //         $itemscount=ItemsFactura::where('factura',$factura->id)->count();
+                    //         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
+                    //         $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
+                    //         //---------------------------------------------//
+                    //         if($factura->emitida == 1){
+                    //             $impTotal = 0;
+                    //             foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
+                    //                 if(isset($totalImp->total)){
+                    //                     $impTotal = $totalImp->total;
+                    //                 }
+                    //             }
 
-                        $empresa = Empresa::find($factura->empresa);
-                        $emails  = $factura->cliente()->email;
-                        $tipo    = 'Factura de venta original';
-                        view()->share(['title' => 'Imprimir Factura']);
-                        if ($factura) {
-                            $items = ItemsFactura::where('factura',$factura->id)->get();
-                            $itemscount=ItemsFactura::where('factura',$factura->id)->count();
-                            $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-                            $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
-                            //---------------------------------------------//
-                            if($factura->emitida == 1){
-                                $impTotal = 0;
-                                foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
-                                    if(isset($totalImp->total)){
-                                        $impTotal = $totalImp->total;
-                                    }
-                                }
+                    //             $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
+                    //             $infoEmpresa = Empresa::find($empresa->id);
+                    //             $data['Empresa'] = $infoEmpresa->toArray();
+                    //             $infoCliente = Contacto::find($factura->cliente);
+                    //             $data['Cliente'] = $infoCliente->toArray();
+                    //             /*..............................
+                    //             Construcción del código qr a la factura
+                    //             ................................*/
+                    //             $impuesto = 0;
+                    //             foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
+                    //                 if(isset($imp->total)){
+                    //                     $impuesto = $imp->total;
+                    //                 }
+                    //             }
 
-                                $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
-                                $infoEmpresa = Empresa::find($empresa->id);
-                                $data['Empresa'] = $infoEmpresa->toArray();
-                                $infoCliente = Contacto::find($factura->cliente);
-                                $data['Cliente'] = $infoCliente->toArray();
-                                /*..............................
-                                Construcción del código qr a la factura
-                                ................................*/
-                                $impuesto = 0;
-                                foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
-                                    if(isset($imp->total)){
-                                        $impuesto = $imp->total;
-                                    }
-                                }
+                    //             $codqr = "NumFac:" . $factura->codigo . "\n" .
+                    //             "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                    //             "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                    //             "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                    //             "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+                    //             "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
+                    //             "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+                    //             "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                    //             "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
+                    //             "CUFE:" . $CUFEvr;
+                    //             /*..............................
+                    //             Construcción del código qr a la factura
+                    //             ................................*/
+                    //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->stream();
+                    //         }else{
+                    //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->stream();
+                    //         }
+                    //         //-----------------------------------------------//
 
-                                $codqr = "NumFac:" . $factura->codigo . "\n" .
-                                "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-                                "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-                                "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-                                "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-                                "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
-                                "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-                                "ValorOtrosImpuestos:" .  0.00 . "\n" .
-                                "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
-                                "CUFE:" . $CUFEvr;
-                                /*..............................
-                                Construcción del código qr a la factura
-                                ................................*/
-                                $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->stream();
-                            }else{
-                                $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->stream();
-                            }
-                            //-----------------------------------------------//
+                    //         $total = Funcion::ParsearAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
+                    //         $key = Hash::make(date("H:i:s"));
+                    //         $toReplace = array('/', '$','.');
+                    //         $key = str_replace($toReplace, "", $key);
+                    //         $factura->nonkey = $key;
+                    //         $factura->save();
+                    //         $cliente = $factura->cliente()->nombre;
+                    //         $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
+                    //         $xmlPath = 'xml/empresa1/FV/FV-'.$factura->codigo.'.xml';
+                    //     }
 
-                            $total = Funcion::ParsearAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
-                            $key = Hash::make(date("H:i:s"));
-                            $toReplace = array('/', '$','.');
-                            $key = str_replace($toReplace, "", $key);
-                            $factura->nonkey = $key;
-                            $factura->save();
-                            $cliente = $factura->cliente()->nombre;
-                            $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
-                            $xmlPath = 'xml/empresa1/FV/FV-'.$factura->codigo.'.xml';
-                        }
-
-                        Mail::send('emails.emailAPI', compact('factura', 'total', 'cliente', 'empresa'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
-                            $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
-                            if(file_exists($xmlPath)){
-                                $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
-                            }
-                            $message->to($emails)->subject($tituloCorreo);
-                        });
-                    }
-
+                    //     Mail::send('emails.emailAPI', compact('factura', 'total', 'cliente', 'empresa'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+                    //         $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+                    //         if(file_exists($xmlPath)){
+                    //             $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+                    //         }
+                    //         $message->to($emails)->subject($tituloCorreo);
+                    //     });
+                    // }
                     ## ENVIO CORREO ##
                 }
             }

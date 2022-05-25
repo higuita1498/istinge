@@ -17,7 +17,6 @@
 
   <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
   	{{ csrf_field() }}
-  	<input type="hidden" name="tipo_contacto[]" id="tipo_contacto" value="0">
   	<div class="row">
   		<div class="form-group col-md-3">
   			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
@@ -105,7 +104,14 @@
   			</span>
   		</div>
   		<div class="form-group col-md-3">
-  			<label class="control-label">Barrio </label>
+  			<label class="control-label">Corregimiento/Vereda</label>
+  			<input type="text" name="vereda" class="form-control" value="{{old('vereda')}}">
+  			<span class="help-block error">
+  				<strong>{{ $errors->first('vereda') }}</strong>
+  			</span>
+  		</div>
+  		<div class="form-group col-md-3">
+  			<label class="control-label">Barrio</label>
   			<input type="text" name="barrio" class="form-control" value="{{old('barrio')}}">
   			<span class="help-block error">
   				<strong>{{ $errors->first('barrio') }}</strong>

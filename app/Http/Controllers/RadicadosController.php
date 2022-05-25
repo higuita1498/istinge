@@ -390,7 +390,7 @@ class RadicadosController extends Controller{
         ->where('radicados.empresa',Auth::user()->empresa);
         
         if ($contacto) { $movimientos=$movimientos->where('radicados.identificacion', $contacto); }
-        if ($requestData->search['value']) {
+        if (isset($requestData->search['value'])) {
             $movimientos=$movimientos->where(function ($query) use ($requestData) {
                 $query->where('radicados.identificacion', 'like', '%'.$requestData->search['value'].'%')
                 ->orwhere('radicados.nombre', 'like', '%'.$requestData->search['value'].'%')

@@ -21,6 +21,8 @@ use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use App\Empresa;
+use App\ServidorCorreo;
+use Mail;
 
 class AsignacionesController extends Controller
 {
@@ -39,7 +41,7 @@ class AsignacionesController extends Controller
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
     $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->get();
-    view()->share(['middel' => true]);
+    view()->share(['invert' => true]);
 
     return view('asignaciones.index')->with(compact('contratos'));
   }
@@ -145,5 +147,45 @@ class AsignacionesController extends Controller
       ]);
     }
     return response()->json(['success' => false]);
+  }
+
+  public function enviar($id){
+    view()->share(['title' => 'Contrato de Internet']);
+    $contrato = Contacto::where('id',$id)->where('empresa', Auth::user()->empresa)->first();
+
+    if($contrato) {
+      if (!$contrato->email) {
+        return back()->with('danger', 'EL CLIENTE NO TIENE UN CORREO ELECTRÓNICO REGISTRADO');
+      }
+
+      $pdf = PDF::loadView('pdf.contrato', compact('contrato'));
+      $tituloCorreo = Auth::user()->empresa()->nombre.": Contrato Digital";
+
+      $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+      if($host){
+        $existing = config('mail');
+        $new =array_merge(
+          $existing, [
+            'host' => $host->servidor,
+            'port' => $host->puerto,
+            'encryption' => $host->seguridad,
+            'username' => $host->usuario,
+            'password' => $host->password,
+            'from' => [
+              'address' => $host->address,
+              'name' => $host->name
+            ],
+          ]
+        );
+        config(['mail'=>$new]);
+      }
+      $emails = $contrato->email;
+      Mail::send('emails.contrato', compact('contrato'), function($message) use ($pdf, $emails,$tituloCorreo){
+        $message->attachData($pdf, 'contrato.pdf', ['mime' => 'application/pdf']);
+        $message->to($emails)->subject($tituloCorreo);
+      });
+      return back()->with('success', 'EL CONTRATO DIGITAL HA SIDO ENVIADO CORRECTAMENTE');
+    }
+    return back()->with('danger', 'CONTRATO DIGITAL NO ENVIADO');
   }
 }

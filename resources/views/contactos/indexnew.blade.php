@@ -84,6 +84,9 @@
 					</div>
 					@if($tipo_usuario == 0)
 					<div class="col-md-3 pl-1 pt-1">
+						<input type="text" placeholder="Corregimiento/Vereda" id="vereda" class="form-control rounded">
+					</div>
+					<div class="col-md-3 pl-1 pt-1">
 						<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
 					</div>
 					<div class="col-md-3 pl-1 pt-1">
@@ -182,6 +185,7 @@
             data.telefono1 = $('#telefono').val();
             data.direccion = $('#direccion').val();
             data.barrio = $('#barrio').val();
+            data.vereda = $('#vereda').val();
             data.email = $('#email').val();
             data.t_contrato = $('#t_contrato').val();
             data.serial_onu = $('#serial_onu').val();
@@ -223,6 +227,7 @@
 		$('#telefono').val('');
 		$('#direccion').val('');
 		$('#barrio').val('');
+		$('#vereda').val('');
 		$('#email').val('');
 		$('#t_contrato').val('').selectpicker('refresh');
 		$('#serial_onu').val('');

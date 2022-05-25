@@ -416,7 +416,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/movimiento/{id}', 'FacturasController@showMovimiento')->name('facturas.showmovimiento');
 
         Route::get('descarga-efecty', 'FacturasController@downloadEfecty')->name('facturas.downloadefecty');
-
+        Route::get('convertirelectronica/{facturaid}', 'FacturasController@convertirelEctronica')->name('facturas.convertirelectronica');
 
 	});
 	Route::resource('facturas', 'FacturasController');
@@ -1146,6 +1146,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/imprimir', 'AsignacionesController@imprimir')->name('asignaciones.imprimir');
 		Route::get('config_campos_asignacion', 'AsignacionesController@show_campos_asignacion')->name('asignaciones.show_campos_asignacion');
 		Route::post('campos_asignacion', 'AsignacionesController@campos_asignacion')->name('asignaciones.campos_asignacion');
+        Route::get('{id}/enviar', 'AsignacionesController@enviar')->name('asignaciones.enviar');
 	});
 	Route::resource('asignaciones', 'AsignacionesController');
 	

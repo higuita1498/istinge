@@ -68,6 +68,9 @@
                                     @endif
                                     <a class="dropdown-item" href="{{route('facturas.imprimircopia',$factura->id)}}" target="_blank">Imprimir como Copia</a>
                                     <a class="dropdown-item" href="{{route('facturas.copia',$factura->id)}}" target="_blank">Descargar como Copia</a>
+                                    @if($factura->tipo == 1)
+                                    <a class="dropdown-item" href="{{route('facturas.convertirelectronica',$factura->id)}}">Convertir a factura electrónica</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

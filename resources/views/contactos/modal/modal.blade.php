@@ -94,6 +94,13 @@
       				<strong>{{ $errors->first('direccion') }}</strong>
       			</span>
       		</div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Corregimiento/Vereda</label>
+                <input type="text" name="vereda" class="form-control" value="{{old('vereda')}}">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('vereda') }}</strong>
+                </span>
+            </div>
       		<div class="form-group col-md-3">
       			<label class="control-label">Barrio </label>
       			<input type="text" name="barrio" class="form-control" value="{{old('barrio')}}">

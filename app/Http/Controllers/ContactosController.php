@@ -92,6 +92,11 @@ class ContactosController extends Controller
                     $query->orWhere('barrio', 'like', "%{$request->barrio}%");
                 });
             }
+            if($request->vereda){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('vereda', 'like', "%{$request->vereda}%");
+                });
+            }
             if($request->email){
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('email', 'like', "%{$request->email}%");
@@ -147,6 +152,9 @@ class ContactosController extends Controller
             })
             ->editColumn('barrio', function (Contacto $contacto) {
                 return $contacto->barrio;
+            })
+            ->editColumn('vereda', function (Contacto $contacto) {
+                return $contacto->vereda;
             })
             ->editColumn('contrato', function (Contacto $contacto) {
                 return $contacto->contract();
@@ -359,6 +367,7 @@ class ContactosController extends Controller
         $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
+        $contacto->vereda=$request->vereda;
         $contacto->direccion=$request->direccion;
         $contacto->email=mb_strtolower($request->email);
         $contacto->telefono1=$request->telefono1;
@@ -423,6 +432,7 @@ class ContactosController extends Controller
         $contacto->apellido2=$request->apellido2;
         $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio=$request->barrio;
+        $contacto->vereda=$request->vereda;
         $contacto->direccion=$request->direccion;
         $contacto->email=mb_strtolower($request->email);
         $contacto->telefono1=$request->telefono1;
@@ -502,6 +512,7 @@ class ContactosController extends Controller
             $contacto->apellido1=$request->apellido1;
             $contacto->apellido2=$request->apellido2;
             $contacto->barrio=$request->barrio;
+            $contacto->vereda=$request->vereda;
             $contacto->direccion=$request->direccion;
             $contacto->email=mb_strtolower($request->email);
             $contacto->telefono1=$request->telefono1;
