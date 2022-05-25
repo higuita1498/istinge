@@ -416,7 +416,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/movimiento/{id}', 'FacturasController@showMovimiento')->name('facturas.showmovimiento');
 
         Route::get('descarga-efecty', 'FacturasController@downloadEfecty')->name('facturas.downloadefecty');
-
+        Route::get('convertirelectronica/{facturaid}', 'FacturasController@convertirelEctronica')->name('facturas.convertirelectronica');
 
 	});
 	Route::resource('facturas', 'FacturasController');
