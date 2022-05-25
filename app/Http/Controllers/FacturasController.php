@@ -3294,6 +3294,7 @@ class FacturasController extends Controller{
         $factura->codigo=$nro->prefijo.$inicio;
         $factura->nro = $numero;
         $factura->numeracion = $nro->id;
+        $factura->tipo = 2;
         $factura->save();
 
         return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
