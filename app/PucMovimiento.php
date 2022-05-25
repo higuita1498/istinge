@@ -166,8 +166,18 @@ class PucMovimiento extends Model
         //opcion 2 es para actualizar el movimiento
         else if($opcion == 2){
 
+            /*
+                Verificamos si los movimientos tienen asociado un recibo de caja, para posteriormente devolver la plata al 
+                recibo de caja y al contacto
+            */
+            $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->get();
+            foreach($movimientos as $mov){
+                if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
+                    $mov->sumarAnticipo();
+                }
+            }
             //obtenemos los movimientos contables de la factura y los eliminamos.
-            $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->delete();
+            $movimientos->delete();
             PucMovimiento::facturaVenta($factura,1,$request);
             
         }
