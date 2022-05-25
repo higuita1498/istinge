@@ -238,7 +238,8 @@ class Ingreso extends Model
     /* * * * Asociados a una categoria * * */
     public function ingresoAnticipo(){
         $anticipo = IngresosCategoria::join('anticipo as an','an.id','=','ingresos_categoria.anticipo')
-        ->where('ingresos_categoria.ingreso',$this->id)->select('an.*')->first();
+        ->join('puc as p','p.id','=','an.cuenta_id')
+        ->where('ingresos_categoria.ingreso',$this->id)->select('p.*')->first();
 
         if($anticipo){
             return $anticipo;

@@ -130,7 +130,7 @@ class PucMovimiento extends Model
                 
                 $idIngreso = null;
                 if(isset($request->selectanticipo[$i])){
-                    $idIngreso = $request->selectanticipo[$i];
+                    $idIngreso = $request->selectanticipo[$i]; //selectanticipo trae clave primaria de recibos de caja.
                 }
 
                 $mov = new PucMovimiento;
@@ -645,16 +645,6 @@ class PucMovimiento extends Model
     public function totalCredito(){
         return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
         ->select(DB::raw("SUM((`credito`)) as total"))->first();
-    }
-
-    public  function codigoCuenta(){
-        if($this->recibocaja_id != null){//si es diferente de null es por que el movimiento viene desde un anticipo de un recibo de caja
-            return Ingreso::join('puc_movimiento as pm', 'pm.recibocaja_id','id')->where('pm.recibocaja_id',$this->recibocaja_id)
-            ->select('pm.codigo_cuenta')->first()->codigo_cuenta;
-        }else{
-            return $this->codigo_cuenta;
-        }
-    }
-    
+    }    
 
 }

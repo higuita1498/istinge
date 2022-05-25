@@ -692,7 +692,7 @@ class IngresosController extends Controller
         $items->impuesto = $impuesto->porcentaje;
         $items->ingreso = $ingreso->id;
         $items->categoria = $request->puc;
-        $items->anticipo = $request->anticipo;
+        $items->anticipo = $request->anticipo; //hace referencia a la pk de la tabla anticipo
         $items->cant = 1;
         $items->save();
 
