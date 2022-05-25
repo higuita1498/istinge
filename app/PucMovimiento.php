@@ -161,7 +161,7 @@ class PucMovimiento extends Model
 
             //obtenemos los movimientos contables de la factura y los eliminamos.
             $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->delete();
-            PucMovimiento::facturaVenta($factura,1);
+            PucMovimiento::facturaVenta($factura,1,$request);
             
         }
         
