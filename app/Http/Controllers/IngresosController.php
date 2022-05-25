@@ -296,11 +296,13 @@ class IngresosController extends Controller
                     }
                 }
                 
-                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-                
-                if ($diasDiferencia <= 10) {
-                    $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
-                    return back()->with('danger', $mensaje)->withInput();
+                if(isset($ultimoingreso)){
+                    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                    
+                    if ($diasDiferencia <= 10) {
+                        $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
+                        return back()->with('danger', $mensaje)->withInput();
+                    }
                 }
             }
             
