@@ -17,7 +17,7 @@ class Radicado extends Model
      * @var array
      */
     protected $fillable = [
-        'cliente','fecha','nombre', 'telefono', 'correo', 'direccion', 'contrato', 'desconocido', 'estatus', 'codigo','empresa','firma'
+        'cliente','fecha','nombre', 'telefono', 'correo', 'direccion', 'contrato', 'desconocido', 'estatus', 'codigo','empresa','firma','prioridad'
     ];
 
     protected $appends = ['session'];
@@ -92,5 +92,15 @@ class Radicado extends Model
 
     public function creado(){
         return ($this->creado == 1) ? 'NetworkSoft' : 'APP';
+    }
+
+    public function prioridad(){
+        if($this->prioridad == 1){
+            return 'Baja';
+        }elseif($this->prioridad == 2){
+            return 'Media';
+        }elseif($this->prioridad == 3){
+            return 'Alta';
+        }
     }
 }

@@ -1095,6 +1095,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::post('/proceder/{id}', 'RadicadosController@proceder')->name('radicados.proceder');
         	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
             Route::get('/{id}/eliminarAdjunto', 'RadicadosController@eliminarAdjunto')->name('radicados.eliminarAdjunto');
+            Route::post('/reabrir/{id}', 'RadicadosController@reabrir')->name('radicados.reabrir');
         });
 		Route::resource('radicados', 'RadicadosController');
 

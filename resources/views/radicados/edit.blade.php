@@ -111,6 +111,14 @@
         @endforeach
       </select>
     </div>
+    <div class="col-md-3 form-group">
+      <label class="control-label">Prioridad <span class="text-danger">*</span></label>
+      <select class="form-control selectpicker" name="prioridad" id="prioridad" required="" title="Seleccione">
+        <option value="1" {{ $radicado->prioridad == 1 ? 'selected':'' }}>Baja</option>
+        <option value="2" {{ $radicado->prioridad == 2 ? 'selected':'' }}>Media</option>
+        <option value="3" {{ $radicado->prioridad == 3 ? 'selected':'' }}>Alta</option>
+      </select>
+    </div>
 
     <div class="col-md-12 form-group">
       <label class="control-label">Observaciones <span class="text-danger">*</span></label>

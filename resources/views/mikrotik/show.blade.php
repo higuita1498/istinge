@@ -38,7 +38,7 @@
 	        <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
 	    </div>
 	@else
-	    <a href="javascript:abrirAcciones()" class="btn btn-info btn-sm my-1" id="boton-acciones"><i class="fas fa-server"></i>Acciones de Mikrotik</a>
+	    <a href="javascript:abrirAcciones()" class="btn btn-dark btn-sm my-1" id="boton-acciones">Acciones de Mikrotik&nbsp;&nbsp;<i class="fas fa-caret-down"></i></a>
 	@endif
 @endsection
 
@@ -276,17 +276,17 @@
 	<script>
 		function abrirAcciones() {
 			if ($('#form-acciones').hasClass('d-none')) {
-				$('#boton-acciones').html('<i class="fas fa-times"></i> Cerrar Acciones');
+				$('#boton-acciones').html('Acciones de Mikrotik&nbsp;&nbsp;<i class="fas fa-caret-up"></i>');
 				$('#form-acciones').removeClass('d-none');
 			} else {
-				$('#boton-acciones').html('<i class="fas fa-server"></i> Acciones de Mikrotik');
+				$('#boton-acciones').html('Acciones de Mikrotik&nbsp;&nbsp;<i class="fas fa-caret-down"></i>');
 				cerrarFiltrador();
 			}
 		}
 
 		function cerrarFiltrador() {
 			$('#form-acciones').addClass('d-none');
-			$('#boton-acciones').html('<i class="fas fa-server"></i> Acciones de Mikrotik');
+			$('#boton-acciones').html('Acciones de Mikrotik&nbsp;&nbsp;<i class="fas fa-caret-down"></i>');
 		}
 	</script>
 @endsection

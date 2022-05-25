@@ -1,53 +1,27 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        body > div.container-scroller > div > div > div.content-wrapper > div > div > div > div.row.card-description > div > div > table > tbody > tr:nth-child(10) > td > img{
+            width: 547px;
+            height: 297px;
+            border-radius: 0%;
+        }
+    </style>
+@endsection
+
 @section('boton')
-    <form action="{{ route('radicados.escalar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="escalar{{$radicado->id}}">
-      	@csrf
-    </form>
-
-    <form action="{{ route('radicados.solventar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="solventar{{$radicado->id}}">
-      	@csrf
-    </form>
-    
-    <form action="{{ route('radicados.proceder',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="proceder{{$radicado->id}}">
-      	@csrf
-    </form>
-    
-    @if($radicado->estatus==0 || $radicado->estatus==2)
-        <a href="#" onclick="confirmar('proceder{{$radicado->id}}', '¿Está seguro de que desea @if($radicado->tiempo_ini == null) iniciar @else finalizar @endif  el radicado?');" class="btn btn-outline-success btn-sm "title="@if($radicado->tiempo_ini == null) Iniciar @else Finalizar @endif Radicado">@if($radicado->tiempo_ini == null) Iniciar @else Finalizar @endif Radicado</a>
-        @if(isset($_SESSION['permisos']['203']))
-            <a href="{{route('radicados.edit',$radicado->id)}}" class="btn btn-outline-primary btn-sm" title="Editar">Editar Caso</a>
-        @endif
-    @endif
-
-    {{-- @if($radicado->estatus==0)
-        @if(isset($_SESSION['permisos']['205']))
-            <a href="#" onclick="confirmar('escalar{{$radicado->id}}', '¿Está seguro de que desea escalar el caso?');" class="btn btn-outline-warning btn-sm "title="Escalar Caso">Escalar Caso</a>
-        @endif
-	@endif --}}
-
-    @if($radicado->estatus == 1 || $radicado->estatus == 3)
-
+    @if(auth()->user()->modo_lectura())
+        <div class="alert alert-warning text-left" role="alert">
+            <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+        </div>
     @else
-        @if($radicado->firma || $radicado->estatus==0)
-            @if(isset($_SESSION['permisos']['207']))
-                <a href="#" onclick="confirmar('solventar{{$radicado->id}}', '¿Está seguro de que desea solventar el caso?');" class="btn btn-outline-success btn-sm "title="Solventar Caso">Solventar Caso</a>
-            @endif
-        @endif
-	@endif
-
-	<a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto">Adjuntar Archivo</a>
+        <a href="javascript:abrirAcciones()" class="btn btn-dark btn-sm my-1" id="boton-acciones">Acciones del Radicado&nbsp;&nbsp;<i class="fas fa-caret-down"></i></a>
+    @endif
 @endsection
 
 @section('content')
-    <style>
-    	body > div.container-scroller > div > div > div.content-wrapper > div > div > div > div.row.card-description > div > div > table > tbody > tr:nth-child(10) > td > img{
-    		width: 547px;
-    		height: 297px;
-    		border-radius: 0%;
-    	}
-    </style>
-
     @if(Session::has('success'))
 		<div class="alert alert-success" >
 			{{Session::get('success')}}
@@ -74,6 +48,66 @@
 		</script>
 	@endif
 
+    <div class="container-fluid d-none" id="form-acciones">
+        <fieldset>
+            <legend>Acciones del Radicado</legend>
+            <div class="card shadow-sm border-0">
+                <div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <form action="{{ route('radicados.escalar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="escalar{{$radicado->id}}">
+                                @csrf
+                            </form>
+
+                            <form action="{{ route('radicados.solventar',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="solventar{{$radicado->id}}">
+                                @csrf
+                            </form>
+
+                            <form action="{{ route('radicados.proceder',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="proceder{{$radicado->id}}">
+                                @csrf
+                            </form>
+
+                            @if($radicado->estatus == 1 || $radicado->estatus == 3)
+                                @if(isset($_SESSION['permisos']['805']))
+                                    <form action="{{ route('radicados.reabrir',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="reabrir-{{$radicado->id}}">
+                                        {{ csrf_field() }}
+                                    </form>
+                                @endif
+                            @endif
+
+                            @if($radicado->estatus==0 || $radicado->estatus==2)
+                                <a href="#" onclick="confirmar('proceder{{$radicado->id}}', '¿Está seguro de que desea @if($radicado->tiempo_ini == null) iniciar @else finalizar @endif  el radicado?');" class="btn btn-outline-success btn-sm "title="@if($radicado->tiempo_ini == null) Iniciar @else Finalizar @endif Radicado"><i class="fas fa-stopwatch"></i> @if($radicado->tiempo_ini == null) Iniciar @else Finalizar @endif Radicado</a>
+                                @if(isset($_SESSION['permisos']['203']))
+                                    <a href="{{route('radicados.edit',$radicado->id)}}" class="btn btn-outline-primary btn-sm" title="Editar"><i class="fas fa-edit"></i> Editar Caso</a>
+                                @endif
+                            @endif
+
+                            @if($radicado->estatus==2 && !$radicado->firma)
+                                @if(isset($_SESSION['permisos']['209']))
+                                    <a href="{{route('radicados.firmar', $radicado->id)}}" class="btn btn-outline-warning btn-sm" title="Firmar" target="_blank"><i class="fas fa-file-signature"></i> Firmar Radicado</a>
+                                @endif
+                            @endif
+
+                            @if($radicado->estatus == 1 || $radicado->estatus == 3)
+                                @if(isset($_SESSION['permisos']['805']))
+                                    <a href="#" onclick="confirmar('reabrir-{{$radicado->id}}', '¿Está seguro de que desea reabrir el radicado?');" class="btn btn-outline-success btn-sm" title="Reabrir Radicado"><i class="fas fa-lock-open"></i> Reabrir Radicado</a>
+                                @endif
+                            @else
+                                @if($radicado->firma || $radicado->estatus==0)
+                                    @if(isset($_SESSION['permisos']['207']))
+                                        <a href="#" onclick="confirmar('solventar{{$radicado->id}}', '¿Está seguro de que desea solventar el caso?');" class="btn btn-outline-success btn-sm "title="Solventar Caso"><i class="fas fa-check-double"></i> Solventar Caso</a>
+                                    @endif
+                                @endif
+                            @endif
+
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
     <div class="row card-description">
     	<div class="col-md-12">
     		<div class="table-responsive">
@@ -87,6 +121,12 @@
     						<th>N° Radicado</th>
     						<td>{{$radicado->codigo}}</td>
     					</tr>
+                        @if ($radicado->prioridad)
+                        <tr>
+                            <th>Prioridad</th>
+                            <td>{{ $radicado->prioridad() }}</td>
+                        </tr>
+                        @endif
     					<tr>
     						<th>Fecha</th>
     						<td>{{date('d-m-Y', strtotime($radicado->fecha))}}</td>
@@ -169,7 +209,7 @@
     					@endif
     					<tr>
     						<th>Observaciones del Radicado</th>
-    						<td>@php echo $radicado->desconocido @endphp</td>
+    						<td>@php echo($radicado->desconocido); @endphp</td>
     					</tr>
     					<tr>
     						<th>Estatus</th>
@@ -191,7 +231,7 @@
     					@if ($radicado->reporte)
     						<tr>
     							<th>Reporte del Técnico</th>
-    							<td>{{$radicado->reporte}}</td>
+                                <td>@php echo($radicado->reporte); @endphp</td>
     						</tr>
     					@endif
     					@if ($radicado->firma)
@@ -269,7 +309,22 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
+    <script>
+        function abrirAcciones() {
+            if ($('#form-acciones').hasClass('d-none')) {
+                $('#boton-acciones').html('Acciones del Radicado&nbsp;&nbsp;<i class="fas fa-caret-up"></i>');
+                $('#form-acciones').removeClass('d-none');
+            } else {
+                $('#boton-acciones').html('Acciones del Radicado&nbsp;&nbsp;<i class="fas fa-caret-down"></i>');
+                cerrarFiltrador();
+            }
+        }
+
+        function cerrarFiltrador() {
+            $('#form-acciones').addClass('d-none');
+            $('#boton-acciones').html('Acciones del Radicado&nbsp;&nbsp;<i class="fas fa-caret-down"></i>');
+        }
+
         function eliminar(id){
         	swal({
         		title: '¿Está seguro de eliminar el archivo adjunto del sistema?',

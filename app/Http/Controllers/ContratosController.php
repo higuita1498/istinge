@@ -364,6 +364,14 @@ class ContratosController extends Controller
             return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO')->withInput();
         }
 
+        if($request->mac_address){
+            $mac_address = Contrato::where('mac_address', $request->mac_address)->where('status', 1)->first();
+
+            if ($mac_address) {
+                return back()->withInput()->with('danger', 'LA DIRECCIÓN MAC YA SE ENCUENTRA REGISTRADA PARA OTRO CONTRATO');
+            }
+        }
+
         if($request->server_configuration_id){
             $request->validate([
                 'plan_id' => 'required',
@@ -812,6 +820,14 @@ class ContratosController extends Controller
 
         if(!$request->server_configuration_id && !$request->servicio_tv){
             return back()->with('danger', 'ESTÁ INTENTANDO GENERAR UN CONTRATO PERO NO HA SELECCIONADO NINGÚN SERVICIO');
+        }
+
+        if($request->mac_address){
+            $mac_address = Contrato::where('mac_address', $request->mac_address)->where('status', 1)->where('id', '<>', $id)->first();
+
+            if ($mac_address) {
+                return back()->withInput()->with('danger', 'LA DIRECCIÓN MAC YA SE ENCUENTRA REGISTRADA PARA OTRO CONTRATO');
+            }
         }
 
         if($request->server_configuration_id){

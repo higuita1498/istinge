@@ -171,6 +171,20 @@
 												<option value="2">App</option>
 											</select>
 										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Prioridad" class="form-control rounded selectpicker" id="prioridad">
+												<option value="1">Baja</option>
+												<option value="2">Media</option>
+												<option value="3">Alta</option>
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Técnico" class="form-control rounded selectpicker" id="tecnico" data-size="5" data-live-search="true">
+												@foreach ($tecnicos as $tecnico)
+													<option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option>
+												@endforeach
+											</select>
+										</div>
 
 										<div class="col-md-2 pl-1 pt-1">
 											<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -245,6 +259,20 @@
 												<option value="2">App</option>
 											</select>
 										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Prioridad" class="form-control rounded selectpicker" id="prioridadG">
+												<option value="1">Baja</option>
+												<option value="2">Media</option>
+												<option value="3">Alta</option>
+											</select>
+										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Técnico" class="form-control rounded selectpicker" id="tecnicoG" data-size="5" data-live-search="true">
+												@foreach ($tecnicos as $tecnico)
+													<option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option>
+												@endforeach
+											</select>
+										</div>
 
 										<div class="col-md-2 pl-1 pt-1">
 											<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -314,6 +342,8 @@
 			data.direccion = $('#direccion').val();
 			data.estatus   = $('#estatus').val();
 			data.creado    = $('#creado').val();
+			data.prioridad = $('#prioridad').val();
+			data.tecnico   = $('#tecnico').val();
 			data.filtro    = true;
 		});
 
@@ -373,6 +403,8 @@
 			data.direccion = $('#direccionG').val();
 			data.estatus   = $('#estatusG').val();
 			data.creado    = $('#creadoG').val();
+			data.prioridad = $('#prioridadG').val();
+			data.tecnico   = $('#tecnicoG').val();
 			data.filtro    = true;
 		});
 
@@ -419,6 +451,8 @@
 		$('#direccion').val('');
 		$('#estatus').val('').selectpicker('refresh');
 		$('#creado').val('').selectpicker('refresh');
+		$('#prioridad').val('').selectpicker('refresh');
+		$('#tecnico').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -450,6 +484,8 @@
 		$('#direccionG').val('');
 		$('#estatusG').val('').selectpicker('refresh');
 		$('#creadoG').val('').selectpicker('refresh');
+		$('#prioridadG').val('').selectpicker('refresh');
+		$('#tecnicoG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTableG();

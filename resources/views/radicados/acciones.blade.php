@@ -7,6 +7,14 @@
     @endif
 @endif
 
+@if($estatus == 1 || $estatus == 3)
+    @if(isset($session['805']))
+        <form action="{{ route('radicados.reabrir',$id) }}" method="POST" class="delete_form" style="display: none;" id="reabrir-{{$id}}">
+            {{ csrf_field() }}
+        </form>
+    @endif
+@endif
+
 <a href="{{route('radicados.show',$id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 
 @if($estatus==0 || $estatus==2)
@@ -37,6 +45,13 @@
         <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$id}}', '¿Estas seguro que deseas eliminar el radicado?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
 @endif
+
+@if($estatus == 1 || $estatus == 3)
+    @if(isset($session['805']))
+        <a href="#" onclick="confirmar('reabrir-{{$id}}', '¿Está seguro de que desea reabrir el radicado?');" class="btn btn-outline-success btn-icons" title="Reabrir Radicado"><i class="fas fa-lock-open"></i></a>
+    @endif
+@endif
+
 
 {{-- @if($tiempo_ini)
     <form action="{{ route('radicados.proceder',$id) }}" method="POST" class="delete_form" style="display: none;" id="proceder{{$id}}">

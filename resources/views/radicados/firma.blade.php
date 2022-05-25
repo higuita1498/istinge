@@ -2,6 +2,15 @@
 
 @section('content')
 <div class="row card-description">
+    <div class="col-md-12 p-3 mb-4 text-justify" style="border: 1px solid rgba(0, 0, 0, 0.125);border-radius: 0.25rem;font-size: .8em;background: #fff;">
+        <b>REPORTE CLIENTE</b><br>
+        @php echo($radicado->desconocido); @endphp
+        @if($radicado->tecnico)
+        <br><br><b>REPORTE TÉCNICO</b><br>
+        @php echo($radicado->reporte); @endphp
+        @endif
+    </div>
+
     <div class="col-md-12 offset-md-3">
         <style>
             .jay-signature-pad {
@@ -22,6 +31,8 @@
                 text-align: -webkit-center;
             }
         </style>
+
+
 
         <div id="signature-pad" class="jay-signature-pad">
             <div class="jay-signature-pad--body">
