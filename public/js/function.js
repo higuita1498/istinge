@@ -754,8 +754,8 @@ function contacto(selected, modificar=false, type = 1){
                     text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se puede realizar una factura estandar',
                     showConfirmButton: true,
                 });
-                // $("#cliente").val("");
-                // $('#cliente').selectpicker('refresh');
+                $("#cliente").val("");
+                $('#cliente').selectpicker('refresh');
                 cargando(false);
                 return;
             }
