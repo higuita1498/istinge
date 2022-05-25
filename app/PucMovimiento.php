@@ -17,7 +17,7 @@ class PucMovimiento extends Model
     protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
-     *
+     * 
      * @var array
      */
     protected $fillable = [
