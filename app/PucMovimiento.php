@@ -7,6 +7,7 @@ use App\Impuesto;
 use App\Retencion;
 use App\Contacto;
 use App\FormaPago;
+use App\Model\Ingresos\Ingreso;
 use App\Puc;
 use DB;
 
