@@ -1645,8 +1645,6 @@ function total_linea_formapago(nro){
     let totalFactura = document.getElementById('total'); 
     totalFactura = totalFactura.textContent;
     totalFactura = parseFloat(totalFactura.replace(/[$.]/g,''));
-    console.log(totalFactura);
-
 
     if(total > totalFactura){
         swal({
@@ -1658,6 +1656,26 @@ function total_linea_formapago(nro){
             confirmButtonText: 'ACEPTAR',
         });
         $("#precioformapago"+nro).val(0);
+        return;
+    }
+
+    
+    if($("#selectanticipo"+nro).length){
+        let valorInputForma = parseFloat($("#precioformapago"+nro).val());
+        let valorSelectRecibo = parseFloat($("#selectanticipo"+nro).val());
+
+        if(valorInputForma > valorSelectRecibo){
+            swal({
+                title: 'Error',
+                html: 'El total de las formas de pago no puede superar el total de la factura.',
+                type: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#1A59A1',
+                confirmButtonText: 'ACEPTAR',
+            });
+            $("#precioformapago"+nro).val(0);
+            return;
+        }
     }
     $('#anticipototal').html(number_format(total));
 }
@@ -2349,6 +2367,7 @@ function llenarSelectAnticipo(value,cliente, nro){
                 $('#selectanticipo'+nro).append($('<option>',
                     {
                         value: value.id,
+                        precio: Math.round(value.valor_anticipo),
                         text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
                     }));
             });
