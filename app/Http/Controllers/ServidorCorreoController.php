@@ -32,16 +32,18 @@ class ServidorCorreoController extends Controller
         $servidor = ServidorCorreo::where('empresa', Auth::user()->empresa)->first();
         
         if ($servidor) {
-            $request->validate([
-                'servidor'  => 'required',
-                'seguridad' => 'required',
-                'puerto'    => 'required',
-                'usuario'   => 'required',
-                'password'  => 'required',
-                'estado'    => 'required',
-                'address'   => 'required',
-                'name'      => 'required',
-            ]);
+            if($request->estado == 1){
+                $request->validate([
+                    'servidor'  => 'required',
+                    'seguridad' => 'required',
+                    'puerto'    => 'required',
+                    'usuario'   => 'required',
+                    'password'  => 'required',
+                    'estado'    => 'required',
+                    'address'   => 'required',
+                    'name'      => 'required',
+                ]);
+            }
 
             $servidor->empresa   = Auth::user()->empresa;
             $servidor->servidor  = $request->servidor;
