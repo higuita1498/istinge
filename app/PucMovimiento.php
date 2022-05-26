@@ -175,13 +175,11 @@ class PucMovimiento extends Model
                 if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
                     $mov->sumarAnticipo();
                 }
+                 //obtenemos los movimientos contables de la factura y los eliminamos.
+                $mov->delete();
             }
-            //obtenemos los movimientos contables de la factura y los eliminamos.
-            $movimientos->delete();
             PucMovimiento::facturaVenta($factura,1,$request);
-            
         }
-        
     }
 
     public static function facturaCompra($ingreso, $opcion, $request){
