@@ -883,12 +883,15 @@ public function forma_pago()
         //obtenemos los ingresos que tiene un anticpo vigente.
 
         if($edit){
-            $ingresosArray = PucMovimiento::where('tipo_comprobante ',1)
-            ->join('ingresos as i','i.id','documento_id')
+            $ingresosArray = PucMovimiento::
+            join('ingresos as i','i.id','documento_id')
+            ->where('tipo_comprobante ',1)
             ->where('documento_id',$this->id)
             ->where('enlace_a',5) //enlace a un anticipo del cliente
             ->select('i.id')
             ->get();
+        }else{
+            $ingresosArray = array();
         }
 
         $ingresos = Ingreso::where('cliente',$this->cliente)
