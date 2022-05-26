@@ -2264,7 +2264,7 @@ function CrearFilaFormaPago(){
         `<tr  id="forma${nro}" fila="${nro}">` +
         `
         <td  class="no-padding">
-          <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="formapago[]" id="formapago${nro}" onchange="llenarSelectAnticipo(this.value, ${cliente});" required="" >
+          <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="formapago[]" id="formapago${nro}" onchange="llenarSelectAnticipo(this.value, ${cliente},${nro});" required="" >
 
           </select>
         </td>
@@ -2305,7 +2305,7 @@ function CrearFilaFormaPago(){
 
 }
 
-function llenarSelectAnticipo(value,cliente){
+function llenarSelectAnticipo(value,cliente, nro){
     
     var formasPago = JSON.parse($('#formaspago').val());
     if(value == 0){
