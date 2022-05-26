@@ -885,11 +885,16 @@ public function forma_pago()
         if($edit){
             $ingresosArray = PucMovimiento::
             join('ingresos as i','i.id','documento_id')
-            ->where('puc_movimiento.tipo_comprobante ',1)
-            ->where('puc_movimiento.documento_id',$this->id)
-            ->where('puc_movimiento.enlace_a',5) //enlace a un anticipo del cliente
+            ->where('tipo_comprobante',1)
+            ->where('documento_id',$this->id)
+            ->where('enlace_a',5) //enlace a un anticipo del cliente
             ->select('i.id')
             ->get();
+
+            $ingresosArray = array();
+            foreach ($ingresosArray as $id) {
+                $ingresosArray[]=$id->id;
+            }
         }else{
             $ingresosArray = array();
         }
