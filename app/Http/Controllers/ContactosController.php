@@ -350,7 +350,7 @@ class ContactosController extends Controller
         $request->validate([
             'tipo_contacto' => 'required'
         ]);
-        $contacto = Contacto::where('nit', $request->nit)->where('empresa', Auth::user()->empresa)->first();
+        $contacto = Contacto::where('nit', $request->nit)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
 
         if ($contacto) {
             $errors= (object) array();
