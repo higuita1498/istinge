@@ -158,9 +158,6 @@ class AsignacionesController extends Controller
         return back()->with('danger', 'EL CLIENTE NO TIENE UN CORREO ELECTRÓNICO REGISTRADO');
       }
 
-      $pdf = PDF::loadView('pdf.contrato', compact('contrato'));
-      $tituloCorreo = Auth::user()->empresa()->nombre.": Contrato Digital";
-
       $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
       if($host){
         $existing = config('mail');
@@ -179,12 +176,14 @@ class AsignacionesController extends Controller
         );
         config(['mail'=>$new]);
       }
-      $emails = $contrato->email;
-      Mail::send('emails.contrato', compact('contrato'), function($message) use ($pdf, $emails,$tituloCorreo){
-        $message->attachData($pdf, 'contrato.pdf', ['mime' => 'application/pdf']);
-        $message->to($emails)->subject($tituloCorreo);
+
+      $pdf = PDF::loadView('pdf.contrato', compact('contrato'))->stream();
+      Mail::send('emails.contrato', compact('contrato'), function($message) use ($pdf, $contrato){
+        $message->attachData($pdf, 'contrato_digital_servicios.pdf', ['mime' => 'application/pdf']);
+        $message->to($contrato->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);
       });
-      return back()->with('success', 'EL CONTRATO DIGITAL HA SIDO ENVIADO CORRECTAMENTE');
+
+      return back()->with('success', strtoupper('EL CONTRATO DIGITAL DE SERVICIOS HA SIDO ENVIADO CORRECTAMENTE A '.$contrato->nombre.' '.$contrato->apellidos()));
     }
     return back()->with('danger', 'CONTRATO DIGITAL NO ENVIADO');
   }
