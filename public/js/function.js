@@ -4286,14 +4286,17 @@ $('#searchIP').click(function() {
 
             var ini = ip_ini['3'];
             var fin = ip_fin['3'];
-
-            for (i = data.i; i <= fin; i++) {
-                var div =`
-                <div class="col-md-2 text-center mb-1" id="`+ip_ini['0']+``+ip_ini['1']+``+ip_ini['2']+``+i+`">
-                    <a href="javascript:selectIP('`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`')" class="btn btn-success btn-sm">`+ip_ini['0']+`.`+ip_ini['1']+`.`+ip_ini['2']+`.`+i+`</a>
-                </div>
-                `;
-                $('#row_ip').append(div);
+            var x = ip_ini['2'];
+            while (x <= ip_fin['2']) {
+                for (i = data.i; i <= fin; i++) {
+                    var div =`
+                    <div class="col-md-2 text-center mb-1" id="`+ip_ini['0']+``+ip_ini['1']+``+x+``+i+`">
+                    <a href="javascript:selectIP('`+ip_ini['0']+`.`+ip_ini['1']+`.`+x+`.`+i+`')" class="btn btn-success btn-sm">`+ip_ini['0']+`.`+ip_ini['1']+`.`+x+`.`+i+`</a>
+                    </div>
+                    `;
+                    $('#row_ip').append(div);
+                }
+                x++;
             }
 
             if (window.location.pathname.split("/")[1] === "software") {

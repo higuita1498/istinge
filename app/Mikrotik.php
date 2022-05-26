@@ -31,7 +31,9 @@ class Mikrotik extends Model
 
     public function getSessionAttribute()
     {
-        return $this->getAllPermissions(Auth::user()->id);
+        if(isset(Auth::user()->rol)){
+            return $this->getAllPermissions(Auth::user()->id);
+        }
     }
 
     public function getAllPermissions($id)
