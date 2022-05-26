@@ -885,7 +885,7 @@ public function forma_pago()
         if($edit){
             $ingresosArray = PucMovimiento::where('tipo_comprobante ',1)
             ->join('ingresos as i','i.id','documento_id')
-            ->where('documento_id',$request->factura)
+            ->where('documento_id',$this->id)
             ->where('enlace_a',5) //enlace a un anticipo del cliente
             ->select('i.id')
             ->get();
