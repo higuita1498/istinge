@@ -2323,6 +2323,7 @@ function llenarSelectAnticipo(value,cliente, nro){
             data: { cliente: cliente, recibo: value },
             success: function(recibos) {
                  //Recibos de caja relacionados que tienene un saldo a favor
+            $('#selectanticipo'+nro).empty();
             $.each( recibos, function( key, value ){
                 $('#selectanticipo'+nro).append($('<option>',
                     {
