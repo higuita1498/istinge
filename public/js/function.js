@@ -2310,17 +2310,31 @@ function llenarSelectAnticipo(value,cliente){
     var formasPago = JSON.parse($('#formaspago').val());
     if(value == 0){
 
-        /* >>> Cpnosulta par atraer los recibos de caja con saldo a favor <<< */
+        /* >>> consulta para traer los recibos de caja con saldo a favor <<< */
         if (window.location.pathname.split("/")[1] === "software") {
             var url='/software/empresa/ingresos/recibosanticipo';
         }else{
             var url='/empresa/ingresos/recibosanticipo';
         }
+
+        /* >>> Validacion de si proviene del blade de editar factura, ya que tendriamos que llamar el recibo así esté en saldo = 0 <<< */
+        let reciboEdit = 0;
+        let factura = 0;
+        if($("#edit").length){
+            reciboEdit = 1;
+            factura = $("#factura").val();
+        }
+
         $.ajax({
             url: url,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             method: 'get',
-            data: { cliente: cliente, recibo: value },
+            data: { 
+                cliente: cliente,
+                recibo: value,
+                reciboEdit: reciboEdit,
+                factura: factura
+            },
             success: function(recibos) {
                  //Recibos de caja relacionados que tienene un saldo a favor
             $.each( recibos, function( key, value ){

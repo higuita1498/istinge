@@ -1338,9 +1338,21 @@ class IngresosController extends Controller
     public function recibosAnticipo(Request $request){
 
         //obtenemos los ingresos que tiene un anticpo vigente.
+        if($request->reciboEdit == 1){
+            $ingresos = PucMovimiento::where('tipo_comprobante ',1)
+            ->join('ingresos as i','i.id','documento_id')
+            ->where('documento_id',$request->factura)
+            ->where('enlace_a',5) //enlace a un anticipo del cliente
+            ->select('i.id')
+            ->get();
+        }else{
+            $ingresos = null;
+        }
+
         $ingresos = Ingreso::where('cliente',$request->cliente)
         ->where('anticipo',1)
         ->where('valor_anticipo','>',0)
+        ->whereIn('id',[$ingresos])
         ->get();
 
         return response()->json($ingresos);

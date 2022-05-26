@@ -473,6 +473,8 @@
         <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
         <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
         <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
+        <input type="hidden" id="edit" value="1">
+        <input type="hidden" id="factura" value="{{$factura->id}}">
     </div>
     
             {{-- Modal Editar Direccion Contacto--}}
