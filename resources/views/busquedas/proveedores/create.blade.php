@@ -63,7 +63,7 @@
       {{--<div class="row">
       <div class="col-md-12">
         <div class="list-group" id="show-list-placa">
-          <a  onclick='agregarMarcaTag(this.value, Isuzu)' class='list-group-item list-group-item-action border-1' value='{{1}}'>Isuzu</a>
+          <a  onclick='agregarMarcaTag(this.value, Isuzu)' class='list-group-item list-group-item-action border-1' value='{[1]}'>Isuzu</a>
           <a  onclick='' class='list-group-item list-group-item-action border-1' value='".$vehiculo->id."'>cat</a>
           <a  onclick='' class='list-group-item list-group-item-action border-1' value='".$vehiculo->id."'>kia</a>
         </div>

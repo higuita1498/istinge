@@ -1,5 +1,5 @@
 <cac:{{$node}}>
-<cbc:AdditionalAccountID>@if($data['tipo_persona']!=null)@if($data['tipo_persona'] =='n'||$data['tipo_persona']==1){{2}}@elseif($data['tipo_persona']=='j'|| $data['tipo_persona']==2){{1}}@endif
+<cbc:AdditionalAccountID>@if($data['tipo_persona']!=null)@if($data['tipo_persona'] =='n'||$data['tipo_persona']==1){{2}}@elseif($data['tipo_persona']=='j'|| $data['tipo_persona']==2){[1]}@endif
 @else{{2}}@endif</cbc:AdditionalAccountID> {{--TIPO DE ORGANIZACION JURIDICA:1 PERSONAL:2--}}
 <cac:Party>
         @if ($data['tipo_persona'] =='n' || $data['tipo_persona'] == 1)

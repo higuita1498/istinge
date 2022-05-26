@@ -23,7 +23,20 @@
 			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
-			}, 5000);
+			}, 8000);
+		</script>
+	@endif
+
+	@if(Session::has('error'))
+		<div class="alert alert-danger" >
+			{{Session::get('error')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 8000);
 		</script>
 	@endif
 

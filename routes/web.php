@@ -657,7 +657,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::group(['prefix' => 'ingresos'], function() {
 		Route::get('/create/{cliente}/{factura}', 'IngresosController@create')->name('ingresos.create_id');
 		Route::get('/create_cuenta/{cliente}/{factura}/{banco}', 'IngresosController@create')->name('ingresos.create_cuenta');
-
+		Route::get('/recibosanticipo', 'IngresosController@recibosAnticipo');
 
         Route::get('contacto/{id}', 'IngresosController@saldoContacto')->name('notascredito.saldoCliente');
 		Route::get('/pendiente/{cliente}/{id?}', 'IngresosController@pendiente')->name('ingresos.pendiente');
