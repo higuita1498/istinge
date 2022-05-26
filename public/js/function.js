@@ -1295,6 +1295,17 @@ function rellenar(id, selected, producto=false){
             
             console.log(data);
 
+            if(data.cuentas.length == 0){
+                swal({
+                    title: 'Información',
+                    html: 'El item seleccionado no tiene aisgnado cuentas contables y por ende el asiento contable no saldrá correcto.',
+                    type: 'info',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#1A59A1',
+                    confirmButtonText: 'ACEPTAR',
+                });
+            }
+
             $('#pcant'+id).html('');
             $('#cant'+id).removeAttr("max");
             data=JSON.parse(data);
@@ -2257,7 +2268,7 @@ function CrearFilaFormaPago(){
     let cliente = null;
     if($("#cliente").val() != null){
         cliente = $("#cliente").val();
-    }else{
+    }elseif(cliente == null){
         swal({
             title: 'Error',
             html: 'Debe seleccionar primero un cliente antes de elegur las formas de pago.',
