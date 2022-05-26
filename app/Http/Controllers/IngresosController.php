@@ -296,11 +296,13 @@ class IngresosController extends Controller
                     }
                 }
                 
-                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-                
-                if ($diasDiferencia <= 10) {
-                    $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
-                    return back()->with('danger', $mensaje)->withInput();
+                if(isset($ultimoingreso)){
+                    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                    
+                    if ($diasDiferencia <= 10) {
+                        $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
+                        return back()->with('danger', $mensaje)->withInput();
+                    }
                 }
             }
             
@@ -330,6 +332,8 @@ class IngresosController extends Controller
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
+            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : '';
+            $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
             $ingreso->save();
             
             //Si el tipo de ingreso es de facturas
@@ -678,6 +682,7 @@ class IngresosController extends Controller
         $ingreso->observaciones = mb_strtolower($request->observaciones);
         $ingreso->created_by = Auth::user()->id;
         $ingreso->anticipo = 1;
+        $ingreso->valor_anticipo = $request->valor_recibido;
         $ingreso->save();
 
         $impuesto = Impuesto::where('porcentaje',0)->first();
@@ -689,7 +694,7 @@ class IngresosController extends Controller
         $items->impuesto = $impuesto->porcentaje;
         $items->ingreso = $ingreso->id;
         $items->categoria = $request->puc;
-        $items->anticipo = $request->anticipo;
+        $items->anticipo = $request->anticipo; //hace referencia a la pk de la tabla anticipo
         $items->cant = 1;
         $items->save();
 
@@ -1327,5 +1332,22 @@ class IngresosController extends Controller
         }else{
             return back()->with('danger','ERROR: EL ARCHIVO NO HA PODIDO SER CARGADO A LA PLATAFORMA, INTENTE NUEVAMENTE');
         }
+    }
+
+    //metodo que calcula que recibos de caja tiene un anticipo para poder cruzar en una forma de pago.
+    public function recibosAnticipo(Request $request){
+
+        //obtenemos los ingresos que tiene un anticpo vigente.
+        if($request->recibo == 0){
+            $ingresos = Ingreso::where('cliente',$request->cliente)
+            ->where('anticipo',1)
+            ->where('valor_anticipo','>',0)
+            ->get();
+        }else{
+            $ingresos = [];
+        }
+     
+
+        return response()->json($ingresos);
     }
 }

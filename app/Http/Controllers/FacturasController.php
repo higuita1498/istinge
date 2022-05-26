@@ -889,7 +889,7 @@ class FacturasController extends Controller{
             $nro->save();
         }
 
-        PucMovimiento::facturaVenta($factura,1);
+        PucMovimiento::facturaVenta($factura,1, $request);
 
         //Creo la variable para el mensaje final, y la variable print (imprimir)
         $mensaje='Se ha creado satisfactoriamente la factura';
@@ -936,6 +936,7 @@ class FacturasController extends Controller{
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+        $formasPago = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->where('enlace_a',4)->get();
 
         if ($factura) {
             if ($factura->estatus==1) {
@@ -975,7 +976,7 @@ class FacturasController extends Controller{
                     view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
                 }
 
-                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones'));
+                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones','formasPago'));
             }
             return redirect('empresa/facturas')->with('success', 'La factura de venta '.$factura->codigo.' ya esta cerrada');
         }
@@ -1085,7 +1086,7 @@ class FacturasController extends Controller{
                     $descuento->save();
                 }
 
-                PucMovimiento::facturaVenta($factura,2);
+                PucMovimiento::facturaVenta($factura,2,$request);
                 $mensaje='Se ha modificado satisfactoriamente la factura';
                 return redirect($request->page)->with('success', $mensaje)->with('codigo', $factura->id);
             }
@@ -1138,12 +1139,14 @@ class FacturasController extends Controller{
         sabemos que se trata de un tipo de movimiento 03
         */
         $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',3)->get();
+        if(count($movimientos) == 0){
+            return back()->with('error', 'La factura: ' . $factura->codigo . " no tiene un asiento contable.");
+        }
         if ($factura) {
             view()->share(['title' => 'Detalle Movimiento ' .$factura->codigo]);
             $items = ItemsFactura::where('factura',$factura->id)->get();
             return view('facturas.show-movimiento')->with(compact('factura','movimientos'));
         }
-        return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
     }
 
     public function copia($id){
@@ -3294,6 +3297,7 @@ class FacturasController extends Controller{
         $factura->nro = $numero;
         $factura->numeracion = $nro->id;
         $factura->tipo = 2;
+        $factura->fecha=Carbon::now()->format('Y-m-d');
         $factura->save();
 
         return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');

@@ -382,6 +382,21 @@
       'time' => 2,
     ),
   ),
+  'ignition' => 
+  array (
+    'editor' => 'phpstorm',
+    'theme' => 'light',
+    'enable_share_button' => false,
+    'register_commands' => false,
+    'ignored_solution_providers' => 
+    array (
+      0 => 'Facade\\Ignition\\SolutionProviders\\MissingPackageSolutionProvider',
+    ),
+    'enable_runnable_solutions' => NULL,
+    'remote_sites_path' => '',
+    'local_sites_path' => '',
+    'housekeeping_endpoint_prefix' => '_ignition',
+  ),
   'log-viewer' => 
   array (
     'storage-path' => 'C:\\laragon\\www\\istingen\\storage\\logs',
@@ -403,7 +418,6 @@
       ),
     ),
     'per-page' => 30,
-    'facade' => 'LogViewer',
     'download' => 
     array (
       'prefix' => 'laravel-',
@@ -447,6 +461,7 @@
       0 => '^#\\d+',
       1 => '^Stack trace:',
     ),
+    'facade' => 'LogViewer',
   ),
   'logging' => 
   array (
@@ -621,9 +636,9 @@
     'cookie' => 'network_soft_sas_session',
     'path' => '/',
     'domain' => NULL,
-    'secure' => false,
+    'secure' => NULL,
     'http_only' => true,
-    'same_site' => NULL,
+    'same_site' => 'lax',
   ),
   'view' => 
   array (
@@ -656,22 +671,257 @@
       'enable_html5_parser' => false,
     ),
   ),
+  'flare' => 
+  array (
+    'key' => NULL,
+    'reporting' => 
+    array (
+      'anonymize_ips' => true,
+      'collect_git_information' => false,
+      'report_queries' => true,
+      'maximum_number_of_collected_queries' => 200,
+      'report_query_bindings' => true,
+      'report_view_data' => true,
+      'grouping_type' => NULL,
+      'report_logs' => true,
+      'maximum_number_of_collected_logs' => 200,
+      'censor_request_body_fields' => 
+      array (
+        0 => 'password',
+      ),
+    ),
+    'send_logs_as_events' => true,
+    'censor_request_body_fields' => 
+    array (
+      0 => 'password',
+    ),
+  ),
+  'cors' => 
+  array (
+    'paths' => 
+    array (
+    ),
+    'allowed_methods' => 
+    array (
+      0 => '*',
+    ),
+    'allowed_origins' => 
+    array (
+      0 => '*',
+    ),
+    'allowed_origins_patterns' => 
+    array (
+    ),
+    'allowed_headers' => 
+    array (
+      0 => '*',
+    ),
+    'exposed_headers' => 
+    array (
+    ),
+    'max_age' => 0,
+    'supports_credentials' => false,
+  ),
   'image' => 
   array (
     'driver' => 'gd',
   ),
+  'excel' => 
+  array (
+    'exports' => 
+    array (
+      'chunk_size' => 1000,
+      'pre_calculate_formulas' => false,
+      'strict_null_comparison' => false,
+      'csv' => 
+      array (
+        'delimiter' => ',',
+        'enclosure' => '"',
+        'line_ending' => '
+',
+        'use_bom' => false,
+        'include_separator_line' => false,
+        'excel_compatibility' => false,
+        'output_encoding' => '',
+      ),
+      'properties' => 
+      array (
+        'creator' => '',
+        'lastModifiedBy' => '',
+        'title' => '',
+        'description' => '',
+        'subject' => '',
+        'keywords' => '',
+        'category' => '',
+        'manager' => '',
+        'company' => '',
+      ),
+    ),
+    'imports' => 
+    array (
+      'read_only' => true,
+      'ignore_empty' => false,
+      'heading_row' => 
+      array (
+        'formatter' => 'slug',
+      ),
+      'csv' => 
+      array (
+        'delimiter' => NULL,
+        'enclosure' => '"',
+        'escape_character' => '\\',
+        'contiguous' => false,
+        'input_encoding' => 'UTF-8',
+      ),
+      'properties' => 
+      array (
+        'creator' => '',
+        'lastModifiedBy' => '',
+        'title' => '',
+        'description' => '',
+        'subject' => '',
+        'keywords' => '',
+        'category' => '',
+        'manager' => '',
+        'company' => '',
+      ),
+    ),
+    'extension_detector' => 
+    array (
+      'xlsx' => 'Xlsx',
+      'xlsm' => 'Xlsx',
+      'xltx' => 'Xlsx',
+      'xltm' => 'Xlsx',
+      'xls' => 'Xls',
+      'xlt' => 'Xls',
+      'ods' => 'Ods',
+      'ots' => 'Ods',
+      'slk' => 'Slk',
+      'xml' => 'Xml',
+      'gnumeric' => 'Gnumeric',
+      'htm' => 'Html',
+      'html' => 'Html',
+      'csv' => 'Csv',
+      'tsv' => 'Csv',
+      'pdf' => 'Dompdf',
+    ),
+    'value_binder' => 
+    array (
+      'default' => 'Maatwebsite\\Excel\\DefaultValueBinder',
+    ),
+    'cache' => 
+    array (
+      'driver' => 'memory',
+      'batch' => 
+      array (
+        'memory_limit' => 60000,
+      ),
+      'illuminate' => 
+      array (
+        'store' => NULL,
+      ),
+    ),
+    'transactions' => 
+    array (
+      'handler' => 'db',
+      'db' => 
+      array (
+        'connection' => NULL,
+      ),
+    ),
+    'temporary_files' => 
+    array (
+      'local_path' => 'C:\\laragon\\www\\istingen\\storage\\framework/cache/laravel-excel',
+      'remote_disk' => NULL,
+      'remote_prefix' => NULL,
+      'force_resync_remote' => NULL,
+    ),
+  ),
+  'datatables-buttons' => 
+  array (
+    'namespace' => 
+    array (
+      'base' => 'DataTables',
+      'model' => '',
+    ),
+    'pdf_generator' => 'snappy',
+    'snappy' => 
+    array (
+      'options' => 
+      array (
+        'no-outline' => true,
+        'margin-left' => '0',
+        'margin-right' => '0',
+        'margin-top' => '10mm',
+        'margin-bottom' => '10mm',
+      ),
+      'orientation' => 'landscape',
+    ),
+    'parameters' => 
+    array (
+      'dom' => 'Bfrtip',
+      'order' => 
+      array (
+        0 => 
+        array (
+          0 => 0,
+          1 => 'desc',
+        ),
+      ),
+      'buttons' => 
+      array (
+        0 => 'create',
+        1 => 'export',
+        2 => 'print',
+        3 => 'reset',
+        4 => 'reload',
+      ),
+    ),
+    'generator' => 
+    array (
+      'columns' => 'id,add your columns,created_at,updated_at',
+      'buttons' => 'create,export,print,reset,reload',
+      'dom' => 'Bfrtip',
+    ),
+  ),
+  'datatables-html' => 
+  array (
+    'namespace' => 'LaravelDataTables',
+    'table' => 
+    array (
+      'class' => 'table',
+      'id' => 'dataTableBuilder',
+    ),
+    'callback' => 
+    array (
+      0 => '$',
+      1 => '$.',
+      2 => 'function',
+    ),
+    'script' => 'datatables::script',
+    'editor' => 'datatables::editor',
+  ),
   'trustedproxy' => 
   array (
     'proxies' => NULL,
-    'headers' => 30,
+    'headers' => 94,
+  ),
+  'datatables-fractal' => 
+  array (
+    'includes' => 'include',
+    'serializer' => 'League\\Fractal\\Serializer\\DataArraySerializer',
   ),
   'tinker' => 
   array (
     'commands' => 
     array (
     ),
+    'alias' => 
+    array (
+    ),
     'dont_alias' => 
     array (
+      0 => 'App\\Nova',
     ),
   ),
 );

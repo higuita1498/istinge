@@ -117,7 +117,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group row">
+            {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Forma de Pago <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
                   <select name="relacion" id="relacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5">
@@ -126,7 +126,7 @@
                       @endforeach
                   </select>
               </div>
-          </div>
+          </div> --}}
         <div class="form-group row">
           <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
         </div>
@@ -321,14 +321,14 @@
         <div class="alert alert-danger" style="display: none;" id="error-items"></div>
       </div>
 		</div>
-    <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 5%">Agregar línea</button>
-    <div class="row"  style="margin-top: 10%; margin-left:0px;">
-          <div class="col-md-7 no-padding">
+    <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 2%">Agregar línea</button>
+    <div class="row"  style="margin-top: 5%; margin-left:0px;">
+          <div class="col-md-5 no-padding">
         <h5>RETENCIONES</h5>
             <table class="table table-striped table-sm" id="table-retencion">
               <thead class="thead-dark">
                 <th width="60%">Tipo de Retención</th>
-                <th width="34%">Valor</th>
+                <th width="35%">Valor</th>
                 <th width="5%"></th>
               </thead>
               <tbody>
@@ -336,6 +336,31 @@
             </table>
             <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button><a><i data-tippy-content="Agrega nuevas retenciones haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
           </div>
+          <div class="col-md-7">
+            <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+                <table class="table table-striped table-sm" id="table-formaspago">
+                  <thead class="thead-dark">
+                    <th width="50%">Cuenta</th>
+                    <th width="25%">Cruce</th>
+                    <th width="20%" class="no-padding">Valor</th>
+                    <th width="5%"></th>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+                <div class="row">
+                  <div class="col-md-6">
+                    <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago();" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+                  </div>
+                  <div class="col-md-6 d-flex justify-content-between pt-3">
+                    <h5>Total:</h5>
+                    <span>$</span><span id="anticipototal">0</span>  
+                  </div>
+                  <div class="col-md-12">
+                    <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+                  </div>
+                </div>
+              </div>
     </div>
     <!-- Totales -->
         <div class="row" style="margin-top: 10%;">
@@ -425,6 +450,7 @@
       </div>
       </div>
 
+    
       <div class="row ">
         <div class="col-sm-12 text-right" style="padding-top: 1%;">
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
@@ -443,7 +469,9 @@
     <input type="hidden" id="jsonproduc" value="{{route('inventario.all')}}">
     <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
     <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
-
+    <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
+    {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+    <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
 </div>
 
   {{-- Modal contacto nuevo --}}

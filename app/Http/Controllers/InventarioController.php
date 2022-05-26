@@ -1095,6 +1095,7 @@ class InventarioController extends Controller{
                 //Se obtiene el inventario del producto buscado
                 $inventario->inventario = $inventario->inventario();
                 $inventario->inventariable= $inventario->esInventariable();
+                $inventario->cuentas = $inventario->booleanCuentas();
                 //<-->
                 return json_encode($inventario);
             }
