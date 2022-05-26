@@ -881,28 +881,24 @@ public function forma_pago()
 
     public function recibosAnticipo($edit = 0){
         //obtenemos los ingresos que tiene un anticpo vigente.
-
+        $ingresosArray=array();
         if($edit){
-            $ingresosArray = PucMovimiento::
-            join('ingresos as i','i.id','documento_id')
-            ->where('tipo_comprobante',1)
-            ->where('documento_id',$this->id)
-            ->where('enlace_a',5) //enlace a un anticipo del cliente
+            $ingresosEdit = PucMovimiento::
+            join('ingresos as i','i.id','recibocaja_id')
+            ->where('tipo_comprobante',3)
+            ->where('documento_id',$factura->id)
             ->select('i.id')
             ->get();
-
-            $ingresosArray = array();
-            foreach ($ingresosArray as $id) {
+        
+            foreach ($ingresosEdit as $id) {
                 $ingresosArray[]=$id->id;
             }
-        }else{
-            $ingresosArray = array();
         }
 
-        $ingresos = Ingreso::where('cliente',$this->cliente)
+        $ingresos = Ingreso::where('cliente',$factura->cliente)
         ->where('anticipo',1)
         ->where('valor_anticipo','>',0)
-        ->whereIn('id',[$ingresosArray])
+        ->orWhereIn('id',[$ingresosArray])
         ->get();
 
         return $ingresos;
