@@ -394,7 +394,7 @@ class PucMovimiento extends Model
             $mov->cliente_id = $ingreso->cliente()->id;
             $mov->consecutivo = $ingreso->nro;
             $mov->descripcion = $ingreso->observaciones;
-            $mov->debito =  $totalIngreso;
+            $mov->debito =  $totalIngreso+$ingreso->saldoFavorIngreso;
             $mov->enlace_a = 4;
             $mov->save();
 

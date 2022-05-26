@@ -1292,7 +1292,8 @@ function rellenar(id, selected, producto=false){
         data:data,
         url: url,
         success: function(data){
-
+            
+            console.log(data);
 
             $('#pcant'+id).html('');
             $('#cant'+id).removeAttr("max");
@@ -2256,6 +2257,16 @@ function CrearFilaFormaPago(){
     let cliente = null;
     if($("#cliente").val() != null){
         cliente = $("#cliente").val();
+    }else{
+        swal({
+            title: 'Error',
+            html: 'Debe seleccionar primero un cliente antes de elegur las formas de pago.',
+            type: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#1A59A1',
+            confirmButtonText: 'ACEPTAR',
+        });
+        return;
     }
 
     var formasPago = JSON.parse($('#formaspago').val());
