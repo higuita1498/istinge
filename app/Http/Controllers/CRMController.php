@@ -331,7 +331,7 @@ class CRMController extends Controller
                                 $numero = str_replace(' ', '', $numero);
                                 $post['to'] = array('57'.$numero);
                                 $post['text'] = $mensaje;
-                                $post['from'] = "";
+                                $post['from'] = "SMS";
                                 $login = $servicio->user;
                                 $password = $servicio->pass;
                                 $ch = curl_init();

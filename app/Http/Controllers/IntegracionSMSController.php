@@ -165,7 +165,7 @@ class IntegracionSMSController extends Controller
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
                 $post['text'] = "SMS Prueba SmsEasySms | Network Soft - Software Administrativo de ISP";
-                $post['from'] = "";
+                $post['from'] = "SMS";
                 $login = $servicio->user;
                 $password = $servicio->pass;
 
