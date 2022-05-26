@@ -219,4 +219,14 @@ class Inventario extends Model
       return ProductoCuenta::where('inventario_id',$this->id)->get();
     }
 
+    public function booleanCuentas(){
+      $cuentas = ProductoCuenta::where('inventario_id',$this->id)->get();
+
+      if($cuentas){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
 }

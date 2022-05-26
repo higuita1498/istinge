@@ -1292,10 +1292,8 @@ function rellenar(id, selected, producto=false){
         data:data,
         url: url,
         success: function(data){
-            
-            console.log(data);
 
-            if(data.cuentas.length == 0){
+            if(!data.cuentas){
                 swal({
                     title: 'Información',
                     html: 'El item seleccionado no tiene aisgnado cuentas contables y por ende el asiento contable no saldrá correcto.',
@@ -2266,9 +2264,9 @@ function CrearFilaFormaPago(){
     }
 
     let cliente = null;
-    if($("#cliente").val() != null){
+    if($("#cliente").val()){
         cliente = $("#cliente").val();
-    }elseif(cliente == null){
+    }else{
         swal({
             title: 'Error',
             html: 'Debe seleccionar primero un cliente antes de elegur las formas de pago.',
@@ -2277,7 +2275,7 @@ function CrearFilaFormaPago(){
             confirmButtonColor: '#1A59A1',
             confirmButtonText: 'ACEPTAR',
         });
-        return;
+        return
     }
 
     var formasPago = JSON.parse($('#formaspago').val());
