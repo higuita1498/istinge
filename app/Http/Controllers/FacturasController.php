@@ -2543,7 +2543,7 @@ class FacturasController extends Controller{
                 if($servicio->user && $servicio->pass){
                     $post['to'] = array('57'.$numero);
                     $post['text'] = $mensaje;
-                    $post['from'] = "";
+                    $post['from'] = "SMS";
                     $login = $servicio->user;
                     $password = $servicio->pass;
 

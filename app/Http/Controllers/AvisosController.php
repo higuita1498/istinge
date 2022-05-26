@@ -207,7 +207,7 @@ class AvisosController extends Controller
                     if($servicio->user && $servicio->pass){
                         $post['to'] = $numeros;
                         $post['text'] = $plantilla->contenido;
-                        $post['from'] = "";
+                        $post['from'] = "SMS";
                         $login = $servicio->user;
                         $password = $servicio->pass;
 
