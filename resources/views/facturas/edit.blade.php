@@ -342,9 +342,11 @@
                                   </td>
                                   <td  class="no-padding" id="tdanticipo{{$cont}}">
                                       <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo{{$cont}}">
+                                        @if($forma->recibocaja_id != null)
                                         @foreach($factura->recibosAnticipo(1) as $recibo)
                                             <option value="{{$recibo->id}}" {{$recibo->id == $forma->recibocaja_id ? 'selected': ''}}>RC-{{$recibo->nro}} - {{round($recibo->valor_anticipo,4)}}</option>
                                         @endforeach
+                                        @endif
                                       </select>
                                   </td>
                                   <td class="monetario">
