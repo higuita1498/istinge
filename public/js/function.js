@@ -1646,7 +1646,7 @@ function total_linea_formapago(nro){
             confirmButtonColor: '#1A59A1',
             confirmButtonText: 'ACEPTAR',
         });
-        // id.val(0);
+        $("#precioformapago"+nro).val(0);
     }
     $('#anticipototal').html(number_format(total));
 }
@@ -2275,7 +2275,7 @@ function CrearFilaFormaPago(){
         </td>
         <td class="monetario">
           <input type="hidden" value='0' id="lock_forma${nro}">
-          <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm" maxlength="24" id="precioformapago${nro}" name="precioformapago[]" placeholder="Valor anticipo" onkeyup="total_linea_formapago()" required="" min="0">
+          <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm" maxlength="24" id="precioformapago${nro}" name="precioformapago[]" placeholder="Valor anticipo" onkeyup="total_linea_formapago(${nro})" required="" min="0">
         </td>
       <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma${nro}');">X</button></td>
     ` +
@@ -2308,7 +2308,7 @@ function CrearFilaFormaPago(){
 function llenarSelectAnticipo(value,cliente, nro){
     
     var formasPago = JSON.parse($('#formaspago').val());
-    if(value == 0){
+    // if(value == 0){
 
         /* >>> Cpnosulta par atraer los recibos de caja con saldo a favor <<< */
         if (window.location.pathname.split("/")[1] === "software") {
@@ -2334,7 +2334,7 @@ function llenarSelectAnticipo(value,cliente, nro){
             $('#selectanticipo'+nro).selectpicker('refresh');
             }
         })
-    }
+    // }
 }
 
 

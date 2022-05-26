@@ -1338,10 +1338,15 @@ class IngresosController extends Controller
     public function recibosAnticipo(Request $request){
 
         //obtenemos los ingresos que tiene un anticpo vigente.
-        $ingresos = Ingreso::where('cliente',$request->cliente)
-        ->where('anticipo',1)
-        ->where('valor_anticipo','>',0)
-        ->get();
+        if($request->recibo == 0){
+            $ingresos = Ingreso::where('cliente',$request->cliente)
+            ->where('anticipo',1)
+            ->where('valor_anticipo','>',0)
+            ->get();
+        }else{
+            $ingresos = [];
+        }
+     
 
         return response()->json($ingresos);
     }
