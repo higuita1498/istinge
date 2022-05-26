@@ -3295,6 +3295,7 @@ class FacturasController extends Controller{
         $factura->nro = $numero;
         $factura->numeracion = $nro->id;
         $factura->tipo = 2;
+        $factura->fecha=Carbon::now()->format('Y-m-d');
         $factura->save();
 
         return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
