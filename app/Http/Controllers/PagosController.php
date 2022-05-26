@@ -217,11 +217,13 @@ class PagosController extends Controller
                     }
                 }
                 //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-                //Si el tiempo es de menos de 30 segundos mandamos al listado general
-                if ($diasDiferencia <= 10) {
-                    $mensaje = "El formulario ya ha sido enviado.";
-                    return redirect('empresa/pagos')->with('success', $mensaje);
+                if(isset($ultimoingreso)){
+                    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                    //Si el tiempo es de menos de 30 segundos mandamos al listado general
+                    if ($diasDiferencia <= 10) {
+                        $mensaje = "El formulario ya ha sido enviado.";
+                        return redirect('empresa/pagos')->with('success', $mensaje);
+                    }
                 }
             }
             
