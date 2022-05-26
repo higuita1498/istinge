@@ -86,6 +86,7 @@ Route::get('blacklist', 'BlacklistController@blacklist');
 Route::get('pagos', 'PagosController@pagos');
 Route::get('ventas-externas', 'VentasExternasController@ventas');
 Route::get('lmikrotik', 'MikrotikController@mikrotik');
+Route::get('lbanco', 'BancosController@banco');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {

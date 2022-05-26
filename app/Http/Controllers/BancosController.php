@@ -12,6 +12,8 @@ use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosCategoria;
 use Validator; use Auth; use DB; use Carbon\Carbon;
 use Session;
+use App\Campos;
+
 class BancosController extends Controller
 {
     public function __construct() {
@@ -21,12 +23,65 @@ class BancosController extends Controller
     
     public function index(){
         $this->getAllPermissions(Auth::user()->id);
-        (Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
+        /*(Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
         if(Auth::user()->rol < 3){
             $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
-        }
-        return view('bancos.index')->with(compact('bancos'));   		
+        }*/
+
+        $tabla = Campos::where('modulo', 16)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        view()->share(['middel' => true]);
+        return view('bancos.index')->with(compact('tabla'));
  	}
+
+    public function banco(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $bancos = Banco::query()
+            ->where('empresa', Auth::user()->empresa);
+
+        if ($request->filtro == true) {
+            if($request->nombre){
+                $bancos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->nro_cta){
+                $bancos->where(function ($query) use ($request) {
+                    $query->orWhere('nro_cta', 'like', "%{$request->nro_cta}%");
+                });
+            }
+            if($request->tipo_cta){
+                $bancos->where(function ($query) use ($request) {
+                    $query->orWhere('tipo_cta', $request->tipo_cta);
+                });
+            }
+        }
+
+        /*(Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
+        if(Auth::user()->rol < 3){
+            $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
+        }*/
+
+        return datatables()->eloquent($bancos)
+        ->editColumn('nombre', function (banco $banco) {
+            return "<a href=" . route('bancos.show', $banco->nro) . ">{$banco->nombre}</a>";
+        })
+        ->editColumn('nro_cta', function (banco $banco) {
+            return $banco->nro_cta;
+        })
+        ->editColumn('descripcion', function (banco $banco) {
+            return $banco->descripcion;
+        })
+        ->editColumn('tipo_cta', function (banco $banco) {
+            return $banco->tipo();
+        })
+        ->editColumn('saldo', function (banco $banco) use ($moneda)  {
+            return $moneda.' '.$banco->parsear($banco->saldo());
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "bancos.acciones")
+        ->rawColumns(['acciones', 'nombre', 'status'])
+        ->toJson();
+    }
  	
  	public function create(){
  	    $this->getAllPermissions(Auth::user()->id);
@@ -123,7 +178,7 @@ class BancosController extends Controller
             $saldo+=Movimiento::where('movimientos.empresa', Auth::user()->empresa)->where('banco', $banco->id)->where('tipo', 1)->where('estatus', 1)->sum('saldo');
             $saldo-=Movimiento::where('movimientos.empresa', Auth::user()->empresa)->where('banco', $banco->id)->where('tipo', 2)->where('estatus', 1)->sum('saldo');
             
-            view()->share(['icon'=>'', 'title' => $banco->nombre, 'title_sub'=>'Banco', 'minus_dere'=>true]);
+            view()->share(['icon'=>'', 'title' => $banco->nombre, 'precice'=>true]);
             $movimientos = $this->mostrarMovimientos($banco->id);
             return view('bancos.show')->with(compact('banco', 'saldo', 'bancos', 'movimientos'));
         }

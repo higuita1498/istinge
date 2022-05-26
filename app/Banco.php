@@ -8,8 +8,9 @@ use App\Movimiento;
 use App\Model\Gastos\GastosRecurrentes; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-
+use DB;
 use Auth;
+
 class Banco extends Model
 {
     protected $table = "bancos";
@@ -22,6 +23,36 @@ class Banco extends Model
     protected $fillable = [
         'nro', 'empresa', 'tipo_cta', 'nombre', 'nro_cta', 'saldo', 'fecha', 'descripcion', 'estatus', 'lectura'
     ];
+
+    protected $appends = ['uso', 'session'];
+
+    public function getUsoAttribute()
+    {
+        return $this->uso();
+    }
+
+    public function getSessionAttribute()
+    {
+        return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public function getAllPermissions($id)
+    {
+        if(Auth::user()->rol>=2){
+            if (DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->count() > 0 ) {
+                $permisos = DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->get();
+                foreach ($permisos as $key => $value) {
+                    $_SESSION['permisos'][$permisos[$key]->id_permiso] = '1';
+                }
+                return $_SESSION['permisos'];
+            }
+            else return null;
+        }
+    }
+
+    public function parsear($valor){
+        return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
+    }
 
     static function tipos(){
         $tipos = array(array('nro'=>1, 'nombre'=>'Banco'), array('nro'=>2, 'nombre'=>'Tarjeta de crédito'), array('nro'=>3, 'nombre'=>'Efectivo'), array('nro'=>4, 'nombre'=>'Punto de Venta'));
