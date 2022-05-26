@@ -450,8 +450,7 @@
       </div>
       </div>
 
-      {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
-      <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
+    
       <div class="row ">
         <div class="col-sm-12 text-right" style="padding-top: 1%;">
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
@@ -471,7 +470,8 @@
     <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
     <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
     <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
-
+    {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+    <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
 </div>
 
   {{-- Modal contacto nuevo --}}
