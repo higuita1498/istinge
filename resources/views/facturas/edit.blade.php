@@ -474,7 +474,9 @@
         <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
         <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
         <input type="hidden" id="edit" value="1">
-        <input type="hidden" id="factura" value="{{$factura->id}}">
+        <input type="hidden" id="factura" value="{{$factura->id}}">    
+        {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+        <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
     </div>
     
             {{-- Modal Editar Direccion Contacto--}}
