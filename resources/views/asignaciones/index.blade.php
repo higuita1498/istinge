@@ -75,9 +75,9 @@
 							<td class="text-center">
 								@if(auth()->user()->modo_lectura())
 								@else
-								<a href="{{ route('contactos.show',$contrato->id )}}"  class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
-								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}"  class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
-								<a href="{{ route('asignaciones.enviar',$contrato->id )}}"  class="btn btn-outline-success btn-icons d-none" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
+								<a href="{{ route('contactos.show',$contrato->id )}}" class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
+								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}" class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
+								<a href="{{ route('asignaciones.enviar',$contrato->id )}}" onclick="cargando('true');" class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
 								@endif
 							</td>
 						</tr>
