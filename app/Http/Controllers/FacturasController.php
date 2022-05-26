@@ -1139,12 +1139,14 @@ class FacturasController extends Controller{
         sabemos que se trata de un tipo de movimiento 03
         */
         $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',3)->get();
+        if(count($movimientos) == 0){
+            return redirect('empresa/facturas')->with('error', 'La factura: ' . $factura->codigo . " no tiene un asiento contable.");
+        }
         if ($factura) {
             view()->share(['title' => 'Detalle Movimiento ' .$factura->codigo]);
             $items = ItemsFactura::where('factura',$factura->id)->get();
             return view('facturas.show-movimiento')->with(compact('factura','movimientos'));
         }
-        return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
     }
 
     public function copia($id){
