@@ -886,7 +886,7 @@ public function forma_pago()
             $ingresosEdit = PucMovimiento::
             join('ingresos as i','i.id','recibocaja_id')
             ->where('tipo_comprobante',3)
-            ->where('documento_id',$factura->id)
+            ->where('documento_id',$this->id)
             ->select('i.id')
             ->get();
         
@@ -895,7 +895,7 @@ public function forma_pago()
             }
         }
 
-        $ingresos = Ingreso::where('cliente',$factura->cliente)
+        $ingresos = Ingreso::where('cliente',$this->cliente)
         ->where('anticipo',1)
         ->where('valor_anticipo','>',0)
         ->orWhereIn('id',[$ingresosArray])
