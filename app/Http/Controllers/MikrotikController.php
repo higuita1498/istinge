@@ -28,6 +28,7 @@ include_once(app_path() .'/../public/api_mt_include2.php');
 use routeros_api;
 use RouterosAPI;
 use StdClass;
+use App\Campos;
 
 class MikrotikController extends Controller
 {
@@ -39,9 +40,88 @@ class MikrotikController extends Controller
     
     public function index(){
       $this->getAllPermissions(Auth::user()->id);
+      $tabla = Campos::where('modulo', 15)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+      view()->share(['middel' => true]);
+      return view('mikrotik.index')->with(compact('tabla'));
+    }
 
-      $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
-      return view('mikrotik.index')->with(compact('mikrotiks'));
+    public function mikrotik(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $mikrotiks = Mikrotik::query()
+            ->where('empresa', Auth::user()->empresa);
+
+        if ($request->filtro == true) {
+            if($request->nombre){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->ip){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('ip', 'like', "%{$request->ip}%");
+                });
+            }
+            if($request->puerto_web){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('puerto_web', 'like', "%{$request->puerto_web}%");
+                });
+            }
+            if($request->puerto_api){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('puerto_api', 'like', "%{$request->puerto_api}%");
+                });
+            }
+            if($request->puerto_winbox){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('puerto_winbox', 'like', "%{$request->puerto_winbox}%");
+                });
+            }
+            if($request->interfaz){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('interfaz', 'like', "%{$request->interfaz}%");
+                });
+            }
+            if($request->interfaz_lan){
+                $mikrotiks->where(function ($query) use ($request) {
+                    $query->orWhere('interfaz_lan', 'like', "%{$request->interfaz_lan}%");
+                });
+            }
+            if($request->status){
+                $status = ($request->status == 'A') ? 0 : $request->status;
+                $mikrotiks->where(function ($query) use ($request, $status) {
+                    $query->orWhere('status', $status);
+                });
+            }
+        }
+
+        return datatables()->eloquent($mikrotiks)
+        ->editColumn('nombre', function (Mikrotik $mikrotik) {
+            return "<a href=" . route('mikrotik.show', $mikrotik->id) . ">{$mikrotik->nombre}</a>";
+        })
+        ->editColumn('ip', function (Mikrotik $mikrotik) {
+            return $mikrotik->ip;
+        })
+        ->editColumn('puerto_api', function (Mikrotik $mikrotik) {
+            return $mikrotik->puerto_api;
+        })
+        ->editColumn('puerto_web', function (Mikrotik $mikrotik) {
+            return $mikrotik->puerto_web;
+        })
+        ->editColumn('puerto_winbox', function (Mikrotik $mikrotik) {
+            return $mikrotik->puerto_winbox;
+        })
+        ->editColumn('interfaz', function (Mikrotik $mikrotik) {
+            return $mikrotik->interfaz;
+        })
+        ->editColumn('interfaz_lan', function (Mikrotik $mikrotik) {
+            return $mikrotik->interfaz_lan;
+        })
+        ->editColumn('status', function (Mikrotik $mikrotik) {
+            return "<span class='text-{$mikrotik->status("true")}'><strong>{$mikrotik->status()}</strong></span>";
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "mikrotik.acciones")
+        ->rawColumns(['acciones', 'nombre', 'status'])
+        ->toJson();
     }
     
     public function create(){
@@ -244,7 +324,7 @@ class MikrotikController extends Controller
             
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 
-                $API->comm("/ip/firewall/nat/add\n=action=redirect\n=chain=dstnat\n=comment='Manager - Suspension de clientes (TCP)'\n=dst-port=!8291\n=protocol=tcp\n=src-address-list=morosos\n=to-ports=999");
+                $API->comm("/ip/firewall/nat/add\n=action=redirect\n=chain=dstnat\n=comment='Manager - Suspension de ips (TCP)'\n=dst-port=!8291\n=protocol=tcp\n=src-address-list=morosos\n=to-ports=999");
                 $API->comm("/ip/firewall/nat/add\n=action=redirect\n=chain=dstnat\n=comment='Manager - Suspender clientes(UDP)'\n=dst-port=!8291,53\n=protocol=udp\n=src-address-list=morosos\n=to-ports=999");
                 $API->comm("/ip/proxy/set\n=enabled=yes\n=port=999");
                 

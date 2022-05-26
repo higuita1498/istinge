@@ -3,26 +3,7 @@
 	<input type="hidden" id="url_base" value="{{route('bancos.index')}}">
 	
 	<div class="row">
-		<div class="col-md-4">
-			<select class="form-control selectpicker d-none" name="cuenta" id="cambiar_cuenta" title="Seleccione"
-                    onchange="location = this.value;">
-		      @php $tipos_cuentas=\App\Banco::tipos();@endphp
-		      @foreach($tipos_cuentas as $tipo_cuenta)
-                      <optgroup label="{{$tipo_cuenta['nombre']}}">
-
-
-		          @foreach($bancos as $cuenta)
-		            @if($cuenta->tipo_cta==$tipo_cuenta['nro'])
-		              <option value="{{route('bancos.show',$cuenta->nro)}}" {{$banco->id==$cuenta->id?'selected':''}}>
-                          {{$cuenta->nombre}}
-                      </option>
-		            @endif
-		          @endforeach
-		        </optgroup>
-		      @endforeach
-		    </select>
-		</div>
-		<div class="col-md-8 nopadding">
+		<div class="col-md-12 nopadding">
 			@if(auth()->user()->modo_lectura())
 			<div class="alert alert-warning text-left" role="alert">
 				<h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>

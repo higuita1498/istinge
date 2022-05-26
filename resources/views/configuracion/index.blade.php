@@ -117,6 +117,8 @@
 			<a href="{{route('campos.organizar', 12)}}">Radicados</a><br>
 			<a href="{{route('campos.organizar', 13)}}">Monitor Blacklist</a><br>
 			<a href="{{route('campos.organizar', 14)}}">Ventas Externas</a><br>
+			<a href="{{route('campos.organizar', 15)}}">Mikrotik</a><br>
+			<a href="{{route('campos.organizar', 16)}}">Bancos</a><br>
 			<hr class="nomina">
 			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>
