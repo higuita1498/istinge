@@ -700,7 +700,7 @@ class PucMovimiento extends Model
 
             $contacto = Contacto::find($this->cliente_id);
             if($contacto){
-                $contacto->saldo_favor = $saldo_favor + $valorUsado;
+                $contacto->saldo_favor = $contacto->saldo_favor + $valorUsado;
                 $contacto->save();
             }
         }
