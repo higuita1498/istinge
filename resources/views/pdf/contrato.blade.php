@@ -121,7 +121,7 @@
                                     <tr>
                                         <td>
                                             <p style="text-align: justify;" class="small">Con este contrato nos comprometemos a prestarle los servicios que usted elija*:</p>
-                                            <p style="text-align: justify;" class="small">Telefonía fija <input type="checkbox" /> Internet fijo <input type="checkbox" {{$contrato->contrato()->server_configuration_id ? 'checked="checked' : ''}} /> Televisión <input type="checkbox" {{$contrato->contrato()->servicio_tv ? 'checked="checked' : ''}}></p>
+                                            <p style="text-align: justify;" class="small">Telefonía fija <input type="checkbox" /> Internet fijo <input type="checkbox" {{isset($contrato->contrato()->server_configuration_id) ? 'checked="checked' : ''}} /> Televisión <input type="checkbox" {{isset($contrato->contrato()->servicio_tv) ? 'checked="checked' : ''}}></p>
                                             <p style="text-align: justify;" class="small">Servicios adicionales ______________________________</p>
                                             <p style="text-align: justify;" class="small">Usted se compromete a pagar oportunamente el precio acordado.</p>
                                             <p style="text-align: justify;" class="small mb-2">El servicio se activará a más tardar el día <b>__/__/____</b>.</p>
@@ -155,21 +155,21 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Down</td>
-                                    <td>{{ $contrato->details()->server_configuration_id ? $contrato->details()->plan()->download : '' }}</td>
+                                    <td>{{ isset($contrato->details()->server_configuration_id) ? $contrato->details()->plan()->download : '' }}</td>
                                     <td style="font-size: 9px;">Ip Fijo</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Up</td>
-                                    <td>{{ $contrato->details()->server_configuration_id ? $contrato->details()->plan()->upload : '' }}</td>
+                                    <td>{{ isset($contrato->details()->server_configuration_id) ? $contrato->details()->plan()->upload : '' }}</td>
                                     <td style="font-size: 9px;">Otros</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ $contrato->details()->server_configuration_id ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</b></td>
+                                    <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details()->server_configuration_id) ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ $contrato->details()->server_configuration_id ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details()->server_configuration_id) ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</td>
                                 </tr>
                             </table>
 
@@ -193,15 +193,15 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}}{{ $contrato->contrato()->servicio_tv ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}}{{ isset($contrato->contrato()->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ $contrato->contrato()->servicio_tv ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->contrato()->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
                                     @php
                                     $total_tv = 0; $total_internet = 0;
-                                    if ($contrato->contrato()->servicio_tv){
+                                    if (isset($contrato->contrato()->servicio_tv)){
                                         $total_tv = (($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio;
                                     }
-                                    if ($contrato->contrato()->server_configuration_id){
+                                    if (isset($contrato->contrato()->server_configuration_id)){
                                         $total_internet = $contrato->contrato()->plan()->price;
                                     }
                                     @endphp
