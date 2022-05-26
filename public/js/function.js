@@ -1293,7 +1293,7 @@ function rellenar(id, selected, producto=false){
         url: url,
         success: function(data){
 
-            if(!data.cuentas){
+            if(data.cuentas == 0){
                 swal({
                     title: 'Información',
                     html: 'El item seleccionado no tiene aisgnado cuentas contables y por ende el asiento contable no saldrá correcto.',
@@ -2269,7 +2269,7 @@ function CrearFilaFormaPago(){
     }else{
         swal({
             title: 'Error',
-            html: 'Debe seleccionar primero un cliente antes de elegur las formas de pago.',
+            html: 'Debe seleccionar primero un cliente antes de elegir las formas de pago.',
             type: 'error',
             showConfirmButton: true,
             confirmButtonColor: '#1A59A1',

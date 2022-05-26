@@ -222,10 +222,10 @@ class Inventario extends Model
     public function booleanCuentas(){
       $cuentas = ProductoCuenta::where('inventario_id',$this->id)->get();
 
-      if($cuentas){
-        return true;
+      if($cuentas->count() > 0){
+        return 1;
       }else{
-        return false;
+        return 0;
       }
     }
 
