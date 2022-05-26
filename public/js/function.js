@@ -1639,7 +1639,6 @@ function total_linea_formapago(nro){
         if (totalLinea) {
             total+=parseFloat(totalLinea);
         }
-
     });
 
     let totalFactura = document.getElementById('total'); 
@@ -1662,12 +1661,11 @@ function total_linea_formapago(nro){
     
     if($("#selectanticipo"+nro).length){
         let valorInputForma = parseFloat($("#precioformapago"+nro).val());
-        let valorSelectRecibo = parseFloat($("#selectanticipo"+nro).val());
-
+        let valorSelectRecibo = parseFloat($("#optionAnticipo"+nro).attr('precio'));
         if(valorInputForma > valorSelectRecibo){
             swal({
                 title: 'Error',
-                html: 'El total de las formas de pago no puede superar el total de la factura.',
+                html: 'El valor del anticipo no puede superar el varlo del recibo de caja.',
                 type: 'error',
                 showConfirmButton: true,
                 confirmButtonColor: '#1A59A1',
@@ -2368,6 +2366,7 @@ function llenarSelectAnticipo(value,cliente, nro){
                     {
                         value: value.id,
                         precio: Math.round(value.valor_anticipo),
+                        id: "optionAnticipo"+nro,
                         text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
                     }));
             });
@@ -2377,9 +2376,6 @@ function llenarSelectAnticipo(value,cliente, nro){
         })
     // }
 }
-
-
-
 
 function change_retencion(id, prefij='', nro=''){
     if ($('#'+prefij+'lock_reten'+id).val()==0) {
