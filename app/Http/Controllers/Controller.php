@@ -1520,13 +1520,15 @@ class Controller extends BaseController
         foreach($segmentos as $segmento){
             $parte = explode('/',$segmento['segmento']);
 
-            if(isset($parte[1]) == 30){
-                $seg = Contrato::where('local_address', $segmento['segmento'])->where('status', 1)->select('local_address')->first();
-                if($seg){
-                    array_splice($segmentos, $i, 1);
+            if(isset($parte[1])){
+                if($parte[1] == 30){
+                    $seg = Contrato::where('local_address', $segmento['segmento'])->where('status', 1)->select('local_address')->first();
+                    if($seg){
+                        array_splice($segmentos, $i, 1);
+                    }
                 }
+                $i++;
             }
-            $i++;
         }
         return response()->json($segmentos);
     }
