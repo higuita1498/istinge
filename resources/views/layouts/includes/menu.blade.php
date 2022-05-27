@@ -78,7 +78,7 @@
                         </li>
                     @endif
                     @if(isset($_SESSION['permisos']['804']))
-                    <li class="nav-item" id="listado">
+                    <li class="nav-item" id="listado_ping">
                         <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
                     </li>
                     @endif
@@ -491,6 +491,17 @@
             <span class="menu-title">Admin OLT</span>
         </a>
     </li>
+    @endif
+
+    @if(Auth::user()->empresa()->oficina)
+    @if(isset($_SESSION['permisos']['808']) || isset($_SESSION['permisos']['809']) || isset($_SESSION['permisos']['810']) || isset($_SESSION['permisos']['811']) || isset($_SESSION['permisos']['812']) || isset($_SESSION['permisos']['813']))
+        <li class="nav-item" id="oficina">
+            <a  class="nav-link" href="{{route('oficinas.index')}}">
+                <i class="menu-icon fas fa-store-alt"></i>
+                <span class="menu-title">Oficinas</span>
+            </a>
+        </li>
+    @endif
     @endif
     
     @if(isset($_SESSION['permisos']['111']))

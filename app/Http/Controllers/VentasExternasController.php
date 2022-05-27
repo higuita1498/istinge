@@ -27,6 +27,7 @@ use App\TipoEmpresa;
 use App\Vendedor;
 use App\Campos;
 use App\Canal;
+use App\Oficina;
 
 class VentasExternasController extends Controller{
     public function __construct(){
@@ -103,6 +104,12 @@ class VentasExternasController extends Controller{
         $contactos->where('contactos.status', 1);
         $contactos->where('contactos.venta_externa', 1);
 
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contactos->where('contactos.oficina', auth()->user()->oficina);
+            }
+        }
+
         return datatables()->eloquent($contactos)
             ->editColumn('nombre', function (VentasExternas $contacto) {
                 return $contacto->nombre();
@@ -144,10 +151,11 @@ class VentasExternasController extends Controller{
         $departamentos = DB::table('departamentos')->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon' =>'', 'title' => 'Nueva Venta Externa', 'subseccion' => 'ventas-externas', 'middel'=>true]);
 
-        return view('ventas_externas.create')->with(compact('identificaciones', 'paises', 'departamentos','vendedores','canales'));
+        return view('ventas_externas.create')->with(compact('identificaciones', 'paises', 'departamentos', 'vendedores', 'canales', 'oficinas'));
     }
     
     public function store(Request $request){
@@ -187,6 +195,7 @@ class VentasExternasController extends Controller{
         $contacto->venta_externa     = 1;
         $contacto->canal_externa     = $request->canal;
         $contacto->vendedor_externa  = $request->vendedor;
+        $contacto->oficina           = $request->oficina;
 
         if ($request->tipo_persona == null) { 
             $contacto->tipo_persona   = 1;
@@ -212,9 +221,10 @@ class VentasExternasController extends Controller{
             $departamentos    = DB::table('departamentos')->get();
             $vendedores       = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
             $canales          = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
+            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
             view()->share(['title' => 'Editar Venta Externa']);
-            return view('ventas_externas.edit')->with(compact('identificaciones', 'paises', 'departamentos','vendedores','canales', 'contacto'));
+            return view('ventas_externas.edit')->with(compact('identificaciones', 'paises', 'departamentos','vendedores','canales', 'contacto', 'oficinas'));
         }
         return redirect('empresa/ventas-externas')->with('danger', 'VENTA EXTERNA NO ENCONTRADA, INTENTE NUEVAMENTE');
     }
@@ -246,6 +256,7 @@ class VentasExternasController extends Controller{
             $contacto->venta_externa     = 1;
             $contacto->canal_externa     = $request->canal;
             $contacto->vendedor_externa  = $request->vendedor;
+            $contacto->oficina           = $request->oficina;
             $contacto->save();
 
             return redirect('empresa/ventas-externas')->with('success', 'SE HA MODIFICADO SATISFACTORIAMENTE LA VENTA EXTERNA');

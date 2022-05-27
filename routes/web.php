@@ -87,6 +87,7 @@ Route::get('pagos', 'PagosController@pagos');
 Route::get('ventas-externas', 'VentasExternasController@ventas');
 Route::get('lmikrotik', 'MikrotikController@mikrotik');
 Route::get('lbanco', 'BancosController@banco');
+Route::get('loficina', 'OficinasController@oficina');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -110,6 +111,7 @@ Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache'
 Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
 Route::post('prorrateo', 'ConfiguracionController@actDescProrrateo');
 Route::post('efecty', 'ConfiguracionController@actDescEfecty');
+Route::post('oficina', 'ConfiguracionController@actDescOficina');
 
 Route::post('configuracion_nominadian', 'ConfiguracionController@nominaDian');
 
@@ -1306,6 +1308,10 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         });
         Route::resource('ventas-externas', 'VentasExternasController');
 
-
+    //OFICINAS
+        Route::group(['prefix' => 'oficinas'], function() {
+            Route::get('/status/{id}', 'OficinasController@status')->name('oficinas.status');
+        });
+        Route::resource('oficinas', 'OficinasController');
 
 });
