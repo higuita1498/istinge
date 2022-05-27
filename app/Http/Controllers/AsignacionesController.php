@@ -56,6 +56,7 @@ class AsignacionesController extends Controller
   }
 
   public function store(Request $request){
+    $ext_permitidas = array('image/jpeg','image/png','image/gif');
     if (!$request->id){
         $mensaje='Debe seleccionar un cliente para la asignación del contrato digital';
         return back()->with('danger', $mensaje);
@@ -75,41 +76,110 @@ class AsignacionesController extends Controller
       $contrato->fecha_isp = date('Y-m-d');
       
       $file = $request->file('documento');
-      $nombre =  $file->getClientOriginalName();
+      $nombre =  'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
       Storage::disk('documentos')->put($nombre, \File::get($file));
       $contrato->documento = $nombre;
 
+      if(in_array($file->getMimeType(), $ext_permitidas)){
+        switch($file->getMimeType()){
+          case 'image/jpeg':
+            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+          break;
+          case 'image/png':
+            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+          break;
+          case 'image/gif':
+            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+          break;
+        }
+      }
+
       if($request->file('imgA')){
         $file = $request->file('imgA');
-        $nombre =  $file->getClientOriginalName();
+        $nombre =  'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
         Storage::disk('documentos')->put($nombre, \File::get($file));
         $contrato->imgA = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/png':
+            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/gif':
+            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+          }
+        }
       }
 
       if($request->file('imgB')){
         $file = $request->file('imgB');
-        $nombre =  $file->getClientOriginalName();
+        $nombre =  'imgB_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
         Storage::disk('documentos')->put($nombre, \File::get($file));
         $contrato->imgB = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/png':
+            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/gif':
+            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+          }
+        }
       }
 
       if($request->file('imgC')){
         $file = $request->file('imgC');
-        $nombre =  $file->getClientOriginalName();
+        $nombre =  'imgC_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
         Storage::disk('documentos')->put($nombre, \File::get($file));
         $contrato->imgC = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/png':
+            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/gif':
+            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+          }
+        }
       }
 
       if($request->file('imgD')){
         $file = $request->file('imgD');
-        $nombre =  $file->getClientOriginalName();
+        $nombre =  'imgD_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
         Storage::disk('documentos')->put($nombre, \File::get($file));
         $contrato->imgD = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/png':
+            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/gif':
+            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+          }
+        }
       }
 
       $contrato->save();
-      $mensaje='Se ha registrado satisfactoriamente la asignación del contrato digital.';
-      return redirect('empresa/asignaciones')->with('success', $mensaje);
+      return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
     }
     return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
   }

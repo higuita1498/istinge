@@ -294,10 +294,10 @@
             var fileName = this.files[0].name;
             var fileSize = this.files[0].size;
             
-            if(fileSize > 1000000){
+            if(fileSize > 5000000){
                 this.value = '';
                 Swal.fire({
-                    title: 'La documentación adjuntada no puede exceder 1MB',
+                    title: 'La documentación adjuntada no puede exceder 5MB',
                     text: 'Intente nuevamente',
                     type: 'error',
                     showCancelButton: false,
