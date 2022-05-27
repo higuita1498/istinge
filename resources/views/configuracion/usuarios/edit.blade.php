@@ -45,6 +45,18 @@
       </span>
     </div>
 
+    <div class="col-md-3 form-group">
+      <label class="control-label">Oficina Asociada</label>
+      <select class="form-control selectpicker" id="oficina" name="oficina" title="Seleccione">
+          @foreach($oficinas as $oficina)
+            <option value="{{$oficina->id}}" {{$usuario->oficina==$oficina->id?'selected':''}} >{{$oficina->nombre}}</option>
+          @endforeach
+      </select>
+      <span class="help-block error">
+        <strong>{{ $errors->first('oficina') }}</strong>
+      </span>
+    </div>
+
   </div>
 
   <div class="row">

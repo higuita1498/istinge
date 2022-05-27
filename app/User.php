@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable; use App\Empresa;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Auth; use DB;
 use App\Contrato;
+use App\Oficina;
 
 class User extends Authenticatable
 {
@@ -293,5 +294,10 @@ class User extends Authenticatable
             return ($contratos > 1500) ? true : false;
         }
         return $contratos;
+    }
+
+    public function oficina()
+    {
+        return Oficina::find($this->oficina);
     }
 }

@@ -27,8 +27,8 @@
 						<td>{{$rol->rol}}</td>
 					</tr>
 					<tr>
-						<td>Radicados Asociados</td>
-						<td>{{$radicados}}</td>
+						<td>Oficina Asociada</td>
+						<td>{{$usuario->oficina ? $usuario->oficina()->nombre : 'N/A'}}</td>
 					</tr>
 					<tr>
 						<td>Acciones</td>
