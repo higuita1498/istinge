@@ -55,6 +55,7 @@ use App\GrupoCorte;
 use App\Segmento;
 use App\Campos;
 use App\Puerto;
+use App\Oficina;
 
 class ContratosController extends Controller
 {
@@ -66,7 +67,7 @@ class ContratosController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -82,7 +83,7 @@ class ContratosController extends Controller
 
     public function disabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -98,7 +99,7 @@ class ContratosController extends Controller
 
     public function enabled(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('status',1)->where('empresa', Auth::user()->empresa)->whereIn('tipo_contacto', [0,2])->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -227,6 +228,12 @@ class ContratosController extends Controller
             $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contratos->where('contracts.oficina', auth()->user()->oficina);
+            }
+        }
+
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
                 if($contrato->ip){
@@ -328,8 +335,7 @@ class ContratosController extends Controller
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
-        $sql = "SELECT * FROM contactos AS c WHERE c.status = 1 AND c.id /*NOT IN (SELECT cs.client_id FROM contracts AS cs)*/ AND tipo_contacto = 0 OR tipo_contacto = 2 AND c.empresa = $empresa ORDER BY c.nombre ASC";
-        $clientes = DB::select($sql);
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -346,9 +352,10 @@ class ContratosController extends Controller
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'servicios', 'vendedores', 'canales', 'gmaps'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
     }
     
     public function store(Request $request){
@@ -795,10 +802,11 @@ class ContratosController extends Controller
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Editar Contrato: '.$contrato->nro]);
-            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos', 'servicios', 'vendedores', 'canales', 'gmaps'));
+            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }

@@ -18,6 +18,7 @@ use App\PlanesVelocidad;
 use App\Model\Inventario\Inventario;
 use App\Vendedor;
 use App\Canal;
+use App\Oficina;
 
 class Contrato extends Model
 {
@@ -203,5 +204,9 @@ class Contrato extends Model
         } else{
             return 'N/A';
         }
+    }
+
+    public function oficina(){
+        return Oficina::find($this->oficina);
     }
 }

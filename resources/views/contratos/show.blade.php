@@ -269,6 +269,12 @@
 							<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank"><strong>Ver {{ $contrato->referencia_d }}</strong></a></td>
 						</tr>
 						@endif
+						@if($contrato->oficina)
+						<tr>
+							<th>Oficina Asociada</th>
+							<td>{{ $contrato->oficina()->nombre }}</td>
+						</tr>
+						@endif
 						@if($contrato->vendedor)
 						<tr>
 							<th>Vendedor</th>

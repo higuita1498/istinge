@@ -187,6 +187,16 @@
                                     </span>
                                 </div>
                             </div>
+                            @if(Auth::user()->empresa()->oficina)
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" name="oficina" id="oficina" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                    @foreach($oficinas as $oficina)
+                                    <option value="{{$oficina->id}}" {{ $oficina->id == auth()->user()->oficina ? 'selected' : '' }}>{{$oficina->nombre}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">

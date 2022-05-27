@@ -23,7 +23,7 @@ class PingsController extends Controller
     public function __construct(){
         $this->middleware('auth');
         set_time_limit(300);
-        view()->share(['seccion' => 'contratos', 'subseccion' => 'listado', 'title' => 'Pings Fallidos', 'icon' => 'fas fa-plug']);
+        view()->share(['seccion' => 'contratos', 'subseccion' => 'listado_ping', 'title' => 'Pings Fallidos', 'icon' => 'fas fa-plug']);
     }
     
     public function index(Request $request){
@@ -35,15 +35,22 @@ class PingsController extends Controller
     public function pings(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $pings = Ping::query()
-        ->where('fecha', date('Y-m-d'))
-        ->where('empresa', Auth::user()->empresa);
+        ->join('contracts', 'contracts.id', '=', 'pings.contrato')
+        ->where('pings.fecha', date('Y-m-d'))
+        ->where('pings.empresa', Auth::user()->empresa);
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $pings->where('contracts.oficina', auth()->user()->oficina);
+            }
+        }
 
         return datatables()->eloquent($pings)
             ->editColumn('contrato', function (Ping $ping) {
                 return "<a href=" . route('contratos.show', $ping->contrato) . " target='_blank'>".$ping->contrato."</div></a>";
             })
             ->editColumn('cliente', function (Ping $ping) {
-                return "<a href=" . route('contactos.show', $ping->contrato()->cliente()->id) . " target='_blank'>".$ping->contrato()->cliente()->nombre."</div></a>";
+                return "<a href=" . route('contactos.show', $ping->contrato()->cliente()->id) . " target='_blank'>".$ping->contrato()->cliente()->nombre." ".$ping->contrato()->cliente()->apellidos()."</div></a>";
             })
             ->editColumn('ip', function (Ping $ping) {
                 return $ping->ip;
