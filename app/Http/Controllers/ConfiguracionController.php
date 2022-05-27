@@ -2242,4 +2242,26 @@ class ConfiguracionController extends Controller
             return 0;
         }
     }
+
+  public function actDescOficina(Request $request){
+    $empresa = Empresa::find(Auth::user()->empresa);
+    if($empresa){
+      if($request->oficina == 0){
+        $empresa->oficina = 1;
+
+        $user_master = User::where('empresa', $empresa->id)->first()->id;
+        $permisos = DB::table('permisos_usuarios')->where('id_permiso', 808)->where('id_usuario', $user_master)->get()->count();
+        if ($permisos == 0) {
+          $permisosAccesos = DB::table('permisos_botones')->where('id_modulo', 35)->select('id')->get();
+          foreach ($permisosAccesos as $permiso) {
+            DB::table('permisos_usuarios')->insert(['id_usuario' => $user_master, 'id_permiso' => $permiso->id]);
+          }
+        }
+      }else{
+        $empresa->oficina = 0;
+      }
+      $empresa->save();
+      return $empresa->oficina;
+    }
+  }
 }

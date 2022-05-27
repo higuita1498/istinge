@@ -119,6 +119,7 @@
 			<a href="{{route('campos.organizar', 14)}}">Ventas Externas</a><br>
 			<a href="{{route('campos.organizar', 15)}}">Mikrotik</a><br>
 			<a href="{{route('campos.organizar', 16)}}">Bancos</a><br>
+			<a href="{{route('campos.organizar', 17)}}">Oficinas</a><br>
 			<hr class="nomina">
 			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>
@@ -182,6 +183,17 @@
 			@endif
 		</div>
 		@endif
+
+		<div class="col-sm-3">
+			<h4 class="card-title">Oficinas</h4>
+			<p>Configura la información relacionada a las oficinas de tu empresa.</p>
+			@if(Auth::user()->empresa()->oficina)
+			<a href="{{route('oficinas.index')}}">Gestión de Oficinas</a><br>
+			@else
+			<a href="javascript:actDescOficina()">{{ Auth::user()->empresa()->oficina == 0 ? 'Habilitar':'Deshabilitar' }} uso de oficinas en NetworkSoft</a><br>
+			<input type="hidden" id="oficinaid" value="{{Auth::user()->empresa()->oficina}}">
+			@endif
+		</div>
 
 		<div class="col-sm-3">
 			<h4 class="card-title">Limpieza del Sistema</h4>
@@ -734,6 +746,67 @@
 					});
 				}
 			})
+		}
+
+		function actDescOficina() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/oficina';
+			}else{
+				var url = '/oficina';
+			}
+
+		    if ($("#oficinaid").val() == 0) {
+		        $titleswal = "¿Desea habilitar el uso de oficinas?";
+		    }
+
+		    if ($("#oficinaid").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar el uso de oficinas?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { oficina: $("#oficinaid").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Uso de oficinas en NetworkSoft habilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#oficinaid").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Uso de oficinas en NetworkSoft deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#oficinaid").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
 		}
     </script>
 @endsection
