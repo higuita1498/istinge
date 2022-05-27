@@ -3,69 +3,68 @@
 @section('content')
 
 @if(Session::has('success-newtypecontact'))
-  <div class="alert alert-success" >
-  	{{Session::get('success-newtypecontact')}}
-  </div>
+    <div class="alert alert-success" >
+    	{{Session::get('success-newtypecontact')}}
+    </div>
+    <script type="text/javascript">
+    	setTimeout(function(){
+    		$('.alert').hide();
+    		$('.active_table').attr('class', ' ');
+    	}, 5000);
+    </script>
+@endif
 
-  <script type="text/javascript">
-  	setTimeout(function(){
-  		$('.alert').hide();
-  		$('.active_table').attr('class', ' ');
-  	}, 5000);
-  </script>
- @endif
-
-  <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
-  	{{ csrf_field() }}
-  	<div class="row">
-  		<div class="form-group col-md-3">
-  			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
-  			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
-  				@foreach($identificaciones as $identificacion)
-  				  <option @if($identificacion->id == 3) ? selected @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
-  				@endforeach
-  			</select>
-  			<span class="help-block error">
-  				<strong>{{ $errors->first('tip_iden') }}</strong>
-  			</span>
-  		</div>
-  		<div class="form-group col-md-3">
-  			<label class="control-label">Identificación <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
-  			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="20" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-  			<span class="help-block error">
-  				<strong>{{ $errors->first('nit') }}</strong>
-  			</span>
-  		</div>
-  		<div class="form-group col-md-1" style="display: none;" id="dvnit">
-  			<label class="control-label">DV <span class="text-danger">*</span></label>
-  			<input type="text" class="form-control" name="dv" id="dv" disabled required="" maxlength="20" value="" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-  			<input type="hidden" name="dvoriginal" id="dvoriginal" value="">
-  			<span class="help-block error">
-  				<strong>{{ $errors->first('dv') }}</strong>
-  			</span>
-  		</div>
-  		<div class="form-group col-md-3">
-  			<label class="control-label">Nombres <span class="text-danger">*</span></label>
-  			<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{old('nombre')}}">
-  			<span class="help-block error">
-  				<strong>{{ $errors->first('nombre') }}</strong>
-  			</span>
-  		</div>
-      <div class="form-group col-md-3">
-          <label class="control-label">Apellido 1 <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="apellido1" id="apellido1" required="" maxlength="200" value="{{old('apellido1')}}">
-          <span class="help-block error">
-              <strong>{{ $errors->first('apellido1') }}</strong>
-          </span>
-      </div>
-      <div class="form-group col-md-3">
-          <label class="control-label">Apellido 2</label>
-          <input type="text" class="form-control" name="apellido2" id="apellido2" maxlength="200" value="{{old('apellido2')}}">
-          <span class="help-block error">
-              <strong>{{ $errors->first('apellido2') }}</strong>
-          </span>
-      </div>
-  	</div>
+    <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+    	@csrf
+    	<div class="row">
+    		<div class="form-group col-md-3">
+    			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
+    			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
+    				@foreach($identificaciones as $identificacion)
+    				<option @if($identificacion->id == 3) ? selected @endif {{old('tip_iden')==$identificacion->id?'selected':''}} value="{{$identificacion->id}}" title="{{$identificacion->mini()}}">{{$identificacion->identificacion}}</option>
+    				@endforeach
+    			</select>
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('tip_iden') }}</strong>
+    			</span>
+    		</div>
+    		<div class="form-group col-md-3">
+    			<label class="control-label">Identificación <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+    			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="20" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('nit') }}</strong>
+    			</span>
+    		</div>
+    		<div class="form-group col-md-1" style="display: none;" id="dvnit">
+    			<label class="control-label">DV <span class="text-danger">*</span></label>
+    			<input type="text" class="form-control" name="dv" id="dv" disabled required="" maxlength="20" value="" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+    			<input type="hidden" name="dvoriginal" id="dvoriginal" value="">
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('dv') }}</strong>
+    			</span>
+    		</div>
+    		<div class="form-group col-md-3">
+    			<label class="control-label">Nombres <span class="text-danger">*</span></label>
+    			<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{old('nombre')}}">
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('nombre') }}</strong>
+    			</span>
+    		</div>
+    		<div class="form-group col-md-3">
+    			<label class="control-label">Apellido 1 <span class="text-danger">*</span></label>
+    			<input type="text" class="form-control" name="apellido1" id="apellido1" required="" maxlength="200" value="{{old('apellido1')}}">
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('apellido1') }}</strong>
+    			</span>
+    		</div>
+    		<div class="form-group col-md-3">
+    			<label class="control-label">Apellido 2</label>
+    			<input type="text" class="form-control" name="apellido2" id="apellido2" maxlength="200" value="{{old('apellido2')}}">
+    			<span class="help-block error">
+    				<strong>{{ $errors->first('apellido2') }}</strong>
+    			</span>
+    		</div>
+    	</div>
 
   	<div class="row">
   		<div class="form-group col-md-3">
@@ -189,6 +188,16 @@
 				<strong>{{ $errors->first('tipo_contacto') }}</strong>
 			</span>
 		</div>
+		@if(Auth::user()->empresa()->oficina)
+		<div class="form-group col-md-3">
+  			<label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
+  			<select class="form-control selectpicker" name="oficina" id="oficina" required="" title="Seleccione" data-live-search="true" data-size="5">
+  				@foreach($oficinas as $oficina)
+  				  <option value="{{$oficina->id}}" {{ $oficina->id == auth()->user()->oficina ? 'selected' : '' }}>{{$oficina->nombre}}</option>
+  				@endforeach
+  			</select>
+  		</div>
+  		@endif
   		<div class="form-group col-md-12">
   			<label class="control-label">Observaciones</label>
   			<textarea class="form-control" name="observaciones" >{{old('observaciones')}}</textarea>

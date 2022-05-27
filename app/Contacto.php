@@ -16,6 +16,7 @@ use App\Model\Gastos\GastosFactura;
 use DB; use Auth; use StdClass;
 use App\Contrato;
 use App\Radicado;
+use App\Oficina;
 
 class Contacto extends Model
 {
@@ -346,5 +347,9 @@ class Contacto extends Model
         $temp = 0;
         $temp += Radicado::where('cliente', $this->id)->count();
         return $temp;
+    }
+
+    public function oficina(){
+        return Oficina::find($this->oficina);
     }
 }

@@ -180,6 +180,14 @@
     				<strong>{{ $errors->first('tipo_contacto') }}</strong>
     			</span>
     		</div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="oficina" id="oficina" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    @foreach($oficinas as $oficina)
+                    <option value="{{$oficina->id}}" {{ $oficina->id == auth()->user()->oficina ? 'selected' : '' }}>{{$oficina->nombre}}</option>
+                    @endforeach
+                </select>
+            </div>
       		<div class="form-group col-md-12">
       			<label class="control-label">Observaciones</label>
       			<textarea class="form-control" name="observaciones" >{{old('observaciones')}}</textarea>

@@ -230,6 +230,12 @@
 						<td>{{$contacto->email}}</td>
 					</tr>
 					@endif
+					@if($contacto->oficina)
+					<tr>
+						<th width="20%">Oficina Asociada</th>
+						<td>{{$contacto->oficina()->nombre}}</td>
+					</tr>
+					@endif
 					@if($contacto->firma_isp)
 					<tr>
 						<th width="20%">Fecha de la firma del Contrato</th>

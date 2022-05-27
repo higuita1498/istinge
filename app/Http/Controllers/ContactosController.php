@@ -36,6 +36,7 @@ use App\Campos;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
 use App\Mikrotik;
+use App\Oficina;
 
 class ContactosController extends Controller
 {
@@ -130,6 +131,9 @@ class ContactosController extends Controller
         $contactos->where('contactos.empresa', auth()->user()->empresa);
         $contactos->whereIn('tipo_contacto', [$tipo_usuario,2]);
         $contactos->where('contactos.status', 1);
+        if(auth()->user()->oficina){
+            $contactos->where('contactos.oficina', auth()->user()->oficina);
+        }
 
         return datatables()->eloquent($contactos)
             ->editColumn('serial_onu', function (Contacto $contacto) {
@@ -292,10 +296,11 @@ class ContactosController extends Controller
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon' =>'', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel'=>true]);
 
-        return view('contactos.create')->with(compact('identificaciones', 'paises', 'departamentos'));
+        return view('contactos.create')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
     }
     
     public function createp(){
@@ -331,6 +336,8 @@ class ContactosController extends Controller
         } else {
             $transportadoras = null;
         }
+
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         
         view()->share(['title' => 'Nuevo Proveedor', 'subseccion' => 'proveedores', 'middel'=>true]);
 
@@ -342,7 +349,8 @@ class ContactosController extends Controller
             'listas',
             'paises',
             'departamentos',
-            'transportadoras'
+            'transportadoras',
+            'oficinas'
         ));
     }
     
@@ -394,6 +402,7 @@ class ContactosController extends Controller
         $contacto->tipo_empresa = $request->tipo_empresa;
         $contacto->lista_precio = $request->lista_precio;
         $contacto->vendedor = $request->vendedor;
+        $contacto->oficina=$request->oficina;
 
         $contacto->save();
         
@@ -447,6 +456,7 @@ class ContactosController extends Controller
         $contacto->fk_iddepartamento = $request->departamento;
         $contacto->fk_idmunicipio    = $request->municipio;
         $contacto->cod_postal        = $request->cod_postal;
+        $contacto->oficina=$request->oficina;
 
         if ($request->tipo_persona == null) { 
             $contacto->tipo_persona      = 1; 
@@ -484,6 +494,7 @@ class ContactosController extends Controller
             $vendedores = Vendedor::where('empresa', Auth::user()->empresa)->where('estado', 1)->get();
             $listas = ListaPrecios::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
+            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
             session(['url_search' => url()->previous()]);
             
@@ -492,7 +503,7 @@ class ContactosController extends Controller
             }else{
                 view()->share(['title' => 'Editar: '.$contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'proveedores', 'middel'=>true, 'icon' => '']);
             }
-            return view('contactos.edit')->with(compact('contacto', 'identificaciones', 'paises', 'departamentos', 'vendedores', 'listas', 'tipos_empresa'));
+            return view('contactos.edit')->with(compact('contacto', 'identificaciones', 'paises', 'departamentos', 'vendedores', 'listas', 'tipos_empresa', 'oficinas'));
         }
         return redirect('empresa/contactos')->with('danger', 'CLIENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
@@ -530,6 +541,7 @@ class ContactosController extends Controller
             $contacto->tipo_empresa = $request->tipo_empresa;
             $contacto->lista_precio = $request->lista_precio;
             $contacto->vendedor = $request->vendedor;
+            $contacto->oficina=$request->oficina;
             
             $contacto->save();
 
