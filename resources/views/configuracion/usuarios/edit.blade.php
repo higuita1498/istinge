@@ -45,6 +45,7 @@
       </span>
     </div>
 
+    @if(Auth::user()->empresa()->oficina)
     <div class="col-md-3 form-group">
       <label class="control-label">Oficina Asociada</label>
       <select class="form-control selectpicker" id="oficina" name="oficina" title="Seleccione">
@@ -56,6 +57,7 @@
         <strong>{{ $errors->first('oficina') }}</strong>
       </span>
     </div>
+    @endif
 
   </div>
 
