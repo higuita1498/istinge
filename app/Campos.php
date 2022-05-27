@@ -59,6 +59,22 @@ class Campos extends Model{
             return 'Pagos Recurrentes';
         }else if($this->modulo == 9){
             return 'Descuentos';
+        }else if($this->modulo == 10){
+            return 'Planes de Velocidad';
+        }else if($this->modulo == 11){
+            return 'Promesas de Pago';
+        }else if($this->modulo == 12){
+            return 'Radicados';
+        }else if($this->modulo == 13){
+            return 'Monitor Blacklist';
+        }else if($this->modulo == 14){
+            return 'Ventas Externas';
+        }else if($this->modulo == 15){
+            return 'Mikrotik';
+        }else if($this->modulo == 16){
+            return 'Bancos';
+        }else if($this->modulo == 17){
+            return 'Oficinas';
         }
     }
 }
