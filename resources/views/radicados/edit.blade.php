@@ -18,7 +18,7 @@
     </script>
   @endif
 
-  <form method="POST" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-banco" >
+  <form method="POST" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-banco" >
    {{ csrf_field() }}
       <input name="_method" type="hidden" value="PATCH">
       <div class="row">
@@ -118,6 +118,9 @@
         <option value="2" {{ $radicado->prioridad == 2 ? 'selected':'' }}>Media</option>
         <option value="3" {{ $radicado->prioridad == 3 ? 'selected':'' }}>Alta</option>
       </select>
+      <span class="help-block error">
+        <strong>{{ $errors->first('prioridad') }}</strong>
+      </span>
     </div>
     @if(Auth::user()->empresa()->oficina)
     <div class="form-group col-md-3">

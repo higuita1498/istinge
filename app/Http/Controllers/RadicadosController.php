@@ -224,7 +224,8 @@ class RadicadosController extends Controller{
             'servicio' => 'required',
             'estatus' => 'required',
             'telefono' => 'required',
-            'direccion' => 'required'
+            'direccion' => 'required',
+            'prioridad' => 'required'
         ]);
 
         if(!$request->contrato && $request->servicio != 4){

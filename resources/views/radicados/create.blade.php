@@ -17,7 +17,7 @@
 		</script>
 	@endif
 
-    <form method="POST" action="{{ route('radicados.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-radicado" >
+    <form method="POST" action="{{ route('radicados.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-radicado" >
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-4 form-group">
@@ -140,6 +140,9 @@
                     <option value="2">Media</option>
                     <option value="3">Alta</option>
                 </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('prioridad') }}</strong>
+                </span>
             </div>
             @if(Auth::user()->empresa()->oficina)
             <div class="form-group col-md-3">
