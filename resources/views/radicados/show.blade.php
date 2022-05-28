@@ -195,12 +195,18 @@
     						<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($radicado->valor)}}</td>
     					</tr>
     					@endif
-    					@if ($radicado->tecnico() != NULL)
-    					<tr>
-    						<th>Técnico Asociado</th>
-    						<td>{{$radicado->tecnico()->nombres}}</td>
-    					</tr>
-    					@endif
+                        @if ($radicado->tecnico() != NULL)
+                        <tr>
+                            <th>Técnico Asociado</th>
+                            <td>{{$radicado->tecnico()->nombres}}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->oficina)
+                        <tr>
+                            <th>Oficina Asociada</th>
+                            <td>{{$radicado->oficina()->nombre}}</td>
+                        </tr>
+                        @endif
     					@if ($radicado->responsable() != NULL)
     					<tr>
     						<th>Responsable</th>

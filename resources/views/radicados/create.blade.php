@@ -141,6 +141,16 @@
                     <option value="3">Alta</option>
                 </select>
             </div>
+            @if(Auth::user()->empresa()->oficina)
+            <div class="form-group col-md-3">
+                <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="oficina" id="oficina" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    @foreach($oficinas as $oficina)
+                      <option value="{{$oficina->id}}" {{ $oficina->id == auth()->user()->oficina ? 'selected' : '' }}>{{$oficina->nombre}}</option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
             <div class="col-md-12 form-group">
                 <label class="control-label">Observaciones</label>
                 <textarea  class="form-control form-control-sm min_max_100" id="desconocido" required="" name="desconocido"></textarea>

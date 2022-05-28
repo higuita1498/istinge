@@ -131,8 +131,11 @@ class ContactosController extends Controller
         $contactos->where('contactos.empresa', auth()->user()->empresa);
         $contactos->whereIn('tipo_contacto', [$tipo_usuario,2]);
         $contactos->where('contactos.status', 1);
-        if(auth()->user()->oficina){
-            $contactos->where('contactos.oficina', auth()->user()->oficina);
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contactos->where('contactos.oficina', auth()->user()->oficina);
+            }
         }
 
         return datatables()->eloquent($contactos)

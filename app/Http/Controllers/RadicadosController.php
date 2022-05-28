@@ -29,6 +29,7 @@ use Mail;
 use App\Mail\RadicadosMailable;
 use Config;
 use App\ServidorCorreo;
+use App\Oficina;
 
 class RadicadosController extends Controller{
     public function __construct(){
@@ -135,8 +136,14 @@ class RadicadosController extends Controller{
             }
         }
 
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $radicados->where('radicados.oficina', auth()->user()->oficina);
+            }
+        }
+
         if(auth()->user()->rol == 4){
-            $radicados = $radicados->where('tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
+            $radicados = $radicados->where('radicados.tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
         }
 
         if($estado == 0){
@@ -204,8 +211,9 @@ class RadicadosController extends Controller{
         $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Nuevo Caso']);
-        return view('radicados.create')->with(compact('clientes','identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','planes','servicios','tecnicos', 'cliente'));
+        return view('radicados.create')->with(compact('clientes','identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','planes','servicios','tecnicos', 'cliente', 'oficinas'));
     }
 
     public function store(Request $request){
@@ -244,6 +252,7 @@ class RadicadosController extends Controller{
         $radicado->empresa = Auth::user()->empresa;
         $radicado->responsable = Auth::user()->id;
         $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
+        $radicado->oficina = $request->oficina;
         $radicado->save();
 
         if($request->contrato){
@@ -265,9 +274,10 @@ class RadicadosController extends Controller{
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         if ($radicado) {
             view()->share(['icon'=>'far fa-life-ring', 'title' => 'Modificar: N° '.$radicado->codigo, 'middel' => true]);
-            return view('radicados.edit')->with(compact('radicado','servicios','tecnicos'));
+            return view('radicados.edit')->with(compact('radicado','servicios','tecnicos','oficinas'));
         }
         return redirect('empresa/radicados')->with('success', 'No existe un registro con ese id');
     }
@@ -316,6 +326,7 @@ class RadicadosController extends Controller{
             $radicado->prioridad = $request->prioridad;
             $radicado->responsable = Auth::user()->id;
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
+            $radicado->oficina = $request->oficina;
             $radicado->save();
 
             $mensaje='Se ha modificado satisfactoriamente el radicado #'.$radicado->codigo;
