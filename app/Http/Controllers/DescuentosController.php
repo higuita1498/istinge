@@ -29,7 +29,8 @@ class DescuentosController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->get();
+        //$clientes = Contacto::where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $tabla = Campos::where('modulo', 9)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
@@ -40,6 +41,7 @@ class DescuentosController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $descuentos = Descuento::query()
                         ->join('factura', 'factura.id', '=', 'descuentos.factura')
+                        ->join('contactos', 'contactos.id', '=', 'factura.cliente')
                         ->select('descuentos.*', 'factura.codigo', 'factura.cliente')
                         ->where('descuentos.empresa', Auth::user()->empresa);
 
@@ -72,6 +74,12 @@ class DescuentosController extends Controller
                 $descuentos->where(function ($query) use ($request) {
                     $query->orWhere('descuentos.updated_by', $request->updated_by);
                 });
+            }
+        }
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $descuentos->where('contactos.oficina', auth()->user()->oficina);
             }
         }
 

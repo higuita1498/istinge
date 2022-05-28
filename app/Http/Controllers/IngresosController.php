@@ -96,7 +96,8 @@ class IngresosController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
-        $clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        //$clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
         $tabla = Campos::where('modulo', 5)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
@@ -147,6 +148,12 @@ class IngresosController extends Controller
         
         $ingresos->where('ingresos.empresa', $empresa)->groupBy('ingresos.id');
 
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $ingresos->where('contactos.oficina', auth()->user()->oficina);
+            }
+        }
+
         return datatables()->eloquent($ingresos)
             ->editColumn('nro', function (Ingreso $ingreso) {
                 return isset($ingreso->nro) ? "<a href=" . route('ingresos.show', $ingreso->id) . ">{$ingreso->nro}</div></a>" : '';
@@ -193,7 +200,8 @@ class IngresosController extends Controller
 
         //$bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         (Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
-        $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status', 1)->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status', 1)->get();
         $metodos_pago =DB::table('metodos_pago')->whereIn('id',[1,2,3,4,5,6,9])->orderby('orden','asc')->get();
         $inventario = Inventario::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
@@ -757,7 +765,7 @@ class IngresosController extends Controller
                 return redirect('empresa/ingresos')->with('error', 'No puede editar una transferencia');
             }
             $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
-            $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->get();
+            $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
             $metodos_pago =DB::table('metodos_pago')->get();
             $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
