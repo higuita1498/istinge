@@ -13,6 +13,7 @@ use App\Model\Gastos\GastosCategoria;
 use Validator; use Auth; use DB; use Carbon\Carbon;
 use Session;
 use App\Campos;
+use App\Oficina;
 
 class BancosController extends Controller
 {
@@ -62,6 +63,12 @@ class BancosController extends Controller
             $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
         }*/
 
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $bancos->where('oficina', auth()->user()->oficina);
+            }
+        }
+
         return datatables()->eloquent($bancos)
         ->editColumn('nombre', function (banco $banco) {
             return "<a href=" . route('bancos.show', $banco->nro) . ">{$banco->nombre}</a>";
@@ -86,30 +93,11 @@ class BancosController extends Controller
  	public function create(){
  	    $this->getAllPermissions(Auth::user()->id);
  	    view()->share(['title' => 'Nuevo Banco']);
- 	    return view('bancos.create');
+        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+ 	    return view('bancos.create')->with(compact('oficinas'));
  	}
  	
     public function store(Request $request){
-        if( Banco::where('empresa',auth()->user()->empresa)->count() > 0){
-            //Tomamos el tiempo en el que se crea el registro
-            Session::put('posttimer', Banco::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
-            $sw = 1;
-            //Recorremos la sesion para obtener la fecha
-            foreach (Session::get('posttimer') as $key) {
-                if ($sw == 1) {
-                    $ultimoingreso = $key;
-                    $sw=0;
-                }
-            }
-            //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-            //Si el tiempo es de menos de 30 segundos mandamos al listado general
-            if ($diasDiferencia <= 10) {
-                $mensaje = "El formulario ya ha sido enviado.";
-                return redirect('empresa/bancos')->with('success', $mensaje);
-            }
-        }
-        
         $request->validate([
             'tipo_cta' => 'required|numeric',
             'nombre' => 'required|max:200',
@@ -132,6 +120,7 @@ class BancosController extends Controller
         $banco->saldo=$request->saldo;
         $banco->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $banco->descripcion=$request->descripcion;
+        $banco->oficina=$request->oficina;
         $banco->save();
         
         $mensaje='Se ha creado satisfactoriamente el banco';
@@ -142,8 +131,9 @@ class BancosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $banco = Banco::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         if ($banco) {        
+            $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             view()->share(['title' => 'Modificar Cuenta: '.$banco->nombre]);
-            return view('bancos.edit')->with(compact('banco'));
+            return view('bancos.edit')->with(compact('banco', 'oficinas'));
         }
         return redirect('empresa/bancos')->with('success', 'No existe un registro con ese id');
     }
@@ -162,6 +152,7 @@ class BancosController extends Controller
             $banco->saldo=$request->saldo;
             $banco->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
             $banco->descripcion=$request->descripcion;
+            $banco->oficina=$request->oficina;
             $banco->save();
             $mensaje='Se ha modificado satisfactoriamente el banco';
             return redirect('empresa/bancos')->with('success', $mensaje)->with('banco_id', $banco->id);
