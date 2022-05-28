@@ -41,7 +41,7 @@ class AsignacionesController extends Controller
   public function index(){
     $this->getAllPermissions(Auth::user()->id);
     view()->share(['invert' => true]);
-    if(auth()->user()->oficina){
+    if(auth()->user()->empresa()->oficina){
       $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->where('contactos.oficina', auth()->user()->oficina)->get();
     }else{
       $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->get();
@@ -52,7 +52,7 @@ class AsignacionesController extends Controller
   public function create(){
     $this->getAllPermissions(Auth::user()->id);
     $clientes = Contacto::where('firma_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
-    $clientes = (Auth::user()->oficina) ? Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+    $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
     $empresa = Empresa::find(Auth::user()->empresa);
 
     view()->share(['title' => 'Asignación de Contrato de Internet']);

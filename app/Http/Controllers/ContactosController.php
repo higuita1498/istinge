@@ -299,7 +299,7 @@ class ContactosController extends Controller
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
-        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon' =>'', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel'=>true]);
 
@@ -340,7 +340,7 @@ class ContactosController extends Controller
             $transportadoras = null;
         }
 
-        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         
         view()->share(['title' => 'Nuevo Proveedor', 'subseccion' => 'proveedores', 'middel'=>true]);
 
@@ -497,7 +497,7 @@ class ContactosController extends Controller
             $vendedores = Vendedor::where('empresa', Auth::user()->empresa)->where('estado', 1)->get();
             $listas = ListaPrecios::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
-            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
             session(['url_search' => url()->previous()]);
             
