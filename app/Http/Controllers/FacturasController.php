@@ -71,7 +71,7 @@ class FacturasController extends Controller{
         $order=$request->order==1?'DESC':'ASC';
         $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
         ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-        ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
+        ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
         ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
         ->select('factura.id', 'factura.correo', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),
           DB::raw('SUM(
@@ -311,7 +311,7 @@ class FacturasController extends Controller{
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
+            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
@@ -347,6 +347,10 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.estatus', $request->estado);
                 });
+            }else{
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhere('factura.estatus', 1);
+                });
             }
             if($request->correo){
                 $correo = ($request->correo == 'A') ? 0 : $request->correo; 
@@ -362,6 +366,12 @@ class FacturasController extends Controller{
 
         $facturas->where('factura.empresa', $identificadorEmpresa);
         $facturas->where('factura.tipo', 2)->where('factura.lectura',1);
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $facturas->where('cs.oficina', auth()->user()->oficina);
+            }
+        }
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
@@ -404,7 +414,7 @@ class FacturasController extends Controller{
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->leftJoin('contracts as cs', 'c.UID', '=', 'cs.client_id')
+            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
@@ -460,6 +470,12 @@ class FacturasController extends Controller{
         $facturas->where('factura.empresa', $identificadorEmpresa);
         $facturas->where('factura.tipo', '!=', 2)->where('factura.tipo', '!=', 5)->where('factura.tipo', '!=', 6)
                  ->where('factura.lectura',1);
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $facturas->where('cs.oficina', auth()->user()->oficina);
+            }
+        }
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
@@ -535,7 +551,8 @@ class FacturasController extends Controller{
         ->get();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -614,7 +631,8 @@ class FacturasController extends Controller{
 
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -953,7 +971,7 @@ class FacturasController extends Controller{
                 $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
                 $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
                 $items = ItemsFactura::where('factura',$factura->id)->get();
-                $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->get();
+                $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
                 $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
                 $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
                 $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();

@@ -28,7 +28,8 @@ class PromesasPagoController extends Controller
 
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->where('contactos.oficina', Auth::user()->oficina)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get() : Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        //$clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $tabla = Campos::where('modulo', 11)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
@@ -46,14 +47,20 @@ class PromesasPagoController extends Controller
 
         if ($request->filtro == true) {
             if($request->cliente){
-                $contratos->where(function ($query) use ($request) {
+                $promesas->where(function ($query) use ($request) {
                     $query->orWhere('promesa_pago.cliente', $request->cliente);
                 });
             }
             if($request->created_by){
-                $contratos->where(function ($query) use ($request) {
+                $promesas->where(function ($query) use ($request) {
                     $query->orWhere('promesa_pago.created_by', $request->created_by);
                 });
+            }
+        }
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $promesas->where('contactos.oficina', auth()->user()->oficina);
             }
         }
 
