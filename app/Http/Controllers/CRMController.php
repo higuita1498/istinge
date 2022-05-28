@@ -45,7 +45,7 @@ class CRMController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_cartera', 'title' => 'CRM: Cartera', 'invert' => true]);
         
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('contactos.oficina', Auth::user()->oficina)->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get() : CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -56,7 +56,8 @@ class CRMController extends Controller
     public function informe(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['subseccion' => 'crm_informe', 'title' => 'CRM: Informe', 'invert' => true]);
-        $clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('contactos.oficina', Auth::user()->oficina)->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get() : CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
+        //$clientes = CRM::join('contactos', 'crm.cliente', '=', 'contactos.id')->where('crm.empresa', Auth::user()->empresa)->groupBy('crm.cliente')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -138,6 +139,12 @@ class CRMController extends Controller
             $contratos->whereIn('crm.estado', [0, 1, 2, 3, 4, 5, 6]);
         }else{
             $contratos->where('crm.estado', $tipo);
+        }
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contratos->where('contactos.oficina', auth()->user()->oficina);
+            }
         }
         
         return datatables()->eloquent($contratos)
@@ -229,6 +236,12 @@ class CRMController extends Controller
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('crm.servidor', $request->servidor);
                 });
+            }
+        }
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contratos->where('contactos.oficina', auth()->user()->oficina);
             }
         }
         
