@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Auth;
 use App\User;
 use DB;
+use App\Oficina;
 
 class Radicado extends Model
 {
@@ -102,5 +103,9 @@ class Radicado extends Model
         }elseif($this->prioridad == 3){
             return 'Alta';
         }
+    }
+
+    public function oficina(){
+        return Oficina::find($this->oficina);
     }
 }
