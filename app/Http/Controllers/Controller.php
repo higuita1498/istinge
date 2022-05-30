@@ -1461,29 +1461,31 @@ class Controller extends BaseController
                 $ARRAY = $API->parseResponse($READ);
                 
                 if(count($ARRAY)>0){
-                    if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
-                        /*$ping = Ping::firstOrCreate([
-                            'contrato' => $contrato->id,
-                            'ip' => $contrato->ip,
-                            'fecha' => date('Y-m-d')
-                        ]);*/
-                        $data = [
-                            'contrato' => $contrato->id,
-                            'ip' => $contrato->ip,
-                            'fecha' => Carbon::parse(now())->format('Y-m-d')
-                        ];
-                        
-                        $ping = Ping::updateOrCreate(
-                            ['contrato' => $contrato->id],
-                            $data
-                        );
-						array_push($fallidos, $contrato->ip);
-						$y++;
-					}else{
-					    Ping::where('contrato', $contrato->id)->delete();
-						$mensaje = 'SE HA REALIZADO EL PING DE CONEXIÓN DE MANERA EXITOSA';
-						$z++;
-					}
+                    if(isset($ARRAY[0])){
+                        if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
+                            /*$ping = Ping::firstOrCreate([
+                                'contrato' => $contrato->id,
+                                'ip' => $contrato->ip,
+                                'fecha' => date('Y-m-d')
+                            ]);*/
+                            $data = [
+                                'contrato' => $contrato->id,
+                                'ip' => $contrato->ip,
+                                'fecha' => Carbon::parse(now())->format('Y-m-d')
+                            ];
+
+                            $ping = Ping::updateOrCreate(
+                                ['contrato' => $contrato->id],
+                                $data
+                            );
+    						array_push($fallidos, $contrato->ip);
+    						$y++;
+    					}else{
+    					    Ping::where('contrato', $contrato->id)->delete();
+    						$mensaje = 'SE HA REALIZADO EL PING DE CONEXIÓN DE MANERA EXITOSA';
+    						$z++;
+    					}
+                    }
                 }
                 $API->disconnect();
             }
