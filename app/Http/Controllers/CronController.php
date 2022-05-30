@@ -702,7 +702,7 @@ class CronController extends Controller
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
         if($servicio){
-            $Mensaje = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
+            $mensaje = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
                     $post['toNumber'] = $numeros;
