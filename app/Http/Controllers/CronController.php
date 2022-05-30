@@ -579,13 +579,12 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
-
-            $vencimiento = $contacto->vencimiento;
         }
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
         if($servicio){
-            $mensaje = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y', strtotime($vencimiento)).", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
+            $mensaje = "Estimado cliente, su fecha limite de pago es el ".date('d-m-Y').", recuerde pagar su factura y evite la suspension del servicio. ".$empresa->slogan;
+
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
                     $post['toNumber'] = $numeros;
@@ -993,60 +992,6 @@ class CronController extends Controller
                 return response('false', 200);
             }else{
                 return response('false', 200);
-            }
-        }
-    }
-
-    public static function habilitarContratos($fecha){
-        $contratos = Contrato::join('factura', 'factura.contrato_id', '=', 'contracts.id')
-        ->where('factura.vencimiento', $fecha)
-        ->where('contracts.status', 1)
-        ->where('contracts.state', 'disabled')
-        ->where('factura.estatus', 1)
-        ->select('contracts.id', 'contracts.server_configuration_id', 'contracts.ip', 'contracts.state', 'factura.id as factura')
-        ->take(20)
-        ->get();
-
-        foreach ($contratos as $contrato) {
-            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-
-                $API->write('/ip/firewall/address-list/print', TRUE);
-                $ARRAYS = $API->read();
-
-                #ELIMINAMOS DE MOROSOS#
-                $API->write('/ip/firewall/address-list/print', false);
-                $API->write('?address='.$contrato->ip, false);
-                $API->write("?list=morosos",false);
-                $API->write('=.proplist=.id');
-                $ARRAYS = $API->read();
-
-                if(count($ARRAYS)>0){
-                    $API->write('/ip/firewall/address-list/remove', false);
-                    $API->write('=.id='.$ARRAYS[0]['.id']);
-                    $READ = $API->read();
-                }
-                #ELIMINAMOS DE MOROSOS#
-
-                #AGREGAMOS A IP_AUTORIZADAS#
-                $API->comm("/ip/firewall/address-list/add", array(
-                    "address" => $contrato->ip,
-                    "list" => 'ips_autorizadas'
-                    )
-                );
-                #AGREGAMOS A IP_AUTORIZADAS#
-
-                $contrato->state = 'enabled';
-                $contrato->save();
-
-                $factura = Factura::find($contrato->factura);
-                $factura->vencimiento = '2022-05-08';
-                $factura->suspension = '2022-05-08';
-                $factura->save();
-                $API->disconnect();
             }
         }
     }
