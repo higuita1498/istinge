@@ -127,7 +127,7 @@
             </div>
             <div class="col-md-3 form-group" id="div_tecnico" style="display:none;">
                 <label class="control-label">Técnico Asociado <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" name="tecnico" id="tecnico" required="" title="Seleccione">
+                <select class="form-control selectpicker" name="tecnico" id="tecnico" title="Seleccione">
                     @foreach($tecnicos as $tecnico)
                     <option {{old('tecnico')==$tecnico->id?'selected':''}} value="{{$tecnico->id}}">{{$tecnico->nombres}}</option>
                     @endforeach

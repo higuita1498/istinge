@@ -79,8 +79,8 @@
 
                     @foreach($facturas as $factura)
                         <tr>
-                            <td><a href="{{route('facturas.show',$factura->nro)}}" target="_blanck">{{$factura->nro}}</a> </td>
-                            <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></td>
+                            <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->nro}}</a> </td>
+                            <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
                             <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subsub)}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>

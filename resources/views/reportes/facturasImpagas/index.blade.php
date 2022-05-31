@@ -77,8 +77,8 @@
 
 				@foreach($facturas as $factura)
 					<tr>
-                        <td><a href="{{route('facturas.show',$factura->nro)}}" target="_blank">{{$factura->codigo}}</a> </td>
-                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} @if($factura->cliente()->celular) | {{$factura->cliente()->celular}}@endif</a></td>
+                        <td><a href="{{route('facturas.show',$factura->i)}}" target="_blank">{{$factura->codigo}}</a> </td>
+                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}}  {{$factura->cliente()->apellidos()}} @if($factura->cliente()->celular) | {{$factura->cliente()->celular}}@endif</a></td>
                         <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
                         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->devoluciones())}}</td>

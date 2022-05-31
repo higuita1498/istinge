@@ -62,8 +62,8 @@
 
                     @foreach($clientes as $cliente)
                         <tr>
-                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blanck">{{$cliente['nombre']}}</a> </td>
-                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blanck">{{$cliente['rep']}}</a></td>
+                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blank">{{$cliente['nombre']}}</a> </td>
+                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blank">{{$cliente['rep']}}</a></td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($cliente['subtotal'])}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($cliente['total'])}}</td>
                             <td></td>
