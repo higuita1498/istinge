@@ -187,12 +187,8 @@
 		<div class="col-sm-3">
 			<h4 class="card-title">Oficinas</h4>
 			<p>Configura la información relacionada a las oficinas de tu empresa.</p>
-			@if(Auth::user()->empresa()->oficina)
-			<a href="{{route('oficinas.index')}}">Gestión de Oficinas</a><br>
-			@else
 			<a href="javascript:actDescOficina()">{{ Auth::user()->empresa()->oficina == 0 ? 'Habilitar':'Deshabilitar' }} uso de oficinas en NetworkSoft</a><br>
 			<input type="hidden" id="oficinaid" value="{{Auth::user()->empresa()->oficina}}">
-			@endif
 		</div>
 
 		<div class="col-sm-3">
