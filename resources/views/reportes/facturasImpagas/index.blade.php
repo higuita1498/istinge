@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
 <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-    <input type="hidden" id="primera" value="{{$request->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$request->date['ultima']}}">
+<input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+<input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
 
 	<form id="form-reporte">
 

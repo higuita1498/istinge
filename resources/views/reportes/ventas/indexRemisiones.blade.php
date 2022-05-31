@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-        <input type="hidden" id="primera" value="{{$example->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$example->date['ultima']}}">
+    <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+    <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <div class="row card-description">
         <div class="col-md-12 ">
             <h2><i class="fas fa-shopping-cart"></i> Ventas - Remisiones</h2>
