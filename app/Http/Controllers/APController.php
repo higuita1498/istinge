@@ -17,6 +17,7 @@ use App\User;
 use App\Contrato;
 use App\Nodo;
 use App\AP;
+use App\Campos;
 
 class APController extends Controller
 {
@@ -105,8 +106,9 @@ class APController extends Controller
 
         if ($ap) {
             $contratos = Contrato::where('ap', $ap->id)->get();
+            $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
             view()->share(['title' => $ap->nombre]);
-            return view('access-point.show')->with(compact('ap', 'contratos'));
+            return view('access-point.show')->with(compact('ap', 'contratos', 'tabla'));
         }
         return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
