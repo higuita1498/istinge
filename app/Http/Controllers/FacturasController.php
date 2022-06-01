@@ -1425,7 +1425,7 @@ class FacturasController extends Controller{
             $key = str_replace($toReplace, "", $key);
             $factura->nonkey = $key;
             $factura->save();
-            $cliente = $factura->cliente()->nombre;
+            $cliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
             $tituloCorreo = Auth::user()->empresa()->nombre.": Factura N° $factura->codigo";
             $xmlPath = 'xml/empresa'.auth()->user()->empresa.'/FV/FV-'.$factura->codigo.'.xml';
             //return $xmlPath;

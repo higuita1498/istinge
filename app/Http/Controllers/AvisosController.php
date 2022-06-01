@@ -107,8 +107,8 @@ class AvisosController extends Controller
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
     }
     
-    public function envio_aviso(Request $request)
-    {
+    public function envio_aviso(Request $request){
+        Ini_set ('max_execution_time', 500);
         $empresa = Empresa::find(1);
         $type = ''; $mensaje = '';
         $fail = 0;
