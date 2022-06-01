@@ -11,10 +11,10 @@
             <li class="ml-3">Las columna como identificación y celular debe ser de tipo numérica, no debe tener puntos o comas.</li>
             <li class="ml-3">En la columnas de celular <b>NO</b> agregar el prefijo telefónico del país {{Auth::user()->empresa()->codigo}}.</li>
             <li class="ml-3">Los tipos de identificación disponibles son los siguientes:
-                <div class="col-md-8">
+                <div class="col-md-8 my-2">
                     <div class="table-responsive">
-                        <table class="table table-striped importar">
-                            <tehead><th>Versión Corta</th><th>Versión Media</th><th>Versión Larga</th></tehead>
+                        <table class="table table-striped importar text-center" style="border: solid 2px {{Auth::user()->empresa()->color}} !important;">
+                            <thead><tr style="background-color: {{Auth::user()->empresa()->color}} !important; color: #fff;"><th>Versión Corta</th><th>Versión Media</th><th>Versión Larga</th></tr></thead>
                             <tbody>
                                 @foreach($identificaciones as $identificacion)
                                 <tr>
@@ -38,9 +38,9 @@
         <form method="POST" action="{{ route('contactos.importar') }}" role="form" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-6 offset-md-3">
                     <label class="control-label">Archivo <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" name="archivo" required="">
+                    <input type="file" class="form-control" name="archivo" required="" accept=".xlsx, .XLSX">
                     <span class="help-block">
                         <strong>{{ $errors->first('archivo') }}</strong>
                     </span>
