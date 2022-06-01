@@ -30,10 +30,19 @@ class PucMovimiento extends Model
        'mes_cierre', 'documento_id', 'cliente_id','cuenta_id','created_at', 'updated_at'
     ];
 
-    public static function facturaVenta($factura, $opcion, $request){
+    public static function facturaVenta($factura, $opcion, $request, $siguienteNumero=null){
 
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->first();
+        
+        //obtenbemos el siguiente numero de los asientos contables
+        if($siguienteNumero == null){
+            $numeracion = Numeracion::where('empresa',$empresa)->first();
+            $siguienteNumero = $numeracion->contabilidad+1;
+            $numeracion->contabilidad = $siguienteNumero;
+            $numeracion->save();
+        }
+
         if($opcion == 1 && !$isGuardar){
 
             //ingresamos los valores del iva
@@ -49,6 +58,7 @@ class PucMovimiento extends Model
                     //si es tipo 3 (el tipo de producto o servicio que significa venta)
                     if($cuentaItem->tipo == 3 || $cuentaItem->tipo == 2 || $cuentaItem->tipo == 1){
                         $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
                         $mov->tipo_comprobante = "03";
                         $mov->consecutivo_comprobante = $factura->codigo;
                         $mov->fecha_elaboracion = $factura->fecha;
@@ -78,6 +88,7 @@ class PucMovimiento extends Model
                     $impuesto = Impuesto::find($totalImp->id);
                     if($impuesto){
                         $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
                         $mov->tipo_comprobante = "03";
                         $mov->consecutivo_comprobante = $factura->codigo;
                         $mov->fecha_elaboracion = $factura->fecha;
@@ -105,6 +116,7 @@ class PucMovimiento extends Model
 
                     if($retencion){
                         $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
                         $mov->tipo_comprobante = "03";
                         $mov->consecutivo_comprobante = $factura->codigo;
                         $mov->fecha_elaboracion = $factura->fecha;
@@ -136,6 +148,7 @@ class PucMovimiento extends Model
                     }
     
                     $mov = new PucMovimiento;
+                    $mov->nro = $siguienteNumero;
                     $mov->tipo_comprobante = "03";
                     $mov->consecutivo_comprobante = $factura->codigo;
                     $mov->fecha_elaboracion = $factura->fecha;
@@ -176,16 +189,26 @@ class PucMovimiento extends Model
                     $mov->sumarAnticipo();
                 }
                  //obtenemos los movimientos contables de la factura y los eliminamos.
+                $siguienteNumero = $mov->nro;
                 $mov->delete();
             }
-            PucMovimiento::facturaVenta($factura,1,$request);
+            PucMovimiento::facturaVenta($factura,1,$request,$siguienteNumero);
         }
     }
 
-    public static function facturaCompra($ingreso, $opcion, $request){
+    public static function facturaCompra($ingreso, $opcion, $request, $siguienteNumero=null){
         
-         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
-         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
+        //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
+        $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
+
+          //obtenbemos el siguiente numero de los asientos contables
+        if($siguienteNumero == null){
+            $numeracion = Numeracion::where('empresa',$empresa)->first();
+            $siguienteNumero = $numeracion->contabilidad+1;
+            $numeracion->contabilidad = $siguienteNumero;
+            $numeracion->save();
+        }
+
          if($opcion == 1 && !$isGuardar){
  
              //ingresamos los valores del iva
@@ -201,6 +224,7 @@ class PucMovimiento extends Model
                      //si es tipo 3 (el tipo de producto o servicio que significa venta)
                      if($cuentaItem->tipo == 1){
                          $mov = new PucMovimiento;
+                         $mov->nro = $siguienteNumero;
                          $mov->tipo_comprobante = "04";
                          $mov->consecutivo_comprobante = $factura->codigo;
                          $mov->fecha_elaboracion = $factura->fecha;
@@ -229,6 +253,7 @@ class PucMovimiento extends Model
                      $impuesto = Impuesto::find($totalImp->id);
                      if($impuesto){
                          $mov = new PucMovimiento;
+                         $mov->nro = $siguienteNumero;
                          $mov->tipo_comprobante = "04";
                          $mov->consecutivo_comprobante = $factura->codigo;
                          $mov->fecha_elaboracion = $factura->fecha;
@@ -255,6 +280,7 @@ class PucMovimiento extends Model
  
                      if($retencion){
                          $mov = new PucMovimiento;
+                         $mov->nro = $siguienteNumero;
                          $mov->tipo_comprobante = "04";
                          $mov->consecutivo_comprobante = $factura->codigo;
                          $mov->fecha_elaboracion = $factura->fecha;
@@ -276,6 +302,7 @@ class PucMovimiento extends Model
  
              //4to. Registramos el medio de pago de la factura.
              $mov = new PucMovimiento;
+             $mov->nro = $siguienteNumero;
              $mov->tipo_comprobante = "04";
              $mov->consecutivo_comprobante = $factura->codigo;
              $mov->fecha_elaboracion = $factura->fecha;
@@ -297,8 +324,16 @@ class PucMovimiento extends Model
          else if($opcion == 2){
  
              //obtenemos los movimientos contables de la factura y los eliminamos.
-             $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->delete();
-             PucMovimiento::facturaCompra($factura,1);
+             $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->get();
+             foreach($movimientos as $mov){
+                // if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
+                //     $mov->sumarAnticipo();
+                // }
+                 //obtenemos los movimientos contables de la factura y los eliminamos.
+                $siguienteNumero = $mov->nro;
+                $mov->delete();
+            }
+             PucMovimiento::facturaCompra($factura,1,$request,$siguienteNumero);
              
          }
          
@@ -314,9 +349,17 @@ class PucMovimiento extends Model
         0: Actualizar el movimiento y borrar el anterior.
         1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
     */
-    public static function ingreso($ingreso, $opcion, $tipo=0){
+    public static function ingreso($ingreso, $opcion, $tipo=0, $siguienteNumero=null){
 
         $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->first();
+
+         //obtenbemos el siguiente numero de los asientos contables
+         if($siguienteNumero == null){
+            $numeracion = Numeracion::where('empresa',$empresa)->first();
+            $siguienteNumero = $numeracion->contabilidad+1;
+            $numeracion->contabilidad = $siguienteNumero;
+            $numeracion->save();
+        }
         
         $totalIngreso = 0;
         
@@ -329,6 +372,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
@@ -345,6 +389,7 @@ class PucMovimiento extends Model
 
             //2do. Registramos el anticipo del cliente.
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
@@ -367,6 +412,7 @@ class PucMovimiento extends Model
                 $totalIngreso+=$ingresoFactura->pago;
 
                 $mov = new PucMovimiento;
+                $mov->nro = $siguienteNumero;
                 $mov->tipo_comprobante = "01";
                 $mov->consecutivo_comprobante = $ingreso->nro;
                 $mov->fecha_elaboracion = $ingreso->fecha;
@@ -384,6 +430,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
@@ -400,6 +447,7 @@ class PucMovimiento extends Model
 
             //2do. Registramos el anticipo del cliente.
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
@@ -423,6 +471,7 @@ class PucMovimiento extends Model
                 $totalIngreso+=$ingresoFactura->pago;
 
                 $mov = new PucMovimiento;
+                $mov->nro = $siguienteNumero;
                 $mov->tipo_comprobante = "01";
                 $mov->consecutivo_comprobante = $ingreso->nro;
                 $mov->fecha_elaboracion = $ingreso->fecha;
@@ -440,6 +489,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "01";
             $mov->consecutivo_comprobante = $ingreso->nro;
             $mov->fecha_elaboracion = $ingreso->fecha;
@@ -467,9 +517,17 @@ class PucMovimiento extends Model
         0: Actualizar el movimiento y borrar el anterior.
         1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
     */
-    public static function gasto($gasto, $opcion, $tipo=0){
+    public static function gasto($gasto, $opcion, $tipo=0, $siguienteNumero=null){
 
         $isGuardar = PucMovimiento::where('documento_id',$gasto->id)->where('tipo_comprobante',2)->first();
+
+         //obtenbemos el siguiente numero de los asientos contables
+         if($siguienteNumero == null){
+            $numeracion = Numeracion::where('empresa',$empresa)->first();
+            $siguienteNumero = $numeracion->contabilidad+1;
+            $numeracion->contabilidad = $siguienteNumero;
+            $numeracion->save();
+        }
         
         $totalIngreso = 0;
         
@@ -482,6 +540,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
@@ -498,6 +557,7 @@ class PucMovimiento extends Model
 
             //2do. Registramos el anticipo del cliente.
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
@@ -520,6 +580,7 @@ class PucMovimiento extends Model
                 $totalIngreso+=$gastoFactura->pago;
 
                 $mov = new PucMovimiento;
+                $mov->nro = $siguienteNumero;
                 $mov->tipo_comprobante = "02";
                 $mov->consecutivo_comprobante = $gasto->nro;
                 $mov->fecha_elaboracion = $gasto->fecha;
@@ -537,6 +598,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
@@ -553,6 +615,7 @@ class PucMovimiento extends Model
 
             //2do. Registramos el anticipo del cliente.
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;
@@ -576,6 +639,7 @@ class PucMovimiento extends Model
                 $totalIngreso+=$gastoFactura->pago;
 
                 $mov = new PucMovimiento;
+                $mov->nro = $siguienteNumero;
                 $mov->tipo_comprobante = "02";
                 $mov->consecutivo_comprobante = $gasto->nro;
                 $mov->fecha_elaboracion = $gasto->fecha;
@@ -593,6 +657,7 @@ class PucMovimiento extends Model
             
             //1to. Registramos la forma de pago (caja o banco).
             $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
             $mov->tipo_comprobante = "02";
             $mov->consecutivo_comprobante = $gasto->nro;
             $mov->fecha_elaboracion = $gasto->fecha;

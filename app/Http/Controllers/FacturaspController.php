@@ -366,7 +366,7 @@ class FacturaspController extends Controller
             }
         }
 
-        PucMovimiento::facturaCompra($factura,1);
+        PucMovimiento::facturaCompra($factura,1,$request);
         
         //Creo la variable para el mensaje final, y la variable print (imprimir)
         $mensaje='Se ha creado satisfactoriamente la factura';
@@ -574,7 +574,7 @@ class FacturaspController extends Controller
                     DB::table('factura_proveedores_retenciones')->where('factura', $factura->id)->delete();
                 }
 
-                PucMovimiento::facturaCompra($factura,2);
+                PucMovimiento::facturaCompra($factura,2, $request);
                 
                 $mensaje='Se ha modificado satisfactoriamente la factura de proveedor';
                 return redirect('empresa/facturasp')->with('success', $mensaje)->with('codigo', $factura->id);
