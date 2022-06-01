@@ -246,7 +246,8 @@ class MikrotikController extends Controller
         if ($mikrotik) {
             view()->share(['title' => 'Mikrotik: '.$mikrotik->nombre, 'icon' =>'fas fa-server', 'middel' => true]);
             $segmentos = Segmento::where('mikrotik', $mikrotik->id)->get();
-            return view('mikrotik.show')->with(compact('mikrotik', 'segmentos'));
+            $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+            return view('mikrotik.show')->with(compact('mikrotik', 'segmentos', 'tabla'));
         }
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
