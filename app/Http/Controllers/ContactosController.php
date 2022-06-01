@@ -2,11 +2,29 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
+use Mail;
+use Validator;
+use Auth;
+use DB;
+use Session;
+use ZipArchive;
+
 use App\Cotizacion;
 use App\Empresa;
 use App\Contrato;
-use Illuminate\Http\Request;
-use App\User; use App\Contacto;
+use App\User;
+use App\Contacto;
+use App\TipoIdentificacion;
+use App\AsociadosContacto;
+use App\TipoEmpresa;
+use App\Vendedor;
+use App\Campos;
+use App\Mikrotik;
+use App\Oficina;
 use App\Model\Gastos\FacturaProveedores;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosRecurrentes;
@@ -17,26 +35,19 @@ use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresoR;
 use App\Model\Ingresos\NotaCredito;
 use App\Model\Ingresos\Remision;
-use App\TipoIdentificacion;
-use App\AsociadosContacto;
-use App\TipoEmpresa;
-use App\Vendedor;
 use App\Model\Inventario\ListaPrecios;
-use Carbon\Carbon;  use Mail; use Validator;
-use Illuminate\Validation\Rule;  use Auth; use DB;
+
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
-use PHPExcel; use PHPExcel_IOFactory; use PHPExcel_Style_Alignment; use PHPExcel_Style_Fill;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
-use ZipArchive;
-use Barryvdh\DomPDF\Facade as PDF;
-use PHPExcel_Shared_ZipArchive; use Session;
-use App\Campos;
+use PHPExcel_Shared_ZipArchive;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
-use App\Mikrotik;
-use App\Oficina;
 
 class ContactosController extends Controller
 {
@@ -775,9 +786,7 @@ class ContactosController extends Controller
      */
     public function importar(){
         $this->getAllPermissions(Auth::user()->id);
-
-        view()->share(['title' => 'Importar Contactos desde Excel', 'subseccion' => 'todos']);
-
+        view()->share(['title' => 'Importar Contactos desde Excel', 'subseccion' => 'clientes']);
 
         $identificaciones=TipoIdentificacion::all();
         return view('contactos.importar')->with(compact('identificaciones'));;
@@ -847,14 +856,14 @@ class ContactosController extends Controller
             if (!$request->tip_iden) {
                 $error->tip_iden="El campo Tipo de identificación es obligatorio";
             }
-            if (!$request->celular) {
-                $error->celular="El campo Celular es obligatorio";
+            if (!$request->celular && !$request->telefono1) {
+                $error->celular="Debe indicar un nro celular o de teléfono";
             }
             if (!$request->tipo_contacto) {
                 $error->tipo_contacto="El campo Tipo de Contacto es obligatorio";
             }
 
-            if(auth()->user()->empresa()->estado_dian == 10){
+            if(auth()->user()->empresa()->estado_dian == 1){
                 if (!$request->fk_idpais) {
                     $error->fk_idpais="El campo pais es obligatorio para facturadores electrónicos";
                 }
@@ -1058,12 +1067,11 @@ class ContactosController extends Controller
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
         }
 
-        $contacto = Contacto::all();
+        $contactos = Contacto::all();
         $j=4;
 
-        $contacto = $contacto->first();
-
-        /*$objPHPExcel->setActiveSheetIndex(0)
+        foreach($contactos as $contacto){
+            $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[0].$j, $contacto->nombre)
             ->setCellValue($letras[1].$j, $contacto->apellido1)
             ->setCellValue($letras[2].$j, $contacto->apellido2)
@@ -1077,10 +1085,14 @@ class ContactosController extends Controller
             ->setCellValue($letras[10].$j, $contacto->telefono1)
             ->setCellValue($letras[11].$j, $contacto->celular)
             ->setCellValue($letras[12].$j, $contacto->direccion)
-            ->setCellValue($letras[13].$j, $contacto->ciudad)
-            ->setCellValue($letras[14].$j, $contacto->email)
-            ->setCellValue($letras[15].$j, $contacto->observaciones)
-            ->setCellValue($letras[16].$j, $contacto->tipo_contacto());*/
+            ->setCellValue($letras[13].$j, $contacto->vereda)
+            ->setCellValue($letras[14].$j, $contacto->barrio)
+            ->setCellValue($letras[15].$j, $contacto->ciudad)
+            ->setCellValue($letras[16].$j, $contacto->email)
+            ->setCellValue($letras[17].$j, $contacto->observaciones)
+            ->setCellValue($letras[18].$j, $contacto->tipo_contacto());
+            $j++;
+        }
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -1093,7 +1105,7 @@ class ContactosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:S'.$j)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
