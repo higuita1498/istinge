@@ -76,13 +76,13 @@ class Factura extends Model
     
     public function contrato(){
         $cliente = Contacto::where('id',$this->cliente)->first();
-        return Contrato::where('client_id',$cliente->UID)->first();
+        return Contrato::where('client_id',$cliente->id)->first();
     }
     
     public function servidor(){
         $cliente = Contacto::where('id',$this->cliente)->first();
-        $contrato = Contrato::where('client_id',$cliente->UID)->first();
-        return DB::table('servidores')->where('id',$contrato->server_configuration_id)->first();
+        $contrato = Contrato::where('client_id',$cliente->id)->first();
+        return DB::table('mikrotik')->where('id',$contrato->server_configuration_id)->first();
     }
 
     public function estatus($class=false){

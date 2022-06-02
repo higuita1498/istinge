@@ -3321,10 +3321,10 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                     ->setCellValue($letras[6].$i, $factura->cliente()->nit)
                     ->setCellValue($letras[7].$i, $factura->cliente()->direccion)
-                    ->setCellValue($letras[8].$i, $factura->contrato()->fecha_corte)
-                    ->setCellValue($letras[9].$i, $factura->servidor()->name)
-                    ->setCellValue($letras[10].$i, $factura->contrato()->ip)
-                    ->setCellValue($letras[11].$i, $factura->contrato()->mac_address);
+                    ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
+                    ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->servidor()->nombre : '')
+                    ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->ip : '')
+                    ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '');
                 $i++;
             }
             /*$objPHPExcel->setActiveSheetIndex(0)

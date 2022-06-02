@@ -552,7 +552,7 @@ class FacturasController extends Controller{
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -632,7 +632,7 @@ class FacturasController extends Controller{
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -971,7 +971,7 @@ class FacturasController extends Controller{
                 $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
                 $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
                 $items = ItemsFactura::where('factura',$factura->id)->get();
-                $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+                $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
                 $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
                 $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
                 $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();

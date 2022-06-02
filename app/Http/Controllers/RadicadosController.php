@@ -40,7 +40,7 @@ class RadicadosController extends Controller{
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tipo = '';
@@ -52,7 +52,7 @@ class RadicadosController extends Controller{
     public function indexNew(Request $request, $tipo){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
