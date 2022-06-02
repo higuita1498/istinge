@@ -38,7 +38,7 @@ class PucMovimiento extends Model
         
         //obtenbemos el siguiente numero de los asientos contables
         if($siguienteNumero == null){
-            $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
+            $numeracion = Numeracion::where('empresa', $factura->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
             $numeracion->contabilidad = $siguienteNumero;
             $numeracion->save();
@@ -524,7 +524,7 @@ class PucMovimiento extends Model
 
          //obtenbemos el siguiente numero de los asientos contables
          if($siguienteNumero == null){
-            $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
+            $numeracion = Numeracion::where('empresa', $gasto->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
             $numeracion->contabilidad = $siguienteNumero;
             $numeracion->save();
@@ -678,7 +678,7 @@ class PucMovimiento extends Model
 
     public static function saldoInicial($request){
 
-        $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
+        $numeracion = Numeracion::where('empresa', Auth::user()->empresa)->first();
         $siguienteNumero = $numeracion->contabilidad+1;
         $numeracion->contabilidad = $siguienteNumero;
         $numeracion->save();
