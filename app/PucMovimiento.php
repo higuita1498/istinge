@@ -7,6 +7,7 @@ use App\Impuesto;
 use App\Retencion;
 use App\Contacto;
 use App\FormaPago;
+use App\Numeracion;
 use App\Model\Ingresos\Ingreso;
 use App\Puc;
 use DB;
@@ -675,6 +676,40 @@ class PucMovimiento extends Model
         }
     }
 
+    public static function saldoInicial($request){
+
+        $numeracion = Numeracion::where('empresa',$empresa)->first();
+        $siguienteNumero = $numeracion->contabilidad+1;
+        $numeracion->contabilidad = $siguienteNumero;
+        $numeracion->save();
+
+        //obtebemos le tipo de comprobnate que estamos manipulando
+        $tipoComprobante = DB::table('tipo_comprobante')->where('id',$request->tipo_comprobante)->first();
+
+        $i = 0;
+        foreach($request->puc_cuenta as $p){
+
+            $mov = new PucMovimiento;
+            $mov->nro = $siguienteNumero;
+            $mov->tipo_comprobante = $tipoComprobante->nro;
+            $mov->consecutivo_comprobante = $siguienteNumero;
+            $mov->fecha_elaboracion = $request->fecha;
+            $mov->documento_id = $siguienteNumero;
+            $mov->codigo_cuenta = Puc::find($request->puc[$i])->codigo;
+            $mov->cuenta_id = Puc::find($request->puc[$i])->id;
+            $mov->identificacion_tercero = Contacto::find($request->contacto[$i])->nit;
+            $mov->cliente_id = Contacto::find($request->contacto[$i])->id;
+            $mov->consecutivo = $siguienteNumero;
+            $mov->descripcion = $request->observacion[$i];
+            $mov->credito =  $request->credito[$i];
+            $mov->debito =  $request->debito[$i];
+            $mov->enlace_a = 7;
+            $mov->save();
+
+            $i++;
+        }
+    }
+
     public function cliente(){
         return $this->belongsTo(Contacto::class,'cliente_id');
     }
@@ -710,6 +745,9 @@ class PucMovimiento extends Model
 
             case 6:
                 return "Asociado a una deuda del cliente.";
+                break;
+            case 7:
+                return "Asociado a un saldo inicial.";
                 break;
             
             default:

@@ -49,6 +49,9 @@ class SaldosInicialesController extends Controller
     public function store(Request $request)
     {
         return $request;
+
+        
+
         $empresa = Auth::user()->empresa;
         $numeracion = Numeracion::where('empresa',$empresa)->first();
         $siguienteNumero = $numeracion->contabilidad+1;
