@@ -643,9 +643,15 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 
     Route::get('nomina/eliminar-liquidacion/{idContrato}', 'Nomina\PersonasController@destroyLiquidar')->name('nomina.liquidar.destroy');
+	
+	Route::group(['prefix' => 'saldosiniciales'], function(){
+		Route::get('/create', 'SaldosInicialesController@create')->name('saldoinicial.create');
+		Route::post('/store', 'SaldosInicialesController@store')->name('saldoinicial.store');
+		Route::get('/validatecartera', 'SaldosInicialesController@validateCartera');
+	});
+
 
 	//Cotizaciones
-
 	Route::group(['prefix' => 'cotizaciones'], function() {
 		Route::get('/{id}/imprimir', 'CotizacionesController@Imprimir')->name('cotizaciones.imprimir');
 		Route::get('pdf/{id}/{name}', 'CotizacionesController@Imprimir')->name('cotizaciones.imprimir.nombre');
