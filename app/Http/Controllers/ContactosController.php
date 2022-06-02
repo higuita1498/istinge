@@ -88,9 +88,17 @@ class ContactosController extends Controller
                 });
             }
             if($request->apellido){
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('apellido1', 'like', "%{$request->apellido}%");
-                    $query->orWhere('apellido2', 'like', "%{$request->apellido}%");
+                $parte = explode(' ', $request->apellido);
+                $contactos->where(function ($query) use ($parte) {
+                    for ($i=0; $i <count($parte) ; $i++) {
+                        if($i == 0){
+                            $query->orWhere('apellido1', 'like', "%{$parte[$i]}%");
+                        }else{
+                            $query->where('apellido2', 'like', "%{$parte[$i]}%");
+                        }
+                    }
+                    /*$query->orWhere('apellido1', 'like', "%{$request->apellido}%");
+                    $query->orWhere('apellido2', 'like', "%{$request->apellido}%");*/
                 });
             }
             if($request->celular){
