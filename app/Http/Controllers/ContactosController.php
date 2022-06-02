@@ -85,8 +85,8 @@ class ContactosController extends Controller
             if($request->nombre){
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    $query->orWhere('apellido1', 'like', "%{$request->apellido1}%");
-                    $query->orWhere('apellido2', 'like', "%{$request->apellido2}%");
+                    $query->orWhere('apellido1', 'like', "%{$request->nombre}%");
+                    $query->orWhere('apellido2', 'like', "%{$request->nombre}%");
                 });
             }
             if($request->celular){
