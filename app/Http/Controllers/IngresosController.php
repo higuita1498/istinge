@@ -651,13 +651,13 @@ class IngresosController extends Controller
                 }
             }
 
-            $print = false;
-            if ($request->print) {
-                $print = true;
+            $tirilla = false;
+            if ($request->tirilla) {
+                $tirilla = true;
             }
             
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('print', $print);
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
         }
     }
 

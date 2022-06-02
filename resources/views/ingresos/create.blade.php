@@ -409,11 +409,11 @@
         </div>
       </div>
 
-      <div class="row d-none">
+      <div class="row">
         <div class="col-md-2 offset-md-10">
           <div class="form-check form-check-flat">
             <label class="form-check-label">
-              <input type="checkbox" class="form-check-input" name="printq" value="1">Imprimir Tirilla
+              <input type="checkbox" class="form-check-input" name="tirilla" value="1">Imprimir Tirilla
               <i class="input-helper"></i>
             </label>
           </div>

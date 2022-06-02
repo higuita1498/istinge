@@ -288,11 +288,13 @@
 @endsection
 
 @section('scripts')
-	<script>
-		$(document).ready(function() {
-			if({{ $print }} == 1){
-				$("#btn_tirilla")[0].click();;
-			}
-		});
-	</script>
+    @if(Session::has('tirilla'))
+	    @if(Session::get('tirilla'))
+			<script>
+				$(document).ready(function() {
+					$("#btn_tirilla")[0].click();
+				});
+			</script>
+		@endif
+	@endif
 @endsection
