@@ -79,7 +79,10 @@
 						</div>
 						@endif
 						<div class="col-md-3 pl-1 pt-1">
-							<input type="text" placeholder="Nombres/Apellidos" id="nombre" class="form-control rounded">
+							<input type="text" placeholder="Nombres" id="nombre" class="form-control rounded">
+						</div>
+						<div class="col-md-3 pl-1 pt-1">
+							<input type="text" placeholder="Apellidos" id="apellido" class="form-control rounded">
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="number" placeholder="Identificación" id="identificacion" class="form-control rounded">
@@ -192,6 +195,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
             data.nombre = $('#nombre').val();
+            data.apellido = $('#apellido').val();
             data.identificacion = $('#identificacion').val();
             data.telefono1 = $('#telefono').val();
             data.direccion = $('#direccion').val();
@@ -234,6 +238,7 @@
 	function cerrarFiltrador() {
 		//$('#serial_onu').val('');
 		$('#nombre').val('');
+		$('#apellido').val('');
 		$('#identificacion').val('');
 		$('#telefono').val('');
 		$('#direccion').val('');
