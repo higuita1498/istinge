@@ -13,7 +13,7 @@
         <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#ffffff;">
             <tr>
                 <td align="center" style="padding:0;">
-                    <table role="presentation" style="width:700px;border-collapse:collapse;border:1px solid #cccccc;border-spacing:0;text-align:left;">
+                    <table role="presentation" style="width:680px;border-collapse:collapse;border:1px solid #cccccc;border-spacing:0;text-align:left;">
                         <tr>
                             <td align="center" style="padding:0;background:#eeeeee;">
                                 <img src="{{config('app.url').'/images/Empresas/Empresa1/logo.png'}}" alt="" width="300" style="height:auto;display:block;" />
@@ -29,10 +29,10 @@
                                             </h1>
                                             <hr>
                                             <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;text-align: justify;">
-                                                Hola <b>{{ $datos->nombre }}</b>,
+                                                Hola <b>{{ $radicado->nombre }}</b>,
                                             </p>
                                             <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;text-align: justify;">
-                                                El día {{date('d-m-Y', strtotime($datos->fecha))}} hemos recibido la solicitud de radicado, el cual ha sido registrado en nuestro sistema bajo el código N° {{ $datos->codigo }}, y se han detectado cambios, a continuación te mostramos los detalles:
+                                                El día {{date('d-m-Y', strtotime($radicado->fecha))}} hemos recibido la solicitud de radicado, el cual ha sido registrado en nuestro sistema bajo el código N° {{ $radicado->codigo }}, y se han detectado cambios, a continuación te mostramos los detalles:
                                             </p>
                                         </td>
                                     </tr>
@@ -44,7 +44,7 @@
                                                         <b>RADICADO</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
-                                                        N° {{ $datos->codigo }}
+                                                        N° {{ $radicado->codigo }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -52,7 +52,7 @@
                                                         <b>FECHA</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
-                                                        {{date('d-m-Y', strtotime($datos->fecha))}}
+                                                        {{date('d-m-Y', strtotime($radicado->fecha))}}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -60,7 +60,7 @@
                                                         <b>ESTADO</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
-                                                        <span class="text-{{ $datos->estatus('true') }}">{{ $datos->estatus() }}</span>
+                                                        <span class="text-{{ $radicado->estatus('true') }}">{{ $radicado->estatus() }}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -68,16 +68,16 @@
                                                         <b>PRIORIDAD</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
-                                                        {{ $datos->prioridad() }}
+                                                        {{ $radicado->prioridad() }}
                                                     </td>
                                                 </tr>
-                                                @if($datos->servicio)
+                                                @if($radicado->servicio)
                                                 <tr>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
                                                         <b>TIPO DE SERVICIO</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
-                                                        {{ $datos->servicio()->nombre }}
+                                                        {{ $radicado->servicio()->nombre }}
                                                     </td>
                                                 </tr>
                                                 @endif
@@ -86,16 +86,16 @@
                                                         <b>REPORTE CLIENTE</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: justify;">
-                                                        {{ $datos->desconocido }}
+                                                        {{ $radicado->desconocido }}
                                                     </td>
                                                 </tr>
-                                                @if($datos->reporte)
+                                                @if($radicado->reporte)
                                                 <tr>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: center;">
                                                         <b>REPORTE TÉCNICO</b>
                                                     </td>
                                                     <td style="padding:0 0 20px 0;color:#153643;text-align: justify;">
-                                                        {{ $datos->reporte }}
+                                                        {{ $radicado->reporte }}
                                                     </td>
                                                 </tr>
                                                 @endif

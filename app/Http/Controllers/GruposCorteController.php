@@ -16,6 +16,7 @@ use App\Mikrotik;
 use App\User;
 use App\Contrato;
 use App\GrupoCorte;
+use App\Campos;
 
 class GruposCorteController extends Controller
 {
@@ -158,8 +159,9 @@ class GruposCorteController extends Controller
 
         if ($grupo) {
             $contratos = Contrato::where('grupo_corte', $grupo->id)->where('empresa', Auth::user()->empresa)->count();
+            $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
             view()->share(['title' => $grupo->nombre]);
-            return view('grupos-corte.show')->with(compact('grupo', 'contratos'));
+            return view('grupos-corte.show')->with(compact('grupo', 'contratos', 'tabla'));
         }
         return redirect('empresa/grupos-corte')->with('danger', 'GRUPO DE CORTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }

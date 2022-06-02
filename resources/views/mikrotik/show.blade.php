@@ -28,6 +28,10 @@
 				width: 28vh;
 			}
 		}
+		.card-header {
+	        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+	        border-bottom: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+	    }
 	</style>
 @endsection
 
@@ -103,177 +107,271 @@
 	</div>
 
 	<div class="row card-description">
-		<div class="col-md-12">
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered table-sm info">
-					<tbody>
-						<tr>
-							<th width="15%">DATOS GENERALES</th>
-							<th></th>
-						</tr>
-						<tr>
-							<th>Nombre</th>
-							<td>{{ $mikrotik->nombre }}</td>
-						</tr>
-						<tr>
-							<th>IP</th>
-							<td>{{ $mikrotik->ip }}</td>
-						</tr>
-						<tr>
-							<th>Puerto API</th>
-							<td>{{ $mikrotik->puerto_api }}</td>
-						</tr>
-						<tr>
-							<th>Puerto WINBOX</th>
-							<td>{{ $mikrotik->puerto_winbox }}</td>
-						</tr>
-						<tr>
-							<th>Puerto WEB</th>
-							<td>{{ $mikrotik->puerto_web }}</td>
-						</tr>
-						<tr>
-							<th>Interfaz WAN</th>
-							<td>{{ $mikrotik->interfaz }}</td>
-						</tr>
-						<tr>
-							<th>Interfaz LAN</th>
-							<td>{{ $mikrotik->interfaz_lan }}</td>
-						</tr>
-						<tr>
-							<th>Estado</th>
-							<td><span class="font-weight-bold text-{{$mikrotik->status('true')}}">{{ $mikrotik->status() }}</span></td>
-						</tr>
-						<tr style="height: 200px;">
-							<th>Segmentos de IP</th>
-							<td class="scroll-y">
-							    @foreach($segmentos as $segmento)
-							        {{$segmento->segmento}}<br>
-							    @endforeach
-							    {{-- <table class="table table-striped text-center">
+		<div class="col-md-12 mb-4">
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="color: #fff!important;font-weight: bold;">
+                                DETALLES DEL MIKROTIK - {{ $mikrotik->nombre }}
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body" style="border: solid 1px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};padding: 0;">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-sm info">
+									<tbody>
 										<tr>
-											@php $i = 0; @endphp
-											@foreach($segmentos as $segmento)
-											    @if($i <= 6)
-											    <td style="font-size: 1em;">{{$segmento->segmento}}</td>
-											    @php $i++; @endphp
-											    @else
-											    <tr></tr>
-											    @php $i = 0; @endphp
-											    @endif
-											@endforeach
-									    </tr>
-									</table>--}}
-							</td>
-						</tr>
-						<tr>
-							<th>Amarre MAC</th>
-							<td class="font-weight-bold text-{{ $mikrotik->amarre_mac('true') }}">{{ $mikrotik->amarre_mac() }}</td>
-						</tr>
-						@if($mikrotik->uptime)
-						<tr>
-							<th>Uptime</th>
-							<td>{{ $mikrotik->uptime }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->version)
-						<tr>
-							<th>Versión</th>
-							<td>{{ $mikrotik->version }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->buildtime)
-						<tr>
-							<th>Build Time</th>
-							<td>{{ $mikrotik->buildtime }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->freememory)
-						<tr>
-							<th>Free Memory</th>
-							<td>{{ $mikrotik->freememory }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->totalmemory)
-						<tr>
-							<th>Total Memory</th>
-							<td>{{ $mikrotik->totalmemory }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->cpu)
-						<tr>
-							<th>CPU</th>
-							<td>{{ $mikrotik->cpu }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->cpucount)
-						<tr>
-							<th>CPU Count</th>
-							<td>{{ $mikrotik->cpucount }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->cpufrequency)
-						<tr>
-							<th>CPU Frequency</th>
-							<td>{{ $mikrotik->cpufrequency }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->cpuload)
-						<tr>
-							<th>CPU Load</th>
-							<td>{{ $mikrotik->cpuload }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->freehddspace)
-						<tr>
-							<th>Free HDD Space</th>
-							<td>{{ $mikrotik->freehddspace }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->totalhddspace)
-						<tr>
-							<th>Total HDD Space</th>
-							<td>{{ $mikrotik->totalhddspace }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->architecturename)
-						<tr>
-							<th>Architecture Name</th>
-							<td>{{ $mikrotik->architecturename }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->board)
-						<tr>
-							<th>Board</th>
-							<td>{{ $mikrotik->board }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->platform)
-						<tr>
-							<th>Platform</th>
-							<td>{{ $mikrotik->platform }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->created_by)
-						<tr>
-							<th>Registrado por</th>
-							<td>{{ $mikrotik->created_by()->nombres }}</td>
-						</tr>
-						@endif
-						@if($mikrotik->updated_by)
-						<tr>
-							<th>Actualizado por</th>
-							<td>{{ $mikrotik->updated_by()->nombres }}</td>
-						</tr>
-						@endif
-					</tbody>
-				</table>
-			</div>
-		</div>
+											<th width="15%">IP</th>
+											<td>{{ $mikrotik->ip }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Puerto API</th>
+											<td>{{ $mikrotik->puerto_api }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Puerto WINBOX</th>
+											<td>{{ $mikrotik->puerto_winbox }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Puerto WEB</th>
+											<td>{{ $mikrotik->puerto_web }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Interfaz WAN</th>
+											<td>{{ $mikrotik->interfaz }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Interfaz LAN</th>
+											<td>{{ $mikrotik->interfaz_lan }}</td>
+										</tr>
+										<tr>
+											<th width="15%">Estado</th>
+											<td><span class="font-weight-bold text-{{$mikrotik->status('true')}}">{{ $mikrotik->status() }}</span></td>
+										</tr>
+										<tr style="height: 200px;">
+											<th width="15%">Segmentos de IP</th>
+											<td class="scroll-y">
+											    @foreach($segmentos as $segmento)
+											        {{$segmento->segmento}}<br>
+											    @endforeach
+											    {{-- <table class="table table-striped text-center">
+														<tr>
+															@php $i = 0; @endphp
+															@foreach($segmentos as $segmento)
+															    @if($i <= 6)
+															    <td style="font-size: 1em;">{{$segmento->segmento}}</td>
+															    @php $i++; @endphp
+															    @else
+															    <tr></tr>
+															    @php $i = 0; @endphp
+															    @endif
+															@endforeach
+													    </tr>
+													</table>--}}
+											</td>
+										</tr>
+										<tr>
+											<th width="15%">Amarre MAC</th>
+											<td class="font-weight-bold text-{{ $mikrotik->amarre_mac('true') }}">{{ $mikrotik->amarre_mac() }}</td>
+										</tr>
+										@if($mikrotik->uptime)
+										<tr>
+											<th width="15%">Uptime</th>
+											<td>{{ $mikrotik->uptime }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->version)
+										<tr>
+											<th width="15%">Versión</th>
+											<td>{{ $mikrotik->version }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->buildtime)
+										<tr>
+											<th width="15%">Build Time</th>
+											<td>{{ $mikrotik->buildtime }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->freememory)
+										<tr>
+											<th width="15%">Free Memory</th>
+											<td>{{ $mikrotik->freememory }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->totalmemory)
+										<tr>
+											<th width="15%">Total Memory</th>
+											<td>{{ $mikrotik->totalmemory }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->cpu)
+										<tr>
+											<th width="15%">CPU</th>
+											<td>{{ $mikrotik->cpu }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->cpucount)
+										<tr>
+											<th width="15%">CPU Count</th>
+											<td>{{ $mikrotik->cpucount }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->cpufrequency)
+										<tr>
+											<th width="15%">CPU Frequency</th>
+											<td>{{ $mikrotik->cpufrequency }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->cpuload)
+										<tr>
+											<th width="15%">CPU Load</th>
+											<td>{{ $mikrotik->cpuload }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->freehddspace)
+										<tr>
+											<th width="15%">Free HDD Space</th>
+											<td>{{ $mikrotik->freehddspace }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->totalhddspace)
+										<tr>
+											<th width="15%">Total HDD Space</th>
+											<td>{{ $mikrotik->totalhddspace }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->architecturename)
+										<tr>
+											<th width="15%">Architecture Name</th>
+											<td>{{ $mikrotik->architecturename }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->board)
+										<tr>
+											<th width="15%">Board</th>
+											<td>{{ $mikrotik->board }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->platform)
+										<tr>
+											<th width="15%">Platform</th>
+											<td>{{ $mikrotik->platform }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->created_by)
+										<tr>
+											<th width="15%">Registrado por</th>
+											<td>{{ $mikrotik->created_by()->nombres }}</td>
+										</tr>
+										@endif
+										@if($mikrotik->updated_by)
+										<tr>
+											<th width="15%">Actualizado por</th>
+											<td>{{ $mikrotik->updated_by()->nombres }}</td>
+										</tr>
+										@endif
+									</tbody>
+								</table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    	<div class="col-md-12">
+    		<table class="table table-striped table-hover w-100" id="tabla-mikrotik">
+    			<thead class="thead-dark">
+    				<tr>
+    					@foreach($tabla as $campo)
+                            <th>{{$campo->nombre}}</th>
+                        @endforeach
+                        <th>Acciones</th>
+    				</tr>
+    			</thead>
+    		</table>
+    	</div>
 	</div>
 @endsection
 
 @section('scripts')
 	<script>
+	    var tabla = null;
+	    window.addEventListener('load',
+	    function() {
+
+			$('#tabla-mikrotik').DataTable({
+				responsive: true,
+				serverSide: true,
+				processing: true,
+				searching: false,
+				language: {
+					'url': '/vendors/DataTables/es.json'
+				},
+				order: [
+					[0, "desc"]
+				],
+				"pageLength": {{ Auth::user()->empresa()->pageLength }},
+				ajax: '{{url("/contratos/0")}}',
+				headers: {
+					'X-CSRF-TOKEN': '{{csrf_token()}}'
+				},
+				columns: [
+				    @foreach($tabla as $campo)
+	                {data: '{{$campo->campo}}'},
+	                @endforeach
+	                { data: 'acciones' },
+				]
+			});
+
+
+	        tabla = $('#tabla-mikrotik');
+
+	        tabla.on('preXhr.dt', function(e, settings, data) {
+				data.server_configuration_id = {{ $mikrotik->id }};
+	            data.filtro = true;
+	        });
+
+	        $('#filtrar').on('click', function(e) {
+				getDataTable();
+				return false;
+			});
+
+	        $('#form-filter').on('keypress',function(e) {
+	                if(e.which == 13) {
+	                    getDataTable();
+	                    return false;
+	                }
+	        });
+
+	    });
+
+		function getDataTable() {
+			tabla.DataTable().ajax.reload();
+		}
+
+		function abrirFiltrador() {
+			if ($('#form-filter').hasClass('d-none')) {
+				$('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
+				$('#form-filter').removeClass('d-none');
+			} else {
+				$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+				cerrarFiltrador();
+			}
+		}
+
+		function cerrarFiltrador() {
+			$('#client_id').val('').selectpicker('refresh');
+			$('#plan').val('').selectpicker('refresh');
+			$('#corte').val('').selectpicker('refresh');
+			$('#state').val('').selectpicker('refresh');
+			$('#form-filter').addClass('d-none');
+			$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+			getDataTable();
+		}
+
 		function abrirAcciones() {
 			if ($('#form-acciones').hasClass('d-none')) {
 				$('#boton-acciones').html('Acciones de Mikrotik&nbsp;&nbsp;<i class="fas fa-caret-up"></i>');

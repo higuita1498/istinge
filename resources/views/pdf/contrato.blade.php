@@ -146,7 +146,9 @@
                         <div style="width: 100%;  margin-top: 5px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">CONDICIONES COMERCIALES CARACTERÍSTICAS DEL PLAN</p><br>
                             <p style="text-align: justify;" class="small pl-2">Tipo de Cliente: Nuevo <input type="checkbox" /> Modificación <input type="checkbox" /></p>
+                            @if(isset($contrato->contrato()->tecnologia))
                             <p style="text-align: justify;" class="small pl-2">Tipo red: FTTH <input type="checkbox" {{$contrato->contrato()->tecnologia == 1 ? 'checked="checked' : ''}}> WIRELESS <input type="checkbox" {{$contrato->contrato()->tecnologia == 2 ? 'checked="checked' : ''}}></p><br>
+                            @endif
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INTERNET</p>
                             <table style="width: 100%; text-align:center; padding:5px;">
                                 <tr style="background-color: {{Auth::user()->empresa()->color}}; color: #fff;">

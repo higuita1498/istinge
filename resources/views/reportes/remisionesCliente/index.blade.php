@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-        <input type="hidden" id="primera" value="{{$example->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$example->date['ultima']}}">
+    <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+    <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <form id="form-reporte">
 
 
@@ -62,8 +62,8 @@
 
                     @foreach($clientes as $cliente)
                         <tr>
-                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blanck">{{$cliente['nombre']}}</a> </td>
-                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blanck">{{$cliente['rep']}}</a></td>
+                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blank">{{$cliente['nombre']}}</a> </td>
+                            <td><a href="{{route('contactos.show', $cliente['id'])}}" target="_blank">{{$cliente['rep']}}</a></td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($cliente['subtotal'])}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($cliente['total'])}}</td>
                             <td></td>

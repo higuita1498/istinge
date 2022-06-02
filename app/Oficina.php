@@ -57,7 +57,7 @@ class Oficina extends Model
 
     public function uso(){
         $cont=0;
-        $cont+=Contrato::where('ap', $this->id)->count();
+        $cont+=User::where('oficina', $this->id)->count();
         return $cont;
     }
     

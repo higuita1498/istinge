@@ -380,8 +380,9 @@ class PlanesVelocidadController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
+            $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
             view()->share(['icon' => 'fas fa-server', 'title' => 'Plan: '.$plan->name]);
-            return view('planesvelocidad.show')->with(compact('plan'));
+            return view('planesvelocidad.show')->with(compact('plan', 'tabla'));
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }

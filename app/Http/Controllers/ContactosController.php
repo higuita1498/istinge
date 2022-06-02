@@ -2,11 +2,29 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
+use Mail;
+use Validator;
+use Auth;
+use DB;
+use Session;
+use ZipArchive;
+
 use App\Cotizacion;
 use App\Empresa;
 use App\Contrato;
-use Illuminate\Http\Request;
-use App\User; use App\Contacto;
+use App\User;
+use App\Contacto;
+use App\TipoIdentificacion;
+use App\AsociadosContacto;
+use App\TipoEmpresa;
+use App\Vendedor;
+use App\Campos;
+use App\Mikrotik;
+use App\Oficina;
 use App\Model\Gastos\FacturaProveedores;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosRecurrentes;
@@ -17,26 +35,19 @@ use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresoR;
 use App\Model\Ingresos\NotaCredito;
 use App\Model\Ingresos\Remision;
-use App\TipoIdentificacion;
-use App\AsociadosContacto;
-use App\TipoEmpresa;
-use App\Vendedor;
 use App\Model\Inventario\ListaPrecios;
-use Carbon\Carbon;  use Mail; use Validator;
-use Illuminate\Validation\Rule;  use Auth; use DB;
+
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
-use PHPExcel; use PHPExcel_IOFactory; use PHPExcel_Style_Alignment; use PHPExcel_Style_Fill;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
-use ZipArchive;
-use Barryvdh\DomPDF\Facade as PDF;
-use PHPExcel_Shared_ZipArchive; use Session;
-use App\Campos;
+use PHPExcel_Shared_ZipArchive;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
-use App\Mikrotik;
-use App\Oficina;
 
 class ContactosController extends Controller
 {
@@ -775,9 +786,7 @@ class ContactosController extends Controller
      */
     public function importar(){
         $this->getAllPermissions(Auth::user()->id);
-
-        view()->share(['title' => 'Importar Contactos desde Excel', 'subseccion' => 'todos']);
-
+        view()->share(['title' => 'Importar Contactos desde Excel', 'subseccion' => 'clientes']);
 
         $identificaciones=TipoIdentificacion::all();
         return view('contactos.importar')->with(compact('identificaciones'));;
@@ -794,6 +803,7 @@ class ContactosController extends Controller
         ],[
             'archivo.mimes' => 'El archivo debe ser de extensión xlsx'
         ]);
+
         $create=0;
         $modf=0;
         $imagen = $request->file('archivo');
@@ -815,8 +825,7 @@ class ContactosController extends Controller
         //obtiene el tamaño de columnas
         $highestColumn = $sheet->getHighestColumn();
 
-        for ($row = 4; $row <= $highestRow; $row++)
-        {
+        for ($row = 4; $row <= $highestRow; $row++){
             $request= (object) array();
             //obtengo el A4 desde donde empieza la data
             $nombre=$sheet->getCell("A".$row)->getValue();
@@ -824,49 +833,37 @@ class ContactosController extends Controller
                 break;
             }
 
-            $request->tip_iden=$sheet->getCell("B".$row)->getValue();
-            $request->nit=$sheet->getCell("C".$row)->getValue();
-            $request->dv=$sheet->getCell("D".$row)->getValue();
-            $request->fk_idpais=$sheet->getCell("E".$row)->getValue();
-            $request->fk_iddepartamento=$sheet->getCell("F".$row)->getValue();
-            $request->fk_idmunicipio=$sheet->getCell("G".$row)->getValue();
-            $request->codigopostal=$sheet->getCell("H".$row)->getValue();
-            $request->telefono1=$sheet->getCell("I".$row)->getValue();
-            $request->telefono2=$sheet->getCell("J".$row)->getValue();
-            $request->fax=$sheet->getCell("K".$row)->getValue();
+            $request->apellido1=$sheet->getCell("B".$row)->getValue();
+            $request->apellido2=$sheet->getCell("C".$row)->getValue();
+            $request->tip_iden=$sheet->getCell("D".$row)->getValue();
+            $request->nit=$sheet->getCell("E".$row)->getValue();
+            $request->dv=$sheet->getCell("F".$row)->getValue();
+            $request->fk_idpais=$sheet->getCell("G".$row)->getValue();
+            $request->fk_iddepartamento=$sheet->getCell("H".$row)->getValue();
+            $request->fk_idmunicipio=$sheet->getCell("I".$row)->getValue();
+            $request->codigopostal=$sheet->getCell("J".$row)->getValue();
+            $request->telefono1=$sheet->getCell("K".$row)->getValue();
             $request->celular=$sheet->getCell("L".$row)->getValue();
             $request->direccion=$sheet->getCell("M".$row)->getValue();
-            $request->ciudad=$sheet->getCell("N".$row)->getValue();
-            $request->email=$sheet->getCell("O".$row)->getValue();
-            $request->observaciones=$sheet->getCell("P".$row)->getValue();
-            $request->tipo_empresa=$sheet->getCell("Q".$row)->getValue();
-            $request->tipo_contacto=$sheet->getCell("R".$row)->getValue();
-            $request->vendedor=$sheet->getCell("S".$row)->getValue();
-            $request->tipo_persona=$sheet->getCell("T".$row)->getValue();
-            $request->responsableiva=$sheet->getCell("U".$row)->getValue();
-            $request->lista_precios=$sheet->getCell("V".$row)->getValue();
+            $request->vereda=$sheet->getCell("N".$row)->getValue();
+            $request->barrio=$sheet->getCell("O".$row)->getValue();
+            $request->ciudad=$sheet->getCell("P".$row)->getValue();
+            $request->email=$sheet->getCell("Q".$row)->getValue();
+            $request->observaciones=$sheet->getCell("R".$row)->getValue();
+            $request->tipo_contacto=$sheet->getCell("S".$row)->getValue();
             $error=(object) array();
+
             if (!$request->tip_iden) {
                 $error->tip_iden="El campo Tipo de identificación es obligatorio";
             }
-            if (!$request->telefono1) {
-                $error->telefono1="El campo Teléfono es obligatorio";
+            if (!$request->celular && !$request->telefono1) {
+                $error->celular="Debe indicar un nro celular o de teléfono";
             }
-            if (!$request->tipo_empresa) {
-                $error->tipo_empresa="El campo Tipo de Empresa es obligatorio";
-            }
-
             if (!$request->tipo_contacto) {
                 $error->tipo_contacto="El campo Tipo de Contacto es obligatorio";
             }
-            if(Vendedor::where('empresa',Auth::user()->empresa)->where('nombre', 'like', '%'.$request->vendedor.'%')->count() == 0)
-            {
-                $error->vendedor = "No existe un vendedor con ese nombre";
-            }
 
-            if(auth()->user()->empresa()->estado_dian == 1)
-            {
-
+            if(auth()->user()->empresa()->estado_dian == 1){
                 if (!$request->fk_idpais) {
                     $error->fk_idpais="El campo pais es obligatorio para facturadores electrónicos";
                 }
@@ -877,26 +874,20 @@ class ContactosController extends Controller
                     $error->fk_idmunicipio="El campo municipio es obligatorio para facturadores electrónicos";
                 }
             }else{
-
-                if($request->fk_idpais != "")
-                {
-                    if(DB::table('pais')->where('nombre',$request->fk_idpais)->count() == 0)
-                    {
+                if($request->fk_idpais != ""){
+                    if(DB::table('pais')->where('nombre',$request->fk_idpais)->count() == 0){
                         $error->fk_idpais = "El nombre del pais ingresado no se encuentra en nuestra base de datos";
                     }
                 }
 
                 if($request->fk_iddepartamento != ""){
-
-                    if(DB::table('departamentos')->where('nombre',$request->fk_iddepartamento)->count() == 0)
-                    {
+                    if(DB::table('departamentos')->where('nombre',$request->fk_iddepartamento)->count() == 0){
                         $error->fk_iddepartamento = "El nombre del departamento ingresado no se encuentra en nuestra base de datos";
                     }
                 }
 
                 if($request->fk_idmunicipio != ""){
-                    if(DB::table('municipios')->where('nombre',$request->fk_idmunicipio)->count() == 0)
-                    {
+                    if(DB::table('municipios')->where('nombre',$request->fk_idmunicipio)->count() == 0){
                         $error->fk_idmunicipio = "El nombre del municipio ingresado no se encuentra en nuestra base de datos";
                     }
                 }
@@ -915,48 +906,42 @@ class ContactosController extends Controller
             }
         }
 
-
         $tipo=2;$tipo_identifi=1;
-        for ($row = 4; $row <= $highestRow; $row++)
-        {
+
+        for ($row = 4; $row <= $highestRow; $row++){
             $tipo=2; $tipo_identifi=1;
             $nombre=$sheet->getCell("A".$row)->getValue();
             if (empty($nombre)) {
                 break;
             }
-            $request= (object) array();
-            $request->nombre=$nombre;
-            $request->tip_iden=$sheet->getCell("B".$row)->getValue();
-            $request->nit=$sheet->getCell("C".$row)->getValue();
-            $request->dv=$sheet->getCell("D".$row)->getValue();
-            $request->fk_idpais=$sheet->getCell("E".$row)->getValue();
-            $request->fk_iddepartamento=$sheet->getCell("F".$row)->getValue();
-            $request->fk_idmunicipio=$sheet->getCell("G".$row)->getValue();
-            $request->codigopostal=$sheet->getCell("H".$row)->getValue();
-            $request->telefono1=$sheet->getCell("I".$row)->getValue();
-            $request->telefono2=$sheet->getCell("J".$row)->getValue();
-            $request->fax=$sheet->getCell("K".$row)->getValue();
-            $request->celular=$sheet->getCell("L".$row)->getValue();
-            $request->direccion=$sheet->getCell("M".$row)->getValue();
-            $request->ciudad=$sheet->getCell("N".$row)->getValue();
-            $request->email=$sheet->getCell("O".$row)->getValue();
-            $request->observaciones=$sheet->getCell("P".$row)->getValue();
-            $request->tipo_empresa=$sheet->getCell("Q".$row)->getValue();
-            $request->tipo_contacto=$sheet->getCell("R".$row)->getValue();
-            $request->vendedor=$sheet->getCell("S".$row)->getValue();
-            $request->tipo_persona=$sheet->getCell("T".$row)->getValue();
-            $request->responsableiva=$sheet->getCell("U".$row)->getValue();
-            $request->lista_precios=$sheet->getCell("V".$row)->getValue();
+            $request                    = (object) array();
+            $request->nombre            = $nombre;
+            $request->apellido1         = $sheet->getCell("B".$row)->getValue();
+            $request->apellido2         = $sheet->getCell("C".$row)->getValue();
+            $request->tip_iden          = $sheet->getCell("D".$row)->getValue();
+            $request->nit               = $sheet->getCell("E".$row)->getValue();
+            $request->dv                = $sheet->getCell("F".$row)->getValue();
+            $request->fk_idpais         = $sheet->getCell("G".$row)->getValue();
+            $request->fk_iddepartamento = $sheet->getCell("H".$row)->getValue();
+            $request->fk_idmunicipio    = $sheet->getCell("I".$row)->getValue();
+            $request->codigopostal      = $sheet->getCell("J".$row)->getValue();
+            $request->telefono1         = $sheet->getCell("K".$row)->getValue();
+            $request->celular           = $sheet->getCell("L".$row)->getValue();
+            $request->direccion         = $sheet->getCell("M".$row)->getValue();
+            $request->vereda            = $sheet->getCell("N".$row)->getValue();
+            $request->barrio            = $sheet->getCell("O".$row)->getValue();
+            $request->ciudad            = $sheet->getCell("P".$row)->getValue();
+            $request->email             = $sheet->getCell("Q".$row)->getValue();
+            $request->observaciones     = $sheet->getCell("R".$row)->getValue();
+            $request->tipo_contacto     = $sheet->getCell("S".$row)->getValue();
             if (strtolower($request->tipo_contacto)=='cliente') {
                 $tipo=0;
-            }
-            else if (strtolower($request->tipo_contacto)=='proveedor') {
+            }else if (strtolower($request->tipo_contacto)=='proveedor') {
                 $tipo=1;
             }
             $request->tipo_contacto=$tipo;
 
-            if($request->fk_idpais != "")
-            {
+            if($request->fk_idpais != ""){
                 $request->fk_idpais = DB::table('pais')->where('nombre',$request->fk_idpais)->first()->codigo;
             }
 
@@ -966,26 +951,6 @@ class ContactosController extends Controller
 
             if($request->fk_idmunicipio != ""){
                 $request->fk_idmunicipio = DB::table('municipios')->where('nombre',$request->fk_idmunicipio)->first()->id;
-            }
-
-            if($request->lista_precios != ""){
-                $request->lista_precios = DB::table('lista_precios')->where('nombre',$request->lista_precios)->first()->id;
-            }
-
-            if($request->vendedor != ""){
-                $request->vendedor = Vendedor::where('empresa',Auth::user()->empresa)->where('nombre', 'like', '%'.$request->vendedor.'%')->first()->id;
-            }
-
-
-            if ($request->tipo_empresa) {
-                $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->where('nombre',$request->tipo_empresa)->first();
-                if (!$tipos_empresa) {
-                    $tipos_empresa = new TipoEmpresa;
-                    $tipos_empresa->empresa=Auth::user()->empresa;
-                    $tipos_empresa->nombre=$request->tipo_empresa;
-                    $tipos_empresa->save();
-                }
-                $request->tipo_empresa=$tipos_empresa->id;
             }
 
             $tipo_identifi_arr=TipoIdentificacion::where('identificacion', 'like', '%' . $request->tip_iden. '%')->first();
@@ -999,54 +964,44 @@ class ContactosController extends Controller
                 $contacto->empresa=Auth::user()->empresa;
                 $contacto->nit=$request->nit;
                 $create=$create+1;
-            }
-            else{
+            }else{
                 $modf=$modf+1;
             }
 
-            $contacto->tip_iden=$request->tip_iden;
-            $contacto->tipo_empresa=$request->tipo_empresa;
-            $contacto->nombre=ucwords(mb_strtolower($request->nombre));
-            $contacto->ciudad=ucwords(mb_strtolower($request->ciudad));
-            $contacto->direccion=mb_strtolower($request->direccion);
-            $contacto->email=mb_strtolower($request->email);
-            $contacto->telefono1=$request->telefono1;
-            $contacto->telefono2=$request->telefono2;
-            $contacto->fax=$request->fax;
-            $contacto->celular=$request->celular;
-            $contacto->tipo_contacto=$request->tipo_contacto;
-            $contacto->observaciones=mb_strtolower($request->observaciones);
-            $contacto->fk_idpais = $request->fk_idpais;
+            $contacto->nombre            = ucwords(mb_strtolower($request->nombre));
+            $contacto->apellido1         = ucwords(mb_strtolower($request->apellido1));
+            $contacto->apellido2         = ucwords(mb_strtolower($request->apellido2));
+            $contacto->tip_iden          = $request->tip_iden;
+            $contacto->ciudad            = ucwords(mb_strtolower($request->ciudad));
+            $contacto->direccion         = mb_strtolower($request->direccion);
+            $contacto->vereda            = mb_strtolower($request->vereda);
+            $contacto->barrio            = mb_strtolower($request->barrio);
+            $contacto->email             = mb_strtolower($request->email);
+            $contacto->telefono1         = $request->telefono1;
+            $contacto->celular           = $request->celular;
+            $contacto->tipo_contacto     = $request->tipo_contacto;
+            $contacto->observaciones     = mb_strtolower($request->observaciones);
+            $contacto->fk_idpais         = $request->fk_idpais;
             $contacto->fk_iddepartamento = $request->fk_iddepartamento;
-            $contacto->fk_idmunicipio = $request->fk_idmunicipio;
-            $contacto->cod_postal =  $request->codigopostal;
-            $contacto->vendedor = $request->vendedor;
+            $contacto->fk_idmunicipio    = $request->fk_idmunicipio;
+            $contacto->cod_postal        =  $request->codigopostal;
 
             if ($request->dv){
                 $contacto->dv = $request->dv;
-            }
-            if ($request->tipo_persona){
-                $contacto->tipo_persona = $request->tipo_persona;
-            }
-            if ($request->responsableiva){
-                $contacto->responsableiva = $request->responsableiva;
-            }
-
-            if ($request->lista_precios){
-                $contacto->lista_precio = $request->lista_precios;
             }
 
             $contacto->save();
 
         }
-        $mensaje='Se ha completado exitosamente la carga de datos del sistema';
+        $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS DEL SISTEMA';
+
         if ($create>0) {
-            $mensaje.=' Creados: '.$create;
+            $mensaje.=' CREADOS: '.$create;
         }
         if ($modf>0) {
-            $mensaje.=' Modificados: '.$modf;
+            $mensaje.=' MODIFICADOS: '.$modf;
         }
-        return redirect('empresa/contactos')->with('success', $mensaje);
+        return redirect('empresa/contactos/clientes')->with('success', $mensaje);
     }
 
     /*
@@ -1056,9 +1011,7 @@ class ContactosController extends Controller
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contactos de ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Nombres', 'Tipo de identificacion', 'Identificacion','DV','Pais','Departamento','Municipio',
-        'Codigo postal','Telefono', 'Telefono 2', 'Fax', 'Celular', 'Direccion','Ciudad', 'Correo Electronico', 'Observaciones',
-        'Tipo de Empresa', 'Tipo de Contacto', 'Vendedor', 'Tipo persona', 'Responsabilidad','Lista Precios');
+        $titulosColumnas = array('Nombres', 'Apellido1', 'Apellido2', 'Tipo de identificacion', 'Identificacion', 'DV', 'Pais', 'Departamento', 'Municipio', 'Codigo postal', 'Telefono', 'Celular', 'Direccion', 'Corregimiento/Vereda', 'Barrio', 'Ciudad', 'Correo Electronico', 'Observaciones', 'Tipo de Contacto');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -1069,71 +1022,90 @@ class ContactosController extends Controller
         ->setKeywords("reporte Contactos") //Etiquetas
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:D1');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A1:N1');
         // Se agregan los titulos del reporte
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1',$tituloReporte);
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:C2');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A2:N2');
         // Se agregan los titulos del reporte
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
 
-        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-        ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:V3')->applyFromArray($estilo);
+        $estilo = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman'
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
 
-        $estilo =array('fill' => array(
-            'type' => PHPExcel_Style_Fill::FILL_SOLID,
-            'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:V3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:S3')->applyFromArray($estilo);
 
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:S3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
         }
 
-        $contacto = Contacto::where('empresa', Auth::user()->empresa)
-            ->where('nombre', 'like', '%Contacto Predeterminado%')->get();
-        if(count($contacto) == 0 ){
-            $contacto = Contacto::all();
-        }
+        $contactos = Contacto::all();
         $j=4;
-        $contacto = $contacto->first();
 
+        foreach($contactos as $contacto){
             $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue($letras[0].$j, $contacto->nombre)
-                ->setCellValue($letras[1].$j, $contacto->tip_iden())
-                ->setCellValue($letras[2].$j, $contacto->nit)
-                ->setCellValue($letras[3].$j, $contacto->dv)
-                ->setCellValue($letras[4].$j, $contacto->pais()->nombre)
-                ->setCellValue($letras[5].$j, $contacto->departamento()->nombre)
-                ->setCellValue($letras[6].$j, $contacto->municipio()->nombre)
-                ->setCellValue($letras[7].$j, $contacto->cod_postal)
-                ->setCellValue($letras[8].$j, $contacto->telefono1)
-                ->setCellValue($letras[9].$j, $contacto->telefono2)
-                ->setCellValue($letras[10].$j, $contacto->fax)
-                ->setCellValue($letras[11].$j, $contacto->celular)
-                ->setCellValue($letras[12].$j, $contacto->direccion)
-                ->setCellValue($letras[13].$j, $contacto->ciudad)
-                ->setCellValue($letras[14].$j, $contacto->email)
-                ->setCellValue($letras[15].$j, $contacto->observaciones)
-                ->setCellValue($letras[16].$j, $contacto->tipo_empresa())
-                ->setCellValue($letras[17].$j, $contacto->tipo_contacto())
-                ->setCellValue($letras[18].$j, $contacto->vendedor())
-                ->setCellValue($letras[19].$j, $contacto->tipo_persona())
-                ->setCellValue($letras[20].$j, $contacto->responsableIva())
-                ->setCellValue($letras[21].$j, $contacto->lista_precios());
+            ->setCellValue($letras[0].$j, $contacto->nombre)
+            ->setCellValue($letras[1].$j, $contacto->apellido1)
+            ->setCellValue($letras[2].$j, $contacto->apellido2)
+            ->setCellValue($letras[3].$j, $contacto->tip_iden())
+            ->setCellValue($letras[4].$j, $contacto->nit)
+            ->setCellValue($letras[5].$j, $contacto->dv)
+            ->setCellValue($letras[6].$j, $contacto->pais()->nombre)
+            ->setCellValue($letras[7].$j, $contacto->departamento()->nombre)
+            ->setCellValue($letras[8].$j, $contacto->municipio()->nombre)
+            ->setCellValue($letras[9].$j, $contacto->cod_postal)
+            ->setCellValue($letras[10].$j, $contacto->telefono1)
+            ->setCellValue($letras[11].$j, $contacto->celular)
+            ->setCellValue($letras[12].$j, $contacto->direccion)
+            ->setCellValue($letras[13].$j, $contacto->vereda)
+            ->setCellValue($letras[14].$j, $contacto->barrio)
+            ->setCellValue($letras[15].$j, $contacto->ciudad)
+            ->setCellValue($letras[16].$j, $contacto->email)
+            ->setCellValue($letras[17].$j, $contacto->observaciones)
+            ->setCellValue($letras[18].$j, $contacto->tipo_contacto());
+            $j++;
+        }
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
                 'allborders' => array(
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
-            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:V'.$i)->applyFromArray($estilo);
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:S'.$j)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);

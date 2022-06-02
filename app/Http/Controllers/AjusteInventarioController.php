@@ -86,31 +86,6 @@ class AjusteInventarioController extends Controller
   * @return redirect
   */
   public function store(Request $request){
-      
-     if(AjusteInventario::where('empresa',auth()->user()->empresa)->count() > 0){
-          //Tomamos el tiempo en el que se crea el registro
-          Session::put('posttimer', AjusteInventario::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
-      }else{
-        Session::put('posttimer', Carbon::now()->subDay());
-      }
-      $sw = 1;
-    //Recorremos la sesion para obtener la fecha
-        foreach (Session::get('posttimer') as $key) {
-          if ($sw == 1) {
-            $ultimoingreso = $key;
-            $sw=0;
-        }
-    }
-
-//Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-
-//Si el tiempo es de menos de 30 segundos mandamos al listado general
-    if ($diasDiferencia <= 10) {
-      $mensaje = "El formulario ya ha sido enviado.";
-       return redirect('empresa/inventario/ajustes')->with('success', $mensaje);
-  }
-      
     $request->validate([
       'bodega' => 'required|exists:bodegas,id',
       'fecha' => 'required',

@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-        <input type="hidden" id="primera" value="{{$example->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$example->date['ultima']}}">
+    <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+    <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <div class="row card-description">
         <div class="col-md-12 ">
             <p  class="card-description">Consulta el total de facturación y cantidad vendida por cada uno de tus items en un período de tiempo, sin importar si la factura de venta ya se pagó o no </p>

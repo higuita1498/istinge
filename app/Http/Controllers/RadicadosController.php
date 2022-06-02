@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\File;
 use App\MovimientoLOG;
 
 use Mail;
-use App\Mail\RadicadosMailable;
 use Config;
 use App\ServidorCorreo;
 use App\Oficina;
@@ -385,9 +384,6 @@ class RadicadosController extends Controller{
             $mensaje = 'SE HA RESUELTO EL CASO RADICADO';
             $radicado->save();
 
-            $datos = $radicado;
-
-            $correo = new RadicadosMailable($datos);
             $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
             if($host){
                 $existing = config('mail');
@@ -401,12 +397,15 @@ class RadicadosController extends Controller{
                         'from' => [
                             'address' => $host->address,
                             'name' => $host->name
-                        ],
+                        ]
                     ]
                 );
                 config(['mail'=>$new]);
             }
-            Mail::to($radicado->correo)->send($correo);
+
+            Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
+            });
 
             return back()->with('success', $mensaje);
         }

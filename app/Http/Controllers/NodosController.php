@@ -16,6 +16,7 @@ use App\Mikrotik;
 use App\User;
 use App\Contrato;
 use App\Nodo;
+use App\Campos;
 
 class NodosController extends Controller
 {
@@ -103,11 +104,12 @@ class NodosController extends Controller
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $nodo = Nodo::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
         if ($nodo) {
             $contratos = Contrato::where('nodo', $nodo->id)->get();
             view()->share(['title' => $nodo->nombre]);
-            return view('nodos.show')->with(compact('nodo', 'contratos'));
+            return view('nodos.show')->with(compact('nodo', 'contratos','tabla'));
         }
         return redirect('empresa/nodos')->with('danger', 'NODO NO ENCONTRADO, INTENTE NUEVAMENTE');
     }

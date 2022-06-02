@@ -28,7 +28,7 @@
         <input type="hidden" id="retencion_previas_{{$factura->id}}" value="{{$factura->retenciones_previas()}}">
         <input type="hidden" id="impuestos_factura_{{$factura->id}}" value="{{$factura->impuestos_totales()}}">
 
-        <td class="text-center"><input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}"><a href="{{route('facturas.show',$factura->nro)}}" target="_blank">{{$factura->codigo}}</a></td>
+        <td class="text-center"><input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}"><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a></td>
         <td class="text-center">{{date('d-m-Y', strtotime($factura->fecha))}}</td>
         <td class="text-center">{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
         <td class="text-center">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>

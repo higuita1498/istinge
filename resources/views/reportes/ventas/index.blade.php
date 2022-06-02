@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
 <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-    <input type="hidden" id="primera" value="{{$request->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$request->date['ultima']}}">
+    <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+    <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
 
 	<form id="form-reporte">
 
@@ -87,8 +87,8 @@
 
 				@foreach($facturas as $factura)
 					<tr>
-                        <td><a href="{{route('facturas.show',$factura->nro)}}" target="_blanck">{{$factura->codigo}}</a> </td>
-                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></td>
+                        <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a> </td>
+                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
                         {{-- <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td> --}}
                         <td>{{date('d-m-Y', strtotime($factura->pagada))}}</td>

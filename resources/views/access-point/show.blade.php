@@ -84,20 +84,10 @@
     		<table class="table table-striped table-hover w-100" id="tabla-contratos">
     			<thead class="thead-dark">
     				<tr>
-    					<th>Nro</th>
-    					<th>Cliente</th>
-    					<th>Identificación</th>
-    					<th>Teléfono</th>
-    					<th>Correo</th>
-    					<th>Barrio</th>
-    					<th>Plan</th>
-    					<th>MAC</th>
-    					<th>IP</th>
-    					<th>Estado</th>
-    					<th>Fecha Corte</th>
-    					<th>Último Pago</th>
-    					<th>Cancelación del Servicio</th>
-    					<th>Acciones</th>
+    					@foreach($tabla as $campo)
+                            <th>{{$campo->nombre}}</th>
+                        @endforeach
+                        <th>Acciones</th>
     				</tr>
     			</thead>
     		</table>
@@ -123,25 +113,15 @@
 				[0, "desc"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{url("/contratos/a-$ap->id")}}',
+			ajax: '{{url("/contratos/0")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			columns: [
-			    { data: 'nro' },
-				{ data: 'client_id' },
-				{ data: 'nit' },
-				{ data: 'telefono' },
-				{ data: 'email' },
-				{ data: 'barrio' },
-				{ data: 'plan' },
-				{ data: 'mac' },
-				{ data: 'ip' },
-				{ data: 'state' },
-				{ data: 'corte' },
-				{ data: 'pago' },
-				{ data: 'servicio' },
-				{ data: 'acciones' },
+			    @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
+                { data: 'acciones' },
 			]
 		});
 
@@ -149,10 +129,7 @@
         tabla = $('#tabla-contratos');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
-			data.cliente_id = $('#client_id').val();
-            data.plan = $('#plan').val();
-            data.state = $('#state').val();
-			data.corte = $('#corte').val();
+			data.ap = {{ $ap->id }};
             data.filtro = true;
         });
 

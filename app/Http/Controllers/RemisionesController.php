@@ -216,30 +216,6 @@ class RemisionesController extends Controller
   */
 
   public function store(Request $request){
-
-       if( Remision::where('empresa',auth()->user()->empresa)->count() > 0){
-      //Tomamos el tiempo en el que se crea el registro
-    Session::put('posttimer', Remision::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
-    $sw = 1;
-
-    //Recorremos la sesion para obtener la fecha
-    foreach (Session::get('posttimer') as $key) {
-      if ($sw == 1) {
-        $ultimoingreso = $key;
-        $sw=0;
-      }
-    }
-
-//Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-    $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-
-//Si el tiempo es de menos de 30 segundos mandamos al listado general
-    if ($diasDiferencia <= 10) {
-      $mensaje = "El formulario ya ha sido enviado.";
-     return redirect('empresa/remisiones')->with('success', $mensaje);
-    }
-       }
-
     $remision = new Remision;
     $nro=Numeracion::where('empresa',Auth::user()->empresa)->first();
     $caja=$nro->remision;

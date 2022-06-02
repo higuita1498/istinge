@@ -957,7 +957,7 @@ class Controller extends BaseController
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
         join('factura as f','f.cliente','c.id')->
         join('items_factura as if','f.id','if.factura')->
-        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.precio as price')->
+        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.precio as price')->
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
@@ -1461,29 +1461,31 @@ class Controller extends BaseController
                 $ARRAY = $API->parseResponse($READ);
                 
                 if(count($ARRAY)>0){
-                    if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
-                        /*$ping = Ping::firstOrCreate([
-                            'contrato' => $contrato->id,
-                            'ip' => $contrato->ip,
-                            'fecha' => date('Y-m-d')
-                        ]);*/
-                        $data = [
-                            'contrato' => $contrato->id,
-                            'ip' => $contrato->ip,
-                            'fecha' => Carbon::parse(now())->format('Y-m-d')
-                        ];
-                        
-                        $ping = Ping::updateOrCreate(
-                            ['contrato' => $contrato->id],
-                            $data
-                        );
-						array_push($fallidos, $contrato->ip);
-						$y++;
-					}else{
-					    Ping::where('contrato', $contrato->id)->delete();
-						$mensaje = 'SE HA REALIZADO EL PING DE CONEXIÓN DE MANERA EXITOSA';
-						$z++;
-					}
+                    if(isset($ARRAY[0])){
+                        if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
+                            /*$ping = Ping::firstOrCreate([
+                                'contrato' => $contrato->id,
+                                'ip' => $contrato->ip,
+                                'fecha' => date('Y-m-d')
+                            ]);*/
+                            $data = [
+                                'contrato' => $contrato->id,
+                                'ip' => $contrato->ip,
+                                'fecha' => Carbon::parse(now())->format('Y-m-d')
+                            ];
+
+                            $ping = Ping::updateOrCreate(
+                                ['contrato' => $contrato->id],
+                                $data
+                            );
+    						array_push($fallidos, $contrato->ip);
+    						$y++;
+    					}else{
+    					    Ping::where('contrato', $contrato->id)->delete();
+    						$mensaje = 'SE HA REALIZADO EL PING DE CONEXIÓN DE MANERA EXITOSA';
+    						$z++;
+    					}
+                    }
                 }
                 $API->disconnect();
             }

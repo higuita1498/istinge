@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
-        <input type="hidden" id="primera" value="{{$example->date['primera']}}">
-    <input type="hidden" id="ultima" value="{{$example->date['ultima']}}">
+    <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
+    <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <div class="row card-description">
         <div class="col-md-12 ">
             <h2><i class="fas fa-shopping-cart"></i> Ventas - Remisiones</h2>
@@ -79,8 +79,8 @@
 
                     @foreach($facturas as $factura)
                         <tr>
-                            <td><a href="{{route('facturas.show',$factura->nro)}}" target="_blanck">{{$factura->nro}}</a> </td>
-                            <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blanck">{{$factura->cliente()->nombre}}</a></td>
+                            <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->nro}}</a> </td>
+                            <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
                             <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subsub)}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
