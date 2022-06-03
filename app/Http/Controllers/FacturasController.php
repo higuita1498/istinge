@@ -1793,22 +1793,25 @@ class FacturasController extends Controller{
             Session::put('posttimer', Factura::where('empresa', auth()->user()->empresa)->orderBy('updated_at', 'desc')->first()->updated_at);
             $sw = 1;
 
-            //Recorremos la sesion para obtener la fecha
-            foreach (Session::get('posttimer') as $key) {
-                if ($sw == 1) {
-                    $ultimoingreso = $key;
-                    $sw = 0;
+            if(isset($ultimoingreso)){
+                //Recorremos la sesion para obtener la fecha
+                foreach (Session::get('posttimer') as $key) {
+                    if ($sw == 1) {
+                        $ultimoingreso = $key;
+                        $sw = 0;
+                    }
+                }
+
+                //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+
+                //Si el tiempo es de menos de 10 segundos mandamos al listado general
+                if ($diasDiferencia <= 10) {
+                    $mensaje = "La factura electrónica ya ha sido enviada.";
+                    return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje);
                 }
             }
-
-            //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
-            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-
-            //Si el tiempo es de menos de 10 segundos mandamos al listado general
-            if ($diasDiferencia <= 10) {
-                $mensaje = "La factura electrónica ya ha sido enviada.";
-                return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje);
-            }
+            
         }
 
         $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
