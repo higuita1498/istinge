@@ -104,7 +104,7 @@
 			<label class="control-label">País</label>
 			<select class="form-control selectpicker" name="pais" id="pais" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validateCountry(this.value)">
 				@foreach($paises as $pais)
-				<option value="{{$pais->codigo}}" {{ $empresa->fk_idpais == $pais->codigo ? 'selected' : $pais->codigo == 'CO' ? 'selected' : '' }}>{{$pais->nombre}}</option>
+				<option value="{{$pais->codigo}}" {{ ($empresa->fk_idpais == $pais->codigo ? 'selected' : $pais->codigo == 'CO') ? 'selected' : '' }}>{{$pais->nombre}}</option>
 				@endforeach
 			</select>
 		</div>

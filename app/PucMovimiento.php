@@ -10,6 +10,8 @@ use App\FormaPago;
 use App\Numeracion;
 use App\Model\Ingresos\Ingreso;
 use App\Puc;
+use Auth;
+use Carbon\Carbon;
 use DB;
 
 class PucMovimiento extends Model
@@ -37,12 +39,14 @@ class PucMovimiento extends Model
         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',3)->first();
         
         //obtenbemos el siguiente numero de los asientos contables
+        $empresa = Auth::user()->empresa;
         if($siguienteNumero == null){
             $numeracion = Numeracion::where('empresa', $factura->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
             $numeracion->contabilidad = $siguienteNumero;
             $numeracion->save();
         }
+
 
         if($opcion == 1 && !$isGuardar){
 
@@ -76,6 +80,7 @@ class PucMovimiento extends Model
                         if($cuentaItem->tipo == 2){$mov->debito = $item->totalCompra();} // se hace sobre el total que se compro del item
                         if($cuentaItem->tipo == 1){$mov->credito = $item->totalCompra();}
                         $mov->enlace_a = 1;
+                        $mov->empresa = $empresa;
                         $mov->save();
                     }
                     //buscamos si el item en inventario el tipo_producto es inventariable (tipo 1).
@@ -105,6 +110,7 @@ class PucMovimiento extends Model
                         $mov->credito =  round($totalImp->total);
                         $mov->codigo_impuesto = $impuesto->id;
                         $mov->enlace_a = 2;
+                        $mov->empresa = $empresa;
                         $mov->save();
                     }
                 }
@@ -133,6 +139,7 @@ class PucMovimiento extends Model
                         $mov->debito =  $ret->total;
                         $mov->codigo_impuesto = $retencion->id;
                         $mov->enlace_a = 3;
+                        $mov->empresa = $empresa;
                         $mov->save();
                     }
                 }
@@ -166,6 +173,7 @@ class PucMovimiento extends Model
                     $mov->enlace_a = 4;
                     $mov->formapago_id = $key;
                     $mov->recibocaja_id = $request->selectanticipo[$i];
+                    $mov->empresa = $empresa;
                     $mov->save();
 
                     //si hay un rc. Descontamos el saldo a favor tanto del cliente como del recibo de caja.
@@ -202,13 +210,15 @@ class PucMovimiento extends Model
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
 
-          //obtenbemos el siguiente numero de los asientos contables
+        //obtenbemos el siguiente numero de los asientos contables
+        $empresa = Auth::user()->empresa;
         if($siguienteNumero == null){
             $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
             $numeracion->contabilidad = $siguienteNumero;
             $numeracion->save();
         }
+
 
          if($opcion == 1 && !$isGuardar){
  
@@ -241,6 +251,7 @@ class PucMovimiento extends Model
                          if($cuentaItem->tipo == 2){$mov->debito = $item->totalCompra();}
                          if($cuentaItem->tipo == 1){$mov->debito = $item->total();}
                          $mov->enlace_a = 1;
+                         $mov->empresa = $empresa;
                          $mov->save();
                      }
                      //buscamos si el item en inventario el tipo_producto es inventariable (tipo 1).
@@ -269,6 +280,7 @@ class PucMovimiento extends Model
                          $mov->debito =  round($totalImp->total);
                          $mov->codigo_impuesto = $impuesto->id;
                          $mov->enlace_a = 2;
+                         $mov->empresa = $empresa;
                          $mov->save();
                      }
                  }
@@ -296,6 +308,7 @@ class PucMovimiento extends Model
                          $mov->credito =  $ret->total;
                          $mov->codigo_impuesto = $retencion->id;
                          $mov->enlace_a = 3;
+                         $mov->empresa = $empresa;
                          $mov->save();
                      }
                  }
@@ -317,6 +330,7 @@ class PucMovimiento extends Model
              $mov->descripcion = $factura->descripcion;
              $mov->credito =  round($factura->total()->total);
              $mov->enlace_a = 4;
+             $mov->empresa = $empresa;
              $mov->save();
  
          }
@@ -355,6 +369,7 @@ class PucMovimiento extends Model
         $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->first();
 
          //obtenbemos el siguiente numero de los asientos contables
+         $empresa = Auth::user()->empresa;
          if($siguienteNumero == null){
             $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
@@ -386,6 +401,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $ingreso->observaciones;
             $mov->debito =  $totalIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();
 
             //2do. Registramos el anticipo del cliente.
@@ -403,6 +419,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $ingreso->observaciones;
             $mov->credito =  $totalIngreso;
             $mov->enlace_a = 5;
+            $mov->empresa = $empresa;
             $mov->save();
         }
 
@@ -426,6 +443,7 @@ class PucMovimiento extends Model
                 $mov->descripcion = $ingreso->observaciones;
                 $mov->credito =  $ingresoFactura->factura()->total()->total;
                 $mov->enlace_a = 1;
+                $mov->empresa = $empresa;
                 $mov->save();
             }
             
@@ -444,6 +462,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $ingreso->observaciones;
             $mov->debito =  $totalIngreso+$ingreso->saldoFavorIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();
 
             //2do. Registramos el anticipo del cliente.
@@ -461,6 +480,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $ingreso->observaciones;
             $mov->credito =  $ingreso->saldoFavorIngreso;
             $mov->enlace_a = 5;
+            $mov->empresa = $empresa;
             $mov->save();
             
         }
@@ -485,6 +505,7 @@ class PucMovimiento extends Model
                 $mov->descripcion = $ingreso->observaciones;
                 $mov->credito =  $ingresoFactura->factura()->total()->total;
                 $mov->enlace_a = 1;
+                $mov->empresa = $empresa;
                 $mov->save();
             }
             
@@ -503,6 +524,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $ingreso->observaciones;
             $mov->debito =  $totalIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();            
         }
         
@@ -523,6 +545,7 @@ class PucMovimiento extends Model
         $isGuardar = PucMovimiento::where('documento_id',$gasto->id)->where('tipo_comprobante',2)->first();
 
          //obtenbemos el siguiente numero de los asientos contables
+         $empresa = Auth::user()->empresa;
          if($siguienteNumero == null){
             $numeracion = Numeracion::where('empresa', $gasto->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
@@ -554,6 +577,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->credito =  $totalIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();
 
             //2do. Registramos el anticipo del cliente.
@@ -571,6 +595,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->debito =  $totalIngreso;
             $mov->enlace_a = 5;
+            $mov->empresa = $empresa;
             $mov->save();
         }
 
@@ -594,6 +619,7 @@ class PucMovimiento extends Model
                 $mov->descripcion = $gasto->observaciones;
                 $mov->debito =  $gastoFactura->factura()->total()->total;
                 $mov->enlace_a = 1;
+                $mov->empresa = $empresa;
                 $mov->save();
             }
             
@@ -612,6 +638,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->credito =  $totalIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();
 
             //2do. Registramos el anticipo del cliente.
@@ -629,6 +656,7 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->debito =  $gasto->saldoFavorIngreso;
             $mov->enlace_a = 5;
+            $mov->empresa = $empresa;
             $mov->save();
             
         }
@@ -653,6 +681,7 @@ class PucMovimiento extends Model
                 $mov->descripcion = $gasto->observaciones;
                 $mov->debito =  $gastoFactura->factura()->total()->total;
                 $mov->enlace_a = 1;
+                $mov->empresa = $empresa;
                 $mov->save();
             }
             
@@ -671,43 +700,74 @@ class PucMovimiento extends Model
             $mov->descripcion = $gasto->observaciones;
             $mov->credito =  $totalIngreso;
             $mov->enlace_a = 4;
+            $mov->empresa = $empresa;
             $mov->save();
             
         }
     }
 
-    public static function saldoInicial($request){
+     /* 
 
+        OPCION:
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+        2: Actualizar el movimiento y borrar el anterior.
+    */
+    public static function saldoInicial($request,$opcion=1,$siguienteNumero=null){
         $numeracion = Numeracion::where('empresa', Auth::user()->empresa)->first();
         $siguienteNumero = $numeracion->contabilidad+1;
         $numeracion->contabilidad = $siguienteNumero;
         $numeracion->save();
 
-        //obtebemos le tipo de comprobnate que estamos manipulando
-        $tipoComprobante = DB::table('tipo_comprobante')->where('id',$request->tipo_comprobante)->first();
+        $empresa = Auth::user()->empresa;
 
-        $i = 0;
-        foreach($request->puc_cuenta as $p){
+        if($opcion == 1){
 
-            $mov = new PucMovimiento;
-            $mov->nro = $siguienteNumero;
-            $mov->tipo_comprobante = $tipoComprobante->nro;
-            $mov->consecutivo_comprobante = $siguienteNumero;
-            $mov->fecha_elaboracion = $request->fecha;
-            $mov->documento_id = $siguienteNumero;
-            $mov->codigo_cuenta = Puc::find($request->puc[$i])->codigo;
-            $mov->cuenta_id = Puc::find($request->puc[$i])->id;
-            $mov->identificacion_tercero = Contacto::find($request->contacto[$i])->nit;
-            $mov->cliente_id = Contacto::find($request->contacto[$i])->id;
-            $mov->consecutivo = $siguienteNumero;
-            $mov->descripcion = $request->observacion[$i];
-            $mov->credito =  $request->credito[$i];
-            $mov->debito =  $request->debito[$i];
-            $mov->enlace_a = 7;
-            $mov->save();
+            if($siguienteNumero == null){
+                $numeracion = Numeracion::where('empresa',$empresa)->first();
+                $siguienteNumero = $numeracion->contabilidad+1;
+                $numeracion->contabilidad = $siguienteNumero;
+                $numeracion->save();
+            }
+    
+            //obtebemos le tipo de comprobnate que estamos manipulando
+            $tipoComprobante = DB::table('tipo_comprobante')->where('id',$request->tipo_comprobante)->first();
+    
+            $i = 0;
+            foreach($request->puc_cuenta as $p){
+    
+                $mov = new PucMovimiento;
+                $mov->nro = $siguienteNumero;
+                $mov->tipo_comprobante = $tipoComprobante->nro;
+                $mov->consecutivo_comprobante = $siguienteNumero;
+                $mov->fecha_elaboracion = Carbon::parse($request->fecha)->format('Y-m-d');
+                $mov->documento_id = $siguienteNumero;
+                $mov->codigo_cuenta = Puc::find($request->puc_cuenta[$i])->codigo;
+                $mov->cuenta_id = Puc::find($request->puc_cuenta[$i])->id;
+                $mov->identificacion_tercero = Contacto::find($request->contacto[$i])->nit;
+                $mov->cliente_id = Contacto::find($request->contacto[$i])->id;
+                $mov->consecutivo = $siguienteNumero;
+                $mov->descripcion = $request->descripcion[$i];
+                $mov->credito =  $request->credito[$i];
+                $mov->debito =  $request->debito[$i];
+                $mov->enlace_a = 7;
+                $mov->empresa = $empresa;
+                $mov->save();
+    
+                $i++;
+            }
+        }else if($opcion == 2){
+            
+            $movimientos = PucMovimiento::where('nro',$siguienteNumero)->where('tipo_comprobante',999)->get();
+            if(count($movimientos) > 0){
+                foreach($movimientos as $mov){
+                    $siguienteNumero = $mov->nro;
+                    $mov->delete();
+                }
+            }
 
-            $i++;
+            PucMovimiento::saldoInicial($request,1,$siguienteNumero);
         }
+        
     }
 
     public function cliente(){
@@ -757,12 +817,23 @@ class PucMovimiento extends Model
     }
 
     public function totalDebito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
-        ->select(DB::raw("SUM((`debito`)) as total"))->first();
+        if($this->documento_id){
+            return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+            ->select(DB::raw("SUM((`debito`)) as total"))->first();
+        }else if($this->nro != null){
+            return DB::table('puc_movimiento')->where('nro',$this->nro)
+            ->select(DB::raw("SUM((`debito`)) as total"))->first();
+        }
     }
+
     public function totalCredito(){
-        return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
-        ->select(DB::raw("SUM((`credito`)) as total"))->first();
+        if($this->documento_id){
+            return DB::table('puc_movimiento')->where('documento_id',$this->documento_id)->where('tipo_comprobante',$this->tipo_comprobante)
+            ->select(DB::raw("SUM((`credito`)) as total"))->first();
+        }else if($this->nro != null){
+            return DB::table('puc_movimiento')->where('nro',$this->nro)
+            ->select(DB::raw("SUM((`credito`)) as total"))->first();
+        }
     } 
     
     public function restarAnticipo(){
@@ -805,6 +876,10 @@ class PucMovimiento extends Model
                 $contacto->save();
             }
         }
+    }
+
+    public function tipoComprobante(){
+        return DB::table('tipo_comprobante')->where('nro',$this->tipo_comprobante)->first();
     }
 
 }

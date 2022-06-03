@@ -43,26 +43,27 @@
 </script>
 @endif
 
-<form method="POST" action="{{ route('saldoinicial.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" autocomplete="off" novalidate id="form-saldoinicial" >
+<form method="POST" action="{{ route('saldoinicial.update') }}" style="padding: 2% 3%;" role="form" class="forms-sample" autocomplete="off" novalidate id="form-saldoinicial" >
     {{ csrf_field() }}
 
     {{-- url sobre la cual se haran las peticiones --}}
     <input type="hidden" id="url" value="{{url('/')}}">
-
+    <input type="hidden" name="nro" id="nro" value="{{$nro}}">
+    
     <div class="row">
         <div class="col-md-6">
             <div>
                 <label class="form-control-label">Tipo:</label>
                 <select class="form-control form-control-sm selectpicker p-0" name="tipo_comprobante" id="tipo_comprobante" data-live-search="true" data-size="5">
                     @foreach($tipos as $tipo)
-                    <option value="{{$tipo->id}}">{{$tipo->nro}} - {{$tipo->nombre}}</option>
+                    <option value="{{$tipo->id}}" {{$tipo->nro == $movimiento->tipo_comprobante ? 'selected' : ''}}>{{$tipo->nro}} - {{$tipo->nombre}}</option>
                     @endforeach
                 </select>
             </div>
         </div>
         <div class="col-md-6">
             <label class="form-control-label">Fecha de elaboración:</label>
-            <input type="text" class="form-control datepicker" id="fecha" name="fecha" value="{{Carbon\Carbon::now()->parse()->format('d-m-Y')}}">
+            <input type="text" class="form-control datepicker" id="fecha" name="fecha" value="{{$movimiento->fecha_elaboracion}}">
         </div>
     </div> 
 
@@ -79,21 +80,22 @@
         <th width="3%"></th>
         </tr>
     </thead>
-    {{-- @foreach($productos as $producto) --}}
-        <tr id="saldoini1" fila="1">
-            <td>1</td> 
+    @php $contt = 1; @endphp
+    @foreach($movimientos as $mov)
+        <tr id="saldoini1" fila="{{$contt}}">
+            <td>{{$contt}}</td> 
             <td>
-                <select name="puc_cuenta[]" id="puc_cuenta1" class="form-control form-control-sm selectpicker p-0" onchange="validateDetalleCartera(this.value,1)" data-live-search="true" data-size="5" required>
+                <select name="puc_cuenta[]" id="puc_cuenta1" class="form-control form-control-sm selectpicker p-0" onchange="validateDetalleCartera(this.value,{{$contt}})" data-live-search="true" data-size="5" required>
                     <option value="0" selected disabled>Seleccione una opción</option>
                     @foreach($puc as $p)
-                    <option value="{{$p->id}}">{{$p->codigo}} - {{$p->nombre}}</option>
+                    <option value="{{$p->id}}" {{$p->id == $mov->cuenta_id ? 'selected' : ''}}>{{$p->codigo}} - {{$p->nombre}}</option>
                     @endforeach
                 </select>
             </td>
             <td>
                 <select name="contacto[]" id="contacto1" class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" required>
                     @foreach($contactos as $contacto)
-                        <option value="{{$contacto->id}}">{{$contacto->nombre}}</option>
+                        <option value="{{$contacto->id}}" {{$contacto->id == $mov->cliente_id ? 'selected' : ''}}>{{$contacto->nombre}}</option>
                     @endforeach
                 </select>
             </td>
@@ -106,29 +108,30 @@
                 </div>
             </td>
             <td>
-                <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion1">
+                <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion1" value="{{$mov->descripcion}}">
             </td>
             <td>
-                <input type="number" min="0" name="debito[]" id="debito1" onkeyup="totalSaldoInicial()" class="form-control form-control-sm" placeholder="Débito" required>
+                <input type="number" min="0" name="debito[]" id="debito1" onkeyup="totalSaldoInicial()" class="form-control form-control-sm" placeholder="Débito" required value="{{$mov->debito}}">
             </td>
             <td>
-                <input type="number" min="0" name="credito[]" id="credito1" onkeyup="totalSaldoInicial()" class="form-control form-control-sm" placeholder="Crédito" required>
+                <input type="number" min="0" name="credito[]" id="credito1" onkeyup="totalSaldoInicial()" class="form-control form-control-sm" placeholder="Crédito" required value="{{$mov->credito}}">
             </td>
             <td>
-                <div clas="d-flex">
+                <div class="d-flex">
                     <a href="#" onclick="crearFilaSaldo()"><i class="fas fa-save"></i></a>
-                    {{-- <a href="#" onclick="eliminarSaldo('saldoini1')"><i class="fas fa-trash"></i></a> --}}
+                    <a href="#" onclick="eliminarSaldo('saldoini'{{$contt}})"><i class="fas fa-trash"></i></a>
                 </div>
             </td>
         </tr>
+        @php $contt++ @endphp
+        @endforeach
         <tfoot class="thead-dark">
             <td colspan="4"></td>
             <th><span>Total:</span></th>
-            <th id="totalDebito"></th>
-            <th id="totalCredito"></th>
+            <th id="totalDebito">{{$movimiento->totalDebito()->total}}</th>
+            <th id="totalCredito">{{$movimiento->totalCredito()->total}}</th>
             <th></th>
         </tfoot>
-    {{-- @endforeach --}}
     
     {{-- Totales--}}
   </table>

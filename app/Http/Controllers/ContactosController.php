@@ -65,6 +65,7 @@ class ContactosController extends Controller
     
     public function index(Request $request)
     {
+        return "ok";
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         view()->share(['middel' => true]);
