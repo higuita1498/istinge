@@ -662,6 +662,10 @@ class ContratosController extends Controller
                     $contrato->servicio_tv = $request->servicio_tv;
                 }
 
+                if($request->oficina){
+                    $contrato->oficina = $request->oficina;
+                }
+
                 ### DOCUMENTOS ADJUNTOS ###
 
                 if($request->adjunto_a) {
@@ -742,6 +746,10 @@ class ContratosController extends Controller
 
             if($request->factura_individual){
                 $contrato->factura_individual   = $request->factura_individual;
+            }
+
+            if($request->oficina){
+                $contrato->oficina = $request->oficina;
             }
 
             ### DOCUMENTOS ADJUNTOS ###
@@ -1177,6 +1185,10 @@ class ContratosController extends Controller
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
 
+                    if($request->oficina){
+                        $contrato->oficina = $request->oficina;
+                    }
+
                     ### DOCUMENTOS ADJUNTOS ###
 
                     if($request->referencia_a) {
@@ -1253,6 +1265,10 @@ class ContratosController extends Controller
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
+                }
+
+                if($request->oficina){
+                    $contrato->oficina = $request->oficina;
                 }
 
                 ### DOCUMENTOS ADJUNTOS ###
