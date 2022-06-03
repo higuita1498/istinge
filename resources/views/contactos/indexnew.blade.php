@@ -60,7 +60,7 @@
         <div class="container-fluid">
         	<div class="row card-description" style="padding: 1% 1%; margin-bottom: 0;">
         		<div class="col-md-12 text-right">
-        			<a href="{{route('contactos.importar')}}" class="btn btn-outline-success btn-sm"><i class="fas fa-file-upload"></i> Importar Contactos</a>
+        			<a href="{{route('contactos.importar')}}" class="btn btn-success btn-sm"><i class="fas fa-file-upload"></i> Importar Contactos</a>
         		</div>
         	</div>
         </div>

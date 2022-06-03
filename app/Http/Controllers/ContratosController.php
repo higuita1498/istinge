@@ -2757,6 +2757,11 @@ class ContratosController extends Controller
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $error=(object) array();
 
+            if($nit != ""){
+                if(Contacto::where('nit', $nit)->where('status', 1)->count() == 0){
+                    $error->nit = "La identificación indicada no se encuentra registrada para ningún cliente en el sistema";
+                }
+            }
             if (!$request->servicio) {
                 $error->servicio="El campo Servicio es obligatorio";
             }
