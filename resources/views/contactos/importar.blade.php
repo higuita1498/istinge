@@ -2,7 +2,7 @@
 
 @section('content')
 	<div class="card-body">
-        <p>Esta opción permite crear nuevos contactos y/o modificar por el nro de identificación. Puedes importar hasta 500 registros por cada archivo.</p>
+        <p>Esta opción permite crear nuevos contactos y/o modificar por el nro de identificación.</p>
         <h4>Tome en cuenta las siguientes reglas para cargar la data</h4>
         <ul>
             <li class="ml-3">Verifique que el orden de las columnas en su documento sea correcto. <small>Si no lo conoce haga clic <a href="{{ route('contactos.ejemplo') }}"><b>aqui</b></a> para descargar archivo Excel de ejemplo.</small></li>

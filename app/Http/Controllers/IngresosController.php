@@ -96,7 +96,7 @@ class IngresosController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $bancos = Banco::where('empresa', Auth::user()->empresa)->where('estatus', 1)->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         //$clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
         $tabla = Campos::where('modulo', 5)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
@@ -651,13 +651,13 @@ class IngresosController extends Controller
                 }
             }
 
-            $print = false;
-            if ($request->print) {
-                $print = true;
+            $tirilla = false;
+            if ($request->tirilla) {
+                $tirilla = true;
             }
             
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('print', $print);
+            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
         }
     }
 

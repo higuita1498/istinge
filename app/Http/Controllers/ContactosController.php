@@ -86,8 +86,20 @@ class ContactosController extends Controller
             if($request->nombre){
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    $query->orWhere('apellido1', 'like', "%{$request->nombre}%");
-                    $query->orWhere('apellido2', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->apellido){
+                $parte = explode(' ', $request->apellido);
+                $contactos->where(function ($query) use ($parte) {
+                    for ($i=0; $i <count($parte) ; $i++) {
+                        if($i == 0){
+                            $query->orWhere('apellido1', 'like', "%{$parte[$i]}%");
+                        }else{
+                            $query->where('apellido2', 'like', "%{$parte[$i]}%");
+                        }
+                    }
+                    /*$query->orWhere('apellido1', 'like', "%{$request->apellido}%");
+                    $query->orWhere('apellido2', 'like', "%{$request->apellido}%");*/
                 });
             }
             if($request->celular){
@@ -311,7 +323,7 @@ class ContactosController extends Controller
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
-        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon' =>'', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel'=>true]);
 
@@ -352,7 +364,7 @@ class ContactosController extends Controller
             $transportadoras = null;
         }
 
-        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         
         view()->share(['title' => 'Nuevo Proveedor', 'subseccion' => 'proveedores', 'middel'=>true]);
 
@@ -509,7 +521,7 @@ class ContactosController extends Controller
             $vendedores = Vendedor::where('empresa', Auth::user()->empresa)->where('estado', 1)->get();
             $listas = ListaPrecios::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
-            $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
             session(['url_search' => url()->previous()]);
             
@@ -852,6 +864,7 @@ class ContactosController extends Controller
             $request->email=$sheet->getCell("Q".$row)->getValue();
             $request->observaciones=$sheet->getCell("R".$row)->getValue();
             $request->tipo_contacto=$sheet->getCell("S".$row)->getValue();
+            $request->estrato=$sheet->getCell("T".$row)->getValue();
             $error=(object) array();
 
             if (!$request->tip_iden) {
@@ -935,6 +948,7 @@ class ContactosController extends Controller
             $request->email             = $sheet->getCell("Q".$row)->getValue();
             $request->observaciones     = $sheet->getCell("R".$row)->getValue();
             $request->tipo_contacto     = $sheet->getCell("S".$row)->getValue();
+            $request->estrato           = $sheet->getCell("T".$row)->getValue();
             if (strtolower($request->tipo_contacto)=='cliente') {
                 $tipo=0;
             }else if (strtolower($request->tipo_contacto)=='proveedor') {
@@ -959,7 +973,7 @@ class ContactosController extends Controller
                 $tipo_identifi=$tipo_identifi_arr->id;
             }
             $request->tip_iden=$tipo_identifi;
-            $contacto =Contacto::where('nit',$request->nit)->where('empresa',Auth::user()->empresa)->first();
+            $contacto =Contacto::where('nit',$request->nit)->where('empresa',Auth::user()->empresa)->where('status', 1)->first();
             if (!$contacto) {
                 $contacto = new Contacto;
                 $contacto->empresa=Auth::user()->empresa;
@@ -974,26 +988,26 @@ class ContactosController extends Controller
             $contacto->apellido2         = ucwords(mb_strtolower($request->apellido2));
             $contacto->tip_iden          = $request->tip_iden;
             $contacto->ciudad            = ucwords(mb_strtolower($request->ciudad));
-            $contacto->direccion         = mb_strtolower($request->direccion);
-            $contacto->vereda            = mb_strtolower($request->vereda);
-            $contacto->barrio            = mb_strtolower($request->barrio);
+            $contacto->direccion         = ucwords(mb_strtolower($request->direccion));
+            $contacto->vereda            = ucwords(mb_strtolower($request->vereda));
+            $contacto->barrio            = ucwords(mb_strtolower($request->barrio));
             $contacto->email             = mb_strtolower($request->email);
             $contacto->telefono1         = $request->telefono1;
             $contacto->celular           = $request->celular;
             $contacto->tipo_contacto     = $request->tipo_contacto;
-            $contacto->observaciones     = mb_strtolower($request->observaciones);
+            $contacto->observaciones     = ucwords(mb_strtolower($request->observaciones));
             $contacto->fk_idpais         = $request->fk_idpais;
             $contacto->fk_iddepartamento = $request->fk_iddepartamento;
             $contacto->fk_idmunicipio    = $request->fk_idmunicipio;
-            $contacto->cod_postal        =  $request->codigopostal;
+            $contacto->cod_postal        = $request->codigopostal;
+            $contacto->estrato           = $request->estrato;
 
             if ($request->dv){
                 $contacto->dv = $request->dv;
             }
-
             $contacto->save();
-
         }
+
         $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS DEL SISTEMA';
 
         if ($create>0) {
@@ -1012,7 +1026,7 @@ class ContactosController extends Controller
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contactos de ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Nombres', 'Apellido1', 'Apellido2', 'Tipo de identificacion', 'Identificacion', 'DV', 'Pais', 'Departamento', 'Municipio', 'Codigo postal', 'Telefono', 'Celular', 'Direccion', 'Corregimiento/Vereda', 'Barrio', 'Ciudad', 'Correo Electronico', 'Observaciones', 'Tipo de Contacto');
+        $titulosColumnas = array('Nombres', 'Apellido1', 'Apellido2', 'Tipo de identificacion', 'Identificacion', 'DV', 'Pais', 'Departamento', 'Municipio', 'Codigo postal', 'Telefono', 'Celular', 'Direccion', 'Corregimiento/Vereda', 'Barrio', 'Ciudad', 'Correo Electronico', 'Observaciones', 'Tipo de Contacto', 'Estrato');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -1042,7 +1056,7 @@ class ContactosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A1:S3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -1062,16 +1076,16 @@ class ContactosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
         }
 
-        $contactos = Contacto::all();
+        //$contactos = Contacto::all();
         $j=4;
 
-        foreach($contactos as $contacto){
+        /*foreach($contactos as $contacto){
             $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[0].$j, $contacto->nombre)
             ->setCellValue($letras[1].$j, $contacto->apellido1)
@@ -1091,9 +1105,13 @@ class ContactosController extends Controller
             ->setCellValue($letras[15].$j, $contacto->ciudad)
             ->setCellValue($letras[16].$j, $contacto->email)
             ->setCellValue($letras[17].$j, $contacto->observaciones)
-            ->setCellValue($letras[18].$j, $contacto->tipo_contacto());
+            ->setCellValue($letras[18].$j, $contacto->tipo_contacto())
+            ->setCellValue($letras[19].$j, $contacto->estrato);
             $j++;
-        }
+        }*/
+
+        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Network Soft')->getText()->createTextRun('Utilizar los tipos de identificación como se indican en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Escribir Cliente, Proveedor o Cliente/Proveedor.');
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -1106,7 +1124,7 @@ class ContactosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S'.$j)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$j)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
@@ -1125,7 +1143,7 @@ class ContactosController extends Controller
         header("Pragma: no-cache");
         header('Content-type: application/vnd.ms-excel');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Reporte_Contactos.xlsx"');
+        header('Content-Disposition: attachment;filename="Archivo_Importacion_Contactos.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');

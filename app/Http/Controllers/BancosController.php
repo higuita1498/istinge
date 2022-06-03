@@ -93,7 +93,7 @@ class BancosController extends Controller
  	public function create(){
  	    $this->getAllPermissions(Auth::user()->id);
  	    view()->share(['title' => 'Nuevo Banco']);
-        $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
  	    return view('bancos.create')->with(compact('oficinas'));
  	}
  	
@@ -131,7 +131,7 @@ class BancosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $banco = Banco::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         if ($banco) {        
-            $oficinas = (Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             view()->share(['title' => 'Modificar Cuenta: '.$banco->nombre]);
             return view('bancos.edit')->with(compact('banco', 'oficinas'));
         }

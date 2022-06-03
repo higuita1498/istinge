@@ -71,7 +71,7 @@ class UsuariosController extends Controller
         if(isset($request->cuenta[2])){ $usuario->cuenta_2 = $request->cuenta[2]; }else{ $usuario->cuenta_2 = null; }
         if(isset($request->cuenta[3])){ $usuario->cuenta_3 = $request->cuenta[3]; }else{ $usuario->cuenta_3 = null; }
         if(isset($request->cuenta[4])){ $usuario->cuenta_4 = $request->cuenta[4]; }else{ $usuario->cuenta_4 = null; }
-        $usuario->oficina = $request->oficina;
+        $usuario->oficina = ($request->oficina == 0) ? NULL : $request->oficina;
         $usuario->save();
         
         $mensaje='Se ha creado satisfactoriamente el usuario';
@@ -103,7 +103,7 @@ class UsuariosController extends Controller
         return redirect('empresa/configuracion/usuarios')->with('success', 'No existe un registro con ese id');
     }
     
-    public function update(Request $request, $id){
+    public function update(Request $request, $id){//dd($request->all());
         $usuario =User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($usuario) {
             $request->validate([
@@ -143,7 +143,7 @@ class UsuariosController extends Controller
             if(isset($request->cuenta[2])){ $usuario->cuenta_2 = $request->cuenta[2]; }else{ $usuario->cuenta_2 = null; }
             if(isset($request->cuenta[3])){ $usuario->cuenta_3 = $request->cuenta[3]; }else{ $usuario->cuenta_3 = null; }
             if(isset($request->cuenta[4])){ $usuario->cuenta_4 = $request->cuenta[4]; }else{ $usuario->cuenta_4 = null; }
-            $usuario->oficina = $request->oficina;
+            $usuario->oficina = ($request->oficina == 0) ? NULL : $request->oficina;
             $usuario->save();
             
             $mensaje='Se ha modificado satisfactoriamente el usuario';

@@ -28,7 +28,7 @@ class PromesasPagoController extends Controller
 
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->where('contactos.oficina', Auth::user()->oficina)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get() : Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->where('contactos.oficina', Auth::user()->oficina)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get() : Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
         //$clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $tabla = Campos::where('modulo', 11)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();

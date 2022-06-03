@@ -201,13 +201,19 @@
     		<div class="container-filtercolumn form-inline">
                 @if(auth()->user()->modo_lectura())
                 @else
+                @if(isset($_SESSION['permisos']['815']))
+                <a href="{{route('contratos.importar')}}" class="btn btn-success mr-1"><i class="fas fa-file-upload"></i> Importar Contratos Internet</a>
+                @endif
                 @if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        @if(auth()->user()->rol == 3)
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
+                        @endif
+
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
                     </div>

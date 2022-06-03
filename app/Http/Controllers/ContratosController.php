@@ -3,6 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade as PDF;
+use Validator;
+use Auth;
+use DB;
+use Session;
+
+use App\Model\Ingresos\Ingreso;
+use App\Model\Ingresos\IngresosCategoria;
+use App\Model\Inventario\ListaPrecios;
+use App\Model\Inventario\Inventario;
 use App\Solicitud;
 use App\Empresa;
 use App\Contrato;
@@ -12,13 +25,9 @@ use App\AP;
 use App\Contacto;
 use App\TipoIdentificacion;
 use App\Vendedor;
-use App\Model\Inventario\ListaPrecios;
-use App\Model\Inventario\Inventario;
 use App\TipoEmpresa;
 use App\Numeracion;
 use App\Impuesto;
-use App\Model\Ingresos\Ingreso;
-use App\Model\Ingresos\IngresosCategoria;
 use App\Categoria;
 use App\Movimiento;
 use App\MovimientoLOG;
@@ -28,16 +37,14 @@ use App\Funcion;
 use App\PlanesVelocidad;
 use App\Interfaz;
 use App\Ping;
-use Validator;
-use Auth;
-use DB;
-use Carbon\Carbon;
-use Session;
-use Barryvdh\DomPDF\Facade as PDF;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use App\Canal;
 use App\Integracion;
+use App\Nodo;
+use App\GrupoCorte;
+use App\Segmento;
+use App\Campos;
+use App\Puerto;
+use App\Oficina;
 
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel; 
@@ -50,12 +57,6 @@ use PHPExcel_Shared_ZipArchive;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
-use App\Nodo;
-use App\GrupoCorte;
-use App\Segmento;
-use App\Campos;
-use App\Puerto;
-use App\Oficina;
 
 class ContratosController extends Controller
 {
@@ -661,6 +662,10 @@ class ContratosController extends Controller
                     $contrato->servicio_tv = $request->servicio_tv;
                 }
 
+                if($request->oficina){
+                    $contrato->oficina = $request->oficina;
+                }
+
                 ### DOCUMENTOS ADJUNTOS ###
 
                 if($request->adjunto_a) {
@@ -741,6 +746,10 @@ class ContratosController extends Controller
 
             if($request->factura_individual){
                 $contrato->factura_individual   = $request->factura_individual;
+            }
+
+            if($request->oficina){
+                $contrato->oficina = $request->oficina;
             }
 
             ### DOCUMENTOS ADJUNTOS ###
@@ -1176,6 +1185,10 @@ class ContratosController extends Controller
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
 
+                    if($request->oficina){
+                        $contrato->oficina = $request->oficina;
+                    }
+
                     ### DOCUMENTOS ADJUNTOS ###
 
                     if($request->referencia_a) {
@@ -1252,6 +1265,10 @@ class ContratosController extends Controller
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
+                }
+
+                if($request->oficina){
+                    $contrato->oficina = $request->oficina;
                 }
 
                 ### DOCUMENTOS ADJUNTOS ###
@@ -2534,5 +2551,384 @@ class ContratosController extends Controller
             'fallidos'  => $fail,
             'correctos' => $succ
         ]);
+    }
+
+    public function importar(){
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Importar Contratos Internet desde Excel', 'full' => true]);
+
+        $mikrotiks = Mikrotik::all();
+        $planes = PlanesVelocidad::all();
+        $grupos = GrupoCorte::all();
+        return view('contratos.importar')->with(compact('mikrotiks', 'planes', 'grupos'));
+    }
+
+    public function ejemplo(){
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
+        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia',         'Fecha del Contrato');
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Archivo Importacion Contratos") // Titulo
+        ->setSubject("Archivo Importacion Contratos") //Asunto
+        ->setDescription("Archivo Importacion Contratos") //Descripci���n
+        ->setKeywords("Archivo Importacion Contratos") //Etiquetas
+        ->setCategory("Archivo Importacion"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A1:N1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1',$tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A2:N2');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
+
+        $estilo = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman'
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
+
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+
+        for ($i=0; $i <count($titulosColumnas) ; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $contratos = Contrato::all();
+        $j=4;
+
+        /*foreach($contratos as $contrato){
+            $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue($letras[0].$j, $contrato->nombre)
+            ->setCellValue($letras[1].$j, $contrato->apellido1)
+            ->setCellValue($letras[2].$j, $contrato->apellido2)
+            ->setCellValue($letras[3].$j, $contrato->tip_iden())
+            ->setCellValue($letras[4].$j, $contrato->nit)
+            ->setCellValue($letras[5].$j, $contrato->dv)
+            ->setCellValue($letras[6].$j, $contrato->pais()->nombre)
+            ->setCellValue($letras[7].$j, $contrato->departamento()->nombre)
+            ->setCellValue($letras[8].$j, $contrato->municipio()->nombre)
+            ->setCellValue($letras[9].$j, $contrato->cod_postal)
+            ->setCellValue($letras[10].$j, $contrato->telefono1)
+            ->setCellValue($letras[11].$j, $contrato->celular)
+            ->setCellValue($letras[12].$j, $contrato->direccion)
+            ->setCellValue($letras[13].$j, $contrato->vereda)
+            ->setCellValue($letras[14].$j, $contrato->barrio)
+            ->setCellValue($letras[15].$j, $contrato->ciudad)
+            ->setCellValue($letras[16].$j, $contrato->email)
+            ->setCellValue($letras[17].$j, $contrato->observaciones)
+            ->setCellValue($letras[18].$j, $contrato->tipo_contacto());
+            $j++;
+        }*/
+
+        $objPHPExcel->getActiveSheet()->getComment('A3')->setAuthor('Network Soft')->getText()->createTextRun('Identificacion del Cliente ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del plan ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('E3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la mikrotik ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('F3')->setAuthor('Network Soft')->getText()->createTextRun('Habilitado o Deshabilitado');
+        $objPHPExcel->getActiveSheet()->getComment('I3')->setAuthor('Network Soft')->getText()->createTextRun('PPPOE, DHCP, IP Estatica o VLAN');
+        $objPHPExcel->getActiveSheet()->getComment('L3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del nodo ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('M3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del access point ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('N3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del grupo de corte ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('O3')->setAuthor('Network Soft')->getText()->createTextRun('Estandar o Electronica');
+        $objPHPExcel->getActiveSheet()->getComment('Q3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del canal ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('R3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la oficina ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Fibra o Inalambrica');
+        $objPHPExcel->getActiveSheet()->getComment('T3')->setAuthor('Network Soft')->getText()->createTextRun('Fecha en formato yyyy-mm-dd hh:mm:ss');
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$j)->applyFromArray($estilo);
+
+        for($i = 'A'; $i <= $letras[20]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Contratos');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,5);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Archivo_Importacion_Contratos.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function cargando(Request $request){
+        $request->validate([
+            'archivo' => 'required|mimes:xlsx',
+        ],[
+            'archivo.mimes' => 'El archivo debe ser de extensión xlsx'
+        ]);
+
+        $create=0;
+        $modf=0;
+        $imagen = $request->file('archivo');
+        $nombre_imagen = 'archivo.'.$imagen->getClientOriginalExtension();
+        $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa;
+        $imagen->move($path,$nombre_imagen);
+        Ini_set ('max_execution_time', 500);
+        $fileWithPath=$path."/".$nombre_imagen;
+        //Identificando el tipo de archivo
+        $inputFileType = PHPExcel_IOFactory::identify($fileWithPath);
+        //Creando el lector.
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        //Cargando al lector de excel el archivo, le pasamos la ubicacion
+        $objPHPExcel = $objReader->load($fileWithPath);
+        //obtengo la hoja 0
+        $sheet = $objPHPExcel->getSheet(0);
+        //obtiene el tamaño de filas
+        $highestRow = $sheet->getHighestRow();
+        //obtiene el tamaño de columnas
+        $highestColumn = $sheet->getHighestColumn();
+
+        for ($row = 4; $row <= $highestRow; $row++){
+            $request= (object) array();
+            //obtengo el A4 desde donde empieza la data
+            $nit=$sheet->getCell("A".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+
+            $request->servicio      = $sheet->getCell("B".$row)->getValue();
+            $request->serial_onu    = $sheet->getCell("C".$row)->getValue();
+            $request->plan          = $sheet->getCell("D".$row)->getValue();
+            $request->mikrotik      = $sheet->getCell("E".$row)->getValue();
+            $request->state         = $sheet->getCell("F".$row)->getValue();
+            $request->ip            = $sheet->getCell("G".$row)->getValue();
+            $request->mac           = $sheet->getCell("H".$row)->getValue();
+            $request->conexion      = $sheet->getCell("I".$row)->getValue();
+            $request->interfaz      = $sheet->getCell("J".$row)->getValue();
+            $request->local_address = $sheet->getCell("K".$row)->getValue();
+            $request->nodo          = $sheet->getCell("L".$row)->getValue();
+            $request->ap            = $sheet->getCell("M".$row)->getValue();
+            $request->grupo_corte   = $sheet->getCell("N".$row)->getValue();
+            $request->facturacion   = $sheet->getCell("O".$row)->getValue();
+            $request->descuento     = $sheet->getCell("P".$row)->getValue();
+            $request->canal         = $sheet->getCell("Q".$row)->getValue();
+            $request->oficina       = $sheet->getCell("R".$row)->getValue();
+            $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
+            $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $error=(object) array();
+
+            if (!$request->servicio) {
+                $error->servicio="El campo Servicio es obligatorio";
+            }
+            if($request->mikrotik != ""){
+                if(Mikrotik::where('nombre', $request->mikrotik)->count() == 0){
+                    $error->mikrotik = "El mikrotik ingresado no se encuentra en nuestra base de datos";
+                }
+            }
+            if($request->plan != ""){
+                if(PlanesVelocidad::where('name', $request->plan)->count() == 0){
+                    $error->plan = "El plan de velocidad ingresado no se encuentra en nuestra base de datos";
+                }
+            }
+            if (!$request->state) {
+                $error->state = "El campo estado es obligatorio";
+            }
+            if (!$request->ip) {
+                $error->ip = "El campo IP es obligatorio";
+            }
+            if (!$request->conexion) {
+                $error->conexion = "El campo conexión es obligatorio";
+            }
+            if (!$request->interfaz) {
+                $error->interfaz = "El campo interfaz es obligatorio";
+            }
+            if (!$request->local_address) {
+                $error->local_address = "El campo segmento es obligatorio";
+            }
+            if($request->grupo_corte != ""){
+                if(GrupoCorte::where('nombre', $request->grupo_corte)->where('status', 1)->count() == 0){
+                    $error->grupo_corte = "El grupo de corte ingresado no se encuentra en nuestra base de datos";
+                }
+            }
+            if (!$request->facturacion) {
+                $error->facturacion = "El campo facturacion es obligatorio";
+            }
+            if (!$request->tecnologia) {
+                $error->tecnologia = "El campo tecnologia es obligatorio";
+            }
+
+            if (count((array) $error)>0) {
+                $fila["error"]='FILA '.$row;
+                $error=(array) $error;
+                var_dump($error);
+                var_dump($fila);
+
+                array_unshift ( $error ,$fila);
+                $result=(object) $error;
+                return back()->withErrors($result)->withInput();
+            }
+        }
+
+        for ($row = 4; $row <= $highestRow; $row++){
+            $nit = $sheet->getCell("A".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+            $request                = (object) array();
+            $request->servicio      = $sheet->getCell("B".$row)->getValue();
+            $request->serial_onu    = $sheet->getCell("C".$row)->getValue();
+            $request->plan          = $sheet->getCell("D".$row)->getValue();
+            $request->mikrotik      = $sheet->getCell("E".$row)->getValue();
+            $request->state         = $sheet->getCell("F".$row)->getValue();
+            $request->ip            = $sheet->getCell("G".$row)->getValue();
+            $request->mac           = $sheet->getCell("H".$row)->getValue();
+            $request->conexion      = $sheet->getCell("I".$row)->getValue();
+            $request->interfaz      = $sheet->getCell("J".$row)->getValue();
+            $request->local_address = $sheet->getCell("K".$row)->getValue();
+            $request->nodo          = $sheet->getCell("L".$row)->getValue();
+            $request->ap            = $sheet->getCell("M".$row)->getValue();
+            $request->grupo_corte   = $sheet->getCell("N".$row)->getValue();
+            $request->facturacion   = $sheet->getCell("O".$row)->getValue();
+            $request->descuento     = $sheet->getCell("P".$row)->getValue();
+            $request->canal         = $sheet->getCell("Q".$row)->getValue();
+            $request->oficina       = $sheet->getCell("R".$row)->getValue();
+            $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
+            $request->created_at    = $sheet->getCell("T".$row)->getValue();
+
+            if($request->conexion ==  'PPPOE'){
+                $request->conexion = 1;
+            }elseif($request->conexion ==  'DHCP'){
+                $request->conexion = 2;
+            }elseif($request->conexion ==  'IP Estatica'){
+                $request->conexion = 3;
+            }elseif($request->conexion ==  'VLAN'){
+                $request->conexion = 4;
+            }
+
+            if($request->mikrotik != ""){
+                $request->mikrotik = Mikrotik::where('nombre', $request->mikrotik)->first()->id;
+            }
+            if($request->plan != ""){
+                $request->plan = PlanesVelocidad::where('name', $request->plan)->first()->id;
+            }
+            if($request->grupo_corte != ""){
+                $request->grupo_corte = GrupoCorte::where('nombre', $request->grupo_corte)->first()->id;
+            }
+
+            if($request->facturacion == 'Estandar'){
+                $request->facturacion = 1;
+            }elseif($request->facturacion == 'Electronica'){
+                $request->facturacion = 3;
+            }
+
+            if($request->tecnologia == 'Fibra'){
+                $request->tecnologia = 1;
+            }elseif($request->tecnologia == 'Inalambrica'){
+                $request->tecnologia = 2;
+            }
+
+            if($request->state == 'Habilitado'){
+                $request->state = 'enabled';
+            }elseif($request->state == 'Deshabilitado'){
+                $request->state = 'disabled';
+            }
+
+            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->first();
+
+            if (!$contrato) {
+                $nro = Numeracion::where('empresa', 1)->first();
+                $nro_contrato = $nro->contrato;
+
+                while (true) {
+                    $numero = Contrato::where('nro', $nro_contrato)->count();
+                    if ($numero == 0) {
+                        break;
+                    }
+                    $nro_contrato++;
+                }
+
+                $contrato = new Contrato;
+                $contrato->empresa   = Auth::user()->empresa;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$nro_contrato;
+                $contrato->nro       = $nro_contrato;
+                $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
+                $create = $create+1;
+            }else{
+                $modf = $modf+1;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$contrato->nro;
+            }
+
+            $contrato->plan_id                 = $request->plan;
+            $contrato->server_configuration_id = $request->mikrotik;
+            $contrato->state                   = $request->state;
+            $contrato->ip                      = $request->ip;
+            $contrato->conexion                = $request->conexion;
+            $contrato->interfaz                = $request->interfaz;
+            $contrato->local_address           = $request->local_address;
+            $contrato->grupo_corte             = $request->grupo_corte;
+            $contrato->facturacion             = $request->facturacion;
+            $contrato->tecnologia              = $request->tecnologia;
+
+            if($request->descuento){ $contrato->descuento = $request->descuento; }
+            if($request->canal){ $contrato->canal = $request->canal; }
+            if($request->oficina){ $contrato->oficina = $request->oficina; }
+            if($request->nodo){ $contrato->nodo = $request->nodo; }
+            if($request->ap){ $contrato->ap = $request->ap; }
+            if($request->mac){ $contrato->mac = $request->mac; }
+            if($request->serial_onu){ $contrato->serial_onu = $request->serial_onu; }
+            if($request->created_at){ $contrato->created_at = $request->created_at; }
+
+            $contrato->save();
+        }
+
+        $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS DEL SISTEMA';
+
+        if ($create>0) {
+            $mensaje.=' CREADOS: '.$create;
+        }
+        if ($modf>0) {
+            $mensaje.=' MODIFICADOS: '.$modf;
+        }
+        return redirect('empresa/contratos')->with('success', $mensaje);
     }
 }
