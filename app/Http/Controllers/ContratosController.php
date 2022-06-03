@@ -72,7 +72,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'middel' => true]);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -88,7 +88,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'middel' => true]);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'disabled';
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -104,7 +104,7 @@ class ContratosController extends Controller
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        view()->share(['title' => 'Contratos', 'middel' => true]);
+        view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = 'enabled';
         $tabla = Campos::where('modulo', 2)->where('estado', 1)->orderBy('orden', 'asc')->where('empresa', Auth::user()->empresa)->get();
         $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -2757,6 +2757,11 @@ class ContratosController extends Controller
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $error=(object) array();
 
+            if($nit != ""){
+                if(Contacto::where('nit', $nit)->where('status', 1)->count() == 0){
+                    $error->nit = "La identificación indicada no se encuentra registrada para ningún cliente en el sistema";
+                }
+            }
             if (!$request->servicio) {
                 $error->servicio="El campo Servicio es obligatorio";
             }

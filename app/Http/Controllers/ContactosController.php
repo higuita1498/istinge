@@ -68,7 +68,7 @@ class ContactosController extends Controller
         return "ok";
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['middel' => true]);
+        view()->share(['invert' => true]);
         return view('contactos.indexnew');
     }
 
@@ -222,7 +222,7 @@ class ContactosController extends Controller
         $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
         $tipo_usuario = 0;
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['middel' => true]);
+        view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario','tabla'));
     }
 
@@ -239,7 +239,7 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $tipo_usuario = 1;
         $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        view()->share(['middel' => true]);
+        view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario','tabla'));
     }
     
