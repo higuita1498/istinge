@@ -972,7 +972,7 @@ class ContactosController extends Controller
                 $tipo_identifi=$tipo_identifi_arr->id;
             }
             $request->tip_iden=$tipo_identifi;
-            $contacto =Contacto::where('nit',$request->nit)->where('empresa',Auth::user()->empresa)->first();
+            $contacto =Contacto::where('nit',$request->nit)->where('empresa',Auth::user()->empresa)->where('status', 1)->first();
             if (!$contacto) {
                 $contacto = new Contacto;
                 $contacto->empresa=Auth::user()->empresa;
@@ -987,14 +987,14 @@ class ContactosController extends Controller
             $contacto->apellido2         = ucwords(mb_strtolower($request->apellido2));
             $contacto->tip_iden          = $request->tip_iden;
             $contacto->ciudad            = ucwords(mb_strtolower($request->ciudad));
-            $contacto->direccion         = mb_strtolower($request->direccion);
-            $contacto->vereda            = mb_strtolower($request->vereda);
-            $contacto->barrio            = mb_strtolower($request->barrio);
+            $contacto->direccion         = ucwords(mb_strtolower($request->direccion));
+            $contacto->vereda            = ucwords(mb_strtolower($request->vereda));
+            $contacto->barrio            = ucwords(mb_strtolower($request->barrio));
             $contacto->email             = mb_strtolower($request->email);
             $contacto->telefono1         = $request->telefono1;
             $contacto->celular           = $request->celular;
             $contacto->tipo_contacto     = $request->tipo_contacto;
-            $contacto->observaciones     = mb_strtolower($request->observaciones);
+            $contacto->observaciones     = ucwords(mb_strtolower($request->observaciones));
             $contacto->fk_idpais         = $request->fk_idpais;
             $contacto->fk_iddepartamento = $request->fk_iddepartamento;
             $contacto->fk_idmunicipio    = $request->fk_idmunicipio;
@@ -1004,10 +1004,9 @@ class ContactosController extends Controller
             if ($request->dv){
                 $contacto->dv = $request->dv;
             }
-
             $contacto->save();
-
         }
+
         $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS DEL SISTEMA';
 
         if ($create>0) {
@@ -1082,10 +1081,10 @@ class ContactosController extends Controller
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
         }
 
-        $contactos = Contacto::all();
+        //$contactos = Contacto::all();
         $j=4;
 
-        foreach($contactos as $contacto){
+        /*foreach($contactos as $contacto){
             $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[0].$j, $contacto->nombre)
             ->setCellValue($letras[1].$j, $contacto->apellido1)
@@ -1108,7 +1107,7 @@ class ContactosController extends Controller
             ->setCellValue($letras[18].$j, $contacto->tipo_contacto())
             ->setCellValue($letras[19].$j, $contacto->estrato);
             $j++;
-        }
+        }*/
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
