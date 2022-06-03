@@ -1139,6 +1139,10 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::post('{id}/carga_adjuntos', 'ContratosController@carga_adjuntos')->name('contratos.carga_adjuntos');
         Route::get('{contratos}/{state}/state_lote', 'ContratosController@state_lote')->name('contratos.state_lote');
         Route::get('{contratos}/enviar_mk_lote', 'ContratosController@enviar_mk_lote')->name('contratos.enviar_mk_lote');
+
+        Route::get('importar', 'ContratosController@importar')->name('contratos.importar');
+        Route::get('ejemplo', 'ContratosController@ejemplo')->name('contratos.ejemplo');
+        Route::post('importar', 'ContratosController@cargando')->name('contratos.importar');
 	});
 
 	Route::resource('contratos', 'ContratosController');

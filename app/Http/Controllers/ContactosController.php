@@ -1109,6 +1109,9 @@ class ContactosController extends Controller
             $j++;
         }*/
 
+        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Network Soft')->getText()->createTextRun('Utilizar los tipos de identificación como se indican en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Escribir Cliente, Proveedor o Cliente/Proveedor.');
+
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
                 'allborders' => array(
@@ -1139,7 +1142,7 @@ class ContactosController extends Controller
         header("Pragma: no-cache");
         header('Content-type: application/vnd.ms-excel');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Reporte_Contactos.xlsx"');
+        header('Content-Disposition: attachment;filename="Archivo_Importacion_Contactos.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
