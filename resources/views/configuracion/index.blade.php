@@ -4,7 +4,7 @@
 
 <div class="row card-description">
 	<div class="col-sm-4" style="text-align: center;">
-		<img class="img-responsive" src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa()->id.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100%">
+		<img class="img-responsive" src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa()->id.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-width: 200px;">
 	</div>
 	<div class="col-sm-8">
 		<p  class="card-title"> <span class="text-primary">Empresa:</span> {{Auth::user()->empresa()->nombre}} <br>
@@ -20,7 +20,7 @@
 		<div class="col-sm-8 offset-md-2 {{$empresa->nomina ? 'd-none' : ''}}" id="alerta_nomina">
 			<div class="alert alert-info" role="alert" style="color: #d08f50;background-color: #d08f5026;border-color: #d08f50;">
 				<h4 class="alert-heading font-weight-bold">SUGERENCIA</h4>
-				<p>Para hacer uso del módulo de <strong>Nómina</strong>, primero debe habilitarlo en la opción <strong>Nómina &gt; Habilitar nómina</strong>.</p>
+				<p class="mb-0">Para hacer uso del módulo de <strong>Nómina</strong>, primero debe habilitarlo en la opción <strong>Nómina &gt; Habilitar nómina</strong>.</p>
 			</div>
 		</div>
 	</div>
