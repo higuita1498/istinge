@@ -202,7 +202,7 @@
                 @if(auth()->user()->modo_lectura())
                 @else
                 @if(isset($_SESSION['permisos']['815']))
-                <a href="{{route('contratos.importar')}}" class="btn btn-success mr-1"><i class="fas fa-file-upload"></i> Importar Contratos</a>
+                <a href="{{route('contratos.importar')}}" class="btn btn-success mr-1"><i class="fas fa-file-upload"></i> Importar Contratos Internet</a>
                 @endif
                 @if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">

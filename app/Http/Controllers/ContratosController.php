@@ -2555,7 +2555,7 @@ class ContratosController extends Controller
 
     public function importar(){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Importar Contratos desde Excel']);
+        view()->share(['title' => 'Importar Contratos Internet desde Excel', 'full' => true]);
 
         $mikrotiks = Mikrotik::all();
         $planes = PlanesVelocidad::all();
@@ -2565,7 +2565,7 @@ class ContratosController extends Controller
 
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
-        $tituloReporte = "Archivo de Importación de Contratos ".Auth::user()->empresa()->nombre;
+        $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
         $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia',         'Fecha del Contrato');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
