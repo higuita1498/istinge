@@ -49,6 +49,7 @@
     <div class="col-md-3 form-group">
       <label class="control-label">Oficina Asociada</label>
       <select class="form-control selectpicker" id="oficina" name="oficina" title="Seleccione">
+          <option value="0" {{$usuario->oficina==NULL?'selected':''}} >Ninguna</option>
           @foreach($oficinas as $oficina)
             <option value="{{$oficina->id}}" {{$usuario->oficina==$oficina->id?'selected':''}} >{{$oficina->nombre}}</option>
           @endforeach
