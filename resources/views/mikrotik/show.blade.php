@@ -88,7 +88,7 @@
 						    {{--<button title="Importar Contratos" class="btn mt-1 btn-outline-info" type="submit" onclick="confirmar('importar-{{$mikrotik->id}}', '¿Está seguro que desea importar todos los contratos desde {{$mikrotik->nombre}}?', '');"><i class="fas fa-sync"></i> Importar Contratos</button>--}}
 						    <button title="Reiniciar" class="btn mt-1 btn-outline-danger" type="submit" onclick="confirmar('reiniciar-{{$mikrotik->id}}', '¿Está seguro que desea reiniciar el mikrotik {{$mikrotik->nombre}}?', '');"><i class="fas fa-power-off"></i> Reiniciar </button>
 						    @endif
-						    @if($mikrotik->status == 0)
+						    @if($mikrotik->status == 0 && $mikrotik->uso == 0)
 						    <button title="Eliminar" class="btn mt-1 btn-outline-danger" type="submit" onclick="confirmar('eliminar-mikrotik', '¿Está seguro que deseas eliminar el Mikrotik?', 'Se borrará de forma permanente');"><i class="fas fa-times"></i> Eliminar</button>
 						    @endif
 						    @if($mikrotik->status == 0)
