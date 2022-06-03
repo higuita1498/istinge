@@ -67,6 +67,7 @@ Route::get('facturas-electronicas','FacturasController@facturas_electronica');
 Route::get('ingresos', 'IngresosController@ingresos');
 //Route::get('contactos', 'ContactosController@contactos');
 Route::get('contactos/{tipo_usuario?}', 'ContactosController@contactos');
+Route::get('saldos', 'SaldosInicialesController@saldos')->name('saldoinicial.saldos');
 Route::get('solicitudes', 'WifiController@solicitudes');
 Route::get('pqrs', 'PqrsController@pqrs');
 Route::get('aps', 'APController@ap');
@@ -648,6 +649,10 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/create', 'SaldosInicialesController@create')->name('saldoinicial.create');
 		Route::post('/store', 'SaldosInicialesController@store')->name('saldoinicial.store');
 		Route::get('/validatecartera', 'SaldosInicialesController@validateCartera');
+		Route::get('/show/{nro}', 'SaldosInicialesController@show')->name('saldoinicial.show');
+		Route::get('/edit/{nro}', 'SaldosInicialesController@edit');
+		Route::post('/update', 'SaldosInicialesController@update')->name('saldoinicial.update');
+		Route::get('/index','SaldosInicialesController@index')->name('saldoinicial.index');
 	});
 
 
