@@ -84,17 +84,58 @@ class AsignacionesController extends Controller
       Storage::disk('documentos')->put($nombre, \File::get($file));
       $contrato->documento = $nombre;
 
+      $xmax = 1080;
+      $ymax = 720;
+
       if(in_array($file->getMimeType(), $ext_permitidas)){
         switch($file->getMimeType()){
           case 'image/jpeg':
-            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+            $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
           break;
           case 'image/png':
-            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+            $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
           break;
           case 'image/gif':
-            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+            $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
           break;
+        }
+
+        $x = imagesx($imagen);
+        $y = imagesy($imagen);
+
+        if($x <= $xmax && $y <= $ymax){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/png':
+              imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+            case 'image/gif':
+              imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+            break;
+          }
+        }else{
+          if($x >= $y) {
+            $nuevax = $xmax;
+            $nuevay = $nuevax * $y / $x;
+          }else{
+            $nuevay = $ymax;
+            $nuevax = $x / $y * $nuevay;
+          }
+          $img2 = imagecreatetruecolor($nuevax, $nuevay);
+          imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+            break;
+            case 'image/png':
+              imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+            break;
+            case 'image/gif':
+              imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+            break;
+          }
         }
       }
 
@@ -107,14 +148,52 @@ class AsignacionesController extends Controller
         if(in_array($file->getMimeType(), $ext_permitidas)){
           switch($file->getMimeType()){
             case 'image/jpeg':
-            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/png':
-            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/gif':
-            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
           }
         }
       }
@@ -128,14 +207,52 @@ class AsignacionesController extends Controller
         if(in_array($file->getMimeType(), $ext_permitidas)){
           switch($file->getMimeType()){
             case 'image/jpeg':
-            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/png':
-            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/gif':
-            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
           }
         }
       }
@@ -149,14 +266,52 @@ class AsignacionesController extends Controller
         if(in_array($file->getMimeType(), $ext_permitidas)){
           switch($file->getMimeType()){
             case 'image/jpeg':
-            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/png':
-            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/gif':
-            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
           }
         }
       }
@@ -170,14 +325,288 @@ class AsignacionesController extends Controller
         if(in_array($file->getMimeType(), $ext_permitidas)){
           switch($file->getMimeType()){
             case 'image/jpeg':
-            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/png':
-            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
             case 'image/gif':
-            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
             break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
+          }
+        }
+      }
+
+      if($request->file('imgE')){
+        $file = $request->file('imgE');
+        $nombre =  'imgE_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgE = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/png':
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/gif':
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
+          }
+        }
+      }
+
+      if($request->file('imgF')){
+        $file = $request->file('imgF');
+        $nombre =  'imgF_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgF = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/png':
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/gif':
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
+          }
+        }
+      }
+
+      if($request->file('imgG')){
+        $file = $request->file('imgG');
+        $nombre =  'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgG = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/png':
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/gif':
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
+          }
+        }
+      }
+
+      if($request->file('imgH')){
+        $file = $request->file('imgH');
+        $nombre =  'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+        Storage::disk('documentos')->put($nombre, \File::get($file));
+        $contrato->imgH = $nombre;
+
+        if(in_array($file->getMimeType(), $ext_permitidas)){
+          switch($file->getMimeType()){
+            case 'image/jpeg':
+              $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/png':
+              $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+            case 'image/gif':
+              $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+            break;
+          }
+
+          $x = imagesx($imagen);
+          $y = imagesy($imagen);
+
+          if($x <= $xmax && $y <= $ymax){
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/png':
+                imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+              case 'image/gif':
+                imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 50);
+              break;
+            }
+          }else{
+            if($x >= $y) {
+              $nuevax = $xmax;
+              $nuevay = $nuevax * $y / $x;
+            }else{
+              $nuevay = $ymax;
+              $nuevax = $x / $y * $nuevay;
+            }
+            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+            switch($file->getMimeType()){
+              case 'image/jpeg':
+                imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/png':
+                imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+              case 'image/gif':
+                imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+              break;
+            }
           }
         }
       }
@@ -210,6 +639,10 @@ class AsignacionesController extends Controller
       $empresa->campo_b = $request->campo_b;
       $empresa->campo_c = $request->campo_c;
       $empresa->campo_d = $request->campo_d;
+      $empresa->campo_e = $request->campo_e;
+      $empresa->campo_f = $request->campo_f;
+      $empresa->campo_g = $request->campo_g;
+      $empresa->campo_h = $request->campo_h;
       $empresa->save();
 
       return response()->json([
@@ -217,7 +650,11 @@ class AsignacionesController extends Controller
         'campo_a' => $empresa->campo_a,
         'campo_b' => $empresa->campo_b,
         'campo_c' => $empresa->campo_c,
-        'campo_d' => $empresa->campo_d
+        'campo_d' => $empresa->campo_d,
+        'campo_e' => $empresa->campo_e,
+        'campo_f' => $empresa->campo_f,
+        'campo_g' => $empresa->campo_g,
+        'campo_h' => $empresa->campo_h,
       ]);
     }
     return response()->json(['success' => false]);

@@ -337,107 +337,107 @@
 				</li>
 				@endif
 				@endif
-				@if($contacto->contract('true') != 'N/A')
+				{{-- @if($contacto->contract('true') != 'N/A') --}}
 				<li class="nav-item">
 					<a class="nav-link {{ $contacto->usado()==0?'active':'' }}" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
 				</li>
-				@endif
+				{{-- @endif --}}
 			</ul>
 			<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
 			<div class="tab-content fact-table" id="myTabContent">
 				@if($contacto->usado()>0)
-				<div class="tab-pane fade" id="transacciones" role="tabpanel" aria-labelledby="transacciones-tab">
-					<input type="hidden" id="url-show-movimientos" value="{{route('bancos.cliente.movimientos.cuenta', $contacto->id)}}">
-					<div class="table-responsive mt-3">
-						<table class="text-center table table-light table-striped table-hover" id="table-show-movimientos" style="width: 100%; border: 1px solid #e9ecef;">
-							<thead class="thead-light">
-								<th>Fecha</th>
-								<th>Banco</th>
-								<th>Detalle del Pago</th>
-								<th>Salidas</th>
-								<th>Entradas</th>
-							</thead>
-							<tbody>
+					<div class="tab-pane fade" id="transacciones" role="tabpanel" aria-labelledby="transacciones-tab">
+						<input type="hidden" id="url-show-movimientos" value="{{route('bancos.cliente.movimientos.cuenta', $contacto->id)}}">
+						<div class="table-responsive mt-3">
+							<table class="text-center table table-light table-striped table-hover" id="table-show-movimientos" style="width: 100%; border: 1px solid #e9ecef;">
+								<thead class="thead-light">
+									<th>Fecha</th>
+									<th>Banco</th>
+									<th>Detalle del Pago</th>
+									<th>Salidas</th>
+									<th>Entradas</th>
+								</thead>
+								<tbody>
 
-							</tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="tab-pane fade show active" id="facturas_venta" role="tabpanel" aria-labelledby="facturas_venta-tab">
+						<input type="hidden" id="url-show-facturas" value="{{route('factura.datatable.cliente', $contacto->id)}}">
+						<div class="table-responsive mt-3">
+		    				<table class="text-center table table-light table-striped table-hover" id="table-show-facturas" style="width: 100%; border: 1px solid #e9ecef;">
+		    					<thead class="thead-light">
+		    						<tr>
+		    							<th>Factura</th>
+		    							<th>Cliente</th>
+		    							<th>Creación</th>
+		    							<th>Vencimiento</th>
+		    							<th>Total</th>
+		    							<th>Pagado</th>
+		    							<th>Por Pagar</th>
+		    							<th>Estado</th>
+		    							<th>Acciones</th>
+		    						</tr>
+		    					</thead>
+		    					<tbody></tbody>
+		    				</table>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="facturas_compra" role="tabpanel" aria-labelledby="facturas_compra-tab">
+						<input type="hidden" id="url-show-facturas-compras" value="{{route('facturap.datatable.cliente', $contacto->id)}}">
+						<table class="table table-light table-striped table-hover  " id="table-show-facturas-compras" style="width: 100%; border: 1px solid #e9ecef;">
+							<thead class="thead-light">
+								<tr>
+									<th>Factura</th>
+									<th>Proveedor</th>
+									<th>Creación</th>
+									<th>Vencimiento</th>
+									<th>Total</th>
+									<th>Pagado</th>
+									<th>Por Pagar</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
 						</table>
 					</div>
-				</div>
-				<div class="tab-pane fade show active" id="facturas_venta" role="tabpanel" aria-labelledby="facturas_venta-tab">
-					<input type="hidden" id="url-show-facturas" value="{{route('factura.datatable.cliente', $contacto->id)}}">
-					<div class="table-responsive mt-3">
-	    				<table class="text-center table table-light table-striped table-hover" id="table-show-facturas" style="width: 100%; border: 1px solid #e9ecef;">
-	    					<thead class="thead-light">
-	    						<tr>
-	    							<th>Factura</th>
-	    							<th>Cliente</th>
-	    							<th>Creación</th>
-	    							<th>Vencimiento</th>
-	    							<th>Total</th>
-	    							<th>Pagado</th>
-	    							<th>Por Pagar</th>
-	    							<th>Estado</th>
-	    							<th>Acciones</th>
-	    						</tr>
-	    					</thead>
-	    					<tbody></tbody>
-	    				</table>
+					<div class="tab-pane fade" id="promesas-pago" role="tabpanel" aria-labelledby="promesas-pago-tab">
+						<input type="hidden" id="url-show-promesas" value="{{route('promesas.json', $contacto->id)}}">
+						<div class="table-responsive mt-3">
+		    				<table class="text-center table table-light table-striped table-hover" id="table-show-promesas" style="width: 100%; border: 1px solid #e9ecef;">
+		    					<thead class="thead-light">
+		    						<tr>
+		    							<th>Nro</th>
+		    							<th>Factura</th>
+		    							<th>Fecha Pago</th>
+		    							<th>Fecha Promesa</th>
+		    							<th>Creado por</th>
+		    							<th>Acciones</th>
+		    						</tr>
+		    					</thead>
+		    					<tbody></tbody>
+		    				</table>
+						</div>
 					</div>
-				</div>
-				<div class="tab-pane fade" id="facturas_compra" role="tabpanel" aria-labelledby="facturas_compra-tab">
-					<input type="hidden" id="url-show-facturas-compras" value="{{route('facturap.datatable.cliente', $contacto->id)}}">
-					<table class="table table-light table-striped table-hover  " id="table-show-facturas-compras" style="width: 100%; border: 1px solid #e9ecef;">
-						<thead class="thead-light">
-							<tr>
-								<th>Factura</th>
-								<th>Proveedor</th>
-								<th>Creación</th>
-								<th>Vencimiento</th>
-								<th>Total</th>
-								<th>Pagado</th>
-								<th>Por Pagar</th>
-								<th>Acciones</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-				</div>
-				<div class="tab-pane fade" id="promesas-pago" role="tabpanel" aria-labelledby="promesas-pago-tab">
-					<input type="hidden" id="url-show-promesas" value="{{route('promesas.json', $contacto->id)}}">
-					<div class="table-responsive mt-3">
-	    				<table class="text-center table table-light table-striped table-hover" id="table-show-promesas" style="width: 100%; border: 1px solid #e9ecef;">
-	    					<thead class="thead-light">
-	    						<tr>
-	    							<th>Nro</th>
-	    							<th>Factura</th>
-	    							<th>Fecha Pago</th>
-	    							<th>Fecha Promesa</th>
-	    							<th>Creado por</th>
-	    							<th>Acciones</th>
-	    						</tr>
-	    					</thead>
-	    					<tbody></tbody>
-	    				</table>
-					</div>
-				</div>
-				@if($contacto->nit)
-				<div class="tab-pane fade" id="radicad" role="tabpanel" aria-labelledby="radicad-tab">
-					<input type="hidden" id="url-show-radicados" value="{{route('radicados.datatable.cliente', $contacto->nit)}}">
-					<div class="table-responsive mt-3">
-						<table class="text-center table table-light table-striped table-hover" id="table-show-radicados" style="width: 100%; border: 1px solid #e9ecef;">
-							<thead class="thead-light">
-								<th>Radicado</th>
-								<th>Fecha</th>
-								<th>Servicio</th>
-								<th>Estatus</th>
-							</thead>
-							<tbody>
+					@if($contacto->nit)
+						<div class="tab-pane fade" id="radicad" role="tabpanel" aria-labelledby="radicad-tab">
+							<input type="hidden" id="url-show-radicados" value="{{route('radicados.datatable.cliente', $contacto->nit)}}">
+							<div class="table-responsive mt-3">
+								<table class="text-center table table-light table-striped table-hover" id="table-show-radicados" style="width: 100%; border: 1px solid #e9ecef;">
+									<thead class="thead-light">
+										<th>Radicado</th>
+										<th>Fecha</th>
+										<th>Servicio</th>
+										<th>Estatus</th>
+									</thead>
+									<tbody>
 
-							</tbody>
-						</table>
-					</div>
-				</div>
-				@endif
+									</tbody>
+								</table>
+							</div>
+						</div>
+					@endif
 				@endif
 				<div class="tab-pane fade {{ $contacto->usado()==0?'show active':'' }}" id="arcadj" role="tabpanel" aria-labelledby="arcadj-tab">
 					<div class="row mt-3">
@@ -510,6 +510,16 @@
 							</div>
 							@endif
 						@endif
+						@if($contacto->documento)
+						<div class="col-md-2 mb-2 text-center">
+							<div class="card card-adj">
+							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+							    	<h3 class="card-title">Documento Asignación</h3>
+							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->documento)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    </div>
+							</div>
+						</div>
+						@endif
 						@if($contacto->imgA)
 						<div class="col-md-2 mb-2 text-center" id="div_imgA">
 							<div class="card card-adj">
@@ -550,6 +560,50 @@
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_d }}</h3>
 							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgD','{{auth()->user()->empresa()->campo_d}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+							    </div>
+							</div>
+						</div>
+						@endif
+						@if($contacto->imgE)
+						<div class="col-md-2 mb-2 text-center" id="div_imgE">
+							<div class="card card-adj">
+							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_e }}</h3>
+							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgE)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="javascript:eliminar('contactos','imgE','{{auth()->user()->empresa()->campo_e}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+							    </div>
+							</div>
+						</div>
+						@endif
+						@if($contacto->imgF)
+						<div class="col-md-2 mb-2 text-center" id="div_imgF">
+							<div class="card card-adj">
+							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_f }}</h3>
+							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgF)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="javascript:eliminar('contactos','imgF','{{auth()->user()->empresa()->campo_f}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+							    </div>
+							</div>
+						</div>
+						@endif
+						@if($contacto->imgG)
+						<div class="col-md-2 mb-2 text-center" id="div_imgG">
+							<div class="card card-adj">
+							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_g }}</h3>
+							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgG)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="javascript:eliminar('contactos','imgG','{{auth()->user()->empresa()->campo_g}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
+							    </div>
+							</div>
+						</div>
+						@endif
+						@if($contacto->imgH)
+						<div class="col-md-2 mb-2 text-center" id="div_imgH">
+							<div class="card card-adj">
+							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_h }}</h3>
+							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgH)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="javascript:eliminar('contactos','imgH','{{auth()->user()->empresa()->campo_h}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
 						</div>

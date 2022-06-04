@@ -99,6 +99,35 @@
                     <strong>{{ $errors->first('imgD') }}</strong>
                 </span>
             </div>
+
+            <div class="col-md-3 form-group">
+                <label class="control-label" id="div_campo_e">{{$empresa->campo_e}}</label>
+                <input type="file" class="form-control"  id="imgE" name="imgE"  value="{{old('imgE')}}" accept=".jpg, .jpeg, .png">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('imgE') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label" id="div_campo_f">{{$empresa->campo_f}}</label>
+                <input type="file" class="form-control"  id="imgF" name="imgF"  value="{{old('imgF')}}" accept=".jpg, .jpeg, .png">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('imgF') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label" id="div_campo_g">{{$empresa->campo_g}}</label>
+                <input type="file" class="form-control"  id="imgG" name="imgG"  value="{{old('imgG')}}" accept=".jpg, .jpeg, .png">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('imgG') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label" id="div_campo_h">{{$empresa->campo_h}}</label>
+                <input type="file" class="form-control"  id="imgH" name="imgH"  value="{{old('imgH')}}" accept=".jpg, .jpeg, .png">
+                <span style="color: red;">
+                    <strong>{{ $errors->first('imgH') }}</strong>
+                </span>
+            </div>
         </div>
 
         <center>
@@ -174,6 +203,35 @@
                                 <input type="text" class="form-control" name="campo_d" id="campo_d">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('campo_d') }}</strong>
+                                </span>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label class="control-label">Campo E</label>
+                                <input type="text" class="form-control" name="campo_e" id="campo_e">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('campo_e') }}</strong>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="control-label">Campo F</label>
+                                <input type="text" class="form-control" name="campo_f" id="campo_f">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('campo_f') }}</strong>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="control-label">Campo G</label>
+                                <input type="text" class="form-control" name="campo_g" id="campo_g">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('campo_g') }}</strong>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="control-label">Campo H</label>
+                                <input type="text" class="form-control" name="campo_h" id="campo_h">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('campo_h') }}</strong>
                                 </span>
                             </div>
                         </div>
@@ -281,11 +339,14 @@
             var url = 'config_campos_asignacion';
             $.get(url,function(data){
                 data = JSON. parse(data);
-                console.log(data);
                 $("#campo_a").val(data.campo_a);
                 $("#campo_b").val(data.campo_b);
                 $("#campo_c").val(data.campo_c);
                 $("#campo_d").val(data.campo_d);
+                $("#campo_e").val(data.campo_e);
+                $("#campo_f").val(data.campo_f);
+                $("#campo_g").val(data.campo_g);
+                $("#campo_h").val(data.campo_h);
             });
             $('#modal_conf').modal("show");
         }
@@ -346,11 +407,14 @@
                         $('#cancelar').click();
                         $('#forma').trigger("reset");
                         swal("Registro Guardado", "", "success");
-                        //location.reload();
                         $("#div_campo_a").text('').text(data.campo_a);
                         $("#div_campo_b").text('').text(data.campo_b);
                         $("#div_campo_c").text('').text(data.campo_c);
                         $("#div_campo_d").text('').text(data.campo_d);
+                        $("#div_campo_e").text('').text(data.campo_e);
+                        $("#div_campo_f").text('').text(data.campo_f);
+                        $("#div_campo_g").text('').text(data.campo_g);
+                        $("#div_campo_h").text('').text(data.campo_h);
                     } else {
                         swal('ERROR', 'Intente nuevamente', "error");
                     }
