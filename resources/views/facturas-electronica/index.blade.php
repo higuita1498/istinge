@@ -43,7 +43,9 @@
 	    <div class="alert alert-danger" role="alert">
 	    	{{Session::get('message_denied')}}
 	    	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
-	    	    @if(count(Session::get('errorReason')) > 1)
+	    	    @if(is_string(Session::get('errorReason')))
+	    	        {{Session::get('errorReason')}}
+	    	    @elseif (count(Session::get('errorReason')) >= 1)
 	    	        @php $cont = 0 @endphp
 	    	        @foreach(Session::get('errorReason') as $error)
 	    	            @php $cont = $cont + 1; @endphp
