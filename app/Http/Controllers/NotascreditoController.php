@@ -37,6 +37,7 @@ use DOMDocument; use QrCode; use File;
 use Config;
 use App\ServidorCorreo;
 use ZipArchive;
+use App\Campos;
 
 class NotascreditoController extends Controller
 {
@@ -54,7 +55,7 @@ class NotascreditoController extends Controller
     /**
      * Vista Principal de las notas de credito
      */
-    public function index(Request $request){
+    public function indexOLD(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $busqueda=false;
         $campos=array('', 'notas_credito.nro', 'nombrecliente', 'notas_credito.fecha', 'total', 'por_aplicar');
@@ -92,6 +93,72 @@ class NotascreditoController extends Controller
         $facturas=$facturas->OrderBy($orderby, $order)->paginate(100)->appends($appends);
 
         return view('notascredito.index')->with(compact('facturas','request', 'busqueda'));
+    }
+
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $tabla = Campos::where('modulo', 18)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+
+        return view('notascredito.index', compact('tabla'));
+    }
+
+    public function notascredito (Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $notas = NotaCredito::query()->
+            leftjoin('contactos as c', 'c.id', '=', 'notas_credito.cliente')->
+            join('items_notas as if', 'notas_credito.id', '=', 'if.nota')->
+            select('notas_credito.*', 'c.nombre as nombrecliente', 'c.apellido1 as ape1cliente', 'c.apellido2 as ape2cliente', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - if((Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id),(Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id), 0)) as por_aplicar'))->
+            where('notas_credito.empresa',Auth::user()->empresa);
+
+        if ($request->filtro == true) {
+            if($request->nro){
+                $notas->where(function ($query) use ($request) {
+                    $query->orWhere('notas_credito.nro', 'like', "%{$request->nro}%");
+                });
+            }
+            if($request->nombre){
+                $notas->where(function ($query) use ($request) {
+                    $query->orWhere('c.nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->fecha){
+                $notas->where(function ($query) use ($request) {
+                    $query->orWhere('notas_credito.fecha', date('Y-m-d', strtotime($request->fecha)));
+                });
+            }
+            if($request->emitida){
+                $emitida = ($request->emitida == 'A') ? 0 : $request->emitida;
+                $notas->where(function ($query) use ($emitida) {
+                    $query->orWhere('notas_credito.emitida', $emitida);
+                });
+            }
+        }
+
+        $notas = $notas->groupBy('if.nota');
+
+        return datatables()->eloquent($notas)
+        ->editColumn('nro', function (NotaCredito $notas) {
+            return $notas->nro ? "<a href=" . route('notascredito.show', $notas->nro) . ">$notas->nro</a>" : "";
+        })
+        ->editColumn('cliente', function (NotaCredito $notas) {
+            return  $notas->cliente ? "<a href=" . route('contactos.show', $notas->cliente()->id) . " target='_blank'>{$notas->cliente()->nombre} {$notas->cliente()->apellidos()}</a>" : "";
+        })
+        ->editColumn('fecha', function (NotaCredito $notas) {
+            return date('d-m-Y', strtotime($notas->fecha));
+        })
+        ->addColumn('total', function (NotaCredito $notas) use ($moneda) {
+            return "{$moneda} {$notas->parsear($notas->total()->total)}";
+        })
+        ->addColumn('por_aplicar', function (NotaCredito $notas) use ($moneda) {
+            return "{$moneda} {$notas->parsear($notas->por_aplicar())}";
+        })
+        ->addColumn('emitida', function (NotaCredito $notas) {
+            return   '<span class="font-weight-bold text-' . $notas->emitida(true) . '">' . $notas->emitida(). '</span>';
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "notascredito.acciones")
+        ->rawColumns(['nro','cliente','fecha','total','por_aplicar','emitida', 'acciones'])
+        ->toJson();
     }
 
     /**
