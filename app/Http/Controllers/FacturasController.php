@@ -2099,23 +2099,11 @@ class FacturasController extends Controller{
             config(['mail'=>$new]);
         }
 
-        Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
-
-            /* Segun Resolución No. 000042 - Anexo Técnico de Factura Electrónica de Venta – Versión 1.7.-2020 – Página 626
-            No mandamos el archivo xml por fuera del zip
-          $message->attach($ruta_xmlresponse);
-          */
-
-            /*Peticiones de clientes que no quieren que se mande la factura de venta por fuera del zip (tal como si es permitido por la DIAN)*/
-            // if (config('app.name') == "Gestoru" && auth()->user()->empresa != 52) {
-            //     $message->attachData($pdf, 'FV-' . $FacturaVenta->codigo . '.pdf', ['mime' => 'application/pdf']);
-            // }
-
-            $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
-
-            $message->from('info@gestordepartes.net', Auth::user()->empresaObj->nombre);
-            $message->to($emails)->subject($tituloCorreo);
-        });
+        // Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
+        //     $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
+        //     $message->from('info@gestordepartes.net', Auth::user()->empresaObj->nombre);
+        //     $message->to($emails)->subject($tituloCorreo);
+        // });
 
         // Si quieres puedes eliminarlo después:
         if (isset($nombreArchivoZip)) {
