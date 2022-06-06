@@ -75,6 +75,8 @@ class Campos extends Model{
             return 'Bancos';
         }else if($this->modulo == 17){
             return 'Oficinas';
+        }else if($this->modulo == 18){
+            return 'Notas de Crédito';
         }
     }
 }
