@@ -76,8 +76,12 @@
 								@if(auth()->user()->modo_lectura())
 								@else
 								<a href="{{ route('contactos.show',$contrato->id )}}" class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
+								@if(isset($_SESSION['permisos']['817']))
 								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}" class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
+								@endif
+								@if(isset($_SESSION['permisos']['818']))
 								<a href="{{ route('asignaciones.enviar',$contrato->id )}}" onclick="cargando('true');" class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
+								@endif
 								@endif
 							</td>
 						</tr>
