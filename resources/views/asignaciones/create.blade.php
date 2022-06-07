@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col-md-6 form-group offset-md-1">
-                <label class="control-label">Adjunte la documentación <span class="text-danger">*</span></label>
+                <label class="control-label" id="div_campo_1">{{$empresa->campo_1}} <span class="text-danger">*</span></label>
                 <input type="file" class="form-control"  id="documento" name="documento"  required="" value="{{old('documento')}}" accept=".jpg, .jpeg, .png, .pdf">
                 <span style="color: red;">
                     <strong>{{ $errors->first('documento') }}</strong>
@@ -167,15 +167,24 @@
     <script src="{{asset('vendors/signature_pad/1.5.3/signature_pad.min.js')}}"></script>
 
     <div class="modal fade" id="modal_conf"  tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog" style="max-width: 50%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Editar Campos Adjuntos</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('asignaciones.campos_asignacion') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="forma" >
-                        {{ csrf_field() }}
+                    <form method="POST" action="{{ route('asignaciones.campos_asignacion') }}" style="padding: 2% 3%;" role="form" class="forms-sample"  id="forma" >
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-6 offset-md-3">
+                                <label class="control-label">Campo Principal</label>
+                                <input type="text" class="form-control" name="campo_1" id="campo_1">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('campo_1') }}</strong>
+                                </span>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="form-group col-md-3">
                                 <label class="control-label">Campo A</label>
@@ -347,6 +356,7 @@
                 $("#campo_f").val(data.campo_f);
                 $("#campo_g").val(data.campo_g);
                 $("#campo_h").val(data.campo_h);
+                $("#campo_1").val(data.campo_1);
             });
             $('#modal_conf').modal("show");
         }
@@ -415,6 +425,7 @@
                         $("#div_campo_f").text('').text(data.campo_f);
                         $("#div_campo_g").text('').text(data.campo_g);
                         $("#div_campo_h").text('').text(data.campo_h);
+                        $("#div_campo_1").text('').html(data.campo_1+' <span class="text-danger">*</span>');
                     } else {
                         swal('ERROR', 'Intente nuevamente', "error");
                     }
