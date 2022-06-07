@@ -464,7 +464,7 @@ class NominaDianController extends Controller
         ];
     }
 
-   /**
+    /**
      * construcción de nóminas de prueba (habilitación) de tipo ajuste (Eliminar).
      *
      * @return json
@@ -686,7 +686,7 @@ class NominaDianController extends Controller
             $json = array_merge($jsonIndividual, $jsonEdit);
 
             // Return solamente para mirar el json.
-            //return $json;
+            // return $json;
 
         } elseif ($nomina->emitida == Nomina::AJUSTE_SIN_EMITIR) {
 
@@ -732,8 +732,8 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        // $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina')); Linea se comenta mientras se soluciona el error de versionamiento
-        $response['statusCode'] = 200;
+        $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
+        // $response['statusCode'] = 200;
 
 
         if (isset($response['statusCode'])) {
@@ -832,7 +832,7 @@ class NominaDianController extends Controller
         foreach ($nomina->nominaperiodos as $nominaPeriodo) {
             $total_sueldo += $nominaPeriodo->valor_total;
             $TiempoLaborado += $nominaPeriodo->diasTrabajados();
-            $date = Carbon::parse($nominaPeriodo->fecha_hasta);
+            $date = Carbon::parse($nominaPeriodo->fecha_hasta)->locale('es');
         }
 
         $empresa = Auth::user()->empresa();
@@ -1015,7 +1015,12 @@ class NominaDianController extends Controller
         $this->getAllPermissions($usuario->id);
         $empresa = auth()->user()->empresaObj;
 
-        $guiasVistas = [];
+        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+            ->select('tips_modulo_usuario.*')
+            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+            ->where('permisos_modulo.nombre_modulo', 'Nomina')
+            ->where('fk_idusuario', $usuario->id)
+            ->get();
 
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
@@ -1084,11 +1089,11 @@ class NominaDianController extends Controller
         $preferencia = NominaPreferenciaPago::where('empresa', $usuario->empresa)->first();
 
         $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
-        $date = Carbon::create($year, $periodo, 1);
+        $date = Carbon::create($year, $periodo, 1)->locale('es');
 
         view()->share([
             'seccion' => 'nomina',
-            'title' => 'Emitir Nómina | ' . ucfirst(Nomina::monthName($date)) . ' ' . $date->format('Y'),
+            'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
             'icon' => 'fas fa-sitemap'
         ]);
         $i = 0;
@@ -1515,7 +1520,6 @@ class NominaDianController extends Controller
             $devengados['HEDDFs']['HEDDF'][0]['Pago'] + $devengados['HRDDFs']['HRDDF'][0]['Pago'] + $devengados['HENDFs']['HENDF'][0]['Pago'] +
             $devengados['HRNDFs']['HRNDF'][0]['Pago'];
 
-
         if (count($devengados['Vacaciones']['VacacionesComunes']) > 0) {
             foreach ($devengados['Vacaciones']['VacacionesComunes'] as $item) {
                 $total += $item['Pago'];
@@ -1565,6 +1569,24 @@ class NominaDianController extends Controller
         if (count($devengados['Comisiones']['Comision']) > 0) {
             foreach ($devengados['Comisiones']['Comision'] as $item) {
                 $total += $item;
+            }
+        }
+        
+        if(isset($devengados['Primas']['Pago'])){
+            $total+=$devengados['Primas']['Pago'];
+        }
+        
+        if(isset($devengados['Cesantias']['PagoIntereses'])){
+            $total+=$devengados['Cesantias']['PagoIntereses'];
+        }
+        
+        if(isset($devengados['Cesantias']['Pago'])){
+            $total+=$devengados['Cesantias']['Pago'];
+        }
+        
+        if (count($devengados['Licencias']['LicenciaR']) > 0) {
+            foreach ($devengados['Licencias']['LicenciaR'] as $item) {
+                $total += $item['Pago'];
             }
         }
 
