@@ -27,34 +27,7 @@
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			{{Session::get('error')}}
 		</div>
-	@endif 
-
-	<div class="row card-description">
-		<div class="col-md-12">
-			<table class="table table-striped table-hover" id="table-cotizacion">
-			<tbody>
-				{{-- @foreach($facturas as $factura)
-					<tr @if($factura->id==Session::get('codigo')) class="active" @endif>
-						<td><a href="{{route('cotizaciones.show',$factura->cot_nro)}}" >{{$factura->cot_nro}}</a> </td>
-						<td>
-							@if($factura->cliente)
-							    <a href="{{route('contactos.show',$factura->cliente)}}" target="_blank">{{$factura->cliente()->nombre}} {{ $factura->cliente()->apellidos() }}</a>
-							@else
-								{{$factura->nombrecliente}}
-							@endif
-						</td>
-						<td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
-						<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total)}}</td>
-						<td class="text-{{$factura->estatus(true)}}">{{$factura->estatus()}}</td>
-						<td>
-
-						</td>
-					</tr>
-				@endforeach --}}
-			</tbody>
-		</table> 
-		</div>
-	</div>
+	@endif
 
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
