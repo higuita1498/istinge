@@ -185,6 +185,13 @@
 												@endforeach
 											</select>
 										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Creado por" class="form-control rounded selectpicker" id="responsable" data-size="5" data-live-search="true">
+												@foreach ($responsables as $responsable)
+													<option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option>
+												@endforeach
+											</select>
+										</div>
 
 										<div class="col-md-2 pl-1 pt-1">
 											<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -273,6 +280,13 @@
 												@endforeach
 											</select>
 										</div>
+										<div class="col-md-2 pl-1 pt-1">
+											<select title="Creado por" class="form-control rounded selectpicker" id="responsableG" data-size="5" data-live-search="true">
+												@foreach ($responsables as $responsable)
+													<option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option>
+												@endforeach
+											</select>
+										</div>
 
 										<div class="col-md-2 pl-1 pt-1">
 											<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -333,18 +347,19 @@
 		tabla = $('#table_sin_gestionar');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
-			data.codigo    = $('#codigo').val();
-			data.fecha     = $('#fecha').val();
-			data.contrato  = $('#contrato').val();
-			data.cliente   = $('#cliente').val();
-			data.telefono  = $('#telefono').val();
-			data.servicio  = $('#servicio').val();
-			data.direccion = $('#direccion').val();
-			data.estatus   = $('#estatus').val();
-			data.creado    = $('#creado').val();
-			data.prioridad = $('#prioridad').val();
-			data.tecnico   = $('#tecnico').val();
-			data.filtro    = true;
+			data.codigo      = $('#codigo').val();
+			data.fecha       = $('#fecha').val();
+			data.contrato    = $('#contrato').val();
+			data.cliente     = $('#cliente').val();
+			data.telefono    = $('#telefono').val();
+			data.servicio    = $('#servicio').val();
+			data.direccion   = $('#direccion').val();
+			data.estatus     = $('#estatus').val();
+			data.creado      = $('#creado').val();
+			data.prioridad   = $('#prioridad').val();
+			data.tecnico     = $('#tecnico').val();
+			data.responsable = $('#responsable').val();
+			data.filtro      = true;
 		});
 
 		$('#filtrar').on('click', function(e) {
@@ -394,18 +409,19 @@
 		tablaG = $('#table_sin_gestionarG');
 
 		tablaG.on('preXhr.dt', function(e, settings, data) {
-			data.codigo    = $('#codigoG').val();
-			data.fecha     = $('#fechaG').val();
-			data.contrato  = $('#contratoG').val();
-			data.cliente   = $('#clienteG').val();
-			data.telefono  = $('#telefonoG').val();
-			data.servicio  = $('#servicioG').val();
-			data.direccion = $('#direccionG').val();
-			data.estatus   = $('#estatusG').val();
-			data.creado    = $('#creadoG').val();
-			data.prioridad = $('#prioridadG').val();
-			data.tecnico   = $('#tecnicoG').val();
-			data.filtro    = true;
+			data.codigo      = $('#codigoG').val();
+			data.fecha       = $('#fechaG').val();
+			data.contrato    = $('#contratoG').val();
+			data.cliente     = $('#clienteG').val();
+			data.telefono    = $('#telefonoG').val();
+			data.servicio    = $('#servicioG').val();
+			data.direccion   = $('#direccionG').val();
+			data.estatus     = $('#estatusG').val();
+			data.creado      = $('#creadoG').val();
+			data.prioridad   = $('#prioridadG').val();
+			data.tecnico     = $('#tecnicoG').val();
+			data.responsable = $('#responsableG').val();
+			data.filtro      = true;
 		});
 
 		$('#filtrarG').on('click', function(e) {
@@ -453,6 +469,7 @@
 		$('#creado').val('').selectpicker('refresh');
 		$('#prioridad').val('').selectpicker('refresh');
 		$('#tecnico').val('').selectpicker('refresh');
+		$('#responsable').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -486,6 +503,7 @@
 		$('#creadoG').val('').selectpicker('refresh');
 		$('#prioridadG').val('').selectpicker('refresh');
 		$('#tecnicoG').val('').selectpicker('refresh');
+		$('#responsableG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTableG();

@@ -209,7 +209,7 @@
                         @endif
     					@if ($radicado->responsable() != NULL)
     					<tr>
-    						<th>Responsable</th>
+    						<th>Creado por</th>
     						<td>{{$radicado->responsable()->nombres}}</td>
     					</tr>
     					@endif
