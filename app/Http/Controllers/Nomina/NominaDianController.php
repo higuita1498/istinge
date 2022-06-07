@@ -686,7 +686,7 @@ class NominaDianController extends Controller
             $json = array_merge($jsonIndividual, $jsonEdit);
 
             // Return solamente para mirar el json.
-            //return $json;
+            // return $json;
 
         } elseif ($nomina->emitida == Nomina::AJUSTE_SIN_EMITIR) {
 
@@ -732,8 +732,8 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        // $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina')); Linea se comenta mientras se soluciona el error de versionamiento
-        $response['statusCode'] = 200;
+        $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
+        // $response['statusCode'] = 200;
 
 
         if (isset($response['statusCode'])) {
@@ -2119,7 +2119,7 @@ class NominaDianController extends Controller
         return $anticipos;
     }
 
-    /**
+   /**
      * Método encargado de disparar el evento a la DIAN con el json a enviar sea de producción, pruebas o habilitación.
      * Tipo 1 = Entorno de producción
      * Tipo 2 = Entorno de pruebas
@@ -2170,6 +2170,7 @@ class NominaDianController extends Controller
             return $e->getMessage();
         }
     }
+
 
 
     public function xmlNominaEmitida(Nomina $nomina)
