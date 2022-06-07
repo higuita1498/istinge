@@ -27,6 +27,29 @@ class NotaCredito extends Model
         'nro', 'empresa', 'tipo', 'cliente', 'fecha', 'observaciones', 'estatus', 'notas', 'lista_precios', 'bodega', 'created_at', 'updated_at','emitida','dian_response','fecha_expedicion',
     ];
 
+    protected $appends = ['session'];
+
+    public function getSessionAttribute(){
+        return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public function getAllPermissions($id){
+        if(Auth::user()->rol>=2){
+            if (DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->count() > 0 ) {
+                $permisos = DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->get();
+                foreach ($permisos as $key => $value) {
+                    $_SESSION['permisos'][$permisos[$key]->id_permiso] = '1';
+                }
+                return $_SESSION['permisos'];
+            }
+            else return null;
+        }
+    }
+
+    public function parsear($valor){
+        return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
+    }
+
     public function cliente(){
          return Contacto::where('id',$this->cliente)->first();
     }
@@ -249,5 +272,12 @@ class NotaCredito extends Model
     public function modelDetalle()
     {
         return NotaCreditoFactura::where('nota', $this->id)->first();
+    }
+
+    public function emitida($class = false){
+        if($class){
+            return ($this->emitida == 0) ? 'danger' : 'success';
+        }
+        return ($this->emitida == 0) ? 'No Emitida' : 'Emitida';
     }
 }   

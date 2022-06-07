@@ -112,6 +112,7 @@
 			<a href="{{route('campos.organizar', 9)}}">Descuentos</a><br>
 			<a href="{{route('campos.organizar', 6)}}">Factura de Proveedores</a><br>
 			<a href="{{route('campos.organizar', 7)}}">Pagos / Egresos</a><br>
+			<a href="{{route('campos.organizar', 18)}}">Notas de Crédito</a><br>
 			{{-- <a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
 			<a href="{{route('campos.organizar', 10)}}">Planes de Velocidad</a><br>
 			<a href="{{route('campos.organizar', 11)}}">Promesas de Pago</a><br>

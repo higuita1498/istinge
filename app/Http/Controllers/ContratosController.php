@@ -2771,7 +2771,7 @@ class ContratosController extends Controller
                 }
             }
             if($request->plan != ""){
-                if(PlanesVelocidad::where('name', $request->plan)->count() == 0){
+                if(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $request->mikrotik)->count() == 0){
                     $error->plan = "El plan de velocidad ingresado no se encuentra en nuestra base de datos";
                 }
             }
@@ -2898,6 +2898,9 @@ class ContratosController extends Controller
                 $contrato->nro       = $nro_contrato;
                 $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
                 $create = $create+1;
+
+                $nro->contrato = $nro_contrato + 1;
+                $nro->save();
             }else{
                 $modf = $modf+1;
                 $contrato->servicio  = $this->normaliza($request->servicio).'-'.$contrato->nro;
