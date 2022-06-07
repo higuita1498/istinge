@@ -274,7 +274,7 @@ class VentasExternasController extends Controller{
         return redirect('empresa/ventas-externas')->with('danger', 'VENTA EXTERNA NO ENCONTRADA, INTENTE NUEVAMENTE');
     }
 
-    public function destroy($id){
+    public function destroy(Request $request, $id){
         $contacto = VentasExternas::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
         if ($contacto) {
             $contacto->delete();
