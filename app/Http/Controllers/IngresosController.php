@@ -262,7 +262,6 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        
         if($request->realizar == 2){
             $this->storeIngresoPucCategoria($request);
 
@@ -461,57 +460,57 @@ class IngresosController extends Controller
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
             
             if ($ingreso->tipo == 1) {
-                $cliente = Contacto::where('id', $request->cliente)->first();
-                $contrato = Contrato::where('client_id', $cliente->id)->first();
-                $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
-                
-                /* * * API MK * * */
-                
-                if($contrato){
-                    if($contrato->server_configuration_id){
-                        $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-        
-                        $API = new RouterosAPI();
-                        $API->port = $mikrotik->puerto_api;
-        
-                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                            $API->write('/ip/firewall/address-list/print', TRUE);
-                            $ARRAYS = $API->read();
-        
-                            #ELIMINAMOS DE MOROSOS#
-                            $API->write('/ip/firewall/address-list/print', false);
-                            $API->write('?address='.$contrato->ip, false);
-                            $API->write("?list=morosos",false);
-                            $API->write('=.proplist=.id');
-                            $ARRAYS = $API->read();
-        
-                            if(count($ARRAYS)>0){
-                                $API->write('/ip/firewall/address-list/remove', false);
-                                $API->write('=.id='.$ARRAYS[0]['.id']);
-                                $READ = $API->read();
+                if($this->precision($precio) == $this->precision($factura->porpagar())){
+                    $cliente = Contacto::where('id', $request->cliente)->first();
+                    $contrato = Contrato::where('client_id', $cliente->id)->first();
+                    $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+
+                    /* * * API MK * * */
+
+                    if($contrato){
+                        if($contrato->server_configuration_id){
+                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                            $API = new RouterosAPI();
+                            $API->port = $mikrotik->puerto_api;
+
+                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                $API->write('/ip/firewall/address-list/print', TRUE);
+                                $ARRAYS = $API->read();
+
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+
+                                $API->disconnect();
+
+                                $contrato->state = 'enabled';
+                                $contrato->save();
                             }
-                            #ELIMINAMOS DE MOROSOS#
-        
-                            #AGREGAMOS A IP_AUTORIZADAS#
-                            $API->comm("/ip/firewall/address-list/add", array(
-                                "address" => $contrato->ip,
-                                "list" => 'ips_autorizadas'
-                                )
-                            );
-                            #AGREGAMOS A IP_AUTORIZADAS#
-        
-                            $API->disconnect();
-        
-                            $contrato->state = 'enabled';
-                            $contrato->save();
                         }
                     }
-                }
-                
-                /* * * API MK * * */
-                
-                /* * * ENVÍO SMS * * */
-                if($precio){
+
+                    /* * * API MK * * */
+
+                    /* * * ENVÍO SMS * * */
                     $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
                     if($servicio){
                         $numero = str_replace('+','',$cliente->celular);
@@ -587,8 +586,8 @@ class IngresosController extends Controller
                             }
                         }
                     }
+                    /* * * ENVÍO SMS * * */
                 }
-                /* * * ENVÍO SMS * * */
             }
             
             if(auth()->user()->rol == 8){
@@ -655,8 +654,72 @@ class IngresosController extends Controller
             if ($request->tirilla) {
                 $tirilla = true;
             }
+
+            ### ADJUNTO DE PAGO ###
+
+            $xmax = 1080; $ymax = 720;
+            if($request->file('adjunto_pago')){
+                $ext_permitidas = array('image/jpeg','image/png','image/gif');
+                $file = $request->file('adjunto_pago');
+                $nombre =  'adjunto_pago_'.$ingreso->nro.'.'.$file->getClientOriginalExtension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ingreso->adjunto_pago = $nombre;
+
+                if(in_array($file->getMimeType(), $ext_permitidas)){
+                    switch($file->getMimeType()){
+                        case 'image/jpeg':
+                        $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                        case 'image/png':
+                        $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                        case 'image/gif':
+                        $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                    }
+                    $x = imagesx($imagen);
+                    $y = imagesy($imagen);
+
+                    if($x <= $xmax && $y <= $ymax){
+                        switch($file->getMimeType()){
+                            case 'image/jpeg':
+                            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                            case 'image/png':
+                            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                            case 'image/gif':
+                            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                        }
+                    }else{
+                        if($x >= $y) {
+                            $nuevax = $xmax;
+                            $nuevay = $nuevax * $y / $x;
+                        }else{
+                            $nuevay = $ymax;
+                            $nuevax = $x / $y * $nuevay;
+                        }
+                        $img2 = imagecreatetruecolor($nuevax, $nuevay);
+                        imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+                        switch($file->getMimeType()){
+                            case 'image/jpeg':
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                            case 'image/png':
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                            case 'image/gif':
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                        }
+                    }
+                }
+
+                $ingreso->save();
+            }
             
-            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+            $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
         }
     }
