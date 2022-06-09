@@ -2005,7 +2005,7 @@ class ContratosController extends Controller
 
         return datatables()->eloquent($contratos)
             ->editColumn('created_at', function (MovimientoLOG $contrato) {
-                return date('d-m-Y h:m:s A', strtotime($contrato->created_at));
+                return date('d-m-Y g:i:s A', strtotime($contrato->created_at));
             })
             ->editColumn('created_by', function (MovimientoLOG $contrato) {
                 return $contrato->created_by();

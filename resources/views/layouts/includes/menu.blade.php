@@ -141,6 +141,30 @@
             </div>
         </li>
     @endif
+
+    @if(isset($_SESSION['permisos']['819']) || isset($_SESSION['permisos']['820']) || isset($_SESSION['permisos']['821']) || isset($_SESSION['permisos']['822']) || isset($_SESSION['permisos']['823']))
+        <li class="nav-item" id="productos">
+            <a class="nav-link" data-toggle="collapse" href="#ui-productos" aria-expanded="false" aria-controls="ui-productos">
+                <i class="menu-icon far fa-hdd"></i>
+                <span class="menu-title">Productos</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-productos">
+                <ul class="nav flex-column sub-menu">
+                    @if(isset($_SESSION['permisos']['819']) || isset($_SESSION['permisos']['820']) || isset($_SESSION['permisos']['821']) || isset($_SESSION['permisos']['822']) || isset($_SESSION['permisos']['823']))
+                    <li class="nav-item" id="asignaciones_pro">
+                        <a class="nav-link" href="{{route('productos.index_asignacion')}}">Asignación</a>
+                    </li>
+                    @endif
+                    @if(isset($_SESSION['permisos']['824']) || isset($_SESSION['permisos']['825']) || isset($_SESSION['permisos']['826']) || isset($_SESSION['permisos']['827']) || isset($_SESSION['permisos']['828']))
+                        <li class="nav-item" id="devoluciones_pro">
+                            <a class="nav-link" href="{{route('productos.index_devolucion')}}">Devolución</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </li>
+    @endif
     
     @if(isset($_SESSION['permisos']['40']) || isset($_SESSION['permisos']['45']) || isset($_SESSION['permisos']['50'])|| isset($_SESSION['permisos']['55']) || isset($_SESSION['permisos']['60']) || isset($_SESSION['permisos']['65']))
         <li class="nav-item" id="facturas">

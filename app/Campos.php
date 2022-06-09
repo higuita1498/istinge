@@ -81,6 +81,8 @@ class Campos extends Model{
             return 'Cotizaciones';
         }else if($this->modulo == 20){
             return 'Remisiones';
+        }else if($this->modulo == 21){
+            return 'Produtos (Asignación/Devolución)';
         }
     }
 }

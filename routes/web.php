@@ -92,6 +92,7 @@ Route::get('loficina', 'OficinasController@oficina');
 Route::get('lnotascredito', 'NotascreditoController@notascredito');
 Route::get('lcotizaciones', 'CotizacionesController@cotizaciones');
 Route::get('lremisiones', 'RemisionesController@remisiones');
+Route::get('lproductos', 'ProductosController@productos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -1331,5 +1332,20 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/status/{id}', 'OficinasController@status')->name('oficinas.status');
         });
         Route::resource('oficinas', 'OficinasController');
+
+    //ASIGNACION DE PRODUCTOS
+        Route::group(['prefix' => 'productos'], function() {
+            Route::get('asignacion', 'ProductosController@index_asignacion')->name('productos.index_asignacion');
+            Route::get('crear-asignacion', 'ProductosController@create_asignacion')->name('productos.create_asignacion');
+            Route::post('crear-asignacion', 'ProductosController@store_asignacion')->name('productos.store_asignacion');
+            Route::get('asignacion/{id}', 'ProductosController@show')->name('productos.show_asignacion');
+            Route::post('eliminar-asignacion/{id}', 'ProductosController@destroy_asignacion')->name('productos.destroy_asignacion');
+
+            Route::get('devolucion', 'ProductosController@index_devolucion')->name('productos.index_devolucion');
+            Route::get('crear-devolucion', 'ProductosController@create_devolucion')->name('productos.create_devolucion');
+            Route::post('crear-devolucion', 'ProductosController@store_devolucion')->name('productos.store_devolucion');
+            Route::get('devolucion/{id}', 'ProductosController@show')->name('productos.show_devolucion');
+        });
+        Route::resource('productos', 'ProductosController');
 
 });
