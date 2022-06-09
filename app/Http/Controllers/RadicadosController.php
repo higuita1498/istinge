@@ -42,11 +42,12 @@ class RadicadosController extends Controller{
 
         $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $responsables = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tipo = '';
         $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos', 'responsables'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -56,6 +57,7 @@ class RadicadosController extends Controller{
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tabla = Campos::where('modulo', 12)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $responsables = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         if($tipo == 'solventados'){
             $tipo = 1;
         }elseif($tipo == 'pendientes'){
@@ -65,7 +67,7 @@ class RadicadosController extends Controller{
         }
 
         view()->share(['invert' => true]);
-        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos'));
+        return view('radicados.indexnew', compact('clientes','tipo','servicios','tabla','tecnicos', 'responsables'));
     }
 
     public function radicados(Request $request, $estado){
@@ -133,6 +135,11 @@ class RadicadosController extends Controller{
                     $query->orWhere('radicados.tecnico', $request->tecnico);
                 });
             }
+            if($request->responsable){
+                $radicados->where(function ($query) use ($request) {
+                    $query->orWhere('radicados.responsable', $request->responsable);
+                });
+            }
         }
 
         if(Auth::user()->empresa()->oficina){
@@ -186,6 +193,10 @@ class RadicadosController extends Controller{
         ->editColumn('creado', function (Radicado $radicado) {
             return  $radicado->creado();
         })
+        ->editColumn('responsable', function (Radicado $radicado) {
+            return $radicado->responsable ? $radicado->responsable()->nombres : 'N/A';
+        })
+
         ->editColumn('prioridad', function (Radicado $radicado) {
             return  $radicado->prioridad();
         })

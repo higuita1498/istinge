@@ -643,6 +643,7 @@ class AsignacionesController extends Controller
       $empresa->campo_f = $request->campo_f;
       $empresa->campo_g = $request->campo_g;
       $empresa->campo_h = $request->campo_h;
+      $empresa->campo_1 = $request->campo_1;
       $empresa->save();
 
       return response()->json([
@@ -655,6 +656,7 @@ class AsignacionesController extends Controller
         'campo_f' => $empresa->campo_f,
         'campo_g' => $empresa->campo_g,
         'campo_h' => $empresa->campo_h,
+        'campo_1' => $empresa->campo_1,
       ]);
     }
     return response()->json(['success' => false]);

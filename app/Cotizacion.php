@@ -23,6 +23,29 @@ class Cotizacion extends Model
         'nro', 'cot_nro', 'empresa','codigo',  'numeracion', 'vendedor', 'tipo', 'cliente', 'fecha', 'vencimiento', 'observaciones', 'estatus', 'notas', 'plazo', 'created_at', 'updated_at', 'term_cond', 'facnotas', 'lista_precios', 'bodega'
     ];
 
+    protected $appends = ['session'];
+
+    public function getSessionAttribute(){
+        return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public function getAllPermissions($id){
+        if(Auth::user()->rol>=2){
+            if (DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->count() > 0 ) {
+                $permisos = DB::table('permisos_usuarios')->select('id_permiso')->where('id_usuario', $id)->get();
+                foreach ($permisos as $key => $value) {
+                    $_SESSION['permisos'][$permisos[$key]->id_permiso] = '1';
+                }
+                return $_SESSION['permisos'];
+            }
+            else return null;
+        }
+    }
+
+    public function parsear($valor){
+        return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
+    }
+
     public function cliente(){
         if ($this->cliente) {
             return Contacto::where('id',$this->cliente)->first();

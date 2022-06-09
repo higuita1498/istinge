@@ -67,10 +67,15 @@
                                 @csrf
                             </form>
 
+                            <form action="{{ route('radicados.destroy',$radicado->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-{{$radicado->id}}">
+                                @csrf
+                                <input name="_method" type="hidden" value="DELETE">
+                            </form>
+
                             @if($radicado->estatus == 1 || $radicado->estatus == 3)
                                 @if(isset($_SESSION['permisos']['805']))
                                     <form action="{{ route('radicados.reabrir',$radicado->id) }}" method="POST" class="delete_form" style="display: none;" id="reabrir-{{$radicado->id}}">
-                                        {{ csrf_field() }}
+                                        @csrf
                                     </form>
                                 @endif
                             @endif
@@ -97,6 +102,12 @@
                                     @if(isset($_SESSION['permisos']['207']))
                                         <a href="#" onclick="confirmar('solventar{{$radicado->id}}', '¿Está seguro de que desea solventar el caso?');" class="btn btn-outline-success btn-sm "title="Solventar Caso"><i class="fas fa-check-double"></i> Solventar Caso</a>
                                     @endif
+                                @endif
+                            @endif
+
+                            @if($radicado->estatus==0)
+                                @if(isset($_SESSION['permisos']['204']))
+                                <button class="btn btn-outline-danger btn-sm" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$radicado->id}}', '¿Estas seguro que deseas eliminar el radicado?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i> Eliminar Caso</button>
                                 @endif
                             @endif
 
@@ -209,7 +220,7 @@
                         @endif
     					@if ($radicado->responsable() != NULL)
     					<tr>
-    						<th>Responsable</th>
+    						<th>Creado por</th>
     						<td>{{$radicado->responsable()->nombres}}</td>
     					</tr>
     					@endif

@@ -90,6 +90,8 @@ Route::get('lmikrotik', 'MikrotikController@mikrotik');
 Route::get('lbanco', 'BancosController@banco');
 Route::get('loficina', 'OficinasController@oficina');
 Route::get('lnotascredito', 'NotascreditoController@notascredito');
+Route::get('lcotizaciones', 'CotizacionesController@cotizaciones');
+Route::get('lremisiones', 'RemisionesController@remisiones');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {

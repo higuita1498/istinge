@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Session;
 use Config;
 use App\ServidorCorreo;
+use App\Campos;
 
 class CotizacionesController extends Controller
 {
@@ -41,7 +42,7 @@ class CotizacionesController extends Controller
      * Vista Principal de las cotizaciones
      * La consulta es tan grande para hacer funcionar las flechas, ya que hay valores qe no estan en la tabla
      */
-    public function index(Request $request){
+    public function indexOLD(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $busqueda=false;
         $campos=array('', 'factura.cot_nro', 'nombrecliente', 'factura.fecha', 'total', 'factura.estatus');
@@ -84,6 +85,70 @@ class CotizacionesController extends Controller
 
         $facturas=$facturas->OrderBy($orderby, $order)->paginate(25)->appends($appends);
         return view('cotizaciones.index')->with(compact('facturas', 'request', 'busqueda'));
+    }
+
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $tabla = Campos::where('modulo', 19)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+
+        return view('cotizaciones.index', compact('tabla'));
+    }
+
+    public function cotizaciones(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $cotizaciones = Cotizacion::query()->
+            leftjoin('contactos as c', 'factura.cliente', '=', 'c.id')->
+            leftjoin('factura_contacto as fc', 'factura.id', '=', 'fc.factura')->
+            join('items_factura as if', 'factura.id', '=', 'if.factura')->
+            select('factura.id', 'factura.codigo', 'factura.cot_nro', DB::raw('if(factura.cliente,c.nombre,fc.nombre) as nombrecliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->
+            where('factura.empresa',Auth::user()->empresa)->
+            where('factura.tipo', 3);
+
+        if ($request->filtro == true) {
+            if($request->cot_nro){
+                $cotizaciones->where(function ($query) use ($request) {
+                    $query->orWhere('factura.cot_nro', 'like', "%{$request->cot_nro}%");
+                });
+            }
+            if($request->nombre){
+                $cotizaciones->where(function ($query) use ($request) {
+                    $query->orWhere('fc.nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->fecha){
+                $cotizaciones->where(function ($query) use ($request) {
+                    $query->orWhere('factura.fecha', date('Y-m-d', strtotime($request->fecha)));
+                });
+            }
+            if($request->estatus){
+                $cotizaciones->where(function ($query) use ($request) {
+                    $query->orWhere('factura.estatus', $request->estatus);
+                });
+            }
+        }
+
+        $cotizaciones = $cotizaciones->groupBy('if.factura');
+
+        return datatables()->eloquent($cotizaciones)
+        ->editColumn('cot_nro', function (Cotizacion $cotizacion) {
+            return $cotizacion->cot_nro ? "<a href=" . route('cotizaciones.show', $cotizacion->cot_nro) . ">$cotizacion->cot_nro</a>" : "";
+        })
+        ->editColumn('cliente', function (Cotizacion $cotizacion) {
+            return  $cotizacion->cliente ? "<a href=" . route('contactos.show', $cotizacion->cliente()->id) . " target='_blank'>{$cotizacion->cliente()->nombre} {$cotizacion->cliente()->apellidos()}</a>" : "";
+        })
+        ->editColumn('fecha', function (Cotizacion $cotizacion) {
+            return date('d-m-Y', strtotime($cotizacion->fecha));
+        })
+        ->addColumn('total', function (Cotizacion $cotizacion) use ($moneda) {
+            return "{$moneda} {$cotizacion->parsear($cotizacion->total()->total)}";
+        })
+        ->addColumn('estatus', function (Cotizacion $cotizacion) {
+            return   '<span class="font-weight-bold text-' . $cotizacion->estatus(true) . '">' . $cotizacion->estatus(). '</span>';
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "cotizaciones.acciones")
+        ->rawColumns(['cot_nro','cliente','fecha','total','estatus', 'acciones'])
+        ->toJson();
     }
 
     /**
@@ -211,6 +276,24 @@ class CotizacionesController extends Controller
         $factura =Cotizacion::find($factura->id);
         $mensaje='Se ha creado satisfactoriamente la cotización';
         if ($factura->cliente()->email) {
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            if($host){
+                $existing = config('mail');
+                $new =array_merge(
+                    $existing, [
+                        'host' => $host->servidor,
+                        'port' => $host->puerto,
+                        'encryption' => $host->seguridad,
+                        'username' => $host->usuario,
+                        'password' => $host->password,
+                        'from' => [
+                            'address' => $host->address,
+                            'name' => $host->name
+                        ],
+                    ]
+                );
+                config(['mail'=>$new]);
+            }
             $this->enviar($factura->cot_nro, null, false);
             $mensaje.=', Se ha enviado la cotización al correo del cliente';
         }

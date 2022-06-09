@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Session;
 use Config;
 use App\ServidorCorreo;
+use App\Campos;
 
 class RemisionesController extends Controller
 {
@@ -41,7 +42,7 @@ class RemisionesController extends Controller
   * Vista Principal de las remisiones
   * La consulta es tan grande para hacer funcionar las flechas, ya que hay valores qe no estan en la tabla
   */
-  public function index(Request $request){
+  public function indexOLD(Request $request){
       $this->getAllPermissions(Auth::user()->id);
     $busqueda=false;
    $campos=array('', 'remisiones.id', 'nombrecliente','nombreVendedor', 'remisiones.fecha', 'remisiones.vencimiento', 'total', 'pagado', 'porpagar', 'remisiones.estatus');
@@ -100,6 +101,91 @@ class RemisionesController extends Controller
 
  		return view('remisiones.index')->with(compact('facturas', 'request', 'busqueda'));
  	}
+
+    public function index(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $tabla = Campos::where('modulo', 20)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+
+        return view('remisiones.index', compact('tabla'));
+    }
+
+    public function remisiones(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $moneda = auth()->user()->empresa()->moneda;
+        $remisiones = Remision::query()->
+            join('contactos as c', 'remisiones.cliente', '=', 'c.id')->
+            join('items_remision as if', 'remisiones.id', '=', 'if.remision')->
+            leftjoin('vendedores as v','remisiones.vendedor','=','v.id')->
+            select('remisiones.id', 'remisiones.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('v.nombre as nombreVendedor'),'remisiones.cliente', 'remisiones.fecha', 'remisiones.vencimiento', 'remisiones.estatus', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) as pagado'), DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -  ((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) )    as porpagar'))->
+            where('remisiones.empresa',Auth::user()->empresa);
+
+        if ($request->filtro == true) {
+            if($request->nro){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('remisiones.nro', 'like', "%{$request->nro}%");
+                });
+            }
+            if($request->cliente){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('c.nombre', 'like', "%{$request->cliente}%");
+                });
+            }
+            if($request->vendedor){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('v.nombre', 'like', "%{$request->vendedor}%");
+                });
+            }
+            if($request->fecha){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('remisiones.fecha', date('Y-m-d', strtotime($request->fecha)));
+                });
+            }
+            if($request->vencimiento){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('remisiones.vencimiento', date('Y-m-d', strtotime($request->vencimiento)));
+                });
+            }
+            if($request->estatus){
+                $remisiones->where(function ($query) use ($request) {
+                    $query->orWhere('remisiones.estatus', $request->estatus);
+                });
+            }
+        }
+
+        $remisiones = $remisiones->groupBy('if.remision');
+
+        return datatables()->eloquent($remisiones)
+        ->editColumn('nro', function (Remision $remision) {
+            return $remision->nro ? "<a href=" . route('remisiones.show', $remision->nro) . ">$remision->nro</a>" : "";
+        })
+        ->editColumn('cliente', function (Remision $remision) {
+            return  $remision->cliente ? "<a href=" . route('contactos.show', $remision->cliente()->id) . " target='_blank'>{$remision->cliente()->nombre} {$remision->cliente()->apellidos()}</a>" : "";
+        })
+        ->editColumn('vendedor', function (Remision $remision) {
+            return  $remision->nombreVendedor;
+        })
+        ->editColumn('fecha', function (Remision $remision) {
+            return date('d-m-Y', strtotime($remision->fecha));
+        })
+        ->editColumn('vencimiento', function (Remision $remision) {
+            return date('d-m-Y', strtotime($remision->vencimiento));
+        })
+        ->addColumn('total', function (Remision $remision) use ($moneda) {
+            return "{$moneda} {$remision->parsear($remision->total()->total)}";
+        })
+        ->addColumn('pagado', function (Remision $remision) use ($moneda) {
+            return "{$moneda} {$remision->parsear($remision->pagado())}";
+        })
+        ->addColumn('por_pagar', function (Remision $remision) use ($moneda) {
+            return "{$moneda} {$remision->parsear($remision->porpagar())}";
+        })
+        ->addColumn('estatus', function (Remision $remision) {
+            return   '<span class="font-weight-bold text-' . $remision->estatus(true) . '">' . $remision->estatus(). '</span>';
+        })
+        ->addColumn('acciones', $modoLectura ?  "" : "remisiones.acciones")
+        ->rawColumns(['nro','cliente','vendedor','fecha','total','estatus', 'acciones'])
+        ->toJson();
+    }
 
   /**
   * Formulario para crear un nueva remision

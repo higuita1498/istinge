@@ -1202,7 +1202,7 @@ class FacturasController extends Controller{
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount', 'tipo'));
-            $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
             return $pdf->download('factura-'.$factura->codigo.($tipo<>'original'?'-copia':'').'.pdf');
         }
     }
