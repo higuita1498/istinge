@@ -124,6 +124,7 @@
 			<a href="{{route('campos.organizar', 15)}}">Mikrotik</a><br>
 			<a href="{{route('campos.organizar', 16)}}">Bancos</a><br>
 			<a href="{{route('campos.organizar', 17)}}">Oficinas</a><br>
+			<a href="{{route('campos.organizar', 21)}}">Produtos</a><br>
 			<hr class="nomina">
 			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>

@@ -270,8 +270,9 @@ class FacturasController extends Controller{
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = false;
         $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -279,12 +280,13 @@ class FacturasController extends Controller{
         $empresaActual = auth()->user()->empresa;
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
         $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
     }
 
     /*
@@ -295,9 +297,10 @@ class FacturasController extends Controller{
         $empresaActual = auth()->user()->empresa;
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
+        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
-        return view('facturas-electronica.index', compact('clientes'));
+        return view('facturas-electronica.index', compact('clientes', 'municipios'));
     }
 
     /*
@@ -356,6 +359,11 @@ class FacturasController extends Controller{
                 $correo = ($request->correo == 'A') ? 0 : $request->correo; 
                 $facturas->where(function ($query) use ($request, $correo) {
                     $query->orWhere('factura.correo', $correo);
+                });
+            }
+            if($request->municipio){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhere('c.fk_idmunicipio', $request->municipio);
                 });
             }
         }
@@ -459,6 +467,11 @@ class FacturasController extends Controller{
                 $correo = ($request->correo == 'A') ? 0 : $request->correo; 
                 $facturas->where(function ($query) use ($request, $correo) {
                     $query->orWhere('factura.correo', $correo);
+                });
+            }
+            if($request->municipio){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhere('c.fk_idmunicipio', $request->municipio);
                 });
             }
         }

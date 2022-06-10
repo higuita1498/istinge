@@ -211,6 +211,16 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.facturacion', $request->facturacion);
                 });
             }
+            if($request->desde){
+                $contratos->where(function ($query) use ($request) {
+                    $query->whereDate('contracts.created_at', '>=', Carbon::parse($request->desde)->format('Y-m-d'));
+                });
+            }
+            if($request->hasta){
+                $contratos->where(function ($query) use ($request) {
+                    $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
+                });
+            }
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
@@ -1995,7 +2005,7 @@ class ContratosController extends Controller
 
         return datatables()->eloquent($contratos)
             ->editColumn('created_at', function (MovimientoLOG $contrato) {
-                return date('d-m-Y h:m:s A', strtotime($contrato->created_at));
+                return date('d-m-Y g:i:s A', strtotime($contrato->created_at));
             })
             ->editColumn('created_by', function (MovimientoLOG $contrato) {
                 return $contrato->created_by();

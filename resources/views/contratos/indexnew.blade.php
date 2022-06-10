@@ -183,11 +183,24 @@
                             </select>
                         </div>
 
-        				<div class="col-md-2 pl-1 pt-1">
-        					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-        					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+                        <div class="col-md-4 pl-1 pt-1">
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <input type="text" class="form-control" id="desde" name="fecha" placeholder="desde">
+                                </div>
+                                <div class="col-md-6 pl-1">
+                                    <input type="text" class="form-control" id="hasta" name="hasta" placeholder="hasta">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+        				<div class="col-md-12 pl-1 pt-1 text-center">
+        					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+        					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
         					@if(isset($_SESSION['permisos']['799']))
-        					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
+        					<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1" title="Exportar"><i class="fas fa-file-excel"></i></a>
         					@endif
         				</div>
         			</div>
@@ -247,6 +260,29 @@
 
 @section('scripts')
 <script>
+    $(document).ready(function() {
+        $('#desde').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            maxDate: function () {
+                return $('#hasta').val();
+            }
+        });
+        $('#hasta').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            minDate: function () {
+                return $('#desde').val();
+            }
+        });
+    });
+
     var tabla = null;
     window.addEventListener('load',
     function() {
@@ -300,6 +336,8 @@
             data.canal = $("#canal").val();
             data.tecnologia = $("#tecnologia_s").val();
             data.facturacion = $("#facturacion_s").val();
+            data.desde = $("#desde").val();
+            data.hasta = $("#hasta").val();
             data.filtro = true;
         });
         
@@ -369,6 +407,8 @@
         $("#canal").val('').selectpicker('refresh');
         $("#tecnologia_s").val('').selectpicker('refresh');
         $("#facturacion_s").val('').selectpicker('refresh');
+        $("#desde").val('');
+        $("#hasta").val('');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');

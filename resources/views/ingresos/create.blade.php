@@ -17,7 +17,7 @@
       {{Session::get('danger')}}
     </div>
   @endif
-	<form method="POST" action="{{ route('ingresos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-ingreso" >
+	<form method="POST" action="{{ route('ingresos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-ingreso" enctype="multipart/form-data">
     @if($factura)
     <input type="hidden" id="factura" value="{{$factura}}">
     @endif
@@ -409,8 +409,14 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-2 offset-md-10">
+      <div class="row form-inline">
+        <div class="col-md-6 offset-md-3 form-inline">
+          <div class="form-check inline-block">
+            <label class="mr-3 form-check-label">Soporte de Pago</label>
+            <input type="file" class="form-control"  id="adjunto_pago" name="adjunto_pago" value="{{old('adjunto_pago')}}" accept=".jpg, .jpeg, .png, .pdf">
+          </div>
+        </div>
+        <div class="col-md-2">
           <div class="form-check form-check-flat">
             <label class="form-check-label">
               <input type="checkbox" class="form-check-input" name="tirilla" value="1">Imprimir Tirilla

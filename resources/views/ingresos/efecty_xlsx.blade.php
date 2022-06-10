@@ -23,7 +23,7 @@
         </div>
     @endif
 	
-	<form method="POST" action="{{ route('ingresos.efecty_store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
+	<form method="POST" action="{{ route('ingresos.efecty_store_xlsx') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
 	    @csrf
 
         <div class="row card-description p-0">
@@ -39,7 +39,7 @@
                         <div class="row">
                             <div class="col-md-6 offset-md-3 form-group">
                                 <label class="control-label">Archivo Efecty</label>
-                                <input type="file" class="form-control"  id="archivo_efecty" name="archivo_efecty" value="{{old('archivo_efecty')}}" accept=".txt, .TXT">
+                                <input type="file" class="form-control"  id="archivo_efecty" name="archivo_efecty" value="{{old('archivo_efecty')}}" accept=".xlsx, .XLSX">
                                 <span style="color: red;">
                                     <strong>{{ $errors->first('archivo_efecty') }}</strong>
                                 </span>
@@ -83,8 +83,8 @@
             }else{
                 var ext = fileName.split('.').pop();
                 switch (ext) {
-                    case 'txt':
-                    case 'TXT':
+                    case 'xlsx':
+                    case 'XLSX':
                         break;
                     default:
                         this.value = '';

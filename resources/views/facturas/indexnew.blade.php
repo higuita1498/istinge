@@ -95,6 +95,13 @@
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
+							<select title="Municipio" class="form-control rounded selectpicker" id="municipio" data-size="5" data-live-search="true">
+								@foreach ($municipios as $municipio)
+									<option value="{{ $municipio->id}}">{{ $municipio->nombre}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
@@ -107,7 +114,7 @@
 								<option value="2">Anuladas</option>
 							</select>
 						</div>
-						<div class="col-md-2 pl-1 pt-1">
+						<div class="col-md-2 pl-1 pt-1 d-none">
 							<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
 								<option value="1">Si</option>
 								<option value="A">No</option>
@@ -199,6 +206,7 @@
 			data.codigo = $('#codigo').val();
 			data.corte = $('#corte').val();
 			data.cliente = $('#cliente').val();
+			data.municipio = $('#municipio').val();
 			data.vendedor = $('#vendedor').val();
 			data.creacion = $('#creacion').val();
 			data.vencimiento = $('#vencimiento').val();
@@ -251,6 +259,7 @@
 		$('#codigo').val('');
 		$('#corte').val('').selectpicker('refresh');
 		$('#cliente').val('').selectpicker('refresh');
+		$('#municipio').val('').selectpicker('refresh');
 		$('#vendedor').val('').selectpicker('refresh');
 		$('#creacion').val('');
 		$('#vencimiento').val('');

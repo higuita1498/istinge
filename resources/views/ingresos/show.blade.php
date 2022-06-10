@@ -8,9 +8,9 @@
 	    </div>
 	@else
 	    @if($ingreso->tipo==1)
-	        @if($ingreso->ingresofactura()->factura()->estatus == 0)
+	        {{-- @if($ingreso->ingresofactura()->factura()->estatus == 0) --}}
 	            <a href="{{route('facturas.tirilla', ['id' => $ingreso->ingresofactura()->factura()->id, 'name' => "Factura No. ".$ingreso->ingresofactura()->factura()->id.".pdf"])}}" class="btn btn-outline-warning @if(Auth::user()->rol==47) btn-xl @else btn-xs @endif" title="Tirilla" target="_blank" id="btn_tirilla"><i class="fas fa-print"></i>Imprimir tirilla</a>
-	        @endif
+	        {{-- @endif --}}
 	    @endif
 
 	    @if($ingreso->tipo!=3)
@@ -110,6 +110,12 @@
 							<th>Total</th>
 							<td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($ingreso->pago())}}</td>
 						</tr>
+						@if($ingreso->adjunto_pago)
+						<tr>
+							<th>Soporte de Pago</th>
+							<td><a href="{{asset('../adjuntos/documentos/'.$ingreso->adjunto_pago)}}" target="_blank">Ver Archivo</a></td>
+						</tr>
+						@endif
 						@if($ingreso->created_by)
 						<tr>
 							<th><strong>Realizado por</strong></th>

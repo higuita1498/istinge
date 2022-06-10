@@ -40,6 +40,15 @@ use RouterosAPI;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
+use PHPExcel_Style_Border;
+use PHPExcel_Style_NumberFormat;
+use PHPExcel_Shared_ZipArchive;
+
 class IngresosController extends Controller
 {
     public function __construct() {
@@ -262,7 +271,6 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        
         if($request->realizar == 2){
             $this->storeIngresoPucCategoria($request);
 
@@ -461,57 +469,57 @@ class IngresosController extends Controller
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
             
             if ($ingreso->tipo == 1) {
-                $cliente = Contacto::where('id', $request->cliente)->first();
-                $contrato = Contrato::where('client_id', $cliente->id)->first();
-                $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
-                
-                /* * * API MK * * */
-                
-                if($contrato){
-                    if($contrato->server_configuration_id){
-                        $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-        
-                        $API = new RouterosAPI();
-                        $API->port = $mikrotik->puerto_api;
-        
-                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                            $API->write('/ip/firewall/address-list/print', TRUE);
-                            $ARRAYS = $API->read();
-        
-                            #ELIMINAMOS DE MOROSOS#
-                            $API->write('/ip/firewall/address-list/print', false);
-                            $API->write('?address='.$contrato->ip, false);
-                            $API->write("?list=morosos",false);
-                            $API->write('=.proplist=.id');
-                            $ARRAYS = $API->read();
-        
-                            if(count($ARRAYS)>0){
-                                $API->write('/ip/firewall/address-list/remove', false);
-                                $API->write('=.id='.$ARRAYS[0]['.id']);
-                                $READ = $API->read();
+                if($this->precision($precio) == $this->precision($factura->porpagar())){
+                    $cliente = Contacto::where('id', $request->cliente)->first();
+                    $contrato = Contrato::where('client_id', $cliente->id)->first();
+                    $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
+
+                    /* * * API MK * * */
+
+                    if($contrato){
+                        if($contrato->server_configuration_id){
+                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                            $API = new RouterosAPI();
+                            $API->port = $mikrotik->puerto_api;
+
+                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                $API->write('/ip/firewall/address-list/print', TRUE);
+                                $ARRAYS = $API->read();
+
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+
+                                $API->disconnect();
+
+                                $contrato->state = 'enabled';
+                                $contrato->save();
                             }
-                            #ELIMINAMOS DE MOROSOS#
-        
-                            #AGREGAMOS A IP_AUTORIZADAS#
-                            $API->comm("/ip/firewall/address-list/add", array(
-                                "address" => $contrato->ip,
-                                "list" => 'ips_autorizadas'
-                                )
-                            );
-                            #AGREGAMOS A IP_AUTORIZADAS#
-        
-                            $API->disconnect();
-        
-                            $contrato->state = 'enabled';
-                            $contrato->save();
                         }
                     }
-                }
-                
-                /* * * API MK * * */
-                
-                /* * * ENVÍO SMS * * */
-                if($precio){
+
+                    /* * * API MK * * */
+
+                    /* * * ENVÍO SMS * * */
                     $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
                     if($servicio){
                         $numero = str_replace('+','',$cliente->celular);
@@ -587,8 +595,8 @@ class IngresosController extends Controller
                             }
                         }
                     }
+                    /* * * ENVÍO SMS * * */
                 }
-                /* * * ENVÍO SMS * * */
             }
             
             if(auth()->user()->rol == 8){
@@ -655,8 +663,72 @@ class IngresosController extends Controller
             if ($request->tirilla) {
                 $tirilla = true;
             }
+
+            ### ADJUNTO DE PAGO ###
+
+            $xmax = 1080; $ymax = 720;
+            if($request->file('adjunto_pago')){
+                $ext_permitidas = array('image/jpeg','image/png','image/gif');
+                $file = $request->file('adjunto_pago');
+                $nombre =  'adjunto_pago_'.$ingreso->nro.'.'.$file->getClientOriginalExtension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ingreso->adjunto_pago = $nombre;
+
+                if(in_array($file->getMimeType(), $ext_permitidas)){
+                    switch($file->getMimeType()){
+                        case 'image/jpeg':
+                        $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                        case 'image/png':
+                        $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                        case 'image/gif':
+                        $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        break;
+                    }
+                    $x = imagesx($imagen);
+                    $y = imagesy($imagen);
+
+                    if($x <= $xmax && $y <= $ymax){
+                        switch($file->getMimeType()){
+                            case 'image/jpeg':
+                            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                            case 'image/png':
+                            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                            case 'image/gif':
+                            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            break;
+                        }
+                    }else{
+                        if($x >= $y) {
+                            $nuevax = $xmax;
+                            $nuevay = $nuevax * $y / $x;
+                        }else{
+                            $nuevay = $ymax;
+                            $nuevax = $x / $y * $nuevay;
+                        }
+                        $img2 = imagecreatetruecolor($nuevax, $nuevay);
+                        imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+                        switch($file->getMimeType()){
+                            case 'image/jpeg':
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                            case 'image/png':
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                            case 'image/gif':
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            break;
+                        }
+                    }
+                }
+
+                $ingreso->save();
+            }
             
-            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+            $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
         }
     }
@@ -1120,6 +1192,13 @@ class IngresosController extends Controller
         return view('ingresos.efecty');
     }
 
+    public function efecty_xlsx(){
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Carga de Archivos Efecty XLSX', 'icon' => 'fas fa-cloud-upload-alt']);
+
+        return view('ingresos.efecty_xlsx');
+    }
+
     public function efecty_store(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
@@ -1357,5 +1436,137 @@ class IngresosController extends Controller
      
 
         return response()->json($ingresos);
+    }
+
+    public function efecty_store_xlsx(Request $request){
+        $request->validate([
+            'archivo_efecty' => 'required|mimes:xlsx',
+        ],[
+            'archivo_efecty.mimes' => 'El archivo debe ser de extensión xlsx'
+        ]);
+
+        $create=0;
+        $modf=0;
+        $mensaje = '';
+        $imagen = $request->file('archivo_efecty');
+        $nombre_imagen = 'archivo_efecty.'.$imagen->getClientOriginalExtension();
+        $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa;
+        $imagen->move($path,$nombre_imagen);
+        Ini_set ('max_execution_time', 500);
+        $fileWithPath=$path."/".$nombre_imagen;
+        //Identificando el tipo de archivo
+        $inputFileType = PHPExcel_IOFactory::identify($fileWithPath);
+        //Creando el lector.
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        //Cargando al lector de excel el archivo, le pasamos la ubicacion
+        $objPHPExcel = $objReader->load($fileWithPath);
+        //obtengo la hoja 0
+        $sheet = $objPHPExcel->getSheet(0);
+        //obtiene el tamaño de filas
+        $highestRow = $sheet->getHighestRow();
+        //obtiene el tamaño de columnas
+        $highestColumn = $sheet->getHighestColumn();
+
+        for ($row = 2; $row <= $highestRow; $row++){
+            $request= (object) array();
+            //obtengo el A4 desde donde empieza la data
+            $nit=$sheet->getCell("B".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+
+            $request->monto=$sheet->getCell("C".$row)->getValue();
+            $request->fecha=$sheet->getCell("D".$row)->getValue();
+            $error=(object) array();
+
+            if (!$request->monto) {
+                $error->monto="EL CAMPO MONTO ES OBLIGATORIO";
+            }
+            if (!$request->fecha) {
+                $error->monto="EL CAMPO FECHA ES OBLIGATORIO";
+            }
+
+            if (count((array) $error)>0) {
+                $fila["error"]='FILA '.$row;
+                $error=(array) $error;
+                var_dump($error);
+                var_dump($fila);
+
+                array_unshift ( $error ,$fila);
+                $result=(object) $error;
+                //reenvia los errores
+                return back()->withErrors($result)->withInput();
+            }
+        }
+
+        for ($row = 2; $row <= $highestRow; $row++){
+            $request        = (object) array();
+            $request->nit   = $sheet->getCell("B".$row)->getValue();
+            $request->monto = $sheet->getCell("C".$row)->getValue() / 10000;
+            $request->fecha = date('Y-m-d');
+
+            $cliente = Contacto::where('nit', $request->nit)->where('status', 1)->first();
+            if($cliente){
+                $factura = Factura::where('cliente',$cliente->id)->where('empresa',Auth::user()->empresa)->where('estatus', 1)->get()->last();
+
+                if($factura){
+                    $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+                    $caja = $nro->caja;
+
+                    while (true) {
+                        $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                        if ($numero == 0) {
+                            break;
+                        }
+                        $caja++;
+                    }
+
+                    $banco = Banco::where('empresa',Auth::user()->empresa)->where('nombre', 'EFECTY')->first();
+
+                    $ingreso              = new Ingreso;
+                    $ingreso->nro         = $caja;
+                    $ingreso->empresa     = Auth::user()->empresa;
+                    $ingreso->cliente     = $factura->cliente;
+                    $ingreso->cuenta      = $banco->id;
+                    $ingreso->metodo_pago = 1;
+                    $ingreso->notas       = 'Pago Realizado por Carga de Archivo';
+                    $ingreso->tipo        = 1;
+                    $ingreso->fecha       = $request->fecha;
+                    $ingreso->created_by  = Auth::user()->id;
+                    $ingreso->save();
+
+                    $precio               = $this->precision($request->monto);
+                    $items                = new IngresosFactura;
+                    $items->ingreso       = $ingreso->id;
+                    $items->factura       = $factura->id;
+                    $items->pagado        = $factura->pagado();
+                    $items->pago          = $this->precision($request->monto);
+
+                    if ($this->precision($request->monto) == $this->precision($factura->porpagar())) {
+                        $factura->estatus = 0;
+                        $factura->save();
+                    }
+                    $items->save();
+
+                    ##SUMO A LAS NUMERACIONES EL RECIBO
+                    $nro->caja = $caja + 1;
+                    $nro->save();
+
+                    ##REGISTRO EL MOVIMIENTO
+                    $ingreso = Ingreso::find($ingreso->id);
+                    $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+                    $create++;
+                }
+            }
+        }
+
+        if ($create>0) {
+            $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS AL SISTEMA - FACTURAS PAGADAS '.$create;
+            $style   = 'success';
+        }else{
+            $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS AL SISTEMA PERO NO HAY FACTURAS POR PAGAR';
+            $style   = 'danger';
+        }
+        return back()->with($style, $mensaje);
     }
 }
