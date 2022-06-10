@@ -701,6 +701,11 @@ function contacto(selected, modificar=false, type = 1){
         }
     }
 
+    var modulo = 0;
+    if(window.location.pathname.split("/")[3] == "notascredito"){
+        modulo = 1;
+    }
+
     if (window.location.pathname.split("/")[1] === "software") {
         var url='/software/empresa/contactos/'+selected+'/json';
     }else{
@@ -746,7 +751,7 @@ function contacto(selected, modificar=false, type = 1){
                     return;
                 }
             //referencia a que el cliente tiene un contrato por facturacion electrónica y no por estandar
-            }else if(type == 1 && data.facturacion == 3){
+            }else if(type == 1 && data.facturacion == 3 && modulo == 0){
                 Swal.fire({
                     position: 'top-center',
                     type: 'error',

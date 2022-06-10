@@ -121,9 +121,8 @@
 						<th>nro</th>
 						<th>tipo</th>
 						<th>codigo</th>
-						<th>codigo</th>
 						<th>cliente</th>
-						<th>dtalle</th>
+						<th>Detalle</th>
 						<th>debito</th>
 						<th>credito</th>
 						<th>Acciones</th>

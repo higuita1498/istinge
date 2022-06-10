@@ -782,8 +782,9 @@ class NotascreditoController extends Controller
                 }
 
                 /*INICIO DE CALCULOS PARA SACAR EL SALDO A FAVOR AL CONTACTO*/
-                if ($request->descuento[$i]) {
-                    $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->descuento[$i] / 100;
+
+                if ($request->desc[$i]) {
+                    $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->desc[$i] / 100;
                     $precioItem = ($request->precio[$i] * $request->cant[$i]) - $descuento;
 
                     $impuestoItem = 0;
