@@ -56,15 +56,19 @@
         </script>
     @endif
 
-    @if(isset($_SESSION['permisos']['814']))
-        <div class="container-fluid">
-        	<div class="row card-description" style="padding: 1% 1%; margin-bottom: 0;">
-        		<div class="col-md-12 text-right">
-        			<a href="{{route('contactos.importar')}}" class="btn btn-success btn-sm"><i class="fas fa-file-upload"></i> Importar Contactos</a>
-        		</div>
-        	</div>
-        </div>
-    @endif
+    <div class="container-fluid">
+    	<div class="row card-description" style="padding: 1% 1%; margin-bottom: 0;">
+    		<div class="col-md-12 text-right">
+    			@if(isset($_SESSION['permisos']['814']))
+    			<a href="{{route('contactos.importar')}}" class="btn btn-success btn-sm"><i class="fas fa-file-upload"></i> Importar Contactos</a>
+    			@endif
+    			@if(isset($_SESSION['permisos']['829']))
+    			<a href="{{ route('contactos.exportar', 0) }}" class="btn mr-1 btn-success btn-sm" title="Exportar"><i class="fas fa-file-excel"></i> Exportar Contactos</a>
+    			@endif
+    		</div>
+    	</div>
+    </div>
+
 
 	@if($tipo_usuario == 1 && isset($_SESSION['permisos']['3']) || $tipo_usuario == 0 && isset($_SESSION['permisos']['2']))
 	<div class="container-fluid d-none" id="form-filter">
