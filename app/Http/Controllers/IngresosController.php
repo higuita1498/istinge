@@ -467,9 +467,9 @@ class IngresosController extends Controller
             $ingreso = Ingreso::find($ingreso->id);
             //ingresos
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
-            
+
             if ($ingreso->tipo == 1) {
-                if($this->precision($precio) == $this->precision($factura->porpagar())){
+                if($factura->estatus == 0){
                     $cliente = Contacto::where('id', $request->cliente)->first();
                     $contrato = Contrato::where('client_id', $cliente->id)->first();
                     $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
