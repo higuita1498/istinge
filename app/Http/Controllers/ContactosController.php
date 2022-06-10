@@ -686,9 +686,7 @@ class ContactosController extends Controller
     public function exportar($tipo=2){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contactos de ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Nombres', 'Tipo de identificacion', 'Identificacion','DV','Pais','Departamento','Municipio',
-            'Codigo postal','Telefono', 'Telefono 2', 'Fax', 'Celular', 'Direccion','Ciudad', 'Correo Electronico', 'Observaciones',
-            'Tipo de Empresa', 'Tipo de Contacto', 'Vendedor', 'Tipo persona', 'Responsabilidad','Lista Precios');
+        $titulosColumnas = array('Nombres', 'Apellido1', 'Apellido2', 'Tipo de identificacion', 'Identificacion', 'DV', 'Pais', 'Departamento', 'Municipio', 'Codigo postal', 'Telefono', 'Celular', 'Direccion', 'Verada/Corregimiento', 'Barrio', 'Ciudad', 'Correo Electronico', 'Estrato', 'Observaciones', 'Tipo de Contacto');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -713,12 +711,26 @@ class ContactosController extends Controller
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:V3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
 
-        $estilo =array('fill' => array(
-            'type' => PHPExcel_Style_Fill::FILL_SOLID,
-            'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:V3')->applyFromArray($estilo);
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -732,32 +744,32 @@ class ContactosController extends Controller
         if ($tipo<>2) {
             $contactos=$contactos->whereIn('tipo_contacto',[$tipo,2]);
         }
+
         $empresa        = Empresa::find(Auth::user()->empresa);
+
         foreach ($contactos as $contacto) {
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contacto->nombre)
-                ->setCellValue($letras[1].$i, $contacto->tip_iden())
-                ->setCellValue($letras[2].$i, $contacto->nit)
-                ->setCellValue($letras[3].$i, $contacto->dv)
-                ->setCellValue($letras[4].$i, $contacto->pais()->nombre)
-                ->setCellValue($letras[5].$i, $contacto->departamento()->nombre)
-                ->setCellValue($letras[6].$i, $contacto->municipio()->nombre)
-                ->setCellValue($letras[7].$i, $contacto->cod_postal)
-                ->setCellValue($letras[8].$i, $contacto->telefono1)
-                ->setCellValue($letras[9].$i, $contacto->telefono2)
-                ->setCellValue($letras[10].$i, $contacto->fax)
+                ->setCellValue($letras[1].$i, $contacto->apellido1)
+                ->setCellValue($letras[2].$i, $contacto->apellido2)
+                ->setCellValue($letras[3].$i, $contacto->tip_iden())
+                ->setCellValue($letras[4].$i, $contacto->nit)
+                ->setCellValue($letras[5].$i, $contacto->dv)
+                ->setCellValue($letras[6].$i, $contacto->pais()->nombre)
+                ->setCellValue($letras[7].$i, $contacto->departamento()->nombre)
+                ->setCellValue($letras[8].$i, $contacto->municipio()->nombre)
+                ->setCellValue($letras[9].$i, $contacto->cod_postal)
+                ->setCellValue($letras[10].$i, $contacto->telefono1)
                 ->setCellValue($letras[11].$i, $contacto->celular)
                 ->setCellValue($letras[12].$i, $contacto->direccion)
-                ->setCellValue($letras[13].$i, $contacto->ciudad)
-                ->setCellValue($letras[14].$i, $contacto->email)
-                ->setCellValue($letras[15].$i, $contacto->observaciones)
-                ->setCellValue($letras[16].$i, $contacto->tipo_empresa())
-                ->setCellValue($letras[17].$i, $contacto->tipo_contacto())
-                ->setCellValue($letras[18].$i, $contacto->vendedor())
-                ->setCellValue($letras[19].$i, $contacto->tipo_persona())
-                ->setCellValue($letras[20].$i, $contacto->responsableIva())
-                ->setCellValue($letras[21].$i, $contacto->lista_precios());
+                ->setCellValue($letras[13].$i, $contacto->vereda)
+                ->setCellValue($letras[14].$i, $contacto->barrio)
+                ->setCellValue($letras[15].$i, $contacto->ciudad)
+                ->setCellValue($letras[16].$i, $contacto->email)
+                ->setCellValue($letras[17].$i, $contacto->estrato)
+                ->setCellValue($letras[18].$i, $contacto->observaciones)
+                ->setCellValue($letras[19].$i, $contacto->tipo_contacto());
             $i++;
         }
 
@@ -767,7 +779,7 @@ class ContactosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:V'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
