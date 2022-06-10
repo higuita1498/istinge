@@ -1015,12 +1015,12 @@ class NominaDianController extends Controller
         $this->getAllPermissions($usuario->id);
         $empresa = auth()->user()->empresaObj;
 
-        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-            ->select('tips_modulo_usuario.*')
-            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-            ->where('permisos_modulo.nombre_modulo', 'Nomina')
-            ->where('fk_idusuario', $usuario->id)
-            ->get();
+        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+        //     ->select('tips_modulo_usuario.*')
+        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
+        //     ->where('fk_idusuario', $usuario->id)
+        //     ->get();
 
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
