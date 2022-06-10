@@ -168,8 +168,8 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas." class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="us2-lat" name="latitude" readonly value="{{ $contrato->latitude }}">
-                                    <input type="text" class="form-control" id="us2-lon" name="longitude" readonly value="{{ $contrato->longitude }}">
+                                    <input type="text" class="form-control" id="us2-lat" name="latitude" value="{{ $contrato->latitude }}">
+                                    <input type="text" class="form-control" id="us2-lon" name="longitude" value="{{ $contrato->longitude }}">
                                     <div class="input-group-prepend">
                                         <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
                                             <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
