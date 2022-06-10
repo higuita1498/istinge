@@ -1178,7 +1178,6 @@ class NominaDianController extends Controller
         return view(
             'nomina.emision',
             [
-                'guiasVistas' => $guiasVistas,
                 'nominas' => $nominas,
                 'moneda' => $usuario->empresaObj->moneda,
                 'costoPeriodo' => $costoPeriodo,
