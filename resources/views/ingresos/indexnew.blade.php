@@ -90,7 +90,8 @@
 		<div class="col-md-12">
     		<div class="container-filtercolumn">
     			@if(Auth::user()->empresa()->efecty == 1)
-    			<a href="{{route('ingresos.efecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-upload"></i> Cargar Archivo Efecty</a>
+    			<a href="{{route('ingresos.efecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-upload"></i> Cargar Archivo Efecty TXT</a>
+    			<a href="{{route('ingresos.efecty_xlsx')}}" class="btn btn-success btn-sm d-none"><i class="fas fa-upload"></i> Cargar Archivo Efecty XLXS</a>
     			@endif
 			</div>
 		</div>

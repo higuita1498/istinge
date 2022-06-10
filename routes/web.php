@@ -685,6 +685,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('{id}/anular', 'IngresosController@anular')->name('ingresos.anular');
         Route::get('efecty', 'IngresosController@efecty')->name('ingresos.efecty');
         Route::post('efecty', 'IngresosController@efecty_store')->name('ingresos.efecty_store');
+        Route::get('efecty-xlsx', 'IngresosController@efecty_xlsx')->name('ingresos.efecty_xlsx');
+        Route::post('efecty_store_xlsx', 'IngresosController@efecty_store_xlsx')->name('ingresos.efecty_store_xlsx');
+
 		Route::get('/movimiento/{id}', 'IngresosController@showMovimiento')->name('ingresos.showmovimiento');
 	});
 
