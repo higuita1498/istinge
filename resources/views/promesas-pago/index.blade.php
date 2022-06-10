@@ -56,23 +56,6 @@
 								@endforeach
 							</select>
 						</div>
-						<div class="col-md-3 pl-1 pt-1 d-none">
-							<select title="Solicitud" class="form-control rounded selectpicker" id="solicitud" data-size="5" data-live-search="true">
-								<option value="Peticiones">Peticiones</option>
-								<option value="Quejas">Quejas</option>
-								<option value="Reclamos">Reclamos</option>
-								<option value="Sugerencias">Sugerencias</option>
-							</select>
-						</div>
-						<div class="col-md-3 pl-1 pt-1 d-none">
-							<input type="text" placeholder="Fecha" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
-						</div>
-						<div class="col-md-2 pl-1 pt-1 d-none">
-							<select title="Estado" class="form-control rounded selectpicker" id="estatus">
-								<option value="1">Por Atender</option>
-								<option value="0">Atendido</option>
-							</select>
-						</div>
 
 						<div class="col-md-1 pl-1 pt-1">
 							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
@@ -147,6 +130,11 @@
 				return false;
 			}
 		});
+
+		$('#cliente, #created_by').on('change',function() {
+            getDataTable();
+            return false;
+        });
 
 		$('.vencimiento').datepicker({
 			locale: 'es-es',

@@ -164,6 +164,18 @@
 					}
 				});
 
+				$('#numero').on('keyup',function(e) {
+		            if(e.which > 32 || e.which == 8) {
+		                getDataTable();
+		                return false;
+		            }
+		        });
+
+		        $('#cliente, #banco, #metodo, #fecha-pago').on('change',function() {
+		            getDataTable();
+		            return false;
+		        });
+
 				$('#fecha-pago').datepicker({
 					locale: 'es-es',
 					uiLibrary: 'bootstrap4',
