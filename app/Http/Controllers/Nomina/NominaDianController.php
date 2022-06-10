@@ -2176,7 +2176,7 @@ class NominaDianController extends Controller
                 $response = Http::withHeaders([
                     "nominaAuthorizationToken" => $nominaToken,
                     "nitAlianza" => "1128464945",
-                    "Set-Test-Id " => $testId,
+                    "Set-Test-Id" => $testId,
                 ])->post($url, $json)->json();
             } else {
                 $response = Http::withHeaders([
