@@ -413,7 +413,7 @@
         <div class="col-md-6 offset-md-3 form-inline">
           <div class="form-check inline-block">
             <label class="mr-3 form-check-label">Soporte de Pago</label>
-            <input type="file" class="form-control"  id="adjunto_pago" name="adjunto_pago"  required="" value="{{old('adjunto_pago')}}" accept=".jpg, .jpeg, .png, .pdf">
+            <input type="file" class="form-control"  id="adjunto_pago" name="adjunto_pago" value="{{old('adjunto_pago')}}" accept=".jpg, .jpeg, .png, .pdf">
           </div>
         </div>
         <div class="col-md-2">
