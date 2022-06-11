@@ -54,7 +54,7 @@
 						<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
 					</div>
 					<div class="col-md-3 pl-1 pt-1">
-					    <select id="nodo" class="form-control rounded selectpicker" title="Modo de Red" data-live-search="true" data-size="5">
+					    <select id="modo_red" class="form-control rounded selectpicker" title="Modo de Red" data-live-search="true" data-size="5">
 	                        <option value="1">Bridge</option>
 							<option value="2">Enrutador</option>
 	                    </select>
@@ -151,6 +151,18 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#nombre, #nodo').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#status, #modo_red').on('change',function() {
+        	getDataTable();
+        	return false;
         });
     });
 

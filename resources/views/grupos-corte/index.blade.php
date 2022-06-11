@@ -62,7 +62,7 @@
 					<div class="col-md-3 pl-1 pt-1">
 					    <select title="Estado" class="form-control rounded selectpicker" id="status">
 					        <option value="1">Habilitado</option>
-							<option value="0">Deshabilitado</option>
+							<option value="A">Deshabilitado</option>
 						</select>
 					</div>
 					<div class="col-md-1 pl-1 pt-1 text-left">
@@ -150,6 +150,18 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#nombre, #fecha_corte, #fecha_suspension').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#status').on('change',function() {
+        	getDataTable();
+        	return false;
         });
     });
 

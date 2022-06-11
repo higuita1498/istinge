@@ -38,17 +38,17 @@ class BlacklistController extends Controller
 
         if ($request->filtro == true) {
             if($request->nombre){
-                $contratos->where(function ($query) use ($request) {
+                $blacklists->where(function ($query) use ($request) {
                     $query->orWhere('nombre', $request->nombre);
                 });
             }
             if($request->ip){
-                $contratos->where(function ($query) use ($request) {
+                $blacklists->where(function ($query) use ($request) {
                     $query->orWhere('ip', $request->ip);
                 });
             }
             if($request->estado){
-                $contratos->where(function ($query) use ($request) {
+                $blacklists->where(function ($query) use ($request) {
                     $query->orWhere('estado', $request->estado);
                 });
             }

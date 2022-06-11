@@ -139,6 +139,18 @@
                 return false;
             }
         });
+
+        $('#nro, #nombre').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#status').on('change',function() {
+        	getDataTable();
+        	return false;
+        });
     });
 
 	function getDataTable() {

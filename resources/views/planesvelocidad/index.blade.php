@@ -186,6 +186,18 @@
                 return false;
             }
         });
+
+        $('#name, #price, #download, #upload').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#type, #mikrotik_s, #status, #tipo_plan').on('change',function() {
+        	getDataTable();
+        	return false;
+        });
     });
 
 	function getDataTable() {
