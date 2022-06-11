@@ -135,13 +135,6 @@
         						@endforeach
         					</select>
         				</div>
-        				{{-- <div class="col-md-3 pl-1 pt-1">
-        					<select title="Interfaz" class="form-control selectpicker" id="interfaz_s">
-        						@foreach ($interfaces as $interfaz)
-        						<option value="{{ $interfaz->id }}">{{ $interfaz->nombre }}</option>
-        						@endforeach
-        					</select>
-        				</div> --}}
         				<div class="col-md-3 pl-1 pt-1">
         					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
         						@foreach ($nodos as $nodo)
@@ -351,6 +344,18 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#celular, #email, #direccion, #barrio, #ip, #mac').on('keyup',function(e) {
+            if(e.which > 32 || e.which == 8) {
+                getDataTable();
+                return false;
+            }
+        });
+
+        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta').on('change',function() {
+            getDataTable();
+            return false;
         });
 
         $(".boton_ocultar_mostrar").on('click', function(){

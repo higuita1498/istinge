@@ -77,11 +77,6 @@
 			<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
 				<div class="card-body py-0">
 					<div class="row">
-						@if($tipo_usuario == 0)
-						<div class="col-md-3 pl-1 pt-1">
-							<input type="text" placeholder="Serial ONU" id="serial_onu" class="form-control rounded">
-						</div>
-						@endif
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="text" placeholder="Nombres" id="nombre" class="form-control rounded">
 						</div>
@@ -124,9 +119,11 @@
 							</select>
 						</div>
 						@endif
-						<div class="col-md-1 pl-1 pt-1 text-left">
-							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					</div>
+					<div class="row mt-3">
+						<div class="col-md-12 pl-1 pt-1 text-center">
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
 						</div>
 					</div>
 				</div>
@@ -197,7 +194,6 @@
         tabla = $('#tabla-contactos');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
-            //data.serial_onu = $('#serial_onu').val();
             data.nombre = $('#nombre').val();
             data.apellido = $('#apellido').val();
             data.identificacion = $('#identificacion').val();
@@ -222,6 +218,18 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#nombre, #apellido, #identificacion, #telefono, #email, #direccion, #vereda, #barrio').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#t_contrato, #estrato').on('change',function() {
+        	getDataTable();
+        	return false;
         });
     });
 

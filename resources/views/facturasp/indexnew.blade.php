@@ -179,6 +179,18 @@
 			}
 		});
 
+		$('#nro, #codigo').on('keyup',function(e) {
+            if(e.which > 32 || e.which == 8) {
+                getDataTable();
+                return false;
+            }
+        });
+
+        $('#proveedor, #creacion, #vencimiento, #estado').on('change',function() {
+            getDataTable();
+            return false;
+        });
+
 		$('.vencimiento').datepicker({
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',

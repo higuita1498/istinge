@@ -126,6 +126,18 @@
 	                return false;
 	            }
 	        });
+
+	        $('#cot_nro, #nombre').on('keyup',function(e) {
+	            if(e.which > 32 || e.which == 8) {
+	                getDataTable();
+	                return false;
+	            }
+	        });
+
+	        $('#estatus, #fecha').on('change',function() {
+	            getDataTable();
+	            return false;
+	        });
 	    });
 
 		function getDataTable() {
