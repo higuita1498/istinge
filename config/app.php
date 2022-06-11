@@ -29,6 +29,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'ambiente_nomina' => env('AMBIENTE_NOMINA'),
 
     /*
     |--------------------------------------------------------------------------

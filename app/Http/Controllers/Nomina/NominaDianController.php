@@ -666,10 +666,27 @@ class NominaDianController extends Controller
         $DocEmp = "" . $jsonEdit['Trabajador']['NumeroDocumento'] . "";
         $TipoXML = 102; //tipo 102 es nomina individual y 103 es nomina individual de ajuste
         $SoftwarePin = 75315;
-        $TipAmb = config('app.ambiente_nomina');
+        $TipAmb = 1;
 
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
+
+        //metodo para retornar el json sin necesidad de ingresar a ningun metodo
+        // /empresa/nominadian/validatedian?id=$id
+        // if(Auth::user()->empresa == 1){
+        //     $jsonIndividual = array(
+        //         "Tipo" => "1",
+        //         "Novedad" => [
+        //             "Novedad" => "false",
+        //             "CUNENov" => $cuneHasheado,
+        //         ],
+        //     );
+
+        //     /*>>> Construcción del QR <<<*/
+        //     $jsonEdit['CodigoQR'] = "https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey={$cuneHasheado}";
+        //     $json = array_merge($jsonIndividual, $jsonEdit);
+        //     dd($json);
+        // }
 
         if ($nomina->emitida == Nomina::NO_EMITIDA) {
 
