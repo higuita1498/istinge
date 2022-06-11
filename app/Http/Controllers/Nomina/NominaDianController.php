@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
-
 use Auth;
 use App\Funcion;
 use App\Empresa;
