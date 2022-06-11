@@ -25,6 +25,8 @@ class User extends Authenticatable
         'nombres', 'nro',  'cedula', 'image', 'email', 'telefono', 'empresa', 'username', 'password', 'user_status','rol','saldo','created_at', 'updated_at'
     ];
 
+    protected $appends = ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'];
+
     /**
      * The attributes that should be hidden for arrays.
      *
