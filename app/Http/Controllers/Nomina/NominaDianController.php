@@ -666,7 +666,7 @@ class NominaDianController extends Controller
         $DocEmp = "" . $jsonEdit['Trabajador']['NumeroDocumento'] . "";
         $TipoXML = 102; //tipo 102 es nomina individual y 103 es nomina individual de ajuste
         $SoftwarePin = 75315;
-        $TipAmb = config('app.ambiente_nomina');
+        $TipAmb = 1;
 
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
