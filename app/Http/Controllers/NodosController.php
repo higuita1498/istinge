@@ -37,24 +37,20 @@ class NodosController extends Controller
             ->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
-            switch ($request) {
-                case !empty($request->nro):
-                    $nodos->where(function ($query) use ($request) {
-                        $query->orWhere('nro', 'like', "%{$request->nro}%");
-                    });
-                    break;
-                case !empty($request->nombre):
-                    $nodos->where(function ($query) use ($request) {
-                        $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    });
-                    break;
-                case !empty($request->status):
-                    $nodos->where(function ($query) use ($request) {
-                        $query->orWhere('status', 'like', "%{$request->status}%");
-                    });
-                    break;
-                default:
-                    break;
+            if($request->nro){
+                $nodos->where(function ($query) use ($request) {
+                    $query->orWhere('nro', 'like', "%{$request->nro}%");
+                });
+            }
+            if($request->nombre){
+                $nodos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->status >=0){
+                $nodos->where(function ($query) use ($request) {
+                    $query->orWhere('status', 'like', "%{$request->status}%");
+                });
             }
         }
 

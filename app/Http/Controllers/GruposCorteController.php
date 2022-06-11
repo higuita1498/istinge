@@ -35,41 +35,36 @@ class GruposCorteController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $grupos = GrupoCorte::query()
             ->where('empresa', Auth::user()->empresa);
-
         if ($request->filtro == true) {
-            switch ($request) {
-                case !empty($request->nombre):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    });
-                    break;
-                case !empty($request->fecha_factura):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('fecha_factura', 'like', "%{$request->fecha_factura}%");
-                    });
-                    break;
-                case !empty($request->fecha_pago):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('fecha_pago', 'like', "%{$request->fecha_pago}%");
-                    });
-                    break;
-                case !empty($request->fecha_corte):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('fecha_corte', 'like', "%{$request->fecha_corte}%");
-                    });
-                    break;
-                case !empty($request->fecha_suspension):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('fecha_suspension', 'like', "%{$request->fecha_suspension}%");
-                    });
-                    break;
-                case !empty($request->status):
-                    $grupos->where(function ($query) use ($request) {
-                        $query->orWhere('status', 'like', "%{$request->status}%");
-                    });
-                    break;
-                default:
-                    break;
+            if($request->nombre){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->fecha_factura){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_factura', 'like', "%{$request->fecha_factura}%");
+                });
+            }
+            if($request->fecha_pago){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_pago', 'like', "%{$request->fecha_pago}%");
+                });
+            }
+            if($request->fecha_corte){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_corte', 'like', "%{$request->fecha_corte}%");
+                });
+            }
+            if($request->fecha_suspension){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_suspension', 'like', "%{$request->fecha_suspension}%");
+                });
+            }
+            if($request->status >= 0){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('status', 'like', "%{$request->status}%");
+                });
             }
         }
 

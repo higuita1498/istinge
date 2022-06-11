@@ -47,7 +47,7 @@ class BlacklistController extends Controller
                     $query->orWhere('ip', $request->ip);
                 });
             }
-            if($request->estado){
+            if($request->estado >= 0){
                 $blacklists->where(function ($query) use ($request) {
                     $query->orWhere('estado', $request->estado);
                 });

@@ -38,24 +38,20 @@ class APController extends Controller
         $aps = AP::query()->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
-            switch ($request) {
-                case !empty($request->nombre):
-                    $aps->where(function ($query) use ($request) {
-                        $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                    });
-                    break;
-                case !empty($request->modo_red):
-                    $aps->where(function ($query) use ($request) {
-                        $query->orWhere('modo_red', 'like', "%{$request->modo_red}%");
-                    });
-                    break;
-                case !empty($request->status):
-                    $aps->where(function ($query) use ($request) {
-                        $query->orWhere('status', 'like', "%{$request->status}%");
-                    });
-                    break;
-                default:
-                    break;
+            if($request->nombre){
+                $aps->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->modo_red){
+                $aps->where(function ($query) use ($request) {
+                    $query->orWhere('modo_red', 'like', "%{$request->modo_red}%");
+                });
+            }
+            if($request->status >=0){
+                $aps->where(function ($query) use ($request) {
+                    $query->orWhere('status', 'like', "%{$request->status}%");
+                });
             }
         }
 
