@@ -666,7 +666,7 @@ class NominaDianController extends Controller
         $DocEmp = "" . $jsonEdit['Trabajador']['NumeroDocumento'] . "";
         $TipoXML = 102; //tipo 102 es nomina individual y 103 es nomina individual de ajuste
         $SoftwarePin = 75315;
-        $TipAmb = env('AMBIENTE_NOMINA');
+        $TipAmb = 1;
 
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
@@ -749,7 +749,7 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        $response = $this->enviarJsonDianApi($json, env('AMBIENTE_NOMINA'));
+        $response = $this->enviarJsonDianApi($json, 1);
         // $response['statusCode'] = 200;
 
 
