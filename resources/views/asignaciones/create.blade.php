@@ -65,7 +65,7 @@
             </div>
             <div class="col-md-6 form-group offset-md-1">
                 <label class="control-label" id="div_campo_1">{{$empresa->campo_1}} <span class="text-danger">*</span></label>
-                <input type="file" class="form-control"  id="documento" name="documento"  required="" value="{{old('documento')}}" accept=".jpg, .jpeg, .png, .pdf">
+                <input type="file" class="form-control"  id="documento" name="documento"  required="" value="{{old('documento')}}" accept=".jpg, .jpeg, .png">
                 <span style="color: red;">
                     <strong>{{ $errors->first('documento') }}</strong>
                 </span>
