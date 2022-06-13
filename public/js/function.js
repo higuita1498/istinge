@@ -4461,7 +4461,7 @@ $('#searchIP').click(function() {
 
             var ini = ip_ini['3'];
             var fin = ip_fin['3'];
-            var x = ip_ini['2'];
+            var x = ip_ini['2']*1;
             while (x <= ip_fin['2']) {
                 for (i = data.i; i <= fin; i++) {
                     var div =`
