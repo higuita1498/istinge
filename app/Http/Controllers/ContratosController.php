@@ -2933,7 +2933,7 @@ class ContratosController extends Controller
             if($request->oficina){ $contrato->oficina = $request->oficina; }
             if($request->nodo){ $contrato->nodo = $request->nodo; }
             if($request->ap){ $contrato->ap = $request->ap; }
-            if($request->mac){ $contrato->mac = $request->mac; }
+            if($request->mac_address){ $contrato->mac = $request->mac; }
             if($request->serial_onu){ $contrato->serial_onu = $request->serial_onu; }
             if($request->created_at){ $contrato->created_at = $request->created_at; }
 
