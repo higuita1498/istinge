@@ -246,6 +246,12 @@
 						<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 					</tr>
 					@endif
+					@if($contacto->observaciones)
+					<tr>
+						<th width="20%">Observaciones</th>
+						<td>{{$contacto->observaciones}}</td>
+					</tr>
+					@endif
 				</tbody>
 			</table>
 
