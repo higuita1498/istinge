@@ -135,125 +135,127 @@
 	
 	<div class="row card-description">
 		<div class="col-md-12">
-			<table class="table table-striped table-bordered table-sm info">
-				<tbody>
-					<tr>
-						<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
-					</tr>
-					@if($contacto->serial_onu)
-					<tr>
-						<th width="20%">Serial ONU</th>
-						<td>{{$contacto->serial_onu}}</td>
-					</tr>
-					@endif
-					<tr>
-						<th width="20%">Nombre</th>
-						<td>{{$contacto->nombre}} {{$contacto->apellidos()}}</td>
-					</tr>
-					<tr>
-						<th width="20%">Tipo de Identificación</th>
-						<td>{{ $contacto->identificacion }}</td>
-					</tr>
-					<tr>
-						<th width="20%">Identificación</th>
-						<td>{{$contacto->nit}}</td>
-					</tr>
-					@if($contacto->tip_iden == 6)
-					<tr>
-						<th width="20%">DV</th>
-						<td>{{$contacto->dv}}</td>
-					</tr>
-					@endif
-					@if($contacto->telefono1)
-					<tr>
-						<th width="20%">Teléfono</th>
-						<td>{{$contacto->telefono1}}</td>
-					</tr>
-					@endif
-					@if($contacto->telefono2)
-					<tr>
-						<th width="20%">Teléfono 2</th>
-						<td>{{$contacto->telefono2}}</td>
-					</tr>
-					@endif
-					@if($contacto->fax)
-					<tr>
-						<th width="20%">Fax</th>
-						<td>{{$contacto->fax}}</td>
-					</tr>
-					@endif
-					@if($contacto->celular)
-					<tr>
-						<th width="20%">Celular</th>
-						<td>{{$contacto->celular}}</td>
-					</tr>
-					@endif
-					@if($contacto->estrato)
-					<tr>
-						<th width="20%">Estrato</th>
-						<td>{{$contacto->estrato}}</td>
-					</tr>
-					@endif
-					@if($contacto->fk_iddepartamento)
-					<tr>
-						<th width="20%">Departamento</th>
-						<td>{{$contacto->getDepartamentoNameAttribute()}}</td>
-					</tr>
-					@endif
-					@if($contacto->fk_idmunicipio)
-					<tr>
-						<th width="20%">Municipio</th>
-						<td>{{$contacto->getMunicipioNameAttribute()}}</td>
-					</tr>
-					@endif
-					@if($contacto->direccion)
-					<tr>
-						<th width="20%">Dirección</th>
-						<td>{{$contacto->direccion}}</td>
-					</tr>
-					@endif
-					@if($contacto->vereda)
-					<tr>
-						<th width="20%">Corregimiento/Vereda</th>
-						<td>{{$contacto->vereda}}</td>
-					</tr>
-					@endif
-					@if($contacto->barrio)
-					<tr>
-						<th width="20%">Barrio</th>
-						<td>{{$contacto->barrio}}</td>
-					</tr>
-					@endif
-					@if($contacto->email)
-					<tr>
-						<th width="20%">Correo Electrónico</th>
-						<td>{{$contacto->email}}</td>
-					</tr>
-					@endif
-					@if($contacto->oficina)
-					<tr>
-						<th width="20%">Oficina Asociada</th>
-						<td>{{$contacto->oficina()->nombre}}</td>
-					</tr>
-					@endif
-					@if($contacto->firma_isp)
-					<tr>
-						<th width="20%">Fecha de la firma del Contrato</th>
-						<td>{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</strong></a></td>
-					</tr>
-					<tr>
-						<th width="20%">Asignación de Contrato Digital</th>
-						<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
-					</tr>
-					@endif
-					@if($contacto->observaciones)
-					<tr>
-						<th width="20%">Observaciones</th>
-						<td>{{$contacto->observaciones}}</td>
-					</tr>
-					@endif
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered table-sm info">
+					<tbody>
+						<tr>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
+						</tr>
+						@if($contacto->serial_onu)
+						<tr>
+							<th width="20%">Serial ONU</th>
+							<td>{{$contacto->serial_onu}}</td>
+						</tr>
+						@endif
+						<tr>
+							<th width="20%">Nombre</th>
+							<td>{{$contacto->nombre}} {{$contacto->apellidos()}}</td>
+						</tr>
+						<tr>
+							<th width="20%">Tipo de Identificación</th>
+							<td>{{ $contacto->identificacion }}</td>
+						</tr>
+						<tr>
+							<th width="20%">Identificación</th>
+							<td>{{$contacto->nit}}</td>
+						</tr>
+						@if($contacto->tip_iden == 6)
+						<tr>
+							<th width="20%">DV</th>
+							<td>{{$contacto->dv}}</td>
+						</tr>
+						@endif
+						@if($contacto->telefono1)
+						<tr>
+							<th width="20%">Teléfono</th>
+							<td>{{$contacto->telefono1}}</td>
+						</tr>
+						@endif
+						@if($contacto->telefono2)
+						<tr>
+							<th width="20%">Teléfono 2</th>
+							<td>{{$contacto->telefono2}}</td>
+						</tr>
+						@endif
+						@if($contacto->fax)
+						<tr>
+							<th width="20%">Fax</th>
+							<td>{{$contacto->fax}}</td>
+						</tr>
+						@endif
+						@if($contacto->celular)
+						<tr>
+							<th width="20%">Celular</th>
+							<td>{{$contacto->celular}}</td>
+						</tr>
+						@endif
+						@if($contacto->estrato)
+						<tr>
+							<th width="20%">Estrato</th>
+							<td>{{$contacto->estrato}}</td>
+						</tr>
+						@endif
+						@if($contacto->fk_iddepartamento)
+						<tr>
+							<th width="20%">Departamento</th>
+							<td>{{$contacto->getDepartamentoNameAttribute()}}</td>
+						</tr>
+						@endif
+						@if($contacto->fk_idmunicipio)
+						<tr>
+							<th width="20%">Municipio</th>
+							<td>{{$contacto->getMunicipioNameAttribute()}}</td>
+						</tr>
+						@endif
+						@if($contacto->direccion)
+						<tr>
+							<th width="20%">Dirección</th>
+							<td>{{$contacto->direccion}}</td>
+						</tr>
+						@endif
+						@if($contacto->vereda)
+						<tr>
+							<th width="20%">Corregimiento/Vereda</th>
+							<td>{{$contacto->vereda}}</td>
+						</tr>
+						@endif
+						@if($contacto->barrio)
+						<tr>
+							<th width="20%">Barrio</th>
+							<td>{{$contacto->barrio}}</td>
+						</tr>
+						@endif
+						@if($contacto->email)
+						<tr>
+							<th width="20%">Correo Electrónico</th>
+							<td>{{$contacto->email}}</td>
+						</tr>
+						@endif
+						@if($contacto->oficina)
+						<tr>
+							<th width="20%">Oficina Asociada</th>
+							<td>{{$contacto->oficina()->nombre}}</td>
+						</tr>
+						@endif
+						@if($contacto->firma_isp)
+						<tr>
+							<th width="20%">Fecha de la firma del Contrato</th>
+							<td>{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</strong></a></td>
+						</tr>
+						<tr>
+							<th width="20%">Asignación de Contrato Digital</th>
+							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
+						</tr>
+						@endif
+						@if($contacto->observaciones)
+						<tr>
+							<th width="20%">Observaciones</th>
+							<td>{{$contacto->observaciones}}</td>
+						</tr>
+						@endif
+					</tbody>
+				</table>
+			</div>
 
 			<div class="row">
 				@foreach($contratos as $contrato)
