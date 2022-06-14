@@ -772,6 +772,10 @@ class ContratosController extends Controller
                 $contrato->oficina = $request->oficina;
             }
 
+            if($request->contrato_permanencia_meses){
+                $contrato->contrato_permanencia_meses = $request->contrato_permanencia_meses;
+            }
+
             ### DOCUMENTOS ADJUNTOS ###
 
             if($request->adjunto_a) {
@@ -1299,6 +1303,10 @@ class ContratosController extends Controller
 
                 if($request->oficina){
                     $contrato->oficina = $request->oficina;
+                }
+
+                if($request->contrato_permanencia_meses){
+                    $contrato->contrato_permanencia_meses = $request->contrato_permanencia_meses;
                 }
 
                 ### DOCUMENTOS ADJUNTOS ###
