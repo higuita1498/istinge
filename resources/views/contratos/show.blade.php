@@ -337,6 +337,12 @@
 							<td>{{ $contrato->descuento }}%</td>
 						</tr>
 						@endif
+						@if($contrato->contrato_permanencia)
+						<tr>
+							<th>Contrato de Permanencia</th>
+							<td>{{ $contrato->contrato_permanencia('completa') }}</td>
+						</tr>
+						@endif
 					</tbody>
 				</table>
 			</div>
