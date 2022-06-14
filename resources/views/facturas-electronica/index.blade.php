@@ -180,7 +180,9 @@
 			serverSide: true,
 			processing: true,
 			searching: false,
+			@if(isset($_SESSION['permisos']['830']))
 			select: true,
+			@endif
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -192,9 +194,11 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
+			@if(isset($_SESSION['permisos']['830']))
             select: {
                 style: 'multi',
             },
+            @endif
 			columns: [
 				{data: 'codigo'},
 				{data: 'cliente'},
