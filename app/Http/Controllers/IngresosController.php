@@ -277,6 +277,10 @@ class IngresosController extends Controller
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
         }else{
+            if(Ingreso::where('comprobante_pago', $request->comprobante_pago)->count() > 0){
+                return back()->withInput()->with('danger', 'DISCULPE, EL NRO DE COMPROBANTE DE PAGO INGRESADO YA HA SIDO REGISTRADO');
+            }
+
             if(auth()->user()->rol == 8){
                 $monto_pagar = 0;
                 foreach ($request->factura_pendiente as $key => $value) {
@@ -350,6 +354,7 @@ class IngresosController extends Controller
             $ingreso->created_by = Auth::user()->id;
             $ingreso->anticipo = $request->saldofavor > 0 ? '1' : '';
             $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
+            $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
             
             //Si el tipo de ingreso es de facturas

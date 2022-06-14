@@ -410,10 +410,16 @@
       </div>
 
       <div class="row form-inline">
-        <div class="col-md-6 offset-md-3 form-inline">
-          <div class="form-check inline-block">
-            <label class="mr-3 form-check-label">Soporte de Pago</label>
-            <input type="file" class="form-control"  id="adjunto_pago" name="adjunto_pago" value="{{old('adjunto_pago')}}" accept=".jpg, .jpeg, .png, .pdf">
+        <div class="col-md-4 form-inline">
+          <div class="form-group inline-block">
+            <label class="mr-2 form-label">Nro Comprobante de Pago</label>
+            <input type="text" class="form-control form-control-sm"  id="comprobante_pago" name="comprobante_pago" value="{{old('comprobante_pago')}}" style="width: 40%;">
+          </div>
+        </div>
+        <div class="col-md-6 form-inline">
+          <div class="form-group inline-block">
+            <label class="mr-2 form-label">Soporte de Pago</label>
+            <input type="file" class="form-control form-control-sm"  id="adjunto_pago" name="adjunto_pago" value="{{old('adjunto_pago')}}" accept=".jpg, .jpeg, .png, .pdf" style="width: 60%;">
           </div>
         </div>
         <div class="col-md-2">
@@ -426,7 +432,7 @@
         </div>
       </div>
 
-  		<div class="row">
+  		<div class="row mt-2">
         <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
           <a href="{{route('ingresos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success" id="button-guardar">Guardar</button>
