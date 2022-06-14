@@ -236,7 +236,7 @@
 						@if($contrato->contrato_permanencia)
 						<tr>
 							<th>Contrato de Permanencia</th>
-							<td>{{ $contrato->contrato_permanencia == 1 ?'Si':'No' }}</td>
+							<td>{{ $contrato->contrato_permanencia('completa') }}</td>
 						</tr>
 						@endif
 						@if($contrato->factura_individual)

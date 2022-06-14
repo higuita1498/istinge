@@ -165,6 +165,20 @@
                                     <option value="0" {{$contrato->contrato_permanencia == '0' ? 'selected':''}}>NO</option>
                                 </select>
                             </div>
+                            <div class="col-md-4 form-group {{old('contrato_permanencia')==1 || $contrato->contrato_permanencia==1?'':'d-none'}}" id="div_meses">
+                                <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="3" {{$contrato->contrato_permanencia_meses==3?'selected':''}}>3 meses</option>
+                                        <option value="6" {{$contrato->contrato_permanencia_meses==6?'selected':''}}>6 meses</option>
+                                        <option value="9" {{$contrato->contrato_permanencia_meses==9?'selected':''}}>9 meses</option>
+                                        <option value="12" {{$contrato->contrato_permanencia_meses==12?'selected':''}}>12 meses</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('contrato_permanencia_meses') }}</strong>
+                                </span>
+                            </div>
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Coordenadas GPS <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas." class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
@@ -657,6 +671,15 @@
                 'translation': {A: {pattern: /[0-9a-fA-F]/}},
             });
             getInterfaces($("#server_configuration_id").val());
+            $('#contrato_permanencia').change(function(){
+                if($('#contrato_permanencia').val() == 1){
+                    $("#div_meses").removeClass('d-none');
+                    $("#contrato_permanencia_meses").val('').selectpicker('refresh');
+                }else{
+                    $("#contrato_permanencia_meses").val('').selectpicker('refresh');
+                    $("#div_meses").addClass('d-none');
+                }
+            });
         });
     </script>
 @endsection

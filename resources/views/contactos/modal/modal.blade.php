@@ -272,6 +272,16 @@
                 $("#local_address").val($("#segmento_bd").val());
                 $("#local_address").selectpicker('refresh');
             }
+
+            $('#contrato_permanencia').change(function(){
+                if($('#contrato_permanencia').val() == 1){
+                    $("#div_meses").removeClass('d-none');
+                    $("#contrato_permanencia_meses").val('').selectpicker('refresh');
+                }else{
+                    $("#contrato_permanencia_meses").val('').selectpicker('refresh');
+                    $("#div_meses").addClass('d-none');
+                }
+            });
         });
 
         setTimeout(function () {

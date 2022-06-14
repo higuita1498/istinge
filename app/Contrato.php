@@ -31,7 +31,7 @@ class Contrato extends Model
      */
     public $timestamps = false;
     protected $fillable = [
-        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at', 'puerto_conexion', 'factura_individual', 'contrato_permanencia'
+        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 'updated_at', 'puerto_conexion', 'factura_individual', 'contrato_permanencia', 'contrato_permanencia_meses'
     ];
     
     protected $appends = ['status'];
@@ -208,5 +208,16 @@ class Contrato extends Model
 
     public function oficina(){
         return Oficina::find($this->oficina);
+    }
+
+    public function contrato_permanencia($completa = false){
+        if($completa){
+            if($this->contrato_permanencia == 1){
+                return 'Si ('.$this->contrato_permanencia_meses.' meses)';
+            }else{
+                return 'No';
+            }
+        }
+        return $this->contrato_permanencia == 1 ? 'Si' : 'No';
     }
 }
