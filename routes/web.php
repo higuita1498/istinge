@@ -376,6 +376,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	    Route::get('xml/{id}','FacturasController@xmlFacturaVenta')->name('xml.factura');
 		Route::get('xmlmasivo', 'FacturasController@xmlFacturaVentaMasivoIni');
+        Route::get('emisionmasivaxml/{facturas}', 'FacturasController@emisionMasivaXml');
 	    Route::get('xmlexport','FacturasController@exportData');
 	    Route::get('xmlcorreo/{id}','FacturasController@xmlFacturaVentabyCorreo')->name('xml.correo');
 

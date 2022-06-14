@@ -221,6 +221,9 @@
                 border-radius: 5px;
                 text-transform: uppercase;
             }
+            div.dataTables_wrapper div.dataTables_length select {
+                width: 60px;
+            }
         </style>
         @yield('style')
     </head>

@@ -128,6 +128,9 @@
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
     			@endif
+    			@if(isset($_SESSION['permisos']['830']))
+    			<a class="btn btn-outline-success btn-sm disabled d-none" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-sitemap" style="margin-left:4px; "></i> Emitir Facturas en Lote</a>
+    			@endif
     			@if(isset($_SESSION['permisos']['774']))
                 <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
                 @endif
@@ -177,6 +180,7 @@
 			serverSide: true,
 			processing: true,
 			searching: false,
+			select: true,
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -188,6 +192,9 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
+            select: {
+                style: 'multi',
+            },
 			columns: [
 				{data: 'codigo'},
 				{data: 'cliente'},
@@ -252,6 +259,76 @@
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',
 			format: 'yyyy-mm-dd' ,
+		});
+
+		$('#tabla-facturas tbody').on('click', 'tr', function () {
+			var table = $('#tabla-facturas').DataTable();
+			var nro = table.rows('.selected').data().length;
+
+			if(table.rows('.selected').data().length >= 0){
+				$("#btn_emitir").removeClass('disabled d-none');
+			}else{
+				$("#btn_emitir").addClass('disabled d-none');
+			}
+        });
+
+        $('#btn_emitir').on('click', function(e) {
+			var table = $('#tabla-facturas').DataTable();
+			var nro = table.rows('.selected').data().length;
+
+			if(nro <= 0){
+				swal({
+					title: 'ERROR',
+					html: 'Para ejecutar esta acción, debe al menos seleccionar una factura electrónica',
+					type: 'error',
+				});
+				return false;
+			}
+
+			var facturas = [];
+			for (i = 0; i < nro; i++) {
+				facturas.push(table.rows('.selected').data()[i]['id']);
+			}
+
+			swal({
+	            title: '¿Desea realizar la emisión de '+nro+' facturas electrónicas?',
+	            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+	            type: 'question',
+	            showCancelButton: true,
+	            confirmButtonColor: '#00ce68',
+	            cancelButtonColor: '#d33',
+	            confirmButtonText: 'Aceptar',
+	            cancelButtonText: 'Cancelar',
+	        }).then((result) => {
+	            if (result.value) {
+	                cargando(true);
+
+	                if (window.location.pathname.split("/")[1] === "software") {
+	                    var url = `/software/empresa/facturas/emisionmasivaxml/`+facturas;
+	                }else{
+	                    var url = `/empresa/facturas/emisionmasivaxml/`+facturas;
+	                }
+
+	                $.ajax({
+	                    url: url,
+	                    method: 'GET',
+	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+	                    success: function(data) {
+	                        cargando(false);
+	                        swal({
+	                            title: 'PROCESO REALIZADO',
+	                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+	                            type: 'success',
+	                            showConfirmButton: true,
+	                            confirmButtonColor: '#1A59A1',
+	                            confirmButtonText: 'ACEPTAR',
+	                        });
+	                        getDataTable();
+	                    }
+	                })
+	            }
+	        })
+			console.log(facturas);
 		});
 	});
 
