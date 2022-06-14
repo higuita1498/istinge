@@ -142,26 +142,34 @@
     						<th>Fecha</th>
     						<td>{{date('d-m-Y', strtotime($radicado->fecha))}}</td>
     					</tr>
+                        @if ($radicado->tiempo_est)
+                        <tr>
+                            <th>Tiempo Estimado</th>
+                            <td>{{ $radicado->tiempo_est }} minuto(s)</td>
+                        </tr>
+                        @endif
     					@if ($radicado->tiempo_ini)
     					<tr>
     						<th>Inicio</th>
-    						<td>{{ $radicado->tiempo_ini }}</td>
+    						<td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_ini))}}</td>
     					</tr>
     					@endif
     					@if ($radicado->tiempo_fin)
     					<tr>
     						<th>Final</th>
-    						<td>{{ $radicado->tiempo_fin }}</td>
+    						<td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin))}}</td>
     					</tr>
     					<tr>
     						<th>Duración</th>
     						<td>{{ $duracion }} minuto(s)</td>
     					</tr>
     					@endif
+                        @if($radicado->contrato)
     					<tr>
     						<th>Contrato</th>
     						<td>{{$radicado->contrato}}</td>
     					</tr>
+                        @endif
     					@if ($radicado->ip)
     					<tr>
     						<th>Dirección IP</th>

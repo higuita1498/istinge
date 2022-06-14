@@ -508,13 +508,12 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
-            if ($radicado->tiempo_fin) {
+            if ($radicado->tiempo_ini == null) {
                 $radicado->tiempo_ini = Carbon::now()->toDateTimeString();
                 $radicado->tiempo_est = $radicado->servicio()->tiempo;
                 $mensaje = 'Radicado Iniciado, recuerde que tiene un tiempo de '.$radicado->tiempo_est.'min para solventarlo';
             }else{
                 $radicado->tiempo_fin = Carbon::now()->toDateTimeString();
-                
                 $inicio = Carbon::parse($radicado->tiempo_ini);
                 $cierre = Carbon::parse($radicado->tiempo_fin);
                 $duracion = $inicio->diffInMinutes($cierre);
