@@ -317,7 +317,7 @@
 	                        cargando(false);
 	                        swal({
 	                            title: 'PROCESO REALIZADO',
-	                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+	                            html: data.text,
 	                            type: 'success',
 	                            showConfirmButton: true,
 	                            confirmButtonColor: '#1A59A1',

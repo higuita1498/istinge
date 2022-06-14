@@ -3341,7 +3341,7 @@ class FacturasController extends Controller{
         }
         return response()->json([
             'success' => true,
-            'text'    => 'Emisión masiva de fcturas electrónicas temrinada',
+            'text'    => 'Emisión masiva de facturas electrónicas temrinada',
         ]);
     }
 }
