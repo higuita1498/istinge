@@ -95,7 +95,17 @@ class Radicado extends Model
         return ($this->creado == 1) ? 'NetworkSoft' : 'APP';
     }
 
-    public function prioridad(){
+    public function prioridad($class = false){
+        if($class){
+            if($this->prioridad == 1){
+                return 'info';
+            }elseif($this->prioridad == 2){
+                return 'warning';
+            }elseif($this->prioridad == 3){
+                return 'danger';
+            }
+        }
+
         if($this->prioridad == 1){
             return 'Baja';
         }elseif($this->prioridad == 2){

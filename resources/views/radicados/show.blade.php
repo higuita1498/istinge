@@ -135,7 +135,7 @@
                         @if ($radicado->prioridad)
                         <tr>
                             <th>Prioridad</th>
-                            <td>{{ $radicado->prioridad() }}</td>
+                            <td class="font-weight-bold text-{{ $radicado->prioridad('true') }}">{{ $radicado->prioridad() }}</td>
                         </tr>
                         @endif
     					<tr>

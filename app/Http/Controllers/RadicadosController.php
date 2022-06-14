@@ -198,7 +198,7 @@ class RadicadosController extends Controller{
         })
 
         ->editColumn('prioridad', function (Radicado $radicado) {
-            return  $radicado->prioridad();
+            return '<span class="font-weight-bold text-'.$radicado->prioridad(true).'">'.$radicado->prioridad().'</span>';
         })
         ->editColumn('tecnico', function (Radicado $radicado) {
             return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
