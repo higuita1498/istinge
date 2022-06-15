@@ -350,10 +350,6 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.estatus', $request->estado);
                 });
-            }else{
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.estatus', 1);
-                });
             }
             if($request->correo){
                 $correo = ($request->correo == 'A') ? 0 : $request->correo; 
@@ -368,9 +364,9 @@ class FacturasController extends Controller{
             }
         }
         
-        if(auth()->user()->rol == 8){
-            $facturas=$facturas->where('factura.estatus', 1);
-        }
+        // if(auth()->user()->rol == 8){
+        //     $facturas=$facturas->where('factura.estatus', 1);
+        // }
 
         $facturas->where('factura.empresa', $identificadorEmpresa);
         $facturas->where('factura.tipo', 2)->where('factura.lectura',1);
