@@ -277,8 +277,10 @@ class IngresosController extends Controller
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
         }else{
-            if(Ingreso::where('comprobante_pago', $request->comprobante_pago)->count() > 0){
-                return back()->withInput()->with('danger', 'DISCULPE, EL NRO DE COMPROBANTE DE PAGO INGRESADO YA HA SIDO REGISTRADO');
+            if(isset($request->comprobante_pago)){
+                if(Ingreso::where('comprobante_pago', $request->comprobante_pago)->count() > 0){
+                    return back()->withInput()->with('danger', 'DISCULPE, EL NRO DE COMPROBANTE DE PAGO INGRESADO YA HA SIDO REGISTRADO');
+                }
             }
 
             if(auth()->user()->rol == 8){
