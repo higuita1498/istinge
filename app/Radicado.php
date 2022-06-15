@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Auth;
-use App\User;
+use Carbon\Carbon;
 use DB;
+
+use App\User;
 use App\Oficina;
 
 class Radicado extends Model
@@ -117,5 +119,12 @@ class Radicado extends Model
 
     public function oficina(){
         return Oficina::find($this->oficina);
+    }
+
+    public function duracion(){
+        $inicio = Carbon::parse($this->tiempo_ini);
+        $cierre = Carbon::parse($this->tiempo_fin);
+        $duracion = $inicio->diffInMinutes($cierre);
+        return $duracion.' minutos';
     }
 }

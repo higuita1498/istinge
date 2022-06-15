@@ -30,6 +30,15 @@ use Config;
 use App\ServidorCorreo;
 use App\Oficina;
 
+include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
+use PHPExcel_Style_Border;
+use PHPExcel_Style_NumberFormat;
+use PHPExcel_Shared_ZipArchive;
+
 class RadicadosController extends Controller{
     public function __construct(){
         $this->middleware('auth');
@@ -196,12 +205,29 @@ class RadicadosController extends Controller{
         ->editColumn('responsable', function (Radicado $radicado) {
             return $radicado->responsable ? $radicado->responsable()->nombres : 'N/A';
         })
-
         ->editColumn('prioridad', function (Radicado $radicado) {
             return '<span class="font-weight-bold text-'.$radicado->prioridad(true).'">'.$radicado->prioridad().'</span>';
         })
         ->editColumn('tecnico', function (Radicado $radicado) {
             return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
+        })
+        ->editColumn('ip', function (Radicado $radicado) {
+            return ($radicado->ip) ? $radicado->ip : 'N/A' ;
+        })
+        ->editColumn('mac_address', function (Radicado $radicado) {
+            return ($radicado->mac_address) ? $radicado->mac_address : 'N/A' ;
+        })
+        ->editColumn('tiempo_est', function (Radicado $radicado) {
+            return ($radicado->tiempo_est) ? $radicado->tiempo_est.' minutos' : 'N/A' ;
+        })
+        ->editColumn('tiempo_ini', function (Radicado $radicado) {
+            return ($radicado->tiempo_ini) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_ini)) : 'N/A' ;
+        })
+        ->editColumn('tiempo_fin', function (Radicado $radicado) {
+            return ($radicado->tiempo_fin) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin)) : 'N/A' ;
+        })
+        ->editColumn('duracion', function (Radicado $radicado) {
+            return ($radicado->tiempo_ini && $radicado->tiempo_fin) ? $radicado->duracion() : 'N/A' ;
         })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
         ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico'])
@@ -564,5 +590,195 @@ class RadicadosController extends Controller{
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('success', 'NO EXISTE UN REGISTRO CON ESE ID');
+    }
+
+    public function exportar(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte de Radicados";
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado');
+
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific�1�7�1�7�1�7
+        ->setTitle("Reporte Excel Radicados") // Titulo
+        ->setSubject("Reporte Excel Radicados") //Asunto
+        ->setDescription("Reporte de Radicados") //Descripci�1�7�1�7�1�7n
+        ->setKeywords("reporte Radicados") //Etiquetas
+        ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:R1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1',$tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A2:R2');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
+
+        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        ));
+        $objPHPExcel->getActiveSheet()->getStyle('A1:R3')->applyFromArray($estilo);
+
+        $estilo =array('fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'd08f50')));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
+
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
+
+        for ($i=0; $i <count($titulosColumnas) ; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $i=4;
+        $letra=0;
+
+        $radicados = Radicado::query()
+            ->where('radicados.empresa', Auth::user()->empresa);
+
+        if(isset($request->codigo)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.codigo', 'like', "%{$request->codigo}%");
+            });
+        }
+        if(isset($request->fecha)){
+            $fecha = date('Y-m-d', strtotime($request->fecha));
+            $radicados->where(function ($query) use ($request, $fecha) {
+                $query->orWhere('radicados.fecha', $fecha);
+            });
+        }
+        if(isset($request->contrato)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.contrato', 'like', "%{$request->contrato}%");
+            });
+        }
+        if(isset($request->cliente)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.nombre', 'like', "%{$request->cliente}%");
+            });
+        }
+        if(isset($request->telefono)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.telefono', 'like', "%{$request->telefono}%");
+            });
+        }
+        if(isset($request->servicio)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.servicio', $request->servicio);
+            });
+        }
+        if(isset($request->estatus)){
+            $estatus = ($request->estatus == 'A') ? 0 : $request->estatus;
+            $radicados->where(function ($query) use ($request, $estatus) {
+                $query->orWhere('radicados.estatus', $request->estatus);
+            });
+        }else{
+            $radicados->where(function ($query) use ($request) {
+                if($request->otp == 0){
+                    $query->whereIn('radicados.estatus', [0, 2]);
+                }elseif($request->otp == 1){
+                    $query->whereIn('radicados.estatus', [1, 3]);
+                }
+            });
+        }
+        if(isset($request->prioridad)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.prioridad', $request->prioridad);
+            });
+        }
+        if(isset($request->tecnico)){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhere('radicados.tecnico', $request->tecnico);
+            });
+        }
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $radicados->where('radicados.oficina', auth()->user()->oficina);
+            }
+        }
+
+        if(auth()->user()->rol == 4){
+            $radicados = $radicados->where('radicados.tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
+        }
+
+        $radicados = $radicados->get();
+
+        foreach ($radicados as $radicado) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0].$i, $radicado->codigo)
+                ->setCellValue($letras[1].$i, $radicado->fecha)
+                ->setCellValue($letras[2].$i, $radicado->nombre)
+                ->setCellValue($letras[3].$i, $radicado->identificacion)
+                ->setCellValue($letras[4].$i, $radicado->telefono)
+                ->setCellValue($letras[5].$i, $radicado->correo)
+                ->setCellValue($letras[6].$i, $radicado->direccion)
+                ->setCellValue($letras[7].$i, ($radicado->contrato) ? $radicado->contrato : '')
+                ->setCellValue($letras[8].$i, ($radicado->ip) ? $radicado->ip : '')
+                ->setCellValue($letras[9].$i, ($radicado->mac_address) ? $radicado->mac_address : '')
+                ->setCellValue($letras[10].$i, ($radicado->servicio) ? $radicado->servicio()->nombre : '')
+                ->setCellValue($letras[11].$i, ($radicado->tecnico) ? $radicado->tecnico()->nombres : '')
+                ->setCellValue($letras[12].$i, ($radicado->tiempo_est) ? $radicado->tiempo_est.' min' : '')
+                ->setCellValue($letras[13].$i, ($radicado->tiempo_ini) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_ini)) : '')
+                ->setCellValue($letras[14].$i, ($radicado->tiempo_fin) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin)) : '')
+                ->setCellValue($letras[15].$i, ($radicado->tiempo_ini && $radicado->tiempo_fin) ? $radicado->duracion() : '')
+                ->setCellValue($letras[16].$i, $radicado->prioridad())
+                ->setCellValue($letras[17].$i, $radicado->estatus());
+            $i++;
+        }
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R'.$i)->applyFromArray($estilo);
+
+        for($i = 'A'; $i <= $letras[20]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Lista de Radicados');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Radicados.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
     }
 }
