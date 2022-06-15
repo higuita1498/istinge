@@ -53,8 +53,6 @@ class NotaCredito extends Model
     public function cliente(){
          return Contacto::where('id',$this->cliente)->first();
     }
-
-    
     public function total(){
         $totales=array('total'=>0, 'subtotal'=>0, 'descuento'=>0, 'subsub'=>0,'totalreten'=>0, 'imp'=>Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get());
         $items=ItemsNotaCredito::where('nota',$this->id)->get(); 

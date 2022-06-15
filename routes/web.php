@@ -1067,6 +1067,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/estadoCliente', 'ReportesController@estadoCliente')->name('reportes.estadoCliente');
 		Route::get('/estadoCliente/consulta', 'ReportesController@estadoClienteShow')->name('reportes.estadoClienteShow');
 		Route::get('/planes', 'ReportesController@planes')->name('reportes.planes');
+
+		Route::get('/ivas', 'ReportesController@ivas')->name('reportes.ivas');
 	});
 	//Exportar
 	Route::group(['prefix' => 'exportar'], function() {
@@ -1095,6 +1097,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 		//rutas para modulo estado de cuenta cliente
 		Route::get('/estadoCliente', 'ExportarReportesController@estadoCliente')->name('exportar.estadoCliente');
+		Route::get('/estadoCliente', 'ExportarReportesController@ivas')->name('exportar.ivas');
 	});
 
 	//Documentacion escrita
