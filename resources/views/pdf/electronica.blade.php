@@ -295,7 +295,7 @@
     
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
-            {{-- <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;"> --}}
+            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
             <br><br>
@@ -312,7 +312,7 @@
         <div style="width: 21%; display: inline-block; text-align: left; vertical-align: top;margin-top: 2%;">
             <table style="border:none;width:100%;height:auto;">
                 <tr>
-                    {{-- <img class="imgwifi" src="{{asset('images/wifi.png')}}"> --}}
+                    <img class="imgwifi" src="{{asset('images/wifi.png')}}">
                 </tr>
             </table>
         </div>
