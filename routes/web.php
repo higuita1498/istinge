@@ -1135,7 +1135,6 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::post('{id}/state', 'ContratosController@state')->name('contratos.state');
 		Route::get('corte/{corte}', 'ContratosController@index')->name('contratos.corte');
 		Route::get('exportar', 'ContratosController@exportar')->name('contratos.exportar');
-		Route::get('exportar', 'ContratosController@exportar')->name('contratos.exportar');
 		Route::get('{id}/grafica', 'ContratosController@grafica')->name('contratos.grafica');
 		Route::get('{id}/graficajson', 'ContratosController@graficajson')->name('contratos.graficajson');
 		Route::get('{id}/ping', 'ContratosController@conexion')->name('contratos.conexion');
