@@ -4519,6 +4519,12 @@ $('#searchIP').click(function() {
                             }
                         }
                     }
+                    if (data.software) {
+                        for (i = 0; i < data.software.length; i++){
+                            var ip = data.software[i].ip.replace(/\./g, '');
+                            $("#"+ip).remove();
+                        }
+                    }
                     cargando(false);
                 }
             });
