@@ -446,7 +446,10 @@ class CotizacionesController extends Controller
         if ($factura) { //Si extiste el registro
             $factura->notas =$request->notas;
 
-            $factura->tipo =$request->facturar?1:3;
+            if ($request->facturar) {
+                $factura->tipo = 1;
+            }
+
             $factura->estatus =1;
             $factura->empresa=Auth::user()->empresa;
             $factura->lista_precios=$request->lista_precios;
