@@ -25,6 +25,7 @@ use App\Model\Inventario\ProductosBodega;
 use App\Movimiento;
 use App\Radicado;
 use App\Vendedor;
+use App\Model\Ingresos\NotaCredito;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request; use Carbon\Carbon;
 use Auth; use App\NumeracionFactura;
@@ -2352,6 +2353,55 @@ class ReportesController extends Controller
             $total=$this->precision((float)$subtotal+$result->impuesto);
         }
         return view('reportes.ventas.planes')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas'));
+    }
+
+    function ivas(Request $request){
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Ivas', 'icon' =>'fas fa-chart-line']);
+        $this->getAllPermissions(Auth::user()->id);
+        $dates = $this->setDateRequest($request);
+
+        $empresa = Auth::user()->empresa;
+
+        if(!isset($request->documento)){
+            $request->documento = 2;
+        }
+
+        if($request->fecha){
+            $appends['fecha']=$request->fecha;
+        }
+        if($request->fecha){
+            $appends['hasta']=$request->hasta;
+        }
+
+        if($request->documento == 1){
+            $documentos = Factura::leftjoin('contactos as c', 'cliente', '=', 'c.id')
+            ->select('factura.*', 'c.nombre', 'factura.codigo as nro')
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('tipo',2)
+            ->where('factura.empresa',$empresa);
+        }elseif($request->documento == 2){
+            $documentos = NotaCredito::leftjoin('contactos as c', 'cliente', '=', 'c.id')
+            ->select('notas_credito.*', 'c.nombre')
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('notas_credito.empresa',$empresa);
+        }
+
+        //obtenemos el total del iva
+        $totalIva = 0;
+        $documentosGet = $documentos->get();
+        foreach($documentosGet as $doc){
+            $totalIva+=$doc->impuestos_totales();
+        }
+
+        $documentos =  $documentos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
+
+        return view('reportes.ivas.index')
+            ->with('documentos', $documentos)
+            ->with('request', $request)
+            ->with('totalIva', $totalIva)
+            ;
     }
 
 }

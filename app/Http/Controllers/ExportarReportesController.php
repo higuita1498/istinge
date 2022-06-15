@@ -25,6 +25,7 @@ use App\Movimiento;
 use App\Vendedor;
 use Illuminate\Http\Request; use Carbon\Carbon;
 use App\NumeracionFactura;
+use App\Model\Ingresos\NotaCredito;
 use DB;
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 include_once(app_path() .'/../public/Spout/Autoloader/autoload.php');
@@ -3686,6 +3687,126 @@ class ExportarReportesController extends Controller
         header('Content-type: application/vnd.ms-excel');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="REPORTE_PTOS_DE_VENTAS_RECAUDOS.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function ivas(Request $request){
+        $objPHPExcel = new PHPExcel();
+
+        $tituloReporte = "Reporte de Ivas ".$request->fecha." hasta ".$request->hasta;
+
+        $titulosColumnas = array('Nro', 'Cliente', 'Fecha', 'Iva');
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte Excel Ivas") // Titulo
+        ->setSubject("Reporte Excel Ivas") //Asunto
+        ->setDescription("Reporte Excel Ivas") //Descripci���n
+        ->setKeywords("reporte cuentas Ivas") //Etiquetas
+        ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:D1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1',$tituloReporte);
+        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        ));
+        for ($i = 0; $i < count($titulosColumnas); $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3',
+                utf8_decode($titulosColumnas[$i]));
+        }
+        $objPHPExcel->getActiveSheet()->getStyle('A1:D1')->applyFromArray($estilo);
+        $estilo =array('fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => '267eb5')));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:D3')->applyFromArray($estilo);
+
+        $dates = $this->setDateRequest($request);
+        
+        $empresa = Auth::user()->empresa;
+
+        if(!isset($request->documento)){
+            $request->documento = 2;
+        }
+
+        if($request->fecha){
+            $appends['fecha']=$request->fecha;
+        }
+        if($request->fecha){
+            $appends['hasta']=$request->hasta;
+        }
+        if($request->documento == 1){
+            $documentos = Factura::leftjoin('contactos as c', 'cliente', '=', 'c.id')
+            ->select('factura.*', 'c.nombre', 'factura.codigo as nro')
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('tipo',2)
+            ->where('factura.empresa',$empresa);
+        }elseif($request->documento == 2){
+            $documentos = NotaCredito::leftjoin('contactos as c', 'cliente', '=', 'c.id')
+            ->select('notas_credito.*', 'c.nombre')
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('notas_credito.empresa',$empresa);
+        }
+
+        $documentos = $documentos->orderBy('fecha', 'DESC')->get();
+
+        $totalIva = 0;
+        foreach($documentos as $doc){
+            $totalIva+=$doc->impuestos_totales();
+        }
+
+        $i=4;
+        foreach ($documentos as $documento) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0].$i, $documento->nro)
+                ->setCellValue($letras[1].$i, $documento->cliente()->nombre)
+                ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($documento->fecha)))
+                ->setCellValue($letras[3].$i, $documento->impuestos_totales());
+            $i++;
+        }
+        
+        $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue($letras[2] . $i, "TOTAL: ")
+        ->setCellValue($letras[3] . $i, $totalIva);
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:D'.$i)->applyFromArray($estilo);
+
+
+        for($i = 'A'; $i <= $letras[20]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Reporte de Ivas');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A2');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        if($request->documento == 1){
+            header('Content-Disposition: attachment;filename="REPORTE_IVAS.xlsx"');
+        }elseif($request->documento == 2){
+            header('Content-Disposition: attachment;filename="REPORTE_IVAS_NOTAS_CREDITO.xlsx"');
+        }
+        
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
