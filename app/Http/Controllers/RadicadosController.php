@@ -176,7 +176,7 @@ class RadicadosController extends Controller{
             return "<a href=".route('radicados.show', $radicado->id).">$radicado->codigo</a>";
         })
         ->editColumn('fecha', function (Radicado $radicado) {
-            return date('d-m-Y', strtotime($radicado->fecha));
+            return date('d-m-Y g:i:s A', strtotime($radicado->created_at));
         })
         ->editColumn('contrato', function (Radicado $radicado) {
             return  $radicado->contrato;
@@ -228,6 +228,12 @@ class RadicadosController extends Controller{
         })
         ->editColumn('duracion', function (Radicado $radicado) {
             return ($radicado->tiempo_ini && $radicado->tiempo_fin) ? $radicado->duracion() : 'N/A' ;
+        })
+        ->editColumn('barrio', function (Radicado $radicado) {
+            return $radicado->cliente()->barrio;
+        })
+        ->editColumn('solventado', function (Radicado $radicado) {
+            return ($radicado->solventado) ? date('d-m-Y g:i:s A', strtotime($radicado->solventado)) : 'N/A' ;
         })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
         ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico'])
@@ -419,6 +425,7 @@ class RadicadosController extends Controller{
                 $radicado->estatus=3;
             }
             $mensaje = 'SE HA RESUELTO EL CASO RADICADO';
+            $radicado->solventado=Carbon::now()->toDateTimeString();
             $radicado->save();
 
             $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();

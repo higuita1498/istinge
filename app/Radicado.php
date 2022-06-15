@@ -9,6 +9,7 @@ use DB;
 
 use App\User;
 use App\Oficina;
+use App\Contacto;
 
 class Radicado extends Model
 {
@@ -126,5 +127,9 @@ class Radicado extends Model
         $cierre = Carbon::parse($this->tiempo_fin);
         $duracion = $inicio->diffInMinutes($cierre);
         return $duracion.' minutos';
+    }
+
+    public function cliente(){
+        return Contacto::find($this->cliente);
     }
 }

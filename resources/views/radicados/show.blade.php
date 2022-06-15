@@ -132,6 +132,10 @@
     						<th>N° Radicado</th>
     						<td>{{$radicado->codigo}}</td>
     					</tr>
+                        <tr>
+                            <th>Fecha</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->created_at))}}</td>
+                        </tr>
     					<tr>
     						<th>Cliente</th>
     						<td><a href="{{ route('contactos.show', $radicado->cliente)}}">{{$radicado->nombre}}</a></td>
@@ -165,10 +169,6 @@
                             <td class="font-weight-bold text-{{ $radicado->prioridad('true') }}">{{ $radicado->prioridad() }}</td>
                         </tr>
                         @endif
-                        <tr>
-                            <th>Fecha</th>
-                            <td>{{date('d-m-Y', strtotime($radicado->fecha))}}</td>
-                        </tr>
                         @if ($radicado->tiempo_est)
                         <tr>
                             <th>Tiempo Estimado</th>
@@ -254,6 +254,12 @@
     							@endif
                             </td>
     					</tr>
+                        @if($radicado->solventado)
+                        <tr>
+                            <th>Solventado el</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->solventado))}}</td>
+                        </tr>
+                        @endif
     					@if ($radicado->reporte)
     						<tr>
     							<th>Reporte del Técnico</th>
