@@ -488,7 +488,8 @@ class RadicadosController extends Controller{
             0 => 'radicados.codigo',
             1 => 'radicados.fecha',
             2 => 'radicados.tipo',
-            3 => 'radicados.status'
+            3 => 'radicados.status',
+            4 => 'radicados.adjunto',
         );
         
         $requestData =  $request;
@@ -518,6 +519,7 @@ class RadicadosController extends Controller{
             $nestedData[] = date('d-m-Y', strtotime($movimiento->fecha));
             $nestedData[] = $movimiento->servicio()->nombre;
             $nestedData[] = '<strong><span class="text-'.$movimiento->estatus('true').'">'.$movimiento->estatus().'</span></strong>';
+            $nestedData[] = '<a href="'.asset('../adjuntos/documentos/'.$movimiento->adjunto).'" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>';
             $data[] = $nestedData;
         }
         
