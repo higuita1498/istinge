@@ -368,9 +368,9 @@ class FacturasController extends Controller{
             }
         }
         
-        if(auth()->user()->rol == 8){
-            $facturas=$facturas->where('factura.estatus', 1);
-        }
+        // if(auth()->user()->rol == 8){
+        //     $facturas=$facturas->where('factura.estatus', 1);
+        // }
 
         $facturas->where('factura.empresa', $identificadorEmpresa);
         $facturas->where('factura.tipo', 2)->where('factura.lectura',1);
