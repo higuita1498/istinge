@@ -90,4 +90,17 @@ class Mikrotik extends Model
 
         return ($this->amarre_mac == 0) ? 'Deshabilitado' : 'Habilitado';
     }
+
+    public function clientes($tipo){
+        $disabled=0;$enabled=0;
+        $contratos = Contrato::where('server_configuration_id', $this->id)->where('status', 1)->get();
+        foreach($contratos as $contrato){
+            if(Ping::where('contrato', $contrato->id)->first()){
+                $disabled++;
+            }else{
+                $enabled++;
+            }
+        }
+        return ($tipo == 'enabled') ? $enabled : $disabled;
+    }
 }

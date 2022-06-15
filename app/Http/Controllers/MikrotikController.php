@@ -119,8 +119,14 @@ class MikrotikController extends Controller
         ->editColumn('status', function (Mikrotik $mikrotik) {
             return "<span class='text-{$mikrotik->status("true")}'><strong>{$mikrotik->status()}</strong></span>";
         })
+        ->editColumn('clientes_enabled', function (Mikrotik $mikrotik) {
+            return '<span class="font-weight-bold text-success">'.$mikrotik->clientes('enabled').' clientes</span>';
+        })
+        ->editColumn('clientes_disabled', function (Mikrotik $mikrotik) {
+            return '<span class="font-weight-bold text-danger">'.$mikrotik->clientes('disabled').' clientes</span>';
+        })
         ->addColumn('acciones', $modoLectura ?  "" : "mikrotik.acciones")
-        ->rawColumns(['acciones', 'nombre', 'status'])
+        ->rawColumns(['acciones', 'nombre', 'clientes_enabled', 'clientes_disabled', 'status'])
         ->toJson();
     }
     
