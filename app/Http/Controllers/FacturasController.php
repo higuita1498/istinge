@@ -350,10 +350,6 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.estatus', $request->estado);
                 });
-            }else{
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.estatus', 1);
-                });
             }
             if($request->correo){
                 $correo = ($request->correo == 'A') ? 0 : $request->correo; 
