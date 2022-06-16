@@ -2743,7 +2743,7 @@ class ContratosController extends Controller
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia',         'Fecha del Contrato');
+        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -2773,7 +2773,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:U3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2793,7 +2793,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -2839,6 +2839,7 @@ class ContratosController extends Controller
         $objPHPExcel->getActiveSheet()->getComment('R3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la oficina ya registrado en el sistema');
         $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Fibra o Inalambrica');
         $objPHPExcel->getActiveSheet()->getComment('T3')->setAuthor('Network Soft')->getText()->createTextRun('Fecha en formato yyyy-mm-dd hh:mm:ss');
+        $objPHPExcel->getActiveSheet()->getComment('U3')->setAuthor('Network Soft')->getText()->createTextRun('Indique son Si o No');
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -2851,7 +2852,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$j)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U'.$j)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
@@ -2932,6 +2933,7 @@ class ContratosController extends Controller
             $request->oficina       = $sheet->getCell("R".$row)->getValue();
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
             $error=(object) array();
 
             if($nit != ""){
@@ -2979,6 +2981,9 @@ class ContratosController extends Controller
             if (!$request->tecnologia) {
                 $error->tecnologia = "El campo tecnologia es obligatorio";
             }
+            if (!$request->mk) {
+                $error->mk = "Debe indicar Si o No en el campo Cliente en Mikrotik";
+            }
 
             if (count((array) $error)>0) {
                 $fila["error"]='FILA '.$row;
@@ -3017,6 +3022,7 @@ class ContratosController extends Controller
             $request->oficina       = $sheet->getCell("R".$row)->getValue();
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
 
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
@@ -3055,6 +3061,8 @@ class ContratosController extends Controller
             }elseif($request->state == 'Deshabilitado'){
                 $request->state = 'disabled';
             }
+
+            $request->mk = (strtoupper($request->mk) == 'NO') ? 0 : 1;
 
             $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->first();
 
@@ -3103,6 +3111,7 @@ class ContratosController extends Controller
             if($request->mac){ $contrato->mac_address = $request->mac; }
             if($request->serial_onu){ $contrato->serial_onu = $request->serial_onu; }
             if($request->created_at){ $contrato->created_at = $request->created_at; }
+            if($request->mk){ $contrato->mk = $request->mk; }
 
             $contrato->save();
         }
