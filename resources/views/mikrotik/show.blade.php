@@ -272,6 +272,10 @@
 											<td>{{ $mikrotik->updated_by()->nombres }}</td>
 										</tr>
 										@endif
+										<tr>
+											<th width="15%">Clientes</th>
+											<td><span class="font-weight-bold text-success">{{ $mikrotik->clientes('enabled') }} Conectados</span> <span class="font-weight-bold text-danger">{{ $mikrotik->clientes('disabled') }} Desconectados</span></td>
+										</tr>
 									</tbody>
 								</table>
                             </div>

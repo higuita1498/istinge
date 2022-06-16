@@ -438,6 +438,7 @@
 										<th>Fecha</th>
 										<th>Servicio</th>
 										<th>Estatus</th>
+										<th>Adjuntos</th>
 									</thead>
 									<tbody>
 

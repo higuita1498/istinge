@@ -1122,6 +1122,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         	Route::get('{cliente}/create', 'RadicadosController@create')->name('radicados.create_cliente');
             Route::get('/{id}/eliminarAdjunto', 'RadicadosController@eliminarAdjunto')->name('radicados.eliminarAdjunto');
             Route::post('/reabrir/{id}', 'RadicadosController@reabrir')->name('radicados.reabrir');
+            Route::get('exportar', 'RadicadosController@exportar')->name('radicados.exportar');
         });
 		Route::resource('radicados', 'RadicadosController');
 
@@ -1137,7 +1138,6 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	Route::group(['prefix' => 'contratos'], function() {
 		Route::post('{id}/state', 'ContratosController@state')->name('contratos.state');
 		Route::get('corte/{corte}', 'ContratosController@index')->name('contratos.corte');
-		Route::get('exportar', 'ContratosController@exportar')->name('contratos.exportar');
 		Route::get('exportar', 'ContratosController@exportar')->name('contratos.exportar');
 		Route::get('{id}/grafica', 'ContratosController@grafica')->name('contratos.grafica');
 		Route::get('{id}/graficajson', 'ContratosController@graficajson')->name('contratos.graficajson');

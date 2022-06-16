@@ -740,12 +740,12 @@ class ContactosController extends Controller
 
         $i=4;
         $letra=0;
-        $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
+        $contactos = Contacto::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         if ($tipo<>2) {
             $contactos=$contactos->whereIn('tipo_contacto',[$tipo,2]);
         }
 
-        $empresa        = Empresa::find(Auth::user()->empresa);
+        $empresa = Empresa::find(Auth::user()->empresa);
 
         foreach ($contactos as $contacto) {
 

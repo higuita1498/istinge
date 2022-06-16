@@ -323,7 +323,7 @@ class ContratosController extends Controller
             ->editColumn('factura', function (Contrato $contrato) {
                 return $contrato->factura();
             })
-            ->editColumn('plan_tv', function (Contrato $contrato) {
+            ->editColumn('servicio_tv', function (Contrato $contrato) {
                 return ($contrato->servicio_tv) ? '<a href='.route('inventario.show', $contrato->servicio_tv).' target="_blank">'.$contrato->plan('true')->producto.'</a>' : 'N/A';
             })
             ->editColumn('vendedor', function (Contrato $contrato) {
@@ -339,7 +339,7 @@ class ContratosController extends Controller
                 return ($contrato->facturacion) ? $contrato->facturacion() : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])
             ->toJson();
     }
     
@@ -1633,7 +1633,26 @@ class ContratosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contratos";
-        $titulosColumnas = array('Nro', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Plan', 'Direccion IP', 'Direccion MAC', 'Estado', 'Grupo de Corte');
+        $titulosColumnas = array(
+            'Nro',
+            'Cliente',
+            'Identificacion',
+            'Celular',
+            'Correo Electronico',
+            'Direccion',
+            'Barrio',
+            'Corregimiento/Vereda',
+            'Plan TV',
+            'Plan Internet',
+            'Servidor',
+            'Direccion IP',
+            'Direccion MAC',
+            'Interfaz',
+            'Serial ONU',
+            'Estado',
+            'Grupo de Corte',
+            'Facturacion');
+
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -1645,26 +1664,44 @@ class ContratosController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:J1');
+            ->mergeCells('A1:R1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:J2');
+            ->mergeCells('A2:R2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:J3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:R3')->applyFromArray($estilo);
 
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:J3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
 
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -1672,44 +1709,146 @@ class ContratosController extends Controller
 
         $i=4;
         $letra=0;
-        
+
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
-			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
-			
-		if(isset($request->client_id)){
-            $contratos->where('contracts.client_id', $request->client_id);
+            ->select(
+                'contracts.*',
+                'contactos.id as c_id',
+                'contactos.nombre as c_nombre',
+                'contactos.apellido1 as c_apellido1',
+                'contactos.apellido2 as c_apellido2',
+                'contactos.nit as c_nit',
+                'contactos.celular as c_celular',
+                'contactos.email as c_email',
+                'contactos.barrio as c_barrio',
+                'contactos.vereda as c_vereda',
+            )
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+
+	    if($request->client_id!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.client_id', $request->client_id);
+            });
         }
-        if(isset($request->plan)){
-            $contratos->where('contracts.plan_id', $request->plan);
+        if($request->plan!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.plan_id', $request->plan);
+            });
         }
-        if(isset($request->ip)){
-            $contratos->where('contracts.ip', $request->ip);
+        if($request->ip!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.ip', 'like', "%{$request->ip}%");
+            });
         }
-        if(isset($request->mac)){
-            $contratos->where('contracts.mac_address', $request->mac);
+        if($request->mac!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.mac_address', 'like', "%{$request->mac}%");
+            });
         }
-        if(isset($request->state)){
-            $contratos->where('contracts.state', $request->state);
+        if($request->grupo_cort!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.grupo_corte', $request->grupo_cort);
+            });
         }
-        if(isset($request->grupo_cort)){
-            $contratos->where('contracts.grupo_corte', $request->grupo_cort);
+        if($request->state!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.state', $request->state);
+            });
         }
+        if($request->conexion_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.conexion', $request->conexion_s);
+            });
+        }
+        if($request->server_configuration_id_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.server_configuration_id', $request->server_configuration_id_s);
+            });
+        }
+        if($request->nodo_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.nodo', $request->nodo_s);
+            });
+        }
+        if($request->ap_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.ap', $request->ap_s);
+            });
+        }
+        if($request->direccion!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
+            });
+        }
+        if($request->barrio!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contactos.barrio', 'like', "%{$request->barrio}%");
+            });
+        }
+        if($request->celular!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contactos.celular', 'like', "%{$request->celular}%");
+            });
+        }
+        if($request->email!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contactos.email', 'like', "%{$request->email}%");
+            });
+        }
+        if($request->vendedor!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.vendedor', $request->vendedor);
+            });
+        }
+        if($request->canal!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.canal', $request->canal);
+            });
+        }
+        if($request->tecnologia_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.tecnologia', $request->tecnologia_s);
+            });
+        }
+        if($request->facturacion_s!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.facturacion', $request->facturacion_s);
+            });
+        }
+        if($request->desde!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->whereDate('contracts.created_at', '>=', Carbon::parse($request->desde)->format('Y-m-d'));
+            });
+        }
+        if($request->hasta!='undefined'){
+            $contratos->where(function ($query) use ($request) {
+                $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
+            });
+        }
+
         $contratos = $contratos->where('contracts.status', 1)->get();
         
         foreach ($contratos as $contrato) {
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contrato->nro)
-                ->setCellValue($letras[1].$i, $contrato->c_nombre)
+                ->setCellValue($letras[1].$i, $contrato->c_nombre.' '.$contrato->c_apellido1.' '.$contrato->c_apellido2)
                 ->setCellValue($letras[2].$i, $contrato->c_nit)
-                ->setCellValue($letras[3].$i, $contrato->c_telefono)
+                ->setCellValue($letras[3].$i, $contrato->c_celular)
                 ->setCellValue($letras[4].$i, $contrato->c_email)
-                ->setCellValue($letras[5].$i, $contrato->plan()->name)
-                ->setCellValue($letras[6].$i, $contrato->ip)
-                ->setCellValue($letras[7].$i, $contrato->mac_address)
-                ->setCellValue($letras[8].$i, $contrato->status())
-                ->setCellValue($letras[9].$i, $contrato->grupo_corte('true'));
+                ->setCellValue($letras[5].$i, $contrato->c_direccion)
+                ->setCellValue($letras[6].$i, $contrato->c_barrio)
+                ->setCellValue($letras[7].$i, $contrato->c_vereda)
+                ->setCellValue($letras[8].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
+                ->setCellValue($letras[9].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
+                ->setCellValue($letras[10].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
+                ->setCellValue($letras[11].$i, $contrato->ip)
+                ->setCellValue($letras[12].$i, $contrato->mac_address)
+                ->setCellValue($letras[13].$i, $contrato->interfaz)
+                ->setCellValue($letras[14].$i, $contrato->serial_onu)
+                ->setCellValue($letras[15].$i, $contrato->status())
+                ->setCellValue($letras[16].$i, $contrato->grupo_corte('true'))
+                ->setCellValue($letras[17].$i, $contrato->facturacion());
             $i++;
         }
 
@@ -1719,7 +1858,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:J'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:R'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
@@ -2604,7 +2743,7 @@ class ContratosController extends Controller
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia',         'Fecha del Contrato');
+        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -2634,7 +2773,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:U3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2654,7 +2793,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -2700,6 +2839,7 @@ class ContratosController extends Controller
         $objPHPExcel->getActiveSheet()->getComment('R3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la oficina ya registrado en el sistema');
         $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Fibra o Inalambrica');
         $objPHPExcel->getActiveSheet()->getComment('T3')->setAuthor('Network Soft')->getText()->createTextRun('Fecha en formato yyyy-mm-dd hh:mm:ss');
+        $objPHPExcel->getActiveSheet()->getComment('U3')->setAuthor('Network Soft')->getText()->createTextRun('Indique son Si o No');
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -2712,7 +2852,7 @@ class ContratosController extends Controller
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$j)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U'.$j)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
@@ -2793,6 +2933,7 @@ class ContratosController extends Controller
             $request->oficina       = $sheet->getCell("R".$row)->getValue();
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
             $error=(object) array();
 
             if($nit != ""){
@@ -2840,6 +2981,9 @@ class ContratosController extends Controller
             if (!$request->tecnologia) {
                 $error->tecnologia = "El campo tecnologia es obligatorio";
             }
+            if (!$request->mk) {
+                $error->mk = "Debe indicar Si o No en el campo Cliente en Mikrotik";
+            }
 
             if (count((array) $error)>0) {
                 $fila["error"]='FILA '.$row;
@@ -2878,6 +3022,7 @@ class ContratosController extends Controller
             $request->oficina       = $sheet->getCell("R".$row)->getValue();
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
 
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
@@ -2916,6 +3061,8 @@ class ContratosController extends Controller
             }elseif($request->state == 'Deshabilitado'){
                 $request->state = 'disabled';
             }
+
+            $request->mk = (strtoupper($request->mk) == 'NO') ? 0 : 1;
 
             $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->first();
 
@@ -2964,6 +3111,7 @@ class ContratosController extends Controller
             if($request->mac){ $contrato->mac_address = $request->mac; }
             if($request->serial_onu){ $contrato->serial_onu = $request->serial_onu; }
             if($request->created_at){ $contrato->created_at = $request->created_at; }
+            if($request->mk){ $contrato->mk = $request->mk; }
 
             $contrato->save();
         }

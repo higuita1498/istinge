@@ -132,59 +132,13 @@
     						<th>N° Radicado</th>
     						<td>{{$radicado->codigo}}</td>
     					</tr>
-                        @if ($radicado->prioridad)
                         <tr>
-                            <th>Prioridad</th>
-                            <td class="font-weight-bold text-{{ $radicado->prioridad('true') }}">{{ $radicado->prioridad() }}</td>
+                            <th>Fecha</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->created_at))}}</td>
                         </tr>
-                        @endif
-    					<tr>
-    						<th>Fecha</th>
-    						<td>{{date('d-m-Y', strtotime($radicado->fecha))}}</td>
-    					</tr>
-                        @if ($radicado->tiempo_est)
-                        <tr>
-                            <th>Tiempo Estimado</th>
-                            <td>{{ $radicado->tiempo_est }} minuto(s)</td>
-                        </tr>
-                        @endif
-    					@if ($radicado->tiempo_ini)
-    					<tr>
-    						<th>Inicio</th>
-    						<td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_ini))}}</td>
-    					</tr>
-    					@endif
-    					@if ($radicado->tiempo_fin)
-    					<tr>
-    						<th>Final</th>
-    						<td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin))}}</td>
-    					</tr>
-    					<tr>
-    						<th>Duración</th>
-    						<td>{{ $duracion }} minuto(s)</td>
-    					</tr>
-    					@endif
-                        @if($radicado->contrato)
-    					<tr>
-    						<th>Contrato</th>
-    						<td>{{$radicado->contrato}}</td>
-    					</tr>
-                        @endif
-    					@if ($radicado->ip)
-    					<tr>
-    						<th>Dirección IP</th>
-    						<td>{{ $radicado->ip }}</td>
-    					</tr>
-    					@endif
-    					@if ($radicado->mac_address)
-    					<tr>
-    						<th>Dirección MAC</th>
-    						<td>{{ $radicado->mac_address }}</td>
-    					</tr>
-    					@endif
     					<tr>
     						<th>Cliente</th>
-    						<td>{{$radicado->nombre}}</td>
+    						<td><a href="{{ route('contactos.show', $radicado->cliente)}}">{{$radicado->nombre}}</a></td>
     					</tr>
     					<tr>
     						<th>N° Telefónico</th>
@@ -208,6 +162,53 @@
     						<th>Tipo de Servicio</th>
     						<td>{{$radicado->servicio()->nombre}}</td>
     					</tr>
+
+                        @if ($radicado->prioridad)
+                        <tr>
+                            <th>Prioridad</th>
+                            <td class="font-weight-bold text-{{ $radicado->prioridad('true') }}">{{ $radicado->prioridad() }}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->tiempo_est)
+                        <tr>
+                            <th>Tiempo Estimado</th>
+                            <td>{{ $radicado->tiempo_est }} minuto(s)</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->tiempo_ini)
+                        <tr>
+                            <th>Inicio</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_ini))}}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->tiempo_fin)
+                        <tr>
+                            <th>Final</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin))}}</td>
+                        </tr>
+                        <tr>
+                            <th>Duración</th>
+                            <td>{{ $duracion }} minuto(s)</td>
+                        </tr>
+                        @endif
+                        @if($radicado->contrato)
+                        <tr>
+                            <th>Contrato</th>
+                            <td>{{$radicado->contrato}}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->ip)
+                        <tr>
+                            <th>Dirección IP</th>
+                            <td>{{ $radicado->ip }}</td>
+                        </tr>
+                        @endif
+                        @if ($radicado->mac_address)
+                        <tr>
+                            <th>Dirección MAC</th>
+                            <td>{{ $radicado->mac_address }}</td>
+                        </tr>
+                        @endif
     					@if ($radicado->valor)
     					<tr>
     						<th>Valor de la Instalación</th>
@@ -253,6 +254,12 @@
     							@endif
                             </td>
     					</tr>
+                        @if($radicado->solventado)
+                        <tr>
+                            <th>Solventado el</th>
+                            <td>{{date('d-m-Y g:i:s A', strtotime($radicado->solventado))}}</td>
+                        </tr>
+                        @endif
     					@if ($radicado->reporte)
     						<tr>
     							<th>Reporte del Técnico</th>
