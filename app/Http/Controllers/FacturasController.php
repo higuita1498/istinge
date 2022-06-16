@@ -2125,7 +2125,7 @@ class FacturasController extends Controller{
     {
         $empresa = auth()->user()->empresaObj;
 
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('preferida', 1)->first();
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('tipo',2)->where('preferida', 1)->first();
 
         $infoEmpresa = Empresa::find(Auth::user()->empresa);
         $data['Empresa'] = $infoEmpresa->toArray();
@@ -2289,7 +2289,7 @@ class FacturasController extends Controller{
     {
         $factura = Factura::find($request->id);
         $responsabilidades = Auth::user()->contador_responsabilidades();
-        $numeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('id', $factura->numeracion)->first();
+        $numeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('tipo',2)->where('id', $factura->numeracion)->first();
         $empresa  = Auth::user()->empresaObj;
         $cliente  = $factura->cliente();
         
@@ -2356,7 +2356,7 @@ class FacturasController extends Controller{
         $empresa = auth()->user()->empresaObj;
 
         $FacturaVenta = Factura::where('nonkey', $id)->first();
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', $FacturaVenta->empresa)->where('preferida', 1)->first();
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', $FacturaVenta->empresa)->where('tipo',2)->where('preferida', 1)->first();
 
         $infoEmpresa = Empresa::find($FacturaVenta->empresa);
         $data['Empresa'] = $infoEmpresa->toArray();
@@ -2491,7 +2491,7 @@ class FacturasController extends Controller{
 
     public function validateTimeEmicion(){
         if(auth()->user()->empresa()->estado_dian == 1){
-            $numeracion = NumeracionFactura::where('empresa',auth()->user()->empresa)->where('preferida',1)->first();
+            $numeracion = NumeracionFactura::where('empresa',auth()->user()->empresa)->where('preferida',1)->where('tipo',2)->first();
             $pendientes = Factura::where('empresa',auth()->user()->empresa)->where('numeracion',$numeracion->id)
             ->where('emitida',0)->where('created_at','<=',Carbon::now()->subDay(1))->get();
         return response()->json($pendientes);
