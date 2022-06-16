@@ -323,7 +323,7 @@ class ContratosController extends Controller
             ->editColumn('factura', function (Contrato $contrato) {
                 return $contrato->factura();
             })
-            ->editColumn('plan_tv', function (Contrato $contrato) {
+            ->editColumn('servicio_tv', function (Contrato $contrato) {
                 return ($contrato->servicio_tv) ? '<a href='.route('inventario.show', $contrato->servicio_tv).' target="_blank">'.$contrato->plan('true')->producto.'</a>' : 'N/A';
             })
             ->editColumn('vendedor', function (Contrato $contrato) {
@@ -339,7 +339,7 @@ class ContratosController extends Controller
                 return ($contrato->facturacion) ? $contrato->facturacion() : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'plan_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])
             ->toJson();
     }
     
