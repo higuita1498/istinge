@@ -518,14 +518,33 @@
     @endif
 
     @if(Auth::user()->empresa()->oficina)
-    @if(isset($_SESSION['permisos']['808']) || isset($_SESSION['permisos']['809']) || isset($_SESSION['permisos']['810']) || isset($_SESSION['permisos']['811']) || isset($_SESSION['permisos']['812']) || isset($_SESSION['permisos']['813']))
-        <li class="nav-item" id="oficina">
-            <a  class="nav-link" href="{{route('oficinas.index')}}">
-                <i class="menu-icon fas fa-store-alt"></i>
-                <span class="menu-title">Oficinas</span>
-            </a>
-        </li>
+        @if(isset($_SESSION['permisos']['808']) || isset($_SESSION['permisos']['809']) || isset($_SESSION['permisos']['810']) || isset($_SESSION['permisos']['811']) || isset($_SESSION['permisos']['812']) || isset($_SESSION['permisos']['813']))
+            <li class="nav-item" id="oficina">
+                <a  class="nav-link" href="{{route('oficinas.index')}}">
+                    <i class="menu-icon fas fa-store-alt"></i>
+                    <span class="menu-title">Oficinas</span>
+                </a>
+            </li>
+        @endif
     @endif
+
+    @if(isset($_SESSION['permisos']['832']))
+        <li class="nav-item" id="auditoria">
+            <a class="nav-link" data-toggle="collapse" href="#ui-auditoria" aria-expanded="false" aria-controls="ui-auditoria">
+                <i class="menu-icon fas fa-user-secret"></i>
+                    <span class="menu-title">Auditoría</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-auditoria">
+                <ul class="nav flex-column sub-menu">
+                    @if(isset($_SESSION['permisos']['832']))
+                    <li class="nav-item" id="auditoria-contratos">
+                        <a class="nav-link" href="{{route('auditoria.contratos')}}">Contratos</a>
+                    </li>
+                    @endif
+                </ul>
+            </div>
+        </li>
     @endif
     
     @if(isset($_SESSION['permisos']['111']))

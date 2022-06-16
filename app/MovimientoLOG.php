@@ -3,9 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Modulo;
+use Carbon\Carbon;
 use Auth;
+use DB;
+
+use App\Modulo;
 use App\User;
+use App\Contrato;
+use App\Funcion;
+
 
 class MovimientoLOG extends Model
 {

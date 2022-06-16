@@ -93,6 +93,7 @@ Route::get('lnotascredito', 'NotascreditoController@notascredito');
 Route::get('lcotizaciones', 'CotizacionesController@cotizaciones');
 Route::get('lremisiones', 'RemisionesController@remisiones');
 Route::get('lproductos', 'ProductosController@productos');
+Route::get('auditoria_contratos', 'AuditoriaController@auditoria_contratos');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -1355,4 +1356,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         });
         Route::resource('productos', 'ProductosController');
 
+    //AUDITORIA
+        Route::group(['prefix' => 'auditoria'], function() {
+            Route::get('contratos', 'AuditoriaController@contratos')->name('auditoria.contratos');
+        });
+        Route::resource('auditoria', 'AuditoriaController');
 });
