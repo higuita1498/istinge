@@ -1512,7 +1512,7 @@ public function facturas_retenciones($id){
     {
         $NotaCredito = NotaCredito::find($id);
 
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('preferida', 1)->first();
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('preferida', 1)->where('tipo',2)->first();
 
         $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
