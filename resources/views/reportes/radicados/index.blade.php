@@ -68,7 +68,7 @@
 
             <div class="form-group col-md-4 text-center offset-md-4 mb-0">
                 <center><button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
-                <button type="button" id="exportar" class="btn btn-outline-success d-none">Exportar a Excel</button></center>
+                <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button></center>
             </div>
 
             <div class="form-group col-md-12 text-left mb-0">
@@ -125,5 +125,5 @@
         </div>
     </form>
     <input type="hidden" id="urlgenerar" value="{{route('reportes.radicados')}}">
-    <input type="hidden" id="urlexportar" value="{{route('exportar.cajas')}}">
+    <input type="hidden" id="urlexportar" value="{{route('exportar.radicados')}}">
 @endsection
