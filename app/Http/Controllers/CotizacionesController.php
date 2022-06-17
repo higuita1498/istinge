@@ -469,6 +469,7 @@ class CotizacionesController extends Controller
                 $factura->plazo=$request->plazo;
                 $factura->term_cond=$request->term_cond;
                 $factura->facnotas=$request->notas;
+                $factura->tipo = 1;
             }
             if ($request->tipocliente!=1) {
                 $clienterapido=DB::table('factura_contacto')->where('factura', $factura->id)->first();
@@ -484,6 +485,7 @@ class CotizacionesController extends Controller
                     $contacto->observaciones='Creado desde contacto rapido';
                     $contacto->save();
                     $factura->cliente=$contacto->id;
+                    $factura->tipo = 1;
                 }
                 else{
                     if ($clienterapido) {
