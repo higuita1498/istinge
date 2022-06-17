@@ -702,7 +702,10 @@ function contacto(selected, modificar=false, type = 1){
     }
 
     var modulo = 0;
-    if(window.location.pathname.split("/")[3] == "notascredito"){
+    if(
+        window.location.pathname.split("/")[3] == "notascredito" ||
+        window.location.pathname.split("/")[2] == "cotizaciones"
+        ){
         modulo = 1;
     }
 
@@ -736,7 +739,7 @@ function contacto(selected, modificar=false, type = 1){
             $("#saldofavorcliente").val(data.saldo_favor);
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
-            if(data.plan == null && type == 1 && data.servicio_tv == null){
+            if(data.plan == null && type == 1 && data.servicio_tv == null && modulo == 0){
                 if($("#dian").val() == null){
                     Swal.fire({
                         position: 'top-center',
