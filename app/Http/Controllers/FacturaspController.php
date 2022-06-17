@@ -265,18 +265,20 @@ class FacturaspController extends Controller
             Session::put('posttimer', FacturaProveedores::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
             $sw = 1;
             //Recorremos la sesion para obtener la fecha
-            foreach (Session::get('posttimer') as $key) {
-                if ($sw == 1) {
-                    $ultimoingreso = $key;
-                    $sw=0;
+            if(isset($ultimoingreso)){
+                foreach (Session::get('posttimer') as $key) {
+                    if ($sw == 1) {
+                        $ultimoingreso = $key;
+                        $sw=0;
+                    }
                 }
-            }
-            //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creaci���n
-            $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-            //Si el tiempo es de menos de 30 segundos mandamos al listado general
-            if ($diasDiferencia <= 10) {
-                $mensaje = "El formulario ya ha sido enviado.";
-                return redirect('empresa/facturasp')->with('success', $mensaje);
+                //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creaci���n
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                //Si el tiempo es de menos de 30 segundos mandamos al listado general
+                if ($diasDiferencia <= 10) {
+                    $mensaje = "El formulario ya ha sido enviado.";
+                    return redirect('empresa/facturasp')->with('success', $mensaje);
+                }
             }
         }
         $last = FacturaProveedores::where('empresa', Auth::user()->empresa)->select('nro')->where('tipo', 1)->get()->last();
