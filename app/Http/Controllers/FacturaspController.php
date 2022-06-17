@@ -340,7 +340,7 @@ class FacturaspController extends Controller
                 $items->id_impuesto=$request->impuesto[$i];
                 $items->impuesto=$impuesto->porcentaje;
             }
-            $items->ref=$request->ref[$i];
+            $items->ref=$request->item[$i];
             $items->precio=$this->precision($request->precio[$i]);
             $items->descripcion=$request->descripcion[$i];
             $items->cant=$request->cant[$i];
