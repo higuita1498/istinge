@@ -703,8 +703,8 @@ function contacto(selected, modificar=false, type = 1){
 
     var modulo = 0;
     if(
-        window.location.pathname.split("/")[3] == "notascredito" ||
-        window.location.pathname.split("/")[2] == "cotizaciones"
+        window.location.pathname.split("/")[3] == "notascredito" || window.location.pathname.split("/")[2] == "notascredito"
+        || window.location.pathname.split("/")[3] == "cotizaciones" || window.location.pathname.split("/")[2] == "cotizaciones"
         ){
         modulo = 1;
     }
