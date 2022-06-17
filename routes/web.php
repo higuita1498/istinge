@@ -1124,6 +1124,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/{id}/eliminarAdjunto', 'RadicadosController@eliminarAdjunto')->name('radicados.eliminarAdjunto');
             Route::post('/reabrir/{id}', 'RadicadosController@reabrir')->name('radicados.reabrir');
             Route::get('exportar', 'RadicadosController@exportar')->name('radicados.exportar');
+            Route::get('/notificacionTecnico', 'RadicadosController@notificacionTecnico')->name('radicados.notificacionTecnico');
         });
 		Route::resource('radicados', 'RadicadosController');
 

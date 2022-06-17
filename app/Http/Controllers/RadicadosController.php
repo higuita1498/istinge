@@ -790,4 +790,17 @@ class RadicadosController extends Controller{
         $objWriter->save('php://output');
         exit;
     }
+
+    public function notificacionTecnico(){
+        $iniciados = Radicado::whereNotNull('tiempo_ini')->where('fecha', date("Y-m-d"))->get()->count();
+        $finalizados = Radicado::whereNotNull('tiempo_ini')->whereNotNull('tiempo_fin')->where('fecha', date("Y-m-d"))->get()->count();
+        $encurso = $iniciados-$finalizados;
+
+        return response()->json([
+            'success'     => true,
+            'iniciados'   => $iniciados,
+            'finalizados' => $finalizados,
+            'encurso'     => $encurso,
+        ]);
+    }
 }

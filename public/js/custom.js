@@ -100,6 +100,7 @@ $(document).ready(function() {
   notificacionRadicado();
   notificacionPing();
   notificacionWifi();
+  notificacionTecnico();
   $('[data-toggle="tooltip"]').tooltip();
   $('.precio').mask('000.000.000.000.000', {reverse: true});
   if ($('#table-general').length > 0) {

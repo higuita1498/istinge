@@ -4688,3 +4688,47 @@ function agregar_cuenta(){
             $('#ap').attr('required','');
         }
     });
+
+function notificacionTecnico(){
+    if($("#notificacionTecnico").val() == 1){
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa/radicados/notificacionTecnico';
+            var route = '/software/empresa/radicados';
+        }else{
+            var url = '/empresa/radicados/notificacionTecnico';
+            var route = '/empresa/radicados';
+        }
+
+        $.ajax({
+            url: url,
+            success: function(data){
+                var nro = parseInt(data.encurso)+parseInt(data.finalizados)+parseInt(data.iniciados);
+                if (nro > 0 && $("#nro_notificacionesT").val() < nro) {
+                    if (window.location.pathname === "/empresa" || window.location.pathname === "/software/empresa") {
+                        $('html, body').animate({scrollTop:90}, 'slow');
+                        $('#modalNotificacionT').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                        $('#modal-bodyT').html('').html('<center><i class="fa fa-info-circle fa-5x mb-2 text-danger"></i><br>Para el día de hoy tenemos<br>'+data.iniciados+' caso(s) de radicados iniciados.<br>'+data.finalizados+' caso(s) de radicados finalizados<br>'+data.encurso+' caso(s) de radicados en proceso.<br><a href="'+ route +'" class="btn btn-primary btn-block my-1">Ver Listado de Radicados</a></center>');
+                        $('html, body').animate({scrollTop:0}, 'slow');
+                        $("#play_notificacion")[0].play();
+                        $("#nro_notificacionesT").val(nro);
+                    }
+                    $("#nro_T").html('<span class="badge badge-danger">'+nro+'</span>');
+                }
+
+                if (nro == 0){
+                    $('#modalNotificacionT').modal('hide');
+                }
+
+                //setTimeout(function(){ notificacion(); }, 3000);
+            },
+            error: function(data){
+                console.log(data);
+                cargando(false);
+            }
+        });
+    }
+}

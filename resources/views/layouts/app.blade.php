@@ -423,6 +423,27 @@
                     </div>
 
                     <!-- NOTIFICACIONES -->
+                    <input type="hidden" name="nro_notificacionesT" id="nro_notificacionesT" value="0">
+                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                        <source src="{{asset('images/alerta.mp3')}}">
+                    </audio>
+                    <div class="modal fade" id="modalNotificacionT" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header p-0">
+                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" id="modal-bodyT">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NOTIFICACIONES -->
                     <input type="hidden" name="nro_notificaciones" id="nro_notificaciones" value="0">
                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
                         <source src="{{asset('images/alerta.mp3')}}">

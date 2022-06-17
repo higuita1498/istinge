@@ -573,4 +573,5 @@
     <input type="hidden" id="notificacionWifi" value="{{ isset($_SESSION['permisos']['779']) ? 1 : 0 }}">
     <input type="hidden" id="notificacionRadicados" value="{{ isset($_SESSION['permisos']['780']) ? 1 : 0 }}">
     <input type="hidden" id="notificacionPings" value="{{ isset($_SESSION['permisos']['781']) ? 1 : 0 }}">
+    <input type="hidden" id="notificacionTecnico" value="{{ isset($_SESSION['permisos']['833']) ? 1 : 0 }}">
 @endif
