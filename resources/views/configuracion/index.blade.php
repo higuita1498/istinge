@@ -11,6 +11,11 @@
 			<span class="text-primary">{{Auth::user()->empresa()->tip_iden()}}:</span>  {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv)-{{Auth::user()->empresa()->dv}}@endif<br>
 			<span class="text-primary">Tipo de Persona:</span>  {{Auth::user()->empresa()->tipo_persona()}}<br>
 			<span class="text-primary">Teléfono:</span>  {{Auth::user()->empresa()->telefono}}<br>
+			@if(Auth::user()->empresa()->whatsapp)<span class="text-primary">Whatsapp:</span>  {{Auth::user()->empresa()->whatsapp}}<br>@endif
+			@if(Auth::user()->empresa()->soporte)<span class="text-primary">Soporte:</span>  {{Auth::user()->empresa()->soporte}}<br>@endif
+			@if(Auth::user()->empresa()->ventas)<span class="text-primary">Ventas:</span>  {{Auth::user()->empresa()->ventas}}<br>@endif
+			@if(Auth::user()->empresa()->finanzas)<span class="text-primary">Finanzas:</span>  {{Auth::user()->empresa()->finanzas}}<br>@endif
+
 			<span class="text-primary">Dirección:</span>  {{Auth::user()->empresa()->direccion}}<br>
 			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}<br>
 			@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
