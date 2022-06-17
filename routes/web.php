@@ -1099,6 +1099,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		//rutas para modulo estado de cuenta cliente
 		Route::get('/estadoCliente', 'ExportarReportesController@estadoCliente')->name('exportar.estadoCliente');
 		Route::get('/estadoCliente', 'ExportarReportesController@ivas')->name('exportar.ivas');
+        Route::get('/radicados', 'ExportarReportesController@radicados')->name('exportar.radicados');
 	});
 
 	//Documentacion escrita
