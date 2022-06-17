@@ -717,6 +717,7 @@
         </p>
     </div>
     
+    @if(Auth::user()->empresa()->ventas || Auth::user()->empresa()->soporte || Auth::user()->empresa()->finanzas)
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%; margin-bottom:7px;">
             <p>LINEAS DE ATENCION</p>
@@ -727,20 +728,21 @@
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta">
-                    <td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">VENTAS:</li></td>
-                    <td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">SOPORTE:</li></td>
-                    <td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">FINANZAS:</li></td>
+                    @if(Auth::user()->empresa()->ventas)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">VENTAS</li></td>@endif
+                    @if(Auth::user()->empresa()->soporte)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">SOPORTE</li></td>@endif
+                    @if(Auth::user()->empresa()->finanzas)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">FINANZAS</li></td>@endif
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
-                <td><li style="padding:4px;">{{Auth::user()->empresa()->telefono}}</li></td>
-                <td><li style="padding:4px;">{{Auth::user()->empresa()->telefono}}</li></td>
-                <td><li style="padding:4px;">{{Auth::user()->empresa()->telefono}}</li></td>
+                    @if(Auth::user()->empresa()->ventas)<td><li style="padding:4px;">{{Auth::user()->empresa()->ventas}}</li></td>@endif
+                    @if(Auth::user()->empresa()->soporte)<td><li style="padding:4px;">{{Auth::user()->empresa()->soporte}}</li></td>@endif
+                    @if(Auth::user()->empresa()->finanzas)<td><li style="padding:4px;">{{Auth::user()->empresa()->finanzas}}</li></td>@endif
                 </tr>
                 </tbody>
                 </table>
             </div>
         </div>
     </div>
+    @endif
     
     <div class="margin-docpdf">
         <table style="width:100%;margin:5px 0px;">

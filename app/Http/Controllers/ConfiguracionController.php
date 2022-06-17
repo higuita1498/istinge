@@ -174,6 +174,9 @@ class ConfiguracionController extends Controller
       $empresa->sms_gateway = $request->sms_gateway;
       $empresa->device_id = $request->device_id;
       $empresa->whatsapp=$request->whatsapp?$request->pref_w." ".$request->whatsapp:$request->whatsapp;
+      $empresa->soporte=$request->soporte?$request->pref_s." ".$request->soporte:$request->soporte;
+      $empresa->ventas=$request->ventas?$request->pref_v." ".$request->ventas:$request->ventas;
+      $empresa->finanzas=$request->finanzas?$request->pref_f." ".$request->finanzas:$request->finanzas;
       $empresa->updated_at  = Carbon::now();
       
       $empresa->dv = $request->dvoriginal;

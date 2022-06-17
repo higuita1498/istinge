@@ -145,7 +145,7 @@
 			</div>
   			<div class="form-group col-md-3">
 	  			<label class="control-label">Teléfono <span class="text-danger">*</span></label>
-	  			<div class="row">
+	  			<div class="row pl-3">
 	  				<div class="col-md-4 nopadding ">
 	  					<select class="form-control selectpicker prefijo" name="pref" id="pref" required="" title="Cod" data-size="5" data-live-search="true">
 			  				@foreach($prefijos as $prefijo)
@@ -168,7 +168,7 @@
 
 			<div class="form-group col-md-3">
 	  			<label class="control-label">WhatsApp <span class="text-danger">*</span></label>
-	  			<div class="row">
+	  			<div class="row pl-3">
 	  				<div class="col-md-4 nopadding ">
 	  					<select class="form-control selectpicker prefijo" name="pref_w" id="pref_w" required="" title="Cod" data-size="5" data-live-search="true">
 			  				@foreach($prefijos as $prefijo)
@@ -189,6 +189,74 @@
 		        </span>
 			</div>
 
+			<div class="form-group col-md-3">
+	  			<label class="control-label">Soporte</label>
+	  			<div class="row pl-3">
+	  				<div class="col-md-4 nopadding ">
+	  					<select class="form-control selectpicker prefijo" name="pref_s" id="pref_s" title="Cod" data-size="5" data-live-search="true">
+			  				@foreach($prefijos as $prefijo)
+		                  		<option @if($empresa->soporte) {{'+'.$prefijo->phone_code==$empresa->soporte('pref')?'selected':''}}  @endif
+
+		                  		 	data-icon="flag-icon flag-icon-{{strtolower($prefijo->iso2)}}"
+
+		                  		 value="+{{$prefijo->phone_code}}" title="+{{$prefijo->phone_code}}" data-subtext="+{{$prefijo->phone_code}}">{{$prefijo->nombre}}</option>
+			  				@endforeach
+		                </select>
+	  				</div>
+	  				<div class="col-md-8" style="padding-left:0;">
+	  					<input type="text" class="form-control" id="soporte" name="soporte" maxlength="15" value="{{$empresa->soporte()}}">
+	  				</div>
+	  			</div>
+				<span class="help-block error">
+		        	<strong>{{ $errors->first('soporte') }}</strong>
+		        </span>
+			</div>
+
+			<div class="form-group col-md-3">
+	  			<label class="control-label">Ventas</label>
+	  			<div class="row pl-3">
+	  				<div class="col-md-4 nopadding ">
+	  					<select class="form-control selectpicker prefijo" name="pref_v" id="pref_v" title="Cod" data-size="5" data-live-search="true">
+			  				@foreach($prefijos as $prefijo)
+		                  		<option @if($empresa->ventas) {{'+'.$prefijo->phone_code==$empresa->ventas('pref')?'selected':''}}  @endif
+
+		                  		 	data-icon="flag-icon flag-icon-{{strtolower($prefijo->iso2)}}"
+
+		                  		 value="+{{$prefijo->phone_code}}" title="+{{$prefijo->phone_code}}" data-subtext="+{{$prefijo->phone_code}}">{{$prefijo->nombre}}</option>
+			  				@endforeach
+		                </select>
+	  				</div>
+	  				<div class="col-md-8" style="padding-left:0;">
+	  					<input type="text" class="form-control" id="ventas" name="ventas" maxlength="15" value="{{$empresa->ventas()}}">
+	  				</div>
+	  			</div>
+				<span class="help-block error">
+		        	<strong>{{ $errors->first('ventas') }}</strong>
+		        </span>
+			</div>
+
+			<div class="form-group col-md-3">
+	  			<label class="control-label">Finanzas</label>
+	  			<div class="row pl-3">
+	  				<div class="col-md-4 nopadding ">
+	  					<select class="form-control selectpicker prefijo" name="pref_f" id="pref_f" title="Cod" data-size="5" data-live-search="true">
+			  				@foreach($prefijos as $prefijo)
+		                  		<option @if($empresa->finanzas) {{'+'.$prefijo->phone_code==$empresa->finanzas('pref')?'selected':''}}  @endif
+
+		                  		 	data-icon="flag-icon flag-icon-{{strtolower($prefijo->iso2)}}"
+
+		                  		 value="+{{$prefijo->phone_code}}" title="+{{$prefijo->phone_code}}" data-subtext="+{{$prefijo->phone_code}}">{{$prefijo->nombre}}</option>
+			  				@endforeach
+		                </select>
+	  				</div>
+	  				<div class="col-md-8" style="padding-left:0;">
+	  					<input type="text" class="form-control" id="finanzas" name="finanzas" maxlength="15" value="{{$empresa->finanzas()}}">
+	  				</div>
+	  			</div>
+				<span class="help-block error">
+		        	<strong>{{ $errors->first('finanzas') }}</strong>
+		        </span>
+			</div>
 
 			<div class="form-group col-md-4">
 	  			<label class="control-label" for="email">Correo Electrónico <span class="text-danger">*</span></label>

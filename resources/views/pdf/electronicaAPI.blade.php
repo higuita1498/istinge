@@ -726,30 +726,32 @@
         </p>
     </div>
     
+    @if($empresa->ventas || $empresa->soporte || $empresa->finanzas)
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%; margin-bottom:7px;">
             <p>LINEAS DE ATENCION</p>
         </div>
-        
+
            <div class="div-content-border">
             <div>
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta">
-                    <td><li style="background-color:{{$empresa->color}};height:auto;">VENTAS:</li></td>
-                    <td><li style="background-color:{{$empresa->color}};height:auto;">SOPORTE:</li></td>
-                    <td><li style="background-color:{{$empresa->color}};height:auto;">FINANZAS:</li></td>
+                    @if($empresa->ventas)<td><li style="background-color:{{$empresa->color}};height:auto;">VENTAS</li></td>@endif
+                    @if($empresa->soporte)<td><li style="background-color:{{$empresa->color}};height:auto;">SOPORTE</li></td>@endif
+                    @if($empresa->finanzas)<td><li style="background-color:{{$empresa->color}};height:auto;">FINANZAS</li></td>@endif
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
-                <td><li style="padding:4px;">{{$empresa->telefono}}</li></td>
-                <td><li style="padding:4px;">{{$empresa->telefono}}</li></td>
-                <td><li style="padding:4px;">{{$empresa->telefono}}</li></td>
+                    @if($empresa->ventas)<td><li style="padding:4px;">{{$empresa->ventas}}</li></td>@endif
+                    @if($empresa->soporte)<td><li style="padding:4px;">{{$empresa->soporte}}</li></td>@endif
+                    @if($empresa->finanzas)<td><li style="padding:4px;">{{$empresa->finanzas}}</li></td>@endif
                 </tr>
                 </tbody>
                 </table>
             </div>
         </div>
     </div>
+    @endif
     
     <div class="margin-docpdf">
         <table style="width:100%;margin:5px 0px;">
