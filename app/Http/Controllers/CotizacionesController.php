@@ -331,7 +331,7 @@ class CotizacionesController extends Controller
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
             
-            return view('cotizaciones.facturar')->with(compact('numeraciones', 'nro', 'clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'print', 'cliente', 'cotizacion', 'items', 'extras', 'identificaciones', 'listas', 'bodegas'));
+            return view('cotizaciones.facturar')->with(compact('numeraciones', 'nro', 'clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'cotizacion', 'items', 'extras', 'identificaciones', 'listas', 'bodegas'));
         }
         return redirect('empresa/cotizaciones')->with('success', 'No existe un registro con ese id');
     }
@@ -655,7 +655,7 @@ class CotizacionesController extends Controller
                     $nro->inicio=$nro->inicio+1;
                     $nro->save();}
                 $mensaje='Se ha facturado satisfactoriamente la cotización';
-                return redirect('empresa/facturas/'.$factura->nro)->with('success', $mensaje)->with('codigo', $factura->id);
+                return redirect('empresa/facturas/'.$factura->id)->with('success', $mensaje)->with('codigo', $factura->id);
 
             }
             $mensaje='Se ha modificado satisfactoriamente la factura';

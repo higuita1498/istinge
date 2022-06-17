@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-<style type="text/css"> .card{ background: #f9f1ed !important;}</style>
 
 <div class="paper">
   <!-- Membrete -->
