@@ -208,7 +208,7 @@ class PucMovimiento extends Model
     public static function facturaCompra($ingreso, $opcion, $request, $siguienteNumero=null){
         
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
-        $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
+        $isGuardar = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',4)->first();
 
         //obtenbemos el siguiente numero de los asientos contables
         $empresa = Auth::user()->empresa;
