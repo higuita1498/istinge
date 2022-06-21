@@ -428,28 +428,30 @@ class RadicadosController extends Controller{
             $radicado->solventado=Carbon::now()->toDateTimeString();
             $radicado->save();
 
-            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
-            if($host){
-                $existing = config('mail');
-                $new =array_merge(
-                    $existing, [
-                        'host' => $host->servidor,
-                        'port' => $host->puerto,
-                        'encryption' => $host->seguridad,
-                        'username' => $host->usuario,
-                        'password' => $host->password,
-                        'from' => [
-                            'address' => $host->address,
-                            'name' => $host->name
+            if(isset($radicado->correo)){
+                $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+                if($host){
+                    $existing = config('mail');
+                    $new =array_merge(
+                        $existing, [
+                            'host' => $host->servidor,
+                            'port' => $host->puerto,
+                            'encryption' => $host->seguridad,
+                            'username' => $host->usuario,
+                            'password' => $host->password,
+                            'from' => [
+                                'address' => $host->address,
+                                'name' => $host->name
+                            ]
                         ]
-                    ]
-                );
-                config(['mail'=>$new]);
-            }
+                    );
+                    config(['mail'=>$new]);
+                }
 
-            Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
-                $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
-            });
+                Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                    $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
+                });
+            }
 
             return back()->with('success', $mensaje);
         }
