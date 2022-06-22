@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 	<form method="POST" action="{{ route('grupos-corte.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-banco">
 	    @csrf
@@ -10,7 +11,6 @@
 	                <strong>{{ $errors->first('nombre') }}</strong>
 	            </span>
 	        </div>
-
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Fecha de Factura <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="fecha_factura" id="fecha_factura" title="Seleccione" data-live-search="true" data-size="5">
@@ -59,6 +59,13 @@
 	                <strong>{{ $errors->first('fecha_suspension') }}</strong>
 	            </span>
 	        </div>
+	        <div class="col-md-3 form-group">
+	            <label class="control-label">Hora de Suspensión <span class="text-danger">*</span></label>
+	            <input type="text" class="timepicker form-control" id="hora_suspension" name="hora_suspension"  required="" value="{{old('hora_suspension', '00:00')}}">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('hora_suspension') }}</strong>
+	            </span>
+	        </div>
 
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Estado <span class="text-danger">*</span></label>
@@ -80,4 +87,15 @@
 	        </div>
 	    </div>
 	</form>
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+        	$('.timepicker').timepicker({
+        		locale: 'es-es',
+        		uiLibrary: 'bootstrap4',
+        	});
+        });
+    </script>
 @endsection

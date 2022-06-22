@@ -87,6 +87,7 @@
 				    <th>Fecha Pago</th>
 				    <th>Fecha Corte</th>
 				    <th>Fecha Suspensión</th>
+				    <th>Hora Suspensión</th>
 					<th>Estado</th>
 					<th>Acciones</th>
 				</tr>
@@ -124,6 +125,7 @@
 			    {data: 'fecha_pago'},
 			    {data: 'fecha_corte'},
 			    {data: 'fecha_suspension'},
+			    {data: 'hora_suspension'},
 				{data: 'status'},
 				{data: 'acciones'},
 			]

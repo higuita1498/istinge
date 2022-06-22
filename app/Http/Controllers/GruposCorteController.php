@@ -87,6 +87,9 @@ class GruposCorteController extends Controller
             ->editColumn('fecha_suspension', function (GrupoCorte $grupo) {
                 return ($grupo->fecha_suspension == 0) ? 'No aplica' : $grupo->fecha_suspension;
             })
+            ->editColumn('hora_suspension', function (GrupoCorte $grupo) {
+                return date('g:i A', strtotime($grupo->hora_suspension));
+            })
             ->editColumn('status', function (GrupoCorte $grupo) {
                 return "<span class='text-{$grupo->status("true")}'><strong>{$grupo->status()}</strong></span>";
             })
@@ -108,7 +111,12 @@ class GruposCorteController extends Controller
             'fecha_suspension' => 'required|numeric',
             'fecha_factura' => 'required|numeric',
             'fecha_pago' => 'required|numeric',
+            'hora_suspension' => 'required',
         ]);
+
+        $hora_suspension = explode(":", $request->hora_suspension);
+        $hora_suspension_limit = $hora_suspension[0]+2;
+        $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
         
         $grupo = new GrupoCorte;
         $grupo->nombre = $request->nombre;
@@ -116,6 +124,8 @@ class GruposCorteController extends Controller
         $grupo->fecha_pago = $request->fecha_pago;
         $grupo->fecha_corte = $request->fecha_corte;
         $grupo->fecha_suspension = $request->fecha_suspension;
+        $grupo->hora_suspension = $request->hora_suspension;
+        $grupo->hora_suspension_limit = $hora_suspension_limit;
         $grupo->status = $request->status;
         $grupo->created_by = Auth::user()->id;
         $grupo->empresa = Auth::user()->empresa;
@@ -126,15 +136,21 @@ class GruposCorteController extends Controller
     }
 
     public function storeBack(Request $request){
-        $grupo = new GrupoCorte;
-        $grupo->nombre = $request->nombre;
-        $grupo->fecha_factura = $request->fecha_factura;
-        $grupo->fecha_pago = $request->fecha_pago;
-        $grupo->fecha_corte = $request->fecha_corte;
+        $hora_suspension = explode(":", $request->hora_suspension);
+        $hora_suspension_limit = $hora_suspension[0]+2;
+        $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
+
+        $grupo                   = new GrupoCorte;
+        $grupo->nombre           = $request->nombre;
+        $grupo->fecha_factura    = $request->fecha_factura;
+        $grupo->fecha_pago       = $request->fecha_pago;
+        $grupo->fecha_corte      = $request->fecha_corte;
         $grupo->fecha_suspension = $request->fecha_suspension;
-        $grupo->status = $request->status;
-        $grupo->created_by = Auth::user()->id;
-        $grupo->empresa = Auth::user()->empresa;
+        $grupo->hora_suspension  = $request->hora_suspension;
+        $grupo->hora_suspension_limit = $hora_suspension_limit;
+        $grupo->status           = $request->status;
+        $grupo->created_by       = Auth::user()->id;
+        $grupo->empresa          = Auth::user()->empresa;
         $grupo->save();
 
         if ($grupo) {
@@ -179,18 +195,25 @@ class GruposCorteController extends Controller
             'fecha_suspension' => 'required|numeric',
             'fecha_factura' => 'required|numeric',
             'fecha_pago' => 'required|numeric',
+            'hora_suspension' => 'required',
         ]);
         
         $grupo = GrupoCorte::find($id);
         
         if ($grupo) {
-            $grupo->nombre = $request->nombre;
-            $grupo->fecha_factura = $request->fecha_factura;
-            $grupo->fecha_pago = $request->fecha_pago;
-            $grupo->fecha_corte = $request->fecha_corte;
+            $hora_suspension = explode(":", $request->hora_suspension);
+            $hora_suspension_limit = $hora_suspension[0]+2;
+            $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
+
+            $grupo->nombre           = $request->nombre;
+            $grupo->fecha_factura    = $request->fecha_factura;
+            $grupo->fecha_pago       = $request->fecha_pago;
+            $grupo->fecha_corte      = $request->fecha_corte;
             $grupo->fecha_suspension = $request->fecha_suspension;
-            $grupo->status = $request->status;
-            $grupo->updated_by = Auth::user()->id;
+            $grupo->hora_suspension  = $request->hora_suspension;
+            $grupo->hora_suspension_limit = $hora_suspension_limit;
+            $grupo->status           = $request->status;
+            $grupo->updated_by       = Auth::user()->id;
             $grupo->save();
             
             $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL GRUPO DE CORTE';

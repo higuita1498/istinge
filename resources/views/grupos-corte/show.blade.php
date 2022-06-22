@@ -33,6 +33,7 @@
                             <th class="bg-th text-center">Fecha pago</th>
                             <th class="bg-th text-center">Fecha Corte</th>
                             <th class="bg-th text-center">Fecha Suspensión</th>
+                            <th class="bg-th text-center">Hora  Suspensión</th>
                             <th class="bg-th text-center">Estado</th>
                             <th class="bg-th text-center">Contratos Asociados</th>
                         </tr>
@@ -42,6 +43,7 @@
                             <td class="text-center">{{$grupo->fecha_pago == 0 ? 'No Aplica' : $grupo->fecha_pago}}</td>
                             <td class="text-center">{{$grupo->fecha_corte == 0 ? 'No Aplica' : $grupo->fecha_corte}}</td>
                             <td class="text-center">{{$grupo->fecha_suspension == 0 ? 'No Aplica' : $grupo->fecha_suspension}}</td>
+                            <td class="text-center">{{date('g:i A', strtotime($grupo->hora_suspension))}}</td>
                             <td class="text-center"><span class="text-{{$grupo->status('true')}}"><b>{{$grupo->status()}}</b></span></td>
                             <td class="text-center">{{$contratos}}</td>
                         </tr>

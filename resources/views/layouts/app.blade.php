@@ -224,6 +224,17 @@
             div.dataTables_wrapper div.dataTables_length select {
                 width: 60px;
             }
+            .border, .loader-demo-box {
+                border: 1px solid #dee4e6 !important;
+            }
+            .gj-picker-bootstrap [role=header] {
+                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                color: #AAA;
+            }
+            .gj-picker-bootstrap {
+                border: 0;
+                border-radius: 20px;
+            }
         </style>
         @yield('style')
     </head>

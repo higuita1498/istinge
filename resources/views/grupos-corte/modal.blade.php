@@ -64,6 +64,13 @@
 	                <strong>{{ $errors->first('fecha_suspension') }}</strong>
 	            </span>
 	        </div>
+	        <div class="col-md-6 form-group">
+	            <label class="control-label">Hora de Suspensión <span class="text-danger">*</span></label>
+	            <input type="text" class="timepicker form-control" id="hora_suspension" name="hora_suspension"  required="" value="{{old('hora_suspension', '00:00')}}">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('hora_suspension') }}</strong>
+	            </span>
+	        </div>
 	        <div class="col-md-6 form-group d-none">
 	            <label class="control-label">Estado <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="status" id="status" title="Seleccione" required="">
@@ -89,6 +96,12 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
+	$(document).ready(function() {
+        $('.timepicker').timepicker({
+        	locale: 'es-es',
+        	uiLibrary: 'bootstrap4',
+        });
+    });
 	function guardar_grupo(){
 		$.post($("#formGrupo").attr('action'), $("#formGrupo").serialize(), function (dato) {
 			if(dato['success']==true){
