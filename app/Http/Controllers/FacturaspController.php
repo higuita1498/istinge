@@ -27,6 +27,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Session;
 use App\FormaPago;
 use App\PucMovimiento;
+use App\Puc;
 use App\Campos;
 
 class FacturaspController extends Controller
@@ -207,14 +208,12 @@ class FacturaspController extends Controller
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
-
             
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
         $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
         $clientes = Contacto::select('contactos.id','contactos.nombre','contactos.nit', 'contactos.apellido1', 'contactos.apellido2')->where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-        $categorias= Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $identificaciones=TipoIdentificacion::all();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
@@ -222,6 +221,9 @@ class FacturaspController extends Controller
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $dataPro = (new InventarioController)->create();
+        $categorias = Puc::where('empresa',auth()->user()->empresa)
+         ->whereRaw('length(codigo) > 6')
+         ->get();
         //Se crea una instancia de facturas_proveedores y se le summa 1 al codigo
         $facturaP = FacturaProveedores::where('empresa', Auth::user()->empresa)->get()->last();
         if (!$facturaP) {
@@ -281,6 +283,7 @@ class FacturaspController extends Controller
                 }
             }
         }
+
         $last = FacturaProveedores::where('empresa', Auth::user()->empresa)->select('nro')->where('tipo', 1)->get()->last();
         if(!$last){
             $nro = 1;
@@ -427,6 +430,8 @@ class FacturaspController extends Controller
                 $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
             }
 
+            // return $factura->gastosAnticipo(1);
+
             //obtiene las formas de pago relacionadas con este modulo (Facturas)
             $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
             
@@ -462,8 +467,13 @@ class FacturaspController extends Controller
             $tipos_empresa2 = $dataPro->tipos_empresa;
             $prefijos2 = $dataPro->prefijos;
             $vendedores2 = $dataPro->vendedores;
+            $formasPago = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->where('enlace_a',4)->get();
+
             view()->share(['title' => 'Modificar Factura de Proveedor: '.$factura->codigo, 'icon' =>'','subseccion' => 'facturas_proveedores', 'seccion' => 'gastos']);
-            return view('facturasp.edit')->with(compact('relaciones','factura', 'items', 'inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras'));
+            return view('facturasp.edit')->with(compact('relaciones','factura', 'items', 'inventario', 'bodegas',
+             'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 
+             'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 
+             'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras', 'formasPago'));
         }
         return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
     }

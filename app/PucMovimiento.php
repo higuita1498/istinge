@@ -9,6 +9,7 @@ use App\Contacto;
 use App\FormaPago;
 use App\Numeracion;
 use App\Model\Ingresos\Ingreso;
+use App\Model\Gastos\Gastos;
 use App\Puc;
 use Auth;
 use Carbon\Carbon;
@@ -205,7 +206,7 @@ class PucMovimiento extends Model
         }
     }
 
-    public static function facturaCompra($ingreso, $opcion, $request, $siguienteNumero=null){
+    public static function facturaCompra($factura, $opcion, $request, $siguienteNumero=null){
         
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
         $isGuardar = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->first();
@@ -213,7 +214,7 @@ class PucMovimiento extends Model
         //obtenbemos el siguiente numero de los asientos contables
         $empresa = Auth::user()->empresa;
         if($siguienteNumero == null){
-            $numeracion = Numeracion::where('empresa', $ingreso->empresa)->first();
+            $numeracion = Numeracion::where('empresa', $factura->empresa)->first();
             $siguienteNumero = $numeracion->contabilidad+1;
             $numeracion->contabilidad = $siguienteNumero;
             $numeracion->save();
@@ -313,25 +314,44 @@ class PucMovimiento extends Model
                      }
                  }
              }          
- 
-             //4to. Registramos el medio de pago de la factura.
-             $mov = new PucMovimiento;
-             $mov->nro = $siguienteNumero;
-             $mov->tipo_comprobante = "04";
-             $mov->consecutivo_comprobante = $factura->codigo;
-             $mov->fecha_elaboracion = $factura->fecha;
-             $mov->documento_id = $factura->id;
-             $mov->codigo_cuenta = isset($factura->formaPago()->codigo) ? $factura->formaPago()->codigo : '';
-             $mov->cuenta_id = isset($factura->formaPago()->id) ? $factura->formaPago()->id : '';
-             $mov->identificacion_tercero = $factura->cliente()->nit;
-             $mov->cliente_id = $factura->cliente()->id;
-             $mov->consecutivo = $factura->nro;
-             $mov->fecha_vencimiento = $factura->vencimiento;
-             $mov->descripcion = $factura->descripcion;
-             $mov->credito =  round($factura->total()->total);
-             $mov->enlace_a = 4;
-             $mov->empresa = $empresa;
-             $mov->save();
+
+            //4to. Registramos el medio de pago de la factura.
+            $i =0;
+            if(isset($request->formapago)){
+                foreach($request->formapago as $forma => $key){
+                    
+                    $idIngreso = null;
+                    if(isset($request->selectanticipo[$i])){
+                        $idIngreso = $request->selectanticipo[$i]; //selectanticipo trae clave primaria de egresos.
+                    }
+    
+                    $mov = new PucMovimiento;
+                    $mov->nro = $siguienteNumero;
+                    $mov->tipo_comprobante = "04";
+                    $mov->consecutivo_comprobante = $factura->codigo;
+                    $mov->fecha_elaboracion = $factura->fecha;
+                    $mov->documento_id = $factura->id;
+                    $mov->codigo_cuenta = isset($factura->formaPagoRequest($key,$idIngreso)->codigo) ? $factura->formaPagoRequest($key,$idIngreso)->codigo : '';
+                    $mov->cuenta_id = isset($factura->formaPagoRequest($key,$idIngreso)->id) ? $factura->formaPagoRequest($key,$idIngreso)->id : '';
+                    $mov->identificacion_tercero = $factura->cliente()->nit;
+                    $mov->cliente_id = $factura->cliente()->id;
+                    $mov->consecutivo = $factura->codigo;
+                    $mov->fecha_vencimiento = $factura->vencimiento;
+                    $mov->descripcion = $factura->descripcion;
+                    $mov->credito =  round($request->precioformapago[$i]);
+                    $mov->enlace_a = 4;
+                    $mov->formapago_id = $key;
+                    $mov->recibocaja_id = $request->selectanticipo[$i];
+                    $mov->empresa = $empresa;
+                    $mov->save();
+
+                    //si hay un rc. Descontamos el saldo a favor tanto del cliente como del recibo de caja.
+                    if($idIngreso){
+                        $mov->restarAnticipo(1);
+                    }
+                    $i++;
+                }
+            }
  
          }
  
@@ -341,9 +361,9 @@ class PucMovimiento extends Model
              //obtenemos los movimientos contables de la factura y los eliminamos.
              $movimientos = PucMovimiento::where('documento_id',$factura->id)->where('tipo_comprobante',4)->get();
              foreach($movimientos as $mov){
-                // if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
-                //     $mov->sumarAnticipo();
-                // }
+                if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
+                    $mov->sumarAnticipo(1);
+                }
                  //obtenemos los movimientos contables de la factura y los eliminamos.
                 $siguienteNumero = $mov->nro;
                 $mov->delete();
@@ -538,7 +558,7 @@ class PucMovimiento extends Model
 
         OPCION:
         0: Actualizar el movimiento y borrar el anterior.
-        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento con la variable $isGuardar
     */
     public static function gasto($gasto, $opcion, $tipo=0, $siguienteNumero=null){
 
@@ -636,7 +656,7 @@ class PucMovimiento extends Model
             $mov->cliente_id = $gasto->beneficiario()->id;
             $mov->consecutivo = $gasto->nro;
             $mov->descripcion = $gasto->observaciones;
-            $mov->credito =  $totalIngreso;
+            $mov->credito =  $totalIngreso+$gasto->saldoFavorIngreso;
             $mov->enlace_a = 4;
             $mov->empresa = $empresa;
             $mov->save();
@@ -836,43 +856,60 @@ class PucMovimiento extends Model
         }
     } 
     
-    public function restarAnticipo(){
+    public function restarAnticipo($facturaProveedor = 0){
 
         if($this->debito > 0){$valorUsado = $this->debito;}
         else{$valorUsado = $this->credito;}
 
         if($this->recibocaja_id != null || $this->recibocaja_id != 0){
-            $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
 
-            if($ingreso){
-                $ingreso->valor_anticipo=$ingreso->valor_anticipo - $valorUsado;
-                $ingreso->save();
+            if($facturaProveedor == 1){
+                $pago = Gastos::where('id',$this->recibocaja_id)->first();
+            }else{
+                $pago = Ingreso::where('id',$this->recibocaja_id)->first();
+            }
+            
+            if($pago){
+                $pago->valor_anticipo=$pago->valor_anticipo - $valorUsado;
+                $pago->save();
             }   
 
             $contacto = Contacto::find($this->cliente_id);
             if($contacto){
-                $contacto->saldo_favor = $contacto->saldo_favor - $valorUsado;
+                if($facturaProveedor == 1){
+                    $contacto->saldo_favor2 = $contacto->saldo_favor2 - $valorUsado;
+                }else{
+                    $contacto->saldo_favor = $contacto->saldo_favor - $valorUsado;
+                }
                 $contacto->save();
             }
         }
     }
 
-    public function sumarAnticipo(){
+    public function sumarAnticipo($facturaProveedor = 0){
 
         if($this->debito > 0){$valorUsado = $this->debito;}
         else{$valorUsado = $this->credito;}
 
         if($this->recibocaja_id != null || $this->recibocaja_id != 0){
-            $ingreso = Ingreso::where('id',$this->recibocaja_id)->first();
-
-            if($ingreso){
-                $ingreso->valor_anticipo=$ingreso->valor_anticipo + $valorUsado;
-                $ingreso->save();
+            if($facturaProveedor == 1){
+                $pago = Gastos::where('id',$this->recibocaja_id)->first();
+            }else{
+                $pago = Ingreso::where('id',$this->recibocaja_id)->first();
+            }
+            
+            if($pago){
+                $pago->valor_anticipo=$pago->valor_anticipo + $valorUsado;
+                $pago->save();
             }
 
             $contacto = Contacto::find($this->cliente_id);
             if($contacto){
-                $contacto->saldo_favor = $contacto->saldo_favor + $valorUsado;
+                if($facturaProveedor == 1){
+                    $contacto->saldo_favor2 = $contacto->saldo_favor2 + $valorUsado;
+                }else{
+                    $contacto->saldo_favor = $contacto->saldo_favor + $valorUsado;
+                }
                 $contacto->save();
             }
         }

@@ -321,6 +321,45 @@
       </div>
     </div>      
     <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        {{-- <div class="form-group cls-anticipo d-none">
+              <div class="form-group">
+            <label class="col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
+
+          
+              <select class="form-control selectpicker" name="puc_banco" id="puc_banco" title="Seleccione" data-live-search="true" data-size="5" required>
+                @foreach($formas as $f)
+                  <option value="{{$f->id}}" >{{$f->nombre}} - {{$f->codigo}}</option>
+                @endforeach
+              </select>
+            
+          <span class="help-block error">
+                <strong>{{ $errors->first('puc_banco') }}</strong>
+          </span>
+              </div>
+        </div>  --}}
+      </div>
+      <div class="col-md-6">
+        <div class="form-group cls-anticipo d-none">
+            <div class="form-group">
+
+              <label class="col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
+              <select class="form-control selectpicker" name="anticipo_factura" id="anticipo_factura" title="Seleccione" data-live-search="true" data-size="5" required>
+                @foreach($anticipos as $anticipo)
+                  <option value="{{$anticipo->id}}" >{{$anticipo->nombre}} - {{$anticipo->codigo}}</option>
+                @endforeach
+              </select>
+
+              <span class="help-block error">
+                    <strong>{{ $errors->first('anticipo_factura') }}</strong>
+              </span>
+            </div>
+        </div> 
+      </div>
+    </div>
+
     <div class="row" >
       
       <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">

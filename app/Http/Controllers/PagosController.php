@@ -247,6 +247,8 @@ class PagosController extends Controller
             $gasto->tipo          = $request->tipo;
             $gasto->fecha         = Carbon::parse($request->fecha)->format('Y-m-d');
             $gasto->observaciones = mb_strtolower($request->observaciones);
+            $gasto->anticipo = $request->saldofavor > 0 ? '1' : '';
+            $gasto->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
             $gasto->created_by    = Auth::user()->id;
             $gasto->save();
             
@@ -291,7 +293,7 @@ class PagosController extends Controller
                         $items->pagado=$factura->pagado();
                         $items->pago = $precio;
                         $items->puc_factura = $factura->cuenta_id;
-                        $items->puc_banco = $request->saldofavor > 0 ? $request->puc_banco : $request->forma_pago;
+                        $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
                         $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
                         $items->save();
 
@@ -342,7 +344,7 @@ class PagosController extends Controller
                 $contacto->save();
 
                 $gasto->saldoFavorIngreso = $request->saldofavor;
-                $gasto->puc_banco = $request->puc_banco;
+                $gasto->puc_banco = $request->forma_pago;
                 $gasto->anticipo = $request->anticipo_factura;
 
                 PucMovimiento::gasto($gasto,1,1);    
@@ -828,5 +830,22 @@ class PagosController extends Controller
         $facturap = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $facturap->estatus = 1;
         $facturap->save();
+    }
+
+     //metodo que calcula que recibos de caja tiene un anticipo para poder cruzar en una forma de pago.
+     public function recibosAnticipo(Request $request){
+
+        //obtenemos los ingresos que tiene un anticpo vigente.
+        if($request->recibo == 0){
+            $pagos = Gastos::where('beneficiario',$request->cliente)
+            ->where('anticipo',1)
+            ->where('valor_anticipo','>',0)
+            ->get();
+        }else{
+            $pagos = [];
+        }
+     
+
+        return response()->json($pagos);
     }
 }
