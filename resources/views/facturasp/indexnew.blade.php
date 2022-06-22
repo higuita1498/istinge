@@ -99,11 +99,12 @@
 								<option value="2">Anuladas</option>
 							</select>
 						</div>
-
-
-						<div class="col-md-1 pl-1 pt-1">
-							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+					</div>
+					<div class="row">
+						<div class="col-md-12 pl-1 pt-1 text-center">
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+							<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1" title="Exportar"><i class="fas fa-file-excel"></i></a>
 						</div>
 					</div>
 				</div>
@@ -228,6 +229,11 @@
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
+	}
+
+	function exportar() {
+		$("#estado").selectpicker('refresh');
+        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&proveedor='+$('#proveedor').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
 	}
 
 	@if($tipo)
