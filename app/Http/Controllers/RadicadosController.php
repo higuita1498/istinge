@@ -235,8 +235,11 @@ class RadicadosController extends Controller{
         ->editColumn('solventado', function (Radicado $radicado) {
             return ($radicado->solventado) ? date('d-m-Y g:i:s A', strtotime($radicado->solventado)) : 'N/A' ;
         })
+        ->editColumn('desconocido', function (Radicado $radicado) {
+            return $radicado->desconocido;
+        })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
-        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico'])
+        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico', 'desconocido'])
         ->toJson();
     }
 
