@@ -529,27 +529,41 @@ class PlanesVelocidadController extends Controller
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
 
-                $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
-                $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
-                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+                $rate_limit = '';
+                $priority        = $plan->prioridad;
+                $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada : '';
+                $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
+                $max_limit       = $plan->upload.'/'.$plan->download;
+
+                if($max_limit){ $rate_limit .= $max_limit; }
+                if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
+                if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
+                if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
+                if($priority){ $rate_limit .= ' '.$priority; }
+                if(strlen($limit_at)>3){ $rate_limit .= ' '.$limit_at; }
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     $API->write('/queue/simple/getall/print', TRUE);
                     $ARRAYS = $API->read();
 
-                    $API->write('/ip/firewall/address-list/print', false);
-                    $API->write('?target='.$contrato->ip, false);
+                    $API->write('/queue/simple/getall/print', false);
+                    $API->write('?target='.$contrato->ip.'/32', false);
                     $API->write('=.proplist=.id');
 
                     if(count($ARRAYS)>0){
                         $API->comm("/queue/simple/set", array(
                             ".id"             => $name[0][".id"],
                             "max-limit"       => $plan->upload.'/'.$plan->download,
-                            "priority"        => $priority,
                             "burst-limit"     => $burst_limit,
-                            "burst-threshold" => $burst_threshold
+                            "burst-threshold" => $burst_threshold,
+                            "burst-time"      => $burst_time,
+                            "priority"        => $priority,
+                            "limit-at"        => $limit_at
                             )
                         );
+                        $succ++;
                     }else{
                         $fail++;
                     }
