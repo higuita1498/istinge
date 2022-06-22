@@ -545,16 +545,14 @@ class PlanesVelocidadController extends Controller
                 if(strlen($limit_at)>3){ $rate_limit .= ' '.$limit_at; }
 
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    $API->write('/queue/simple/getall/print', TRUE);
-                    $ARRAYS = $API->read();
+                    $queue = $API->comm("/queue/simple/getall", array(
+                        "?target" => $contrato->ip.'/32'
+                        )
+                    );
 
-                    $API->write('/queue/simple/getall/print', false);
-                    $API->write('?target='.$contrato->ip.'/32', false);
-                    $API->write('=.proplist=.id');
-
-                    if(count($ARRAYS)>0){
+                    if(count($queue)>0){
                         $API->comm("/queue/simple/set", array(
-                            ".id"             => $name[0][".id"],
+                            ".id"             => $ARRAYS[0][".id"],
                             "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
                             "burst-threshold" => $burst_threshold,
