@@ -513,57 +513,57 @@ class PlanesVelocidadController extends Controller
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function aplicando_cambios($nro){
+    public function aplicando_cambios($contratos){
         $this->getAllPermissions(Auth::user()->id);
 
-        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
-        $plan = PlanesVelocidad::find($contrato->plan_id);
-        if ($plan) {
-            $mikrotik = Mikrotik::find($plan->mikrotik);
+        $succ = 0; $fail = 0;
 
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
+        $contratos = explode(",", $contratos);
 
-            $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
-            $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
-            $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+        for ($i=0; $i < count($contratos) ; $i++) {
+            $contrato =Contrato::find($contratos[$i]);
+            $plan     = PlanesVelocidad::find($contrato->plan_id);
 
-            if($contrato->local_address){
-                $segmento = explode("/", $contrato->local_address);
-                $prefijo = '/'.$segmento[1];
-            }else{
-                $prefijo = '';
-            }
+            if ($plan) {
+                $mikrotik = Mikrotik::find($plan->mikrotik);
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
 
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                $name = $API->comm("/queue/simple/getall", array(
-                    "?target" => ($contrato->local_address) ? $contrato->ip.''.$prefijo : $contrato->ip
-                    )
-                );
+                $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
+                $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
+                $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
 
-                if($name){
-                    $API->comm("/queue/simple/set", array(
-                        ".id"             => $name[0][".id"],
-                        "max-limit"       => $plan->upload.'/'.$plan->download,
-                        "priority"        => $priority,
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
-                        )
-                    );
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    $API->write('/queue/simple/getall/print', TRUE);
+                    $ARRAYS = $API->read();
+
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?target='.$contrato->ip, false);
+                    $API->write('=.proplist=.id');
+
+                    if(count($ARRAYS)>0){
+                        $API->comm("/queue/simple/set", array(
+                            ".id"             => $name[0][".id"],
+                            "max-limit"       => $plan->upload.'/'.$plan->download,
+                            "priority"        => $priority,
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold
+                            )
+                        );
+                    }else{
+                        $fail++;
+                    }
+                    $API->disconnect();
                 }
-
-                $API->disconnect();
-
-                return response()->json([
-                    'success'  => true,
-                    'servicio' => $contrato->servicio,
-                ]);
-            } else {
-                return response()->json([
-                    'success'  => false,
-                    'servicio' => $contrato->servicio,
-                ]);
+            }else{
+                $fail++;
             }
         }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ
+        ]);
     }
 }
