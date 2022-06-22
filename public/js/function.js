@@ -4518,7 +4518,9 @@ $('#searchIP').click(function() {
 
                             if(ip_mk == ip_so){
                                 var ip = target[0].replace(/\./g, '');
-                                $("#"+ip).remove();
+                                if(document.getElementById(ip)){
+                                    $("#"+ip).remove();
+                                }
                             }
                         }
                     }
@@ -4526,7 +4528,9 @@ $('#searchIP').click(function() {
                         for (i = 0; i < data.software.length; i++){
                             if (data.software[i].ip) {
                                 var ip = data.software[i].ip.replace(/\./g, '');
-                                $("#"+ip).remove();
+                                if(document.getElementById(ip)){
+                                    $("#"+ip).remove();
+                                }
                             }
                         }
                     }
