@@ -60,6 +60,13 @@
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
+	            <label class="control-label">Hora de Suspensión <span class="text-danger">*</span></label>
+	            <input type="text" class="timepicker form-control" id="hora_suspension" name="hora_suspension"  required="" value="{{$grupo->hora_suspension}}">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('hora_suspension') }}</strong>
+	            </span>
+	        </div>
+	        <div class="col-md-3 form-group">
 	            <label class="control-label">Estado <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="status" id="status" title="Seleccione" required="">
 	                <option value="1" {{ ($grupo->status == 1) ? 'selected' : '' }}>Habilitado</option>
@@ -79,4 +86,15 @@
 	        </div>
 	    </div>
 	</form>
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+        	$('.timepicker').timepicker({
+        		locale: 'es-es',
+        		uiLibrary: 'bootstrap4',
+        	});
+        });
+    </script>
 @endsection

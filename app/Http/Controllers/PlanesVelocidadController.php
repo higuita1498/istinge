@@ -513,57 +513,69 @@ class PlanesVelocidadController extends Controller
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function aplicando_cambios($nro){
+    public function aplicando_cambios($contratos){
         $this->getAllPermissions(Auth::user()->id);
 
-        $contrato = Contrato::where('nro', $nro)->where('status', 1)->where('empresa', Auth::user()->empresa)->first();
-        $plan = PlanesVelocidad::find($contrato->plan_id);
-        if ($plan) {
-            $mikrotik = Mikrotik::find($plan->mikrotik);
+        $succ = 0; $fail = 0;
 
-            $API = new RouterosAPI();
-            $API->port = $mikrotik->puerto_api;
+        $contratos = explode(",", $contratos);
 
-            $priority = ($plan->prioridad) ? $plan->prioridad.'/'.$plan->prioridad : '';
-            $burst_limit = ($plan->burst_limit_subida) ? $plan->burst_limit_subida.'M/'.$plan->burst_limit_bajada.'M' : '';
-            $burst_threshold = ($plan->burst_threshold_subida) ? $plan->burst_threshold_subida.'M/'.$plan->burst_threshold_bajada.'M': '';
+        for ($i=0; $i < count($contratos) ; $i++) {
+            $contrato =Contrato::find($contratos[$i]);
+            $plan     = PlanesVelocidad::find($contrato->plan_id);
 
-            if($contrato->local_address){
-                $segmento = explode("/", $contrato->local_address);
-                $prefijo = '/'.$segmento[1];
-            }else{
-                $prefijo = '';
-            }
+            if ($plan) {
+                $mikrotik = Mikrotik::find($plan->mikrotik);
+                $API = new RouterosAPI();
+                $API->port = $mikrotik->puerto_api;
 
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                $name = $API->comm("/queue/simple/getall", array(
-                    "?target" => ($contrato->local_address) ? $contrato->ip.''.$prefijo : $contrato->ip
-                    )
-                );
+                $rate_limit = '';
+                $priority        = $plan->prioridad;
+                $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada : '';
+                $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada  : '';
+                $max_limit       = $plan->upload.'/'.$plan->download;
 
-                if($name){
-                    $API->comm("/queue/simple/set", array(
-                        ".id"             => $name[0][".id"],
-                        "max-limit"       => $plan->upload.'/'.$plan->download,
-                        "priority"        => $priority,
-                        "burst-limit"     => $burst_limit,
-                        "burst-threshold" => $burst_threshold
+                if($max_limit){ $rate_limit .= $max_limit; }
+                if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
+                if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
+                if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
+                if($priority){ $rate_limit .= ' '.$priority; }
+                if(strlen($limit_at)>3){ $rate_limit .= ' '.$limit_at; }
+
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    $queue = $API->comm("/queue/simple/getall", array(
+                        "?target" => $contrato->ip.'/32'
                         )
                     );
+
+                    if(count($queue)>0){
+                        $API->comm("/queue/simple/set", array(
+                            ".id"             => $ARRAYS[0][".id"],
+                            "max-limit"       => $plan->upload.'/'.$plan->download,
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold,
+                            "burst-time"      => $burst_time,
+                            "priority"        => $priority,
+                            "limit-at"        => $limit_at
+                            )
+                        );
+                        $succ++;
+                    }else{
+                        $fail++;
+                    }
+                    $API->disconnect();
                 }
-
-                $API->disconnect();
-
-                return response()->json([
-                    'success'  => true,
-                    'servicio' => $contrato->servicio,
-                ]);
-            } else {
-                return response()->json([
-                    'success'  => false,
-                    'servicio' => $contrato->servicio,
-                ]);
+            }else{
+                $fail++;
             }
         }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ
+        ]);
     }
 }

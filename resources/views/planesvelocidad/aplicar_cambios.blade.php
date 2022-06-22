@@ -5,8 +5,9 @@
     	@csrf
     </form>
 
-    <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-times"></i> Cancelar</a>
-    <a href="javascript:aplicar_cambios()" class="btn btn-success btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
+    <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync-alt"></i> Actualizar</a>
+    <a href="{{ route('planes-velocidad.index')}}"  class="btn btn-danger btn-sm" title="Regresar" id="btn_salir"><i class="fas fa-step-backward"></i></i> Regresar</a>
+    <a href="javascript:aplicar_cambios()" class="btn btn-warning btn-sm" title="Aplicar Cambios" id="btn_cambios"><i class="fas fa-check"></i> Aplicar Cambios</a>
 @endsection
 
 @section('style')
@@ -50,7 +51,6 @@
     				<tr>
     					<th width="90px">Contrato</th>
     					<th>Cliente</th>
-    					<th>Plan</th>
     					<th>IP</th>
     				</tr>
     			</thead>
@@ -73,6 +73,10 @@
 			serverSide: false,
 			processing: true,
 			searching: true,
+            select: true,
+            select: {
+                style: 'multi',
+            },
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -87,7 +91,6 @@
 			columns: [
 			    { data: 'nro' },
 			    { data: 'client_id' },
-			    { data: 'plan' },
 			    { data: 'ip' },
 			]
 		});
@@ -100,9 +103,35 @@
 	}
 
 	function aplicar_cambios() {
+		var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if(nro>25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 25 contratos y ha seleccionado '+nro,
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
 		swal({
-			title: '¿Desea aplicar los cambios a todos los contratos en la mikrotik que poseen este plan?',
-			text: 'ESTE PROCESO PUEDE DEMORAR UNOS MINUTOS',
+			title: '¿Está seguro que desea aplicar los cambios a '+nro+' contratos?',
+			html: '<span style="color:red;">(EL PROCESO PUEDE DEMORAR UNOS MINUTOS)</span></b>',
 			type: 'question',
 			showCancelButton: true,
 			confirmButtonColor: '#00ce68',
@@ -112,53 +141,32 @@
 		}).then((result) => {
 			if (result.value) {
 				cargando(true);
-				var contador_t = $("#contador_t").val($('#tabla-contratos').DataTable().data().count());
 
-				$('#tabla-contratos tbody tr td.sorting_1 a strong').each(function() {
-					var nro = $(this).text();
+				if (window.location.pathname.split("/")[1] === "software") {
+					var url='/software/empresa/planes-velocidad/'+contratos+'/aplicando-cambios';
+				}else{
+					var url = '/empresa/planes-velocidad/'+contratos+'/aplicando-cambios';
+				}
 
-					if (window.location.pathname.split("/")[1] === "software") {
-						var url='/software/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
-					}else{
-						var url = '/empresa/planes-velocidad/'+nro+'/aplicando-cambios';
+				$.ajax({
+					url: url,
+					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+					method: 'GET',
+					success: function(data){
+						cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
 					}
-
-					$.ajax({
-	                    url: url,
-	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-	                    method: 'get',
-	                    success: function(data){
-	                        if(data.success){
-	                        	var opt = parseInt($("#contador_s").val())+parseInt(1);
-	                        	$("#contador_s").val(opt);
-	                        }else{
-	                        	var opt = parseInt($("#contador_f").val())+parseInt(1);
-	                        	$("#contador_f").val(opt);
-	                        }
-	                        verificar();
-	                    },
-	                    error: function(data){
-
-	                    }
-	                });
 				});
 			}
 		})
-	}
-
-	function verificar() {
-		var total = parseInt($("#contador_s").val()) + parseInt($("#contador_f").val());
-		var opt   = parseInt($("#contador_t").val());
-		if(total == opt){
-			Swal.fire({
-				type: 'success',
-				title: 'PROCESO DE ACTUALIZACIÓN FINALIZADO',
-				showConfirmButton: false
-			});
-			cargando(false);
-			$("#btn_cambios").addClass('d-none');
-			$("#btn_salir").text('Volver al listado');
-		}
 	}
 </script>
 @endsection
