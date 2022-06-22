@@ -43,6 +43,10 @@
 			}, 10000);
 		</script>
 	@endif
+
+	<div class="alert alert-info" role="alert">
+		Debido a que el plan de velocidad ha sido actualizado, le recomendamos aplicarlos cambios a cada uno de los contratos que están asociado directamente y se encuentran en la mikrotik. Para ello debe seleccionar, un máximo 50 contratos, y dar clic en el botón <strong>Aplicar Cambios</strong>.
+	</div>
 	
 	<div class="row card-description">
     	<div class="col-md-12">
@@ -83,7 +87,7 @@
 			order: [
 				[0, "desc"]
 			],
-			"pageLength": {{ Auth::user()->empresa()->pageLength }},
+			"pageLength": 50,
 			ajax: '{{url("contratos/p-$plan->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -117,10 +121,10 @@
             return false;
         }
 
-        if(nro>25){
+        if(nro>50){
             swal({
                 title: 'ERROR',
-                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 25 contratos y ha seleccionado '+nro,
+                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 50 contratos y ha seleccionado '+nro,
                 type: 'error',
             });
             return false;

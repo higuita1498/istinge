@@ -361,7 +361,6 @@ class PlanesVelocidadController extends Controller
             $inventario->save();
             
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
-            return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('plan_id', $plan->id);
             return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
       }
       return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
@@ -552,7 +551,7 @@ class PlanesVelocidadController extends Controller
 
                     if(count($queue)>0){
                         $API->comm("/queue/simple/set", array(
-                            ".id"             => $ARRAYS[0][".id"],
+                            ".id"             => $queue[0][".id"],
                             "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
                             "burst-threshold" => $burst_threshold,
