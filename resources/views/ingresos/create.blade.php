@@ -373,7 +373,7 @@
 
       <div class="row">
         <div class="col-md-6">
-          <div class="form-group cls-anticipo d-none">
+          {{-- <div class="form-group cls-anticipo d-none">
                 <div class="form-group">
               <label class="col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
 
@@ -388,7 +388,7 @@
                   <strong>{{ $errors->first('puc_banco') }}</strong>
             </span>
                 </div>
-          </div> 
+          </div>  --}}
         </div>
         <div class="col-md-6">
           <div class="form-group cls-anticipo d-none">

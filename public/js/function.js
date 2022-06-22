@@ -705,6 +705,7 @@ function contacto(selected, modificar=false, type = 1){
     if(
         window.location.pathname.split("/")[3] == "notascredito" || window.location.pathname.split("/")[2] == "notascredito"
         || window.location.pathname.split("/")[3] == "cotizaciones" || window.location.pathname.split("/")[2] == "cotizaciones"
+        || window.location.pathname.split("/")[3] == "facturasp" || window.location.pathname.split("/")[2] == "facturasp"
         ){
         modulo = 1;
     }
@@ -736,7 +737,12 @@ function contacto(selected, modificar=false, type = 1){
             }
 
             //seteamos un posoble saldo a favor que tenga el cliente
-            $("#saldofavorcliente").val(data.saldo_favor);
+            if(window.location.pathname.split("/")[3] == "facturasp" || window.location.pathname.split("/")[2] == "facturasp"){
+                $("#saldofavorcliente").val(data.saldo_favor2);
+            }else{
+                $("#saldofavorcliente").val(data.saldo_favor);
+            }
+            
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
             if(data.plan == null && type == 1 && data.servicio_tv == null && modulo == 0){
@@ -1649,6 +1655,13 @@ function total_linea_formapago(nro){
         }
     });
 
+    let msjAnticipo = "";
+    if($("#fact_prov").length == 0){
+        msjAnticipo = "El valor del anticipo no puede superar el valor del recibo de caja.";
+    }else{
+        msjAnticipo = "El valor del anticipo no puede superar el valor del pago / egreso.";
+    }
+
     let totalFactura = document.getElementById('total'); 
     totalFactura = totalFactura.textContent;
     totalFactura = parseFloat(totalFactura.replace(/[$.]/g,''));
@@ -1669,11 +1682,12 @@ function total_linea_formapago(nro){
     
     if($("#selectanticipo"+nro).length){
         let valorInputForma = parseFloat($("#precioformapago"+nro).val());
-        let valorSelectRecibo = parseFloat($("#optionAnticipo"+nro).attr('precio'));
+        let valorSelectRecibo = parseFloat($("#selectanticipo"+nro).children("option:selected").attr('precio'));
+
         if(valorInputForma > valorSelectRecibo){
             swal({
                 title: 'Error',
-                html: 'El valor del anticipo no puede superar el varlo del recibo de caja.',
+                html: msjAnticipo,
                 type: 'error',
                 showConfirmButton: true,
                 confirmButtonColor: '#1A59A1',
@@ -2355,12 +2369,21 @@ function llenarSelectAnticipo(value,cliente, nro){
     var formasPago = JSON.parse($('#formaspago').val());
     // if(value == 0){
 
-        /* >>> Cpnosulta par atraer los recibos de caja con saldo a favor <<< */
-        if (window.location.pathname.split("/")[1] === "software") {
-            var url='/software/empresa/ingresos/recibosanticipo';
+        /* >>> Consulta para traer los recibos de caja o los egresos con saldo a favor <<< */
+        if($("#fact_prov").length == 0){
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url='/software/empresa/ingresos/recibosanticipo';
+            }else{
+                var url='/empresa/ingresos/recibosanticipo';
+            }
         }else{
-            var url='/empresa/ingresos/recibosanticipo';
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url='/software/empresa/pagos/recibosanticipo';
+            }else{
+                var url='/empresa/pagos/recibosanticipo';
+            }
         }
+        
         $.ajax({
             url: url,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -2369,14 +2392,16 @@ function llenarSelectAnticipo(value,cliente, nro){
             success: function(recibos) {
                  //Recibos de caja relacionados que tienene un saldo a favor
             $('#selectanticipo'+nro).empty();
+            let i = 1;
             $.each( recibos, function( key, value ){
                 $('#selectanticipo'+nro).append($('<option>',
                     {
                         value: value.id,
                         precio: Math.round(value.valor_anticipo),
-                        id: "optionAnticipo"+nro,
+                        id: "optionAnticipo"+i,
                         text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
                     }));
+                i++;
             });
 
             $('#selectanticipo'+nro).selectpicker('refresh');

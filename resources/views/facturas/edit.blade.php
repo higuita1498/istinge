@@ -341,7 +341,7 @@
                                   </td>
                                   <td class="monetario">
                                     <input type="hidden" value='0' id="lock_forma{{$cont}}">
-                                    <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->debito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="Valor anticipo" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
+                                    <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->debito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="valor forma de pago" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
                                   </td>
                                 <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>                          
                               </tr>

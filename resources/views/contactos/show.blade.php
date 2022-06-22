@@ -318,6 +318,25 @@
 					</div>
 				@endforeach
 		    </div>
+			
+			<div class="table-responsive mt-4">
+				<table class="table table-striped table-bordered table-sm info">
+					<tbody>
+						<tr>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>SALDOS {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
+						</tr>
+						<tr>
+							<th width="20%">Saldo a favor Pagos / Ingresos</th>
+							<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor)}}</td>
+						</tr>
+						<tr>
+							<th width="20%">Saldo a favor Pagos / Egresos</th>
+							<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor2)}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
 		</div>
 	</div>
 

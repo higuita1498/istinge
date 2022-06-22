@@ -77,16 +77,6 @@
             </select>
           </div>
         </div>
-        <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Forma de Pago <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
-          <div class="col-sm-8">
-              <select name="relacion" id="relacion" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required="">
-                  @foreach($relaciones as $relacion)
-                      <option value="{{$relacion->id}}" {{$relacion->id == $factura->cuenta_id ? 'selected':''}}>{{$relacion->codigo}} - {{$relacion->nombre}}</option>
-                  @endforeach
-              </select>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -188,7 +178,7 @@
 
     <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 5%">Agregar línea</button>
     <div class="row"  style="margin-top: 5%;">
-          <div class="col-md-7 no-padding">
+          <div class="col-md-5 no-padding">
         <h5>RETENCIONES</h5>
             <table class="table table-striped table-sm" id="table-retencion">
               <thead class="thead-dark">
@@ -224,6 +214,63 @@
             </table>
             <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button>
           </div>
+          <div class="col-md-7">
+            <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+            <table class="table table-striped table-sm" id="table-formaspago">
+              <thead class="thead-dark">
+                <th width="50%">Cuenta</th>
+                <th width="25%">Cruce</th>
+                <th width="20%" class="no-padding">Valor</th>
+                <th width="5%"></th>
+              </thead>
+              <tbody>
+                @php $cont=0; $totalformas= 0; @endphp
+                  @foreach($formasPago as $forma) 
+                @php $cont+=1; $totalformas+=$forma->credito; @endphp
+                  <tr id="forma{{$cont}}" fila="{{$cont}}">
+                    <td  class="no-padding">
+                        <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="formapago[]" id="formapago{{$cont}}" onchange="llenarSelectAnticipo(this.value, $factura->cliente);" required="" >
+                            @if($forma->recibocaja_id != null)
+                            <option value="0" selected>Agregar un anticipo</option>
+                            @endif
+                            @foreach($relaciones as $relacion)
+                                <option value="{{$relacion->id}}" {{$relacion->id == $forma->formapago_id ? 'selected': ''}}>{{$relacion->codigo}} - {{$relacion->nombre}}</option>
+                            @endforeach
+                        </select>
+                      </td>
+                      <td  class="no-padding" id="tdanticipo{{$cont}}">
+                          <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo{{$cont}}">
+                            @if($forma->recibocaja_id != null)
+                              @php $i = 1; @endphp
+                              @foreach($factura->gastosAnticipo(1) as $recibo)
+                                <option value="{{$recibo->id}}" id="optionAnticipo{{$i}}" precio="{{round($recibo->valor_anticipo,4)}}" {{$recibo->id == $forma->recibocaja_id ? 'selected': ''}}>EG-{{$recibo->nro}} - {{round($recibo->valor_anticipo,4)}}</option>
+                              @php  $i++; @endphp
+                              @endforeach
+                            @endif
+                          </select>
+                      </td>
+                      <td class="monetario">
+                        <input type="hidden" value='0' id="lock_forma{{$cont}}">
+                        <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->credito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="valor forma de pago" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
+                      </td>
+                    <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>                          
+                  </tr>
+                  @endforeach
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago();" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+              </div>
+              <div class="col-md-6 d-flex justify-content-between pt-3">
+                <h5>Total:</h5>
+                <span>$</span><span id="anticipototal">{{$totalformas}}</span>  
+              </div>
+              <div class="col-md-12">
+                <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+              </div>
+            </div>
+        </div>
     </div>
     <!-- Totales -->
         <div class="row" style="margin-top: 10%;">
@@ -332,6 +379,12 @@
   <input type="hidden" id="url" value="{{url('/')}}">
   <input type="hidden" id="jsonproduc" value="{{route('inventario.all')}}">
   <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
+
+  {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+  <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
+  <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
+  <input type="hidden" id="edit" value="1">
+  <input type="hidden" id="factura" value="{{$factura->id}}">    
 
   <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
                             <optgroup label="{{$categoria->nombre}}">

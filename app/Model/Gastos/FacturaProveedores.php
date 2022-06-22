@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\FormaPago;
 use App\Puc;
 use DB;
+use App\PucMovimiento;
 
 
 class FacturaProveedores extends Model
@@ -292,9 +293,61 @@ class FacturaProveedores extends Model
         }
     }
 
+    //se recibe normalmente un id de la tabla de forma de pago, pero si ingreso es diferente de null se recibe un id del puc
+    public function formaPagoRequest($cuenta_id,$idIngreso=null){
+
+        if($idIngreso == null){
+            $forma = FormaPago::find($cuenta_id);
+    
+            if($forma){
+                return Puc::find($forma->cuenta_id); 
+            }
+        //si es igual a cero es por que se trata de un anticipo.
+        }else{
+            //buscamos la cuenta contable que tiene asociada el ingreso
+            $pm= PucMovimiento::where('documento_id',$idIngreso)->where('tipo_comprobante',1)->where('enlace_a',5)->first();
+
+            if($pm){
+                return Puc::find($pm->cuenta_id);
+            }
+        }
+    }
+
     public function itemsFactura()
     {
         return $this->hasMany(ItemsFacturaProv::class,'factura');
+    }
+
+    public function gastosAnticipo($edit = 0){
+        //obtenemos los gastos que tiene un anticpo vigente.
+        $gastosArray=array();
+        if($edit){
+            $gastosEdit = PucMovimiento::
+            join('gastos as i','i.id','recibocaja_id')
+            ->where('tipo_comprobante',4)
+            ->where('documento_id',$this->id)
+            ->select('i.id')
+            ->get();
+        
+            foreach ($gastosEdit as $id) {
+                $gastosArray[]=$id->id;
+            }
+        }
+
+        if(count($gastosArray) > 0){
+            $gastos = Gastos::where('beneficiario',$this->proveedor)
+            ->where('anticipo',1)
+            ->where('valor_anticipo','>',0)
+            ->orWhereIn('id',[$gastosArray])
+            ->get();
+        }else{
+            $gastos = Gastos::where('beneficiario',$this->proveedor)
+            ->where('anticipo',1)
+            ->where('valor_anticipo','>',0)
+            ->get();
+        }
+
+        return $gastos;
     }
 
 }

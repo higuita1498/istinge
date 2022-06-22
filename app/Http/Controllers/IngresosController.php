@@ -388,7 +388,7 @@ class IngresosController extends Controller
                         $items->factura = $factura->id;
                         $items->pagado = $factura->pagado();
                         $items->puc_factura = $factura->cuenta_id;
-                        $items->puc_banco = $request->saldofavor > 0 ? $request->puc_banco : $request->forma_pago;
+                        $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
                         $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
                         
                         /*
@@ -456,7 +456,7 @@ class IngresosController extends Controller
                 $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
                 $contacto->save();
 
-                $ingreso->puc_banco = $request->puc_banco; //cuenta de forma de pago genérico del ingreso. (en memoria)
+                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.

@@ -15,6 +15,7 @@ use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosFactura;
 use DB; use Auth; use StdClass;
 use App\Contrato;
+use App\Model\Ingresos\Ingreso;
 use App\Radicado;
 use App\Oficina;
 
