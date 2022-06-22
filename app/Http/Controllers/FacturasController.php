@@ -3340,4 +3340,176 @@ class FacturasController extends Controller{
             'text'    => 'Emisión masiva de facturas electrónicas temrinada',
         ]);
     }
+
+    public function exportar(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte de Facturas de Ventas";
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Subtotal', 'Impuesto', 'Total', 'Abono', 'Saldo', 'Forma de Pago');
+
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific�1�7�1�7�1�7
+        ->setTitle("Reporte Excel Factura de Ventas") // Titulo
+        ->setSubject("Reporte Excel Factura de Ventas") //Asunto
+        ->setDescription("Reporte de Factura de Ventas") //Descripci�1�7�1�7�1�7n
+        ->setKeywords("reporte Factura de Ventas") //Etiquetas
+        ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:J1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1',$tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A2:J2');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
+
+        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        ));
+        $objPHPExcel->getActiveSheet()->getStyle('A1:J3')->applyFromArray($estilo);
+
+        $estilo =array('fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'd08f50')));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:J3')->applyFromArray($estilo);
+
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:J3')->applyFromArray($estilo);
+
+        for ($i=0; $i <count($titulosColumnas) ; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $i=4;
+        $letra=0;
+
+        $facturas = Factura::query()
+            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
+            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
+            ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->groupBy('factura.id');
+
+        if($request->codigo!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('factura.codigo', 'like', "%{$request->codigo}%");
+            });
+        }
+        if($request->cliente!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('factura.cliente', $request->cliente);
+            });
+        }
+        if($request->corte!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('cs.fecha_corte', $request->corte);
+            });
+        }
+        if($request->creacion!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('factura.fecha', $request->creacion);
+            });
+        }
+        if($request->vencimiento!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('factura.vencimiento', $request->vencimiento);
+            });
+        }
+        if($request->estado!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('factura.estatus', $request->estado);
+            });
+        }
+        if($request->municipio!=null){
+            $facturas->where(function ($query) use ($request) {
+                $query->orWhere('c.fk_idmunicipio', $request->municipio);
+            });
+        }
+        $facturas->where('factura.tipo', $request->tipo)->where('factura.lectura',1);
+
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $facturas->where('cs.oficina', auth()->user()->oficina);
+            }
+        }
+
+        $facturas = $facturas->get();
+        $moneda = auth()->user()->empresa()->moneda;
+
+        foreach ($facturas as $factura) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0].$i, $factura->codigo)
+                ->setCellValue($letras[1].$i, date('d-m-Y', strtotime($factura->fecha)))
+                ->setCellValue($letras[2].$i, $factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente)
+                ->setCellValue($letras[3].$i, $factura->cliente()->tip_iden('true').' '.$factura->nitcliente)
+                ->setCellValue($letras[4].$i, $moneda.' '.$factura->parsear(($factura->total - $factura->impuestos_totales())))
+                ->setCellValue($letras[5].$i, $moneda.' '.$factura->parsear(($factura->impuestos_totales())))
+                ->setCellValue($letras[6].$i, $moneda.' '.$factura->parsear(($factura->total)))
+                ->setCellValue($letras[7].$i, $moneda.' '.$factura->parsear(($factura->pagado)))
+                ->setCellValue($letras[8].$i, $moneda.' '.$factura->parsear(($factura->porpagar)))
+                ->setCellValue($letras[9].$i, ($factura->cuenta_id) ?$factura->formaPago()->nombre:'');
+            $i++;
+        }
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:J'.$i)->applyFromArray($estilo);
+
+        for($i = 'A'; $i <= $letras[20]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        if($request->tipo==1){
+            $objPHPExcel->getActiveSheet()->setTitle('Facturas de Ventas');
+        }elseif($request->tipo==2){
+            $objPHPExcel->getActiveSheet()->setTitle('Facturas de Ventas Electrónicas');
+        }
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        if($request->tipo==1){
+            header('Content-Disposition: attachment;filename="Reporte_Facturas_Ventas.xlsx"');
+        }elseif($request->tipo==2){
+            header('Content-Disposition: attachment;filename="Reporte_Facturas_Ventas_Electronicas.xlsx"');
+        }
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
 }

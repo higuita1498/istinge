@@ -428,7 +428,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
         Route::get('descarga-efecty', 'FacturasController@downloadEfecty')->name('facturas.downloadefecty');
         Route::get('convertirelectronica/{facturaid}', 'FacturasController@convertirelEctronica')->name('facturas.convertirelectronica');
-
+        Route::get('exportar', 'FacturasController@exportar');
+        Route::get('facturas_electronica/exportar', 'FacturasController@exportar');
 	});
 	Route::resource('facturas', 'FacturasController');
 
@@ -771,6 +772,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/datatable/cliente/{producto}', 'FacturaspController@datatable_cliente')->name('facturap.datatable.cliente');
 
 		Route::get('/movimiento/{id}', 'FacturaspController@showMovimiento')->name('facturasp.showmovimiento');
+        Route::get('exportar', 'FacturaspController@exportar');
 	});
 
 
@@ -1216,7 +1218,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/plan-velocidad/{id}/status', 'PlanesVelocidadController@status')->name('planes-velocidad.status');
 	        Route::get('/plan-velocidad/{id}/reglas', 'PlanesVelocidadController@reglas')->name('planes-velocidad.reglas');
 	        Route::get('{id}/aplicar-cambios', 'PlanesVelocidadController@aplicar_cambios')->name('planes-velocidad.aplicar-cambios');
-	        Route::get('{nro}/aplicando-cambios', 'PlanesVelocidadController@aplicando_cambios')->name('planes-velocidad.aplicando-cambios');
+	        Route::get('{contratos}/aplicando-cambios', 'PlanesVelocidadController@aplicando_cambios')->name('planes-velocidad.aplicando-cambios');
             Route::post('storeBack', 'PlanesVelocidadController@storeBack')->name('planes-velocidad.storeBack');
 	    });
 	    
