@@ -37,7 +37,9 @@
             "_": "Mostrar %d filas"
         },
         "pdf": "PDF",
-        "print": "Imprimir"
+        "print": "Imprimir",
+        "selectAll": "Seleccionar todos",
+        "selectNone": "Seleccionar ninguno"
     },
     "autoFill": {
         "cancel": "Cancelar",
