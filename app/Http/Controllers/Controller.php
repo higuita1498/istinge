@@ -953,7 +953,7 @@ class Controller extends BaseController
         echo 'Se han generado '.$i.' facturas';
     }
     
-    public function consultar_invoice($identificacion){
+    public function consultar_invoice_old($identificacion){
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
         join('factura as f','f.cliente','c.id')->
         join('items_factura as if','f.id','if.factura')->
@@ -962,6 +962,23 @@ class Controller extends BaseController
         where('f.estatus',1)->
         where('contracts.status',1)->
         get()->last();
+
+        return json_encode($contrato);
+    }
+
+    public function consultar_invoice($identificacion){
+        $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
+        join('factura as f','f.cliente','c.id')->
+        join('items_factura as if','f.id','if.factura')->
+        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.precio as price', 'if.impuesto', 'c.direccion', 'c.tip_iden')->
+        where('c.nit', $identificacion)->
+        where('f.estatus',1)->
+        where('contracts.status',1)->
+        get()->last();
+
+        $pasarelas = DB::table('integracion')->where('web', 1)->where('tipo', 'PASARELA')->where('status', 1)->get();
+
+        return response()->json(['contrato' => $contrato, 'pasarelas' => $pasarelas]);
 
         return json_encode($contrato);
     }
