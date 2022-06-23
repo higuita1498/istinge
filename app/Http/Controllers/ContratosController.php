@@ -3126,4 +3126,121 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('success', $mensaje);
     }
+
+    public function importarMK(){
+        $contratos = Contrato::
+        join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
+        join('mikrotik as m', 'm.id', '=', 'contracts.server_configuration_id')->
+        select('contracts.*', 'p.prioridad', 'p.burst_limit_subida', 'p.burst_limit_bajada', 'p.burst_threshold_subida', 'p.burst_threshold_bajada', 'p.burst_time_subida', 'p.burst_time_bajada', 'p.limit_at_subida', 'p.limit_at_bajada', 'p.upload', 'p.download', 'p.dhcp_server', 'm.amarre_mac')->
+        where('contracts.status', 1)->
+        where('contracts.mk', 0)->
+        get();
+
+        $filePath = "NetworkSoft".date('dmY').".rsc";
+        $file = fopen($filePath, "w");
+        foreach($contratos as $contrato){
+            $priority        = $contrato->prioridad;
+            $burst_limit     = (strlen($contrato->burst_limit_subida)>1) ? $contrato->burst_limit_subida.'/'.$contrato->burst_limit_bajada : '';
+            $burst_threshold = (strlen($contrato->burst_threshold_subida)>1) ? $contrato->burst_threshold_subida.'/'.$contrato->burst_threshold_bajada : '';
+            $burst_time      = ($contrato->burst_time_subida) ? $contrato->burst_time_subida.'/'.$contrato->burst_time_bajada: '';
+            $limit_at        = (strlen($contrato->limit_at_subida)>1) ? $contrato->limit_at_subida.'/'.$contrato->limit_at_bajada : '';
+            $max_limit       = $contrato->upload.'/'.$contrato->download;
+
+            fputs($file, '/queue/simple/add name="'.$contrato->servicio.'" target='.$contrato->ip.' max-limit='.$contrato->upload.'/'.$contrato->download);
+
+            if(strlen($burst_limit)>3){
+                fputs($file, ' burst-limit='.$burst_limit);
+            }
+            if(strlen($burst_threshold)>3){
+                fputs($file, ' burst-threshold='.$burst_threshold);
+            }
+            if(strlen($burst_time)>3){
+                fputs($file, ' burst-time='.$burst_time);
+            }
+            if(strlen($priority)>0){
+                fputs($file, ' priority='.$priority);
+            }
+            if(strlen($limit_at)>0){
+                fputs($file, ' limit-at='.$limit_at);
+            }
+
+            fputs($file, PHP_EOL);
+        }
+        fclose($file);
+
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.basename($filePath));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
+
+
+        foreach($contratos as $contrato){
+            /*PPPOE*/
+            if($contrato->conexion == 1){
+                $API->comm("/ppp/secret/add",
+                    array(
+                        "name"           => $contrato->usuario,
+                        "password"       => $contrato->password,
+                        "profile"        => 'default',
+                        "local-address"  => $contrato->ip,
+                        "remote-address" => $contrato->ip,
+                        "service"        => 'pppoe',
+                        "comment"        => $contrato->servicio
+                    )
+                );
+            }
+            /*DHCP*/
+            if($contrato->conexion == 2){
+                if(isset($contrato->dhcp_server)){
+                    if($contrato->simple_queue == 'dinamica'){
+                        $API->comm("/ip/dhcp-server/set\n=name=".$contrato->dhcp_server."\n=address-pool=static-only\n=parent-queue=".$contrato->parenta);
+                        $API->comm("/ip/dhcp-server/lease/add",
+                            array(
+                                "comment"     => $contrato->servicio,
+                                "address"     => $contrato->ip,
+                                "server"      => $contrato->dhcp_server,
+                                "mac-address" => $contrato->mac_address,
+                                "rate-limit"  => $rate_limit
+                            )
+                        );
+                    }elseif ($contrato->simple_queue == 'estatica') {
+                        $API->comm("/ip/dhcp-server/lease/add",
+                            array(
+                                "comment"     => $contrato->servicio,
+                                "address"     => $contrato->ip,
+                                "server"      => $contrato->dhcp_server,
+                                "mac-address" => $contrato->mac_address
+                            )
+                        );
+                    }
+                }
+            }
+            /*IP ESTÁTICA*/
+            if($contrato->conexion == 3){
+                if($contrato->amarre_mac == 1){
+                    $API->comm("/ip/arp/add",
+                        array(
+                            "comment"     => $contrato->servicio,
+                            "address"     => $contrato->ip,
+                            "interface"   => $contrato->interfaz,
+                            "mac-address" => $contrato->mac_address
+                        )
+                    );
+                }
+            }
+            #QUEUE SIMPLE
+
+            #AGREGAMOS A IP_AUTORIZADAS#
+            $API->comm("/ip/firewall/address-list/add",
+                array(
+                    "address" => $contrato->ip,
+                    "list" => 'ips_autorizadas'
+                )
+            );
+        }
+    }
 }
