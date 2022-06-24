@@ -170,4 +170,60 @@ class APController extends Controller
             return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
         }
     }
+
+    public function state_lote($aps, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $aps = explode(",", $aps);
+
+        for ($i=0; $i < count($aps) ; $i++) {
+            $ap = AP::find($aps[$i]);
+
+            if($ap){
+                if($state == 'disabled'){
+                    $ap->status = 0;
+                }elseif($state == 'enabled'){
+                    $ap->status = 1;
+                }
+                $ap->save();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($aps){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $aps = explode(",", $aps);
+
+        for ($i=0; $i < count($aps) ; $i++) {
+            $ap = AP::find($aps[$i]);
+            if ($ap->uso()==0) {
+                $ap->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }
