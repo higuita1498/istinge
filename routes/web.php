@@ -1302,6 +1302,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    Route::group(['prefix' => 'grupos-corte'], function (){
 	        Route::get('{id}/act_des', 'GruposCorteController@act_des')->name('grupos-corte.act_des');
             Route::post('storeBack', 'GruposCorteController@storeBack')->name('grupos-corte.storeBack');
+            Route::get('/{grupo}/{state}/state_lote', 'GruposCorteController@state_lote')->name('grupos-corte.state_lote');
+            Route::get('/{grupo}/destroy_lote', 'GruposCorteController@destroy_lote')->name('grupos-corte.destroy_lote');
 	    });
 	    
 	    Route::resource('grupos-corte', 'GruposCorteController');

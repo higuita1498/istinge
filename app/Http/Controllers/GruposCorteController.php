@@ -70,7 +70,7 @@ class GruposCorteController extends Controller
 
         return datatables()->eloquent($grupos)
             ->editColumn('id', function (GrupoCorte $grupo) {
-                return "<a href=" . route('grupos-corte.show', $grupo->id) . ">{$grupo->id}</div></a>";
+                return $grupo->id;
             })
             ->editColumn('nombre', function (GrupoCorte $grupo) {
                 return "<a href=" . route('grupos-corte.show', $grupo->id) . ">{$grupo->nombre}</div></a>";
@@ -250,5 +250,61 @@ class GruposCorteController extends Controller
         }else{
             return redirect('empresa/grupos-corte')->with('danger', 'GRUPO DE CORTE NO ENCONTRADO, INTENTE NUEVAMENTE');
         }
+    }
+
+    public function state_lote($grupos, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $grupos = explode(",", $grupos);
+
+        for ($i=0; $i < count($grupos) ; $i++) {
+            $grupo = GrupoCorte::find($grupos[$i]);
+
+            if($grupo){
+                if($state == 'disabled'){
+                    $grupo->status = 0;
+                }elseif($state == 'enabled'){
+                    $grupo->status = 1;
+                }
+                $grupo->save();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($grupos){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $grupos = explode(",", $grupos);
+
+        for ($i=0; $i < count($grupos) ; $i++) {
+            $grupo = GrupoCorte::find($grupos[$i]);
+            if ($grupo->uso()==0) {
+                $grupo->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
     }
 }
