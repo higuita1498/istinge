@@ -192,12 +192,16 @@
 												@endforeach
 											</select>
 										</div>
-
 										<div class="col-md-2 pl-1 pt-1">
-											<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-											<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+											<input type="text" placeholder="Fecha Fin" id="tiempo_fin" name="tiempo_fin" class="form-control rounded creacion" autocomplete="off">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 pl-1 pt-1 text-center">
+											<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+											<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
 											@if(isset($_SESSION['permisos']['831']))
-											<a href="javascript:exportar('0');" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
+											<a href="javascript:exportar('0');" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1" title="Exportar"><i class="fas fa-file-excel"></i></a>
 											@endif
 										</div>
 									</div>
@@ -290,12 +294,16 @@
 												@endforeach
 											</select>
 										</div>
-
 										<div class="col-md-2 pl-1 pt-1">
-											<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-											<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+											<input type="text" placeholder="Fecha Fin" id="tiempo_finG" name="tiempo_finG" class="form-control rounded creacion" autocomplete="off">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12 pl-1 pt-1 text-center">
+											<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+											<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
 											@if(isset($_SESSION['permisos']['831']))
-											<a href="javascript:exportar('1');" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1 float-right" title="Exportar"><i class="fas fa-file-excel"></i></a>
+											<a href="javascript:exportar('1');" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1" title="Exportar"><i class="fas fa-file-excel"></i></a>
 											@endif
 										</div>
 									</div>
@@ -365,6 +373,7 @@
 			data.prioridad   = $('#prioridad').val();
 			data.tecnico     = $('#tecnico').val();
 			data.responsable = $('#responsable').val();
+			data.tiempo_fin  = $('#tiempo_fin').val();
 			data.filtro      = true;
 		});
 
@@ -380,7 +389,23 @@
 			}
 		});
 
-		$('.fecha').datepicker({
+		$('#fecha').datepicker({
+			locale: 'es-es',
+      		uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd' ,
+		});
+		$('#fechaG').datepicker({
+			locale: 'es-es',
+      		uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd' ,
+		});
+
+		$('#tiempo_fin').datepicker({
+			locale: 'es-es',
+      		uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd' ,
+		});
+		$('#tiempo_finG').datepicker({
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',
 			format: 'yyyy-mm-dd' ,
@@ -427,6 +452,7 @@
 			data.prioridad   = $('#prioridadG').val();
 			data.tecnico     = $('#tecnicoG').val();
 			data.responsable = $('#responsableG').val();
+			data.tiempo_fin  = $('#tiempo_finG').val();
 			data.filtro      = true;
 		});
 
@@ -440,12 +466,6 @@
 				getDataTableG();
 				return false;
 			}
-		});
-
-		$('.fecha').datepicker({
-			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
 		});
 	});
 
@@ -476,6 +496,7 @@
 		$('#prioridad').val('').selectpicker('refresh');
 		$('#tecnico').val('').selectpicker('refresh');
 		$('#responsable').val('').selectpicker('refresh');
+		$('#tiempo_fin').val('');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -510,13 +531,18 @@
 		$('#prioridadG').val('').selectpicker('refresh');
 		$('#tecnicoG').val('').selectpicker('refresh');
 		$('#responsableG').val('').selectpicker('refresh');
+		$('#tiempo_finG').val('');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTableG();
 	}
 
 	function exportar(otp) {
-		window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&fecha='+$('#fecha').val()+'&contrato='+$('#contrato').val()+'&cliente='+$('#cliente').val()+'&telefono='+$('#telefono').val()+'&servicio='+$('#servicio').val()+'&estatus='+$('#estatus').val()+'&prioridad='+$('#prioridad').val()+'&tecnico='+$('#tecnico').val()+'&otp='+otp;
+		if(otp == 0){
+			window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&fecha='+$('#fecha').val()+'&contrato='+$('#contrato').val()+'&cliente='+$('#cliente').val()+'&telefono='+$('#telefono').val()+'&servicio='+$('#servicio').val()+'&estatus='+$('#estatus').val()+'&prioridad='+$('#prioridad').val()+'&tecnico='+$('#tecnico').val()+'&tiempo_fin='+$('#tiempo_fin').val()+'&otp='+otp;
+		}else{
+			window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigoG').val()+'&fecha='+$('#fechaG').val()+'&contrato='+$('#contratoG').val()+'&cliente='+$('#clienteG').val()+'&telefono='+$('#telefonoG').val()+'&servicio='+$('#servicioG').val()+'&estatus='+$('#estatusG').val()+'&prioridad='+$('#prioridadG').val()+'&tecnico='+$('#tecnicoG').val()+'&tiempo_fin='+$('#tiempo_finG').val()+'&otp='+otp;
+		}
 	}
 </script>
 @endsection

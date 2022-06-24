@@ -149,6 +149,11 @@ class RadicadosController extends Controller{
                     $query->orWhere('radicados.responsable', $request->responsable);
                 });
             }
+            if($request->tiempo_fin){
+                $radicados->where(function ($query) use ($request) {
+                    $query->orWhereDate('radicados.tiempo_fin', 'like', "%{$request->tiempo_fin}%");
+                });
+            }
         }
 
         if(Auth::user()->empresa()->oficina){
@@ -238,8 +243,11 @@ class RadicadosController extends Controller{
         ->editColumn('desconocido', function (Radicado $radicado) {
             return $radicado->desconocido;
         })
+        ->editColumn('tiempo_fin', function (Radicado $radicado) {
+            return ($radicado->tiempo_fin) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin)):'N/A';
+        })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
-        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico', 'desconocido'])
+        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico', 'desconocido', 'tiempo_fin'])
         ->toJson();
     }
 
