@@ -261,6 +261,9 @@
                 background-color: #c82333 !important;
                 border-color: #bd2130 !important;
             }
+            div.dataTables_wrapper div.dataTables_paginate {
+                text-align: -webkit-center !important;
+            }
             </style>
         @yield('style')
     </head>
