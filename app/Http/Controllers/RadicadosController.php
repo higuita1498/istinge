@@ -736,6 +736,11 @@ class RadicadosController extends Controller{
                 $query->orWhere('radicados.tecnico', $request->tecnico);
             });
         }
+        if($request->tiempo_fin){
+            $radicados->where(function ($query) use ($request) {
+                $query->orWhereDate('radicados.tiempo_fin', 'like', "%{$request->tiempo_fin}%");
+            });
+        }
 
         if(Auth::user()->empresa()->oficina){
             if(auth()->user()->oficina){
