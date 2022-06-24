@@ -235,7 +235,33 @@
                 border: 0;
                 border-radius: 20px;
             }
-        </style>
+            #tabla-contratos_wrapper .dt-buttons{
+                float: right !important;
+            }
+            #tabla-contratos_length{
+                margin: 1% 0 !important;
+            }
+            #tabla-contratos_wrapper .dt-buttons button{
+                color: #fff !important;
+                background-color: #00ce68 !important;
+                border-color: #00ce68 !important;
+            }
+            #tabla-contratos_wrapper .dt-buttons button:hover{
+                color: #fff !important;
+                background-color: #218838 !important;
+                border-color: #1e7e34 !important;
+            }
+            #tabla-contratos_wrapper .dt-buttons button:nth-child(2){
+                color: #fff !important;
+                background-color: #e65251 !important;
+                border-color: #e65251 !important;
+            }
+            #tabla-contratos_wrapper .dt-buttons button:nth-child(2):hover{
+                color: #fff !important;
+                background-color: #c82333 !important;
+                border-color: #bd2130 !important;
+            }
+            </style>
         @yield('style')
     </head>
     <body>

@@ -45,7 +45,7 @@
 	@endif
 
 	<div class="alert alert-info" role="alert">
-		Debido a que el plan de velocidad ha sido actualizado, le recomendamos aplicarlos cambios a cada uno de los contratos que están asociado directamente y se encuentran en la mikrotik. Para ello debe seleccionar, un máximo 50 contratos, y dar clic en el botón <strong>Aplicar Cambios</strong>.
+		Debido a que el plan de velocidad ha sido actualizado, le recomendamos aplicarlos cambios a cada uno de los contratos que están asociado directamente y se encuentran en la mikrotik. Para ello debe seleccionar, un máximo 25 contratos, y dar clic en el botón <strong>Aplicar Cambios</strong>.
 	</div>
 	
 	<div class="row card-description">
@@ -72,11 +72,11 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-		$('#tabla-contratos').DataTable({
+		tabla = $('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: false,
 			processing: true,
-			searching: true,
+			searching: false,
             select: true,
             select: {
                 style: 'multi',
@@ -87,7 +87,7 @@
 			order: [
 				[0, "desc"]
 			],
-			"pageLength": 50,
+			"pageLength": 25,
 			ajax: '{{url("contratos/p-$plan->id")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -96,10 +96,25 @@
 			    { data: 'nro' },
 			    { data: 'client_id' },
 			    { data: 'ip' },
-			]
+			],
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
 		});
-
-        tabla = $('#tabla-contratos');
     });
 
 	function getDataTable() {
@@ -121,10 +136,10 @@
             return false;
         }
 
-        if(nro>50){
+        if(nro>25){
             swal({
                 title: 'ERROR',
-                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 50 contratos y ha seleccionado '+nro,
+                html: 'Sólo se permite ejecutar esta acción en lotes máximos de 25 contratos y ha seleccionado '+nro,
                 type: 'error',
             });
             return false;
