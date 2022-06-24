@@ -167,4 +167,60 @@ class NodosController extends Controller
             return redirect('empresa/nodos')->with('danger', 'NODO NO ENCONTRADO, INTENTE NUEVAMENTE');
         }
     }
+
+    public function state_lote($nodos, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $nodos = explode(",", $nodos);
+
+        for ($i=0; $i < count($nodos) ; $i++) {
+            $nodo = Nodo::find($nodos[$i]);
+
+            if($nodo){
+                if($state == 'disabled'){
+                    $nodo->status = 0;
+                }elseif($state == 'enabled'){
+                    $nodo->status = 1;
+                }
+                $nodo->save();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($nodos){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $nodos = explode(",", $nodos);
+
+        for ($i=0; $i < count($nodos) ; $i++) {
+            $nodo = Nodo::find($nodos[$i]);
+            if ($nodo->uso()==0) {
+                $nodo->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }

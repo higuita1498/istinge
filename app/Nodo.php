@@ -61,6 +61,7 @@ class Nodo extends Model
     public function uso(){
         $cont=0;
         $cont+=Contrato::where('nodo', $this->id)->count();
+        $cont+=AP::where('nodo', $this->id)->count();
         return $cont;
     }
     

@@ -1279,6 +1279,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	// NODOS
 	    Route::group(['prefix' => 'nodos'], function (){
 	        Route::get('{id}/act_des', 'NodosController@act_des')->name('nodos.act_des');
+            Route::get('/{nodos}/{state}/state_lote', 'NodosController@state_lote')->name('nodos.state_lote');
+            Route::get('/{nodos}/destroy_lote', 'NodosController@destroy_lote')->name('nodos.destroy_lote');
 	    });
 	    
 	    Route::resource('nodos', 'NodosController');
@@ -1286,6 +1288,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	// ACCESS POINT (AP)
 	    Route::group(['prefix' => 'access-point'], function (){
 	        Route::get('{id}/act_des', 'APController@act_des')->name('access-point.act_des');
+            Route::get('/{ap}/{state}/state_lote', 'APController@state_lote')->name('access-point.state_lote');
+            Route::get('/{ap}/destroy_lote', 'APController@destroy_lote')->name('access-point.destroy_lote');
 	    });
 	    
 	    Route::resource('access-point', 'APController');
