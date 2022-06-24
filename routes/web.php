@@ -1225,6 +1225,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('{id}/aplicar-cambios', 'PlanesVelocidadController@aplicar_cambios')->name('planes-velocidad.aplicar-cambios');
 	        Route::get('{contratos}/aplicando-cambios', 'PlanesVelocidadController@aplicando_cambios')->name('planes-velocidad.aplicando-cambios');
             Route::post('storeBack', 'PlanesVelocidadController@storeBack')->name('planes-velocidad.storeBack');
+            Route::get('/{planes}/{state}/state_lote', 'PlanesVelocidadController@state_lote')->name('planes-velocidad.state_lote');
+            Route::get('/{planes}/destroy_lote', 'PlanesVelocidadController@destroy_lote')->name('planes-velocidad.destroy_lote');
 	    });
 	    
 	    Route::resource('planes-velocidad', 'PlanesVelocidadController');

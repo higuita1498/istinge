@@ -115,6 +115,27 @@
 	</div>
 
 	<div class="row card-description">
+		@if(isset($_SESSION['permisos']['834']))
+		<div class="col-md-12">
+    		<div class="container-filtercolumn form-inline">
+                @if(auth()->user()->modo_lectura())
+                @else
+                    <div class="dropdown mr-1">
+                    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    		Acciones en Lote
+                    	</button>
+                    	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    		@if(auth()->user()->rol == 3)
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Habilitar Planes</a>
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Deshabilitar Planes</a>
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_destroy"><i class="fas fa-fw fa-times" style="margin-left:4px; "></i> Eliminar Planes</a>
+                    		@endif
+                    	</div>
+                    </div>
+                @endif
+			</div>
+		</div>
+		@endif
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-planes">
 				<thead class="thead-dark">
@@ -135,7 +156,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-		$('#tabla-planes').DataTable({
+		tabla = $('#tabla-planes').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -156,11 +177,31 @@
 			    {data: '{{$campo->campo}}'},
                 @endforeach
 				{data: 'acciones'},
-			]
+			],
+			@if(isset($_SESSION['permisos']['834']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-
-        tabla = $('#tabla-planes');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
@@ -198,10 +239,22 @@
         	getDataTable();
         	return false;
         });
+
+        $('#btn_enabled').click( function () {
+            states('enabled');
+        });
+
+        $('#btn_disabled').click( function () {
+            states('disabled');
+        });
+
+        $('#btn_destroy').click( function () {
+            destroy();
+        });
     });
 
 	function getDataTable() {
-		tabla.DataTable().ajax.reload();
+		tabla.ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -227,5 +280,135 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
+
+	function states(state){
+        var planes = [];
+
+        var table = $('#tabla-planes').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos planes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            planes.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        if(state === 'enabled'){
+            var states = 'habilitar';
+        }else{
+            var states = 'deshabilitar';
+        }
+
+        swal({
+            title: '¿Desea '+states+' '+nro+' planes en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/planes-velocidad/`+planes+`/`+state+`/state_lote`;
+                }else{
+                    var url = `/empresa/planes-velocidad/`+planes+`/`+state+`/state_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        if(data.state === 'enabled'){
+                        	var states = 'habilitados';
+                        }else{
+                        	var states = 'deshabilitados';
+
+                        }
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' planes '+states+'</strong><br><strong>'+data.fallidos+' planes no '+states+'</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
+
+    function destroy(){
+        var planes = [];
+
+        var table = $('#tabla-planes').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos planes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            planes.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea eliminar '+nro+' planes en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/planes-velocidad/`+planes+`/destroy_lote`;
+                }else{
+                    var url = `/empresa/planes-velocidad/`+planes+`/destroy_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' planes '+data.state+'</strong><br><strong>'+data.fallidos+' planes no '+data.state+' por estar en uso</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
 </script>
 @endsection

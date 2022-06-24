@@ -235,28 +235,28 @@
                 border: 0;
                 border-radius: 20px;
             }
-            #tabla-contratos_wrapper .dt-buttons{
+            #tabla-contratos_wrapper .dt-buttons,#tabla-planes_wrapper .dt-buttons,#tabla-mikrotiks_wrapper .dt-buttons{
                 float: right !important;
             }
-            #tabla-contratos_length{
+            #tabla-contratos_length,#tabla-planes_length,#tabla-mikrotiks_length{
                 margin: 1% 0 !important;
             }
-            #tabla-contratos_wrapper .dt-buttons button{
+            #tabla-contratos_wrapper .dt-buttons button,#tabla-planes_wrapper .dt-buttons button,#tabla-mikrotiks_wrapper .dt-buttons button{
                 color: #fff !important;
                 background-color: #00ce68 !important;
                 border-color: #00ce68 !important;
             }
-            #tabla-contratos_wrapper .dt-buttons button:hover{
+            #tabla-contratos_wrapper .dt-buttons button:hover,#tabla-planes_wrapper .dt-buttons button:hover,#tabla-mikrotiks_wrapper .dt-buttons button:hover{
                 color: #fff !important;
                 background-color: #218838 !important;
                 border-color: #1e7e34 !important;
             }
-            #tabla-contratos_wrapper .dt-buttons button:nth-child(2){
+            #tabla-contratos_wrapper .dt-buttons button:nth-child(2),#tabla-planes_wrapper .dt-buttons button:nth-child(2),#tabla-mikrotiks_wrapper .dt-buttons button:nth-child(2){
                 color: #fff !important;
                 background-color: #e65251 !important;
                 border-color: #e65251 !important;
             }
-            #tabla-contratos_wrapper .dt-buttons button:nth-child(2):hover{
+            #tabla-contratos_wrapper .dt-buttons button:nth-child(2):hover,#tabla-planes_wrapper .dt-buttons button:nth-child(2):hover,#tabla-mikrotiks_wrapper .dt-buttons button:nth-child(2):hover{
                 color: #fff !important;
                 background-color: #c82333 !important;
                 border-color: #bd2130 !important;

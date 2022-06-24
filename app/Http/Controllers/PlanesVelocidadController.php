@@ -577,4 +577,55 @@ class PlanesVelocidadController extends Controller
             'correctos' => $succ
         ]);
     }
+
+    public function state_lote($planes, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $planes = explode(",", $planes);
+
+        for ($i=0; $i < count($planes) ; $i++) {
+            $plan = PlanesVelocidad::find($planes[$i]);
+            if ($plan) {
+                $plan->status = ($state == 'disabled') ? 0:1;
+                $plan->save();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($planes){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $planes = explode(",", $planes);
+
+        for ($i=0; $i < count($planes) ; $i++) {
+            $plan = PlanesVelocidad::find($planes[$i]);
+            if ($plan->uso()==0) {
+                $plan->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }
