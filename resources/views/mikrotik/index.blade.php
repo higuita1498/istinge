@@ -88,8 +88,27 @@
 	</div>
 
 	<div class="row card-description">
+		@if(isset($_SESSION['permisos']['835']))
 		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-mikrotik">
+    		<div class="container-filtercolumn form-inline">
+                @if(auth()->user()->modo_lectura())
+                @else
+                    <div class="dropdown mr-1">
+                    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    		Acciones en Lote
+                    	</button>
+                    	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Conectar Mikrotiks</a>
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Desconectar Mikrotiks</a>
+                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_destroy"><i class="fas fa-fw fa-times" style="margin-left:4px; "></i> Eliminar Mikrotiks</a>
+                    	</div>
+                    </div>
+                @endif
+			</div>
+		</div>
+		@endif
+		<div class="col-md-12">
+			<table class="table table-striped table-hover w-100" id="tabla-mikrotiks">
 				<thead class="thead-dark">
 					<tr>
 					    @foreach($tabla as $campo)
@@ -109,7 +128,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-		$('#tabla-mikrotik').DataTable({
+		tabla = $('#tabla-mikrotiks').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -130,10 +149,31 @@
                     {data: '{{$campo->campo}}'},
                 @endforeach
 				{data: 'acciones'},
-			]
+			],
+			@if(isset($_SESSION['permisos']['835']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-        tabla = $('#tabla-mikrotik');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
 			data.nombre        = $('#nombre').val();
@@ -170,10 +210,22 @@
         	getDataTable();
         	return false;
         });
+
+        $('#btn_enabled').click( function () {
+            states('on');
+        });
+
+        $('#btn_disabled').click( function () {
+            states('off');
+        });
+
+        $('#btn_destroy').click( function () {
+            destroy();
+        });
     });
 
 	function getDataTable() {
-		tabla.DataTable().ajax.reload();
+		tabla.ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -199,5 +251,135 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
+
+	function states(state){
+        var mikrotiks = [];
+
+        var table = $('#tabla-mikrotiks').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos mikrotiks',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            mikrotiks.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        if(state === 'on'){
+            var states = 'conectar';
+        }else{
+            var states = 'desconectar';
+        }
+
+        swal({
+            title: '¿Desea '+states+' '+nro+' mikrotiks en lote?',
+            html: 'Al Aceptar, no podrá cancelar el proceso.<br><span class="text-danger font-weight-bold">PUEDE DEMORAR UNOS MINUTOS</span>',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/mikrotik/`+mikrotiks+`/`+state+`/state_lote`;
+                }else{
+                    var url = `/empresa/mikrotik/`+mikrotiks+`/`+state+`/state_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        if(data.state === 'on'){
+                        	var states = 'conectada(s)';
+                        }else{
+                        	var states = 'desconectada(s)';
+
+                        }
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' mikrotiks '+states+'</strong><br><strong>'+data.fallidos+' mikrotiks no '+states+'</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
+
+    function destroy(){
+        var mikrotiks = [];
+
+        var table = $('#tabla-mikrotiks').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos mikrotiks',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            mikrotiks.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea eliminar '+nro+' mikrotiks en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/mikrotik/`+mikrotiks+`/destroy_lote`;
+                }else{
+                    var url = `/empresa/mikrotik/`+mikrotiks+`/destroy_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' mikrotiks '+data.state+'</strong><br><strong>'+data.fallidos+' mikrotiks no '+data.state+' por estar en uso</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
 </script>
 @endsection

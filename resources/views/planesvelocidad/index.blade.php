@@ -125,11 +125,9 @@
                     		Acciones en Lote
                     	</button>
                     	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    		@if(auth()->user()->rol == 3)
                     		<a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Habilitar Planes</a>
                     		<a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-fw fa-power-off" style="margin-left:4px; "></i> Deshabilitar Planes</a>
                     		<a class="dropdown-item" href="javascript:void(0)" id="btn_destroy"><i class="fas fa-fw fa-times" style="margin-left:4px; "></i> Eliminar Planes</a>
-                    		@endif
                     	</div>
                     </div>
                 @endif

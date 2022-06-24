@@ -618,4 +618,70 @@ class MikrotikController extends Controller
             'correctos' => $succ
         ]);
     }
+
+    public function state_lote($mikrotiks, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $mikrotiks = explode(",", $mikrotiks);
+
+        for ($i=0; $i < count($mikrotiks) ; $i++) {
+            $mikrotik = Mikrotik::find($mikrotiks[$i]);
+
+            if($mikrotik){
+                if($state == 'off'){
+                    $mikrotik->status = 0;
+                    $succ++;
+                }elseif($state == 'on'){
+                    $API           = new RouterosAPI();
+                    $API->port     = $mikrotik->puerto_api;
+                    $API->attempts = 1;
+
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        $API->disconnect();
+                        $mikrotik->status = 1;
+                        $succ++;
+                    } else {
+                        $fail++;
+                    }
+                }
+                $mikrotik->save();
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($mikrotiks){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $mikrotiks = explode(",", $mikrotiks);
+
+        for ($i=0; $i < count($mikrotiks) ; $i++) {
+            $mikrotik = Mikrotik::find($mikrotiks[$i]);
+            if ($mikrotik->uso()==0) {
+                $mikrotik->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }
