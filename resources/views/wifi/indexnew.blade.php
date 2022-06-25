@@ -68,28 +68,45 @@
 	</div>
 
 	<div class="row card-description">
-	<div class="col-md-12">
-		<table class="table table-striped table-hover w-100" id="tabla-wifi">
-			<thead class="thead-dark">
-				<tr>
-					<th>Nro.</th>
-					<th>Estatus</th>
-					<th>Cliente</th>
-					<th>Red Antigua</th>
-					<th>Red Nueva</th>
-					<th>Contraseña Antigua</th>
-					<th>Contraseña Nueva</th>
-					<th>Red Oculta</th>
-					<th>IP</th>
-					<th>MAC</th>
-					<th>Ejecutado por</th>
-					<th>Ejecutado el</th>
-					<th>Acciones</th>
-				</tr>
-			</thead>
-		</table>
+		@if(isset($_SESSION['permisos']['840']))
+			<div class="col-md-12">
+	    		<div class="container-filtercolumn form-inline">
+	                @if(auth()->user()->modo_lectura())
+	                @else
+	                    <div class="dropdown mr-1">
+	                    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                    		Acciones en Lote
+	                    	</button>
+	                    	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_aprobar"><i class="fas fa-fw fa-check" style="margin-left:4px; "></i> Aprobar Solicitud</a>
+	                    	</div>
+	                    </div>
+	                @endif
+				</div>
+			</div>
+		@endif
+		<div class="col-md-12">
+			<table class="table table-striped table-hover w-100" id="tabla-wifis">
+				<thead class="thead-dark">
+					<tr>
+						<th>Nro.</th>
+						<th>Estatus</th>
+						<th>Cliente</th>
+						<th>Red Antigua</th>
+						<th>Red Nueva</th>
+						<th>Contraseña Antigua</th>
+						<th>Contraseña Nueva</th>
+						<th>Red Oculta</th>
+						<th>IP</th>
+						<th>MAC</th>
+						<th>Ejecutado por</th>
+						<th>Ejecutado el</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
 	</div>
-</div>
 @endsection
 
 @section('scripts')
@@ -97,8 +114,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-
-		$('#tabla-wifi').DataTable({
+		tabla = $('#tabla-wifis').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -128,11 +144,31 @@
 				{data: 'created_by'},
 				{data: 'updated_at'},
 				{data: 'acciones'}
-			]
+			],
+			@if(isset($_SESSION['permisos']['840']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-
-        tabla = $('#tabla-wifi');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.id_cliente = $('#id_cliente').val();
@@ -151,10 +187,14 @@
                 return false;
             }
         });
+
+        $('#btn_aprobar').click( function () {
+            aprobar();
+        });
     });
 
 	function getDataTable() {
-		tabla.DataTable().ajax.reload();
+		tabla.ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -187,7 +227,65 @@
 			window.getSelection().addRange(range);
 			document.execCommand("copy");
 		}
-		alert(range);
 	}
+
+	function aprobar(){
+        var wifis = [];
+
+        var table = $('#tabla-wifis').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos solicitudes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            wifis.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea aprobar '+nro+' solicitudes en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/wifi/`+wifis+`/aprobar_lote`;
+                }else{
+                    var url = `/empresa/wifi/`+wifis+`/aprobar_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' solicitudes '+data.state+'</strong><br><strong>'+data.fallidos+' solicitudes no '+data.state+'</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
 </script>
 @endsection

@@ -1209,6 +1209,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
     //WIFI
         Route::group(['prefix' => 'wifi'], function() {
 		    Route::post('/{id}/status', 'WifiController@status')->name('wifi.status');
+            Route::get('/{wifis}/aprobar_lote', 'WifiController@aprobar_lote')->name('wifi.aprobar_lote');
 	    });
 	    Route::get('/notificacionWifi', 'WifiController@notificacionWifi')->name('wifi.notificacion');
 

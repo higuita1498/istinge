@@ -164,4 +164,63 @@ class WifiController extends Controller
         $notificaciones = Wifi::where('status', 1)->get();
         return json_encode($notificaciones);
     }
+
+    public function aprobar_lote($wifis){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $wifis = explode(",", $wifis);
+
+        for ($i=0; $i < count($wifis) ; $i++) {
+            $solicitud = Wifi::find($wifis[$i]);
+            if ($solicitud) {
+                if ($solicitud->status == 1) {
+                    $mensaje = 'Cambio de contraseña realizado';
+                    $solicitud->status = 0;
+                    $solicitud->created_by = Auth::user()->id;
+                    $solicitud->save();
+                    $datos = array(
+                        'nombres' => $solicitud->cliente()->nombre.' '.$solicitud->cliente()->apellidos(),
+                        'red_nueva' => $solicitud->red_nueva,
+                        'pass_nueva' => $solicitud->pass_nueva,
+                        'oculta' => $solicitud->oculta(),
+                        'ip' => $solicitud->ip,
+                        'fecha'=> $solicitud->fecha,
+                    );
+                    $correo = new WifiMailable($datos);
+                    $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+                    if($host){
+                        $existing = config('mail');
+                        $new =array_merge(
+                            $existing, [
+                                'host' => $host->servidor,
+                                'port' => $host->puerto,
+                                'encryption' => $host->seguridad,
+                                'username' => $host->usuario,
+                                'password' => $host->password,
+                                'from' => [
+                                    'address' => $host->address,
+                                    'name' => $host->name
+                                ],
+                            ]
+                        );
+                        config(['mail'=>$new]);
+                    }
+                    Mail::to($solicitud->cliente()->email)->send($correo);
+                    $succ++;
+                } else {
+                    $fail++;
+                }
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'aprobadas'
+        ]);
+    }
 }
