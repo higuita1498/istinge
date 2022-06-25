@@ -618,7 +618,7 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Radicados";
-        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado');
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado', 'Observaciones', 'Reporte Tecnico');
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
@@ -631,25 +631,25 @@ class RadicadosController extends Controller{
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:R1');
+            ->mergeCells('A1:T1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:R2');
+            ->mergeCells('A2:T2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:R3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:T3')->applyFromArray($estilo);
 
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -669,7 +669,7 @@ class RadicadosController extends Controller{
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -773,7 +773,9 @@ class RadicadosController extends Controller{
                 ->setCellValue($letras[14].$i, ($radicado->tiempo_fin) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin)) : '')
                 ->setCellValue($letras[15].$i, ($radicado->tiempo_ini && $radicado->tiempo_fin) ? $radicado->duracion() : '')
                 ->setCellValue($letras[16].$i, $radicado->prioridad())
-                ->setCellValue($letras[17].$i, $radicado->estatus());
+                ->setCellValue($letras[17].$i, $radicado->estatus())
+                ->setCellValue($letras[18].$i, $radicado->desconocido)
+                ->setCellValue($letras[19].$i, $radicado->reporte);
             $i++;
         }
 
@@ -783,7 +785,7 @@ class RadicadosController extends Controller{
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:R'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
