@@ -71,8 +71,25 @@
 	</div>
 
 	<div class="row card-description">
+		@if(isset($_SESSION['permisos']['839']))
+			<div class="col-md-12">
+	    		<div class="container-filtercolumn form-inline">
+	                @if(auth()->user()->modo_lectura())
+	                @else
+	                    <div class="dropdown mr-1">
+	                    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                    		Acciones en Lote
+	                    	</button>
+	                    	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	                    		<a class="dropdown-item" href="javascript:void(0)" id="btn_destroy"><i class="fas fa-fw fa-times" style="margin-left:4px; "></i> Eliminar Bancos</a>
+	                    	</div>
+	                    </div>
+	                @endif
+				</div>
+			</div>
+		@endif
 		<div class="col-md-12">
-			<table class="table table-striped table-hover w-100" id="tabla-banco">
+			<table class="table table-striped table-hover w-100" id="tabla-bancos">
 				<thead class="thead-dark">
 					<tr>
 					    @foreach($tabla as $campo)
@@ -92,7 +109,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-		$('#tabla-banco').DataTable({
+		tabla = $('#tabla-bancos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -113,10 +130,31 @@
                     {data: '{{$campo->campo}}'},
                 @endforeach
 				{data: 'acciones'},
-			]
+			],
+			@if(isset($_SESSION['permisos']['839']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-        tabla = $('#tabla-banco');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
 			data.nombre  = $('#nombre').val();
@@ -148,10 +186,14 @@
         	getDataTable();
         	return false;
         });
+
+        $('#btn_destroy').click( function () {
+            destroy();
+        });
     });
 
 	function getDataTable() {
-		tabla.DataTable().ajax.reload();
+		tabla.ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -172,5 +214,64 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
+
+	function destroy(){
+        var bancos = [];
+
+        var table = $('#tabla-bancos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos bancos',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            bancos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea eliminar '+nro+' bancos en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/bancos/`+bancos+`/destroy_lote`;
+                }else{
+                    var url = `/empresa/bancos/`+bancos+`/destroy_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' bancos '+data.state+'</strong><br><strong>'+data.fallidos+' bancos no '+data.state+' por estar en uso</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                    }
+                })
+            }
+        })
+    }
 </script>
 @endsection

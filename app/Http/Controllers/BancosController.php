@@ -428,4 +428,29 @@ class BancosController extends Controller
             return redirect('empresa/bancos/'.$banco->nro)->with('success', $mensaje);
         }
     }
+
+    public function destroy_lote($bancos){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $bancos = explode(",", $bancos);
+
+        for ($i=0; $i < count($bancos) ; $i++) {
+            $banco = Banco::find($bancos[$i]);
+            if ($banco->uso()==0 && $banco->lectura==0) {
+                $banco->delete();
+                $succ++;
+            } else {
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }

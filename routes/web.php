@@ -819,6 +819,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::get('/bancos/transferencia/{id}', 'BancosController@create_transferencia')->name('bancos.transferencia');
 	Route::post('/bancos/transferencia/{id}', 'BancosController@store_transferencia')->name('bancos.transferencia');
 	Route::post('/bancos/act_desac/{id}', 'CategoriasController@default')->name('bancos.act_desac');
+    Route::get('bancos/{bancos}/destroy_lote', 'BancosController@destroy_lote')->name('bancos.destroy_lote');
 	Route::resource('bancos', 'BancosController');
 
     //PAGOS RECURRENTES
