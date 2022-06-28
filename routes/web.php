@@ -1356,6 +1356,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
     //VENTAS EXTERNAS
         Route::group(['prefix' => 'ventas-externas'], function() {
             Route::get('/aprobar/{id}', 'VentasExternasController@aprobar')->name('ventas-externas.aprobar');
+            Route::get('/{ventas}/state_lote', 'VentasExternasController@state_lote')->name('ventas-externas.state_lote');
+            Route::get('/{ventas}/destroy_lote', 'VentasExternasController@destroy_lote')->name('ventas-externas.destroy_lote');
         });
         Route::resource('ventas-externas', 'VentasExternasController');
 

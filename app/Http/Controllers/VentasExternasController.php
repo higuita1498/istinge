@@ -294,4 +294,55 @@ class VentasExternasController extends Controller{
         }
         return redirect('empresa/ventas-externas')->with('danger', 'VENTA EXTERNA NO ENCONTRADA, INTENTE NUEVAMENTE');
     }
+
+    public function destroy_lote($ventas){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $ventas = explode(",", $ventas);
+
+        for ($i=0; $i < count($ventas) ; $i++) {
+            $venta = VentasExternas::find($ventas[$i]);
+            if ($venta) {
+                $venta->delete();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminadas'
+        ]);
+    }
+
+    public function state_lote($ventas){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $ventas = explode(",", $ventas);
+
+        for ($i=0; $i < count($ventas) ; $i++) {
+            $venta = VentasExternas::find($ventas[$i]);
+            if ($venta) {
+                $venta->tipo_contacto = 0;
+                $venta->save();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'aprobadas'
+        ]);
+    }
 }
