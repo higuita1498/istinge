@@ -823,4 +823,99 @@ class RadicadosController extends Controller{
             'encurso'     => $encurso,
         ]);
     }
+
+    public function state_lote($radicados, $state){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $radicados = explode(",", $radicados);
+
+        for ($i=0; $i < count($radicados) ; $i++) {
+            $radicado = Radicado::find($radicados[$i]);
+            if ($radicado) {
+                if($state == 'solventar'){
+                    if ($radicado->estatus==0) {
+                        $radicado->estatus=1;
+                    }else if ($radicado->estatus==2) {
+                        $radicado->estatus=3;
+                    }
+                    $radicado->solventado=Carbon::now()->toDateTimeString();
+                }elseif($state == 'reabrir'){
+                    if ($radicado->estatus == 1) {
+                        $radicado->estatus = 0;
+                    }else if ($radicado->estatus == 3) {
+                        $radicado->estatus = 2;
+                    }
+                }
+
+                $radicado->save();
+
+                if($state == 'solventar'){
+                    if(isset($radicado->correo)){
+                        $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+                        if($host){
+                            $existing = config('mail');
+                            $new =array_merge(
+                                $existing, [
+                                    'host' => $host->servidor,
+                                    'port' => $host->puerto,
+                                    'encryption' => $host->seguridad,
+                                    'username' => $host->usuario,
+                                    'password' => $host->password,
+                                    'from' => [
+                                        'address' => $host->address,
+                                        'name' => $host->name
+                                    ]
+                                ]
+                            );
+                            config(['mail'=>$new]);
+                        }
+
+                        Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                            $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
+                        });
+                    }
+                }
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => $state
+        ]);
+    }
+
+    public function destroy_lote($radicados){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $radicados = explode(",", $radicados);
+
+        for ($i=0; $i < count($radicados) ; $i++) {
+            $radicado = Radicado::find($radicados[$i]);
+            if ($radicado) {
+                if($radicado->adjunto){
+                    Storage::disk('documentos')->delete($radicado->adjunto);
+                }
+                $radicado->delete();
+                $succ++;
+            }else{
+                $fail++;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'state'     => 'eliminados'
+        ]);
+    }
 }

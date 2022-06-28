@@ -1130,6 +1130,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::post('/reabrir/{id}', 'RadicadosController@reabrir')->name('radicados.reabrir');
             Route::get('exportar', 'RadicadosController@exportar')->name('radicados.exportar');
             Route::get('/notificacionTecnico', 'RadicadosController@notificacionTecnico')->name('radicados.notificacionTecnico');
+
+            Route::get('/{radicados}/{state}/state_lote', 'RadicadosController@state_lote')->name('radicados.state_lote');
+            Route::get('/{radicados}/destroy_lote', 'RadicadosController@destroy_lote')->name('radicados.destroy_lote');
         });
 		Route::resource('radicados', 'RadicadosController');
 

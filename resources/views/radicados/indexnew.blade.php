@@ -61,6 +61,10 @@
         color: #fff!important;
         background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
     }
+    .btn-group {
+    	border: 0;
+    	border-radius: 0;
+    }
 </style>
 @endsection
 
@@ -96,7 +100,6 @@
         </script>
     @endif
 
-
     @if(Session::has('danger'))
         <div class="alert alert-danger">
         	{{Session::get('danger')}}
@@ -123,8 +126,25 @@
     		<div class="tab-content fact-table" id="myTabContent">
     			<div class="tab-pane fade show active" id="sin_gestionar" role="tabpanel" aria-labelledby="sin_gestionar-tab">
     			    <div class="text-right">
-    			        <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
-    			        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+    			    	@if(isset($_SESSION['permisos']['841']))
+    			    	@if(auth()->user()->modo_lectura())
+    			    	@else
+	    			    <div class="btn-group dropdown">
+	    			    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	    			    		Acciones en Lote
+	    			    	</button>
+	    			    	<div class="dropdown-menu">
+	    			    		<a class="dropdown-item" href="javascript:void(0)" id="btn_solventar"><i class="fas fa-check-double fa-fw" style="margin-left:4px; "></i> Solventar Casos</a>
+	    			    		<a class="dropdown-item" href="javascript:void(0)" id="btn_destroy"><i class="fas fa-times fa-fw" style="margin-left:4px; "></i> Eliminar Casos</a>
+	    			    	</div>
+	    			    </div>
+	    			    @endif
+	    			    @endif
+
+    			    	<div class="btn-group">
+    			    		<a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
+    			    		<a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+    			    	</div>
     			    </div>
 
     			    <div class="container-fluid d-none" id="form-filter">
@@ -225,6 +245,19 @@
     			</div>
     			<div class="tab-pane fade" id="gestionados" role="tabpanel" aria-labelledby="gestionados-tab">
     			    <div class="text-right">
+    			    	@if(isset($_SESSION['permisos']['841']))
+    			    	@if(auth()->user()->modo_lectura())
+    			    	@else
+	    			    <div class="btn-group dropdown">
+	    			    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	    			    		Acciones en Lote
+	    			    	</button>
+	    			    	<div class="dropdown-menu">
+	    			    		<a class="dropdown-item" href="javascript:void(0)" id="btn_reabrir"><i class="fas fa-check-double fa-fw" style="margin-left:4px; "></i> Reabrir Casos</a>
+	    			    	</div>
+	    			    </div>
+	    			    @endif
+	    			    @endif
     			        <a href="javascript:getDataTableG()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
     			        <a href="javascript:abrirFiltradorG()" class="btn btn-info btn-sm my-1" id="boton-filtrarG"><i class="fas fa-search"></i>Filtrar</a>
     			    </div>
@@ -333,8 +366,9 @@
 @section('scripts')
 <script>
 	var tabla = null;
+	var tablaG = null;
 	window.addEventListener('load', function() {
-		$('#table_sin_gestionar').DataTable({
+		tabla = $('#table_sin_gestionar').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -355,10 +389,31 @@
                 {data: '{{$campo->campo}}'},
                 @endforeach
 				{data: 'acciones'}
-			]
+			],
+			@if(isset($_SESSION['permisos']['841']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tabla.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-		tabla = $('#table_sin_gestionar');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
 			data.codigo      = $('#codigo').val();
@@ -394,6 +449,7 @@
       		uiLibrary: 'bootstrap4',
 			format: 'yyyy-mm-dd' ,
 		});
+
 		$('#fechaG').datepicker({
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',
@@ -405,6 +461,7 @@
       		uiLibrary: 'bootstrap4',
 			format: 'yyyy-mm-dd' ,
 		});
+
 		$('#tiempo_finG').datepicker({
 			locale: 'es-es',
       		uiLibrary: 'bootstrap4',
@@ -413,7 +470,7 @@
 
 		///////////////////////////////////////////
 
-		$('#table_sin_gestionarG').DataTable({
+		tablaG = $('#table_sin_gestionarG').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -434,10 +491,31 @@
                 {data: '{{$campo->campo}}'},
                 @endforeach
 				{data: 'acciones'}
-			]
+			],
+			@if(isset($_SESSION['permisos']['841']))
+			select: true,
+            select: {
+                style: 'multi',
+            },
+			dom: 'Blfrtip',
+            buttons: [{
+            	text: '<i class="fas fa-check"></i> Seleccionar todos',
+            	action: function() {
+            		tablaG.rows({
+            			page: 'current'
+            		}).select();
+            	}
+            },
+            {
+            	text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            	action: function() {
+            		tablaG.rows({
+            			page: 'current'
+            		}).deselect();
+            	}
+            }]
+            @endif
 		});
-
-		tablaG = $('#table_sin_gestionarG');
 
 		tablaG.on('preXhr.dt', function(e, settings, data) {
 			data.codigo      = $('#codigoG').val();
@@ -467,10 +545,22 @@
 				return false;
 			}
 		});
+
+		$('#btn_solventar').click( function () {
+            states('solventar');
+        });
+
+        $('#btn_reabrir').click( function () {
+            states('reabrir');
+        });
+
+        $('#btn_destroy').click( function () {
+            destroy();
+        });
 	});
 
 	function getDataTable() {
-		tabla.DataTable().ajax.reload();
+		tabla.ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -505,7 +595,7 @@
 	///////////////////////
 
 	function getDataTableG() {
-		tablaG.DataTable().ajax.reload();
+		tablaG.ajax.reload();
 	}
 
 	function abrirFiltradorG() {
@@ -544,5 +634,133 @@
 			window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigoG').val()+'&fecha='+$('#fechaG').val()+'&contrato='+$('#contratoG').val()+'&cliente='+$('#clienteG').val()+'&telefono='+$('#telefonoG').val()+'&servicio='+$('#servicioG').val()+'&estatus='+$('#estatusG').val()+'&prioridad='+$('#prioridadG').val()+'&tecnico='+$('#tecnicoG').val()+'&tiempo_fin='+$('#tiempo_finG').val()+'&otp='+otp;
 		}
 	}
+
+	function states(state){
+		if(state == 'solventar'){
+            var table = $('#table_sin_gestionar').DataTable();
+            var nro = table.rows('.selected').data().length;
+        }else{
+            var table = $('#table_sin_gestionarG').DataTable();
+            var nro = table.rows('.selected').data().length;
+        }
+
+        var radicados = [];
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos radicados',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            radicados.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea '+state+' '+nro+' radicados en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+                if (window.location.pathname.split("/")[1] == "software") {
+                    var url = `/software/empresa/radicados/`+radicados+`/`+state+`/state_lote`;
+                }else{
+                    var url = `/empresa/radicados/`+radicados+`/`+state+`/state_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        if(data.state == 'solventar'){
+                        	var state = 'solventados';
+                        }else{
+                        	var state = 'reabiertos';
+                        }
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' radicados '+state+'</strong><br><strong>'+data.fallidos+' radicados no '+state+'</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                        getDataTableG();
+                    }
+                })
+            }
+        })
+    }
+
+    function destroy(){
+        var radicados = [];
+
+        var table = $('#table_sin_gestionar').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=1){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar dos radicados',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            radicados.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        swal({
+            title: '¿Desea eliminar '+nro+' radicados en lote?',
+            text: 'Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] == "software") {
+                    var url = `/software/empresa/radicados/`+radicados+`/destroy_lote`;
+                }else{
+                    var url = `/empresa/radicados/`+radicados+`/destroy_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: '<strong>'+data.correctos+' radicados '+data.state+'</strong><br><strong>'+data.fallidos+' radicados no '+data.state+'</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                        getDataTableG();
+                    }
+                })
+            }
+        })
+    }
 </script>
 @endsection
