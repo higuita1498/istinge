@@ -1725,102 +1725,102 @@ class ContratosController extends Controller
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
-	    if($request->client_id!='undefined'){
+	    if($request->client_id != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.client_id', $request->client_id);
             });
         }
-        if($request->plan!='undefined'){
+        if($request->plan != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.plan_id', $request->plan);
             });
         }
-        if($request->ip!='undefined'){
+        if($request->ip != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.ip', 'like', "%{$request->ip}%");
             });
         }
-        if($request->mac!='undefined'){
+        if($request->mac != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.mac_address', 'like', "%{$request->mac}%");
             });
         }
-        if($request->grupo_cort!='undefined'){
+        if($request->grupo_cort != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.grupo_corte', $request->grupo_cort);
             });
         }
-        if($request->state!='undefined'){
+        if($request->state != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.state', $request->state);
             });
         }
-        if($request->conexion_s!='undefined'){
+        if($request->conexion_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.conexion', $request->conexion_s);
             });
         }
-        if($request->server_configuration_id_s!='undefined'){
+        if($request->server_configuration_id_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.server_configuration_id', $request->server_configuration_id_s);
             });
         }
-        if($request->nodo_s!='undefined'){
+        if($request->nodo_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.nodo', $request->nodo_s);
             });
         }
-        if($request->ap_s!='undefined'){
+        if($request->ap_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.ap', $request->ap_s);
             });
         }
-        if($request->direccion!='undefined'){
+        if($request->direccion != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
             });
         }
-        if($request->barrio!='undefined'){
+        if($request->barrio != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contactos.barrio', 'like', "%{$request->barrio}%");
             });
         }
-        if($request->celular!='undefined'){
+        if($request->celular != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contactos.celular', 'like', "%{$request->celular}%");
             });
         }
-        if($request->email!='undefined'){
+        if($request->email != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contactos.email', 'like', "%{$request->email}%");
             });
         }
-        if($request->vendedor!='undefined'){
+        if($request->vendedor != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.vendedor', $request->vendedor);
             });
         }
-        if($request->canal!='undefined'){
+        if($request->canal != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.canal', $request->canal);
             });
         }
-        if($request->tecnologia_s!='undefined'){
+        if($request->tecnologia_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.tecnologia', $request->tecnologia_s);
             });
         }
-        if($request->facturacion_s!='undefined'){
+        if($request->facturacion_s != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.facturacion', $request->facturacion_s);
             });
         }
-        if($request->desde!='undefined'){
+        if($request->desde != null){
             $contratos->where(function ($query) use ($request) {
                 $query->whereDate('contracts.created_at', '>=', Carbon::parse($request->desde)->format('Y-m-d'));
             });
         }
-        if($request->hasta!='undefined'){
+        if($request->hasta != null){
             $contratos->where(function ($query) use ($request) {
                 $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
             });
