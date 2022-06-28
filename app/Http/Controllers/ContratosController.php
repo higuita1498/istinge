@@ -1722,6 +1722,7 @@ class ContratosController extends Controller
                 'contactos.email as c_email',
                 'contactos.barrio as c_barrio',
                 'contactos.vereda as c_vereda',
+                'contactos.direccion as c_direccion',
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
