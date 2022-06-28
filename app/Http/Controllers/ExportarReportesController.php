@@ -3116,7 +3116,7 @@ class ExportarReportesController extends Controller
             $caja = 'DE_CAJAS';
         }
 
-        $titulosColumnas = array('Fecha', 'Comprobante', 'Cuenta', 'Concepto', 'Estado', 'Salida', 'Entrada');
+        $titulosColumnas = array('Fecha', 'Comprobante', 'Identificacion', 'Cuenta', 'Concepto', 'Estado', 'Salida', 'Entrada');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -3127,17 +3127,17 @@ class ExportarReportesController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:D1');
+            ->mergeCells('A1:H1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:G3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:H3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
 
@@ -3176,21 +3176,48 @@ class ExportarReportesController extends Controller
         }
 
         $i=4;
+
+        $estilo =array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => substr(Auth::user()->empresa()->color,1))
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Times New Roman',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                ),
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:H3')->applyFromArray($estilo);
+
         foreach ($movimientos as $movimiento) {
+            $identificacion = '';
+
+            if(isset($movimiento->contacto)){
+                $identificacion .= $movimiento->cliente()->tip_iden('corta').' '.$movimiento->cliente()->nit;
+            }
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, date('d-m-Y', strtotime($movimiento->fecha)))
                 ->setCellValue($letras[1].$i, $movimiento->id)
-                ->setCellValue($letras[2].$i, $movimiento->banco()->nombre)
-                ->setCellValue($letras[3].$i, $movimiento->categoria())
-                ->setCellValue($letras[4].$i, $movimiento->estatus())
-                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==2?$movimiento->saldo:0))
-                ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==1?$movimiento->saldo:0));
+                ->setCellValue($letras[2].$i, $identificacion)
+                ->setCellValue($letras[3].$i, $movimiento->banco()->nombre)
+                ->setCellValue($letras[4].$i, $movimiento->categoria())
+                ->setCellValue($letras[5].$i, $movimiento->estatus())
+                ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==2?$movimiento->saldo:0))
+                ->setCellValue($letras[7].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==1?$movimiento->saldo:0));
             $i++;
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['salida']))
-            ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['entrada']));
+            ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['salida']))
+            ->setCellValue($letras[7].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['entrada']));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -3198,7 +3225,7 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:G'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:H'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){

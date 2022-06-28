@@ -70,7 +70,13 @@ class Movimiento extends Model
         if (GastosRecurrentes::find($this->id_modulo)) {
                 return GastosRecurrentes::find($this->id_modulo)->detalle();    
             }
+    }
 
+    public function cliente(){
+        if($this->contacto){
+            return Contacto::where('id', $this->contacto)->first();
+        }
+        return '';
     }
 
     public function boton(){

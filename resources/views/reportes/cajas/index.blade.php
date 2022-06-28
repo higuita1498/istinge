@@ -75,6 +75,7 @@
                 <tr>
                     <th>Fecha</th>
                     <th>Comprobante</th>
+                    <th>Identificación</th>
                     <th>Cuenta</th>
                     <th>Categoría</th>
                     <th>Estado</th>
@@ -91,6 +92,9 @@
                             <a href="{{$movimiento->show_url()}}">
                                 {{$movimiento->id}}
                             </a>
+                        </td>
+                        <td>
+                            {{$movimiento->contacto ? $movimiento->cliente()->tip_iden('corta') : '' }} {{$movimiento->contacto ? $movimiento->cliente()->nit : '' }}
                         </td>
                         <td>
                             {{$movimiento->banco()->nombre}}
@@ -113,7 +117,7 @@
                 @endforeach
                 </tbody>
                 <tfoot class="thead-dark">
-                    <td colspan="5"></td>
+                    <td colspan="6"></td>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['salida'])}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
                 </tfoot>
