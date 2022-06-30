@@ -3244,4 +3244,96 @@ class ContratosController extends Controller
             );
         }
     }
+
+    public function planes_lote($contratos, $server_configuration_id, $plan_id){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $succ = 0; $fail = 0;
+
+        $contratos = explode(",", $contratos);
+
+        for ($i=0; $i < count($contratos) ; $i++) {
+            $descripcion = '';
+            $contrato = Contrato::find($contratos[$i]);
+            $plan     = PlanesVelocidad::find($plan_id);
+            $mikrotik = Mikrotik::find($server_configuration_id);
+
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
+            if ($contrato) {
+                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                    #ELMINAMOS DEL QUEUE#
+                    $queue = $API->comm("/queue/simple/getall", array(
+                        "?target" => $contrato->ip.'/32'
+                        )
+                    );
+
+                    if($queue){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $queue[0][".id"],
+                            )
+                        );
+                    }
+                    #ELMINAMOS DEL QUEUE#
+
+                    $rate_limit      = '';
+                    $priority        = $plan->prioridad;
+                    $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
+                    $burst_threshold = (strlen($plan->burst_threshold_subida)>1) ? $plan->burst_threshold_subida.'/'.$plan->burst_threshold_bajada : '';
+                    $burst_time      = ($plan->burst_time_subida) ? $plan->burst_time_subida.'/'.$plan->burst_time_bajada: '';
+                    $limit_at        = (strlen($plan->limit_at_subida)>1) ? $plan->limit_at_subida.'/'.$plan->limit_at_bajada : '';
+                    $max_limit       = $plan->upload.'/'.$plan->download;
+
+                    if($max_limit){ $rate_limit .= $max_limit; }
+                    if(strlen($burst_limit)>3){ $rate_limit .= ' '.$burst_limit; }
+                    if(strlen($burst_threshold)>3){ $rate_limit .= ' '.$burst_threshold; }
+                    if(strlen($burst_time)>3){ $rate_limit .= ' '.$burst_time; }
+                    if($priority){ $rate_limit .= ' '.$priority; }
+                    if($limit_at){ $rate_limit .= ' '.$limit_at; }
+
+                    $API->comm("/queue/simple/add",
+                        array(
+                            "name"            => $this->normaliza($servicio).'-'.$request->nro,
+                            "target"          => $request->ip,
+                            "max-limit"       => $plan->upload.'/'.$plan->download,
+                            "burst-limit"     => $burst_limit,
+                            "burst-threshold" => $burst_threshold,
+                            "burst-time"      => $burst_time,
+                            "priority"        => $priority,
+                            "limit-at"        => $limit_at
+                        )
+                    );
+
+                    $plan_old = ($contrato->plan_id) ? PlanesVelocidad::find($contrato->plan_id)->name : 'Ninguno';
+
+                    $descripcion .= ($contrato->plan_id == $plan_id) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Plan</b> de '.$plan_old.' a '.$plan->name.'<br>';
+                    $contrato->plan_id = $plan_id;
+                    $contrato->save();
+
+                    /*REGISTRO DEL LOG*/
+                    if(!is_null($descripcion)){
+                        $movimiento = new MovimientoLOG;
+                        $movimiento->contrato    = $contrato->id;
+                        $movimiento->modulo      = 5;
+                        $movimiento->descripcion = $descripcion;
+                        $movimiento->created_by  = Auth::user()->id;
+                        $movimiento->empresa     = Auth::user()->empresa;
+                        $movimiento->save();
+                    }
+                    $succ++;
+                } else {
+                    $fail++;
+                }
+                $API->disconnect();
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'fallidos'  => $fail,
+            'correctos' => $succ,
+            'plan'      => $plan->name
+        ]);
+    }
 }

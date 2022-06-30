@@ -201,6 +201,7 @@
         	</div>
         </fieldset>
     </div>
+
     @if(isset($_SESSION['permisos']['405']))
     <div class="row card-description">
     	<div class="col-md-12">
@@ -222,6 +223,7 @@
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_planes"><i class="fas fa-exchange-alt" style="margin-left:4px; "></i> Cambiar Plan de Internet</a>
                     </div>
                 </div>
                 @endif
@@ -248,11 +250,25 @@
     		</table>
     	</div>
     </div>
+
+    <div class="modal fade" id="planModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body px-0">
+                    @include('contratos.modal.planes')
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 @endsection
 
 @section('scripts')
 <script>
+    $("#formulario").submit(function () {
+        return false;
+    });
+
     $(document).ready(function() {
         $('#desde').datepicker({
             uiLibrary: 'bootstrap4',
@@ -274,17 +290,19 @@
                 return $('#desde').val();
             }
         });
+        $('#servidor').change(function(){
+            getPlanes($("#servidor").val());
+        });
     });
 
     var tabla = null;
     window.addEventListener('load',
     function() {
-		var tbl = $('#tabla-contratos').DataTable({
+		var tabla = $('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
 			searching: false,
-            select: true,
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
@@ -296,18 +314,36 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
-            select: {
-                style: 'multi',
-            },
 			columns: [
 			    @foreach($tabla as $campo)
                 {data: '{{$campo->campo}}'},
                 @endforeach
 				{ data: 'acciones' },
-			]
+			],
+            @if(isset($_SESSION['permisos']['778']))
+            select: true,
+            select: {
+                style: 'multi',
+            },
+            dom: 'Blfrtip',
+            buttons: [{
+                text: '<i class="fas fa-check"></i> Seleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).select();
+                }
+            },
+            {
+                text: '<i class="fas fa-times"></i> Deseleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).deselect();
+                }
+            }]
+            @endif
 		});
-		
-		tabla = $('#tabla-contratos');
 		
         tabla.on('preXhr.dt', function(e, settings, data) {
 			data.cliente_id = $('#client_id').val();
@@ -361,7 +397,7 @@
         $(".boton_ocultar_mostrar").on('click', function(){
         	var indice = $(this).index(".boton_ocultar_mostrar");
         	$(".boton_ocultar_mostrar").eq(indice).toggleClass("btn-danger");
-        	var columna = tbl.column(indice);
+        	var columna = tabla.column(indice);
         	columna.visible(!columna.visible());
         });
 
@@ -376,10 +412,18 @@
         $('#btn_mk').click( function () {
             mk_lote();
         });
+
+        $('#btn_planes').click( function () {
+            planes_lote();
+        });
+
+        $('#guardarc').click( function () {
+            planes_lote_store();
+        });
     });
     
     function getDataTable() {
-		tabla.DataTable().ajax.reload();
+        $('#tabla-contratos').DataTable().ajax.reload();
 	}
 
 	function abrirFiltrador() {
@@ -421,9 +465,7 @@
 	}
 	
 	function exportar() {
-	    //window.location.href = window.location.pathname+'/exportar?client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val();
-
-        window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val();
 	}
 
     function states(state){
@@ -553,6 +595,160 @@
                             confirmButtonText: 'ACEPTAR',
                         });
                         getDataTable();
+                    }
+                })
+            }
+        })
+    }
+
+    function planes_lote(){
+        var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if(nro>25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar 25 contratos por lotes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        $("#planModal").modal('show');
+
+        // swal({
+        //     title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
+        //     text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+        //     type: 'question',
+        //     showCancelButton: true,
+        //     confirmButtonColor: '#00ce68',
+        //     cancelButtonColor: '#d33',
+        //     confirmButtonText: 'Aceptar',
+        //     cancelButtonText: 'Cancelar',
+        // }).then((result) => {
+        //     if (result.value) {
+        //         cargando(true);
+
+        //         if (window.location.pathname.split("/")[1] === "software") {
+        //             var url = `/software/empresa/contratos/`+contratos+`/enviar_mk_lote`;
+        //         }else{
+        //             var url = `/empresa/contratos/`+contratos+`/enviar_mk_lote`;
+        //         }
+
+        //         $.ajax({
+        //             url: url,
+        //             method: 'GET',
+        //             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        //             success: function(data) {
+        //                 cargando(false);
+        //                 swal({
+        //                     title: 'PROCESO REALIZADO',
+        //                     html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+        //                     type: 'success',
+        //                     showConfirmButton: true,
+        //                     confirmButtonColor: '#1A59A1',
+        //                     confirmButtonText: 'ACEPTAR',
+        //                 });
+        //                 getDataTable();
+        //             }
+        //         })
+        //     }
+        // })
+    }
+
+    function planes_lote_store(){
+        var contratos = [];
+
+        var table = $('#tabla-contratos').DataTable();
+        var nro = table.rows('.selected').data().length;
+
+        if(nro<=0){
+            swal({
+                title: 'ERROR',
+                html: 'Para ejecutar esta acción, debe al menos seleccionar un contrato',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if(nro>25){
+            swal({
+                title: 'ERROR',
+                html: 'Sólo se permite ejecutar 25 contratos por lotes',
+                type: 'error',
+            });
+            return false;
+        }
+
+        if($('#server_configuration_id').val().length == 0 || $('#plan_id').val().length == 0){
+            swal({
+                title: 'ERROR',
+                html: 'Debe seleccionar el plan de internet que desea cambiar',
+                type: 'error',
+            });
+            return false;
+        }
+
+        for (i = 0; i < nro; i++) {
+            contratos.push(table.rows('.selected').data()[i]['id']);
+        }
+
+        var server_configuration_id = $('#server_configuration_id').val();
+        var plan_id = $('#plan_id').val();
+
+        swal({
+            title: '¿Desea cambiar de plan de internet a '+nro+' contratos en lote?',
+            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.value) {
+                cargando(true);
+
+                if (window.location.pathname.split("/")[1] === "software") {
+                    var url = `/software/empresa/contratos/`+contratos+`/`+server_configuration_id+`/`+plan_id+`/planes_lote`;
+                }else{
+                    var url = `/empresa/contratos/`+contratos+`/`+server_configuration_id+`/`+plan_id+`/planes_lote`;
+                }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function(data) {
+                        cargando(false);
+                        swal({
+                            title: 'PROCESO REALIZADO',
+                            html: 'Plan de Internet: <strong>'+data.plan+'</strong><br>Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong>',
+                            type: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#1A59A1',
+                            confirmButtonText: 'ACEPTAR',
+                        });
+                        getDataTable();
+                        cerrarFiltrador();
+                        $('#server_configuration_id').val('').selectpicker('refresh');
+                        $('#plan_id').val('').selectpicker('refresh');
+                        $("#planModal").modal('hide');
                     }
                 })
             }
