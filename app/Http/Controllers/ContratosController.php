@@ -3294,8 +3294,8 @@ class ContratosController extends Controller
 
                     $API->comm("/queue/simple/add",
                         array(
-                            "name"            => $this->normaliza($servicio).'-'.$request->nro,
-                            "target"          => $request->ip,
+                            "name"            => $contrato->servicio,
+                            "target"          => $contrato->ip,
                             "max-limit"       => $plan->upload.'/'.$plan->download,
                             "burst-limit"     => $burst_limit,
                             "burst-threshold" => $burst_threshold,
