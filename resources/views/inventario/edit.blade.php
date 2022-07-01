@@ -294,6 +294,17 @@
 
 								<div id="inventariable" class="col-md-12" style="@if($inventario->tipo_producto==1) display: block; @else display: none; @endif  ">
 									<div class="row">
+										<div class="form-group col-md-4 {{ $inventario->type == 'TV' ? 'd-none' : '' }}">
+											<label class="control-label">Tipo <span class="text-danger">*</span></label>
+											<select class="form-control selectpicker" name="type" id="type" required="" title="Seleccione" data-live-search="true" data-size="5">
+												<option value="MATERIAL" {{ $inventario->type == 'MATERIAL' ? 'selected' : '' }}>MATERIAL</option>
+												<option value="MODEMS" {{ $inventario->type == 'MODEMS' ? 'selected' : '' }}>MODEMS</option>
+												<option value="TV" {{ $inventario->type == 'TV' ? 'selected' : '' }}>TV</option>
+											</select>
+											<span class="help-block error">
+												<strong>{{ $errors->first('type') }}</strong>
+											</span>
+										</div>
 										<div class="form-group col-md-4" >
 											<label class="control-label">Unidad de medida</label>
 											<select class="form-control selectpicker" name="unidad" id="unidad" required="" title="Seleccione" data-live-search="true" data-size="5">

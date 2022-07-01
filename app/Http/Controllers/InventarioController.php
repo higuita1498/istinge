@@ -81,7 +81,7 @@ class InventarioController extends Controller{
         }
         
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
-        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','MATERIAL');
+        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->whereIn('type',['MATERIAL','MODEMS']);
         
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $productos=$productos->where('inventario.ref', 'like', '%' .$request->name_1.'%');
@@ -116,7 +116,7 @@ class InventarioController extends Controller{
             $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
         }
         
-        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MATERIAL')->count();
+        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->whereIn('type',['MATERIAL','MODEMS'])->count();
         view()->share(['title' => 'Productos']);
         $type = '';
         return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
@@ -223,7 +223,7 @@ class InventarioController extends Controller{
         }
         
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
-        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','MATERIAL');
+        $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->whereIn('type',['MATERIAL','MODEMS']);
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $productos=$productos->where('inventario.ref', 'like', '%' .$request->name_1.'%');
         }
@@ -255,7 +255,7 @@ class InventarioController extends Controller{
         }else{
             $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
         }
-        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MATERIAL')->count();
+        $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->whereIn('type',['MATERIAL','MODEMS'])->count();
         view()->share(['seccion' => 'inventario', 'title' => 'Productos', 'icon' =>'fas fa-boxes', 'subseccion'=>'material']);
         $type = 'MATERIAL';
         return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
@@ -571,7 +571,7 @@ class InventarioController extends Controller{
         return redirect('empresa/inventario')->with('success', $mensaje)->with('producto_id', $inventario->id);
         if($request->type == 'PLAN'){
             return redirect('empresa/inventario')->with('success', $mensaje)->with('producto_id', $inventario->id);
-        }elseif($request->type == 'MATERIAL'){
+        }elseif($request->type == 'MATERIAL' || $request->type == 'MODEMS'){
             return redirect('empresa/inventario/material')->with('success', $mensaje)->with('producto_id', $inventario->id);
         }else{
             return redirect('empresa/inventario/modem')->with('success', $mensaje)->with('producto_id', $inventario->id);
@@ -854,6 +854,7 @@ class InventarioController extends Controller{
             $inventario->categoria=$request->categoria;
             $inventario->lista = $request->list;
             $inventario->link = $request->link;
+            $inventario->type = $request->type;
             $inventario->save();
             
             if ($request->tipo_producto==1) {
@@ -1053,7 +1054,7 @@ class InventarioController extends Controller{
                 DB::table('inventario_meta')->insert($inserts);
             }
         }
-        if($inventario->type = 'TV'){
+        if($inventario->type == 'TV'){
             return redirect('empresa/inventario/television')->with('success', 'Se ha modificado satisfactoriamente el plan de televisión')->with('producto_id', $inventario->id);
         }
         return redirect('empresa/inventario/')->with('success', 'Se ha modificado satisfactoriamente el producto');
