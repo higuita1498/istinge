@@ -94,8 +94,13 @@ class CronController extends Controller
                     $numero = 0;
                 }
 
-                $qwerty = Carbon::now()->endOfMonth()->toDateString();
-                $ultimo = explode("-", $qwerty);
+                if(Carbon::now()->format('d')*1 > $grupo_corte->fecha_suspension){
+                    $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->addMonth()->format('m'), $grupo_corte->fecha_suspension,0);
+                }else{
+                    $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
+                }
+
+                //dd('Plazo: '.(Funcion::diffDates($date, Carbon::now())+1).PHP_EOL.' Fecha: '.Carbon::now()->format('Y-m-d').PHP_EOL.' Vencimiento: '.$date->format('Y-m-d').PHP_EOL.' Fecha Factura: '.Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2).PHP_EOL.' Pago Oportuno: '.Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2));
 
                 foreach ($contratos as $contrato) {
                     $numero++;
@@ -113,7 +118,7 @@ class CronController extends Controller
                         }
 
                         //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
-                        $plazo=TerminosPago::where('dias', ($grupo_corte->fecha_suspension*1) - (Carbon::now()->format('d')*1))->first();                        
+                        $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
 
                         $tipo = 1; //1= normal, 2=Electrónica.
 
@@ -136,11 +141,11 @@ class CronController extends Controller
                         $factura->facnotas      = $contrato->notas_fact;
                         $factura->empresa       = 1;
                         $factura->cliente       = $contrato->cliente;
-                        $factura->fecha         = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_factura;
+                        $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
                         $factura->tipo          = $tipo;
-                        $factura->vencimiento   = $ultimo[0].'-'.($ultimo[1]+1).'-'.$fecha_suspension;
-                        $factura->suspension    = $ultimo[0].'-'.($ultimo[1]+1).'-'.$fecha_suspension;
-                        $factura->pago_oportuno = $ultimo[0].'-'.$ultimo[1].'-'.$grupo_corte->fecha_pago;
+                        $factura->vencimiento   = $date->format('Y-m-d');
+                        $factura->suspension    = $date->format('Y-m-d');
+                        $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
                         $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                         $factura->bodega        = 1;
                         $factura->vendedor      = 1;
