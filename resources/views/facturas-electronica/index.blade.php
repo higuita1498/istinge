@@ -74,7 +74,7 @@
 			<div class="card shadow-sm border-0">
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
-						<div class="col-md-1 pl-1 pt-1">
+						<div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
@@ -102,6 +102,12 @@
 								<option value="1">Abierta</option>
 								<option value="A">Cerrada</option>
 								<option value="2">Anulada</option>
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<select title="Emisión" class="form-control rounded selectpicker" id="emision">
+								<option value="1">Emitida</option>
+								<option value="0">No emitida</option> 	
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1 d-none">
@@ -228,6 +234,7 @@
 			data.comparador = $('#comparador').val();
 			data.total = $('#total').val();
 			data.estado = $('#estado').val();
+			data.emision = $('#emision').val();
 			data.filtro = true;
 		});
 
@@ -363,6 +370,7 @@
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
+		$('#emision').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
