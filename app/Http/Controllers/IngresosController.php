@@ -35,6 +35,7 @@ use App\PucMovimiento;
 use App\Anticipo;
 use App\FormaPago;
 use App\NumeracionFactura;
+use App\Funcion;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -1265,8 +1266,9 @@ class IngresosController extends Controller
 
             foreach ($registros as $registro) {
                 $codigo = substr($registro['8'],1,-3);
-                $precio = $registro['2'];
-                $factura = Factura::where('codigo', $codigo)->first();
+                $precio = $this->precision($registro['2']);
+                $nit = substr($registro['1'], 1, -1);
+                $factura = Factura::where('factura.codigo', $codigo)->first();
                 if($factura){
                     if($factura->estatus == 0){
                         $mensaje .= 'FACTURA N° '.$factura->codigo.' YA SE ENCUENTRA PAGADA<br>';
@@ -1296,13 +1298,14 @@ class IngresosController extends Controller
                         $ingreso->created_by  = Auth::user()->id;
                         $ingreso->save();
 
-                        $precio               = $this->precision($precio);
                         $items                = new IngresosFactura;
                         $items->ingreso       = $ingreso->id;
                         $items->factura       = $factura->id;
                         $items->pagado        = $factura->pagado();
-                        $items->pago          = $this->precision($precio);
-                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                        $items->pago          = $precio;
+                        $items->save();
+
+                        if ($precio >= $factura->porpagar()) {
                             $factura->estatus = 0;
                             $factura->save();
                             CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
@@ -1311,14 +1314,13 @@ class IngresosController extends Controller
                                 $crm->delete();
                             }
                         }
-                        $items->save();
 
                         ##SUMO A LAS NUMERACIONES EL RECIBO
                         $nro->caja = $caja + 1;
                         $nro->save();
 
                         ##REGISTRO EL MOVIMIENTO
-                        $ingreso = Ingreso::find($ingreso->id);
+                        //$ingreso = Ingreso::find($ingreso->id);
                         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
 
                         if ($factura->estatus == 0) {
@@ -1368,86 +1370,84 @@ class IngresosController extends Controller
                             /* * * API MK * * */
 
                             /* * * ENVÍO SMS * * */
-                            if($precio){
-                                $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                                if($servicio){
-                                    $numero = str_replace('+','',$cliente->celular);
-                                    $numero = str_replace(' ','',$numero);
-                                    $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
-                                    if($servicio->nombre == 'Hablame SMS'){
-                                        if($servicio->api_key && $servicio->user && $servicio->pass){
-                                            $post['toNumber'] = $numero;
-                                            $post['sms'] = $mensaje;
+                            $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                            if($servicio){
+                                $numero = str_replace('+','',$cliente->celular);
+                                $numero = str_replace(' ','',$numero);
+                                $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
+                                if($servicio->nombre == 'Hablame SMS'){
+                                    if($servicio->api_key && $servicio->user && $servicio->pass){
+                                        $post['toNumber'] = $numero;
+                                        $post['sms'] = $mensaje;
 
-                                            $curl = curl_init();
-                                            curl_setopt_array($curl, array(
-                                                CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
-                                                CURLOPT_RETURNTRANSFER => true,
-                                                CURLOPT_ENCODING => '',
-                                                CURLOPT_MAXREDIRS => 10,
-                                                CURLOPT_TIMEOUT => 0,
-                                                CURLOPT_FOLLOWLOCATION => true,
-                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                                CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                                                CURLOPT_HTTPHEADER => array(
-                                                    'account: '.$servicio->user,
-                                                    'apiKey: '.$servicio->api_key,
-                                                    'token: '.$servicio->pass,
-                                                    'Content-Type: application/json'
-                                                ),
-                                            ));
-                                            $result = curl_exec ($curl);
-                                            $err  = curl_error($curl);
-                                            curl_close($curl);
-                                        }
-                                    }elseif($servicio->nombre == 'SmsEasySms'){
-                                        if($servicio->user && $servicio->pass){
-                                            $post['to'] = array('57'.$numero);
-                                            $post['text'] = $mensaje;
-                                            $post['from'] = "SMS";
-                                            $login = $servicio->user;
-                                            $password = $servicio->pass;
+                                        $curl = curl_init();
+                                        curl_setopt_array($curl, array(
+                                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                            CURLOPT_RETURNTRANSFER => true,
+                                            CURLOPT_ENCODING => '',
+                                            CURLOPT_MAXREDIRS => 10,
+                                            CURLOPT_TIMEOUT => 0,
+                                            CURLOPT_FOLLOWLOCATION => true,
+                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                            CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                            CURLOPT_HTTPHEADER => array(
+                                                'account: '.$servicio->user,
+                                                'apiKey: '.$servicio->api_key,
+                                                'token: '.$servicio->pass,
+                                                'Content-Type: application/json'
+                                            ),
+                                        ));
+                                        $result = curl_exec ($curl);
+                                        $err  = curl_error($curl);
+                                        curl_close($curl);
+                                    }
+                                }elseif($servicio->nombre == 'SmsEasySms'){
+                                    if($servicio->user && $servicio->pass){
+                                        $post['to'] = array('57'.$numero);
+                                        $post['text'] = $mensaje;
+                                        $post['from'] = "SMS";
+                                        $login = $servicio->user;
+                                        $password = $servicio->pass;
 
-                                            $ch = curl_init();
-                                            curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
-                                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                            curl_setopt($ch, CURLOPT_POST, 1);
-                                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                                            curl_setopt($ch, CURLOPT_HTTPHEADER,
-                                                array(
-                                                    "Accept: application/json",
-                                                    "Authorization: Basic ".base64_encode($login.":".$password)));
-                                            $result = curl_exec ($ch);
-                                            $err  = curl_error($ch);
-                                            curl_close($ch);
-                                        }
-                                    }else{
-                                        if($servicio->user && $servicio->pass){
-                                            $post['to'] = array('57'.$numero);
-                                            $post['text'] = $mensaje;
-                                            $post['from'] = "";
-                                            $login = $servicio->user;
-                                            $password = $servicio->pass;
+                                        $ch = curl_init();
+                                        curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                        curl_setopt($ch, CURLOPT_POST, 1);
+                                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                            array(
+                                                "Accept: application/json",
+                                                "Authorization: Basic ".base64_encode($login.":".$password)));
+                                        $result = curl_exec ($ch);
+                                        $err  = curl_error($ch);
+                                        curl_close($ch);
+                                    }
+                                }else{
+                                    if($servicio->user && $servicio->pass){
+                                        $post['to'] = array('57'.$numero);
+                                        $post['text'] = $mensaje;
+                                        $post['from'] = "";
+                                        $login = $servicio->user;
+                                        $password = $servicio->pass;
 
-                                            $ch = curl_init();
-                                            curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                            curl_setopt($ch, CURLOPT_POST, 1);
-                                            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                                            curl_setopt($ch, CURLOPT_HTTPHEADER,
-                                                array(
-                                                    "Accept: application/json",
-                                                    "Authorization: Basic ".base64_encode($login.":".$password)));
-                                            $result = curl_exec ($ch);
-                                            $err  = curl_error($ch);
-                                            curl_close($ch);
-                                        }
+                                        $ch = curl_init();
+                                        curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                        curl_setopt($ch, CURLOPT_POST, 1);
+                                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                            array(
+                                                "Accept: application/json",
+                                                "Authorization: Basic ".base64_encode($login.":".$password)));
+                                        $result = curl_exec ($ch);
+                                        $err  = curl_error($ch);
+                                        curl_close($ch);
                                     }
                                 }
                             }
                             /* * * ENVÍO SMS * * */
 
-                            $mensaje .= 'LA FACTURA N° '.$factura->codigo.' HA SIDO PAGADA BAJO EL PAGO N° '.$ingreso->nro.'<br>';
+                            $mensaje .= 'La factura '.$factura->codigo.' del cliente '.$cliente->nombre.' '.$cliente->apellidos().' ha sido pagada bajo el ingreso Nro.'.$ingreso->nro.' por '.Auth::user()->empresa()->moneda.''.Funcion::Parsear($precio).'<br>';
                         }
                     }
                 }else{

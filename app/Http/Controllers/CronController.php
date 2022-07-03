@@ -1301,7 +1301,8 @@ class CronController extends Controller
                 $ingreso->save();
 
                 # REGISTRAMOS EL INGRESO_FACTURA
-                $precio         = $this->precisionAPI($request->transaction_value, $empresa->id);
+                //$precio         = $this->precisionAPI($request->transaction_value, $empresa->id);
+                $precio         = $this->precisionAPI($factura->totalAPI($empresa->id)->total);
 
                 $items          = new IngresosFactura;
                 $items->ingreso = $ingreso->id;
