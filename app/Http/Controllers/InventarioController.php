@@ -419,6 +419,7 @@ class InventarioController extends Controller{
         $inventario->categoria=$request->categoria;
         $inventario->lista = 0;
         $inventario->link = $request->link;
+        $inventario->type_autoretencion = $request->tipo_autoretencion;
         $inventario->save();
         
         if ($request->tipo_producto==1) {
@@ -499,6 +500,16 @@ class InventarioController extends Controller{
             $pr->tipo = 4;
             $pr->save();
         }
+
+        if(isset($request->autoretencion)){
+            $pr = new ProductoCuenta;
+            $pr->cuenta_id = $request->autoretencion;
+            $pr->inventario_id = $inventario->id;
+            $pr->tipo = 5;
+            $pr->save();
+        }
+
+
         
         $inserts=array();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -842,7 +853,6 @@ class InventarioController extends Controller{
             
             $monto = str_replace('.','',$request->precio);
             $monto = str_replace(',','.',$monto);
-            
             $impuesto = Impuesto::where('id', $request->impuesto)->first();
             $inventario->id_impuesto=$request->impuesto;
             $inventario->impuesto=$impuesto->porcentaje;
@@ -855,6 +865,7 @@ class InventarioController extends Controller{
             $inventario->lista = $request->list;
             $inventario->link = $request->link;
             $inventario->type = $request->type;
+            $inventario->type_autoretencion = $request->tipo_autoretencion;
             $inventario->save();
             
             if ($request->tipo_producto==1) {
@@ -907,6 +918,10 @@ class InventarioController extends Controller{
             
             if(isset($request->devolucion)){
                 array_push($services,$request->devolucion);
+            }
+
+            if(isset($request->autoretencion)){
+                array_push($services,$request->autoretencion);
             }
 
             if($request->cuentacontable){
@@ -977,6 +992,19 @@ class InventarioController extends Controller{
                 if($inven){
                     $inven->tipo = 4;
                     $inven->save();
+                }
+            }
+
+            if(isset($request->autoretencion)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->autoretencion)->first();
+
+                if($request->tipo_autoretencion == 1){
+                    $inven->delete();
+                }else{
+                    if($inven){
+                        $inven->tipo = 5;
+                        $inven->save();
+                    }
                 }
             }
             

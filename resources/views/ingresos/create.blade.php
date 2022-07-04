@@ -431,6 +431,32 @@
           </div>
         </div>
       </div>
+      <hr>
+      <div class="row form-inline fact-table">
+        <div class="col-md-6">
+          <div class="alert alert-warning" role="alert">
+            Se tendrán en cuenta todas las facturas que les asocie un pago.
+            <a><i data-tippy-content="Las facturas que ya sean electrónicas, podrá hacer uso de la funcion 'convertir a electrónica y emitir'.
+              Si por lo contrario selecciona la opcion 'convertir a electrónica' no tendrá ningun efecto sobre las que ya son electrónicas." class="icono far fa-question-circle"></i></a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-radio">
+            <label class="form-check-label" style="font-size: 13px;">
+              <input type="radio" class="form-check-input" name="tipo_electronica" value="1">Convertir a electrónica
+              <i class="input-helper"></i>
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-radio">
+            <label class="form-check-label" style="font-size: 13px;">
+              <input type="radio" class="form-check-input" name="tipo_electronica" value="2">Convertir a electrónica y emitir
+              <i class="input-helper"></i>
+            </label>
+          </div>
+        </div>
+      </div>
 
   		<div class="row mt-2">
         <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">

@@ -34,6 +34,7 @@ use App\Puc;
 use App\PucMovimiento;
 use App\Anticipo;
 use App\FormaPago;
+use App\NumeracionFactura;
 use App\Funcion;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
@@ -272,6 +273,7 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
+
         if($request->realizar == 2){
             $this->storeIngresoPucCategoria($request);
 
@@ -299,11 +301,41 @@ class IngresosController extends Controller
             }
     
             if ($request->tipo == 1) {
+
                 foreach ($request->factura_pendiente as $key => $value) {
+
                     $factura = Factura::find($request->factura_pendiente[$key]);
                     if($factura->estatus == 0){
                         $mensaje='DISCULPE ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
                         return back()->with('danger', $mensaje)->withInput();
+                    }
+
+                    //Conversión de factura estandar a factura electrónica.
+                    if(isset($request->tipo_electronica)){
+                        //primero recuperamos
+                        $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+                        $inicio = $nro->inicio;
+                        
+                        if($factura->tipo != 2 && $request->precio[$key] > 0)
+                        {
+                            $factura->tipo = 2;     
+                            $factura->codigo = $nro->prefijo.$inicio;
+                            $factura->numeracion = $nro->id;
+                            $factura->save();
+    
+                            $nro->inicio += 1;
+                            $nro->save();
+                        }
+                    }
+                }
+
+                if($request->tipo_electronica == 2){
+                    foreach ($request->factura_pendiente as $key => $value) {
+                        $factura = Factura::find($request->factura_pendiente[$key]);
+                        //si tiene el tipo 2 es por que desean emitir la(s) factura(s).
+                        if($factura->emitida != 1){
+                            $emision = app(FacturasController::class)->xmlFacturaVentaMasivo($factura->id);
+                        }
                     }
                 }
             }
