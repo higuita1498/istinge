@@ -103,7 +103,8 @@ class CotizacionesController extends Controller
             join('items_factura as if', 'factura.id', '=', 'if.factura')->
             select('factura.id', 'factura.codigo', 'factura.cot_nro', DB::raw('if(factura.cliente,c.nombre,fc.nombre) as nombrecliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'))->
             where('factura.empresa',Auth::user()->empresa)->
-            where('factura.tipo', 3);
+            where('factura.tipo', 3)->
+            where('factura.codigo', NULL);
 
         if ($request->filtro == true) {
             if($request->cot_nro){
