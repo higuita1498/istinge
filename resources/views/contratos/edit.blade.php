@@ -434,7 +434,7 @@
                                 <select class="form-control selectpicker" name="servicio_tv" id="servicio_tv" title="Seleccione" data-live-search="true" data-size="5">
                                     <option value="">NINGUNO</option>
                                     @foreach($servicios as $servicio)
-                                        <option value="{{$servicio->id}}" {{ $servicio->id==$contrato->servicio_tv?'selected':'' }}>{{$servicio->producto}}</option>
+                                        <option value="{{$servicio->id}}" {{ $servicio->id==$contrato->servicio_tv?'selected':'' }}>{{$servicio->producto}} - ({{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($servicio->precio)}})</option>
                                     @endforeach
                                 </select>
                                 <span style="color: red;">
