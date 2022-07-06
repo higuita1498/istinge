@@ -1871,7 +1871,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[15].$i, $contrato->status())
                 ->setCellValue($letras[16].$i, $contrato->grupo_corte('true'))
                 ->setCellValue($letras[17].$i, $contrato->facturacion())
-                ->setCellValue($letras[17].$i, $contrato->costo_reconexion);
+                ->setCellValue($letras[18].$i, $contrato->costo_reconexion);
             $i++;
         }
 
