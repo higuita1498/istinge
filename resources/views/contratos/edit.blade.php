@@ -545,6 +545,28 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">¿Cobro de Reconexión?</label>
+                                <div class="input-group mb-2">
+                                    <select class="form-control selectpicker" name="reconexion" id="reconexion" title="Seleccione">
+                                        <option value="1" {{ $contrato->costo_reconexion > 0 ? 'selected':'' }}>Si</option>
+                                        <option value="0" {{ $contrato->costo_reconexion == 0 ? 'selected':'' }}>No</option>
+                                    </select>
+                                    <span style="color: red;">
+                                        <strong>{{ $errors->first('reconexion') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group {{ $contrato->costo_reconexion > 0 ? '':'d-none' }}" id="div_reconexion">
+                                <label class="control-label">Monto de Reconexión</label>
+                                <div class="input-group mb-2">
+                                    <input type="number" class="form-control" id="costo_reconexion" name="costo_reconexion" onkeypress="return event.charCode >= 48 && event.charCode <=57" min="0" value="{{ $contrato->costo_reconexion }}">
+                                    <span style="color: red;">
+                                        <strong>{{ $errors->first('costo_reconexion') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -678,6 +700,15 @@
                 }else{
                     $("#contrato_permanencia_meses").val('').selectpicker('refresh');
                     $("#div_meses").addClass('d-none');
+                }
+            });
+            $('#reconexion').change(function(){
+                if($('#reconexion').val() == 1){
+                    $("#div_reconexion").removeClass('d-none');
+                    $("#costo_reconexion").val('');
+                }else{
+                    $("#div_reconexion").addClass('d-none');
+                    $("#costo_reconexion").val('');
                 }
             });
         });

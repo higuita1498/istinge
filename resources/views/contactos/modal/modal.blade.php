@@ -282,6 +282,16 @@
                     $("#div_meses").addClass('d-none');
                 }
             });
+
+            $('#reconexion').change(function(){
+                if($('#reconexion').val() == 1){
+                    $("#div_reconexion").removeClass('d-none');
+                    $("#costo_reconexion").val('');
+                }else{
+                    $("#div_reconexion").addClass('d-none');
+                    $("#costo_reconexion").val('');
+                }
+            });
         });
 
         setTimeout(function () {

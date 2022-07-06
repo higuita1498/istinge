@@ -227,6 +227,12 @@
 							<th>Precio Plan</th>
 							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->plan()->price) }}</td>
 						</tr>
+						@if($contrato->costo_reconexion>0)
+						<tr>
+							<th>Costo de Reconexión</th>
+							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->costo_reconexion) }}</td>
+						</tr>
+						@endif
 						@if($contrato->descuento)
 						<tr>
 							<th>Descuento</th>
@@ -331,6 +337,12 @@
 							<th>Precio del Plan Contratado</th>
 							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($inventario->precio) }}</td>
 						</tr>
+						@if($contrato->costo_reconexion>0)
+						<tr>
+							<th>Costo de Reconexión</th>
+							<td>{{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($contrato->costo_reconexion) }}</td>
+						</tr>
+						@endif
 						@if($contrato->descuento)
 						<tr>
 							<th>Descuento</th>
