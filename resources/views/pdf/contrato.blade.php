@@ -101,7 +101,7 @@
                 <tr>
                     <td>
                         <div style="width: 100%; margin-top: 10px; text-align:center;">
-
+                            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100px;">
                         </div>
 
                         <div style="width: 100%; background-color: {{Auth::user()->empresa()->color}}; clear:both;  margin-top: 10px;">
