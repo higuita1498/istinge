@@ -644,19 +644,21 @@ class AsignacionesController extends Controller
       $empresa->campo_g = $request->campo_g;
       $empresa->campo_h = $request->campo_h;
       $empresa->campo_1 = $request->campo_1;
+      $empresa->contrato_digital = $request->contrato_digital;
       $empresa->save();
 
       return response()->json([
-        'success' => true,
-        'campo_a' => $empresa->campo_a,
-        'campo_b' => $empresa->campo_b,
-        'campo_c' => $empresa->campo_c,
-        'campo_d' => $empresa->campo_d,
-        'campo_e' => $empresa->campo_e,
-        'campo_f' => $empresa->campo_f,
-        'campo_g' => $empresa->campo_g,
-        'campo_h' => $empresa->campo_h,
-        'campo_1' => $empresa->campo_1,
+        'success'          => true,
+        'campo_a'          => $empresa->campo_a,
+        'campo_b'          => $empresa->campo_b,
+        'campo_c'          => $empresa->campo_c,
+        'campo_d'          => $empresa->campo_d,
+        'campo_e'          => $empresa->campo_e,
+        'campo_f'          => $empresa->campo_f,
+        'campo_g'          => $empresa->campo_g,
+        'campo_h'          => $empresa->campo_h,
+        'campo_1'          => $empresa->campo_1,
+        'contrato_digital' => $empresa->contrato_digital
       ]);
     }
     return response()->json(['success' => false]);

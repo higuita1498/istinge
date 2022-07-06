@@ -2,7 +2,7 @@
 
 @section('boton')
     @if(isset($_SESSION['permisos']['751']))
-        <a href="javascript:editCampos();" class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Editar Campos</a>
+        <a href="javascript:editCampos();" class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Editar Configuración</a>
     @endif
 @endsection
 
@@ -243,6 +243,13 @@
                                     <strong>{{ $errors->first('campo_h') }}</strong>
                                 </span>
                             </div>
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Contrato Digital</label>
+                                <textarea class="form-control" name="contrato_digital" id="contrato_digital" rows="6" maxlength="2050"></textarea>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('contrato_digital') }}</strong>
+                                </span>
+                            </div>
                         </div>
                         <div class="row" >
                             <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
@@ -357,6 +364,7 @@
                 $("#campo_g").val(data.campo_g);
                 $("#campo_h").val(data.campo_h);
                 $("#campo_1").val(data.campo_1);
+                $("#contrato_digital").val(data.contrato_digital);
             });
             $('#modal_conf').modal("show");
         }
@@ -416,7 +424,7 @@
                     if(data.success == true){
                         $('#cancelar').click();
                         $('#forma').trigger("reset");
-                        swal("Registro Guardado", "", "success");
+                        swal("Configuración Almacenada", "", "success");
                         $("#div_campo_a").text('').text(data.campo_a);
                         $("#div_campo_b").text('').text(data.campo_b);
                         $("#div_campo_c").text('').text(data.campo_c);
@@ -426,6 +434,7 @@
                         $("#div_campo_g").text('').text(data.campo_g);
                         $("#div_campo_h").text('').text(data.campo_h);
                         $("#div_campo_1").text('').html(data.campo_1+' <span class="text-danger">*</span>');
+                        $("#div_contrato_digital").text('').html(data.contrato_digital);
                     } else {
                         swal('ERROR', 'Intente nuevamente', "error");
                     }

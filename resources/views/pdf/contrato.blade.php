@@ -101,7 +101,7 @@
                 <tr>
                     <td>
                         <div style="width: 100%; margin-top: 10px; text-align:center;">
-                            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="width: 100px;">
+
                         </div>
 
                         <div style="width: 100%; background-color: {{Auth::user()->empresa()->color}}; clear:both;  margin-top: 10px;">
@@ -357,9 +357,13 @@
                         <p style="text-align: justify;" class="small">En caso de suspensión del servicio por mora en el pago, podremos cobrarle un valor por reconexión que corresponderá estrictamente a los costos asociados a la operación de reconexión. En caso de servicios empaquetados procede máximo un cobro de reconexión por cada tipo de conexión empleado en la prestación de los servicios. <b>{{ $contrato->contrato()->costo_reconexion > 0 ? 'Costo reconexión: '.Auth::user()->empresa()->moneda.' '.App\Funcion::Parsear($contrato->contrato()->costo_reconexion) : '' }}</b></p><br>
                         <p style="padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">El usuario es el ÚNICO responsable por el contenido y la información que se curse a través de la red y del uso que se haga de los equipos o de los servicios.</p>
                         <p style="margin-top: 5px; padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">Los equipos de comunicaciones que ya no use son desechos que no deben ser botados a la caneca, consulte nuestra política de recolección de aparatos en desuso.</p>
+                        @if(Auth::user()->empresa()->contrato_digital)
                         <div style="border: 1px  solid #000; margin-top: 5px;">
-                            <p style="font-size: 9px;text-align: justify; padding:5px;" class="small">1. EQUIPOS. En el evento que la empresa para efectos de la prestación del servicio, ponga a disposición del cliente equipos, éste último reconoce que la empresa es la propietaria legítima de los equipos asociados a la prestación de los servicios, dichos equipos son entregados en comodato y/o alquiler, para la prestación y operación del servicio, las partes acuerdan que deben ser entregados a la terminación del contrato, y que éstos serán facturados y debidamente cancelados por parte del cliente en caso de daño, pérdida, hurto, incluyendo daños derivados por variaciones de energía, descargas atmosféricas o el mal uso de los equipos, conforme el valor comercial de los mismos. 2. CARGOS ADICIONALES: Las partes acuerdan que podrán incluirse otros cargos derivados de la prestación del servicio como; Cargos Eventuales: 1. Cargo por cada solicitud de traslado de equipos a una nueva dirección según la tarifa vigente. 2. Visitas Técnicas, Cuando se presenten fallas en el servicio por causas imputables al cliente, bien sea por conexiones inadecuadas, mal uso o desconfiguración de los equipos, problemas técnicos originados por la red interna del cliente, virus o cualquier otra, que sea de su responsabilidad, el cliente autoriza a través del presente documento cobrar el valor correspondiente en la siguiente factura. 3. Excedente por metro de cable adicional al autorizado para la instalación, al momento de realizar instalaciones y traslados solicitados por usted. 3. VELOCIDAD: No podemos garantizar vía wifi, la velocidad contratada, toda vez que ésta depende de múltiples aspectos, que no son siempre directamente imputables al proveedor del servicio, por ejemplo: equipos, configuración, tarjetas de red, obstáculos físicos permanentes y/o transitorios, entre otros. 4. SUBDISTRIBUCION: El cliente certifica que conoce que debe abstenerse de prestar servicios de telecomunicaciones valiéndose para el efecto de los servicios que son objeto del presente contrato y que de hacerlo constituye causal de cancelación de servicio.</p>
+                            <p style="font-size: 9px;text-align: justify; padding:5px;" class="small">
+                                {{ Auth::user()->empresa()->contrato_digital }}
+                            </p>
                         </div>
+                        @endif
 
                         <div style="border: 1px  solid #000; margin-top: 5px;text-align: center;">
                             <img src="data:image/png;base64,{{substr($contrato->firma_isp,1)}}" style="width: 20%; margin-top: 12.5px;">
