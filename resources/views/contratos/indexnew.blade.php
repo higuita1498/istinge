@@ -758,7 +758,6 @@
 	@if($tipo)
 	    $('#state').val('{{ $tipo }}').selectpicker('refresh');
 	    abrirFiltrador();
-	    getDataTable();
 	@endif
 </script>
 @endsection
