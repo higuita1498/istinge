@@ -435,7 +435,7 @@ class RadicadosController extends Controller{
             }else if ($radicado->estatus==2 && $radicado->reporte) {
                 $radicado->estatus=3;
             }else{
-                return back()->with('danger', 'El radicado no puede ser solventado sin tener el reporte del técnico');
+                return back()->with('danger', 'EL RADICADO NO PUEDE SER SOLVENTADO SIN TENER EL REPORTE DEL TÉCNICO');
             }
             $mensaje = 'SE HA RESUELTO EL CASO RADICADO';
             $radicado->solventado=Carbon::now()->toDateTimeString();
