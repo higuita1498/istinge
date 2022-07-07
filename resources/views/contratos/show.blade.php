@@ -142,12 +142,14 @@
 							    <strong class="text-{{$contrato->status('true')}}">{{$contrato->status()}}</strong>
 							</td>
 						</tr>
+						@if($contrato->tipo_contrato)
 						<tr>
 							<th>Tipo Contrato</th>
 							<td>
 							    {{ucfirst($contrato->tipo_contrato)}}
 							</td>
 						</tr>
+						@endif
 						<tr>
 							<th>Dirección IP</th>
 							<td><a href="http://{{ $contrato->ip }}" target="_blank">{{ $contrato->ip }} <i class="fas fa-external-link-alt"></i></a></td>
@@ -361,12 +363,14 @@
 							<td>{{ $contrato->contrato_permanencia('completa') }}</td>
 						</tr>
 						@endif
+						@if($contrato->tipo_contrato)
 						<tr>
 							<th>Tipo Contrato</th>
 							<td>
 							    {{ucfirst($contrato->tipo_contrato)}}
 							</td>
 						</tr>
+						@endif
 					</tbody>
 				</table>
 			</div>
