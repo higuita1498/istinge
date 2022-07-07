@@ -571,7 +571,7 @@
                                 <label class="control-label">Tipo de Contrato</label>
                                 <div class="input-group mb-2">
                                     <select class="form-control selectpicker" name="tipo_contrato" id="tipo_contrato" title="Seleccione">
-                                        <option value="instalacion" {{ $contrato->tipo_contrato == 'instalacion' ? 'selected':'' }}>Instalación</option>
+                                        <option value="instalacion" {{ $contrato->tipo_contrato == 'instalacion' || $contrato->tipo_contrato == null ? 'selected':'' }}>Instalación</option>
                                         <option value="reconexion" {{ $contrato->tipo_contrato == 'reconexion' ? 'selected':'' }}>Reconexión</option>
                                     </select>
                                     <span style="color: red;">
