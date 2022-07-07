@@ -221,6 +221,12 @@ class ContratosController extends Controller
                     $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
                 });
             }
+            if($request->tipo_contrato){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
+                });
+            }
+
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
@@ -337,6 +343,9 @@ class ContratosController extends Controller
             })
             ->editColumn('facturacion', function (Contrato $contrato) {
                 return ($contrato->facturacion) ? $contrato->facturacion() : 'N/A';
+            })
+            ->editColumn('tipo_contrato', function (Contrato $contrato) {
+                return ($contrato->tipo_contrato) ? ucfirst($contrato->tipo_contrato) : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia'])
@@ -1678,7 +1687,9 @@ class ContratosController extends Controller
             'Estado',
             'Grupo de Corte',
             'Facturacion',
-            'Costo Reconexion');
+            'Costo Reconexion',
+            'Tipo Contrato'
+        );
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
@@ -1709,7 +1720,7 @@ class ContratosController extends Controller
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -1728,7 +1739,7 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -1853,6 +1864,11 @@ class ContratosController extends Controller
                 $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
             });
         }
+        if($request->tipo_contrato != null){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
+            });
+        }
 
         $contratos = $contratos->where('contracts.status', 1)->get();
         
@@ -1877,7 +1893,8 @@ class ContratosController extends Controller
                 ->setCellValue($letras[15].$i, $contrato->status())
                 ->setCellValue($letras[16].$i, $contrato->grupo_corte('true'))
                 ->setCellValue($letras[17].$i, $contrato->facturacion())
-                ->setCellValue($letras[18].$i, $contrato->costo_reconexion);
+                ->setCellValue($letras[18].$i, $contrato->costo_reconexion)
+                ->setCellValue($letras[19].$i, ucfirst($contrato->tipo_contrato));
             $i++;
         }
 
@@ -1887,7 +1904,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:S'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
