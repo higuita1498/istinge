@@ -396,7 +396,7 @@
             }
         });
 
-        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta').on('change',function() {
+        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato').on('change',function() {
             getDataTable();
             return false;
         });
