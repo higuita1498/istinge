@@ -848,6 +848,7 @@ class FacturasController extends Controller{
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
         $factura->cuenta_id    = $request->relacion;
+        $factura->created_by = Auth::user()->id;
 
         if($contrato){
             $factura->contrato_id = $contrato->id;
