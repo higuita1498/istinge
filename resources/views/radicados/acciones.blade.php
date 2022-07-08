@@ -52,6 +52,10 @@
     @endif
 @endif
 
+@if(isset($session['843']))
+<a href="{{ route('radicados.log',$id )}}" class="btn btn-outline-primary btn-icons" title="Log del Radicado"><i class="fas fa-clipboard-list"></i></a>
+@endif
+
 
 {{-- @if($tiempo_ini)
     <form action="{{ route('radicados.proceder',$id) }}" method="POST" class="delete_form" style="display: none;" id="proceder{{$id}}">

@@ -72,6 +72,7 @@ Route::get('solicitudes', 'WifiController@solicitudes');
 Route::get('pqrs', 'PqrsController@pqrs');
 Route::get('aps', 'APController@ap');
 Route::get('logs/{contrato}', 'ContratosController@logs');
+Route::get('logsR/{radicado}', 'RadicadosController@logs');
 Route::get('logsMK/{mikrotik}', 'Controller@logsMK');
 Route::get('pings', 'PingsController@pings');
 Route::get('grupos', 'GruposCorteController@grupos');
@@ -1133,6 +1134,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
             Route::get('/{radicados}/{state}/state_lote', 'RadicadosController@state_lote')->name('radicados.state_lote');
             Route::get('/{radicados}/destroy_lote', 'RadicadosController@destroy_lote')->name('radicados.destroy_lote');
+            Route::get('{id}/log', 'RadicadosController@log')->name('radicados.log');
         });
 		Route::resource('radicados', 'RadicadosController');
 
