@@ -134,6 +134,9 @@ $(document).ready(function() {
   if ($('#example00').length > 0) {
     table('example00');
   }
+  if ($('#table-reporte').length > 0) {
+    notabletable('table-facturas');
+  }
 
   if ($('#table-bodega').length > 0) {
     var pageLength = $("#pageLength").val();
