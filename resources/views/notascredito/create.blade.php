@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('content')
+
+@if(Session::has('error'))
+<div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
+  {{Session::get('error')}}
+</div>
+@endif
+
   <form method="POST" action="{{ route('notascredito.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
     {{ csrf_field() }}
       {{-- <input type="hidden" value="1" name="fact_prov" id="fact_prov"> --}}

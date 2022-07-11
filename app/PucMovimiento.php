@@ -279,8 +279,8 @@ class PucMovimiento extends Model
                           $mov->consecutivo = $nota->nro;
                           $mov->fecha_vencimiento = $nota->vencimiento;
                           $mov->descripcion = $item->descripcion;
-                          if($cuentaItem->tipo == 4){$mov->credito =  round($item->total());} //se hace sobre el total que se vendio del item
-                          if($cuentaItem->tipo == 2){$mov->debito = $item->totalCompra();} // se hace sobre el total que se compro del item
+                          if($cuentaItem->tipo == 4){$mov->debito =  round($item->total());} //se hace sobre el total que se vendio del item
+                          if($cuentaItem->tipo == 2){$mov->credito = $item->totalCompra();} // se hace sobre el total que se compro del item
                           if($cuentaItem->tipo == 1){$mov->debito = $item->totalCompra();}
                           $mov->enlace_a = 1;
                           $mov->empresa = $empresa;
@@ -336,7 +336,7 @@ class PucMovimiento extends Model
                           $mov->consecutivo = $nota->nro;
                           $mov->fecha_vencimiento = $nota->vencimiento;
                           $mov->descripcion = $impuesto->descripcion;
-                          $mov->credito =  round($totalImp->total);
+                          $mov->debito =  round($totalImp->total);
                           $mov->codigo_impuesto = $impuesto->id;
                           $mov->enlace_a = 2;
                           $mov->empresa = $empresa;
@@ -364,7 +364,7 @@ class PucMovimiento extends Model
                           $mov->consecutivo = $nota->nro;
                           $mov->fecha_vencimiento = $nota->vencimiento;
                           $mov->descripcion = $retencion->descripcion;
-                          $mov->debito =  $ret->total;
+                          $mov->credito =  $ret->total;
                           $mov->codigo_impuesto = $retencion->id;
                           $mov->enlace_a = 3;
                           $mov->empresa = $empresa;
@@ -378,31 +378,56 @@ class PucMovimiento extends Model
               if(isset($request->formapago)){
                   foreach($request->formapago as $forma => $key){
                       
-                      $idIngreso = null;
+                      $idFactura = null;
+                      
+                      //si existe esta variable es por que vamos añadir las formas de pago de la factura de venta relacionada
                       if(isset($request->selectanticipo[$i])){
-                          $idIngreso = $request->selectanticipo[$i]; //selectanticipo trae clave primaria de recibos de caja.
+                            $idFactura = $request->selectanticipo[$i]; //selectanticipo trae clave primaria de facturas de venta.
+                            foreach($nota->formaPagoRequest($key,$idFactura) as $forma){
+                                $mov = new PucMovimiento;
+                                $mov->nro = $siguienteNumero;
+                                $mov->tipo_comprobante = "06";
+                                $mov->consecutivo_comprobante = $nota->nro;
+                                $mov->fecha_elaboracion = $nota->fecha;
+                                $mov->documento_id = $nota->id;
+                                $mov->codigo_cuenta = isset($forma->codigo) ? $forma->codigo : '';
+                                $mov->cuenta_id = isset($forma->id) ? $forma->id : '';
+                                $mov->identificacion_tercero = $nota->cliente()->nit;
+                                $mov->cliente_id = $nota->cliente()->id;
+                                $mov->consecutivo = $nota->nro;
+                                $mov->fecha_vencimiento = $nota->vencimiento;
+                                $mov->descripcion = "medio de pago " .$nota->descripcion;
+                                $mov->credito =  round($forma->debito);
+                                $mov->enlace_a = 4;
+                                $mov->formapago_id = $key;
+                                $mov->recibocaja_id = $request->selectanticipo[$i];
+                                $mov->empresa = $empresa;
+                                $mov->save();
+                            }
+                          
+                      }else{
+                        $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
+                        $mov->tipo_comprobante = "06";
+                        $mov->consecutivo_comprobante = $nota->nro;
+                        $mov->fecha_elaboracion = $nota->fecha;
+                        $mov->documento_id = $nota->id;
+                        $mov->codigo_cuenta = isset($nota->formaPagoRequest($key,$idFactura)->codigo) ? $nota->formaPagoRequest($key,$idFactura)->codigo : '';
+                        $mov->cuenta_id = isset($nota->formaPagoRequest($key,$idFactura)->id) ? $nota->formaPagoRequest($key,$idFactura)->id : '';
+                        $mov->identificacion_tercero = $nota->cliente()->nit;
+                        $mov->cliente_id = $nota->cliente()->id;
+                        $mov->consecutivo = $nota->nro;
+                        $mov->fecha_vencimiento = $nota->vencimiento;
+                        $mov->descripcion = "medio de pago " .$nota->descripcion;
+                        $mov->credito =  round($request->precioformapago[$i]);
+                        $mov->enlace_a = 4;
+                        $mov->formapago_id = $key;
+                        $mov->recibocaja_id = $request->selectanticipo[$i];
+                        $mov->empresa = $empresa;
+                        $mov->save();
                       }
       
-                      $mov = new PucMovimiento;
-                      $mov->nro = $siguienteNumero;
-                      $mov->tipo_comprobante = "06";
-                      $mov->consecutivo_comprobante = $nota->nro;
-                      $mov->fecha_elaboracion = $nota->fecha;
-                      $mov->documento_id = $nota->id;
-                      $mov->codigo_cuenta = isset($nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->codigo) ? $nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->codigo : '';
-                      $mov->cuenta_id = isset($nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->id) ? $nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->id : '';
-                      $mov->identificacion_tercero = $nota->cliente()->nit;
-                      $mov->cliente_id = $nota->cliente()->id;
-                      $mov->consecutivo = $nota->nro;
-                      $mov->fecha_vencimiento = $nota->vencimiento;
-                      $mov->descripcion = "medio de pago " .$nota->descripcion;
-                      $mov->debito =  round($request->precioformapago[$i]);
-                      $mov->enlace_a = 4;
-                      $mov->formapago_id = $key;
-                      $mov->recibocaja_id = $request->selectanticipo[$i];
-                      $mov->empresa = $empresa;
-                      $mov->save();
-  
+                     
                       //si hay un rc. Descontamos el saldo a favor tanto del cliente como del recibo de caja.
                     //   if($idIngreso){
                     //       $mov->restarAnticipo();

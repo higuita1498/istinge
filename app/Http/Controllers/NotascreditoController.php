@@ -196,6 +196,7 @@ class NotascreditoController extends Controller
      */
     public function store(Request $request)
     {
+
         //Validaciones con respecto a la nueva programacion del cda.
         if ($request->tipo_operacion == 3) {
             if (count($request->item) > 1) {
@@ -207,6 +208,8 @@ class NotascreditoController extends Controller
                 return back()->with('error', $mensaje);
             }
         }
+
+        
 
         if ($request->factura) {
             $total = 0;
@@ -266,8 +269,6 @@ class NotascreditoController extends Controller
                 //Acumulado de total en notas creditos de la factura.
                 $precioNotas += $notas->nota()->total()->total;
             }
-
-            $precioNotas += $total;
 
             if (round($precioNotas) > round($fc->total()->total)) {
                 return redirect()->back()->with('error', "La nota crédito supera el valor de la factura de venta");
@@ -1872,7 +1873,11 @@ public function facturas_retenciones($id){
     }
 
     public function facturaAsociada(Request $request){
-        return $request;
+        $factura = Factura::find($request->facturaRelacionada);
+        if($factura){
+            $factura->total = $factura->total()->total;
+            return response()->json(['factura'=>$factura]);
+        }
     }
 
 

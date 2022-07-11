@@ -2411,8 +2411,6 @@ function llenarSelectAnticipo(value,cliente, nro){
             var url='/empresa/pagos/recibosanticipo';
         }
     }
-
-    alert(facturaRelacionada);
     
     $.ajax({
         url: url,
@@ -2423,17 +2421,32 @@ function llenarSelectAnticipo(value,cliente, nro){
         //Recibos de caja relacionados que tienene un saldo a favor
         $('#selectanticipo'+nro).empty();
         let i = 1;
-        $.each( recibos, function( key, value ){
-            $('#selectanticipo'+nro).append($('<option>',
-                {
-                    value: value.id,
-                    precio: Math.round(value.valor_anticipo),
-                    id: "optionAnticipo"+i,
-                    text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
-                }));
-            i++;
-        });
 
+        if($("#notacredito").length > 0 && value == 0){
+            $.each( recibos, function( key, value ){
+                
+                $('#selectanticipo'+nro).append($('<option>',
+                    {
+                        value: value.id,
+                        precio: Math.round(value.total),
+                        id: "optionAnticipo"+i,
+                        text : "FV-"+value.codigo+" - "+ Math.round(value.total)+""
+                    }));
+                i++;
+            });
+        }else if(value == 0){
+            $.each( recibos.factura, function( key, value ){
+                $('#selectanticipo'+nro).append($('<option>',
+                    {
+                        value: value.id,
+                        precio: Math.round(value.valor_anticipo),
+                        id: "optionAnticipo"+i,
+                        text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
+                    }));
+                i++;
+            });
+        }
+    
         $('#selectanticipo'+nro).selectpicker('refresh');
         }
     })

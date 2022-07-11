@@ -13,6 +13,9 @@ use App\Model\Ingresos\Devoluciones;
 use App\Model\Inventario\ListaPrecios; 
 use App\Model\Inventario\Bodega;
 use Auth;  use DB; 
+use App\PucMovimiento;
+use App\Puc;
+use App\FormaPago;
   
 class NotaCredito extends Model
 {
@@ -282,5 +285,24 @@ class NotaCredito extends Model
     public function itemsNota()
     {
         return $this->hasMany(ItemsNotaCredito::class,'nota','id');
+    }
+
+    public function formaPagoRequest($cuenta_id,$idFactura=null){
+        if($idFactura == null){
+            $forma = FormaPago::find($cuenta_id);
+    
+            if($forma){
+                return Puc::find($forma->cuenta_id); 
+            }
+        //si es igual a cero es por que se trata de un anticipo.
+        }else{
+           //buscamos las cuentas contables que tiene asociada la factura en su forma de pago
+            $pm= PucMovimiento::join('puc as p','p.id','=','cuenta_id')
+            ->where('documento_id',$idFactura)->where('tipo_comprobante',3)->where('enlace_a',4)->get();
+
+            if($pm){
+                return $pm;
+            }
+        }
     }
 }   
