@@ -195,6 +195,7 @@ Route::post('contrato-digital/{key}', function (Request $request, $key) {
     if($contacto){
         $contacto->firma_isp = $request->firma_isp;
         $contacto->fecha_isp = date('Y-m-d');
+        $contacto->referencia_asignacion = null;
         $contacto->save();
 
         $empresa = Empresa::find($contacto->empresa);
