@@ -2202,4 +2202,21 @@ class ConfiguracionController extends Controller
       return $empresa->oficina;
     }
   }
+
+  public function clausula_permanencia(Request $request){
+    $empresa = Empresa::find(Auth::user()->empresa);
+
+    if ($empresa) {
+      $empresa->clausula_permanencia = $request->clausula_permanencia;
+      $empresa->save();
+
+      return response()->json([
+        'success'              => true,
+        'message'              => 'CLAUSULA DE PERMANENCIA',
+        'text'                 => 'Configuración establecida',
+        'type'                 => 'success',
+        'clausula_permanencia' => $empresa->clausula_permanencia
+      ]);
+    }
+  }
 }
