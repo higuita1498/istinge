@@ -399,7 +399,7 @@ class RadicadosController extends Controller{
             $radicado->tecnico = $request->tecnico;
             $radicado->estatus = $request->estatus;
             $radicado->prioridad = $request->prioridad;
-            $radicado->responsable = Auth::user()->id;
+            //$radicado->responsable = Auth::user()->id;
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->oficina = $request->oficina;
             $radicado->save();
