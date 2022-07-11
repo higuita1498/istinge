@@ -64,7 +64,7 @@ class NotasdebitoController extends Controller
     $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
     $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
     $proveedores = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
-      $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+      $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
 
     return view('notasdebito.create')->with(compact('proveedores', 'inventario', 'impuestos', 'bancos', 'bodegas', 'categorias','retenciones'));
   }
@@ -339,7 +339,7 @@ class NotasdebitoController extends Controller
       $facturas_reg = NotaDeditoFactura::where('nota',$nota->id)->get();
       $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('id', $nota->bodega)->first();
 
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
       $inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))->where('empresa',Auth::user()->empresa)->where('status', 1)->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')->get();
       $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
       $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();

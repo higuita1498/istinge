@@ -65,7 +65,7 @@
   <!--Formulario Facturas-->
 	<form method="POST" action="{{ route('facturas.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
 		{{ csrf_field() }}
-        <input type="hidden" value="1" name="fact_prov" id="fact_prov">
+        {{-- <input type="hidden" value="1" name="fact_prov" id="fact_prov"> --}}
 		<div class="row text-right">
 			<div class="col-md-5">
   			<div class="form-group row">

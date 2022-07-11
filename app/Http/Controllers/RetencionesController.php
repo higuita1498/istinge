@@ -23,7 +23,7 @@ class RetencionesController extends Controller
 
   public function index(){
       $this->getAllPermissions(Auth::user()->id);
- 		$retenciones = Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->get();
+ 		$retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->orWhere('empresa', null)->get();
 
  		return view('configuracion.retenciones.index')->with(compact('retenciones'));   		
  	}
@@ -171,7 +171,76 @@ class RetencionesController extends Controller
   }
 
 
+  //Auto reteneciones
+  public function autoIndex(){
+    $this->getAllPermissions(Auth::user()->id);
+    view()->share(['seccion' => 'configuracion', 'title' => 'Auto Retenciones', 'icon' =>'']);
+    $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',2)->orWhere('empresa', null)->get();
 
+    return view('configuracion.autoretencion.index')->with(compact('retenciones'));   
+  }
+
+  public function autoCreate(){
+    $this->getAllPermissions(Auth::user()->id);
+    view()->share(['title' => 'Nuevo Tipo de Auto Retención']);
+
+    $cuentas = Puc::cuentasTransaccionables();
+
+    return view('configuracion.autoretencion.create', compact('cuentas')); 
+  }
+
+  public function autoStore(Request $request){
+    $request->validate([
+      'nombre' => 'required|max:250',
+      'porcentaje' => 'required|numeric',
+    ]); 
+    $retencion = new Retencion;
+    $retencion->empresa=Auth::user()->empresa;
+    $retencion->nombre=$request->nombre;
+    $retencion->porcentaje=$request->porcentaje;
+    $retencion->descripcion=$request->descripcion;
+    $retencion->puc_compra = $request->compra; //debito para el modulo 2 
+    $retencion->puc_venta = $request->venta; //credito para el modulo 2
+    $retencion->modulo = 2;
+    $retencion->save();
+
+    $mensaje='Se ha creado satisfactoriamente el tipo de auto retención';
+    return redirect('empresa/configuracion/autoretenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
+  }
+
+  public function autoEdit($id){
+    $retencion =Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    $this->getAllPermissions(Auth::user()->id);
+    $cuentas = Puc::cuentasTransaccionables();
+    if ($retencion) {        
+      view()->share(['title' => 'Modificar Tipo de Auto Retención']);
+      return view('configuracion.autoretencion.edit')->with(compact('retencion','cuentas'));
+    }
+    return redirect('empresa/configuracion/retenciones')->with('success', 'No existe un registro con ese id');
+  }
+
+  public function autoUpdate(Request $request, $id){
+    $retencion =Retencion::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+    if ($retencion) {
+      $request->validate([
+        'nombre' => 'required|max:250',
+        'porcentaje' => 'required|numeric',
+      ]);
+      $retencion->nombre=$request->nombre;
+      $retencion->porcentaje=$request->porcentaje;
+      $retencion->descripcion=$request->descripcion;
+      $retencion->puc_compra = $request->compra; //debito para el modulo 2 
+      $retencion->puc_venta = $request->venta; //credito para el modulo 2
+      $retencion->save();
+      $mensaje='Se ha modificado satisfactoriamente el tipo de auto retención';
+      return redirect('empresa/configuracion/autoretenciones')->with('success', $mensaje)->with('retencion_id', $retencion->id);
+
+    }
+    return redirect('empresa/configuracion/autoretenciones')->with('success', 'No existe un registro con ese id');
+  }
+
+
+  //End Autoretenciones
  
 
 }

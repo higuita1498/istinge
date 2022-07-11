@@ -33,8 +33,6 @@ use App\Puc;
 use App\ProductoServicio;
 use App\ProductoCuenta;
 
-
-
 class InventarioController extends Controller{
     public $id;
     
@@ -353,8 +351,10 @@ class InventarioController extends Controller{
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
+
+        $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
         $type = '';
-        return view('inventario.create')->with(compact('unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
+        return view('inventario.create')->with(compact('unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type','autoRetenciones'));
     }
 
     public function television_create(){
@@ -714,7 +714,7 @@ class InventarioController extends Controller{
         ->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
@@ -769,6 +769,8 @@ class InventarioController extends Controller{
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
+
+        $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
         
         if ($inventario) {
             $categorias=Categoria::where('empresa',$empresa)->whereNull('asociado')->get();
@@ -776,7 +778,7 @@ class InventarioController extends Controller{
             $medidas=DB::table('medidas')->get();
             $unidades=DB::table('unidades_medida')->get();
             $cuentasInventario = $inventario->cuentas();
-            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras', 'bodegas', 'listas','cuentasInventario','cuentas'));
+            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras', 'bodegas', 'listas','cuentasInventario','cuentas','autoRetenciones'));
         }
         return redirect('empresa/inventario')->with('success', 'No existe un registro con ese id');
     }

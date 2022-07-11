@@ -46,4 +46,35 @@ class ProductoCuenta extends Model
       return $this->belongsTo('App\Puc','cuenta_id');
     }
 
+      //tipo: [1 = credito, 2 = débito] en facturas de venta
+      //tipo: [1 = debito, 2 = credito] en notas crédito
+      //modo 1 facturas de venta, modo 2 notas crédito
+      public function autoretencionPuc($tipo, $modo=1){
+
+        if($modo == 1){
+          if($tipo == 1){
+            $cuenta = Retencion::join('puc as p', 'p.id','=','retenciones.puc_venta')
+            ->where('retenciones.id',$this->cuenta_id)
+            ->select('p.*','retenciones.porcentaje')->first();
+          }else if($tipo == 2){
+              $cuenta = Retencion::join('puc as p', 'p.id','=','retenciones.puc_compra')
+              ->where('retenciones.id',$this->cuenta_id)
+              ->select('p.*','retenciones.porcentaje')->first();
+          }
+        }else{
+          if($tipo == 1){
+            $cuenta = Retencion::join('puc as p', 'p.id','=','retenciones.puc_compra')
+            ->where('retenciones.id',$this->cuenta_id)
+            ->select('p.*','retenciones.porcentaje')->first();
+          }else if($tipo == 2){
+            $cuenta = Retencion::join('puc as p', 'p.id','=','retenciones.puc_venta')
+            ->where('retenciones.id',$this->cuenta_id)
+            ->select('p.*','retenciones.porcentaje')->first();
+          }
+        }
+        
+        if(isset($cuenta)){
+            return $cuenta;
+        }
+    }
 }

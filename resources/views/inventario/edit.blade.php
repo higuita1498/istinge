@@ -229,9 +229,9 @@
 					<div class="cls-autoretencion @if($inventario->type_autoretencion == 1) d-none @endif">
 						<label class="control-label">Cuenta de auto retención <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione" required="">
-							@foreach($cuentas as $cuenta)
+							@foreach($autoRetenciones as $cuenta)
 								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 5){{'selected'}}@endif @endforeach 
-								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+								value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
 							@endforeach
 					</select>
 					<span class="help-block error">

@@ -2343,11 +2343,20 @@ function CrearFilaFormaPago(){
 
      //Añadimos una nueva opcion al select si el cliente tiene un saldo a favor disponible para usar en facturas.
      var saldoFavorCliente = $("#saldofavorcliente").val();
-     if(saldoFavorCliente > 0){
+     if(saldoFavorCliente > 0 && $("#notacredito").length == 0){
          $('#formapago'+nro).append($('<option>',
              {
                  value: 0,
                  text : "Agregar un anticipo"
+             }));
+     }
+
+     //validación para colocar la opción saldos de cartera de la factura que vamos a hacerle nota crédito
+     if($("#notacredito").length > 0){
+        $('#formapago'+nro).append($('<option>',
+             {
+                 value: 0,
+                 text : "Saldos de cartera"
              }));
      }
 
@@ -2367,47 +2376,67 @@ function CrearFilaFormaPago(){
 function llenarSelectAnticipo(value,cliente, nro){
     
     var formasPago = JSON.parse($('#formaspago').val());
-    // if(value == 0){
+    var facturaRelacionada = null;
 
-        /* >>> Consulta para traer los recibos de caja o los egresos con saldo a favor <<< */
-        if($("#fact_prov").length == 0){
+    /* >>> Consulta para traer los recibos de caja o los egresos con saldo a favor <<< */
+    if($("#fact_prov").length == 0){
+
+        if($("#notacredito").length == 0){
             if (window.location.pathname.split("/")[1] === "software") {
                 var url='/software/empresa/ingresos/recibosanticipo';
             }else{
                 var url='/empresa/ingresos/recibosanticipo';
             }
-        }else{
+        }
+        else{
             if (window.location.pathname.split("/")[1] === "software") {
-                var url='/software/empresa/pagos/recibosanticipo';
+                var url='/software/empresa/notascredito/facturaasociada';
             }else{
-                var url='/empresa/pagos/recibosanticipo';
+                var url='/empresa/notascredito/facturaasociada';
+            } 
+
+            //desarrollo solamente para nota crédito para obtener la factura asociada.
+            if($("#lista_factura").val()){
+                facturaRelacionada = $("#lista_factura").val();
+            }else{
+                alert("escoge primero la factura relacionada a la nota crédito.")
+                return;
             }
         }
         
-        $.ajax({
-            url: url,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            method: 'get',
-            data: { cliente: cliente, recibo: value },
-            success: function(recibos) {
-                 //Recibos de caja relacionados que tienene un saldo a favor
-            $('#selectanticipo'+nro).empty();
-            let i = 1;
-            $.each( recibos, function( key, value ){
-                $('#selectanticipo'+nro).append($('<option>',
-                    {
-                        value: value.id,
-                        precio: Math.round(value.valor_anticipo),
-                        id: "optionAnticipo"+i,
-                        text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
-                    }));
-                i++;
-            });
+    }else{
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url='/software/empresa/pagos/recibosanticipo';
+        }else{
+            var url='/empresa/pagos/recibosanticipo';
+        }
+    }
 
-            $('#selectanticipo'+nro).selectpicker('refresh');
-            }
-        })
-    // }
+    alert(facturaRelacionada);
+    
+    $.ajax({
+        url: url,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        method: 'get',
+        data: { cliente: cliente, recibo: value, facturaRelacionada: facturaRelacionada },
+        success: function(recibos) {
+        //Recibos de caja relacionados que tienene un saldo a favor
+        $('#selectanticipo'+nro).empty();
+        let i = 1;
+        $.each( recibos, function( key, value ){
+            $('#selectanticipo'+nro).append($('<option>',
+                {
+                    value: value.id,
+                    precio: Math.round(value.valor_anticipo),
+                    id: "optionAnticipo"+i,
+                    text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
+                }));
+            i++;
+        });
+
+        $('#selectanticipo'+nro).selectpicker('refresh');
+        }
+    })
 }
 
 function change_retencion(id, prefij='', nro=''){

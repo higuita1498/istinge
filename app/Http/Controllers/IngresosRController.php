@@ -74,7 +74,7 @@ class IngresosRController extends Controller
      $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
     $clientes = Contacto::where('empresa',Auth::user()->empresa)->get();
     $metodos_pago =DB::table('metodos_pago')->get();
-    $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+    $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
     view()->share(['icon' =>'', 'title' => 'Nuevo Ingreso de Remisión']);
     return view('ingresosr.create')->with(compact('clientes', 'cliente', 'remision', 'bancos', 'metodos_pago', 'retenciones'));
   }
@@ -207,7 +207,7 @@ class IngresosRController extends Controller
           $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
       $clientes = Contacto::where('empresa',Auth::user()->empresa)->get();
       $metodos_pago =DB::table('metodos_pago')->get();
-      $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+      $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
 
       view()->share(['icon' =>'', 'title' => 'Modificar Ingreso (Recibo de Caja) #'.$ingreso->nro]);
       return view('ingresosr.edit')->with(compact('ingreso', 'clientes', 'bancos', 'metodos_pago', 'retenciones'));

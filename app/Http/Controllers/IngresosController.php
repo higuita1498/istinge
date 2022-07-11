@@ -215,7 +215,7 @@ class IngresosController extends Controller
         //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status', 1)->get();
         $metodos_pago =DB::table('metodos_pago')->whereIn('id',[1,2,3,4,5,6,9])->orderby('orden','asc')->get();
         $inventario = Inventario::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
          //Tomar las categorias del puc que no son transaccionables.
          $categorias = Puc::where('empresa',auth()->user()->empresa)
@@ -254,7 +254,7 @@ class IngresosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $facturas=Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $entro=false;
-        $retencioness = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retencioness = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
         $new=$facturas;
@@ -879,7 +879,7 @@ class IngresosController extends Controller
             $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
             $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
             $metodos_pago =DB::table('metodos_pago')->get();
-            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $items= $retencionesIngreso=array();
@@ -1462,7 +1462,7 @@ class IngresosController extends Controller
 
     //metodo que calcula que recibos de caja tiene un anticipo para poder cruzar en una forma de pago.
     public function recibosAnticipo(Request $request){
-
+        
         //obtenemos los ingresos que tiene un anticpo vigente.
         if($request->recibo == 0){
             $ingresos = Ingreso::where('cliente',$request->cliente)

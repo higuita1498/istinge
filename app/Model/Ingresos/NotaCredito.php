@@ -278,4 +278,9 @@ class NotaCredito extends Model
         }
         return ($this->emitida == 0) ? 'No Emitida' : 'Emitida';
     }
+
+    public function itemsNota()
+    {
+        return $this->hasMany(ItemsNotaCredito::class,'nota','id');
+    }
 }   

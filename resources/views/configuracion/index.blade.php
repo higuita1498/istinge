@@ -75,6 +75,7 @@
 			<p>Define aquí los tipos de impuestos y retenciones que aplicas a tus facturas de venta.</p>
 			<a href="{{route('impuestos.index')}}">Impuestos</a> <br>
 			<a href="{{route('retenciones.index')}}">Retenciones</a><br>
+			<a href="{{route('autoretenciones.index')}}">Autoretenciones</a><br>
 		</div>
 
 		<div class="col-sm-3">

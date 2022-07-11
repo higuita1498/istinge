@@ -297,7 +297,7 @@ class PagosRecurrentesController extends Controller {
         $metodos_pago =DB::table('metodos_pago')->get();
         $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
 
         $fecha_actual = Carbon::now();
         $fecha_actual = Carbon::parse($fecha_actual)->format('Y-m-d');

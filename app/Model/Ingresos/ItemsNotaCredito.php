@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Impuesto;
 use App\Model\Inventario\Inventario;  
 use DB; use Auth;
+use App\ProductoCuenta;
 
 class ItemsNotaCredito extends Model
 {
@@ -160,5 +161,23 @@ class ItemsNotaCredito extends Model
         return $imp;
     }
 
+    public function cuentasContable(){
+        return ProductoCuenta::where('inventario_id',$this->producto)->get();
+    }
+
+    public function totalCompra(){
+        
+        if($this->inventario->tipo_producto == 1){
+            $result=$this->inventario->costo_unidad*$this->cant;
+            $result = round($result);
+        }else{
+            $result = 0;
+        }
+        return $result;
+    }
+
+    public function inventario(){
+        return $this->belongsTo(Inventario::class,'producto');
+    }
 
 }

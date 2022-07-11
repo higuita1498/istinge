@@ -168,7 +168,7 @@ class PagosController extends Controller
         $bancos = Banco::where('empresa',Auth::user()->empresa)->get();
         $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $metodos_pago =DB::table('metodos_pago')->get();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $categorias = Puc::where('empresa',auth()->user()->empresa)
          ->whereRaw('length(codigo) > 6')
          ->get();
@@ -446,7 +446,7 @@ class PagosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $facturas=FacturaProveedores::where('proveedor', $proveedor)->where('empresa',Auth::user()->empresa)->where('tipo',1)->where('estatus', 1)->get();
         $entro=false;
-        $retencioness = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retencioness = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         $items = GastosFactura::where('gasto',$gasto->id)->get();
         $new=$facturas;
@@ -475,7 +475,7 @@ class PagosController extends Controller
             $bancos = Banco::where('empresa',Auth::user()->empresa)->get();
             $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
             $metodos_pago =DB::table('metodos_pago')->get();
-            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
             $categorias = Puc::where('empresa',auth()->user()->empresa)
             ->whereRaw('length(codigo) > 6')
             ->get();

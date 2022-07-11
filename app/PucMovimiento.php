@@ -84,7 +84,34 @@ class PucMovimiento extends Model
                         $mov->empresa = $empresa;
                         $mov->save();
                     }
-                    //buscamos si el item en inventario el tipo_producto es inventariable (tipo 1).
+                //Entra acá cuando el item aplica autoretencion, entonces se hacen dos asientos contables más.
+                if($cuentaItem->tipo == 5){
+                    //1 = crédito 2 = débito
+                    for ($i=1; $i <= 2; $i++) { 
+
+                        $pucRetencion = $cuentaItem->autoretencionPuc($i);
+
+                        $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
+                        $mov->tipo_comprobante = "03";
+                        $mov->consecutivo_comprobante = $factura->codigo;
+                        $mov->fecha_elaboracion = $factura->fecha;
+                        $mov->documento_id = $factura->id;
+                        $mov->codigo_cuenta = isset($pucRetencion->codigo) ? $pucRetencion->codigo : '';
+                        $mov->cuenta_id = isset($pucRetencion->id) ? $pucRetencion->id : '';
+                        $mov->identificacion_tercero = $factura->cliente()->nit;
+                        $mov->cliente_id = $factura->cliente()->id;
+                        $mov->prefijo = $factura->numeracionFactura->prefijo;
+                        $mov->consecutivo = $factura->codigo;
+                        $mov->fecha_vencimiento = $factura->vencimiento;
+                        $mov->descripcion = "Auto retención ". $item->descripcion;
+                        if($i == 1){$mov->credito =  round($item->total()*($pucRetencion->porcentaje/100));}
+                        else{$mov->debito =  round($item->total()*($pucRetencion->porcentaje/100));}
+                        $mov->enlace_a = 1;
+                        $mov->empresa = $empresa;
+                        $mov->save();
+                    }
+                }  
                     
             }
             }
@@ -204,6 +231,205 @@ class PucMovimiento extends Model
             }
             PucMovimiento::facturaVenta($factura,1,$request,$siguienteNumero);
         }
+    }
+
+     /* 
+        OPCION:
+        0: Actualizar el movimiento y borrar el anterior.
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    */
+    public static function notaCredito($nota, $opcion, $request, $siguienteNumero=null){
+          //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
+          $isGuardar = PucMovimiento::where('documento_id',$nota->id)->where('tipo_comprobante',6)->first();
+        
+          //obtenbemos el siguiente numero de los asientos contables
+          $empresa = Auth::user()->empresa;
+          if($siguienteNumero == null){
+              $numeracion = Numeracion::where('empresa', $nota->empresa)->first();
+              $siguienteNumero = $numeracion->contabilidad+1;
+              $numeracion->contabilidad = $siguienteNumero;
+              $numeracion->save();
+          }
+  
+  
+          if($opcion == 1 && !$isGuardar){
+  
+              //ingresamos los valores del iva
+              $totalFactura = $nota->total();
+              // return response()->json($totalFactura->reten);    
+  
+              //1ro. registramos los movimientos contables de los items.
+              foreach($nota->itemsNota as $item){
+                  
+                  //iteramos sobre las cuentas contables a las que está asignado el producto.
+                  foreach($item->cuentasContable() as $cuentaItem){
+                      
+                      //si es tipo 3 (el tipo de producto o servicio que significa devolucion)
+                      if($cuentaItem->tipo == 1 || $cuentaItem->tipo == 2 || $cuentaItem->tipo == 4){
+                          $mov = new PucMovimiento;
+                          $mov->nro = $siguienteNumero;
+                          $mov->tipo_comprobante = "06";
+                          $mov->consecutivo_comprobante = $nota->nro;
+                          $mov->fecha_elaboracion = $nota->fecha;
+                          $mov->documento_id = $nota->id;
+                          $mov->codigo_cuenta = isset($cuentaItem->puc->codigo) ? $cuentaItem->puc->codigo : '';
+                          $mov->cuenta_id = isset($cuentaItem->puc->id) ? $cuentaItem->puc->id : '';
+                          $mov->identificacion_tercero = $nota->cliente()->nit;
+                          $mov->cliente_id = $nota->cliente()->id;
+                          $mov->consecutivo = $nota->nro;
+                          $mov->fecha_vencimiento = $nota->vencimiento;
+                          $mov->descripcion = $item->descripcion;
+                          if($cuentaItem->tipo == 4){$mov->credito =  round($item->total());} //se hace sobre el total que se vendio del item
+                          if($cuentaItem->tipo == 2){$mov->debito = $item->totalCompra();} // se hace sobre el total que se compro del item
+                          if($cuentaItem->tipo == 1){$mov->debito = $item->totalCompra();}
+                          $mov->enlace_a = 1;
+                          $mov->empresa = $empresa;
+                          $mov->save();
+                      }
+                    //Entra acá cuando el item aplica autoretención, entonces se hacen dos asientos contables más.
+                    if($cuentaItem->tipo == 5){
+                    //1 = crédito 2 = débito
+                    for ($i=1; $i <= 2; $i++) { 
+
+                        //modo 2 notas crédito
+                        $pucRetencion = $cuentaItem->autoretencionPuc($i,2);
+
+                        $mov = new PucMovimiento;
+                        $mov->nro = $siguienteNumero;
+                        $mov->tipo_comprobante = "06";
+                        $mov->consecutivo_comprobante = $nota->nro;
+                        $mov->fecha_elaboracion = $nota->fecha;
+                        $mov->documento_id = $nota->id;
+                        $mov->codigo_cuenta = isset($pucRetencion->codigo) ? $pucRetencion->codigo : '';
+                        $mov->cuenta_id = isset($pucRetencion->id) ? $pucRetencion->id : '';
+                        $mov->identificacion_tercero = $nota->cliente()->nit;
+                        $mov->cliente_id = $nota->cliente()->id;
+                        $mov->consecutivo = $nota->nro;
+                        $mov->fecha_vencimiento = $nota->vencimiento;
+                        $mov->descripcion = "Auto retención ". $item->descripcion;
+                        if($i == 1){$mov->debito =  round($item->total()*($pucRetencion->porcentaje/100));}
+                        else{$mov->credito =  round($item->total()*($pucRetencion->porcentaje/100));}
+                        $mov->enlace_a = 1;
+                        $mov->empresa = $empresa;
+                        $mov->save();
+                    }
+                }  
+                      
+              }
+              }
+  
+              //2do. registramos el iva de la factura.
+              foreach ($totalFactura->imp as $totalImp) {
+                  if (isset($totalImp->total)) {
+                      $impuesto = Impuesto::find($totalImp->id);
+                      if($impuesto){
+                          $mov = new PucMovimiento;
+                          $mov->nro = $siguienteNumero;
+                          $mov->tipo_comprobante = "06";
+                          $mov->consecutivo_comprobante = $nota->nro;
+                          $mov->fecha_elaboracion = $nota->fecha;
+                          $mov->documento_id = $nota->id;
+                          $mov->codigo_cuenta = isset($impuesto->pucVenta()->codigo) ? $impuesto->pucVenta()->codigo : '';
+                          $mov->cuenta_id = isset($impuesto->pucVenta()->id) ? $impuesto->pucVenta()->id : '';
+                          $mov->identificacion_tercero = $nota->cliente()->nit;
+                          $mov->cliente_id = $nota->cliente()->id;
+                          $mov->consecutivo = $nota->nro;
+                          $mov->fecha_vencimiento = $nota->vencimiento;
+                          $mov->descripcion = $impuesto->descripcion;
+                          $mov->credito =  round($totalImp->total);
+                          $mov->codigo_impuesto = $impuesto->id;
+                          $mov->enlace_a = 2;
+                          $mov->empresa = $empresa;
+                          $mov->save();
+                      }
+                  }
+              }        
+  
+              //3ro. Registramos las retenciones de la factura.
+              foreach($totalFactura->reten as $ret){
+                  if(isset($ret->total)){
+                      $retencion = Retencion::find($ret->id);
+  
+                      if($retencion){
+                          $mov = new PucMovimiento;
+                          $mov->nro = $siguienteNumero;
+                          $mov->tipo_comprobante = "06";
+                          $mov->consecutivo_comprobante = $nota->nro;
+                          $mov->fecha_elaboracion = $nota->fecha;
+                          $mov->documento_id = $nota->id;
+                          $mov->codigo_cuenta = isset($retencion->pucVenta()->codigo) ? $retencion->pucVenta()->codigo : '';
+                          $mov->cuenta_id = isset($retencion->pucVenta()->id) ? $retencion->pucVenta()->id : '';
+                          $mov->identificacion_tercero = $nota->cliente()->nit;
+                          $mov->cliente_id = $nota->cliente()->id;
+                          $mov->consecutivo = $nota->nro;
+                          $mov->fecha_vencimiento = $nota->vencimiento;
+                          $mov->descripcion = $retencion->descripcion;
+                          $mov->debito =  $ret->total;
+                          $mov->codigo_impuesto = $retencion->id;
+                          $mov->enlace_a = 3;
+                          $mov->empresa = $empresa;
+                          $mov->save();
+                      }
+                  }
+              }          
+  
+              //4to. Registramos el medio de pago de la factura.
+              $i =0;
+              if(isset($request->formapago)){
+                  foreach($request->formapago as $forma => $key){
+                      
+                      $idIngreso = null;
+                      if(isset($request->selectanticipo[$i])){
+                          $idIngreso = $request->selectanticipo[$i]; //selectanticipo trae clave primaria de recibos de caja.
+                      }
+      
+                      $mov = new PucMovimiento;
+                      $mov->nro = $siguienteNumero;
+                      $mov->tipo_comprobante = "06";
+                      $mov->consecutivo_comprobante = $nota->nro;
+                      $mov->fecha_elaboracion = $nota->fecha;
+                      $mov->documento_id = $nota->id;
+                      $mov->codigo_cuenta = isset($nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->codigo) ? $nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->codigo : '';
+                      $mov->cuenta_id = isset($nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->id) ? $nota->modelDetalle()->factura()->formaPagoRequest($key,$idIngreso)->id : '';
+                      $mov->identificacion_tercero = $nota->cliente()->nit;
+                      $mov->cliente_id = $nota->cliente()->id;
+                      $mov->consecutivo = $nota->nro;
+                      $mov->fecha_vencimiento = $nota->vencimiento;
+                      $mov->descripcion = "medio de pago " .$nota->descripcion;
+                      $mov->debito =  round($request->precioformapago[$i]);
+                      $mov->enlace_a = 4;
+                      $mov->formapago_id = $key;
+                      $mov->recibocaja_id = $request->selectanticipo[$i];
+                      $mov->empresa = $empresa;
+                      $mov->save();
+  
+                      //si hay un rc. Descontamos el saldo a favor tanto del cliente como del recibo de caja.
+                    //   if($idIngreso){
+                    //       $mov->restarAnticipo();
+                    //   }
+                      $i++;
+                  }
+              }
+          }
+  
+          //opcion 2 es para actualizar el movimiento
+          else if($opcion == 2){
+  
+              /*
+                  Verificamos si los movimientos tienen asociado un recibo de caja, para posteriormente devolver la plata al 
+                  recibo de caja y al contacto
+              */
+              $movimientos = PucMovimiento::where('documento_id',$nota->id)->where('tipo_comprobante',6)->get();
+              foreach($movimientos as $mov){
+                //   if($mov->recibocaja_id != null || $mov->recibocaja_id != 0){
+                //       $mov->sumarAnticipo();
+                //   }
+                   //obtenemos los movimientos contables de la factura y los eliminamos.
+                  $siguienteNumero = $mov->nro;
+                  $mov->delete();
+              }
+              PucMovimiento::notaCredito($nota,1,$request,$siguienteNumero);
+          }
     }
 
     public static function facturaCompra($factura, $opcion, $request, $siguienteNumero=null){

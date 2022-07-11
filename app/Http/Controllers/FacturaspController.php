@@ -217,7 +217,7 @@ class FacturaspController extends Controller
         $relaciones = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
             
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
         $clientes = Contacto::select('contactos.id','contactos.nombre','contactos.nit', 'contactos.apellido1', 'contactos.apellido2')->where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
@@ -451,7 +451,7 @@ class FacturaspController extends Controller
             $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
             $retencionesFacturas=FacturaProveedoresRetenciones::where('factura', $factura->id)->get();
             $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+            $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
             $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();

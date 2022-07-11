@@ -721,7 +721,10 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/datatable/cliente/{cliente}', 'NotascreditoController@datatable_cliente')->name('notascredito.datatable.cliente');
 
 		Route::post('/validatetime/emicion', 'NotascreditoController@validateTimeEmicion')->middleware(['auth']);
+		Route::get('/movimiento/{id}', 'NotascreditoController@showMovimiento')->name('notascredito.showmovimiento');
 
+		
+		Route::get('/facturaasociada', 'NotascreditoController@facturaAsociada');
 
 	});
 	Route::resource('notascredito', 'NotascreditoController');
@@ -905,6 +908,13 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/empresa/store', 'ConfiguracionController@store')->name('configuracion.empresa.store');
 		Route::get('/miusuario', 'ConfiguracionController@miusuario')->name('miusuario');
 		Route::post('/miusuario', 'ConfiguracionController@miusuario_store')->name('miusuario');
+
+		//Autoretenciones
+		Route::get('/autoretenciones', 'RetencionesController@autoIndex')->name('autoretenciones.index');
+		Route::get('/autoretenciones/create', 'RetencionesController@autoCreate')->name('autoretenciones.create');
+		Route::post('/autoretenciones/store', 'RetencionesController@autoStore')->name('autoretenciones.store');
+		Route::get('/autoretenciones/edit/{id}', 'RetencionesController@autoEdit')->name('autoretenciones.edit');
+		Route::post('/autoretenciones/update/{id}', 'RetencionesController@autoUpdate')->name('autoretenciones.update');
 		
 		Route::get('/recarga-saldo', 'UsuariosController@saldo')->name('recarga.index');
 		Route::post('/{id}/reiniciar-saldo','UsuariosController@reiniciarSaldo')->name('recarga.reiniciar');

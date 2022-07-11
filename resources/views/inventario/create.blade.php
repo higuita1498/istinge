@@ -168,8 +168,8 @@
 					<div class="cls-autoretencion d-none">
 						<label class="control-label">Cuenta de auto retención <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione" required="">
-							@foreach($cuentas as $cuenta)
-								<option {{old('autoretencion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+							@foreach($autoRetenciones as $cuenta)
+								<option {{old('autoretencion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
 							@endforeach
 					</select>
 					<span class="help-block error">

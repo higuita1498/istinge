@@ -15,4 +15,5 @@
     @if($emitida !=1)
         <button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('eliminar-notascredito{{$id}}', '¿Estas seguro que deseas eliminar nota de crédito?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
+    <a href="{{route('notascredito.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
 @endif

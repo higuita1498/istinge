@@ -15,7 +15,7 @@ class Retencion extends Model
      * @var array
      */
     protected $fillable = [
-         'nombre', 'porcentaje', 'tipo', 'descripcion', 'empresa'
+         'nombre', 'porcentaje', 'tipo', 'descripcion', 'empresa','modulo'
     ];
 
     public function usado()

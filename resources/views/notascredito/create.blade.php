@@ -2,7 +2,7 @@
 @section('content')
   <form method="POST" action="{{ route('notascredito.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
     {{ csrf_field() }}
-      <input type="hidden" value="1" name="fact_prov" id="fact_prov">
+      {{-- <input type="hidden" value="1" name="fact_prov" id="fact_prov"> --}}
       <input type="hidden" value="1" name="cotizacion" id="cotizacion_si">
 
     <div class="row" style=" text-align: right;">
@@ -218,21 +218,46 @@
 
     <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 5%">Agregar línea</button>
 
-      <div class="row"  style="margin-top: 10%; margin-left:0px;">
-          <div class="col-md-7 no-padding">
-              <h5>RETENCIONES</h5>
-              <table class="table table-striped table-sm" id="table-retencion">
-                  <thead class="thead-dark">
-                  <th width="60%">Tipo de Retención</th>
-                  <th width="34%">Valor</th>
-                  <th width="5%"></th>
-                  </thead>
-                  <tbody>
-                  </tbody>
-              </table>
-              <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button><a><i data-tippy-content="Agrega nuevas retenciones haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
-          </div>
+    <div class="row"  style="margin-top: 5%; margin-left:0px;">
+      <div class="col-md-5 no-padding">
+    <h5>RETENCIONES</h5>
+        <table class="table table-striped table-sm" id="table-retencion">
+          <thead class="thead-dark">
+            <th width="60%">Tipo de Retención</th>
+            <th width="35%">Valor</th>
+            <th width="5%"></th>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button><a><i data-tippy-content="Agrega nuevas retenciones haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
       </div>
+      <div class="col-md-7">
+        <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+            <table class="table table-striped table-sm" id="table-formaspago">
+              <thead class="thead-dark">
+                <th width="50%">Cuenta</th>
+                <th width="25%">Cruce</th>
+                <th width="20%" class="no-padding">Valor</th>
+                <th width="5%"></th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago();" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+              </div>
+              <div class="col-md-6 d-flex justify-content-between pt-3">
+                <h5>Total:</h5>
+                <span>$</span><span id="anticipototal">0</span>  
+              </div>
+              <div class="col-md-12">
+                <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+              </div>
+            </div>
+          </div>
+</div>
       <!-- Totales -->
       <div class="row" style="margin-top: 10%;">
           <div class="col-md-4 offset-md-8">
@@ -377,6 +402,11 @@
   <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
   <input type="hidden" id="todaytoday" value="{{date('d-m-Y')}}">
   <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
+  <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
+  <input type="hidden" id="notacredito" value="1">
+  {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+  <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
+
   {{--<input type="hidden" id="bancos-input" value='
                 @foreach($tipos_cuentas as $tipo_cuenta)
                     <optgroup label="{{$tipo_cuenta["nombre"]}}">

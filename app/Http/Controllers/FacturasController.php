@@ -589,7 +589,7 @@ class FacturasController extends Controller{
         $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // /Datos necesarios para hacer funcionar la ventana modal
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
 
         $title = "Nueva Factura de Venta";
@@ -668,7 +668,7 @@ class FacturasController extends Controller{
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // /Datos necesarios para hacer funcionar la ventana modal
 
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Factura Electrónica', 'subseccion' => 'venta-electronica']);
 
         $title = "Nueva Factura Electrónica";
@@ -741,7 +741,7 @@ class FacturasController extends Controller{
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         // /Datos necesarios para hacer funcionar la ventana modal
 
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
         return view('facturas.facturaRemision')->with(compact('clientes', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos', 'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2', 'unidades2', 'extras2', 'listas2','bodegas2','remision','itemsRemision', 'extras'));
     }
@@ -835,7 +835,7 @@ class FacturasController extends Controller{
         $factura->facnotas=$request->notas;
         $factura->empresa=Auth::user()->empresa;
         $factura->cliente=$request->cliente;
-        $factura->tipo=$request->documento;
+        $factura->tipo=$tipo;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $factura->vencimiento=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
         $factura->suspension=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
@@ -964,7 +964,7 @@ class FacturasController extends Controller{
         $this->url = back()->getTargetUrl();
         $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $retencionesFacturas = FacturaRetencion::where('factura', $factura->id)->get();
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->get();
+        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();

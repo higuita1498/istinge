@@ -93,7 +93,7 @@ class SaldosInicialesController extends Controller
         $puc = Puc::where('empresa',auth()->user()->empresa)
         ->whereRaw('length(codigo) > 6')
         ->get();
-        $movimientos = Contacto::where('empresa',auth()->user()->empresa)->get();
+        $contactos = Contacto::where('empresa',auth()->user()->empresa)->get();
 
         return view('saldosiniciales.create',compact('tipos','puc','contactos'));
     }
