@@ -187,7 +187,7 @@ Route::get('contrato-digital/{key}', function ($key) {
         $formulario = true;
         return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
     }
-    abort(419);
+    abort(403, 'ACCIÓN NO AUTORIZADA');
 });
 
 Route::post('contrato-digital/{key}', function (Request $request, $key) {
@@ -204,5 +204,5 @@ Route::post('contrato-digital/{key}', function (Request $request, $key) {
         view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
         return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
     }
-    abort(419);
+    abort(403, 'ACCIÓN NO AUTORIZADA');
 })->name('asignaciones.store_firma');
