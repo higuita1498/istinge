@@ -112,6 +112,10 @@
                             @endif
 
                             <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a>
+
+                            @if(isset($_SESSION['permisos']['843']))
+                                <a href="{{ route('radicados.log',$radicado->id )}}" class="btn btn-outline-primary btn-sm" title="Log del Radicado"><i class="fas fa-clipboard-list"></i> Log del Radicado</a>
+                            @endif
                         </div>
                     </div>
                 </div>

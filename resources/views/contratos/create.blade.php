@@ -658,6 +658,18 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Tipo de Contrato</label>
+                                <div class="input-group mb-2">
+                                    <select class="form-control selectpicker" name="tipo_contrato" id="tipo_contrato" title="Seleccione">
+                                        <option value="instalacion" selected>Instalación</option>
+                                        <option value="reconexion">Reconexión</option>
+                                    </select>
+                                    <span style="color: red;">
+                                        <strong>{{ $errors->first('tipo_contrato') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

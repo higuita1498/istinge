@@ -175,6 +175,12 @@
                                 <option value="3">Electrónica</option>
                             </select>
                         </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Tipo Contrato" class="form-control selectpicker" id="tipo_contrato">
+                                <option value="instalacion">Instalación</option>
+                                <option value="reconexion">Reconexión</option>
+                            </select>
+                        </div>
 
                         <div class="col-md-4 pl-1 pt-1">
                             <div class="row">
@@ -367,6 +373,7 @@
             data.facturacion = $("#facturacion_s").val();
             data.desde = $("#desde").val();
             data.hasta = $("#hasta").val();
+            data.tipo_contrato = $("#tipo_contrato").val();
             data.filtro = true;
         });
         
@@ -389,7 +396,7 @@
             }
         });
 
-        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta').on('change',function() {
+        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato').on('change',function() {
             getDataTable();
             return false;
         });
@@ -458,6 +465,7 @@
         $("#facturacion_s").val('').selectpicker('refresh');
         $("#desde").val('');
         $("#hasta").val('');
+        $("#tipo_contrato").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
@@ -465,7 +473,7 @@
 	}
 	
 	function exportar() {
-	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val();
 	}
 
     function states(state){

@@ -1543,7 +1543,7 @@ class Controller extends BaseController
                 if($parte[1] == 30){
                     $seg = Contrato::where('local_address', $segmento['segmento'])->where('status', 1)->select('local_address')->first();
                     if($seg){
-                        array_splice($segmentos, $i, 1);
+                        unset($segmentos[$i]);
                     }
                 }
                 $i++;

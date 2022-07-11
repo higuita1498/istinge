@@ -70,7 +70,7 @@
         </div>
         <div class="row card-description">
             <div class="col-md-12 table-responsive">
-                <table class="table" id="table-facturas">
+                <table class="table" id="table-reporte">
                 <thead class="thead-dark">
                 <tr>
                     <th>Fecha</th>
@@ -81,6 +81,7 @@
                     <th>Estado</th>
                     <th>Salida</th>
                     <th>Entrada</th>
+                    <th>Observaciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -112,6 +113,9 @@
                         </td>
                         <td>
                             {{$movimiento->tipo==1?Auth::user()->empresa()->moneda.\App\Funcion::Parsear($movimiento->saldo):''}}
+                        </td>
+                        <td>
+                            {{$movimiento->observaciones()}}
                         </td>
                     </tr>
                 @endforeach

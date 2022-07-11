@@ -157,4 +157,12 @@ class Movimiento extends Model
         }
         return $saldo;
     }
+
+    public function observaciones(){
+        if ($this->modulo==1) {
+            return Ingreso::find($this->id_modulo)->observaciones;
+        }else if ($this->modulo==3) {
+            return Gastos::find($this->id_modulo)->observaciones;
+        }
+    }
 }

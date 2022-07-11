@@ -324,7 +324,7 @@
   </div>
 
     <div class="row" style="padding: 0 2.7%;">
-        <div class="col-md-12" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
+        <div class="col-md-7" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
             <h6>Observaciones</h6>
             <p class="text-justify">
                 @php
@@ -340,8 +340,14 @@
                 @endphp
             </p>
         </div>
-        <div class="col-md-4 offset-md-1 d-none" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
-            <table class="table table-striped cliente">
+        <div class="col-md-4 offset-md-1" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
+            <h6>Detalles</h6>
+            @if($factura->created_by)
+            <p class="text-justify mb-0"><strong>Creada por:</strong> {{$factura->created_by()->nombres}}</p>
+            @endif
+            <p class="text-justify mb-0"><strong>Creada el:</strong> {{date('d-m-Y g:i:s A', strtotime($factura->created_at))}}</p>
+
+            <table class="table table-striped cliente d-none">
                 <tbody>
                     <tr>
                         <td>Vendedor</td>

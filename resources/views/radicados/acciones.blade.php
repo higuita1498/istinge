@@ -23,7 +23,7 @@
     @endif
 @endif
 
-@if($estatus==0 || $estatus==2)
+@if($firma || $estatus==0)
     @if(isset($session['207']))
         <form action="{{ route('radicados.solventar',$id) }}" method="POST" class="delete_form" style="display: none;" id="solventar-{{$id}}">
         	{{ csrf_field() }}
@@ -50,6 +50,10 @@
     @if(isset($session['805']))
         <a href="#" onclick="confirmar('reabrir-{{$id}}', '¿Está seguro de que desea reabrir el radicado?');" class="btn btn-outline-success btn-icons" title="Reabrir Radicado"><i class="fas fa-lock-open"></i></a>
     @endif
+@endif
+
+@if(isset($session['843']))
+<a href="{{ route('radicados.log',$id )}}" class="btn btn-outline-primary btn-icons" title="Log del Radicado"><i class="fas fa-clipboard-list"></i></a>
 @endif
 
 

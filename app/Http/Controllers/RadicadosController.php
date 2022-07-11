@@ -24,6 +24,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\MovimientoLOG;
+use App\RadicadoLOG;
 
 use Mail;
 use Config;
@@ -319,6 +320,12 @@ class RadicadosController extends Controller{
             $movimiento->save();
         }
 
+        $log = new RadicadoLOG;
+        $log->id_radicado = $radicado->id;
+        $log->id_usuario = Auth::user()->id;
+        $log->accion = 'Creación del radicado bajo el código #'.$radicado->codigo;
+        $log->save();
+
         $mensaje='Se ha creado satisfactoriamente el radicado bajo el código #'.$radicado->codigo;
         return redirect('empresa/radicados')->with('success', $mensaje);
     }
@@ -347,6 +354,13 @@ class RadicadosController extends Controller{
                 $radicado->adjunto = $nombre;
                 $radicado->save();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
                 return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
             }
 
@@ -354,6 +368,13 @@ class RadicadosController extends Controller{
                 $radicado->reporte = $request->reporte;
                 $radicado->save();
                 $mensaje='SE HA REGISTRADO EL REPORTE DEL TÉCNICO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Registro del reporte del técnico asociado.';
+                $log->save();
+
                 return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
             }
             $request->validate([
@@ -382,6 +403,12 @@ class RadicadosController extends Controller{
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->oficina = $request->oficina;
             $radicado->save();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Actualización del caso radicado.';
+            $log->save();
 
             $mensaje='Se ha modificado satisfactoriamente el radicado #'.$radicado->codigo;
             return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
@@ -420,6 +447,13 @@ class RadicadosController extends Controller{
                 $radicado->estatus=2;
                 $mensaje='Se ha escalado el caso a soporte técnico';
                 $radicado->save();
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Se ha escalado el caso radicado.';
+                $log->save();
+
                 return back()->with('success', $mensaje);
             }
         }
@@ -432,12 +466,20 @@ class RadicadosController extends Controller{
         if ($radicado) {
             if ($radicado->estatus==0) {
                 $radicado->estatus=1;
-            }else if ($radicado->estatus==2) {
+            }else if ($radicado->estatus==2 && $radicado->reporte) {
                 $radicado->estatus=3;
+            }else{
+                return back()->with('danger', 'EL RADICADO NO PUEDE SER SOLVENTADO SIN TENER EL REPORTE DEL TÉCNICO');
             }
-            $mensaje = 'SE HA RESUELTO EL CASO RADICADO';
+            $mensaje = 'SE HA SOLVENTADO EL CASO RADICADO';
             $radicado->solventado=Carbon::now()->toDateTimeString();
             $radicado->save();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Se ha solventado el caso radicado.';
+            $log->save();
 
             if(isset($radicado->correo)){
                 $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
@@ -491,6 +533,13 @@ class RadicadosController extends Controller{
             $radicado->firma = $request->dataImg;
             $radicado->save();
             $mensaje='Se ha registrado la firma del cliente.';
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Se ha registrado la firma del cliente asociado al radicado.';
+            $log->save();
+
             return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
         }
         return redirect('empresa/radicados')->with('success', 'No existe un registro con ese id');
@@ -560,16 +609,24 @@ class RadicadosController extends Controller{
                 $radicado->tiempo_ini = Carbon::now()->toDateTimeString();
                 $radicado->tiempo_est = $radicado->servicio()->tiempo;
                 $mensaje = 'Radicado Iniciado, recuerde que tiene un tiempo de '.$radicado->tiempo_est.'min para solventarlo';
+                $msj = 'Iniciado el tiempo para solventar el radicado.';
             }else{
                 $radicado->tiempo_fin = Carbon::now()->toDateTimeString();
                 $inicio = Carbon::parse($radicado->tiempo_ini);
                 $cierre = Carbon::parse($radicado->tiempo_fin);
                 $duracion = $inicio->diffInMinutes($cierre);
-                
                 $mensaje = 'Radicado Finalizado, con una duración de '.$duracion.'min';
+                $msj = 'Finalizado el tiempo para solventar el radicado.';
             }
             
             $radicado->save();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = $msj;
+            $log->save();
+
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('danger', 'No existe un registro con ese id');
@@ -581,6 +638,12 @@ class RadicadosController extends Controller{
             Storage::disk('documentos')->delete($radicado->adjunto);
             $radicado->adjunto = NULL;
             $radicado->save();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Eliminando adjunto asociado al radicado';
+            $log->save();
 
             return response()->json([
                 'success' => true,
@@ -609,6 +672,13 @@ class RadicadosController extends Controller{
 
             $mensaje = 'EL RADICADO HA SIDO REABIERTO SATISFACTORIAMENTE';
             $radicado->save();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Reabriendo el caso radicado.';
+            $log->save();
+
             return back()->with('success', $mensaje);
         }
         return back('empresa/radicados')->with('success', 'NO EXISTE UN REGISTRO CON ESE ID');
@@ -851,6 +921,12 @@ class RadicadosController extends Controller{
 
                 $radicado->save();
 
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = ($state == 'solventar') ? 'Se ha solventado el caso radicado.' : 'Reabriendo el caso radicado.';
+                $log->save();
+
                 if($state == 'solventar'){
                     if(isset($radicado->correo)){
                         $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
@@ -917,5 +993,37 @@ class RadicadosController extends Controller{
             'correctos' => $succ,
             'state'     => 'eliminados'
         ]);
+    }
+
+    public function log($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $radicado = radicado::find($id);
+        if ($radicado) {
+            view()->share(['icon'=>'fas fa-clipboard-list', 'title' => 'Log | Radicado: '.$radicado->codigo]);
+            return view('radicados.log')->with(compact('radicado'));
+        } else {
+            $mensaje='NO SE HA PODIDO OBTENER EL LOG DEL RADICADO';
+            return redirect('empresa/radicados/'.$radicado->id)->with('danger', $mensaje);
+        }
+        return redirect('empresa/radicados')->with('danger', 'EL RADICADO NO SE HA ENCONTRADO');
+    }
+
+    public function logs(Request $request, $radicado){
+        $modoLectura = auth()->user()->modo_lectura();
+        $radicados = RadicadoLOG::query();
+        $radicados->where('id_radicado', $radicado);
+
+        return datatables()->eloquent($radicados)
+            ->editColumn('created_at', function (RadicadoLOG $radicado) {
+                return date('d-m-Y g:i:s A', strtotime($radicado->created_at));
+            })
+            ->editColumn('id_usuario', function (RadicadoLOG $radicado) {
+                return $radicado->id_usuario();
+            })
+            ->editColumn('accion', function (RadicadoLOG $radicado) {
+                return $radicado->accion;
+            })
+            ->rawColumns(['created_at', 'id_usuario', 'accion'])
+            ->toJson();
     }
 }

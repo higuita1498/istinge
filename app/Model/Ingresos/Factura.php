@@ -25,6 +25,8 @@ use App\Puc;
 use App\PucMovimiento;
 use App\FormaPago;
 use stdClass;
+use App\User;
+
 class Factura extends Model
 {
     protected $table = "factura";
@@ -40,7 +42,7 @@ class Factura extends Model
         'estatus', 'notas', 'plazo', 'created_at', 'updated_at', 'term_cond',
         'facnotas' , 'lista_precios', 'bodega','emitida','dian_response',
         'nonkey', 'statusdian', 'observacionesdian', 'modificado','fecha_expedicion',
-        'tipo_fac','tipo_operacion', 'promesa_pago', 'contrato_id'
+        'tipo_fac','tipo_operacion', 'promesa_pago', 'contrato_id', 'created_by'
     ];
 
     protected $appends = ['session'];
@@ -910,6 +912,10 @@ public function forma_pago()
        
 
         return $ingresos;
+    }
+
+    public function created_by(){
+        return User::find($this->created_by);
     }
 
 }
