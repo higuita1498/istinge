@@ -82,6 +82,9 @@
 								@if(isset($_SESSION['permisos']['818']))
 								<a href="{{ route('asignaciones.enviar',$contrato->id )}}" onclick="cargando('true');" class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
 								@endif
+								@if(isset($_SESSION['permisos']['818']))
+								<a href="javascript:void(0);" onclick="generar_link({{ $contrato->id }});" class="btn btn-outline-warning btn-icons" title="Generar Link de Actualización de Firma"><i class="fas fa-fw fa-link"></i></a>
+								@endif
 								@endif
 							</td>
 						</tr>
@@ -96,8 +99,37 @@
 	    	$("#name_1,#name_2,#name_3,#name_4,#name_5,#name_6").val('').selectpicker('refresh');
 	    }
     </script>
-
     @endif
+@endsection
 
+@section('scripts')
+    <script>
+    	function generar_link(id) {
+    		cargando(true);
+    		if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/empresa/asignaciones/`+id+`/generar_link`;
+    		}else{
+    			var url = `/empresa/asignaciones/`+id+`/generar_link`;
+    		}
 
+    		$.ajax({
+    			url: url,
+    			method: 'GET',
+    			headers: {
+    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			},
+    			success: function(data) {
+    				cargando(false);
+    				swal({
+    					title: 'LINK DE ACTUALIZACIÓN DE FIRMA',
+    					html: data.text,
+    					type: data.type,
+    					showConfirmButton: true,
+    					confirmButtonColor: '#1A59A1',
+    					confirmButtonText: 'ACEPTAR',
+    				});
+    			}
+    		});
+    	}
+    </script>
 @endsection

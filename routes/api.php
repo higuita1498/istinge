@@ -175,4 +175,33 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
     return view('notascredito.landing')->with(compact('nota', 'empresa'));
 });
 
+/**
+ * FIRMA DIGITAL
+ */
+Route::get('contrato-digital/{key}', function ($key) {
+    $contacto = Contacto::where('referencia_asignacion', $key)->first();
+    if($contacto){
+        $empresa = Empresa::find($contacto->empresa);
+        $title = $empresa->nombre;
+        view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
+        $formulario = true;
+        return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
+    }
+    abort(419);
+});
 
+Route::post('contrato-digital/{key}', function (Request $request, $key) {
+    $contacto = Contacto::where('referencia_asignacion', $key)->first();
+    if($contacto){
+        $contacto->firma_isp = $request->firma_isp;
+        $contacto->fecha_isp = date('Y-m-d');
+        $contacto->save();
+
+        $empresa = Empresa::find($contacto->empresa);
+        $formulario = false;
+        $title = $empresa->nombre;
+        view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
+        return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
+    }
+    abort(419);
+})->name('asignaciones.store_firma');
