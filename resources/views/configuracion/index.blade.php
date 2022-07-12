@@ -374,7 +374,7 @@
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-md-12 form-group">
-							<label class="control-label">Indique el monto a establecer por concepto de Clausula de Permanencia</label>
+							<label class="control-label">Indique el monto a establecer de Clausula de Permanencia</label>
 							<input type="number" class="form-control" id="clausula_permanencia" name="clausula_permanencia" value="{{Auth::user()->empresa()->clausula_permanencia}}" min="0">
 							<span class="help-block error">
 								<strong>{{ $errors->first('clausula_permanencia') }}</strong>
