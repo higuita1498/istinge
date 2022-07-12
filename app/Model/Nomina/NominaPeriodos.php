@@ -142,11 +142,19 @@ class NominaPeriodos extends Model
         if(!($persona = $this->persona)){
             $persona = $this->nomina->persona;
         }
+        
+        if($hasta->format('d') >= 27 && $hasta->format('d') < 30){
+                $hasta->day = 30;
+        }
+        
+        if($hasta->format('d') >= 31){
+                $hasta->day = 30;
+        }
 
         $fechaContratacion = new Carbon($persona->fecha_contratacion);
 
         $diasRestados = 0;
-
+        //CONTRATO VIGENTE ACTUAL.
         if($inicio->format('y') == $fechaContratacion->format('y')){
             if($inicio->format('m') == $fechaContratacion->format('m')){
                 if(intval($fechaContratacion->format('d')) <= intval($hasta->format('d'))){
@@ -157,7 +165,41 @@ class NominaPeriodos extends Model
                 }
             }
         }
-
+        
+        
+        //CONTRATOS ANTERIORES O LIQUIDADOS EL ONTRATO ACTUAL DE LA PERSONA NO SE LISTA ACÀ
+        if($persona->contratos->count() > 0){
+            foreach($persona->contratos as $co){
+                $fechaTerminacion = $co->comprobanteLiquidacion->fecha_terminacion;
+                $fechaTerminacion = new Carbon($fechaTerminacion);
+                
+                if($inicio->format('y') == $fechaTerminacion->format('y')){
+                    if($inicio->format('m') == $fechaTerminacion->format('m')){
+                        if(intval($fechaTerminacion->format('d')) <= intval($hasta->format('d'))){
+                                if($fechaContratacion->format('y') == $fechaTerminacion->format('y')){
+                                    if($fechaContratacion->format('m') == $fechaTerminacion->format('m')){
+                                        
+                                        //AQUI ENTRA CUANDO SE ECHO EL MISMO MES EL MISMO AÑO Y SE CONTRATO EL MISMO MES Y EL MISMO AÑO
+                                        //NO SE HACE NADA PORQUE LOS ANTERIORES CONTRATOS SE LIQUIDAN JUNTO AL COMPROBANTE DE LIQUIDACION POR ENDE NO SE TOMAN EN CUENTA EN ESTE PERIODO.
+                                        if($fechaTerminacion->format('d') >= 1){
+                                            // $diasRestados -= $inicio->diffInDays($fechaTerminacion) + 1;   
+                                             
+                                             // 
+                                        }
+                                        
+                                        //continua por que no es igual el año de contratacion y terminqcion y no es igual el mes de contratcion y liquidacion
+                                        continue;
+                                    }
+                                }
+                                // AQUI ENTRA CUANDO LA PERSONA SE LIQUIDO Y NO SE VOLVIO A CONTRATAR EN EL PRESENTE MES O AÑO
+                              $diasRestados += $fechaTerminacion->diffInDays($hasta);
+                        }
+                    }
+                }
+                
+            }
+        }
+      
          /* >>>
         Segun la teoria, al empleado se le paga siempre sobre 15 días si el pago es quincenal o sobre 30 días
         así el mes tenga 28,29,30 o 31 días.
@@ -236,16 +278,19 @@ class NominaPeriodos extends Model
             /*>>> a las vacaciones se les suma el porcentaje del o los dias que se incapacito <<<*/
             $ibcSeguridadSocial['vacaciones'] += $ibcSeguridadSocial['incapacidades'];
         }
-
-        $licencias = NominaDetalleUno::where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 6)->where('fk_nominaperiodo', $this->id)->get();
+        $licenciaPaga = 0;
+        $licencias = NominaDetalleUno::where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 6)->where('fk_nominaperiodo', $this->id)->whereNotNull('fecha_inicio')->get();
         foreach($licencias as $licencia){
             if(!($licencia->is_remunerado())){
                 $ibcSeguridadSocial['salario'] -= $licencia->valor_categoria;
+            }else{
+                $ibcSeguridadSocial['salario'] -= $licencia->valor_categoria;
+                $licenciaPaga += $licencia->valor_categoria;
             }
         }
 
         /* >>> Cálculo final del ibc seguridad social <<< */
-        $ibcSeguridadSocial['total'] = $subtotal = $ibcSeguridadSocial['vacaciones'] + $ibcSeguridadSocial['salario'] + $ibcSeguridadSocial['ingresosyExtras'];
+        $ibcSeguridadSocial['total'] = $subtotal = $licenciaPaga + $ibcSeguridadSocial['vacaciones'] + $ibcSeguridadSocial['salario'] + $ibcSeguridadSocial['ingresosyExtras'];
 
 
         /* >>> Obtenemos los valores de salud y pension configurados desde el modulo de calculos fijos. <<< */
@@ -256,7 +301,18 @@ class NominaPeriodos extends Model
         $persona = $this->nomina->persona;
 
         /* >>> Cálculo de retencion en salud y pensión <<< */
-        if($persona->fk_tipo_contrato == 4 || $persona->fk_tipo_contrato == 6){
+        
+        if($persona->fk_salario_base == 2){
+            $calculosFijos['reten_salud'] = (object)['valor' => (($subtotal * (70 / 100)) * $retenSalud->porcDecimal()), 'simbolo' => '-'];
+            $calculosFijos['reten_pension'] = (object)['valor' => (($subtotal * (70 / 100)) * $retenPension->porcDecimal()), 'simbolo' => '-'];
+            
+            /* provisional
+            if($this->pago_empleado >= 4000000 && $this->pago_empleado <= 16000000){
+                 $calculosFijos['reten_pension_solidaria'] = (object)['valor' => (($subtotal * (70 / 100)) * (1/100)), 'simbolo' => '-'];
+            }
+            */
+            
+        }elseif($persona->fk_tipo_contrato == 4 || $persona->fk_tipo_contrato == 6){
             $calculosFijos['reten_salud'] = (object)['valor' => (0), 'simbolo' => '-'];
             $calculosFijos['reten_pension'] = (object)['valor' => (0), 'simbolo' => '-'];
         }else{
@@ -337,7 +393,8 @@ class NominaPeriodos extends Model
                       'retenciones' => ['salud' => 0, 'pension' => 0, 'total' => 0, 'porcentajeSalud' => 0, 'porcentajePension' => 0],
                       'seguridadSocial' => ['pension' => 0, 'riesgo1' => 0, 'total' => 0],
                       'parafiscales' => ['cajaCompensacion' => 0, 'total' => 0],
-                      'provisionPrestacion' => ['cesantias' => 0, 'interesesCesantias' => 0, 'primaServicios' => 0, 'vacaciones' => 0, 'total' => 0]
+                      'provisionPrestacion' => ['cesantias' => 0, 'interesesCesantias' => 0, 'primaServicios' => 0, 'vacaciones' => 0, 'total' => 0],
+                      'pagoContratado' => ['total' => 0]
                      ];
 
         $calculosFijosCollect = $this->nominaCalculoFijos;
@@ -363,6 +420,7 @@ class NominaPeriodos extends Model
         $incapacidades = NominaDetalleUno::where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 5)->where('fk_nominaperiodo', $this->id)->get();
         $diasIncapacitado = 0;
         $diasValidosTrabajados = $totalidad['diasTrabajados']['diasPeriodo'];
+        
 
         foreach($incapacidades as $incapacidad){
             $fechaInicio = new Carbon($incapacidad->fecha_inicio);
@@ -381,23 +439,30 @@ class NominaPeriodos extends Model
         }
 
         $totalidad['ibcSeguridadSocial']['salarioParcial'] = $diasValidosTrabajados * $totalidad['salarioSubsidio']['valorDia'];
+        //Valor real trabajado, contando unicamente con liquidaciones de la persona
+        $totalidad['pagoContratado']['total'] = $diasValidosTrabajados * $this->pago_empleado / 30;
 
         $totalidad['diasTrabajados']['ausencia'] = $this->diasAusenteDetalle();
         $totalidad['diasTrabajados']['total'] = $totalidad['diasTrabajados']['diasPeriodo'] - array_sum($totalidad['diasTrabajados']['ausencia']);
         $totalidad['ibcSeguridadSocial']['licencias'] = 0;
         $totalidad['pago']['licencias'] = 0;
         $licencias = NominaDetalleUno::where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 6)->where('fk_nominaperiodo', $this->id)->whereNotNull('fecha_inicio')->get();
+        $licenciaNoRemunerada = 0;
         foreach($licencias as $licencia){
             if(!($licencia->is_remunerado())){
                 $totalidad['ibcSeguridadSocial']['licencias'] += $licencia->valor_categoria;
                 $totalidad['ibcSeguridadSocial']['salario'] -= $licencia->valor_categoria;
                 $totalidad['ibcSeguridadSocial']['salarioParcial'] -= $licencia->valor_categoria;
+                $licenciaNoRemunerada += $licencia->valor_categoria;
+                $totalidad['pagoContratado']['total'] -= $licencia->valor_categoria;
             }else{
                 $totalidad['pago']['licencias'] += $licencia->valor_categoria;
+                $totalidad['ibcSeguridadSocial']['salario'] -= $licencia->valor_categoria;
+                $totalidad['ibcSeguridadSocial']['salarioParcial'] -= $licencia->valor_categoria;
             }
         }
 
-        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['ibcSeguridadSocial']['vacaciones'] + $totalidad['ibcSeguridadSocial']['salarioParcial'] + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
+        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + ($totalidad['pagoContratado']['total']) + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
 
         $totalidad['retenciones']['salud'] = floatval($calculosFijosCollect->where('tipo', 'reten_salud')->first()->valor ?? 0);
         $totalidad['retenciones']['pension'] = floatval($calculosFijosCollect->where('tipo', 'reten_pension')->first()->valor ?? 0);
@@ -410,8 +475,8 @@ class NominaPeriodos extends Model
         $subtotal += $calculosFijosCollect->where('simbolo', '+')->sum('valor');
         $subtotal -= $calculosFijosCollect->where('simbolo', '-')->sum('valor');
         $subtotal -= $deducciones = $totalidad['deducciones']['total'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 4)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
-        $subtotal -= $totalidad['ibcSeguridadSocial']['vacaciones'];
-
+        //$subtotal -= $totalidad['ibcSeguridadSocial']['vacaciones'];
+        
         $totalidad['pago']['total'] = $subtotal;
         $totalidad['pago']['salario'] = $totalidad['ibcSeguridadSocial']['salario'];
         $totalidad['pago']['extrasOrdinariasRecargos'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 1)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
@@ -421,8 +486,22 @@ class NominaPeriodos extends Model
         $totalidad['pago']['retencionesDeducciones'] = $totalidad['retenciones']['total'] + $deducciones;
 
 
+        $porcentajeRiesgo = 0.00522;
+
+        if($claseRiesgo = $this->nomina->persona->clase_riesgo()){
+            if($claseRiesgo == 'Máximo - Riesgo 5'){
+                $porcentajeRiesgo = 0.0696;
+            }else if($claseRiesgo == 'Bajo - riesgo 2'){
+                $porcentajeRiesgo = 0.01044;
+            }else if($claseRiesgo == 'Medio - Riesgo 3'){
+                $porcentajeRiesgo = 0.02436;
+            }else if($claseRiesgo == 'Alto - riesgo 4'){
+                $porcentajeRiesgo = 0.0435;
+            }
+        }
+        $totalidad['seguridadSocial']['valorRiesgo'] = $porcentajeRiesgo;
         $totalidad['seguridadSocial']['pension'] = $totalidad['ibcSeguridadSocial']['total'] * 0.12;
-        $totalidad['seguridadSocial']['riesgo1'] = $totalidad['ibcSeguridadSocial']['salario'] * 0.00522;
+        $totalidad['seguridadSocial']['riesgo1'] = $totalidad['ibcSeguridadSocial']['salario'] * $porcentajeRiesgo;
         $totalidad['seguridadSocial']['total'] = $totalidad['seguridadSocial']['pension'] + $totalidad['seguridadSocial']['riesgo1'];
 
         $totalidad['parafiscales']['cajaCompensacion'] = $totalidad['ibcSeguridadSocial']['total'] * 0.04;
@@ -432,7 +511,6 @@ class NominaPeriodos extends Model
         $totalidad['provisionPrestacion']['primaServicios'] = $totalidad['salarioSubsidio']['total'] * (8.33 / 100);
         $totalidad['provisionPrestacion']['vacaciones'] = $totalidad['ibcSeguridadSocial']['total'] * (4.17 / 100);
         $totalidad['provisionPrestacion']['total'] = $totalidad['provisionPrestacion']['cesantias'] + $totalidad['provisionPrestacion']['interesesCesantias'] + $totalidad['provisionPrestacion']['primaServicios'] + $totalidad['provisionPrestacion']['vacaciones'];
-
         return $totalidad;
     }
 
