@@ -109,8 +109,6 @@
     </div>
     @endif
 
-    {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([2,3,4])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
-
     @if (session()->has('success'))
     <div class="row">
         <div class="col-12">
@@ -153,7 +151,7 @@
         </div>
         <div class="col-12 col-md-6">
             <div class="notice pt-4">
-                <strong>Mes <span class="float-right">{{ ucfirst(App\Model\Nomina\Nomina::monthName($date)).' '.$date->format('Y') }}</span></strong>
+                <strong>Mes <span class="float-right">{{ ucfirst($date->monthName).' '.$date->format('Y') }}</span></strong>
                 <hr>
                 @if($isFinalizado)
                 <strong>Estado <span class="float-right text-success">Finalizado</span></strong>
