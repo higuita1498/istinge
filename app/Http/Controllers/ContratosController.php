@@ -1197,8 +1197,10 @@ class ContratosController extends Controller
                     if($request->ap){
                         $ap_new = AP::find($request->ap);
                         $ap_old = AP::find($contrato->ap);
-                        $descripcion .= ($contrato->ap == $ap_new->ap) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Access Point</b> de '.$ap_old->nombre.' a '.$ap_new->nombre.'<br>';
-                        $contrato->ap   = $request->ap;
+                        if(isset($ap_new)){
+                            $descripcion .= ($contrato->ap == $ap_new->ap) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Access Point</b> de '.$ap_old->nombre.' a '.$ap_new->nombre.'<br>';
+                            $contrato->ap   = $request->ap;
+                        }
                     }
 
                     if($contrato->nodo){
