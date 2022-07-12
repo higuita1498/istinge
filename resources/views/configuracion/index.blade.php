@@ -84,6 +84,14 @@
 			<a href="{{route('tiposempresa.index')}}">Tipos de Contactos</a> <br>
 		</div>
 
+		@if(isset($_SESSION['permisos']['845']))
+		<div class="col-sm-3">
+			<h4 class="card-title">Contratos</h4>
+			<p>Gestiona y organiza las configuraciones de contratos.</p>
+			<a href="#" data-toggle="modal" data-target="#config_clausula">Definir Monto de Clausula de Permanencia</a><br>
+		</div>
+		@endif
+
 		<div class="col-sm-3">
 			<h4 class="card-title">Categorias</h4>
 			<p>Organice a su medida el plan único de cuentas.</p>
@@ -354,6 +362,34 @@
 		</div>
 	</div>
 	{{-- /PERIODO FACTURACIÓN --}}
+
+	{{-- CONFIGURACION CLAUSULAS --}}
+	<div class="modal fade" id="config_clausula" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label class="control-label">Indique el monto a establecer por concepto de Clausula de Permanencia</label>
+							<input type="number" class="form-control" id="clausula_permanencia" name="clausula_permanencia" value="{{Auth::user()->empresa()->clausula_permanencia}}" min="0">
+							<span class="help-block error">
+								<strong>{{ $errors->first('clausula_permanencia') }}</strong>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<a href="javascript:configurarClausula()" class="btn btn-success">Guardar</A>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /CONFIGURACION CLAUSULAS --}}
 @endsection
 
 @section('scripts')
@@ -815,5 +851,41 @@
 		        }
 		    })
 		}
+
+		function configurarClausula() {
+    		cargando(true);
+    		if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/clausula_permanencia`;
+    		}else{
+    			var url = `/clausula_permanencia`;
+    		}
+    		$.ajax({
+    			url: url,
+    			method: 'POST',
+    			headers: {
+    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			},
+    			data: {
+    				clausula_permanencia: $('#clausula_permanencia').val()
+    			},
+    			success: function(response) {
+    				cargando(false);
+    				swal({
+    					title: response.message,
+    					text: response.text,
+    					type: response.type,
+    					showConfirmButton: true,
+    					confirmButtonColor: '#1A59A1',
+    					confirmButtonText: 'ACEPTAR',
+    				});
+    				if (response.success == true) {
+    					$("#config_clausula").modal('hide');
+    					setTimeout(function(){
+    						location.reload();
+    					}, 1000);
+    				}
+    			}
+    		});
+    	}
     </script>
 @endsection

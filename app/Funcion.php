@@ -43,4 +43,8 @@ class Funcion
 
         return $interval->days;
     }
+
+    public static function generateRandomString($length = 10){
+        return substr(str_shuffle("0123456789"), 0, $length);
+    }
 }

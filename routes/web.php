@@ -119,6 +119,7 @@ Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');
 Route::post('prorrateo', 'ConfiguracionController@actDescProrrateo');
 Route::post('efecty', 'ConfiguracionController@actDescEfecty');
 Route::post('oficina', 'ConfiguracionController@actDescOficina');
+Route::post('clausula_permanencia', 'ConfiguracionController@clausula_permanencia');
 
 Route::post('configuracion_nominadian', 'ConfiguracionController@nominaDian');
 
@@ -1207,6 +1208,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('config_campos_asignacion', 'AsignacionesController@show_campos_asignacion')->name('asignaciones.show_campos_asignacion');
 		Route::post('campos_asignacion', 'AsignacionesController@campos_asignacion')->name('asignaciones.campos_asignacion');
         Route::get('{id}/enviar', 'AsignacionesController@enviar')->name('asignaciones.enviar');
+        Route::get('{id}/generar_link', 'AsignacionesController@generar_link')->name('asignaciones.generar_link');
 	});
 	Route::resource('asignaciones', 'AsignacionesController');
 	

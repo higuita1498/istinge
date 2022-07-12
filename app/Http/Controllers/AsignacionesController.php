@@ -702,4 +702,29 @@ class AsignacionesController extends Controller
     }
     return back()->with('danger', 'CONTRATO DIGITAL NO ENVIADO');
   }
+
+  public function generar_link($id){
+    $contacto = Contacto::find($id);
+    if($contacto){
+      $sw = 1;
+      while ($sw == 1) {
+        $ref = Funcion::generateRandomString();
+        if (Contacto::where('referencia_asignacion', $ref)->first()) {
+          $ref = Funcion::generateRandomString();
+        }else{
+          $sw = 0;
+          $contacto->referencia_asignacion = $ref;
+          $contacto->save();
+        }
+      }
+
+      return response()->json([
+        'success'  => true,
+        'contacto' => $contacto->id,
+        'text'     => "<a href='".config('app.url')."/api/contrato-digital/".$ref."' target='_blank'>".config('app.url')."/api/contrato-digital/".$ref."</a>",
+        'type'     => 'success'
+      ]);
+    }
+    return response()->json(['success' => false,'text' => 'Algo falló, intente nuevamente', 'type' => 'error']);
+  }
 }

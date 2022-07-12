@@ -976,6 +976,15 @@ class Controller extends BaseController
         where('contracts.status',1)->
         get()->last();
 
+        if(is_null($contrato)){
+            $contrato = Contacto::join('factura as f','f.cliente','contactos.id')->
+            join('items_factura as if','f.id','if.factura')->
+            select('contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit', 'contactos.celular', 'contactos.telefono1', 'contactos.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.precio as price', 'if.impuesto', 'contactos.direccion', 'contactos.tip_iden')->
+            where('contactos.nit', $identificacion)->
+            where('f.estatus',1)->
+            get()->last();
+        }
+
         $pasarelas = DB::table('integracion')->where('web', 1)->where('tipo', 'PASARELA')->where('status', 1)->get();
 
         return response()->json(['contrato' => $contrato, 'pasarelas' => $pasarelas]);
