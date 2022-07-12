@@ -198,6 +198,139 @@ class ExportarReportesController extends Controller
             exit;
     }
 
+    public function facturasElectronicas(Request $request){
+        //Acá se obtiene la información a impimir
+        DB::enableQueryLog();
+
+        $comprobacionFacturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+        ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
+            'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'factura.emitida')
+        ->where('factura.tipo',2)
+        ->where('factura.empresa',Auth::user()->empresa)
+        ->where('emitida',$request->tipo)
+        ->groupBy('factura.id');
+        
+        $dates = $this->setDateRequest($request);
+        $comprobacionFacturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
+        if($comprobacionFacturas->count() >2100){
+            return $this->bigVentas($request);
+        }
+
+
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte de Facturas Electrónicas desde ".$request->fecha." hasta ".$request->hasta;
+
+        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Creracion', 'Vencimiento', 'Tipo', 'Total');
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte de Facturas Electrónicas")
+        ->setSubject("Reporte de Facturas Electrónicas")
+        ->setDescription("Reporte de Facturas Electrónicas")
+        ->setKeywords("Reporte de Facturas Electrónicas")
+        ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:F1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1',$tituloReporte);
+        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        ));
+        $objPHPExcel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($estilo);
+        $estilo =array('fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'd08f50')));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:F3')->applyFromArray($estilo);
+
+
+        for ($i=0; $i <count($titulosColumnas) ; $i++) {
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+        ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
+            'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'factura.emitida')
+        ->where('factura.tipo',2)
+        ->where('factura.empresa',Auth::user()->empresa)
+        ->where('emitida',$request->tipo)
+        ->groupBy('factura.id');
+        $dates = $this->setDateRequest($request);
+
+        /*if ($request->nro>0) {
+            $facturas=$facturas->where('numeracion', $request->nro);
+        }*/
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
+        }
+    
+        $ides=array();
+        $factures=$facturas->get();
+        $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
+
+        foreach ($factures as $factura) {
+            $ides[]=$factura->id;
+        }
+
+        Log::debug(DB::getQueryLog());
+
+        $subtotal=$total=0;
+        if ($ides) {
+            $result=DB::table('items_factura')->whereIn('factura', $ides)->select(DB::raw("SUM((`cant`*`precio`)) as 'total', SUM((precio*(`desc`/100)*`cant`)+0)  as 'descuento', SUM((precio-(precio*(if(`desc`,`desc`,0)/100)))*(`impuesto`/100)*cant) as 'impuesto'  "))->first();
+            $subtotal=$this->precision($result->total-$result->descuento);
+            $total=$this->precision((float)$subtotal+$result->impuesto);
+        }
+
+        // Aquí se escribe en el archivo
+        $i=4;
+        foreach ($facturas as $factura) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0].$i, $factura->codigo)
+                ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
+                ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($factura->fecha)))
+                ->setCellValue($letras[3].$i, date('d-m-Y', strtotime($factura->vencimiento)))
+                ->setCellValue($letras[4].$i, $factura->emitida == 1 ? 'Emitida' : 'No Emitida')
+                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
+            $i++;
+        }
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue($letras[4].$i, "TOTAL: ")
+            ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:F'.$i)->applyFromArray($estilo);
+
+
+        for($i = 'A'; $i <= $letras[20]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Facturas Electrónicas');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A2');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Facturas_Electronicas.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
 	public function ventas(Request $request){
         //Acá se obtiene la información a impimir
         DB::enableQueryLog();

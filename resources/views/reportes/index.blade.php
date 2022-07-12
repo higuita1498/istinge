@@ -16,6 +16,7 @@
                 <ul class="list-report">
                     <li><a href="{{route('reportes.ventas')}}">Reporte de Facturas Pagadas</a></li>
                     <li><a href="{{route('reportes.facturasImpagas')}}">Reporte de Facturas Impagas</a></li>
+                    <li><a href="{{route('reportes.facturasElectronicas')}}">Reporte de Facturas Electrónicas</a></li>
                     <li><a href="{{route('reportes.transacciones')}}" >Reporte de Transacciones</a></li>
                     <li><a href="{{route('reportes.cajas')}}" >Reporte de Cajas</a></li>
                     <li><a href="{{route('reportes.instalacion')}}" >Reporte de Contratos con Instalación</a></li>
