@@ -11,11 +11,11 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
-// use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomina extends Model
 {
-    use Funciones;
+    use Funciones, LogsActivity;
 
     // ESTADOS DE UNA NOMINA 1= emitida, 2=no emitida, 3= anulada emitida, 4= ajuste sin emitir,  5= ajuste emitido, 6=eliminada'
     const EMITIDA = 1;
@@ -71,16 +71,8 @@ class Nomina extends Model
 
     public function periodo()
     {
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        $fecha = $this->year . "-" . $this->periodo . "-1";
-        $date = Carbon::parse($fecha);
-        $mes = $meses[($date->format('n')) - 1];
-        return ucfirst($mes) . ' ' . $this->year;
-    }
-
-    public static function monthName($date){
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        return  $mes = $meses[($date->format('n')) - 1];
+        $date = Carbon::create($this->year, $this->periodo, 1)->locale('es');
+        return ucfirst($date->monthName) . ' ' . $this->year;
     }
 
     /**
@@ -94,7 +86,11 @@ class Nomina extends Model
         ->where('periodo',$this->periodo)
         ->where('fk_idempresa', $this->fk_idempresa)
         ->where('p.status',1)
-        ->whereNotIn('emitida', [4, 5, 6])->groupBy('periodo')->count();
+        ->whereIn('emitida', [1, 5, 6])
+        ->whereNotIn('emitida', [4,7])
+        ->orWhere('periodo',$this->periodo)
+        ->where('fk_idempresa', $this->fk_idempresa)
+        ->whereIn('emitida', [1, 5, 6])->count();
     }
 
     /**
@@ -110,10 +106,10 @@ class Nomina extends Model
 
         $arrayEstados['aceptadas'] = Nomina::
         join('ne_personas as p','p.id','=','ne_nomina.fk_idpersona')
-        ->where('p.status',1)
+        // ->where('p.status',1)
         ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
         ->where('periodo', $this->periodo)
-        ->whereIn('emitida', [1, 3, 5])
+        ->whereIn('emitida', [1, 5, 6])
         ->count();
 
         $arrayEstados['enEspera'] = Nomina::
@@ -222,15 +218,22 @@ class Nomina extends Model
         ));
 
         $response = curl_exec($curl);
-        
+       
         if($response){
             
             $response = json_decode($response);
                 if(is_object($response)){
-                    if($response->statusCode == 200){
-                        if($response->statusCodeDIAN == "RDI"){
+                    if($response->statusCode == 200 || $response->statusCode == 409){
+                        if($response->statusCodeDIAN == "RDI" || $response->statusCode == 409){
                             foreach($response->errorMessage as $err){
-                                if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente'){
+                                if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
+                                        $this->emitida = 1;
+                                        $this->update();
+                                        return true;
+                                }
+                            }
+                            foreach($response->warnings as $err){
+                                if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
                                         $this->emitida = 1;
                                         $this->update();
                                         return true;
