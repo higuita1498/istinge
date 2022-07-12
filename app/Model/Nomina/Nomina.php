@@ -11,11 +11,10 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomina extends Model
 {
-    use Funciones, LogsActivity;
+    use Funciones;
 
     // ESTADOS DE UNA NOMINA 1= emitida, 2=no emitida, 3= anulada emitida, 4= ajuste sin emitir,  5= ajuste emitido, 6=eliminada'
     const EMITIDA = 1;
