@@ -109,8 +109,6 @@
     </div>
     @endif
 
-    @include('nomina.tips.serie-base', ['pasos' => \collect([2,3,4])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()])
-
     @if (session()->has('success'))
     <div class="row">
         <div class="col-12">
