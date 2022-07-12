@@ -1211,11 +1211,10 @@ class ContratosController extends Controller
                         }else{
                             $nodo_new = '';
                         }
-
-                        $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new.'<br>';
                         
                         if(isset($ap_new->nodo)){
                             $contrato->nodo = $ap_new->nodo;
+                            $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new.'<br>';
                         }
                     }
 
