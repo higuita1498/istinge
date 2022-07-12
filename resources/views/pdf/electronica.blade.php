@@ -291,6 +291,9 @@
         .imgwifi{
             width:80px;
         }
+        .d-none{
+            display: none;
+        }
     </style>
     
     <div class="divheader-pr">
@@ -652,7 +655,7 @@
                 <tr class="tr-precios">
                     @for ($i = 0; $i < $factura->contract()->contrato_permanencia_meses; $i++)
                         <td>
-                            {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear(($factura->contract()->plan()->tipo_plan == 1) ? $factura->contract()->plan()->price * ($factura->contract()->contrato_permanencia_meses-$i) : ($factura->contract()->plan()->price + ($factura->contract()->plan()->price * 0.19)) * ($factura->contract()->contrato_permanencia_meses-$i)) }}
+                            {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $factura->contract()->contrato_permanencia_meses) * (12-$i)) }}
                         </td>
                     @endfor
                 </tr>
@@ -660,7 +663,7 @@
         </table>
     </div>
     
-    <div class="margin-docpdf">
+    <div class="margin-docpdf d-none">
         <table style="width:100%;">
             <tbody>
                 <tr>

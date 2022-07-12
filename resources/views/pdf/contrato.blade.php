@@ -292,7 +292,7 @@
                             </tbody>
                         </table>
 
-                        <p style="font-size:9px; text-align: justify;font-weight: bold;" class="small titulo-bg">ACEPTO CLÁUSULA DE PERMANENCIA MÍNIMA <input checked="checked" type="checkbox" />*</p><br>
+                        <p style="font-size:9px; text-align: justify;font-weight: bold;" class="small titulo-bg">ACEPTO CLÁUSULA DE PERMANENCIA MÍNIMA</p><br>
 
                         <p style="text-align: justify;" class="small">En consideración a que le estamos otorgando un descuento respecto del valor del cargo por conexión, o le diferimos el pago del mismo, se incluye la presente cláusula de permanencia mínima. En la factura encontrará el valor a pagar si decide terminar el contrato anticipadamente</p><br>
 
@@ -323,7 +323,7 @@
                                 <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de inicio de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
-                                        <p style="padding: 0;margin:0;">____/____/____/</p>
+                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->created_at)->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -334,7 +334,7 @@
                                 <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de finalización de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
-                                        <p style="padding: 0;margin:0;">____/____/____/</p>
+                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->created_at)->addYear()->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -346,6 +346,36 @@
                                     <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center; font-size: 10px; padding: 0;margin:0;">Valor a pagar si termina el contrato anticipadamente según el mes</th>
                                 </tr>
                             </thead>
+                        </table>
+
+                        <table width="100%">
+                            <tbody>
+                                <tr style="background-color: {{Auth::user()->empresa()->color}}; border: solid 1px {{Auth::user()->empresa()->color}}; color: #fff; text-align: center;">
+                                    @for ($i = 1; $i <= 6; $i++)
+                                        <td style="font-size: 8px;">MES {{ $i }}</td>
+                                    @endfor
+                                </tr>
+                                <tr class="tr-precios">
+                                    @for ($i = 0; $i < 6; $i++)
+                                    <td style="font-size: 8px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (12-$i)) }}
+                                    </td>
+                                    @endfor
+                                </tr>
+
+                                <tr style="background-color: {{Auth::user()->empresa()->color}}; border: solid 1px {{Auth::user()->empresa()->color}}; color: #fff; text-align: center;">
+                                    @for ($i = 7; $i <= 12; $i++)
+                                        <td style="font-size: 8px;">MES {{ $i }}</td>
+                                    @endfor
+                                </tr>
+                                <tr class="tr-precios">
+                                    @for ($i = 0; $i < 6; $i++)
+                                    <td style="font-size: 8px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (6-$i)) }}
+                                    </td>
+                                    @endfor
+                                </tr>
+                            </tbody>
                         </table>
                     </td>
                     <td style="vertical-align:top;" width="50%">
