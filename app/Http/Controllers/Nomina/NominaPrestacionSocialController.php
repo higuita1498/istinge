@@ -18,8 +18,8 @@ class NominaPrestacionSocialController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('can_access_to_page:161')->only('imprimir');
-        // $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
+        $this->middleware('can_access_to_page:161')->only('imprimir');
+        $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
     }
 
     public function prima(Request $request)
@@ -31,7 +31,7 @@ class NominaPrestacionSocialController extends Controller
         $rango = $request->rango;
         $tipo = $request->tipo;
 
-        if ($periodo < 6) {
+        if ($periodo <= 6) {
             $prima = 1;
             $desde = 1;
             $hasta = 6;
@@ -128,10 +128,10 @@ class NominaPrestacionSocialController extends Controller
             $valor = $request->valores[$key];
             $valorPagar = $request->valoresPagar[$key];
 
-            if ($valorPagar > $valor) {
-                return back()->with('error',
-                    'Error al guardar. Los valores a pagar deben ser inferiores al valor total');
-            }
+            // if ($valorPagar > $valor) {
+            //     return back()->with('error',
+            //         'Error al guardar. Los valores a pagar deben ser inferiores al valor total');
+            // }
 
             $prestacionSocial = NominaPrestacionSocial::where('fk_idnomina', $nomina)->where('nombre',
                 $nombre)->first();
