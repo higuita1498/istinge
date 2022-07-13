@@ -106,7 +106,7 @@ class RadicadosController extends Controller{
             }
             if($request->cliente){
                 $radicados->where(function ($query) use ($request) {
-                    $query->orWhere('radicados.nombre', 'like', "%{$request->cliente}%");
+                    $query->orWhere('radicados.identificacion', 'like', "%{$request->cliente}%");
                 });
             }
             if($request->telefono){
