@@ -85,6 +85,9 @@
 								@if(isset($_SESSION['permisos']['844']))
 								<a href="javascript:void(0);" onclick="generar_link({{ $contrato->id }});" class="btn btn-outline-warning btn-icons" title="Generar Link de Actualización de Firma"><i class="fas fa-fw fa-link"></i></a>
 								@endif
+								@if(isset($_SESSION['permisos']['846']))
+								<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-outline-primary btn-icons" title="Cargar Documentos"><i class="fas fa-fw fa-upload"></i></a>
+								@endif
 								@endif
 							</td>
 						</tr>
