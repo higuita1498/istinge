@@ -52,6 +52,9 @@
 	        <li class="nav-item">
 	            <a class="nav-link" id="pills-avanzado-tab" data-toggle="pill" href="#pills-avanzado" role="tab" aria-controls="pills-avanzado" aria-selected="false">Configuración Avanzada</a>
 	        </li>
+			<li class="nav-item">
+	            <a class="nav-link" id="pills-contabilidad-tab" data-toggle="pill" href="#pills-contabilidad" role="tab" aria-controls="pills-contabilidad" aria-selected="false">Contabilidad</a>
+	        </li>
 	    </ul>
 	    
 	    <div class="tab-content" id="pills-tabContent">
@@ -299,6 +302,116 @@
         	        </div>
 				</div>
 	        </div>
+			<div class="tab-pane fade" id="pills-contabilidad" role="tabpanel" aria-labelledby="pills-contabilidad-tab">
+				<div class="row">
+					<div class="form-group col-md-3">
+						<label class="control-label">Inventario <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
+							@foreach($cuentas as $cuenta)
+								<option {{old('inventario')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+							@endforeach
+							</select>
+						<span class="help-block error">
+							<strong>{{ $errors->first('inventario') }}</strong>
+						</span>
+					</div>
+					<div class="form-group col-md-3">
+						<label class="control-label">Costo <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
+							@foreach($cuentas as $cuenta)
+								<option {{old('costo')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+							@endforeach
+						</select>
+						<span class="help-block error">
+							<strong>{{ $errors->first('costo') }}</strong>
+						</span>
+					</div>
+					<div class="form-group col-md-3">
+						<label class="control-label">Venta <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
+							@foreach($cuentas as $cuenta)
+								<option {{old('venta')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+							@endforeach
+						</select>
+						<span class="help-block error">
+							<strong>{{ $errors->first('venta') }}</strong>
+						</span>
+					</div>
+					<div class="form-group col-md-3">
+						<label class="control-label">Devolución <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
+							@foreach($cuentas as $cuenta)
+								<option {{old('devolucion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
+							@endforeach
+						</select>
+						<span class="help-block error">
+							<strong>{{ $errors->first('devolucion') }}</strong>
+						</span>
+					</div>
+					</div>
+	
+					<div class="row">
+					<div class="form-group col-md-5">
+							
+					</div>
+						<div class="form-group col-md-7 ">
+							<div class="row">
+								<div class="col-md-6 monetario">
+								</div>
+								<div class="col-md-6" style="padding-top: 1%;padding-left: 0;"><button type="button" class="btn btn-link " style="padding-left: 0;" onclick="agregar_cuenta();" @if(json_encode($cuentas)=='[]') title="Usted no tiene cuentas registradas" @endif><i class="fas fa-plus"></i> Agregar otras cuentas contables</button></div>
+							</div>
+							<div class="row" id="lista_cuentas">
+								<div class="col-md-12">
+									<table id="table_cuentas">
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div>
+		
+					</div>
+					</div>
+	
+					<div class="row">
+					<div class="form-group col-md-4">
+						<label class="control-label">¿Producto con auto retención?</label>
+						<div class="row">
+							<div class="col-sm-6">
+							<div class="form-radio">
+								<label class="form-check-label">
+								<input type="radio" class="form-check-input" name="tipo_autoretencion" id="tipo_autoretencion1" value="1" checked=""> No
+								<i class="input-helper"></i></label>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-radio">
+								<label class="form-check-label">
+								<input type="radio" class="form-check-input" name="tipo_autoretencion" id="tipo_autoretencion2" value="2" @if(old('tipo_autoretencion')==1) checked="" @endif> Si
+								<i class="input-helper"></i></label>
+							</div>
+						</div>
+						</div>
+						<span class="help-block error">
+							<strong>{{ $errors->first('tipo_autoretencion') }}</strong>
+						</span>
+					</div>
+					<div class="form-group col-md-3">
+					<div class="cls-autoretencion d-none">
+						<label class="control-label">Cuenta de auto retención <span class="text-danger">*</span></label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione" required="">
+							@foreach($autoRetenciones as $cuenta)
+								<option {{old('autoretencion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
+							@endforeach
+					</select>
+					<span class="help-block error">
+						<strong>{{ $errors->first('autoretencion') }}</strong>
+					</span>
+					</div>
+					</div>
+					<div class="form-group col-md-5">
+					</div>
+				</div>
+	        </div>
 	    </div>
 	    
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
@@ -312,9 +425,12 @@
 	       </div>
 	   </div>
     </form>
+
+	<input type="hidden" id="json_cuentas" value="{{json_encode($cuentas)}}">
 @endsection
 
 @section('scripts')
+<script type="text/javascript" src="{{asset('lowerScripts/inventario/inventario.js')}}"></script>
 <script type="text/javascript">
     function typeChange(){
         if(document.getElementById("type").value == 1){
