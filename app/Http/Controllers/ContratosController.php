@@ -226,6 +226,11 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
                 });
             }
+            if($request->nro){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
+                });
+            }
 
         }
 
@@ -1871,6 +1876,11 @@ class ContratosController extends Controller
         if($request->tipo_contrato != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
+            });
+        }
+        if($request->nro != null){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
             });
         }
 
