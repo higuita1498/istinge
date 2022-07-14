@@ -63,6 +63,7 @@
 						<th>Cliente</th>
 						<th>Cédula</th>
 						<th>Fecha de Firma</th>
+						<th>Estado</th>
 						<th class="text-center">Acciones</th>
 		            </tr>
 				</thead>
@@ -71,6 +72,7 @@
 						<tr>
 							<td><a href="{{ route('contactos.show',$contrato->id )}}"  title="Ver">{{ $contrato->nombre }} {{ $contrato->apellido1 }} {{ $contrato->apellido2 }}</a></td>
 							<td>{{ $contrato->nit }}</td>
+							<td class="font-weight-bold text-{{ $contrato->asignacion('firma', true) }}">{{ $contrato->asignacion('firma', false) }}</td>
 							<td>{{date('d-m-Y', strtotime($contrato->fecha_isp))}}</td>
 							<td class="text-center">
 								@if(auth()->user()->modo_lectura())
