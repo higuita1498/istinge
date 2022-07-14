@@ -75,9 +75,12 @@
         	<div class="card shadow-sm border-0">
         		<div class="card-body py-3" style="background: #f9f9f9;">
         			<div class="row">
-        				<div class="col-md-2 pl-1 pt-1">
-        					<input type="text" class="form-control" id="celular" placeholder="Celular">
-        				</div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" class="form-control" id="nro" placeholder="Nro">
+                        </div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" class="form-control" id="celular" placeholder="Celular">
+                        </div>
         				<div class="col-md-2 pl-1 pt-1">
         					<input type="text" class="form-control" id="email" placeholder="Email">
         				</div>
@@ -93,7 +96,7 @@
                         <div class="col-md-2 pl-1 pt-1">
                             <input type="text" class="form-control" id="mac" placeholder="MAC">
                         </div>
-                        <div class="col-md-3 pl-1 pt-1">
+                        <div class="col-md-4 pl-1 pt-1">
                             <select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
                                 @foreach ($clientes as $cliente)
                                 <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
@@ -301,6 +304,11 @@
         });
     });
 
+    @foreach($tabla as $campo)
+        @if($campo->campo == 'ip')
+            var nro_orden = {{ $campo->orden }};
+        @endif
+    @endforeach
     var tabla = null;
     window.addEventListener('load',
     function() {
@@ -326,6 +334,9 @@
                 @endforeach
 				{ data: 'acciones' },
 			],
+            columnDefs: [{
+                type: 'ip-address', targets: nro_orden
+            }],
             @if(isset($_SESSION['permisos']['778']))
             select: true,
             select: {
@@ -352,6 +363,7 @@
 		});
 		
         tabla.on('preXhr.dt', function(e, settings, data) {
+            data.nro = $('#nro').val();
 			data.cliente_id = $('#client_id').val();
             data.plan = $('#plan').val();
             data.state = $('#state').val();
@@ -389,7 +401,7 @@
             }
         });
 
-        $('#celular, #email, #direccion, #barrio, #ip, #mac').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
@@ -444,7 +456,8 @@
 	}
 	
 	function cerrarFiltrador() {
-		$('#client_id').val('').selectpicker('refresh');
+		$('#nro').val('');
+        $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
 		$('#grupo_cort').val('').selectpicker('refresh');
 		$('#state').val('').selectpicker('refresh');
@@ -473,7 +486,7 @@
 	}
 	
 	function exportar() {
-	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val();
 	}
 
     function states(state){
