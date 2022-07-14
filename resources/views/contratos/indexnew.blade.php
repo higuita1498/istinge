@@ -307,7 +307,7 @@
     @foreach($tabla as $campo)
         @if($campo->campo == 'ip')
             var nro_orden = {{ $campo->orden }};
-        @endif,
+        @endif
     @endforeach
     var tabla = null;
     window.addEventListener('load',
