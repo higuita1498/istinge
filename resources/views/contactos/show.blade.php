@@ -364,11 +364,9 @@
 				</li>
 				@endif
 				@endif
-				{{-- @if($contacto->contract('true') != 'N/A') --}}
 				<li class="nav-item">
 					<a class="nav-link {{ $contacto->usado()==0?'active':'' }}" id="arcadj-tab" data-toggle="tab" href="#arcadj" role="tab" aria-controls="arcadj" aria-selected="false">Archivos Adjuntos</a>
 				</li>
-				{{-- @endif --}}
 			</ul>
 			<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
 			<div class="tab-content fact-table" id="myTabContent">
@@ -475,7 +473,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid #28A745;border-radius: 0.25rem;padding: 1.88rem 0.88rem;">
 								    	<h3 class="card-title text-success font-weight-bold">Agregar Adjunto</h3>
-								    	<a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-success btn-sm btn-icons"><i class="fas fa-plus"></i></a>
+								    	<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-success btn-sm btn-icons"><i class="fas fa-plus"></i></a>
 								    </div>
 								</div>
 							</div>

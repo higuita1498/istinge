@@ -89,7 +89,7 @@
 
                             @if($radicado->estatus==2 && !$radicado->firma)
                                 @if(isset($_SESSION['permisos']['209']))
-                                    <a href="{{route('radicados.firmar', $radicado->id)}}" class="btn btn-outline-warning btn-sm" title="Firmar" target="_blank"><i class="fas fa-file-signature"></i> Firmar Radicado</a>
+                                    <a href="{{route('radicados.firmar', $radicado->id)}}" class="btn btn-outline-warning btn-sm" title="Firmar"><i class="fas fa-file-signature"></i> Firmar Radicado</a>
                                 @endif
                             @endif
 

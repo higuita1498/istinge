@@ -165,7 +165,7 @@
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
 												@foreach ($clientes as $cliente)
-													<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+													<option value="{{ $cliente->nit }}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
 												@endforeach
 											</select>
 										</div>
@@ -280,7 +280,7 @@
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Cliente" class="form-control rounded selectpicker" id="clienteG" data-size="5" data-live-search="true">
 												@foreach ($clientes as $cliente)
-													<option value="{{ $cliente->nombre}}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+													<option value="{{ $cliente->nit }}">{{ $cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
 												@endforeach
 											</select>
 										</div>
@@ -468,6 +468,18 @@
 			format: 'yyyy-mm-dd' ,
 		});
 
+		$('#codigoG, #contratoG, #telefonoG').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTableG();
+        		return false;
+        	}
+        });
+
+        $('#fechaG, #clienteG, #servicioG, #estatusG, #creadoG, #prioridadG, #tecnicoG, #responsableG, #tiempo_finG').on('change',function() {
+        	getDataTableG();
+        	return false;
+        });
+
 		///////////////////////////////////////////
 
 		tablaG = $('#table_sin_gestionarG').DataTable({
@@ -556,6 +568,18 @@
 
         $('#btn_destroy').click( function () {
             destroy();
+        });
+
+        $('#codigo, #contrato, #telefono').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		getDataTable();
+        		return false;
+        	}
+        });
+
+        $('#fecha, #cliente, #servicio, #estatus, #creado, #prioridad, #tecnico, #responsable, #tiempo_fin').on('change',function() {
+        	getDataTable();
+        	return false;
         });
 	});
 

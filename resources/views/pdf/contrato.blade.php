@@ -357,7 +357,7 @@
                                 </tr>
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
-                                    <td style="font-size: 8px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                    <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
                                         {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (12-$i)) }}
                                     </td>
                                     @endfor
@@ -370,7 +370,7 @@
                                 </tr>
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
-                                    <td style="font-size: 8px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                    <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
                                         {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (6-$i)) }}
                                     </td>
                                     @endfor
