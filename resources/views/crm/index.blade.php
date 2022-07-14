@@ -165,7 +165,7 @@
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
-                    					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corte" data-size="5" data-live-search="true">
+                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corte" data-size="5" data-live-search="true">
                                             @foreach ($grupos_corte as $grupo)
                                                 <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
                                             @endforeach
@@ -234,7 +234,7 @@
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
-                    					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteG" data-size="5" data-live-search="true">
+                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corteG" data-size="5" data-live-search="true">
                 							@foreach ($grupos_corte as $grupo)
                                                 <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
                                             @endforeach
@@ -295,7 +295,7 @@
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
-                    					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteR" data-size="5" data-live-search="true">
+                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corteR" data-size="5" data-live-search="true">
                 							@foreach ($grupos_corte as $grupo)
                                                 <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
                                             @endforeach
@@ -356,7 +356,7 @@
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
-                    					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteT" data-size="5" data-live-search="true">
+                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corteT" data-size="5" data-live-search="true">
                 							@foreach ($grupos_corte as $grupo)
                                                 <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
                                             @endforeach
@@ -525,7 +525,7 @@
             data.cliente = $('#cliente').val();
             data.estado = $('#estado').val();
             data.created_by = $('#created_by').val();
-            data.fecha_corte = $('#fecha_corte').val();
+            data.grupo_corte = $('#grupo_corte').val();
             data.servidor = $('#servidor').val();
             data.filtro = true;
         });
@@ -574,7 +574,7 @@
             data.cliente = $('#clienteG').val();
             data.estado = $('#estadoG').val();
             data.created_by = $('#created_byG').val();
-            data.fecha_corte = $('#fecha_corteG').val();
+            data.grupo_corte = $('#grupo_corteG').val();
             data.servidor = $('#servidorG').val();
             data.filtro = true;
         });
@@ -623,7 +623,7 @@
             data.cliente = $('#clienteR').val();
             data.estado = $('#estadoR').val();
             data.created_by = $('#created_byR').val();
-            data.fecha_corte = $('#fecha_corteR').val();
+            data.grupo_corte = $('#grupo_corteR').val();
             data.servidor = $('#servidorR').val();
             data.filtro = true;
         });
@@ -672,7 +672,7 @@
             data.cliente = $('#clienteT').val();
             data.estado = $('#estadoT').val();
             data.created_by = $('#created_byT').val();
-            data.fecha_corte = $('#fecha_corteT').val();
+            data.grupo_corte = $('#grupo_corteT').val();
             data.servidor = $('#servidorT').val();
             data.filtro = true;
         });
@@ -720,7 +720,7 @@
 		$('#cliente').val('');
 		$('#estado').val('').selectpicker('refresh');
 		$('#created_by').val('').selectpicker('refresh');
-		$('#fecha_corte').val('').selectpicker('refresh');
+		$('#grupo_corte').val('').selectpicker('refresh');
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
@@ -741,7 +741,7 @@
 		$('#clienteG').val('');
 		$('#estadoG').val('').selectpicker('refresh');
 		$('#created_byG').val('').selectpicker('refresh');
-		$('#fecha_corteG').val('').selectpicker('refresh');
+		$('#grupo_corteG').val('').selectpicker('refresh');
 		$('#servidorG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
@@ -762,7 +762,7 @@
 		$('#clienteR').val('');
 		$('#estadoR').val('').selectpicker('refresh');
 		$('#created_byR').val('').selectpicker('refresh');
-		$('#fecha_corteR').val('').selectpicker('refresh');
+		$('#grupo_corteR').val('').selectpicker('refresh');
 		$('#servidorR').val('').selectpicker('refresh');
 		$('#form-filterR').addClass('d-none');
 		$('#boton-filtrarR').html('<i class="fas fa-search"></i> Filtrar');
@@ -783,7 +783,7 @@
 		$('#clienteT').val('');
 		$('#estadoT').val('').selectpicker('refresh');
 		$('#created_byT').val('').selectpicker('refresh');
-		$('#fecha_corteT').val('').selectpicker('refresh');
+		$('#grupo_corteT').val('').selectpicker('refresh');
 		$('#servidorT').val('').selectpicker('refresh');
 		$('#form-filterT').addClass('d-none');
 		$('#boton-filtrarT').html('<i class="fas fa-search"></i> Filtrar');
