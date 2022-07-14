@@ -304,6 +304,11 @@
         });
     });
 
+    @foreach($tabla as $campo)
+        @if($campo->campo == 'ip')
+            var nro_orden = {{ $campo->orden }};
+        @endif
+    @endforeach
     var tabla = null;
     window.addEventListener('load',
     function() {
@@ -329,6 +334,9 @@
                 @endforeach
 				{ data: 'acciones' },
 			],
+            columnDefs: [{
+                type: 'ip-address', targets: nro_orden
+            }]
             @if(isset($_SESSION['permisos']['778']))
             select: true,
             select: {

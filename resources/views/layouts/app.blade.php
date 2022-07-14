@@ -571,6 +571,8 @@
         <script src="{{asset('js/dian.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
         <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
+
+        <script src="//cdn.datatables.net/plug-ins/1.12.1/sorting/ip-address.js"></script>
         
         <script type="text/javascript">
             $( document ).ready(function() {
