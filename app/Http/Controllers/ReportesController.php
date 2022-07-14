@@ -2491,68 +2491,101 @@ class ReportesController extends Controller
     public function notasCredito(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         DB::enableQueryLog();
-        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Facturas Electrónicas', 'icon' =>'fas fa-chart-line']);
 
-        $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Notas Crédito', 'icon' => '']);
+
+        $campos = array('', 'f.codigo', 'c.nombre', 'notas_credito.fecha', 'nro', 'nro', 'nro', 'nro', 'nro');
+
+        //Si no existe un request entrante vamos a ordenar por la fecha de la factura descendentemente
         if (!$request->orderby) {
-            $request->orderby=1; $request->order=1;
-        }
-        $orderby=$campos[$request->orderby];
-        $order=$request->order==1?'DESC':'ASC';
-
-        $facturas = NotaCredito::join('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'factura.emitida')
-            ->where('factura.tipo',2)
-            ->where('factura.empresa',Auth::user()->empresa)
-            ->where('emitida',$request->tipo)
-            ->groupBy('factura.id');
-            
-        $example = $facturas->get()->last();
-
-        $dates = $this->setDateRequest($request);
-        
-        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
-            $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
-        }
-        $ides=array();
-        $facturas=$facturas->OrderBy($orderby, $order)->get();
-
-        foreach ($facturas as $factura) {
-            $ides[]=$factura->id;
+            $request->orderby = 3;
+            $request->order = 1;
         }
 
-        foreach ($facturas as $invoice) {
-            $invoice->subtotal = $invoice->total()->subsub;
-            $invoice->iva = $invoice->impuestos_totales();
-            $invoice->retenido = $factura->retenido(true);
-            $invoice->total = $invoice->total()->total - $invoice->devoluciones();
+        $orderby = $campos[$request->orderby];
+        $order = $request->order == 1 ? 'DESC' : 'ASC';
+
+        //Si no existe un request con fecha vamos a tomas el mes actual como rangos
+        if($request->fechas != 8){
+            if (!$request->fecha) {
+                $arrayDate = $this->setDateRequest($request);
+                $desde = $arrayDate['inicio'];
+                $hasta = $arrayDate['fin'];
+            } else {
+                $desde = Carbon::parse($request->fecha)->format('Y-m-d');
+                $hasta = Carbon::parse($request->hasta)->format('Y-m-d');
+            }
+        }else{
+            $desde = '2000-01-01';
+            $hasta = now()->format('Y-m-d');
         }
-        if($request->orderby == 4 || $request->orderby == 5  || $request->orderby == 6 || $request->orderby == 7 ){
-            switch ($request->orderby){
+
+        $notasc = NotaCredito::join('contactos as c', 'notas_credito.cliente', '=', 'c.id')
+            ->join('notas_factura as nf', 'nf.nota', '=', 'notas_credito.id')
+            ->join('factura as f', 'f.id', '=', 'nf.factura')
+            ->where('notas_credito.empresa', auth()->user()->empresa)
+            ->where('notas_credito.fecha', '>=', $desde)->where('notas_credito.fecha', '<=', $hasta)
+            ->where('notas_credito.emitida',$request->tipo)
+            ->select(
+                'notas_credito.id as id',
+                'notas_credito.nro',
+                'c.id as cliente',
+                'c.nombre',
+                'notas_credito.fecha',
+                'f.id as fid',
+                'f.codigo',
+                'f.nro as fnro',
+                'notas_credito.emitida'
+            )
+            ->orderBy($orderby, $order)->groupBy('notas_credito.id')->get();
+
+
+        //variable la cual identifica lo que se debe descontar por devoluciones pagadas.
+        $devoluciones = 0;
+        $retenciones = 0;
+        $subtotal = 0;
+        $total = 0;
+        $iva = 0;
+        $saldosR = 0;
+
+        foreach ($notasc as $nota) {
+            $subtotal = $subtotal + $nota->subtotal = ($nota->total()->subtotal - $nota->total()->descuento);
+            $iva = $iva + $nota->iva = $nota->impuestos_totales();
+            $retenciones = $retenciones + $nota->retenido = $nota->retenido_factura();
+            $total = $total + $nota->total = $nota->total()->total;
+            $saldosR = $saldosR + $nota->saldoRestante = $nota->por_aplicar();
+        }
+
+
+        if (
+            $request->orderby == 4 || $request->orderby == 5 || $request->orderby == 6 || $request->orderby == 7 || $request->orderby == 8
+        ) {
+            switch ($request->orderby) {
+
                 case 4:
-                    $facturas = $request->order  ? $facturas->sortBy('subtotal') : $facturas = $facturas->sortByDesc('subtotal');
+                    $notasc = $request->order ? $notasc->sortBy('subtotal') : $notasc = $notasc->sortByDesc('subtotal');
                     break;
                 case 5:
-                    $facturas = $request->order ? $facturas->sortBy('iva') : $facturas = $facturas->sortByDesc('iva');
+                    $notasc = $request->order ? $notasc->sortBy('iva') : $notasc = $notasc->sortByDesc('iva');
                     break;
                 case 6:
-                    $facturas = $request->order ? $facturas->sortBy('retenido') : $facturas = $facturas->sortByDesc('retenido');
+                    $notasc = $request->order ? $notasc->sortBy('retenido') : $notasc = $notasc->sortByDesc('retenido');
                     break;
                 case 7:
-                    $facturas = $request->order ? $facturas->sortBy('total') : $facturas = $facturas->sortByDesc('total');
+                    $notasc = $request->order ? $notasc->sortBy('total') : $notasc = $notasc->sortByDesc('total');
                     break;
             }
         }
-        $facturas = $this->paginate($facturas, 15, $request->page, $request);
+        $notasc = $this->paginate($notasc, 15, $request->page, $request);
+        $notas = $notasc;
 
-        $subtotal=$total=0;
-        if ($ides) {
-            $result=DB::table('items_factura')->whereIn('factura', $ides)->select(DB::raw("SUM((`cant`*`precio`)) as 'total', SUM((precio*(`desc`/100)*`cant`)+0)  as 'descuento', SUM((precio-(precio*(if(`desc`,`desc`,0)/100)))*(`impuesto`/100)*cant) as 'impuesto'  "))->first();
-            $subtotal=$this->precision($result->total-$result->descuento);
-            $total=$this->precision((float)$subtotal+$result->impuesto);
-        }
-        return view('reportes.facturasElectronicas.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example'));
+        return view('reportes.notascredito.index')->with(compact('notas',
+        'subtotal',
+        'total',
+        'request',
+        'iva',
+        'retenciones',
+        'saldosR'));
     }
 
 }

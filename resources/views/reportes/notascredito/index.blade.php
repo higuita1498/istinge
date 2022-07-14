@@ -78,38 +78,45 @@
 			<table class="table table-striped table-hover " id="table-facturas">
 			<thead class="thead-dark">
 				<tr>
-                    <th>Nro. Factura</th>
-                    <th>Cliente <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==1?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
-                    <th>Creación <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==2?'':'no_order'}}" campo="2" order="@if($request->orderby==2){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==2){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Vencimiento <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Tipo <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Total <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==7?'':'no_order'}}" campo="7" order="@if($request->orderby==7){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==7){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+					<th>Nro.</th>
+					<th>Factura <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==1?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Cliente <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==2?'':'no_order'}}" campo="2" order="@if($request->orderby==2){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==2){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Creación <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Subtotal<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==4?'':'no_order'}}" campo="4" order="@if($request->orderby==4){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==4){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>IVA <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==5?'':'no_order'}}" campo="5" order="@if($request->orderby==5){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==5){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Retención <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==6?'':'no_order'}}" campo="6" order="@if($request->orderby==6){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==6){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Total <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==7?'':'no_order'}}" campo="7" order="@if($request->orderby==7){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==7){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
 	          </tr>
 			</thead>
 			<tbody>
 
-				@foreach($facturas as $factura)
+				@foreach($notas as $nota)
 					<tr>
-                        <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a> </td>
-                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}}  {{$factura->cliente()->apellidos()}} @if($factura->cliente()->celular) | {{$factura->cliente()->celular}}@endif</a></td>
-                        <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
-                        <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
-                        <td>{{$factura->emitida == 1 ? 'Emitida' : 'No emitida'}}</td>
-                        <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->devoluciones())}}</td>
+						<td><a href="{{route('notascredito.show',$nota->nro)}}" target="_blanck">{{$nota->nro}}</a> </td>
+						<td><a href="{{route('facturas.show',$nota->fnro)}}" >{{$nota->codigo}}</a></td>
+                        <td><div class="elipsis-short" style="width:135px;"><a href="{{route('contactos.show',$nota->cliente()->id)}}" target="_blanck">{{$nota->cliente()->nombre}}</a></div></td>
+                        <td>{{date('Y-m-d', strtotime($nota->fecha))}}</td>
+                        <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($nota->subtotal)}}</td>
+                        <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($nota->iva)}}</td>
+						<td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($nota->retenido)}}</td>
+                        <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($nota->total)}}</td>
 					</tr>
 				@endforeach
 			</tbody>
 			<tfoot class="thead-dark">
-				<td colspan="4"></td>
+				<td colspan="3"></td>
 				<th  class="text-right">Total</th>
-				<th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($total)}}</th>
+				<th>{{Auth::user()->empresaObj->moneda}} {{App\Funcion::Parsear($subtotal)}}</th>
+				<th>{{Auth::user()->empresaObj->moneda}} {{App\Funcion::Parsear($iva)}}</th>
+				<th>{{Auth::user()->empresaObj->moneda}} {{App\Funcion::Parsear($retenciones)}}</th>
+				<th>{{Auth::user()->empresaObj->moneda}} {{App\Funcion::Parsear($total)}}</th>
 			</tfoot>
 
 		</table>
-            {!! $facturas->render() !!}
+            {!! $notas->render() !!}
 	</div>
 </div>
 </form>
-<input type="hidden" id="urlgenerar" value="{{route('reportes.facturasElectronicas')}}">
-<input type="hidden" id="urlexportar" value="{{route('exportar.facturasElectronicas')}}">
+<input type="hidden" id="urlgenerar" value="{{route('reportes.notasCredito')}}">
+<input type="hidden" id="urlexportar" value="{{route('exportar.notasCredito')}}">
 @endsection

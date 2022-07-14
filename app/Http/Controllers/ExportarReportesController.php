@@ -4118,4 +4118,186 @@ class ExportarReportesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
+
+    public function notasCredito(Request $request){
+        //Acá se obtiene la información a impimir
+        DB::enableQueryLog();
+
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte de notas crédito desde " . $request->fecha . " hasta " . $request->hasta;
+
+        $titulosColumnas = array(
+            'Nro.',
+            'Factura',
+            'Cliente',
+            'Creacion',
+            'Subtotal',
+            'IVA',
+            'Retencion',
+            'Total'
+        );
+        $letras = array(
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z'
+        );
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte Excel Notas Crédito") // Titulo
+        ->setSubject("Reporte Excel Notas Crédito") //Asunto
+        ->setDescription("Reporte de Notas Crédito") //Descripci���n
+        ->setKeywords("reporte Notas Crédito") //Etiquetas
+        ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:I1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', $tituloReporte);
+        $estilo = array(
+            'font' => array('bold' => true, 'size' => 12, 'name' => 'Times New Roman'),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($estilo);
+        $estilo = array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => 'd08f50')
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:H3')->applyFromArray($estilo);
+
+
+        for ($i = 0; $i < count($titulosColumnas); $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        if($request->fechas != 8){
+            if (!$request->fecha) {
+                $arrayDate = $this->setDateRequest($request);
+                $desde = $arrayDate['inicio'];
+                $hasta = $arrayDate['fin'];
+            } else {
+                $desde = Carbon::parse($request->fecha)->format('Y-m-d');
+                $hasta = Carbon::parse($request->hasta)->format('Y-m-d');
+            }
+        }else{
+            $desde = '2000-01-01';
+            $hasta = now()->format('Y-m-d');
+        }
+
+        $notasc = NotaCredito::join('contactos as c', 'notas_credito.cliente', '=', 'c.id')
+            ->join('notas_factura as nf', 'nf.nota', '=', 'notas_credito.id')
+            ->join('factura as f', 'f.id', '=', 'nf.factura')
+            ->where('notas_credito.empresa', auth()->user()->empresa)
+            ->where('notas_credito.fecha', '>=', $desde)->where('notas_credito.fecha', '<=', $hasta)
+            ->select('notas_credito.id as id', 'notas_credito.nro', 'c.id as cliente', 'c.nombre',
+                'notas_credito.fecha', 'f.id as fid', 'f.codigo', 'f.nro as fnro')
+            ->orderBy('id', 'DESC')->groupBy('notas_credito.id');
+
+        $notasc = $notasc->paginate(1000000)->appends([
+            'fechas' => $request->fechas,
+            'nro' => $request->nro,
+            'fecha' => $request->fecha,
+            'hasta' => $request->hasta
+        ]);
+
+        //variable la cual identifica lo que se debe descontar por devoluciones pagadas.
+        $devoluciones = 0;
+        $retenciones = 0;
+        $subtotal = 0;
+        $total = 0;
+        $iva = 0;
+        $saldosR = 0;
+
+        foreach ($notasc as $nota) {
+            $subtotal = $subtotal + $nota->subtotal = ($nota->total()->subtotal - $nota->total()->descuento);
+            $iva = $iva + $nota->iva = $nota->impuestos_totales();
+            $retenciones = $retenciones + $nota->retenido = $nota->retenido_factura();
+            $total = $total + $nota->total = $nota->total()->total;
+            $saldosR = $saldosR + $nota->saldoRestante = $nota->por_aplicar();
+        }
+
+        // Aquí se escribe en el archivo
+        $i = 4;
+        foreach ($notasc as $nota) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0] . $i, $nota->nro)
+                ->setCellValue($letras[1] . $i, $nota->codigo)
+                ->setCellValue($letras[2] . $i, $nota->cliente()->nombre)
+                ->setCellValue($letras[3] . $i, date('d-m-Y', strtotime($nota->fecha)))
+                ->setCellValue($letras[4] . $i, $nota->subtotal)
+                ->setCellValue($letras[5] . $i, $nota->iva)
+                ->setCellValue($letras[6] . $i, $nota->retenido)
+                ->setCellValue($letras[7] . $i, $nota->total);
+            $i++;
+        }
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue($letras[3] . $i, "TOTAL: ")
+            ->setCellValue($letras[4] . $i, $subtotal)
+            ->setCellValue($letras[5] . $i, $iva)
+            ->setCellValue($letras[6] . $i, $retenciones)
+            ->setCellValue($letras[7] . $i, $total);
+
+
+        $estilo = array(
+            'font' => array('size' => 12, 'name' => 'Times New Roman'),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:H' . $i)->applyFromArray($estilo);
+
+
+        for ($i = 'A'; $i <= $letras[20]; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Reporte de Notas Crédito');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A2');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_notascredito.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
 }
