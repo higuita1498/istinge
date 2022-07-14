@@ -45,6 +45,8 @@ Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
 Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
 Route::get('PagoVencimiento','CronController@PagoVencimiento')->name('PagoVencimiento');
+Route::get('cortarpromesas','CronController@CortarPromesas')->name('CortarPromesas');
+
 
 /*PAYU*/
 
