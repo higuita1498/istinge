@@ -166,8 +166,9 @@
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corte" data-size="5" data-live-search="true">
-                							<option value="15">15</option>
-                							<option value="30">30</option>
+                                            @foreach ($grupos_corte as $grupo)
+                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
+                                            @endforeach
                 						</select>
                     				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
@@ -234,8 +235,9 @@
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteG" data-size="5" data-live-search="true">
-                							<option value="15">15</option>
-                							<option value="30">30</option>
+                							@foreach ($grupos_corte as $grupo)
+                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
+                                            @endforeach
                 						</select>
                     				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
@@ -294,8 +296,9 @@
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteR" data-size="5" data-live-search="true">
-                							<option value="15">15</option>
-                							<option value="30">30</option>
+                							@foreach ($grupos_corte as $grupo)
+                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
+                                            @endforeach
                 						</select>
                     				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
@@ -354,8 +357,9 @@
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Corte" class="form-control rounded selectpicker" id="fecha_corteT" data-size="5" data-live-search="true">
-                							<option value="15">15</option>
-                							<option value="30">30</option>
+                							@foreach ($grupos_corte as $grupo)
+                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
+                                            @endforeach
                 						</select>
                     				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
