@@ -16,9 +16,11 @@ use Auth;
 use Session;
 use App\Rules\guion;
 use App\Funcion;
-
+USE App\ProductoCuenta;
 use App\Mikrotik;
 use App\PlanesVelocidad;
+use App\Puc;
+use App\Retencion;
 
 use App\Impuesto;  
 use App\Model\Inventario\Inventario; 
@@ -147,8 +149,17 @@ class PlanesVelocidadController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Plan', 'icon' => 'fas fa-server']);
         $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
-        
-        return view('planesvelocidad.create')->with(compact('mikrotiks'));
+        $empresa = Auth::user()->empresa;
+
+        //Tomar las categorias del puc que no son transaccionables.
+        $cuentas = Puc::where('empresa',$empresa)
+        ->where('estatus',1)
+        ->whereRaw('length(codigo) > 6')
+        ->get();
+        $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
+        $type = '';
+
+        return view('planesvelocidad.create')->with(compact('mikrotiks','cuentas','autoRetenciones','type'));
     }
     
     public function store(Request $request){
@@ -176,6 +187,7 @@ class PlanesVelocidadController extends Controller
             $inventario->nro           = 0;
             $inventario->categoria     = 116;
             $inventario->lista         = 0;
+            $inventario->type_autoretencion = isset($request->tipo_autoretencion) ? $request->tipo_autoretencion : null;
             $inventario->type          = 'PLAN';
             $inventario->save();
 
@@ -205,6 +217,58 @@ class PlanesVelocidadController extends Controller
             $plan->empresa = Auth::user()->empresa;
             $plan->dhcp_server = $request->dhcp_server;
             $plan->save();
+
+
+             //Desarrollo pendiente de cuentas por producto
+        if ($request->cuentacontable) {
+            foreach ($request->cuentacontable as $key => $value) {
+                    DB::table('producto_cuentas')->insert([
+                        'cuenta_id' => $value,
+                        'inventario_id' => $inventario->id
+                    ]);
+            }
+        }
+
+            //introduccion de cuentas de productos y servicios (inv, costo, venta y dev).
+            if(isset($request->inventario)){
+                $pr = new ProductoCuenta;
+                $pr->cuenta_id = $request->inventario;
+                $pr->inventario_id = $inventario->id;
+                $pr->tipo = 1;
+                $pr->save();
+            }
+        
+            if(isset($request->costo)){
+                $pr = new ProductoCuenta;
+                $pr->cuenta_id = $request->costo;
+                $pr->inventario_id = $inventario->id;
+                $pr->tipo = 2;
+                $pr->save();
+            }
+
+            if(isset($request->venta)){
+                $pr = new ProductoCuenta;
+                $pr->cuenta_id = $request->venta;
+                $pr->inventario_id = $inventario->id;
+                $pr->tipo = 3;
+                $pr->save();
+            }
+
+            if(isset($request->devolucion)){
+                $pr = new ProductoCuenta;
+                $pr->cuenta_id = $request->devolucion;
+                $pr->inventario_id = $inventario->id;
+                $pr->tipo = 4;
+                $pr->save();
+            }
+
+            if(isset($request->autoretencion)){
+                $pr = new ProductoCuenta;
+                $pr->cuenta_id = $request->autoretencion;
+                $pr->inventario_id = $inventario->id;
+                $pr->tipo = 5;
+                $pr->save();
+            }
         }
             
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PLAN';
@@ -307,11 +371,20 @@ class PlanesVelocidadController extends Controller
     
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
+        $empresa = Auth::user()->empresa;
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        $cuentas = Puc::where('empresa',$empresa)
+        ->where('estatus',1)
+        ->whereRaw('length(codigo) > 6')
+        ->get();
+        $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
+
         if ($plan) {
+            $inventario = Inventario::find($plan->item);
+            $cuentasInventario = $inventario->cuentas();
             view()->share(['title' => 'Modificar Plan', 'icon' => 'fas fa-server']);
             $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
-            return view('planesvelocidad.edit')->with(compact('plan', 'mikrotiks'));
+            return view('planesvelocidad.edit')->with(compact('plan', 'mikrotiks', 'cuentas', 'autoRetenciones','cuentasInventario','inventario'));
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
@@ -358,7 +431,115 @@ class PlanesVelocidadController extends Controller
             $inventario->precio      = $this->precision($request->price);
             $inventario->id_impuesto = ($request->tipo_plan == 2) ? 1 : 2;
             $inventario->impuesto    = ($request->tipo_plan == 2) ? 19 : 0;
+            $inventario->type_autoretencion = isset($request->tipo_autoretencion) ? $request->tipo_autoretencion : null;
             $inventario->save();
+
+            $services = array();
+            
+            if(isset($request->inventario)){
+                array_push($services,$request->inventario);
+            }
+
+            if(isset($request->costo)){
+                array_push($services,$request->costo);
+            }
+
+            if(isset($request->venta)){
+                array_push($services,$request->venta);
+            }
+            
+            if(isset($request->devolucion)){
+                array_push($services,$request->devolucion);
+            }
+
+            if(isset($request->autoretencion)){
+                array_push($services,$request->autoretencion);
+            }
+
+            if($request->cuentacontable){
+                $request->cuentacontable = array_merge($request->cuentacontable, $services);
+            }else{
+                $request->cuentacontable = $services;
+            }
+
+            //actualizando cuentas del inventario
+            $insertsCuenta=array();
+            if ($request->cuentacontable) {
+                foreach ($request->cuentacontable as $key) {
+
+                    if(!DB::table('producto_cuentas')->
+                    where('cuenta_id',$key)->
+                    where('inventario_id',$inventario->id)->first()){
+                        
+                        $idCuentaPro = DB::table('producto_cuentas')->insertGetId([
+                            'cuenta_id' => $key,
+                            'inventario_id' => $inventario->id
+                        ]);
+
+                    }else{
+                        $idCuentaPro = DB::table('producto_cuentas')->
+                        where('cuenta_id',$key)->
+                        where('inventario_id',$inventario->id)->first()->id;
+                    }
+                    $insertsCuenta[]=$idCuentaPro;
+                }
+                if (count($insertsCuenta)>0) {
+                    DB::table('producto_cuentas')
+                    ->where('inventario_id',$inventario->id)
+                    ->whereNotIn('id',$insertsCuenta)->delete();
+                }
+            }else{
+                DB::table('producto_cuentas')
+                    ->where('inventario_id',$inventario->id)
+                    ->delete();
+            }
+
+             //Actualizacion de cuentas contables por tipo
+             if(isset($request->inventario)){
+
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->inventario)->first();
+                if($inven){
+                    $inven->tipo = 1;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->costo)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->costo)->first();
+                if($inven){
+                    $inven->tipo = 2;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->venta)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->venta)->first();
+                if($inven){
+                    $inven->tipo = 3;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->devolucion)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->devolucion)->first();
+                if($inven){
+                    $inven->tipo = 4;
+                    $inven->save();
+                }
+            }
+
+            if(isset($request->autoretencion)){
+                $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->autoretencion)->first();
+
+                if($request->tipo_autoretencion == 1){
+                    $inven->delete();
+                }else{
+                    if($inven){
+                        $inven->tipo = 5;
+                        $inven->save();
+                    }
+                }
+            }
             
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
             return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
