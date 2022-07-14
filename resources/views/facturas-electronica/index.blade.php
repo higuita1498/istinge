@@ -195,7 +195,7 @@
 				'url': '/vendors/DataTables/es.json'
 			},
 			order: [
-				[2, "DESC"],[0, "DESC"]
+				[4, "DESC"],[0, "DESC"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
 			ajax: '{{url("/facturas-electronicas")}}',

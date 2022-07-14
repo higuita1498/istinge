@@ -1080,6 +1080,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/puntos-de-ventas-ganancias', 'ReportesController@puntoVenta')->name('reportes.puntoVenta');
 		Route::get('/puntos-de-ventas-recaudos', 'ReportesController@puntoVentaRecaudo')->name('reportes.puntoVentaRecaudo');
 		Route::get('/facturas-electronicas', 'ReportesController@facturasElectronicas')->name('reportes.facturasElectronicas');
+		Route::get('/notas-credito', 'ReportesController@notasCredito')->name('reportes.notasCredito');
+
 
 		//Rutas para modulo estado de cuenta cliente
 		Route::get('/estadoCliente', 'ReportesController@estadoCliente')->name('reportes.estadoCliente');
@@ -1113,6 +1115,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('/puntos-de-ventas-ganancias', 'ExportarReportesController@puntoVenta')->name('exportar.puntoVenta');
         Route::get('/puntos-de-ventas-recaudos', 'ExportarReportesController@puntoVentaRecaudo')->name('exportar.puntoVentaRecaudo');
         Route::get('/facturas-electronicas', 'ExportarReportesController@facturasElectronicas')->name('exportar.facturasElectronicas');
+        Route::get('/notas-credito', 'ExportarReportesController@notasCredito')->name('exportar.notasCredito');
 
 		//rutas para modulo estado de cuenta cliente
 		Route::get('/estadoCliente', 'ExportarReportesController@estadoCliente')->name('exportar.estadoCliente');
