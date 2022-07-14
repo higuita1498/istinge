@@ -165,7 +165,7 @@
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
-                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corte" data-size="5" data-live-search="true">
+                    					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corteA" data-size="5" data-live-search="true">
                                             @foreach ($grupos_corte as $grupo)
                                                 <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
                                             @endforeach
@@ -525,7 +525,7 @@
             data.cliente = $('#cliente').val();
             data.estado = $('#estado').val();
             data.created_by = $('#created_by').val();
-            data.grupo_corte = $('#grupo_corte').val();
+            data.grupo_corte = $('#grupo_corteA').val();
             data.servidor = $('#servidor').val();
             data.filtro = true;
         });
