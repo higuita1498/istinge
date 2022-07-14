@@ -37,17 +37,17 @@ class AsignacionesController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['invert' => true]);
         if(auth()->user()->empresa()->oficina){
-            $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->where('contactos.oficina', auth()->user()->oficina)->get();
+            $contratos = Contacto::where('fecha_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->where('contactos.oficina', auth()->user()->oficina)->get();
         }else{
-            $contratos = Contacto::where('firma_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->get();
+            $contratos = Contacto::where('fecha_isp','<>',null)->where('empresa', Auth::user()->empresa)->where('status', 1)->OrderBy('nombre')->get();
         }
         return view('asignaciones.index')->with(compact('contratos'));
     }
 
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = Contacto::where('firma_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::where('firma_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = Contacto::where('fecha_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('fecha_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::where('fecha_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $empresa = Empresa::find(Auth::user()->empresa);
         view()->share(['title' => 'Asignación de Contrato de Internet']);
         return view('asignaciones.create')->with(compact('clientes', 'empresa'));
@@ -59,17 +59,16 @@ class AsignacionesController extends Controller
             $mensaje='Debe seleccionar un cliente para la asignación del contrato digital';
             return back()->with('danger', $mensaje);
         }
-        if (!$request->id || !$request->firma_isp || !$request->file('documento')){
+        if (!$request->id || !$request->file('documento')){
             $mensaje='Debe adjuntar la documentación para la asignación del contrato digital';
-            return back()->with('danger', $mensaje);
-        }
-        if (!$request->id || !$request->firma_isp || !$request->file('documento')){
-            $mensaje='Debe realizar la firma de aceptación de contrato para la asignación';
             return back()->with('danger', $mensaje);
         }
         $contrato = Contacto::where('id',$request->id)->where('empresa', Auth::user()->empresa)->first();
         if ($contrato) {
-            $contrato->firma_isp = $request->firma_isp;
+            if($request->firma_isp){
+                $contrato->firma_isp = $request->firma_isp;
+            }
+
             $contrato->fecha_isp = date('Y-m-d');
             $file = $request->file('documento');
             $nombre =  'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
