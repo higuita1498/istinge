@@ -359,7 +359,7 @@ class Contacto extends Model
             if($class){
                 return ($this->firma_isp) ? 'success' : 'danger';
             }
-            return ($this->firma_isp) ? 'Firmado' : 'No firmado';
+            return ($this->firma_isp) ? 'Firmado' : 'Pendiente por firmar';
         }
 
     }
