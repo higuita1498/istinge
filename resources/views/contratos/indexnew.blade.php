@@ -606,7 +606,7 @@
                         cargando(false);
                         swal({
                             title: 'PROCESO REALIZADO',
-                            html: 'Exitosos: <strong>'+data.correctos+' contratos</strong><br>Fallidos: <strong>'+data.fallidos+' contratos</strong><br>Contratos Duplicados: '+data.contracts_fallidos,
+                            html: 'Contratos Enviados a la MK<br>'+data.contracts_correctos+'<br>Contratos Duplicados: '+data.contracts_fallidos,
                             type: 'success',
                             showConfirmButton: true,
                             confirmButtonColor: '#1A59A1',
