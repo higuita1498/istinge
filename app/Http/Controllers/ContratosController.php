@@ -2615,7 +2615,7 @@ class ContratosController extends Controller
     public function enviar_mk_lote($contratos){
         $this->getAllPermissions(Auth::user()->id);
 
-        $succ = 0; $fail = 0; $registro = false;
+        $succ = 0; $fail = 0; $registro = false; $contracts_fallidos = '';
 
         $contratos = explode(",", $contratos);
 
@@ -2779,14 +2779,16 @@ class ContratosController extends Controller
                     }
                 }else{
                     $fail++;
+                    $contracts_fallidos .= 'Contrato Nro '.$contrato->nro.'<br>';
                 }
             }
         }
 
         return response()->json([
-            'success'   => true,
-            'fallidos'  => $fail,
-            'correctos' => $succ
+            'success'            => true,
+            'fallidos'           => $fail,
+            'correctos'          => $succ,
+            'contracts_fallidos' => $contracts_fallidos
         ]);
     }
 
