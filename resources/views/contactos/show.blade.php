@@ -473,7 +473,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid #28A745;border-radius: 0.25rem;padding: 1.88rem 0.88rem;">
 								    	<h3 class="card-title text-success font-weight-bold">Agregar Adjunto</h3>
-								    	<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-success btn-sm btn-icons"><i class="fas fa-plus"></i></a>
+								    	<a href="{{ route('asignaciones.edit',$contacto->id )}}" class="btn btn-success btn-sm btn-icons"><i class="fas fa-plus"></i></a>
 								    </div>
 								</div>
 							</div>
