@@ -334,9 +334,6 @@
                 @endforeach
 				{ data: 'acciones' },
 			],
-            columnDefs: [{
-                type: 'ip-address', targets: nro_orden
-            }],
             @if(isset($_SESSION['permisos']['778']))
             select: true,
             select: {
