@@ -35,6 +35,9 @@
                             <th class="bg-th text-center">Fecha Suspensión</th>
                             <th class="bg-th text-center">Hora  Suspensión</th>
                             <th class="bg-th text-center">Estado</th>
+                            @if($grupo->updated_by)
+                            <th class="bg-th text-center">Editado</th>
+                            @endif
                             <th class="bg-th text-center">Contratos Asociados</th>
                         </tr>
                         <tr>
@@ -45,6 +48,9 @@
                             <td class="text-center">{{$grupo->fecha_suspension == 0 ? 'No Aplica' : $grupo->fecha_suspension}}</td>
                             <td class="text-center">{{date('g:i A', strtotime($grupo->hora_suspension))}}</td>
                             <td class="text-center"><span class="text-{{$grupo->status('true')}}"><b>{{$grupo->status()}}</b></span></td>
+                            @if($grupo->updated_by)
+                            <td class="text-center">Por {{$grupo->updated_by()}} el {{date('d-m-Y g:i:s A', strtotime($grupo->updated_at))}}</td>
+                            @endif
                             <td class="text-center">{{$contratos}}</td>
                         </tr>
                     </tbody>
