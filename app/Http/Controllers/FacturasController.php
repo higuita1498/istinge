@@ -3219,7 +3219,7 @@ class FacturasController extends Controller{
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select(
+            ->select('factura.id',
                 DB::raw('c.nit as referencia'),
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as valor'),
                 'factura.created_at',
