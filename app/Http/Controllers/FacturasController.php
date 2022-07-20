@@ -396,7 +396,7 @@ class FacturasController extends Controller{
             return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
         })
         ->addColumn('total', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total)}";
+            return "{$moneda} {$factura->parsear($factura->total()->total)}";
         })
         ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
             return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
@@ -505,7 +505,7 @@ class FacturasController extends Controller{
             return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
         })
         ->addColumn('total', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total)}";
+            return "{$moneda} {$factura->parsear($factura->total()->total)}";
         })
         ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
             return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
