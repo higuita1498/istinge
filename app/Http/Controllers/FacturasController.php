@@ -3472,7 +3472,7 @@ class FacturasController extends Controller{
                 ->setCellValue($letras[3].$i, $factura->cliente()->tip_iden('true').' '.$factura->nitcliente)
                 ->setCellValue($letras[4].$i, $moneda.' '.$factura->parsear(($factura->total - $factura->impuestos_totales())))
                 ->setCellValue($letras[5].$i, $moneda.' '.$factura->parsear(($factura->impuestos_totales())))
-                ->setCellValue($letras[6].$i, $moneda.' '.$factura->parsear(($factura->total)))
+                ->setCellValue($letras[6].$i, $moneda.' '.$factura->parsear(($factura->total()->total)))
                 ->setCellValue($letras[7].$i, $moneda.' '.$factura->parsear(($factura->pagado)))
                 ->setCellValue($letras[8].$i, $moneda.' '.$factura->parsear(($factura->porpagar)))
                 ->setCellValue($letras[9].$i, ($factura->cuenta_id) ?$factura->formaPago()->nombre:'');
