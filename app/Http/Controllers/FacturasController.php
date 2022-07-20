@@ -3239,8 +3239,8 @@ class FacturasController extends Controller{
             $campo2 = ($factura->campo2) ? $factura->campo2 : 'NA';
             $campo3 = ($factura->campo3) ? $factura->campo3 : 'NA';
 
-            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->valor).'|'.$factura->created_at.'|"'.$campo1.'"|"'.$campo2.'"|"'.$campo3.'"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
-            $valor += $factura->valor;
+            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->total()->total).'|'.$factura->created_at.'|"'.$campo1.'"|"'.$campo2.'"|"'.$campo3.'"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
+            $valor += $factura->total()->total;
         }
         fputs($file, '"03"|'.count($facturas).'|'.round($valor).'|'.date('Y-m-d H:i:s').'|||||'.PHP_EOL);
         fclose($file);
