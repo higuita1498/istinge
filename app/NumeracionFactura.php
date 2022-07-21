@@ -41,9 +41,12 @@ class NumeracionFactura extends Model
     }
 
     public static function tipoNumeracion($contrato){
-    
-        if($contrato->facturacion == 3){
-            $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+        if(isset($contrato)){
+            if($contrato->facturacion == 3){
+                $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+            }else{
+                $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+            }
         }else{
             $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
         }
