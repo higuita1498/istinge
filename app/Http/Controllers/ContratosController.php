@@ -3128,7 +3128,7 @@ class ContratosController extends Controller
 
             $request->mk = (strtoupper($request->mk) == 'NO') ? 0 : 1;
 
-            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->first();
+            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit*1)->where('contracts.empresa', Auth::user()->empresa)->where('contracts.status', 1)->where('c.status', 1)->first();
 
             if (!$contrato) {
                 $nro = Numeracion::where('empresa', 1)->first();
@@ -3167,15 +3167,15 @@ class ContratosController extends Controller
             $contrato->facturacion             = $request->facturacion;
             $contrato->tecnologia              = $request->tecnologia;
 
-            if($request->descuento){ $contrato->descuento = $request->descuento; }
-            if($request->canal){ $contrato->canal = $request->canal; }
-            if($request->oficina){ $contrato->oficina = $request->oficina; }
-            if($request->nodo){ $contrato->nodo = $request->nodo; }
-            if($request->ap){ $contrato->ap = $request->ap; }
-            if($request->mac){ $contrato->mac_address = $request->mac; }
-            if($request->serial_onu){ $contrato->serial_onu = $request->serial_onu; }
-            if($request->created_at){ $contrato->created_at = $request->created_at; }
-            if($request->mk){ $contrato->mk = $request->mk; }
+            $contrato->descuento               = $request->descuento;
+            $contrato->canal                   = $request->canal;
+            $contrato->oficina                 = $request->oficina;
+            $contrato->nodo                    = $request->nodo;
+            $contrato->ap                      = $request->ap;
+            $contrato->mac_address             = $request->mac;
+            $contrato->serial_onu              = $request->serial_onu;
+            $contrato->created_at              = $request->created_at;
+            $contrato->mk                      = $request->mk;
 
             $contrato->save();
         }
