@@ -1252,7 +1252,7 @@ class IngresosController extends Controller
             if (!$gestor) {
                 return back()->with('danger','ERROR: ALGO HA FALLADO EN LA CARGA DEL ARCHIVO, INTENTE NUEVAMENTE');
             }
-            $tamanio_bufer = 130; # bytes
+            $tamanio_bufer = 400; # bytes
             while (($lectura = fgets($gestor, $tamanio_bufer)) != false) {
                 $lectura = explode("|", $lectura);
                 if($lectura[0] == '01' || $lectura[0] == '03'){}else{

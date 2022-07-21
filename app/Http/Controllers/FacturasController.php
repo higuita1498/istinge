@@ -396,7 +396,7 @@ class FacturasController extends Controller{
             return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
         })
         ->addColumn('total', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total)}";
+            return "{$moneda} {$factura->parsear($factura->total()->total)}";
         })
         ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
             return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
@@ -505,7 +505,7 @@ class FacturasController extends Controller{
             return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
         })
         ->addColumn('total', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total)}";
+            return "{$moneda} {$factura->parsear($factura->total()->total)}";
         })
         ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
             return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
@@ -3219,7 +3219,7 @@ class FacturasController extends Controller{
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select(
+            ->select('factura.id',
                 DB::raw('c.nit as referencia'),
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as valor'),
                 'factura.created_at',
@@ -3239,8 +3239,8 @@ class FacturasController extends Controller{
             $campo2 = ($factura->campo2) ? $factura->campo2 : 'NA';
             $campo3 = ($factura->campo3) ? $factura->campo3 : 'NA';
 
-            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->valor).'|'.$factura->created_at.'|"'.$campo1.'"|"'.$campo2.'"|"'.$campo3.'"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
-            $valor += $factura->valor;
+            fputs($file, '"02"|"'.$factura->referencia.'"|'.round($factura->total()->total).'|'.$factura->created_at.'|"'.$campo1.'"|"'.$campo2.'"|"'.$campo3.'"|"NA"|"'.$factura->campo5.'"'.PHP_EOL);
+            $valor += $factura->total()->total;
         }
         fputs($file, '"03"|'.count($facturas).'|'.round($valor).'|'.date('Y-m-d H:i:s').'|||||'.PHP_EOL);
         fclose($file);
@@ -3472,7 +3472,7 @@ class FacturasController extends Controller{
                 ->setCellValue($letras[3].$i, $factura->cliente()->tip_iden('true').' '.$factura->nitcliente)
                 ->setCellValue($letras[4].$i, $moneda.' '.$factura->parsear(($factura->total - $factura->impuestos_totales())))
                 ->setCellValue($letras[5].$i, $moneda.' '.$factura->parsear(($factura->impuestos_totales())))
-                ->setCellValue($letras[6].$i, $moneda.' '.$factura->parsear(($factura->total)))
+                ->setCellValue($letras[6].$i, $moneda.' '.$factura->parsear(($factura->total()->total)))
                 ->setCellValue($letras[7].$i, $moneda.' '.$factura->parsear(($factura->pagado)))
                 ->setCellValue($letras[8].$i, $moneda.' '.$factura->parsear(($factura->porpagar)))
                 ->setCellValue($letras[9].$i, ($factura->cuenta_id) ?$factura->formaPago()->nombre:'');

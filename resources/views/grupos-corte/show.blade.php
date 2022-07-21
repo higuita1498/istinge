@@ -28,23 +28,27 @@
                 <table class="table table-striped table-bordered table-sm info">
                     <tbody>
                         <tr class="text-center">
-                            <th class="bg-th text-center">Nombre</th>
                             <th class="bg-th text-center">Fecha factura</th>
                             <th class="bg-th text-center">Fecha pago</th>
                             <th class="bg-th text-center">Fecha Corte</th>
                             <th class="bg-th text-center">Fecha Suspensión</th>
                             <th class="bg-th text-center">Hora  Suspensión</th>
                             <th class="bg-th text-center">Estado</th>
+                            @if($grupo->updated_by)
+                            <th class="bg-th text-center">Editado</th>
+                            @endif
                             <th class="bg-th text-center">Contratos Asociados</th>
                         </tr>
                         <tr>
-                            <td class="text-center">{{$grupo->nombre}}</td>
                             <td class="text-center">{{$grupo->fecha_factura == 0 ? 'No Aplica' : $grupo->fecha_factura}}</td>
                             <td class="text-center">{{$grupo->fecha_pago == 0 ? 'No Aplica' : $grupo->fecha_pago}}</td>
                             <td class="text-center">{{$grupo->fecha_corte == 0 ? 'No Aplica' : $grupo->fecha_corte}}</td>
                             <td class="text-center">{{$grupo->fecha_suspension == 0 ? 'No Aplica' : $grupo->fecha_suspension}}</td>
                             <td class="text-center">{{date('g:i A', strtotime($grupo->hora_suspension))}}</td>
                             <td class="text-center"><span class="text-{{$grupo->status('true')}}"><b>{{$grupo->status()}}</b></span></td>
+                            @if($grupo->updated_by)
+                            <td class="text-center">Por {{$grupo->updated_by()->nombres}}<br>{{date('d-m-Y g:i:s A', strtotime($grupo->updated_at))}}</td>
+                            @endif
                             <td class="text-center">{{$contratos}}</td>
                         </tr>
                     </tbody>
