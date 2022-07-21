@@ -1252,7 +1252,7 @@ class IngresosController extends Controller
             if (!$gestor) {
                 return back()->with('danger','ERROR: ALGO HA FALLADO EN LA CARGA DEL ARCHIVO, INTENTE NUEVAMENTE');
             }
-            $tamanio_bufer = 130; # bytes
+            $tamanio_bufer = 140; # bytes
             while (($lectura = fgets($gestor, $tamanio_bufer)) != false) {
                 $lectura = explode("|", $lectura);
                 if($lectura[0] == '01' || $lectura[0] == '03'){}else{
@@ -1265,6 +1265,7 @@ class IngresosController extends Controller
             fclose($gestor);
 
             foreach ($registros as $registro) {
+                dd($registros);
                 $codigo = substr($registro['8'],1,-3);
                 $precio = $this->precision($registro['2']);
                 $nit = substr($registro['1'], 1, -1);
