@@ -89,7 +89,8 @@ class ConfiguracionController extends Controller
     view()->share(['title' => 'Modificar Información de la Empresa', 'icon' =>'']);
     $identificaciones=TipoIdentificacion::all();
     $empresa = Empresa::find(Auth::user()->empresa);
-    $responsabilidades = DB::table('responsabilidades_facturacion')->get();
+    $responsabilidades = DB::table('responsabilidades_facturacion')
+    ->where('id', 5)->orWhere('id', 7)->orWhere('id', 12)->orWhere('id', 20)->orWhere('id', 29)->get();
     $prefijos=DB::table('prefijos_telefonicos')->get();
     $paises  =DB::table('pais')->get();
     $departamentos = DB::table('departamentos')->get();

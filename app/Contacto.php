@@ -353,4 +353,14 @@ class Contacto extends Model
     public function oficina(){
         return Oficina::find($this->oficina);
     }
+
+    public function asignacion($opt = false, $class = false){
+        if($opt == 'firma'){
+            if($class){
+                return ($this->firma_isp) ? 'success' : 'danger';
+            }
+            return ($this->firma_isp) ? 'Firmado' : 'Pendiente por firmar';
+        }
+
+    }
 }

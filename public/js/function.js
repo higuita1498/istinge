@@ -4808,3 +4808,23 @@ function notificacionTecnico(){
         });
     }
 }
+
+function impuestoFacturaDeVenta(impuesto) {
+    let myArr = $("#" + impuesto).val();
+
+    // console.log(impuesto);
+    if (myArr[0] == 0 && myArr[myArr.length - 1] != 0) {
+        $("#" + impuesto + " option[value=" + myArr[0] + "]").removeProp("selected");
+
+    } else if (myArr[myArr.length - 1] == 0) {
+        $("#" + impuesto).val('').selectpicker('refresh');
+    }
+    if (myArr[0] == 0 && myArr[myArr.length - 1] == 0) {
+        $("#" + impuesto + " option[value=" + myArr[0] + "]").prop("selected", "selected");
+    }
+
+    setTimeout(function() {
+        $("#" + impuesto).selectpicker('refresh');
+    }, 800);
+
+}

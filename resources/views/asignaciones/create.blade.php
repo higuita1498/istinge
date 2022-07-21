@@ -317,7 +317,7 @@
         });
         savePNGButton.addEventListener("click", function (event) {
             if (signaturePad.isEmpty()) {
-                alert("Ingrese la firma del cliente.");
+                //alert("Ingrese la firma del cliente.");
                 return false;
             } else {
                 var dataURL = signaturePad.toDataURL();

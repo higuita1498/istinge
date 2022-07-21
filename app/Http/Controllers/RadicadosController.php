@@ -546,7 +546,7 @@ class RadicadosController extends Controller{
     }
 
     public function notificacionRadicado(){
-        $radicado=Radicado::whereIn('estatus', [0,2])->where('creado', 2)->get();
+        $radicado = Radicado::whereIn('estatus', [0,2])->where('tecnico', Auth::user()->id)->get();
         return json_encode($radicado);
     }
   

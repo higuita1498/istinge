@@ -565,6 +565,12 @@ class NotascreditoController extends Controller
             $devoluciones = Devoluciones::where('nota', $nota->id)->get();
             $tipos = DB::table('tipos_nota_credito')->get();
 
+            //obtiene las formas de pago relacionadas con este modulo (Facturas)
+            $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+            $formasPago = PucMovimiento::where('documento_id',$nota->id)->where('tipo_comprobante',6)->where('enlace_a',4)->get();
+
+            // return $nota->modelDetalle()->factura();
+
             return view('notascredito.edit')->with(compact(
                 'nota',
                 'retencionesNotas',
@@ -582,7 +588,9 @@ class NotascreditoController extends Controller
                 'proveedores',
                 'facturas_reg',
                 'listas',
-                'tipos'
+                'tipos',
+                'formasPago',
+                'relaciones'
             ));
         }
 
@@ -958,7 +966,6 @@ class NotascreditoController extends Controller
                     return $nota->modelDetalle()->factura()->formaPagoRequest(1);
                 }
             }
-            return;
 
             PucMovimiento::notaCredito($nota,2,$request);
             $mensaje = 'Se ha modificado satisfactoriamente la nota de Crédito';
