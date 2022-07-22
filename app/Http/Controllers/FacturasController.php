@@ -3526,7 +3526,7 @@ class FacturasController extends Controller{
 
         $factura = Factura::where('empresa', $empresa->id)->where('id', $nro)->first();
 
-        $path = public_path() . '/software/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
+        $path = public_path() . '/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
 
         if (!File::exists($path)) { 
 
@@ -3542,7 +3542,7 @@ class FacturasController extends Controller{
 
                 $xmlFactura = base64_decode($response->document);
 
-                $rutaXml = "/software/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
+                $rutaXml = "/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
 
                 // Storage::disk('public_2')->put($rutaXml, $xmlFactura);
             } else {
