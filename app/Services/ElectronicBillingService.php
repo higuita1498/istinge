@@ -31,7 +31,7 @@ class ElectronicBillingService
 
     public function decodeResponse($response)
     {
-        return json_decode($response);
+        return json_decode($response); 
     }
 
 
