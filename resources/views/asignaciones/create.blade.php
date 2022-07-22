@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('boton')
-    @if(isset($_SESSION['permisos']['751']))
-        <a href="javascript:editCampos();" class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Editar Configuración</a>
-    @endif
+
 @endsection
 
 @section('content')
@@ -166,103 +164,6 @@
     <script src="{{asset('vendors/signature_pad/2.3.2/signature_pad.min.js')}}"></script>
     <script src="{{asset('vendors/signature_pad/1.5.3/signature_pad.min.js')}}"></script>
 
-    <div class="modal fade" id="modal_conf"  tabindex="-1" role="dialog">
-        <div class="modal-dialog" style="max-width: 50%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Editar Campos Adjuntos</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('asignaciones.campos_asignacion') }}" style="padding: 2% 3%;" role="form" class="forms-sample"  id="forma" >
-                        @csrf
-                        <div class="row">
-                            <div class="form-group col-md-6 offset-md-3">
-                                <label class="control-label">Campo Principal</label>
-                                <input type="text" class="form-control" name="campo_1" id="campo_1">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_1') }}</strong>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo A</label>
-                                <input type="text" class="form-control" name="campo_a" id="campo_a">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_a') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo B</label>
-                                <input type="text" class="form-control" name="campo_b" id="campo_b">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_b') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo C</label>
-                                <input type="text" class="form-control" name="campo_c" id="campo_c">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_c') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo D</label>
-                                <input type="text" class="form-control" name="campo_d" id="campo_d">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_d') }}</strong>
-                                </span>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo E</label>
-                                <input type="text" class="form-control" name="campo_e" id="campo_e">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_e') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo F</label>
-                                <input type="text" class="form-control" name="campo_f" id="campo_f">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_f') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo G</label>
-                                <input type="text" class="form-control" name="campo_g" id="campo_g">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_g') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="control-label">Campo H</label>
-                                <input type="text" class="form-control" name="campo_h" id="campo_h">
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('campo_h') }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label class="control-label">Contrato Digital</label>
-                                <textarea class="form-control" name="contrato_digital" id="contrato_digital" rows="6" maxlength="2050"></textarea>
-                                <span class="help-block error">
-                                    <strong>{{ $errors->first('contrato_digital') }}</strong>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="cancelar">Cancelar</button>
-                                <a href="javascript:void(0);" class="btn btn-success" id="guardar">Guardar</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         var wrapper = document.getElementById("signature-pad");
         var clearButton = wrapper.querySelector("[data-action=clear]");
@@ -317,7 +218,6 @@
         });
         savePNGButton.addEventListener("click", function (event) {
             if (signaturePad.isEmpty()) {
-                //alert("Ingrese la firma del cliente.");
                 return false;
             } else {
                 var dataURL = signaturePad.toDataURL();
@@ -326,49 +226,11 @@
                 //document.getElementById("submitcheck").click();
             }
         });
-        // saveJPGButton.addEventListener("click", function (event) {
-        //     if (signaturePad.isEmpty()) {
-        //         alert("Ingrese la firma del cliente.");
-        //         return false;
-        //     } else {
-        //         var dataURL = signaturePad.toDataURL("image/jpeg");
-        //         document.getElementById("dataImg").value = dataURL;
-        //         document.getElementById("submitcheck").click();
-        //     }
-        // });
-        // saveSVGButton.addEventListener("click", function (event) {
-        //     if (signaturePad.isEmpty()) {
-        //         alert("Ingrese la firma del cliente.");
-        //         return false;
-        //     } else {
-        //         var dataURL = signaturePad.toDataURL('image/svg+xml');
-        //         document.getElementById("dataImg").value = dataURL;
-        //         document.getElementById("submitcheck").click();
-        //     }
-        // });
     </script>
 @endsection
 
 @section('scripts')
     <script>
-        function editCampos(){
-            var url = 'config_campos_asignacion';
-            $.get(url,function(data){
-                data = JSON. parse(data);
-                $("#campo_a").val(data.campo_a);
-                $("#campo_b").val(data.campo_b);
-                $("#campo_c").val(data.campo_c);
-                $("#campo_d").val(data.campo_d);
-                $("#campo_e").val(data.campo_e);
-                $("#campo_f").val(data.campo_f);
-                $("#campo_g").val(data.campo_g);
-                $("#campo_h").val(data.campo_h);
-                $("#campo_1").val(data.campo_1);
-                $("#contrato_digital").val(data.contrato_digital);
-            });
-            $('#modal_conf').modal("show");
-        }
-
         $(document).on('change','input[type="file"]',function(){
             var fileName = this.files[0].name;
             var fileSize = this.files[0].size;
@@ -418,29 +280,6 @@
         }
 
         $(document).ready(function () {
-            $("#guardar").click(function (form) {
-                $.post($("#forma").attr('action'), $("#forma").serialize(), function (data) {
-                    console.log(data);
-                    if(data.success == true){
-                        $('#cancelar').click();
-                        $('#forma').trigger("reset");
-                        swal("Configuración Almacenada", "", "success");
-                        $("#div_campo_a").text('').text(data.campo_a);
-                        $("#div_campo_b").text('').text(data.campo_b);
-                        $("#div_campo_c").text('').text(data.campo_c);
-                        $("#div_campo_d").text('').text(data.campo_d);
-                        $("#div_campo_e").text('').text(data.campo_e);
-                        $("#div_campo_f").text('').text(data.campo_f);
-                        $("#div_campo_g").text('').text(data.campo_g);
-                        $("#div_campo_h").text('').text(data.campo_h);
-                        $("#div_campo_1").text('').html(data.campo_1+' <span class="text-danger">*</span>');
-                        $("#div_contrato_digital").text('').html(data.contrato_digital);
-                    } else {
-                        swal('ERROR', 'Intente nuevamente', "error");
-                    }
-                }, 'json');
-            });
-
             $('#cancelar').click(function () {
                 $('#forma').trigger("reset");
             });
