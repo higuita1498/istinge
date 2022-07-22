@@ -15,12 +15,11 @@ class ElectronicBillingService
 
     protected $partnershipId;
 
-
     public function __construct()
     {
-        $this->baseUri = config('services.billing.base_uri');
-        $this->authorizationToken = config('services.billing.authorization_token');
-        $this->partnershipId = config('services.billing.partnership_id');
+        $this->baseUri = "https://apine.efacturacadena.com";
+        $this->authorizationToken = "42e5b496-d882-4041-97ec-e3e91750805f990ef12f-36ff-454b-b020-fb19e953c37397478011-edaf-4f66-9945-81b691a718b118213614-da33-4e7b-9c22-ce78e0d55cf0";
+        $this->partnershipId = 1128464945;
     }
 
 
