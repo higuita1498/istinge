@@ -708,7 +708,8 @@ class CronController extends Controller
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
                 if($servicio->user && $servicio->pass){
-                    $post['to'] = array('57'.$numero);
+                    //$post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "SMS";
                     $login = $servicio->user;
@@ -729,7 +730,8 @@ class CronController extends Controller
                 }
             }else{
                 if($servicio->user && $servicio->pass){
-                    $post['to'] = array('57'.$numero);
+                    //$post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "";
                     $login = $servicio->user;
@@ -825,7 +827,7 @@ class CronController extends Controller
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
                 if($servicio->user && $servicio->pass){
-                    $post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "SMS";
                     $login = $servicio->user;
@@ -846,7 +848,7 @@ class CronController extends Controller
                 }
             }else{
                 if($servicio->user && $servicio->pass){
-                    $post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "";
                     $login = $servicio->user;
