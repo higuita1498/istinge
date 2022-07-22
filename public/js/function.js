@@ -2423,25 +2423,27 @@ function llenarSelectAnticipo(value,cliente, nro){
         let i = 1;
 
         if($("#notacredito").length > 0 && value == 0){
-            $.each( recibos, function( key, value ){
-                
+
+            // $.each( recibos.factura, function( key, val ){
+
                 $('#selectanticipo'+nro).append($('<option>',
                     {
-                        value: value.id,
-                        precio: Math.round(value.total),
+                        value: recibos.factura.id,
+                        precio: Math.round(recibos.factura.total),
                         id: "optionAnticipo"+i,
-                        text : "FV-"+value.codigo+" - "+ Math.round(value.total)+""
+                        text : "FV-"+recibos.factura.codigo+" - "+ Math.round(recibos.factura.total)+""
                     }));
                 i++;
-            });
+            // });
         }else if(value == 0){
-            $.each( recibos.factura, function( key, value ){
+
+            $.each( recibos, function( key, val ){
                 $('#selectanticipo'+nro).append($('<option>',
                     {
-                        value: value.id,
-                        precio: Math.round(value.valor_anticipo),
+                        value: val.id,
+                        precio: Math.round(val.valor_anticipo),
                         id: "optionAnticipo"+i,
-                        text : "RC-"+value.nro+" - "+ Math.round(value.valor_anticipo)+""
+                        text : "RC-"+val.nro+" - "+ Math.round(val.valor_anticipo)+""
                     }));
                 i++;
             });

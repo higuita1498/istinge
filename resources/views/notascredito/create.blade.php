@@ -508,7 +508,7 @@
                     cargando(true);
                 },*/
                 complete: function(data){
-                    console.log(data.responseText);
+                    // console.log(data.responseText);
                     data = JSON.parse(data.responseText);
 
                     $('#table-form tbody tr').remove();
