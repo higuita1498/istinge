@@ -17,7 +17,7 @@ class ElectronicBillingService
 
     public function __construct()
     {
-        $this->baseUri = "https://apine.efacturacadena.com";
+        $this->baseUri = "https://apivp.efacturacadena.com/";
         $this->authorizationToken = "62808bf1-d446-46ee-8120-00162e95c059";
         $this->partnershipId = "1128464945";
     }
