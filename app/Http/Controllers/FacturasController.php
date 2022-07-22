@@ -3528,7 +3528,7 @@ class FacturasController extends Controller{
 
         $path = public_path() . '/software/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
 
-        if (!File::exists($path)) {
+        if (!File::exists($path)) { 
 
             $numeracion = NumeracionFactura::where('empresa', $empresa->id)
                 ->where('num_equivalente', 0)
