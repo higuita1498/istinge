@@ -32,6 +32,8 @@ use App\Servidor;
 use App\GrupoCorte;
 use App\Mikrotik;
 use App\Integracion;
+use App\CRMLOG;
+use App\PromesaPago;
 
 class CRMController extends Controller
 {
@@ -280,28 +282,58 @@ class CRMController extends Controller
         ]);
         
         $crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->get()->last();
+        $accion_log = '';
         if($crm){
             if($request->llamada == 0){
                 $estado = 3;
+                $accion_log .= 'CRM Gestionado/Sin Contestar';
             }else{
                 $estado = 1;
+                $accion_log .= 'CRM Gestionado';
             }
             
             if($request->retirado == 1){
                 $estado = 4;
+                $accion_log .= ': Cliente Retirado<br>';
             }else if($request->retirado == 2){
                 $estado = 5;
+                $accion_log .= ': Cliente Retirado Total<br>';
             }
             
-            $crm->llamada = $request->llamada;
-            $crm->informacion = $request->informacion;
+            $crm->llamada      = $request->llamada;
+            $crm->informacion  = $request->informacion;
             $crm->promesa_pago = $request->promesa_pago;
-            $crm->fecha_pago = $request->fecha;
-            $crm->tiempo = $request->tiempo;
-            $crm->created_by = auth()->user()->id;
-            $crm->empresa = Auth::user()->empresa;
+            $crm->fecha_pago   = $request->fecha;
+            $crm->tiempo       = $request->tiempo;
+            $crm->created_by   = auth()->user()->id;
+            $crm->empresa      = Auth::user()->empresa;
             
             if($request->promesa_pago && $request->fecha){
+                $factura = Factura::find($crm->factura);
+                $factura->vencimiento = date('Y-m-d', strtotime($request->fecha));
+                $factura->observaciones = $factura->observaciones.' | Promesa de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
+                $factura->save();
+
+                ### PROMESA DE PAGO ###
+
+                $nro_promesa = 0;
+                $nro_promesa = PromesaPago::all()->count();
+                $nro_promesa++;
+
+                $promesa_pago              = New PromesaPago;
+                $promesa_pago->nro         = $nro_promesa;
+                $promesa_pago->factura     = $factura->id;
+                $promesa_pago->cliente     = $factura->cliente;
+                $promesa_pago->fecha       = $factura->vencimiento;
+                $promesa_pago->vencimiento = $request->promesa_pago;
+                $promesa_pago->created_by  = Auth::user()->id;
+                $promesa_pago->save();
+
+                ### LOG CRM ###
+                $accion_log .= ': Asociando Promesa de Pago N° '.$nro_promesa.'<br>';
+
+                ### EVÍO DE SMS AL CLIENTE ###
+
                 $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
                 if($servicio){
                     $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
@@ -395,12 +427,6 @@ class CRMController extends Controller
                         }
                     }
                 }
-
-                $factura = Factura::find($crm->factura);
-
-                $factura->vencimiento = date('Y-m-d', strtotime($request->fecha));
-                $factura->observaciones = $factura->observaciones.' | Promesa de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
-                $factura->save();
             }
             
             if($request->numero_nuevo){
@@ -408,10 +434,20 @@ class CRMController extends Controller
                 $contacto->celular = $request->numero_nuevo;
                 $contacto->save();
                 $estado = 6;
+
+                $accion_log .= ': Actualización de número telefónico '.$request->numero_nuevo.'<br>';
             }
             
             $crm->estado = $estado;
             $crm->save();
+
+            ### LOG CRM ###
+
+            $log             = New CRMLOG;
+            $log->id_crm     = $crm->id;
+            $log->accion     = $accion_log;
+            $log->created_by = Auth::user()->id;
+            $log->save();
             
             return response()->json([
                 'success' => true,
@@ -642,5 +678,36 @@ class CRMController extends Controller
             'title' => 'ERROR',
             'icon'  => 'error'
         ]);
+    }
+
+    public function log($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $crm = CRM::find($id);
+        if ($crm) {
+            view()->share(['icon' => 'fas fa-clipboard-list', 'title' => 'Log | CRM: '.$crm->id]);
+            return view('crm.log')->with(compact('crm'));
+        } else {
+            return back()->with('error', 'NO SE HA PODIDO OBTENER EL LOG DEL CRM');
+        }
+        return back()->with('error', 'NO SE HA PODIDO OBTENER EL LOG DEL CRM');
+    }
+
+    public function logsCRM(Request $request, $crm){
+        $modoLectura = auth()->user()->modo_lectura();
+        $crms = CRMLOG::query();
+        $crms->where('id_crm', $crm);
+
+        return datatables()->eloquent($crms)
+        ->editColumn('created_at', function (CRMLOG $crm) {
+            return date('d-m-Y g:i:s A', strtotime($crm->created_at));
+        })
+        ->editColumn('created_by', function (CRMLOG $crm) {
+            return $crm->created_by()->nombres;
+        })
+        ->editColumn('accion', function (CRMLOG $crm) {
+            return $crm->accion;
+        })
+        ->rawColumns(['created_at', 'created_by', 'accion'])
+        ->toJson();
     }
 }

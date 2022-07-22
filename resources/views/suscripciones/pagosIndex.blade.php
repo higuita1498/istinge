@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('boton')
-<a href="https://gestordepartes.net/PlanesPagina" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Pago</a>
+<a href="#" target="_blank" class="btn btn-primary btn-sm d-none"><i class="fas fa-plus"></i> Nuevo Pago</a>
 @endsection
 
 @section('content')

@@ -43,7 +43,9 @@
 @endsection
 
 @section('boton')
-
+    @if(isset($_SESSION['permisos']['847']))
+        <a href="{{route('crm.log', $crm->id)}}" class="btn btn-warning btn-sm"><i class="fas fa-clipboard-list"></i> Ver Log del CRM</a>
+    @endif
 @endsection
 
 @section('content')

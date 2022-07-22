@@ -10,4 +10,8 @@
             <a href="javascript:cambiarRetiroTotal('{{$id}}');" title="" class="btn btn-outline-danger btn-icons"><i class="fas fa-times"></i></a>
         @endif
     @endif
+
+    @if (isset($session['847']))
+        <a href="{{route('crm.log', $id)}}" title="Ve Log del CRM" class="btn btn-outline-warning btn-icons"><i class="fas fa-clipboard-list"></i></a>
+    @endif
 </center>

@@ -83,6 +83,7 @@ Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
 Route::get('reporte', 'CRMController@reporte');
+Route::get('logsCRM/{crm}', 'CRMController@logsCRM');
 Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
 Route::get('promesas', 'PromesasPagoController@promesas');
@@ -1359,6 +1360,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('exportar', 'CRMController@exportar')->name('crm.exportar');
 	        Route::get('/notificacion','CRMController@notificacion')->name('crm.notificacion');
 	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
+            Route::get('{id}/log', 'CRMController@log')->name('crm.log');
 	    });
 		Route::resource('crm', 'CRMController');
 

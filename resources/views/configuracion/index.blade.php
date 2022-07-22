@@ -8,7 +8,7 @@
 	</div>
 	<div class="col-sm-8">
 		<p  class="card-title"> <span class="text-primary">Empresa:</span> {{Auth::user()->empresa()->nombre}} <br>
-			<span class="text-primary">{{Auth::user()->empresa()->tip_iden()}}:</span>  {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv)-{{Auth::user()->empresa()->dv}}@endif<br>
+			<span class="text-primary">{{Auth::user()->empresa()->tip_iden()}}:</span> {{Auth::user()->empresa()->nit}}@if(Auth::user()->empresa()->dv)-{{Auth::user()->empresa()->dv}}@endif<br>
 			<span class="text-primary">Tipo de Persona:</span>  {{Auth::user()->empresa()->tipo_persona()}}<br>
 			<span class="text-primary">Teléfono:</span>  {{Auth::user()->empresa()->telefono}}<br>
 			@if(Auth::user()->empresa()->whatsapp)<span class="text-primary">Whatsapp:</span>  {{Auth::user()->empresa()->whatsapp}}<br>@endif
