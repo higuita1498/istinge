@@ -3128,7 +3128,7 @@ class ContratosController extends Controller
 
             $request->mk = (strtoupper($request->mk) == 'NO') ? 0 : 1;
 
-            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit*1)->where('contracts.empresa', Auth::user()->empresa)->where('contracts.status', 1)->where('c.status', 1)->first();
+            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->where('contracts.status', 1)->where('c.status', 1)->first();
 
             if (!$contrato) {
                 $nro = Numeracion::where('empresa', 1)->first();
