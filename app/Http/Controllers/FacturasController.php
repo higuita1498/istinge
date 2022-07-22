@@ -49,6 +49,7 @@ use ZipArchive;
 use App\Integracion;
 use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
+use App\Services\ElectronicBillingService;
 
 class FacturasController extends Controller{
 
