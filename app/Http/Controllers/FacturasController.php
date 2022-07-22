@@ -49,14 +49,16 @@ use ZipArchive;
 use App\Integracion;
 use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
+use App\Services\ElectronicBillingService;
 
 class FacturasController extends Controller{
 
     protected $url;
 
-    public function __construct(){
-        $this->middleware('auth');
+    public function __construct(ElectronicBillingService $electronicBillingService){
+        $this->middleware('auth'); 
         view()->share(['seccion' => 'facturas', 'title' => 'Factura de Venta', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
+        $this->electronicBillingService = $electronicBillingService;
     }
 
     public function indexold(Request $request){
@@ -3522,11 +3524,11 @@ class FacturasController extends Controller{
     function xml($nro){
         $empresa = auth()->user()->empresaObj;
 
-        $factura = Factura::where('empresa', $empresa->id)->where('nro', $nro)->first();
+        $factura = Factura::where('empresa', $empresa->id)->where('id', $nro)->first();
 
-        $path = public_path() . '/software/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
+        $path = public_path() . '/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
 
-        if (!File::exists($path)) {
+        if (!File::exists($path)) { 
 
             $numeracion = NumeracionFactura::where('empresa', $empresa->id)
                 ->where('num_equivalente', 0)
@@ -3540,9 +3542,9 @@ class FacturasController extends Controller{
 
                 $xmlFactura = base64_decode($response->document);
 
-                $rutaXml = "/software/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
+                $rutaXml = "/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
 
-                Storage::disk('public_2')->put($rutaXml, $xmlFactura);
+                // Storage::disk('public_2')->put($rutaXml, $xmlFactura);
             } else {
                 return back()->with('error', "No se ha encontrado el xml perteneciente al documento");
             }

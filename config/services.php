@@ -13,7 +13,11 @@ return [
     | to have a conventional place to find your various credentials.
     |
     */
-
+    'billing' => [
+        'base_uri' => env('BILLING_BASE_URI'),
+        'authorization_token' => env('BILLING_AUTHORIZATION_TOKEN'),
+        'partnership_id' => env('BILLING_PARTNERSHIP_ID'),
+    ],
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
