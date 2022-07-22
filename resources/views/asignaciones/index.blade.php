@@ -54,62 +54,63 @@
 	@endif
 
 	@if(isset($_SESSION['permisos']['410']))
-
-	<div class="row card-description">
-		<div class="col-md-12">
-			<table class="table table-striped table-hover" id="example">
-				<thead class="thead-dark">
-					<tr>
-						<th>Cliente</th>
-						<th>Cédula</th>
-						<th>Fecha de Firma</th>
-						<th>Estado</th>
-						<th class="text-center">Acciones</th>
-		            </tr>
-				</thead>
-				<tbody>
-					@foreach($contratos as $contrato)
+		<div class="row card-description">
+			<div class="col-md-12">
+				<table class="table table-striped table-hover" id="example">
+					<thead class="thead-dark">
 						<tr>
-							<td><a href="{{ route('contactos.show',$contrato->id )}}"  title="Ver">{{ $contrato->nombre }} {{ $contrato->apellido1 }} {{ $contrato->apellido2 }}</a></td>
-							<td>{{ $contrato->nit }}</td>
-							<td class="font-weight-bold text-{{ $contrato->asignacion('firma', true) }}">{{ $contrato->asignacion('firma', false) }}</td>
-							<td>{{date('d-m-Y', strtotime($contrato->fecha_isp))}}</td>
-							<td class="text-center">
-								@if(auth()->user()->modo_lectura())
-								@else
-								<a href="{{ route('contactos.show',$contrato->id )}}" class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
-								@if(isset($_SESSION['permisos']['817']))
-								<a href="{{ route('asignaciones.imprimir',$contrato->id )}}" class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
-								@endif
-								@if(isset($_SESSION['permisos']['818']))
-								<a href="{{ route('asignaciones.enviar',$contrato->id )}}" onclick="cargando('true');" class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
-								@endif
-								@if(isset($_SESSION['permisos']['844']))
-								<a href="javascript:void(0);" onclick="generar_link({{ $contrato->id }});" class="btn btn-outline-warning btn-icons" title="Generar Link de Actualización de Firma"><i class="fas fa-fw fa-link"></i></a>
-								@endif
-								@if(isset($_SESSION['permisos']['846']))
-								<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-outline-primary btn-icons" title="Cargar Documentos"><i class="fas fa-fw fa-upload"></i></a>
-								@endif
-								@endif
-							</td>
-						</tr>
-					@endforeach
-				</tbody>
-			</table>
+							<th>Cliente</th>
+							<th>Cédula</th>
+							<th>Fecha de Firma</th>
+							<th>Estado</th>
+							<th class="text-center">Acciones</th>
+			            </tr>
+					</thead>
+					<tbody>
+						@foreach($contratos as $contrato)
+							<tr>
+								<td><a href="{{ route('contactos.show',$contrato->id )}}"  title="Ver">{{ $contrato->nombre }} {{ $contrato->apellido1 }} {{ $contrato->apellido2 }}</a></td>
+								<td>{{ $contrato->nit }}</td>
+								<td class="font-weight-bold text-{{ $contrato->asignacion('firma', true) }}">{{ $contrato->asignacion('firma', false) }}</td>
+								<td>{{date('d-m-Y', strtotime($contrato->fecha_isp))}}</td>
+								<td class="text-center">
+									@if(auth()->user()->modo_lectura())
+									@else
+									<a href="{{ route('contactos.show',$contrato->id )}}" class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
+									@if(isset($_SESSION['permisos']['817']))
+									<a href="{{ route('asignaciones.imprimir',$contrato->id )}}" class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
+									@endif
+									@if(isset($_SESSION['permisos']['818']))
+									<a href="{{ route('asignaciones.enviar',$contrato->id )}}" onclick="cargando('true');" class="btn btn-outline-success btn-icons" title="Enviar Contrato Digital"><i class="fas fa-envelope"></i></a>
+									@endif
+									@if(isset($_SESSION['permisos']['844']))
+									<a href="javascript:void(0);" onclick="generar_link({{ $contrato->id }});" class="btn btn-outline-warning btn-icons" title="Generar Link de Actualización de Firma"><i class="fas fa-fw fa-link"></i></a>
+									@endif
+									@if(isset($_SESSION['permisos']['846']))
+									<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-outline-primary btn-icons" title="Cargar Documentos"><i class="fas fa-fw fa-upload"></i></a>
+									@endif
+									@endif
+								</td>
+							</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
 
-	<script>
-	    function resetForm(){
-	    	$("#name_1,#name_2,#name_3,#name_4,#name_5,#name_6").val('').selectpicker('refresh');
-	    }
-    </script>
+		<script>
+		    function resetForm(){
+		    	$("#name_1,#name_2,#name_3,#name_4,#name_5,#name_6").val('').selectpicker('refresh');
+		    }
+	    </script>
     @endif
 @endsection
 
 @section('scripts')
+    <script src="//cdn.rawgit.com/zenorocha/clipboard.js/v1.5.3/dist/clipboard.min.js"></script>
     <script>
     	function generar_link(id) {
+    		var clipboard = new Clipboard('.btn');
     		cargando(true);
     		if (window.location.pathname.split("/")[1] === "software") {
     			var url = `/software/empresa/asignaciones/`+id+`/generar_link`;
@@ -129,7 +130,7 @@
     					title: 'LINK DE ACTUALIZACIÓN DE FIRMA',
     					html: data.text,
     					type: data.type,
-    					showConfirmButton: true,
+    					showConfirmButton: false,
     					confirmButtonColor: '#1A59A1',
     					confirmButtonText: 'ACEPTAR',
     				});
