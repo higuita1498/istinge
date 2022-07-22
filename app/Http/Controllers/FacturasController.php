@@ -3544,7 +3544,7 @@ class FacturasController extends Controller{
 
                 $rutaXml = "/software/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
 
-                Storage::disk('public_2')->put($rutaXml, $xmlFactura);
+                // Storage::disk('public_2')->put($rutaXml, $xmlFactura);
             } else {
                 return back()->with('error', "No se ha encontrado el xml perteneciente al documento");
             }
