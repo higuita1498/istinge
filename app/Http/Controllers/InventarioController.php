@@ -380,11 +380,8 @@ class InventarioController extends Controller{
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
-
         $autoRetenciones = Retencion::where('empresa',$empresa)->where('estado',1)->where('modulo',2)->get();
-        $type = '';
-        $autoRetenciones = Retencion::where('empresa',$empresa)->where('estado',1)->where('modulo',2)->get();
-        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type'));
+        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type', 'autoRetenciones'));
     }
     
     public function store(Request $request){
