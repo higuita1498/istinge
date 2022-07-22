@@ -3524,7 +3524,7 @@ class FacturasController extends Controller{
     function xml($nro){
         $empresa = auth()->user()->empresaObj;
 
-        $factura = Factura::where('empresa', $empresa->id)->where('nro', $nro)->first();
+        $factura = Factura::where('empresa', $empresa->id)->where('id', $nro)->first();
 
         $path = public_path() . '/software/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
 
