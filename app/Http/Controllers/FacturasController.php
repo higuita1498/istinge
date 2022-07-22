@@ -56,7 +56,7 @@ class FacturasController extends Controller{
     protected $url;
 
     public function __construct(ElectronicBillingService $electronicBillingService){
-        $this->middleware('auth');
+        $this->middleware('auth'); 
         view()->share(['seccion' => 'facturas', 'title' => 'Factura de Venta', 'icon' =>'fas fa-plus', 'subseccion' => 'venta']);
         $this->electronicBillingService = $electronicBillingService;
     }
