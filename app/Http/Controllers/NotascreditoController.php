@@ -604,7 +604,7 @@ class NotascreditoController extends Controller
      */
     public function update(Request $request, $id)
     {
-
+       
         //Validaciones con respecto a la nueva programacion del cda.
         if ($request->tipo_operacion == 3) {
             if (count($request->item) > 1) {
@@ -758,7 +758,7 @@ class NotascreditoController extends Controller
             }
 
             $nota->save();
-
+    
             //Compruebo que existe la bodega y la uso
             //$bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
             if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -963,7 +963,7 @@ class NotascreditoController extends Controller
             
             foreach($nota->itemsNota as $item){
                 foreach($item->cuentasContable() as $cuentaItem){
-                    return $nota->modelDetalle()->factura()->formaPagoRequest(1);
+                    $nota->modelDetalle()->factura()->formaPagoRequest(1);
                 }
             }
 
@@ -1883,7 +1883,7 @@ public function facturas_retenciones($id){
         $factura = Factura::find($request->facturaRelacionada);
         if($factura){
             $factura->total = $factura->total()->total;
-            return response()->json(['factura'=>$factura]);
+            return response()->json(["factura"=>$factura]);
         }
     }
 

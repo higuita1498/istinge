@@ -3518,4 +3518,40 @@ class FacturasController extends Controller{
         $objWriter->save('php://output');
         exit;
     }
+
+    function xml($nro){
+        $empresa = auth()->user()->empresaObj;
+
+        $factura = Factura::where('empresa', $empresa->id)->where('nro', $nro)->first();
+
+        $path = public_path() . '/software/xml/empresa' . $empresa->id . "/FV" . "/FV-" . $factura->codigo . ".xml";
+
+        if (!File::exists($path)) {
+
+            $numeracion = NumeracionFactura::where('empresa', $empresa->id)
+                ->where('num_equivalente', 0)
+                ->where('nomina', 0)
+                ->where('preferida', 1)
+                ->first();
+
+            $response = $this->electronicBillingService->electronicInvoiceStatus($empresa->nit, $factura->codigo, $numeracion->prefijo);
+
+            if (isset($response->statusCode) && $response->statusCode == 200) {
+
+                $xmlFactura = base64_decode($response->document);
+
+                $rutaXml = "/software/xml/empresa{$empresa->id}/FV/FV-{$factura->codigo}.xml";
+
+                Storage::disk('public_2')->put($rutaXml, $xmlFactura);
+            } else {
+                return back()->with('error', "No se ha encontrado el xml perteneciente al documento");
+            }
+        }
+
+        $headers = array(
+            'Content-Type: application/xml',
+        );
+
+        return Response::download($path, "FV-{$factura->codigo}.xml", $headers);
+    }
 }

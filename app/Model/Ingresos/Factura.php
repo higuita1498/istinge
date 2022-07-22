@@ -901,7 +901,7 @@ public function forma_pago()
             $ingresos = Ingreso::where('cliente',$this->cliente)
             ->where('anticipo',1)
             ->where('valor_anticipo','>',0)
-            ->orWhereIn('id',[$ingresosArray])
+            ->orWhereIn('id',$ingresosArray)
             ->get();
         }else{
             $ingresos = Ingreso::where('cliente',$this->cliente)
