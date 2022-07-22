@@ -43,7 +43,10 @@ class PucController extends Controller
     public function create($id){
         $this->getAllPermissions(Auth::user()->id);
         $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
-        return view('puc.create')->with(compact('categoria'));
+        $grupos = DB::table('puc_grupo')->get();
+        $tipos = DB::table('puc_tipo')->get();
+        $balances = DB::table('puc_balance')->get();
+        return view('puc.create')->with(compact('categoria','grupos','tipos','balances'));
     }
 
     /**
@@ -66,6 +69,10 @@ class PucController extends Controller
             $categoria->nombre=$request->nombre;
             $categoria->codigo=$request->codigo;
             $categoria->descripcion=$request->descripcion;
+            $categoria->tercero=$request->tercero;
+            $categoria->id_grupo=$request->grupo;
+            $categoria->id_tipo=$request->tipo;
+            $categoria->id_balance=$request->balance;
             $categoria->save();
             $mensaje='Se ha creado satisfactoriamente la categoría';
             return redirect('empresa/puc')->with('success', $mensaje);
@@ -77,8 +84,11 @@ class PucController extends Controller
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $categoria = Puc::where('empresa',Auth::user()->empresa)->where('codigo', $id)->first();
+        $grupos = DB::table('puc_grupo')->get();
+        $tipos = DB::table('puc_tipo')->get();
+        $balances = DB::table('puc_balance')->get();
         if ($categoria) {        
-          return view('puc.edit')->with(compact('categoria'));
+          return view('puc.edit')->with(compact('categoria','grupos','tipos','balances'));
         }
         return 'No existe un registro con ese id';
     }
@@ -148,6 +158,10 @@ class PucController extends Controller
                 $categoria->nombre=$request->nombre;
                 $categoria->codigo=$request->codigo;
                 $categoria->descripcion=$request->descripcion;
+                $categoria->tercero=$request->tercero;
+                $categoria->id_grupo=$request->grupo;
+                $categoria->id_tipo=$request->tipo;
+                $categoria->id_balance=$request->balance;
                 $categoria->save();
                 $mensaje='Se ha modificado satisfactoriamente la categoría';
                 return redirect('empresa/puc')->with('success', $mensaje);

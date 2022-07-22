@@ -71,6 +71,9 @@
                                     @if($factura->tipo == 1)
                                     <a class="dropdown-item" href="{{route('facturas.convertirelectronica',$factura->id)}}">Convertir a factura electrónica</a>
                                     @endif
+                                    @if($factura->emitida == 1)
+                                        <a class="dropdown-item" href="{{route('facturas.xml',$factura->nro)}}" target="_blank">Descargar xml</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
