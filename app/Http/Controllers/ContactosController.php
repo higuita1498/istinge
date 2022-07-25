@@ -561,6 +561,7 @@ class ContactosController extends Controller
             $contacto->lista_precio = $request->lista_precio;
             $contacto->vendedor = $request->vendedor;
             $contacto->oficina=$request->oficina;
+            $contacto->router=$request->router;
             
             $contacto->save();
 

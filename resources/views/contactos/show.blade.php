@@ -247,6 +247,12 @@
 							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 						</tr>
 						@endif
+						@if($contacto->router)
+						<tr>
+							<th width="20%">¿El router fue regresado?</th>
+							<td>{{$contacto->router}}</td>
+						</tr>
+						@endif
 						@if($contacto->observaciones)
 						<tr>
 							<th width="20%">Observaciones</th>

@@ -227,6 +227,18 @@
 					<strong>{{ $errors->first('tipo_contacto') }}</strong>
 				</span>
 			</div>
+			@if($contacto->tipo_contacto == 0 || $contacto->tipo_contacto == 2)
+			<div class="form-group col-md-3">
+                <label class="control-label">¿El router fue regresado?</label>
+                <select class="form-control selectpicker" id="router" name="router" title="Seleccione">
+                    <option value="Si" {{ $contacto->router == 'Si' ? 'selected':'' }}>Si</option>
+                    <option value="No" {{ $contacto->router == 'No' ? 'selected':'' }}>No</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('router') }}</strong>
+                </span>
+            </div>
+			@endif
 			@if(Auth::user()->empresa()->oficina)
 			<div class="form-group col-md-3">
 				<label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
