@@ -573,6 +573,7 @@
                                     <select class="form-control selectpicker" name="tipo_contrato" id="tipo_contrato" title="Seleccione">
                                         <option value="instalacion" {{ $contrato->tipo_contrato == 'instalacion' || $contrato->tipo_contrato == null ? 'selected':'' }}>Instalación</option>
                                         <option value="reconexion" {{ $contrato->tipo_contrato == 'reconexion' ? 'selected':'' }}>Reconexión</option>
+                                        <option value="cambio titular del servicio" {{ $contrato->tipo_contrato == 'cambio titular del servicio' ? 'selected':'' }}>Cambio titular del servicio</option>
                                     </select>
                                     <span style="color: red;">
                                         <strong>{{ $errors->first('tipo_contrato') }}</strong>
