@@ -50,6 +50,7 @@ use App\Integracion;
 use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
 use App\Services\ElectronicBillingService;
+use App\CRM;
 
 class FacturasController extends Controller{
 
@@ -1524,6 +1525,9 @@ class FacturasController extends Controller{
                 $factura->estatus=2;
                 $factura->observaciones = $factura->observaciones.' | Factura Anulada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->save();
+
+                CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
                 return back()->with('success', 'Se ha anulado la factura');
             }else if($factura->estatus==2){
                 $factura->estatus=1;
