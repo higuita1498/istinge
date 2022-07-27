@@ -59,7 +59,7 @@
 	    </div>
 
 		<div class="row card-description">
-			<div class="col-md-12 text-right mb-2">
+			<div class="col-md-12 text-right mb-2 d-none">
 	    		@if(isset($_SESSION['permisos']['751']))
 	    		<a href="javascript:editCampos();" class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Editar Configuración</a>
 	    		@endif

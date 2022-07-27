@@ -1,5 +1,35 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+    	.nav-tabs .nav-link {
+    		font-size: 1em;
+    	}
+    	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		color: #fff!important;
+    	}
+    	.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    	.nav-pills .nav-link {
+    		font-weight: 700!important;
+    	}
+    	.nav-pills .nav-link{
+    		color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    		background-color: #f9f9f9!important;
+    		margin: 2px;
+    		border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		transition: 0.4s;
+    	}
+    	.nav-pills .nav-link:hover {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    </style>
+@endsection
+
 @section('content')
 
 <div class="row card-description">
@@ -89,6 +119,9 @@
 			<h4 class="card-title">Contratos</h4>
 			<p>Gestiona y organiza las configuraciones de contratos.</p>
 			<a href="#" data-toggle="modal" data-target="#config_clausula">Definir Monto de Clausula de Permanencia</a><br>
+			@if(isset($_SESSION['permisos']['751']))
+			<a href="javascript:parametrosContratoDigital();">Parámetros Contrato Digital</a><br>
+			@endif
 		</div>
 		@endif
 
@@ -111,36 +144,6 @@
 			@if(isset($_SESSION['permisos']['737']))
 			<a href="{{route('tipos-gastos.index')}}">Tipos de Gastos</a> <br>
 			@endif
-		</div>
-		@endif
-
-		@if(isset($_SESSION['permisos']['750']))
-		<div class="col-sm-3">
-			<h4 class="card-title">Organización de Tablas</h4>
-			<p>Configura y organiza los campos de las tablas.</p>
-			<a href="{{route('campos.organizar', 1)}}">Contactos</a><br>
-			<a href="{{route('campos.organizar', 2)}}">Contratos</a><br>
-			{{-- <a href="{{route('campos.organizar', 3)}}">Inventario</a><br> --}}
-			<a href="{{route('campos.organizar', 4)}}">Factura de Venta</a><br>
-			<a href="{{route('campos.organizar', 5)}}">Pagos / Ingresos</a><br>
-			<a href="{{route('campos.organizar', 9)}}">Descuentos</a><br>
-			<a href="{{route('campos.organizar', 6)}}">Factura de Proveedores</a><br>
-			<a href="{{route('campos.organizar', 7)}}">Pagos / Egresos</a><br>
-			<a href="{{route('campos.organizar', 18)}}">Notas de Crédito</a><br>
-			<a href="{{route('campos.organizar', 19)}}">Cotizaciones</a><br>
-			<a href="{{route('campos.organizar', 20)}}">Remisiones</a><br>
-			{{-- <a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
-			<a href="{{route('campos.organizar', 10)}}">Planes de Velocidad</a><br>
-			<a href="{{route('campos.organizar', 11)}}">Promesas de Pago</a><br>
-			<a href="{{route('campos.organizar', 12)}}">Radicados</a><br>
-			<a href="{{route('campos.organizar', 13)}}">Monitor Blacklist</a><br>
-			<a href="{{route('campos.organizar', 14)}}">Ventas Externas</a><br>
-			<a href="{{route('campos.organizar', 15)}}">Mikrotik</a><br>
-			<a href="{{route('campos.organizar', 16)}}">Bancos</a><br>
-			<a href="{{route('campos.organizar', 17)}}">Oficinas</a><br>
-			<a href="{{route('campos.organizar', 21)}}">Produtos</a><br>
-			<hr class="nomina">
-			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>
 		@endif
 
@@ -228,6 +231,18 @@
 			<a href="{{route('PlanesPagina.index')}}">Metodos de pago</a> <br> --}}
 		</div>
 		@endif
+
+		@if(isset($_SESSION['permisos']['750']))
+		<div class="col-sm-3">
+			<h4 class="card-title">Organización de Tablas</h4>
+			<p>Configura y organiza los campos de las tablas.</p>
+			<a href="#" data-toggle="modal" data-target="#config_modulos">Organización de Tablas</a><br>
+			{{-- <a href="{{route('campos.organizar', 3)}}">Inventario</a><br> --}}
+			{{-- <a href="{{route('campos.organizar', 8)}}">Pagos Recurrentes</a><br> --}}
+			<hr class="nomina">
+			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
+		</div>
+		@endif
 	</div>
 
 	{{-- <div class="row card-description configuracion">
@@ -252,6 +267,52 @@
 			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
 		</div>
 	</div> --}}
+
+	{{-- MÓDULOS --}}
+	<div class="modal fade" id="config_modulos" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+                    <h4 class="modal-title">Organización de Tablas</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p>Seleccione el módulo a donde requiere hacer la configuración de la tabla</p>
+						</div>
+						<div class="col-md-6">
+							<a href="{{route('campos.organizar', 1)}}">Contactos</a><br>
+							<a href="{{route('campos.organizar', 2)}}">Contratos</a><br>
+							<a href="{{route('campos.organizar', 4)}}">Factura de Venta</a><br>
+							<a href="{{route('campos.organizar', 5)}}">Pagos / Ingresos</a><br>
+							<a href="{{route('campos.organizar', 9)}}">Descuentos</a><br>
+							<a href="{{route('campos.organizar', 6)}}">Factura de Proveedores</a><br>
+							<a href="{{route('campos.organizar', 7)}}">Pagos / Egresos</a><br>
+							<a href="{{route('campos.organizar', 18)}}">Notas de Crédito</a><br>
+							<a href="{{route('campos.organizar', 19)}}">Cotizaciones</a><br>
+							<a href="{{route('campos.organizar', 20)}}">Remisiones</a><br>
+						</div>
+						<div class="col-md-6">
+							<a href="{{route('campos.organizar', 10)}}">Planes de Velocidad</a><br>
+							<a href="{{route('campos.organizar', 11)}}">Promesas de Pago</a><br>
+							<a href="{{route('campos.organizar', 12)}}">Radicados</a><br>
+							<a href="{{route('campos.organizar', 13)}}">Monitor Blacklist</a><br>
+							<a href="{{route('campos.organizar', 14)}}">Ventas Externas</a><br>
+							<a href="{{route('campos.organizar', 15)}}">Mikrotik</a><br>
+							<a href="{{route('campos.organizar', 16)}}">Bancos</a><br>
+							<a href="{{route('campos.organizar', 17)}}">Oficinas</a><br>
+							<a href="{{route('campos.organizar', 21)}}">Produtos</a><br>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /MÓDULOS --}}
 
 	{{-- SEGURIDAD --}}
 	<div class="modal fade" id="seguridad" role="dialog">
@@ -390,6 +451,136 @@
 		</div>
 	</div>
 	{{-- /CONFIGURACION CLAUSULAS --}}
+
+	{{-- /CONFIGURACION CONTRATO DIGITAL --}}
+	<div class="modal fade" id="modal_parametrosContratoDigital"  tabindex="-1" role="dialog">
+        <div class="modal-dialog" style="max-width: 50%;">
+            <div class="modal-content">
+                <div class="modal-body">
+                	<form method="POST" action="{{ route('asignaciones.campos_asignacion') }}" role="form" class="forms-sample" id="form_contrato" >
+                        @csrf
+	                	<ul class="nav nav-pills" id="pills-tab" role="tablist">
+	                		<li class="nav-item">
+	                			<a class="nav-link active" id="pills-asignacion-tab" data-toggle="pill" href="#pills-asignacion" role="tab" aria-controls="pills-asignacion" aria-selected="true">Asignación de Contrato</a>
+	                		</li>
+	                		<li class="nav-item">
+	                			<a class="nav-link" id="pills-contrato-tab" data-toggle="pill" href="#pills-contrato" role="tab" aria-controls="pills-contrato" aria-selected="false">Contrato Digital</a>
+	                		</li>
+	                	</ul>
+
+	                	<hr style="border-top: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}; margin: .5rem 0rem;">
+
+					    <div class="tab-content mt-4" id="pills-tabContent">
+					        <div class="tab-pane fade show active" id="pills-asignacion" role="tabpanel" aria-labelledby="pills-asignacion-tab">
+					            <div class="row">
+		                            <div class="form-group col-md-6 offset-md-3">
+		                                <label class="control-label">Campo Principal</label>
+		                                <input type="text" class="form-control" name="campo_1" id="campo_1">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_1') }}</strong>
+		                                </span>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo A</label>
+		                                <input type="text" class="form-control" name="campo_a" id="campo_a">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_a') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo B</label>
+		                                <input type="text" class="form-control" name="campo_b" id="campo_b">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_b') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo C</label>
+		                                <input type="text" class="form-control" name="campo_c" id="campo_c">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_c') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo D</label>
+		                                <input type="text" class="form-control" name="campo_d" id="campo_d">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_d') }}</strong>
+		                                </span>
+		                            </div>
+
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo E</label>
+		                                <input type="text" class="form-control" name="campo_e" id="campo_e">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_e') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo F</label>
+		                                <input type="text" class="form-control" name="campo_f" id="campo_f">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_f') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo G</label>
+		                                <input type="text" class="form-control" name="campo_g" id="campo_g">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_g') }}</strong>
+		                                </span>
+		                            </div>
+		                            <div class="form-group col-md-3">
+		                                <label class="control-label">Campo H</label>
+		                                <input type="text" class="form-control" name="campo_h" id="campo_h">
+		                                <span class="help-block error">
+		                                    <strong>{{ $errors->first('campo_h') }}</strong>
+		                                </span>
+		                            </div>
+		                        </div>
+					        </div>
+					        <div class="tab-pane fade" id="pills-contrato" role="tabpanel" aria-labelledby="pills-contrato-tab">
+					        	<div class="row">
+					        		<div class="form-group col-md-12">
+		                                <label class="control-label">Contrato Digital</label>
+		                                <textarea class="form-control" name="contrato_digital" id="contrato_digital" rows="6"></textarea>
+		                            </div>
+		                            <div class="form-group col-md-12 d-none">
+		                                <label class="control-label">ANEXO 1</label>
+		                                <textarea class="form-control" name="anexo_1" id="anexo_1" rows="6"></textarea>
+		                            </div>
+		                            <div class="form-group col-md-12 d-none">
+		                                <label class="control-label">ANEXO 2</label>
+		                                <textarea class="form-control" name="anexo_2" id="anexo_2" rows="6"></textarea>
+		                            </div>
+		                            <div class="form-group col-md-12 d-none">
+		                                <label class="control-label">ANEXO 3</label>
+		                                <textarea class="form-control" name="anexo_3" id="anexo_3" rows="6"></textarea>
+		                            </div>
+		                            <div class="form-group col-md-12 d-none">
+		                                <label class="control-label">ANEXO 4</label>
+		                                <textarea class="form-control" name="anexo_4" id="anexo_4" rows="6"></textarea>
+		                            </div>
+				        	   </div>
+					        </div>
+					    </div>
+
+					    <hr>
+
+					    <div class="row">
+					    	<div class="col-sm-12" style="text-align: right;">
+					    		<button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="cancelar">Cancelar</button>
+					    		<a href="javascript:void(0);" class="btn btn-success" id="guardar">Guardar</a>
+					    	</div>
+					    </div>
+				    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- /CONFIGURACION CONTRATO DIGITAL --}}
 @endsection
 
 @section('scripts')
@@ -887,5 +1078,44 @@
     			}
     		});
     	}
+
+    	function parametrosContratoDigital(){
+    		cargando(true);
+            var url = 'asignaciones/config_campos_asignacion';
+            $.get(url,function(data){
+                data = JSON. parse(data);
+                $("#campo_a").val(data.campo_a);
+                $("#campo_b").val(data.campo_b);
+                $("#campo_c").val(data.campo_c);
+                $("#campo_d").val(data.campo_d);
+                $("#campo_e").val(data.campo_e);
+                $("#campo_f").val(data.campo_f);
+                $("#campo_g").val(data.campo_g);
+                $("#campo_h").val(data.campo_h);
+                $("#campo_1").val(data.campo_1);
+                $("#contrato_digital").val(data.contrato_digital);
+                $("#anexo_1").val(data.anexo_1);
+                $("#anexo_2").val(data.anexo_2);
+                $("#anexo_3").val(data.anexo_3);
+                $("#anexo_4").val(data.anexo_4);
+            });
+    		cargando(false);
+            $('#modal_parametrosContratoDigital').modal("show");
+        }
+
+    	$(document).ready(function () {
+            $("#guardar").click(function (form) {
+                $.post($("#form_contrato").attr('action'), $("#form_contrato").serialize(), function (data) {
+                    console.log(data);
+                    if(data.success == true){
+                        $('#cancelar').click();
+                        $('#form_contrato').trigger("reset");
+                        swal("Configuración Almacenada", "", "success");
+                    } else {
+                        swal('ERROR', 'Intente nuevamente', "error");
+                    }
+                }, 'json');
+            });
+        });
     </script>
 @endsection
