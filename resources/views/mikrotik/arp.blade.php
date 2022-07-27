@@ -34,10 +34,10 @@
     					<th>ADDRESS</th>
     					<th>MAC-ADDRESS</th>
     					<th>INTERFACE</th>
-    					<th>PUBLISHED</th>
-    					<th>INVALID</th>
-    					<th>DHCP</th>
-    					<th>DYNAMIC</th>
+    					<th class="d-none">PUBLISHED</th>
+    					<th class="d-none">INVALID</th>
+    					<th class="d-none">DHCP</th>
+    					<th class="d-none">DYNAMIC</th>
     					<th>COMPLETE</th>
     					<th>DISABLED</th>
     					<th>COMMENT</th>
@@ -49,10 +49,10 @@
                             <td>{{ $array['address'] }}</td>
                             <td>{{ $array['mac-address'] }}</td>
                             <td>{{ $array['interface'] }}</td>
-                            <td>{{ $array['published'] }}</td>
-                            <td>{{ $array['invalid'] }}</td>
-                            <td>{{ $array['DHCP'] }}</td>
-                            <td>{{ $array['dynamic'] }}</td>
+                            <td class="d-none">{{ $array['published'] }}</td>
+                            <td class="d-none">{{ $array['invalid'] }}</td>
+                            <td class="d-none">{{ $array['DHCP'] }}</td>
+                            <td class="d-none">{{ $array['dynamic'] }}</td>
                             <td>{{ $array['complete'] }}</td>
                             <td>{{ $array['disabled'] }}</td>
                             <td>{{ isset($array['comment']) ? $array['comment'] : '- - - - -' }}</td>
