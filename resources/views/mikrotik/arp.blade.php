@@ -32,11 +32,13 @@
     			<thead class="thead-dark">
     				<tr>
     					<th>ADDRESS</th>
-    					<th>NETWORK</th>
+    					<th>MAC-ADDRESS</th>
     					<th>INTERFACE</th>
-    					<th>ACTUAL-INTERFACE</th>
+    					<th>PUBLISHED</th>
     					<th>INVALID</th>
+    					<th>DHCP</th>
     					<th>DYNAMIC</th>
+    					<th>COMPLETE</th>
     					<th>DISABLED</th>
     					<th>COMMENT</th>
     				</tr>
@@ -45,11 +47,13 @@
     				@foreach($arrays as $array)
     				    <tr>
                             <td>{{ $array['address'] }}</td>
-                            <td>{{ $array['network'] }}</td>
+                            <td>{{ $array['mac-address'] }}</td>
                             <td>{{ $array['interface'] }}</td>
-                            <td>{{ $array['actual-interface'] }}</td>
+                            <td>{{ $array['published'] }}</td>
                             <td>{{ $array['invalid'] }}</td>
+                            <td>{{ $array['DHCP'] }}</td>
                             <td>{{ $array['dynamic'] }}</td>
+                            <td>{{ $array['complete'] }}</td>
                             <td>{{ $array['disabled'] }}</td>
                             <td>{{ isset($array['comment']) ? $array['comment'] : '- - - - -' }}</td>
 	    				</tr>

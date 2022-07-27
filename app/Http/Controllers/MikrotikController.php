@@ -694,9 +694,7 @@ class MikrotikController extends Controller
             $API->port = $mikrotik->puerto_api;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                ///ip/address/print
-                $API->write('/ip/address/print', true);
-                //$API->write('/ip/arp/print', true);
+                $API->write('/ip/arp/print', true);
                 $READ = $API->read(false);
                 $arrays = $API->parseResponse($READ);
                 $API->disconnect();
