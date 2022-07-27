@@ -1174,7 +1174,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/grafica', 'ContratosController@grafica')->name('contratos.grafica');
 		Route::get('{id}/graficajson', 'ContratosController@graficajson')->name('contratos.graficajson');
 		Route::get('{id}/ping', 'ContratosController@conexion')->name('contratos.conexion');
-		Route::get('{id}/destroy_to_mk', 'ContratosController@destroy_to_mk')->name('contratos.destroy_to_mk');
+        Route::get('{id}/destroy_to_mk', 'ContratosController@destroy_to_mk')->name('contratos.destroy_to_mk');
+		Route::get('{id}/destroy_to_networksoft', 'ContratosController@destroy_to_networksoft')->name('contratos.destroy_to_networksoft');
 		Route::get('{id}/log', 'ContratosController@log')->name('contratos.log');
 		Route::get('{id}/pings', 'ContratosController@conexion')->name('contratos.ping');
 		Route::get('{id}/ping_nuevo', 'ContratosController@ping_nuevo')->name('contratos.ping_nuevo');

@@ -1581,6 +1581,16 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
+
+    public function destroy_to_networksoft($id){
+        $contrato = Contrato::find($id);
+        if ($contrato) {
+            $contrato->delete();
+            $mensaje = 'SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
+            return redirect('empresa/contratos')->with('success', $mensaje);
+        }
+        return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
+    }
     
     public function state($id){
         $this->getAllPermissions(Auth::user()->id);
