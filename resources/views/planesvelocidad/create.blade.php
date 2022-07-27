@@ -305,8 +305,9 @@
 			<div class="tab-pane fade" id="pills-contabilidad" role="tabpanel" aria-labelledby="pills-contabilidad-tab">
 				<div class="row">
 					<div class="form-group col-md-3">
-						<label class="control-label">Inventario <span class="text-danger">*</span></label>
+						<label class="control-label">Inventario</label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
+							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
 								<option {{old('inventario')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 							@endforeach
@@ -316,8 +317,9 @@
 						</span>
 					</div>
 					<div class="form-group col-md-3">
-						<label class="control-label">Costo <span class="text-danger">*</span></label>
+						<label class="control-label">Costo</label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
+							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
 								<option {{old('costo')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 							@endforeach
@@ -327,8 +329,9 @@
 						</span>
 					</div>
 					<div class="form-group col-md-3">
-						<label class="control-label">Venta <span class="text-danger">*</span></label>
+						<label class="control-label">Venta</label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
+							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
 								<option {{old('venta')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 							@endforeach
@@ -338,8 +341,9 @@
 						</span>
 					</div>
 					<div class="form-group col-md-3">
-						<label class="control-label">Devolución <span class="text-danger">*</span></label>
+						<label class="control-label">Devolución</label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
+							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
 								<option {{old('devolucion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}</option>
 							@endforeach
@@ -397,8 +401,9 @@
 					</div>
 					<div class="form-group col-md-3">
 					<div class="cls-autoretencion d-none">
-						<label class="control-label">Cuenta de auto retención <span class="text-danger">*</span></label>
-						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione" required="">
+						<label class="control-label">Cuenta de auto retención</label>
+						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione">
+							<option value="0" >Ninguno</option>
 							@foreach($autoRetenciones as $cuenta)
 								<option {{old('autoretencion')==$cuenta->id?'selected':''}} value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
 							@endforeach

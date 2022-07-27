@@ -219,7 +219,7 @@ class PlanesVelocidadController extends Controller
             $plan->save();
 
 
-             //Desarrollo pendiente de cuentas por producto
+        //Desarrollo pendiente de cuentas por producto
         if ($request->cuentacontable) {
             foreach ($request->cuentacontable as $key => $value) {
                     DB::table('producto_cuentas')->insert([
@@ -230,7 +230,7 @@ class PlanesVelocidadController extends Controller
         }
 
             //introduccion de cuentas de productos y servicios (inv, costo, venta y dev).
-            if(isset($request->inventario)){
+            if(isset($request->inventario) && $request->inventario != 0){
                 $pr = new ProductoCuenta;
                 $pr->cuenta_id = $request->inventario;
                 $pr->inventario_id = $inventario->id;
@@ -238,7 +238,7 @@ class PlanesVelocidadController extends Controller
                 $pr->save();
             }
         
-            if(isset($request->costo)){
+            if(isset($request->costo) && $request->costo != 0){
                 $pr = new ProductoCuenta;
                 $pr->cuenta_id = $request->costo;
                 $pr->inventario_id = $inventario->id;
@@ -246,7 +246,7 @@ class PlanesVelocidadController extends Controller
                 $pr->save();
             }
 
-            if(isset($request->venta)){
+            if(isset($request->venta) && $request->venta != 0){
                 $pr = new ProductoCuenta;
                 $pr->cuenta_id = $request->venta;
                 $pr->inventario_id = $inventario->id;
@@ -254,7 +254,7 @@ class PlanesVelocidadController extends Controller
                 $pr->save();
             }
 
-            if(isset($request->devolucion)){
+            if(isset($request->devolucion) && $request->devolucion != 0){
                 $pr = new ProductoCuenta;
                 $pr->cuenta_id = $request->devolucion;
                 $pr->inventario_id = $inventario->id;
@@ -464,6 +464,7 @@ class PlanesVelocidadController extends Controller
 
             //actualizando cuentas del inventario
             $insertsCuenta=array();
+
             if ($request->cuentacontable) {
                 foreach ($request->cuentacontable as $key) {
 
@@ -495,8 +496,7 @@ class PlanesVelocidadController extends Controller
             }
 
              //Actualizacion de cuentas contables por tipo
-             if(isset($request->inventario)){
-
+             if(isset($request->inventario) && $request->inventario != 0){
                 $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->inventario)->first();
                 if($inven){
                     $inven->tipo = 1;
@@ -504,7 +504,7 @@ class PlanesVelocidadController extends Controller
                 }
             }
 
-            if(isset($request->costo)){
+            if(isset($request->costo) && $request->costo != 0){
                 $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->costo)->first();
                 if($inven){
                     $inven->tipo = 2;
@@ -512,7 +512,7 @@ class PlanesVelocidadController extends Controller
                 }
             }
 
-            if(isset($request->venta)){
+            if(isset($request->venta) && $request->venta != 0){
                 $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->venta)->first();
                 if($inven){
                     $inven->tipo = 3;
@@ -520,7 +520,7 @@ class PlanesVelocidadController extends Controller
                 }
             }
 
-            if(isset($request->devolucion)){
+            if(isset($request->devolucion) && $request->devolucion != 0){
                 $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->devolucion)->first();
                 if($inven){
                     $inven->tipo = 4;
@@ -528,7 +528,7 @@ class PlanesVelocidadController extends Controller
                 }
             }
 
-            if(isset($request->autoretencion)){
+            if(isset($request->autoretencion) && $request->autoretencion != 0){
                 $inven= ProductoCuenta::where('inventario_id',$inventario->id)->where('cuenta_id',$request->autoretencion)->first();
 
                 if($request->tipo_autoretencion == 1){
