@@ -700,7 +700,7 @@ class MikrotikController extends Controller
                 $READ = $API->read(false);
                 $arrays = $API->parseResponse($READ);
                 $API->disconnect();
-                view()->share(['title' => "Listado ARP: ".$mikrotik->nombre, 'middel' => true]);
+                view()->share(['title' => "Listado ARP: ".$mikrotik->nombre, 'minus_izq' => true]);
                 return view('mikrotik.arp')->with(compact('arrays', 'mikrotik'));
             } else {
                 return redirect('empresa/mikrotik')->with('danger', 'La mikrotik '.$mikrotik->nombre.' se encuentra desconectada')->with('mikrotik_id', $mikrotik->id);
