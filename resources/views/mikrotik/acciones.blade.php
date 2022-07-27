@@ -48,8 +48,14 @@
         @endif
     @endif
 
+    @if($status == 1)
     @if(isset($session['807']))
         <a title="IP's Autorizadas" href="{{ route('mikrotik.ips-autorizadas',$id )}}" class="btn btn-outline-warning btn-icons"><i class="fas fa-project-diagram"></i></a>
+    @endif
+
+    @if(isset($session['848']))
+        <a title="Listado ARP" href="{{ route('mikrotik.arp',$id )}}" class="btn btn-outline-dark btn-icons"><i class="fas fa-clipboard-list"></i></a>
+    @endif
     @endif
 @endif
 

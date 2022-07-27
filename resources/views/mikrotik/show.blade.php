@@ -98,6 +98,9 @@
 						    @endif
 						    @if($mikrotik->status == 1)
 						    <a title="IP's Autorizadas" href="{{ route('mikrotik.ips-autorizadas',$mikrotik->id )}}" class="btn mt-1 btn-outline-warning"><i class="fas fa-project-diagram"></i> IP's Autorizadas</a>
+						    @if(isset($_SESSION['permisos']['848']))
+						    <a title="Listado ARP" href="{{ route('mikrotik.arp',$mikrotik->id )}}" class="btn btn-outline-dark mt-1"><i class="fas fa-clipboard-list"></i> Ver Listado ARP</a>
+						    @endif
 						    @endif
 						</div>
 					</div>

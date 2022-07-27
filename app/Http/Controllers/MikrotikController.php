@@ -684,4 +684,30 @@ class MikrotikController extends Controller
             'state'     => 'eliminados'
         ]);
     }
+
+    public function arp($id){
+        $this->getAllPermissions(Auth::user()->id);
+        $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        if ($mikrotik->status == 1) {
+            $API = new RouterosAPI();
+
+            $API->port = $mikrotik->puerto_api;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                ///ip/address/print
+                $API->write('/ip/address/print', true);
+                //$API->write('/ip/arp/print', true);
+                $READ = $API->read(false);
+                $arrays = $API->parseResponse($READ);
+                $API->disconnect();
+                view()->share(['title' => "Listado ARP: ".$mikrotik->nombre, 'middel' => true]);
+                return view('mikrotik.arp')->with(compact('arrays', 'mikrotik'));
+            } else {
+                return redirect('empresa/mikrotik')->with('danger', 'La mikrotik '.$mikrotik->nombre.' se encuentra desconectada')->with('mikrotik_id', $mikrotik->id);
+            }
+        }else{
+            return redirect('empresa/mikrotik')->with('danger', 'La mikrotik '.$mikrotik->nombre.' se encuentra desconectada')->with('mikrotik_id', $mikrotik->id);
+        }
+        return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
+    }
 }
