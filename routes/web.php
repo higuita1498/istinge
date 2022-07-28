@@ -1343,7 +1343,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 	// DESCUENTOS
 	    Route::group(['prefix' => 'descuentos'], function (){
-	        Route::post('/aprobar', 'DescuentosController@aprobar')->name('descuentos.aprobar');
+            Route::post('/aprobar', 'DescuentosController@aprobar')->name('descuentos.aprobar');
+	        Route::post('no-aprobar', 'DescuentosController@noAprobar')->name('descuentos.noaprobar');
 	    });
 
 	    Route::resource('descuentos', 'DescuentosController');

@@ -236,5 +236,45 @@
 				}
 			})
 		}
+
+		function noaprobarDescuento(id) {
+			swal({
+				title: '¿Está seguro que desea no aprobar el descuento a la factura?',
+				text: 'Esta acción no se puede revertir',
+				type: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#00ce68',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Aceptar',
+				cancelButtonText: 'Cancelar',
+			}).then((result) => {
+				if (result.value) {
+					cargando(true);
+					$.ajax({
+						url: `{{ route('descuentos.noaprobar') }}`,
+						method: 'POST',
+						headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+						},
+						data: {
+							id: id,
+						},
+						success: function(data) {
+							cargando(false);
+							if (data.success) {
+								Swal.fire({
+									type: data.icon,
+									title: data.title,
+									text: data.text,
+									showConfirmButton: false,
+									timer: 5000
+								})
+								getDataTable();
+							}
+						}
+					});
+				}
+			})
+		}
 	</script>
 @endsection
