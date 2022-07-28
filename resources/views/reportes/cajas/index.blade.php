@@ -79,9 +79,10 @@
                     <th>Cuenta</th>
                     <th>Categoría</th>
                     <th>Estado</th>
+                    <th>Observaciones</th>
+                    <th>notas</th>
                     <th>Salida</th>
                     <th>Entrada</th>
-                    <th>Observaciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -109,19 +110,22 @@
                             </spam>
                         </td>
                         <td>
+                            {{$movimiento->observaciones()}}
+                        </td>
+                        <td>
+                            {{$movimiento->notas()}}
+                        </td>
+                        <td>
                             {{$movimiento->tipo==2?Auth::user()->empresa()->moneda.\App\Funcion::Parsear($movimiento->saldo):''}}
                         </td>
                         <td>
                             {{$movimiento->tipo==1?Auth::user()->empresa()->moneda.\App\Funcion::Parsear($movimiento->saldo):''}}
                         </td>
-                        <td>
-                            {{$movimiento->observaciones()}}
-                        </td>
                     </tr>
                 @endforeach
                 </tbody>
                 <tfoot class="thead-dark">
-                    <td colspan="6"></td>
+                    <td colspan="8"></td>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['salida'])}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
                 </tfoot>
