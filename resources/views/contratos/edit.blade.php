@@ -383,7 +383,7 @@
                                 <label class="control-label">Marca Router</label>
                                 <select class="form-control selectpicker" id="marca_router" name="marca_router" required="" value="{{ $contrato->marca_router }}" title="Seleccione">
                                     @foreach($marcas as $marca)
-                                    <option value="{{$marca->id}}" @if($marca->id == $contrato->marca_router)? selected : '' @endif>{{$marca->nombre}}</option>
+                                    <option value="{{$marca->id}}" {{ $marca->id == $contrato->marca_router ? 'selected' : '' }}>{{$marca->nombre}}</option>
                                     @endforeach
                                 </select>
                                 <span class="help-block error">
