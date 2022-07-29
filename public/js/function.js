@@ -1831,60 +1831,134 @@ function max_value_valor_recibido(id, ides=null, pref=null ){
 
 }
 
-function retencion_calculate(id, reten, recursividad=true, pref='', seccion=null){
+function retencion_calculate(id, reten, recursividad = true, pref = '', seccion = null) {
 
-    var subtotal='subtotal_categoria_js';
+    var subtotal = 'subtotal_categoria_js';
     //Valor a Pagar
-    if (pref) {subtotal='subfact'+seccion;}
-    if (parseFloat($('#'+subtotal).val())>0) {
+    if (pref) { subtotal = 'subfact' + seccion; }
+    if (parseFloat($('#' + subtotal).val()) > 0) {
         var retenciones = JSON.parse($('#retenciones').val());
-        var total=0;
-        $.each( retenciones, function( key, value ){
-            if (value.id==reten) {
+        var total = 0;
+
+        $.each(retenciones, function(key, value) {
+            if (value.id == reten) {
                 if (pref) {
-                    if(value.tipo != 1){
+
+                    if (value.tipo != 1) {
                         var desc = $("#descuento" + seccion).val();
                         //Se verifica que exista el descuento, sino se le coloca 0 para realizar el cálculo sin el error de NaN
                         if (isNaN(desc)) { var desc = 0; }
                         total = (parseFloat(($('#' + subtotal).val() - desc) * value.porcentaje)) / 100;
-                    }else{
-                        var number = $('#imp_total1').val();
-                        var monto = number.replace(",", "");
-                        total=( monto *value.porcentaje)/100;
+                    } else {
+                        if (value.descripcion == 'RETENCION IVA') {
+                            total = (parseFloat($("#impuestos_factura_" + seccion).val()) * value.porcentaje) / 100;
+                        } else {
+                            var tmp = parseFloat($('#' + subtotal).val() * (19 / 100));
+                            total = (tmp * value.porcentaje) / 100;
+
+                        }
                     }
 
                 }
+                /*
+                -Actualizacion del modulo de retenciones-
+                */
                 else {
 
-                    if(value.tipo != 1 ){
-                        total=($('#'+subtotal).val()*value.porcentaje)/100;
-                    }else{
-                        var number = $('#imp_total1').val();
-                        var monto = number.replace(",", "");
-                        total=( monto *value.porcentaje)/100;
+                    if (value.tipo != 1) {
+                        total = ($('#' + subtotal).val() * value.porcentaje) / 100;
+                    } else {
+                        //La finalidad de contar los items de la tabla es para recorrer los
+                        //posibles impueso
+                        var nItems = $("#table-form tr").length - 1;
+                        var tmp = 0;
+                        var arrayImp = [];
+                        total = 0;
+                        for (var i = 1; i <= nItems; i++) {
+                            var impuestoTabla = $("#impuesto" + i + " option:selected").val();
+                            var impuestoIndex = $("#impuesto" + i + " option:selected").index() - 1;
+                            if (!impuestoTabla) {
+                                //var impuestoTablaID = $("#impuesto" + i).val();
+                                var impuestoTablaID = $("#impuesto" + i + " option:selected").val();
+                                impuestoTablaID = impuestoTablaID.replace(" ", "");
+                                var hddn_imp_INDEX = $("#hddn_imp_INDEX" + impuestoTablaID).val();
+                                if (isNaN(hddn_imp_INDEX)) { var hddn_imp_INDEX = 0; } else { $("#hddn_imp_INDEX" + impuestoTablaID).val() - 1; }
+                                var hddn_imp = $("#hddn_imp_" + impuestoTablaID).val();
+                                if (hddn_imp === '1') {
+                                    var val = $('#totalimp' + hddn_imp_INDEX).text();
+                                    val = val.substr(1).replace('.', '');
+                                    val = val.replace('.', '');
+                                    val = val.replace('.', '');
+                                    val = val.replace('.', '');
+                                    val = val.replace('.', '');
+                                    val = val.replace('.', '');
+                                    val = val.replace(',', '');
+                                    val = val.replace(',', '');
+                                    val = val.replace(',', '');
+                                    val = val.replace(',', '');
+                                    val = val.replace(',', '');
+                                    val = parseFloat(val);
+                                    if (!arrayImp.includes(hddn_imp_INDEX)) {
+                                        tmp += val * (value.porcentaje / 100);
+                                    }
+                                    arrayImp.push(hddn_imp_INDEX);
+                                }
+                            } else {
+
+                                var hddn_imp = $("#hddn_imp_" + impuestoTabla).val();
+                                if (hddn_imp === '1') {
+                                    tmp = 0;
+                                    $('td[id*="totalimp"]').each(function(indice) {
+
+                                        val = $(this).text();
+
+                                        val = val.substr(1).replace('.', '');
+
+                                        val = val.replace('.', '');
+                                        val = val.replace('.', '');
+                                        val = val.replace('.', '');
+                                        val = val.replace('.', '');
+                                        val = val.replace('.', '');
+                                        val = val.replace(',', '');
+                                        val = val.replace(',', '');
+                                        val = val.replace(',', '');
+                                        val = val.replace(',', '');
+                                        val = val.replace(',', '');
+                                        val = val.replace('$', '');
+                                        val = val.trim();
+                                        val = parseFloat(val);
+                                        tmp += val * (value.porcentaje / 100);
+
+                                    });
+
+
+                                }
+
+                            }
+                            total = tmp;
+                        }
+
                     }
                 }
             }
         });
-        $("#"+pref+"precio_reten"+id).val(number_format(total,false));
+        $("#" + pref + "precio_reten" + id).val(number_format(total, false));
 
-        if ($('#fact_prov').length>0) {
-            if (recursividad) {totalall();}
+        if ($('#fact_prov').length > 0) {
+            if (recursividad) { totalall(); }
             return false;
         }
 
 
         if (recursividad && !pref) {
             total_categorias();
-        }
-        else{
+        } else {
             max_value_valor_recibido(seccion, id, pref);
             totales_ingreso();
         }
     }
 
 }
-
 function totales_ingreso(input=true){
     var total=0; var reten_may=0; 
     let saldoFavor = 0; //este es el saldo sobrante cuando el cliente paga una factura y paga de mas.
@@ -2379,6 +2453,8 @@ function llenarSelectAnticipo(value,cliente, nro){
     var facturaRelacionada = null;
 
     /* >>> Consulta para traer los recibos de caja o los egresos con saldo a favor <<< */
+    console.log($("#fact_prov").length);
+    console.log($("#notacredito").length);
     if($("#fact_prov").length == 0){
 
         if($("#notacredito").length == 0){
