@@ -73,11 +73,10 @@
       </span>
     </div>
   </div>
-  </div>
 
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
-	<div class="row" >
+	<div class="row">
     <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
       <a href="{{route('impuestos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
       <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>

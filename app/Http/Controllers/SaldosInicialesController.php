@@ -181,7 +181,7 @@ class SaldosInicialesController extends Controller
     public function saldos(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
-        $movimientos = PucMovimiento::query()->select('puc_movimiento.*')->groupBy('puc_movimiento.nro')->orderBy('desc','puc_movimiento.id');
+        $movimientos = PucMovimiento::query()->select('puc_movimiento.*')->groupBy('puc_movimiento.nro')->orderByDesc('puc_movimiento.id');
 
         if ($request->filtro == true) {
             

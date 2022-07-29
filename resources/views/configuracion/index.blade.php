@@ -1,37 +1,6 @@
 @extends('layouts.app')
 
-@section('style')
-    <style>
-    	.nav-tabs .nav-link {
-    		font-size: 1em;
-    	}
-    	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
-    		color: #fff!important;
-    	}
-    	.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    		color: #fff!important;
-    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
-    	}
-    	.nav-pills .nav-link {
-    		font-weight: 700!important;
-    	}
-    	.nav-pills .nav-link{
-    		color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
-    		background-color: #f9f9f9!important;
-    		margin: 2px;
-    		border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
-    		transition: 0.4s;
-    	}
-    	.nav-pills .nav-link:hover {
-    		color: #fff!important;
-    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
-    	}
-    </style>
-@endsection
-
 @section('content')
-
 <div class="row card-description">
 	<div class="col-sm-4" style="text-align: center;">
 		<img class="img-responsive" src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa()->id.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-width: 200px;">
@@ -132,7 +101,7 @@
 			<a href="{{route('puc.index')}}">Gestionar PUC</a> <br>
 			<a href="{{route('formapago.index')}}">Formas de Pago</a> <br>
 			<a href="{{route('anticipo.index')}}">Anticipos</a> <br>
-			<a href="{{route('productoservicio.index')}}">Productos y Servicios</a> <br>
+			{{-- <a href="{{route('productoservicio.index')}}">Productos y Servicios</a> <br> --}}
 			<a href="{{route('saldoinicial.index')}}">Comprobantes contables</a> <br>
 		</div>
 		@endif
@@ -1118,4 +1087,34 @@
             });
         });
     </script>
+@endsection
+
+@section('style')
+    <style>
+    	.nav-tabs .nav-link {
+    		font-size: 1em;
+    	}
+    	.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		color: #fff!important;
+    	}
+    	.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    	.nav-pills .nav-link {
+    		font-weight: 700!important;
+    	}
+    	.nav-pills .nav-link{
+    		color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    		background-color: #f9f9f9!important;
+    		margin: 2px;
+    		border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+    		transition: 0.4s;
+    	}
+    	.nav-pills .nav-link:hover {
+    		color: #fff!important;
+    		background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+    	}
+    </style>
 @endsection

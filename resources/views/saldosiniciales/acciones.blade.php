@@ -1,2 +1,3 @@
-<a href="{{route('saldoinicial.show',$nro)}}" class="btn btn-outline-info btn-icons"><i class="far fa-eye"></i></i></a>
 <a href="{{route('saldoinicial.show',$nro)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
+<a href="#" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar('anular-factura57', '¿Está seguro de que desea eliminar el asiento contable?', ' ');"><i class="fas fa-times"></i></button>
