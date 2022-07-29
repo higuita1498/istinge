@@ -1156,6 +1156,27 @@ class AsignacionesController extends Controller
         return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
     }
 
+    public function destroy($id){
+        $contrato = Contacto::find($id);
+        if ($contrato) {
+            $contrato->firma_isp = null;
+            $contrato->fecha_isp = null;
+            $contrato->documento = null;
+            $contrato->imgA = null;
+            $contrato->imgB = null;
+            $contrato->imgC = null;
+            $contrato->imgD = null;
+            $contrato->imgE = null;
+            $contrato->imgF = null;
+            $contrato->imgG = null;
+            $contrato->imgH = null;
+            $contrato->save();
+
+            return redirect('empresa/asignaciones')->with('success', 'SE HA ELIMINADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
+        }
+        return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
+    }
+
     public function imprimir($id){
         $contrato = Contacto::where('id',$id)->where('empresa', Auth::user()->empresa)->first();
         if($contrato) {

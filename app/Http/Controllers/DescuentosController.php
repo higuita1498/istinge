@@ -135,7 +135,36 @@ class DescuentosController extends Controller
     public function update(Request $request, $id){
     }
     
-    public function destroy($id){
+    public function noAprobar(Request $request){
+        $descuento = Descuento::find($request->id);
+
+        if($descuento){
+            if($descuento->estado == 2){
+                $descuento->delete();
+
+                $title = 'EL DESCUENTO HA SIDO ELIMINADO';
+                $text  = '';
+                $icon  = 'success';
+
+            }else{
+                $title = 'EL DESCUENTO YA HA SIDO APROBADO';
+                $text  = 'No es posible eliminarlo';
+                $icon  = 'error';
+            }
+
+            return response()->json([
+                'success' => true,
+                'title'   => $title,
+                'text'    => $text,
+                'icon'    => $icon
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'title'   => 'DESCUENTO NO ENCONTRADO, INTENTE NUEVAMENTE',
+                'icon'    => 'error'
+            ]);
+        }
     }
     
     public function aprobar(Request $request){

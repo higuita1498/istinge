@@ -899,8 +899,17 @@ class FacturasController extends Controller{
             $items->id_impuesto=$request->impuesto[$i];
             $items->impuesto=$impuesto->porcentaje;
             $items->cant=$request->cant[$i];
-            $items->desc=$request->desc[$i];
+            //$items->desc=$request->desc[$i];
+            $desc=$request->desc[$i];
             $items->save();
+        }
+
+        if($desc > 0){
+            $descuento             = new Descuento;
+            $descuento->factura    = $items->factura;
+            $descuento->descuento  = $desc;
+            $descuento->created_by = Auth::user()->id;
+            $descuento->save();
         }
 
         //Registrar retennciones
@@ -1115,6 +1124,8 @@ class FacturasController extends Controller{
                 }
 
                 if($desc > 0){
+                    Descuento::where('factura', $items->factura)->where('estado', 2)->delete();
+
                     $descuento = new Descuento;
                     $descuento->factura    = $items->factura;
                     $descuento->descuento  = $desc;

@@ -34,10 +34,6 @@
     					<th>ADDRESS</th>
     					<th>MAC-ADDRESS</th>
     					<th>INTERFACE</th>
-    					<th class="d-none">PUBLISHED</th>
-    					<th class="d-none">INVALID</th>
-    					<th class="d-none">DHCP</th>
-    					<th class="d-none">DYNAMIC</th>
     					<th>COMPLETE</th>
     					<th>DISABLED</th>
     					<th>COMMENT</th>
@@ -46,15 +42,11 @@
     			<tbody>
     				@foreach($arrays as $array)
     				    <tr>
-                            <td>{{ $array['address'] }}</td>
-                            <td>{{ $array['mac-address'] }}</td>
-                            <td>{{ $array['interface'] }}</td>
-                            <td class="d-none">{{ $array['published'] }}</td>
-                            <td class="d-none">{{ $array['invalid'] }}</td>
-                            <td class="d-none">{{ $array['DHCP'] }}</td>
-                            <td class="d-none">{{ $array['dynamic'] }}</td>
-                            <td>{{ $array['complete'] }}</td>
-                            <td>{{ $array['disabled'] }}</td>
+                            <td>{{ isset($array['address']) ? $array['address'] : '- - - - -' }}</td>
+                            <td>{{ isset($array['mac-address']) ? $array['mac-address'] : '- - - - -' }}</td>
+                            <td>{{ isset($array['interface']) ? $array['interface'] : '- - - - -' }}</td>
+                            <td>{{ isset($array['complete']) ? $array['complete'] : '- - - - -' }}</td>
+                            <td>{{ isset($array['disabled']) ? $array['disabled'] : '- - - - -' }}</td>
                             <td>{{ isset($array['comment']) ? $array['comment'] : '- - - - -' }}</td>
 	    				</tr>
     				@endforeach

@@ -85,6 +85,12 @@
 								<td class="text-center">
 									@if(auth()->user()->modo_lectura())
 									@else
+                                    @if(isset($_SESSION['permisos']['850']))
+                                    <form action="{{ route('asignaciones.destroy', $contrato->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar{{$contrato->id}}">
+                                        @csrf
+                                        <input name="_method" type="hidden" value="DELETE">
+                                    </form>
+                                    @endif
 									<a href="{{ route('contactos.show',$contrato->id )}}" class="btn btn-outline-info btn-icons" title="Ver Detalle"><i class="far fa-eye"></i></i></a>
 									@if(isset($_SESSION['permisos']['817']))
 									<a href="{{ route('asignaciones.imprimir',$contrato->id )}}" class="btn btn-outline-danger btn-icons" title="Imprimir Contrato Digital" target="_blank"><i class="fas fa-print"></i></a>
@@ -98,6 +104,9 @@
 									@if(isset($_SESSION['permisos']['846']))
 									<a href="{{ route('asignaciones.edit',$contrato->id )}}" class="btn btn-outline-primary btn-icons" title="Cargar Documentos"><i class="fas fa-fw fa-upload"></i></a>
 									@endif
+                                    @if(isset($_SESSION['permisos']['850']))
+                                    <button type="button" class="btn btn-outline-danger btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar{{$contrato->id}}', '¿Está seguro que desear eliminar esta asignación de contrato?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
+                                    @endif
 									@endif
 								</td>
 							</tr>
