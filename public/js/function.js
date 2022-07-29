@@ -4830,3 +4830,70 @@ function impuestoFacturaDeVenta(impuesto) {
     }, 800);
 
 }
+
+function getClienteSMS(id){
+    cargando(true);
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/getClienteSMS'+id;
+    }else{
+        var url = '/getClienteSMS/'+id;
+    }
+
+    $.ajax({
+        url: url,
+        success: function(data){
+
+            var vencimiento = data.factura.vencimiento.split('-');
+            $("#div_contenido_user").html('').html(`<center>
+                <div class="btn-group" role="group" aria-label="">
+                <a href="javascript:montar('`+data.contacto.nombre+`')" class="btn btn-sm btn-secondary">Nombre cliente</a>
+                <a href="javascript:montar('`+data.factura.codigo+`')" class="btn btn-sm btn-secondary">N° Factura</a>
+                <a href="javascript:montar('`+data.contrato.plan+`')" class="btn btn-sm btn-secondary">Plan</a>
+                <a href="javascript:montar('`+vencimiento[2]+`-`+vencimiento[1]+`-`+vencimiento[0]+`')" class="btn btn-sm btn-secondary">Fecha de corte</a>
+                </div>
+                </center>`);
+            $("#div_footer, #div_contenido").removeClass('d-none');
+            $("#numero_sms").val(data.contacto.celular);
+            $("#text_sms").val('');
+            cargando(false);
+            contarCaracteres($("#text_sms").val());
+        },
+        error: function(data){
+            cargando(false);
+            $("#div_footer, #div_contenido").addClass('d-none');
+            $("#text_sms, #numero_sms").val('');
+            $("#cliente_sms").val('').selectpicker('refresh');
+        }
+    });
+}
+
+function montar(str){
+    var contenido = $("#text_sms").val();
+    if(parseInt(contenido.length + str.length) <= 140){
+        $("#text_sms").val(contenido+' '+str);
+        contarCaracteres($("#text_sms").val());
+    }
+}
+
+function contarCaracteres(obj){
+    var maxLength = 140;
+    var strLength = obj.length;
+    var charRemain = (maxLength - strLength);
+
+    document.getElementById("charNum").innerHTML = charRemain+' caracteres restantes';
+
+    if(charRemain == 0){
+        $("#charNum").addClass('text-danger');
+    }else{
+        $("#charNum").removeClass('text-danger');
+    }
+}
+
+function dnone(element){
+    $('.'+element).addClass('d-none');
+}
+
+function limpiar(form){
+    document.getElementById(form).reset();
+    $("#"+form+' .selectpicker').val('').trigger('change');
+}

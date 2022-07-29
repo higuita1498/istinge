@@ -109,6 +109,8 @@ Route::get('/clear', function() {
      return redirect()->back();
 });
 
+Route::get('/getClienteSMS/{id}','Controller@getClienteSMS');
+
 Route::get('pdfmariano', 'ContactosController@pdfmariano')->name('contactos.pdfmariano');
 
 Route::get('/testerroute54','Controller@tester54');
@@ -1297,6 +1299,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::post('/envio_aviso', 'AvisosController@envio_aviso')->name('avisos.envio_aviso');
 	        Route::get('/envio/{id}/email', 'AvisosController@email')->name('avisos.envio.email.cliente');
 	        Route::get('/envio/{id}/sms', 'AvisosController@sms')->name('avisos.envio.sms.cliente');
+            Route::post('/envio_personalizado', 'AvisosController@envio_personalizado')->name('avisos.envio_personalizado');
 	    });
 	    
 	    Route::resource('avisos', 'AvisosController');
