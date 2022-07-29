@@ -4910,7 +4910,7 @@ function impuestoFacturaDeVenta(impuesto) {
 function getClienteSMS(id){
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
-        var url = '/software/getClienteSMS'+id;
+        var url = '/software/getClienteSMS/'+id;
     }else{
         var url = '/getClienteSMS/'+id;
     }
