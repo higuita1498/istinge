@@ -17,7 +17,7 @@ class SaldosInicialesController extends Controller
 
     public function __construct(){
         $this->middleware('auth');
-        view()->share(['seccion' => 'Saldos Iniciales', 'title' => 'Saldos Iiniciales', 'icon' =>'fas fa-plus', 'subseccion' => 'saldos']);
+        view()->share(['seccion' => 'Comprobantes Contables', 'title' => 'Comprobantes Contables', 'icon' =>'fas fa-plus', 'subseccion' => 'saldos']);
     }
 
     /**
@@ -62,7 +62,7 @@ class SaldosInicialesController extends Controller
 
 
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Saldos Iniciales', 'subseccion' => 'Saldos Iniciales']);
+        view()->share(['title' => 'Comprobantes Contables', 'subseccion' => 'Comprobantes Contables']);
         $busqueda=false;
         if ($request->name_1 || $request->name_2 || $request->name_3|| isset($request->name_4) || $request->name_5) {
             $busqueda='contactos.clientes';
@@ -86,7 +86,7 @@ class SaldosInicialesController extends Controller
      */
     public function create()
     {
-        view()->share(['seccion' => 'saldosiniciales', 'title' => 'Saldos Iniciales', 'icon' =>'fas fa-list-ul']);
+        view()->share(['seccion' => 'saldosiniciales', 'title' => 'Comprobantes Contables', 'icon' =>'fas fa-list-ul']);
         $this->getAllPermissions(Auth::user()->id);
         
         $tipos = DB::table('tipo_comprobante')->get();
@@ -181,7 +181,7 @@ class SaldosInicialesController extends Controller
     public function saldos(Request $request)
     {
         $modoLectura = auth()->user()->modo_lectura();
-        $movimientos = PucMovimiento::query()->select('puc_movimiento.*')->groupBy('puc_movimiento.nro');
+        $movimientos = PucMovimiento::query()->select('puc_movimiento.*')->groupBy('puc_movimiento.nro')->orderBy('desc','puc_movimiento.id');
 
         if ($request->filtro == true) {
             

@@ -133,7 +133,7 @@
 			<a href="{{route('formapago.index')}}">Formas de Pago</a> <br>
 			<a href="{{route('anticipo.index')}}">Anticipos</a> <br>
 			<a href="{{route('productoservicio.index')}}">Productos y Servicios</a> <br>
-			<a href="{{route('saldoinicial.index')}}">Saldos iniciales</a> <br>
+			<a href="{{route('saldoinicial.index')}}">Comprobantes contables</a> <br>
 		</div>
 		@endif
 

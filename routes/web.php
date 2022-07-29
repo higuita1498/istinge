@@ -658,7 +658,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
     Route::get('nomina/eliminar-liquidacion/{idContrato}', 'Nomina\PersonasController@destroyLiquidar')->name('nomina.liquidar.destroy');
 	
-	Route::group(['prefix' => 'saldosiniciales'], function(){
+	Route::group(['prefix' => 'comprobantes'], function(){
 		Route::get('/create', 'SaldosInicialesController@create')->name('saldoinicial.create');
 		Route::post('/store', 'SaldosInicialesController@store')->name('saldoinicial.store');
 		Route::get('/validatecartera', 'SaldosInicialesController@validateCartera');
