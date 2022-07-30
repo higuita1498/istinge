@@ -1733,4 +1733,19 @@ class Controller extends BaseController
             return $dat;
         }
     }
+
+    public function getClienteSMS($id){
+        return response()->json([
+            'succes' => true,
+            'id'     => $id,
+            'contacto' => Contacto::where('id', $id)->first(),
+            'contrato' => Contrato::
+            join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
+            join('grupos_corte as g', 'g.id', '=', 'contracts.grupo_corte')->
+            select('p.name as plan', 'g.nombre as corte')->
+            where('contracts.client_id', $id)->
+            first(),
+            'factura' => Factura::where('cliente', $id)->get()->last(),
+        ]);
+    }
 }
