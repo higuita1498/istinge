@@ -116,69 +116,232 @@ class Factura extends Model
 
 
 
-    public function total(){
-        $totales=array('total'=>0, 
-        'subtotal'=>0, 
-        'descuento'=>0, 
-        'subsub'=>0, 
-        'imp'=>Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get(), 
-        'totalreten'=>0, 
-        'reteFuente' => 0
-        );
-        $items=ItemsFactura::where('factura',$this->id)->get();
-        $totales["reten"]=Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-        $result=0; $desc=0; $impuesto=0;
-        $totales["TaxExclusiveAmount"] = 0;
+    public function total()
+    {
 
-        foreach ($items as $item) {
-            $result=$item->precio*$item->cant;
-            $totales['subtotal']+=$result;
-
-            //SACAR EL DESCUENTO
-            if ($item->desc>0) {
-                $desc=($result*$item->desc)/100;
-            }
-            else{ $desc=0; }
-
-            $totales['descuento']+=$desc;
-            $result=$result-$desc;
-            $totales['resul'] = $totales['subtotal'] - $totales['descuento'];
-
-            //SACAR EL IMPUESTO
-            if ($item->impuesto>0) {
-                foreach ($totales["imp"] as $key => $imp) {
-                    if ($imp->id==$item->id_impuesto) {
-                         $impuesto=($result*$imp->porcentaje)/100;
-                        if (!isset($totales["imp"][$key]->total)) {
-                            $totales["imp"][$key]->total=0;
-                        }
-                        $totales["imp"][$key]->total+=$impuesto;
-                        $totales["imp"][$key]->totalprod+= $item->total();
-                    }
+        // Personalizado para a la hora de ver o descargar pdf que involucran totalidades de facturass... empresa importadora y gestor de partes
+        $idEmpresas = [0];
+        if(isset(Auth::user()->empresaObj)){
+                if(Auth::user()->empresaObj->id == 1){
+                if(Auth::user()->empresaObj->nit == 1128464945){   
+                    $idEmpresas = [1, 160];  
+                }else{
+                    $idEmpresas = [optional(auth()->user())->empresa];
                 }
-            }
-            //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
-            if ($item->impuesto != null) {
-                $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+            }else{  
+                    $idEmpresas = [optional(auth()->user())->empresa];
             }
         }
+        
 
-        if (FacturaRetencion::where('factura',$this->id)->count()>0) {
-            $items=FacturaRetencion::join('retenciones as r','r.id','=','factura_retenciones.id_retencion')
-            ->where('factura_retenciones.factura',$this->id)
-            ->select('factura_retenciones.*','r.tipo as id_tipo')
+
+        $totales = array(
+            'total' => 0,
+            'subtotal' => 0,
+            'descuento' => 0,
+            'subsub' => 0,
+            'imp' => Impuesto::whereIn('empresa', $idEmpresas)
+                ->orWhere('empresa', null)
+                ->Where('estado', 1)
+                ->get(),
+            'totalreten' => 0,
+            'valImpuesto' => 0,
+            'reteIva' => 0,
+            'reteFuente' => 0,
+            'reteIca' => 0,
+            'baseImponible' => 0
+        );
+        $items = ItemsFactura::where('factura', $this->id)->get();
+        $totales["reten"] = Retencion::whereIn('empresa',  $idEmpresas)
+            ->orWhere('empresa', null)
+            ->Where('estado', 1)
             ->get();
+        $result = 0;
+        $desc = 0;
+        $impuesto = 0;
+        $totales["TaxExclusiveAmount"] = 0;
 
+
+        if ($items) {
             foreach ($items as $item) {
-                foreach ($totales["reten"] as $key => $reten) {
-                    if ($reten->id==$item->id_retencion) {
-                        if (!isset($totales["reten"][$key]->total)) {
-                            $totales["reten"][$key]->total=0;
-                        }
-                        $totales["reten"][$key]->total+=$item->valor;
-                        $totales['totalreten']+=$item->valor;
+                $result = $item->precio * $item->cant;
+                $totales['subtotal'] += $result;
 
-                        $tipo = $item->id_tipo;
+                //SACAR EL DESCUENTO
+                if ($item->desc > 0) {
+                    $desc = ($result * $item->desc) / 100;
+                } else {
+                    $desc = 0;
+                }
+
+                $totales['descuento'] += $desc;
+                $result = $result - $desc;
+                $totales['resul'] = $totales['subtotal'] - $totales['descuento'];
+
+                //SACAR EL IMPUESTO
+
+                if ($item->impuesto > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
+                if ($item->impuesto != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_1 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_1) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_1 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_2 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_2) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_2 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_3 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_3) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_3 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_4 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_4) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_4 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_5 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_5) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_5 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_6 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_6) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_6 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+
+                if ($item->impuesto_7 > 0) {
+                    foreach ($totales["imp"] as $key => $imp) {
+                        if ($imp->id == $item->id_impuesto_7) {
+                            $impuesto = ($result * $imp->porcentaje) / 100;
+                            if (!isset($totales["imp"][$key]->total)) {
+                                $totales["imp"][$key]->total = 0;
+                            }
+
+                            $totales["imp"][$key]->total += $impuesto;
+                            $totales["imp"][$key]->totalprod += $item->total();
+                            $totales['baseImponible'] += $totales["imp"][$key]->totalprod - $desc;
+                        }
+                    }
+                }
+                if ($item->impuesto_7 != null) {
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
+                }
+            }
+
+
+            if (FacturaRetencion::where('factura', $this->id)->count() > 0) {
+                $items = FacturaRetencion::select('factura_retenciones.*', 'retenciones.tipo as id_tipo')
+                    ->join('retenciones', 'retenciones.id', '=', 'factura_retenciones.id_retencion')
+                    ->where('factura', $this->id)->get();
+
+                foreach ($items as $item) {
+                    foreach ($totales["reten"] as $key => $reten) {
+                        if ($reten->id == $item->id_retencion) {
+                            if (!isset($totales["reten"][$key]->total)) {
+                                $totales["reten"][$key]->total = 0;
+                            }
+                            $totales["reten"][$key]->total += $item->valor;
+                            $totales['totalreten'] += $item->valor;
+
+                            $tipo = $item->id_tipo;
                             switch ($tipo) {
 
                                 case 1:
@@ -193,18 +356,26 @@ class Factura extends Model
                                     $totales['reteIca'] += $item->valor;
                                     break;
                             }
+                        }
                     }
                 }
             }
-        }
 
-        $totales['total']=$totales['subsub']=$totales['subtotal']-$totales['descuento'] - $this->retenido_factura()
-            - $this->retenido();
-        foreach ($totales["imp"] as $key => $imp) {
-            $totales['total']+=$imp->total;
-        }
-        return (object) $totales;
 
+            //A este metodo se le quita el this->retenido() ya que este metodo se encarga de aplicar las retenciones a los ingresos también.
+            $totales['total'] = $totales['subsub'] = $totales['subtotal'] - $totales['descuento'] - $this->retenido_factura();
+
+
+            foreach ($totales["imp"] as $key => $imp) {
+                $totales['total'] += Funcion::precision($imp->total);
+                $totales['valImpuesto'] += Funcion::precision($imp->total);
+            }
+
+            //Agregamos una precisión sobre el valor total de la factura
+            $totales['total'] = Funcion::precision($totales['total']);
+
+            return (object) $totales;
+        }
     }
 
     public function totalAPI($empresaId){

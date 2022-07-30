@@ -299,7 +299,8 @@ class IngresosController extends Controller
                     return back()->with('danger', $mensaje)->withInput();
                 }
             }
-    
+            
+            //Si es tipo 1, osea coversion de factura estandar a electrónica con emisión
             if ($request->tipo == 1) {
 
                 foreach ($request->factura_pendiente as $key => $value) {
@@ -321,6 +322,10 @@ class IngresosController extends Controller
                             $factura->tipo = 2;     
                             $factura->codigo = $nro->prefijo.$inicio;
                             $factura->numeracion = $nro->id;
+                            $factura->fecha =  Carbon::now()->format('Y-m-d');
+                            if($factura->vencimiento < Carbon::now()->format('Y-m-d')){
+                                $factura->vencimiento = Carbon::now()->format('Y-m-d');
+                            }
                             $factura->save();
     
                             $nro->inicio += 1;
