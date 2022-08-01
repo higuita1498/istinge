@@ -15,6 +15,7 @@ function validateCampos(){
 
 function crearFilaSaldo(){
 
+    //logica para tener numeros de los tr |importante|
     var nro=$('#table-saldoinicial tbody tr').length +1 ;
     if ($('#saldoini'+nro).length > 0) {
         for (i = 1; i <= nro; i++) {
@@ -42,7 +43,13 @@ function crearFilaSaldo(){
 
             </select>
         </td>
-        <td></td>
+        <td>
+            <div class="d-flex justify-content-between d-none" id="divCartera${nro}">
+                    <input type="text" class="form-control form-control-sm" readonly>
+                    <a class="btn btn-primary-sm not-active-a" onclick="modalShow()" style="
+                    padding: 0px;
+                    margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
+            </div></td>
         <td>
             <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion${nro}">
         </td>
@@ -61,6 +68,25 @@ function crearFilaSaldo(){
     ` +
         `</tr>`
     );
+    
+
+    //Valores iniciales para seleccionar cuenta.
+    $('#puc_cuenta'+nro).append($('<option>',
+        {
+            value: 0,
+            text : 'Seleccione una opción',
+            selected: true,
+            disabled: true
+        }
+    ));
+
+    $.each( puc, function( key, value ){
+        $('#puc_cuenta'+nro).append($('<option>',
+            {
+                value: value.id,
+                text : value.codigo+" - "+ value.nombre+""
+            }));
+    });
 
 
     $.each( contactos, function( key, value ){
@@ -71,13 +97,7 @@ function crearFilaSaldo(){
             }));
     });
 
-    $.each( puc, function( key, value ){
-        $('#puc_cuenta'+nro).append($('<option>',
-            {
-                value: value.id,
-                text : value.codigo+" - "+ value.nombre+""
-            }));
-    });
+   
 
     $('#contacto'+nro).selectpicker('refresh');
     $('#puc_cuenta'+nro).selectpicker('refresh');
@@ -167,9 +187,9 @@ function validateDetalleCartera(pucId,nro){
 
 
     if (window.location.pathname.split("/")[1] === "software") {
-        var url='/software/empresa/saldosiniciales/validatecartera';
+        var url='/software/empresa/comprobantes/validatecartera';
     }else{
-        var url = '/empresa/saldosiniciales/validatecartera';
+        var url = '/empresa/comprobantes/validatecartera';
     }
 
     $.ajax({
@@ -181,7 +201,9 @@ function validateDetalleCartera(pucId,nro){
             pucId: pucId,
         },
         success: function (response) {
-            console.log(response);
+
+            console.log(nro);
+
             if(response == true){
                 $("#divCartera"+nro).addClass('d-flex');
                 $("#divCartera"+nro).removeClass('d-none');

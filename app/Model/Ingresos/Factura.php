@@ -87,33 +87,71 @@ class Factura extends Model
         return DB::table('mikrotik')->where('id',$contrato->server_configuration_id)->first();
     }
 
-    public function estatus($class=false){
+    public function estatus($class = false, $isId = false)
+    {
+
+        if (!isset($this->estatus)) {
+            $factura = DB::table('factura')->select('estatus as estado')->where('id', $this->id)->first();
+            if (!$factura) {
+                return '';
+            }
+            $estatus = $factura->estado;
+        } else {
+            $estatus = $this->estatus;
+        }
+
+
         if ($class) {
-            if ($this->estatus==2) {
-               return 'warning';
+            if ($estatus == 2) {
+                return 'warning';
             }
-            return $this->estatus==1?'danger':'success';
+            return $estatus == 1 ? 'danger' : 'success';
         }
 
-        if ($this->estatus==2) {
-            $mensaje = 'Anulada';
-        }
-        if ($this->estatus==3) {
-            $mensaje = 'Reconexión';
-        }
-        $mensaje = $this->estatus==1?'Abierta':'Cerrada';
-
-        if(isset($this->tipo) && $this->tipo == 2){
-            if($this->emitida == 1){
-                $mensaje.="-emitida";
-            }else{
-                $mensaje.="-no emitida";
+        if ($estatus == 2) {
+            if ($isId) {
+                return 2;
+            } else {
+                return 'Anulada';
             }
         }
 
-        return $mensaje;
+        if ($this->notas_credito()) {
+            $precioNotas = 0;
+
+            foreach ($this->notas_credito() as $notas) {
+
+                //Acumulado de total en notas creditos de la factura.
+                $precioNotas += $notas->nota()->total()->total;
+            }
+
+            if ($precioNotas > 0 && $this->total()->total > $precioNotas && $estatus == 1 && $precioNotas + $this->pagado() < $this->total()->total) {
+                if ($isId) {
+                    return 3;
+                } else {
+                    return "Abierta con nota crédito";
+                }
+            } elseif ($this->total()->total == $precioNotas) {
+                if ($isId) {
+                    return 4;
+                } else {
+                    return "Cerrada con nota crédito";
+                }
+            } elseif ($precioNotas > 0 && $estatus == 1 && $precioNotas + $this->pagado() >= $this->total()->total) {
+                if ($isId) {
+                    return 3;
+                } else {
+                    return "Cerrada con nota crédito";
+                }
+            }
+        }
+
+        if ($isId) {
+            return $estatus == 1 ? 1 : 0;
+        } else {
+            return $estatus == 1 ? 'Abierta' : 'Cerrada';
+        }
     }
-
 
 
     public function total()
