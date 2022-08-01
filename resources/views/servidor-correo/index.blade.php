@@ -1,4 +1,9 @@
 @extends('layouts.app')
+
+@section('boton')
+    <a href="{{asset('images/Empresas/Empresa1/Gestión Servidor De Correo.pdf')}}" class="btn btn-danger btn-sm" target="_blank"><i class="fas fa-book"></i> Documentación</a>
+@endsection
+
 @section('content')
     @if(Session::has('success'))
         <div class="alert alert-success alerta" style="margin-left: 2%;margin-right: 2%;">
