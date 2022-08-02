@@ -114,12 +114,12 @@
                 </select>
             </td>
             <td class="not-active">
-                {{-- <div class="d-flex justify-content-between" id="divCartera1">
+                <div class="d-none justify-content-between" id="divCartera1">
                     <input type="text" class="form-control form-control-sm" readonly>
                     <a class="btn btn-primary-sm not-active-a" onclick="modalShow()" style="
                     padding: 0px;
                     margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
-                </div> --}}
+                </div>
             </td>
             <td>
                 <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion1">
@@ -208,7 +208,11 @@
             <div class="row detallecartera2 d-none">
                     <div class="col-md-3">
                         <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="5" placeholder="Prefijo">
-                            <option>FV - Factura de venta</option>
+                            <option value="FV">FV - Factura de venta</option>
+                            <option value="FC">FC - Factura de compra</option>
+                            <option value="RC">RC - Anticipo de clientes</option>
+                            <option value="RP">RP - Anticipo de proveedores</option>
+                            <option value="CC">CC - Otros</option>
                         </select>
                     </div>
                     <div class="col-md-3">

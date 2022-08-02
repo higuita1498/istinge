@@ -44,9 +44,9 @@ function crearFilaSaldo(){
             </select>
         </td>
         <td>
-            <div class="d-flex justify-content-between d-none" id="divCartera${nro}">
+            <div class="d-none justify-content-between" id="divCartera${nro}">
                     <input type="text" class="form-control form-control-sm" readonly>
-                    <a class="btn btn-primary-sm not-active-a" onclick="modalShow()" style="
+                    <a class="btn btn-primary-sm" onclick="modalShow()" style="
                     padding: 0px;
                     margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
             </div></td>

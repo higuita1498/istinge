@@ -200,6 +200,26 @@ class CronController extends Controller
 
                         array_push($numeros, '57'.$numero);
 
+                        //>>>>Posible aplicación de Prorrateo al total<<<<//
+                            if(Auth::user()->empresaObj->prorrateo == 1){
+                                $dias = $factura->diasCobradosProrrateo();
+                                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                                if($dias != 30){
+                                    if(isset($factura->prorrateo_aplicado)){
+                                        $factura->prorrateo_aplicado = 1;
+                                        $factura->save();
+                                    }
+
+                                    foreach($factura->itemsFactura as $item){
+                                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                                        $precioItemProrrateo = round($item->precio * $dias / 30, Auth::user()->empresa()->precision); 
+                                        $item->precio = $precioItemProrrateo;
+                                        $item->save();
+                                    }
+                                }
+                            }
+                        //>>>>Fin posible aplicación prorrateo al total<<<<//
+
                         ## ENVIO CORREO ##
                         // $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
                         // if($host){
