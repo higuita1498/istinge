@@ -300,12 +300,12 @@ class CronController extends Controller
                 $mensaje = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
-                        $post['toNumber'] = $numeros;
+                        $post['numero'] = $numeros;
                         $post['sms'] = $mensaje;
 
                         $curl = curl_init();
                         curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                             CURLOPT_RETURNTRANSFER => true,
                             CURLOPT_ENCODING => '',
                             CURLOPT_MAXREDIRS => 10,
@@ -684,12 +684,12 @@ class CronController extends Controller
 
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                    $post['toNumber'] = $numeros;
+                    $post['numero'] = $numeros;
                     $post['sms'] = $mensaje;
 
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => '',
                         CURLOPT_MAXREDIRS => 10,
@@ -803,12 +803,12 @@ class CronController extends Controller
             $mensaje = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                    $post['toNumber'] = $numeros;
+                    $post['numero'] = $numeros;
                     $post['sms'] = $mensaje;
 
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => '',
                         CURLOPT_MAXREDIRS => 10,
@@ -1017,12 +1017,12 @@ class CronController extends Controller
                             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                                    $post['toNumber'] = $numero;
+                                    $post['numero'] = $numero;
                                     $post['sms'] = $mensaje;
 
                                     $curl = curl_init();
                                     curl_setopt_array($curl, array(
-                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                         CURLOPT_RETURNTRANSFER => true,
                                         CURLOPT_ENCODING => '',
                                         CURLOPT_MAXREDIRS => 10,
@@ -1218,12 +1218,12 @@ class CronController extends Controller
                             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                                    $post['toNumber'] = $numero;
+                                    $post['numero'] = $numero;
                                     $post['sms'] = $mensaje;
 
                                     $curl = curl_init();
                                     curl_setopt_array($curl, array(
-                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                         CURLOPT_RETURNTRANSFER => true,
                                         CURLOPT_ENCODING => '',
                                         CURLOPT_MAXREDIRS => 10,
@@ -1478,12 +1478,12 @@ class CronController extends Controller
                         $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                         if($servicio->nombre == 'Hablame SMS'){
                             if($servicio->api_key && $servicio->user && $servicio->pass){
-                                $post['toNumber'] = $numero;
+                                $post['numero'] = $numero;
                                 $post['sms'] = $mensaje;
 
                                 $curl = curl_init();
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => '',
                                     CURLOPT_MAXREDIRS => 10,
