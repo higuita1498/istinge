@@ -1573,4 +1573,92 @@ class CronController extends Controller
         }
         return abort(400);
     }
+
+    public static function SMSFacturas($fecha){
+        $numeros = [];
+        $empresa = Empresa::find(1);
+        $facturas = Factura::where('fecha', $fecha)->where('estatus', 1)->get();
+
+        foreach ($facturas as $factura) {
+            $numero = str_replace('+','',$factura->cliente()->celular);
+            $numero = str_replace(' ','',$numero);
+            array_push($numeros, '57'.$numero);
+        }
+
+        $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
+        if($servicio){
+            $mensaje = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
+            if($servicio->nombre == 'Hablame SMS'){
+                if($servicio->api_key && $servicio->user && $servicio->pass){
+                    $post['numero'] = $numeros;
+                    $post['sms'] = $mensaje;
+
+                    $curl = curl_init();
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                        CURLOPT_HTTPHEADER => array(
+                            'account: '.$servicio->user,
+                            'apiKey: '.$servicio->api_key,
+                            'token: '.$servicio->pass,
+                            'Content-Type: application/json'
+                        ),
+                    ));
+                    $result = curl_exec ($curl);
+                    $err  = curl_error($curl);
+                    curl_close($curl);
+                }
+            }elseif($servicio->nombre == 'SmsEasySms'){
+                if($servicio->user && $servicio->pass){
+                    //$post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
+                    $post['text'] = $mensaje;
+                    $post['from'] = "SMS";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                    $result = curl_exec ($ch);
+                    $err  = curl_error($ch);
+                    curl_close($ch);
+                }
+            }else{
+                if($servicio->user && $servicio->pass){
+                    //$post['to'] = array('57'.$numero);
+                    $post['to'] = $numeros;
+                    $post['text'] = $mensaje;
+                    $post['from'] = "";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                    $result = curl_exec ($ch);
+                    $err  = curl_error($ch);
+                    curl_close($ch);
+                }
+            }
+        }
+    }
 }

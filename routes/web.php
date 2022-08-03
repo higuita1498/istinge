@@ -46,6 +46,7 @@ Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorB
 Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
 Route::get('PagoVencimiento','CronController@PagoVencimiento')->name('PagoVencimiento');
 Route::get('cortarpromesas','CronController@CortarPromesas')->name('CortarPromesas');
+Route::get('SMSFacturas/{fecha}','CronController@SMSFacturas')->name('SMSFacturas');
 
 
 /*PAYU*/
