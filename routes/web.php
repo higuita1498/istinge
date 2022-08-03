@@ -47,6 +47,8 @@ Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
 Route::get('PagoVencimiento','CronController@PagoVencimiento')->name('PagoVencimiento');
 Route::get('cortarpromesas','CronController@CortarPromesas')->name('CortarPromesas');
 Route::get('SMSFacturas/{fecha}','CronController@SMSFacturas')->name('SMSFacturas');
+Route::get('DeshabilitarContratosMK/{mk}','CronController@DeshabilitarContratosMK')->name('DeshabilitarContratosMK');
+
 
 
 /*PAYU*/

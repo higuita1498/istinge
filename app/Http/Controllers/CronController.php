@@ -1661,4 +1661,49 @@ class CronController extends Controller
             }
         }
     }
+
+    public static function DeshabilitarContratosMK($mk){
+        $i=0;
+        $mikrotik = Mikrotik::find($mk);
+        $empresa = Empresa::find(1);
+
+        if($mikrotik){
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+
+            //dd($contratos);
+
+            foreach ($contratos as $contrato) {
+                if($contrato->state == 'disabled'){
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
+
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        if($contrato->ip){
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "comment" => $contrato->servicio,
+                                "list" => 'morosos'
+                                )
+                            );
+
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
+                            $API->write('/ip/firewall/address-list/print', false);
+                            $API->write('?address='.$contrato->ip, false);
+                            $API->write("?list=ips_autorizadas",false);
+                            $API->write('=.proplist=.id');
+                            $ARRAYS = $API->read();
+                            if(count($ARRAYS)>0){
+                                $API->write('/ip/firewall/address-list/remove', false);
+                                $API->write('=.id='.$ARRAYS[0]['.id']);
+                                $READ = $API->read();
+                            }
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
+                            $i++;
+                        }
+                        $API->disconnect();
+                    }
+                }
+            }
+        }
+    }
 }
