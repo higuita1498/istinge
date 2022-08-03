@@ -87,33 +87,71 @@ class Factura extends Model
         return DB::table('mikrotik')->where('id',$contrato->server_configuration_id)->first();
     }
 
-    public function estatus($class=false){
+    public function estatus($class = false, $isId = false)
+    {
+
+        if (!isset($this->estatus)) {
+            $factura = DB::table('factura')->select('estatus as estado')->where('id', $this->id)->first();
+            if (!$factura) {
+                return '';
+            }
+            $estatus = $factura->estado;
+        } else {
+            $estatus = $this->estatus;
+        }
+
+
         if ($class) {
-            if ($this->estatus==2) {
-               return 'warning';
+            if ($estatus == 2) {
+                return 'warning';
             }
-            return $this->estatus==1?'danger':'success';
+            return $estatus == 1 ? 'danger' : 'success';
         }
 
-        if ($this->estatus==2) {
-            $mensaje = 'Anulada';
-        }
-        if ($this->estatus==3) {
-            $mensaje = 'Reconexión';
-        }
-        $mensaje = $this->estatus==1?'Abierta':'Cerrada';
-
-        if(isset($this->tipo) && $this->tipo == 2){
-            if($this->emitida == 1){
-                $mensaje.="-emitida";
-            }else{
-                $mensaje.="-no emitida";
+        if ($estatus == 2) {
+            if ($isId) {
+                return 2;
+            } else {
+                return 'Anulada';
             }
         }
 
-        return $mensaje;
+        if ($this->notas_credito()) {
+            $precioNotas = 0;
+
+            foreach ($this->notas_credito() as $notas) {
+
+                //Acumulado de total en notas creditos de la factura.
+                $precioNotas += $notas->nota()->total()->total;
+            }
+
+            if ($precioNotas > 0 && $this->total()->total > $precioNotas && $estatus == 1 && $precioNotas + $this->pagado() < $this->total()->total) {
+                if ($isId) {
+                    return 3;
+                } else {
+                    return "Abierta con nota crédito";
+                }
+            } elseif ($this->total()->total == $precioNotas) {
+                if ($isId) {
+                    return 4;
+                } else {
+                    return "Cerrada con nota crédito";
+                }
+            } elseif ($precioNotas > 0 && $estatus == 1 && $precioNotas + $this->pagado() >= $this->total()->total) {
+                if ($isId) {
+                    return 3;
+                } else {
+                    return "Cerrada con nota crédito";
+                }
+            }
+        }
+
+        if ($isId) {
+            return $estatus == 1 ? 1 : 0;
+        } else {
+            return $estatus == 1 ? 'Abierta' : 'Cerrada';
+        }
     }
-
 
 
     public function total()
@@ -955,15 +993,15 @@ public function forma_pago()
             $inicioCorte = Carbon::parse($inicioCorte)->addDay()->toFormattedDateString();
 
             //obtenemos el mes y año de la factura actual
-            $mesFactura = Carbon::parse($this->fecha)->format('m-Y');
+            $mesYearFactura = Carbon::parse($this->fecha)->format('m-Y');
 
             //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
-            $fechaFin = $finCorte = $diaFinCorte . "-" . $mesFactura;
+            $fechaFin = $finCorte = $diaFinCorte . "-" . $mesYearFactura;
             $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
 
             //Construimos una fecha con el grupo de corte y mes y año de la factura, tambien formateamos la fecha de la factura completamente
             $fechaFactura = Carbon::parse($this->fecha);
-            $inicio = $grupo->fecha_corte . "-" . $mesFactura;
+            $inicio = $grupo->fecha_corte . "-" . $mesYearFactura;
             $inicio = Carbon::parse($inicio);
 
             $diasCobrados = 0;
@@ -995,14 +1033,90 @@ public function forma_pago()
                     $fechaContrato = Carbon::parse($fechaContrato);
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+                    if($diasCobrados == 0){return 30;}
+                    if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
                 }else{
                     //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
                     $diasCobrados = $fechaInicio->diffInDays($fechaFin);
+                    if($diasCobrados == 0){return 30;}
+                    if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
                 }
             }
             return $mensaje;
+        }
+    }
+    
+    public function diasCobradosProrrateo(){
+        $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+        where('client_id',$this->cliente)
+        ->select('gc.*')->first();
+        
+        if($grupo){
+            $empresa = Empresa::find($this->empresa);
+            $mesInicioCorte = $mesFinCorte = Carbon::parse($this->fecha)->format('m');
+            $yearInicioCorte = $yearFinCorte = Carbon::parse($this->fecha)->format('Y');
+    
+            $diaInicioCorte = $diaFinCorte = $grupo->fecha_corte;
+
+            //construimos el inicio del corte tomando la fecha de la factura (mes y año) y el grupo de corte (el dia)
+            $fechaInicio = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
+
+            //obtenemos el mes y año de la factura actual
+            $mesYearFactura = Carbon::parse($this->fecha)->format('m-Y');
+
+            //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
+            $fechaFin = $diaFinCorte . "-" . $mesYearFactura;
+
+            $inicio = $grupo->fecha_corte . "-" . $mesYearFactura;
+            $inicio = Carbon::parse($inicio);
+
+            $diasCobrados = 0;
+            $fechaInicio = Carbon::parse($fechaInicio);
+            $fechaFin    = Carbon::parse($fechaFin);
+
+            //Primero analizamos si es la primer factura del contrato que vamos a generar
+            if($this->contrato_id != null){
+
+                $factura = Factura::where('empresa',$this->empresa)->where('contrato_id',$this->contrato_id)->orderBy('id','ASC')->first();
+
+                /*
+                De esta manera nos aseguramos que se esté hablando de la misma y primer factura y entonces cobraremos
+                los primeros dias de uso dependiendo de la creacion del contrato
+                también debemos tener la opción de prorrateo activa en el menú de configuración.
+                */
+                if($factura->id == $this->id && $empresa->prorrateo == 1){
+
+                    //Buscamos el contrato al que esta asociada la factura
+                    $contrato = Contrato::find($this->contrato_id);
+
+                    $yearContrato = Carbon::parse($contrato->created_at)->format('Y');
+                    $mesContrato = Carbon::parse($contrato->created_at)->format('m');
+                    $diaContrato = Carbon::parse($contrato->created_at)->format('d');
+
+                    $fechaContrato = $yearContrato . "-" . $mesContrato . "-" . $diaContrato;
+                    $fechaContrato = Carbon::parse($fechaContrato);
+
+                    $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+
+                    if($diasCobrados > 30){$diasCobrados=30;}
+                    if($diasCobrados == 0){return 30;}
+                    return $diasCobrados;
+                }else{
+                    //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
+                    $diasCobrados = $fechaInicio->diffInDays($fechaFin);
+                    
+                    //si es 0 es por que no se le puede aplicar prorrateo ya que no es la primer factura
+                    if($diasCobrados == 0){return 30;}
+                    if($diasCobrados > 30){$diasCobrados=30;}
+                    return $diasCobrados;
+                }
+            }else{
+                return 30;
+            }
+        }else{
+            return 30;
         }
     }
 

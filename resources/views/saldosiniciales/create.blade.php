@@ -15,6 +15,15 @@
     .forma-check{
         margin-left: 10px;
     }
+
+    .not-active {
+        cursor: not-allowed;
+    }
+
+    .not-active-a{
+        pointer-events: none; 
+            cursor: default; 
+    }
 </style>
 
 @if(Session::has('success'))
@@ -42,6 +51,13 @@
     }, 8000);
 </script>
 @endif
+
+<div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4 text-center align-self-center">
+        <h4 style="position:absolute;bottom: 1.25em;left:12em;"><b class="text-primary">No. </b> {{$proximoNumero}}</h4>
+    </div>
+</div>
 
 <form method="POST" action="{{ route('saldoinicial.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" autocomplete="off" novalidate id="form-saldoinicial" >
     {{ csrf_field() }}
@@ -97,10 +113,10 @@
                     @endforeach
                 </select>
             </td>
-            <td>
-                <div class="d-flex justify-content-between" id="divCartera1">
-                    <input type="text" class="form-control form-control-sm">
-                    <a class="btn btn-primary-sm" onclick="modalShow()" style="
+            <td class="not-active">
+                <div class="d-none justify-content-between" id="divCartera1">
+                    <input type="text" class="form-control form-control-sm" readonly>
+                    <a class="btn btn-primary-sm not-active-a" onclick="modalShow()" style="
                     padding: 0px;
                     margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
                 </div>
@@ -192,7 +208,11 @@
             <div class="row detallecartera2 d-none">
                     <div class="col-md-3">
                         <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="5" placeholder="Prefijo">
-                            <option>FV - Factura de venta</option>
+                            <option value="FV">FV - Factura de venta</option>
+                            <option value="FC">FC - Factura de compra</option>
+                            <option value="RC">RC - Anticipo de clientes</option>
+                            <option value="RP">RP - Anticipo de proveedores</option>
+                            <option value="CC">CC - Otros</option>
                         </select>
                     </div>
                     <div class="col-md-3">

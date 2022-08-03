@@ -94,8 +94,9 @@ class SaldosInicialesController extends Controller
         ->whereRaw('length(codigo) > 6')
         ->get();
         $contactos = Contacto::where('empresa',auth()->user()->empresa)->get();
+        $proximoNumero = Numeracion::where('empresa',Auth::user()->empresa)->first()->contabilidad;
 
-        return view('saldosiniciales.create',compact('tipos','puc','contactos'));
+        return view('saldosiniciales.create',compact('tipos','puc','contactos','proximoNumero'));
     }
 
     /**
@@ -159,12 +160,8 @@ class SaldosInicialesController extends Controller
         if(isset($request->pucId)){ 
             $puc = Puc::find($request->pucId);
 
-            $codigo = substr($puc->codigo, 0, 4);
-            
-            $grupo = Puc::where('codigo',$codigo)->first();
-
-            if($grupo){
-                if($grupo->id_grupo == 38 || $grupo->id_grupo == 39){
+            if($puc->id_tipo){
+                if($puc->id_tipo == 38 || $puc->id_tipo == 39){
                     return response()->json(true);
                 }else{
                     return response()->json(false);
