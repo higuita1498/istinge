@@ -220,7 +220,7 @@ class ExportarReportesController extends Controller
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Facturas Electrónicas desde ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Creracion', 'Vencimiento', 'Tipo', 'Total');
+        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio', 'Creacion','Vencimiento','Tipo','Subtotal','Iva','Total');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -231,17 +231,17 @@ class ExportarReportesController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:F1');
+            ->mergeCells('A1:K1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:K1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:F3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:K3')->applyFromArray($estilo);
 
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -284,16 +284,23 @@ class ExportarReportesController extends Controller
 
         // Aquí se escribe en el archivo
         $i=4;
+        $moneda = Auth::user()->empresa()->moneda;
         foreach ($facturas as $factura) {
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $factura->codigo)
                 ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
-                ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($factura->fecha)))
-                ->setCellValue($letras[3].$i, date('d-m-Y', strtotime($factura->vencimiento)))
-                ->setCellValue($letras[4].$i, $factura->emitida == 1 ? 'Emitida' : 'No Emitida')
-                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
+                ->setCellValue($letras[2].$i, $factura->cliente()->nit)
+                ->setCellValue($letras[3].$i, $factura->cliente()->estrato)
+                ->setCellValue($letras[4].$i, $factura->cliente()->municipio()->nombre)
+                ->setCellValue($letras[5].$i, date('d-m-Y', strtotime($factura->fecha)))
+                ->setCellValue($letras[6].$i, date('d-m-Y', strtotime($factura->vencimiento)))
+                ->setCellValue($letras[7].$i, $factura->emitida == 1 ? 'Emitida' : 'No Emitida')
+                ->setCellValue($letras[8].$i, $factura->total()->subtotal)
+                ->setCellValue($letras[9].$i, $factura->total()->valImpuesto)
+                ->setCellValue($letras[10].$i,$factura->total()->total);
             $i++;
         }
+ 
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[4].$i, "TOTAL: ")
             ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
@@ -304,7 +311,7 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:F'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:K'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){

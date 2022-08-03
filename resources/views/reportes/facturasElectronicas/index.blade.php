@@ -80,10 +80,15 @@
 				<tr>
                     <th>Nro. Factura</th>
                     <th>Cliente <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==1?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
-                    <th>Creación <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==2?'':'no_order'}}" campo="2" order="@if($request->orderby==2){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==2){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Vencimiento <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Tipo <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
-                    <th>Total <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==7?'':'no_order'}}" campo="7" order="@if($request->orderby==7){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==7){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Cédula<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==2?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Estrato<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==3?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Municipio<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==4?'':'no_order'}}" campo="1" order="@if($request->orderby==1){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==1){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
+                    <th>Creación <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==5?'':'no_order'}}" campo="2" order="@if($request->orderby==2){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==2){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Vencimiento <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==6?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Tipo <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==7?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Subtotal<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==8?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Iva<button type="button" class="btn btn-link no-padding orderby {{$request->orderby==9?'':'no_order'}}" campo="3" order="@if($request->orderby==3){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==3){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button></th>
+                    <th>Total <button type="button" class="btn btn-link no-padding orderby {{$request->orderby==10?'':'no_order'}}" campo="7" order="@if($request->orderby==7){{$request->order==1?'0':'1'}}@else 0 @endif" ><i class="fas fa-arrow-@if($request->orderby==7){{$request->order==0?'up':'down'}}@else{{'down'}} @endif"></i></button> </th>
 	          </tr>
 			</thead>
 			<tbody>
@@ -92,15 +97,20 @@
 					<tr>
                         <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a> </td>
                         <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}}  {{$factura->cliente()->apellidos()}} @if($factura->cliente()->celular) | {{$factura->cliente()->celular}}@endif</a></td>
+                        <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nit}}</a></td>
+                        <td>{{$factura->cliente()->estrato}}</td>
+                        <td>{{$factura->cliente()->municipio()->nombre}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
                         <td>{{$factura->emitida == 1 ? 'Emitida' : 'No emitida'}}</td>
+                        <td>{{$factura->total()->subtotal}}</td>
+                        <td>{{$factura->total()->valImpuesto}}</td>
                         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->devoluciones())}}</td>
 					</tr>
 				@endforeach
 			</tbody>
 			<tfoot class="thead-dark">
-				<td colspan="4"></td>
+				<td colspan="9"></td>
 				<th  class="text-right">Total</th>
 				<th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($total)}}</th>
 			</tfoot>
