@@ -302,8 +302,8 @@ class ExportarReportesController extends Controller
         }
  
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[4].$i, "TOTAL: ")
-            ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
+            ->setCellValue($letras[9].$i, "TOTAL: ")
+            ->setCellValue($letras[10].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
