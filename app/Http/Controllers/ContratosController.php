@@ -175,6 +175,9 @@ class ContratosController extends Controller
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
                 });
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion}%");
+                });
             }
             if($request->c_barrio){
                 $contratos->where(function ($query) use ($request) {
@@ -323,7 +326,7 @@ class ContratosController extends Controller
                 return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
             })
             ->editColumn('direccion', function (Contrato $contrato) {
-                return $contrato->c_direccion;
+                return ($contrato->address_street) ? $contrato->address_street : $contrato->c_direccion;
             })
             ->editColumn('celular', function (Contrato $contrato) {
                 return $contrato->c_celular;
