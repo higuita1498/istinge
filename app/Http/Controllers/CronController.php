@@ -204,7 +204,7 @@ class CronController extends Controller
                         $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
 
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
-                            if(Auth::user()->empresaObj->prorrateo == 1){
+                            if($empresa->prorrateo == 1){
                                 $dias = $factura->diasCobradosProrrateo();
                                 //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
                                 if($dias != 30){
@@ -215,7 +215,7 @@ class CronController extends Controller
 
                                     foreach($factura->itemsFactura as $item){
                                         //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                        $precioItemProrrateo = round($item->precio * $dias / 30, Auth::user()->empresa()->precision); 
+                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
                                         $item->precio = $precioItemProrrateo;
                                         $item->save();
                                     }
@@ -1668,16 +1668,16 @@ class CronController extends Controller
         $empresa = Empresa::find(1);
 
         if($mikrotik){
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('state', 'disabled')->where('status', 1)->where('disabled', 0)->take(25)->get();
 
             //dd($contratos);
 
-            foreach ($contratos as $contrato) {
-                if($contrato->state == 'disabled'){
-                    $API = new RouterosAPI();
-                    $API->port = $mikrotik->puerto_api;
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
 
-                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                foreach ($contratos as $contrato) {
+                    if($contrato->state == 'disabled'){
                         if($contrato->ip){
                             $API->comm("/ip/firewall/address-list/add", array(
                                 "address" => $contrato->ip,
@@ -1699,11 +1699,15 @@ class CronController extends Controller
                             }
                             #ELIMINAMOS DE IP_AUTORIZADAS#
                             $i++;
+                            $contrato->disabled = 1;
+                            $contrato->save();
                         }
-                        $API->disconnect();
                     }
                 }
             }
+            $API->disconnect();
+
+            dd(Contrato::where('server_configuration_id', $mikrotik->id)->where('state', 'disabled')->where('status', 1)->where('disabled', 0)->count());
         }
     }
 }
