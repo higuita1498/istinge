@@ -411,7 +411,12 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->porpagar)}";
         })
         ->addColumn('estado', function (Factura $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus(). '</span>';
+            $msj = '';
+            if (Auth::user()->empresaObj->estado_dian == 1) {
+                $msj = $factura->emitida == 1 ? '- Emitida' : '- No Emitida';
+            }
+
+            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . ' ' . $msj . '</span>';
         })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
         ->rawColumns(['codigo', 'cliente', 'estado', 'acciones', 'vencimiento'])
