@@ -204,7 +204,7 @@ class CronController extends Controller
                         $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
 
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
-                            if(Auth::user()->empresaObj->prorrateo == 1){
+                            if($empresa->prorrateo == 1){
                                 $dias = $factura->diasCobradosProrrateo();
                                 //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
                                 if($dias != 30){
@@ -215,7 +215,7 @@ class CronController extends Controller
 
                                     foreach($factura->itemsFactura as $item){
                                         //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                        $precioItemProrrateo = round($item->precio * $dias / 30, Auth::user()->empresa()->precision); 
+                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
                                         $item->precio = $precioItemProrrateo;
                                         $item->save();
                                     }
