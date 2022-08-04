@@ -1075,6 +1075,7 @@ class FacturasController extends Controller{
                 $factura->cliente=$request->cliente;
                 $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
                 $factura->vencimiento=Carbon::parse($request->vencimiento)->format('Y-m-d');
+                $factura->suspension=Carbon::parse($request->vencimiento)->format('Y-m-d');
                 $factura->observaciones=mb_strtolower($request->observaciones).' | Factura Editada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->vendedor=$request->vendedor;
                 $factura->lista_precios=$request->lista_precios;
