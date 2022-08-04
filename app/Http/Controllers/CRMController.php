@@ -635,7 +635,7 @@ class CRMController extends Controller
     public static function notificacion(){
         $fecha = date('d-m-Y');
         $fecha = date('d-m-Y', strtotime("-1 days", strtotime($fecha)));
-        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->where('crm.created_by', Auth::user()->id)->where('empresa', Auth::user()->empresa)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
+        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->where('crm.created_by', Auth::user()->id)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
         
         foreach($notificaciones as $notificacion){
             $notificacion->estado = 2;
