@@ -1668,16 +1668,16 @@ class CronController extends Controller
         $empresa = Empresa::find(1);
 
         if($mikrotik){
-            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->where('state', 'disabled')->where('status', 1)->where('disabled', 0)->take(25)->get();
 
             //dd($contratos);
 
-            foreach ($contratos as $contrato) {
-                if($contrato->state == 'disabled'){
-                    $API = new RouterosAPI();
-                    $API->port = $mikrotik->puerto_api;
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
 
-                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                foreach ($contratos as $contrato) {
+                    if($contrato->state == 'disabled'){
                         if($contrato->ip){
                             $API->comm("/ip/firewall/address-list/add", array(
                                 "address" => $contrato->ip,
@@ -1699,11 +1699,15 @@ class CronController extends Controller
                             }
                             #ELIMINAMOS DE IP_AUTORIZADAS#
                             $i++;
+                            $contrato->disabled = 1;
+                            $contrato->save();
                         }
-                        $API->disconnect();
                     }
                 }
             }
+            $API->disconnect();
+
+            dd(Contrato::where('server_configuration_id', $mikrotik->id)->where('state', 'disabled')->where('status', 1)->where('disabled', 0)->count());
         }
     }
 }
