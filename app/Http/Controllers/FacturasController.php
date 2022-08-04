@@ -2786,7 +2786,7 @@ class FacturasController extends Controller{
         $promesa_pago->factura = $factura->id;
         $promesa_pago->cliente = $factura->cliente;
         $promesa_pago->fecha = $factura->vencimiento;
-        $promesa_pago->vencimiento = $request->promesa_pago;
+        $promesa_pago->vencimiento = $factura->vencimiento;
         $promesa_pago->created_by = Auth::user()->id;
         $promesa_pago->save();
         
