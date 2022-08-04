@@ -75,6 +75,7 @@
                 <tr>
                     <th>Fecha</th>
                     <th>Comprobante</th>
+                    <th>Contacto</th>
                     <th>Identificación</th>
                     <th>Cuenta</th>
                     <th>Categoría</th>
@@ -96,8 +97,12 @@
                             </a>
                         </td>
                         <td>
-                            {{$movimiento->contacto ? $movimiento->cliente()->tip_iden('corta') : '' }} {{$movimiento->contacto ? $movimiento->cliente()->nit : '' }}
+                            {{$movimiento->contacto ? $movimiento->cliente()->nombre  . $movimiento->cliente()->apellidos() : ''}}
                         </td>
+                        <td>
+                            {{$movimiento->cliente()->nit}}
+                        </td>
+                        
                         <td>
                             {{$movimiento->banco()->nombre}}
                         </td>
