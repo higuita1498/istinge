@@ -79,6 +79,7 @@ class CronController extends Controller
             $i=0;
             $date = date('d') * 1;
             $numeros = [];
+            $bulk = '';
             $fail = 0;
             $succ = 0;
 
@@ -200,6 +201,8 @@ class CronController extends Controller
 
                         array_push($numeros, '57'.$numero);
 
+                        $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
                             if(Auth::user()->empresaObj->prorrateo == 1){
                                 $dias = $factura->diasCobradosProrrateo();
@@ -320,33 +323,30 @@ class CronController extends Controller
                 $mensaje = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
-                        $post['toNumber'] = $numeros;
-                        $post['sms'] = $mensaje;
-
                         $curl = curl_init();
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
                             CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => '',
+                            CURLOPT_ENCODING => "",
                             CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_TIMEOUT => 30,
                             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                            CURLOPT_HTTPHEADER => array(
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                            CURLOPT_HTTPHEADER => [
+                                'Content-Type: application/json',
                                 'account: '.$servicio->user,
                                 'apiKey: '.$servicio->api_key,
                                 'token: '.$servicio->pass,
-                                'Content-Type: application/json'
-                            ),
-                        ));
-                        $result = curl_exec ($curl);
-                        $err  = curl_error($curl);
+                                ],
+                        ]);
+
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
                         curl_close($curl);
                     }
                 }elseif($servicio->nombre == 'SmsEasySms'){
                     if($servicio->user && $servicio->pass){
-                        //$post['to'] = array('57'.$numero);
                         $post['to'] = $numeros;
                         $post['text'] = $mensaje;
                         $post['from'] = "SMS";
@@ -368,7 +368,6 @@ class CronController extends Controller
                     }
                 }else{
                     if($servicio->user && $servicio->pass){
-                        //$post['to'] = array('57'.$numero);
                         $post['to'] = $numeros;
                         $post['text'] = $mensaje;
                         $post['from'] = "";
@@ -679,6 +678,7 @@ class CronController extends Controller
         $i=0;
         $fecha = date('Y-m-d');
         $numeros = [];
+        $bulk = '';
         $fail = 0;
         $succ = 0;
 
@@ -696,6 +696,8 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
+
+            $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
         }
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
@@ -704,33 +706,30 @@ class CronController extends Controller
 
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                    $post['toNumber'] = $numeros;
-                    $post['sms'] = $mensaje;
-
                     $curl = curl_init();
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
                         CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => '',
+                        CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_TIMEOUT => 30,
                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                        CURLOPT_HTTPHEADER => array(
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                        CURLOPT_HTTPHEADER => [
+                            'Content-Type: application/json',
                             'account: '.$servicio->user,
                             'apiKey: '.$servicio->api_key,
                             'token: '.$servicio->pass,
-                            'Content-Type: application/json'
-                        ),
-                    ));
-                    $result = curl_exec ($curl);
-                    $err  = curl_error($curl);
+                            ],
+                    ]);
+
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
                     curl_close($curl);
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
                 if($servicio->user && $servicio->pass){
-                    //$post['to'] = array('57'.$numero);
                     $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "SMS";
@@ -752,7 +751,6 @@ class CronController extends Controller
                 }
             }else{
                 if($servicio->user && $servicio->pass){
-                    //$post['to'] = array('57'.$numero);
                     $post['to'] = $numeros;
                     $post['text'] = $mensaje;
                     $post['from'] = "";
@@ -799,6 +797,7 @@ class CronController extends Controller
         $i=0;
         $fecha = date('Y-m-d');
         $numeros = [];
+        $bulk = '';
         $fail = 0;
         $succ = 0;
 
@@ -816,6 +815,8 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
+
+            $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
         }
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
@@ -823,28 +824,26 @@ class CronController extends Controller
             $mensaje = "Estimado cliente su servicio ha sido suspendido por falta de pago, por favor realice su pago para continuar disfrutando de su servicio. ".$empresa->slogan;
             if($servicio->nombre == 'Hablame SMS'){
                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                    $post['toNumber'] = $numeros;
-                    $post['sms'] = $mensaje;
-
                     $curl = curl_init();
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
                         CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => '',
+                        CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_TIMEOUT => 30,
                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                        CURLOPT_HTTPHEADER => array(
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                        CURLOPT_HTTPHEADER => [
+                            'Content-Type: application/json',
                             'account: '.$servicio->user,
                             'apiKey: '.$servicio->api_key,
                             'token: '.$servicio->pass,
-                            'Content-Type: application/json'
-                        ),
-                    ));
-                    $result = curl_exec ($curl);
-                    $err  = curl_error($curl);
+                            ],
+                    ]);
+
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
                     curl_close($curl);
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
@@ -1037,12 +1036,12 @@ class CronController extends Controller
                             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                                    $post['toNumber'] = $numero;
+                                    $post['numero'] = $numero;
                                     $post['sms'] = $mensaje;
 
                                     $curl = curl_init();
                                     curl_setopt_array($curl, array(
-                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                         CURLOPT_RETURNTRANSFER => true,
                                         CURLOPT_ENCODING => '',
                                         CURLOPT_MAXREDIRS => 10,
@@ -1238,12 +1237,12 @@ class CronController extends Controller
                             $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
-                                    $post['toNumber'] = $numero;
+                                    $post['numero'] = $numero;
                                     $post['sms'] = $mensaje;
 
                                     $curl = curl_init();
                                     curl_setopt_array($curl, array(
-                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                         CURLOPT_RETURNTRANSFER => true,
                                         CURLOPT_ENCODING => '',
                                         CURLOPT_MAXREDIRS => 10,
@@ -1498,12 +1497,12 @@ class CronController extends Controller
                         $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
                         if($servicio->nombre == 'Hablame SMS'){
                             if($servicio->api_key && $servicio->user && $servicio->pass){
-                                $post['toNumber'] = $numero;
+                                $post['numero'] = $numero;
                                 $post['sms'] = $mensaje;
 
                                 $curl = curl_init();
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => '',
                                     CURLOPT_MAXREDIRS => 10,
@@ -1572,5 +1571,139 @@ class CronController extends Controller
             return abort(400);
         }
         return abort(400);
+    }
+
+    public static function SMSFacturas($fecha){
+        $numeros = [];
+        $bulk = '';
+        $empresa = Empresa::find(1);
+        $facturas = Factura::where('fecha', $fecha)->where('estatus', 1)->get();
+
+        foreach ($facturas as $factura) {
+            if($factura->cliente()->celular){
+                $numero = str_replace('+','',$factura->cliente()->celular);
+                $numero = str_replace(' ','',$numero);
+                array_push($numeros, '57'.$numero);
+
+                $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+            }
+        }
+
+        $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
+        if($servicio){
+            $mensaje = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
+            if($servicio->nombre == 'Hablame SMS'){
+                if($servicio->api_key && $servicio->user && $servicio->pass){
+                    $curl = curl_init();
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                        CURLOPT_HTTPHEADER => [
+                            'Content-Type: application/json',
+                            'account: '.$servicio->user,
+                            'apiKey: '.$servicio->api_key,
+                            'token: '.$servicio->pass,
+                            ],
+                    ]);
+
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
+                    curl_close($curl);
+                }
+            }elseif($servicio->nombre == 'SmsEasySms'){
+                if($servicio->user && $servicio->pass){
+                    $post['to'] = $numeros;
+                    $post['text'] = $mensaje;
+                    $post['from'] = "SMS";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                    $result = curl_exec ($ch);
+                    $err  = curl_error($ch);
+                    curl_close($ch);
+                }
+            }else{
+                if($servicio->user && $servicio->pass){
+                    $post['to'] = $numeros;
+                    $post['text'] = $mensaje;
+                    $post['from'] = "";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                        array(
+                            "Accept: application/json",
+                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                    $result = curl_exec ($ch);
+                    $err  = curl_error($ch);
+                    curl_close($ch);
+                }
+            }
+        }
+    }
+
+    public static function DeshabilitarContratosMK($mk){
+        $i=0;
+        $mikrotik = Mikrotik::find($mk);
+        $empresa = Empresa::find(1);
+
+        if($mikrotik){
+            $contratos = Contrato::where('server_configuration_id', $mikrotik->id)->get();
+
+            //dd($contratos);
+
+            foreach ($contratos as $contrato) {
+                if($contrato->state == 'disabled'){
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
+
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        if($contrato->ip){
+                            $API->comm("/ip/firewall/address-list/add", array(
+                                "address" => $contrato->ip,
+                                "comment" => $contrato->servicio,
+                                "list" => 'morosos'
+                                )
+                            );
+
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
+                            $API->write('/ip/firewall/address-list/print', false);
+                            $API->write('?address='.$contrato->ip, false);
+                            $API->write("?list=ips_autorizadas",false);
+                            $API->write('=.proplist=.id');
+                            $ARRAYS = $API->read();
+                            if(count($ARRAYS)>0){
+                                $API->write('/ip/firewall/address-list/remove', false);
+                                $API->write('=.id='.$ARRAYS[0]['.id']);
+                                $READ = $API->read();
+                            }
+                            #ELIMINAMOS DE IP_AUTORIZADAS#
+                            $i++;
+                        }
+                        $API->disconnect();
+                    }
+                }
+            }
+        }
     }
 }
