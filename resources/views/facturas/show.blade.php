@@ -11,6 +11,12 @@
             right: 0px;
             border-color: #f9fafd #f9f9f9 #eaedf7 #eaedf7;
         }
+        td .elipsis-short-item {
+            width: 300px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
     </style>
     
     @if(auth()->user()->modo_lectura())
@@ -213,6 +219,10 @@
                             <td>Vencimiento</td>
                             <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
                         </tr>
+                        <tr>
+                            <td>Dirección</td>
+                            <th colspan="3">{{$factura->cliente()->contrato()->address_street ? $factura->cliente()->contrato()->address_street : $factura->cliente()->direccion}}</th>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -242,7 +252,7 @@
           <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td>@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blank">{{$item->producto()}}</a>@endif</td>
+                    <td><div class="elipsis-short-item">@if(auth()->user()->rol == 8) {{$item->producto()}} @else <a href="{{route('inventario.show',$item->producto)}}" target="_blank">{{$item->producto()}}</a>@endif</div></td>
                     <td><div class="elipsis-short">{{$item->ref}}</div></td>
                     <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($item->precio)}}</td>
                     <td>{{$item->desc?$item->desc:0}}%</td>
