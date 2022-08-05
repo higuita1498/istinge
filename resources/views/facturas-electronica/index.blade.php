@@ -148,15 +148,9 @@
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						<th>Número</th>
-						<th>Cliente</th>
-						<th>Creación</th>
-						<th>Vencimiento</th>
-						<th>Total</th>
-						<th>IVA</th>
-						<th>Pagado</th>
-						<th>Por Pagar</th>
-						<th>Estado</th>
+						@foreach($tabla as $campo)
+    					    <th>{{$campo->nombre}}</th>
+    					@endforeach
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -208,15 +202,9 @@
             },
             @endif
 			columns: [
-				{data: 'codigo'},
-				{data: 'cliente'},
-				{data: 'fecha'},
-				{data: 'vencimiento'},
-				{data: 'total'},
-				{data: 'impuesto'},
-				{data: 'pagado'},
-				{data: 'pendiente'},
-				{data: 'estado'},
+				@foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
 				{data: 'acciones'},
 			]
 		});
