@@ -329,7 +329,7 @@
         <table border="0" class="titulo">
             <tr>
                 <th width="23.5%" class="right smalltd">NOMBRE</th>
-                <td colspan="1" style="">{{$factura->cliente()->nombre}}</td>
+                <td colspan="1" style="">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</td>
             </tr>
             <tr>
                 <th class="right smalltd">NIT O C.C</th>
