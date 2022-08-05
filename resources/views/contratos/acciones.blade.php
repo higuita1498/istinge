@@ -32,3 +32,5 @@
 @if($mk == 0)
 <button class="btn btn-outline-warning btn-icons" title="Enviar a MK" type="submit" onclick="confirmar('enviar-mk-{{$id}}', '¿Está seguro que desea registrar este contrato en la mikrotik?', '');"><i class="fas fa-server"></i></button>
 @endif
+
+<a href="{{route('factura.create.cliente', $c_id)}}" class="btn btn-outline-warning btn-icons" title="Crear una factura" target="_blank"><i class="fas fa-file-invoice-dollar"></i></a>
