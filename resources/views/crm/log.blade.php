@@ -50,6 +50,7 @@
     					<th>Ejecutado por</th>
     					<th>Fecha / Hora</th>
     					<th>Acción</th>
+    					<th>Información</th>
     				</tr>
     			</thead>
     		</table>
@@ -81,7 +82,8 @@
 			columns: [
 			    { data: 'created_by' },
 			    { data: 'created_at' },
-				{ data: 'accion' }
+				{ data: 'accion' },
+				{ data: 'informacion' },
 			]
 		});
 

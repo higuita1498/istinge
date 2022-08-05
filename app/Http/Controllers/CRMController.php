@@ -301,7 +301,8 @@ class CRMController extends Controller
             }
             
             $crm->llamada      = $request->llamada;
-            $crm->informacion  = $request->informacion;
+            //$crm->informacion  = $request->informacion;
+            $crm->informacion  = ($crm->informacion) ? $crm->informacion.'<br>'.$request->informacion : $request->informacion;
             $crm->promesa_pago = $request->promesa_pago;
             $crm->fecha_pago   = $request->fecha;
             $crm->tiempo       = $request->tiempo;
@@ -707,7 +708,10 @@ class CRMController extends Controller
         ->editColumn('accion', function (CRMLOG $crm) {
             return $crm->accion;
         })
-        ->rawColumns(['created_at', 'created_by', 'accion'])
+        ->editColumn('informacion', function (CRMLOG $crm) {
+            return $crm->crmObj->informacion;
+        })
+        ->rawColumns(['created_at', 'created_by', 'accion', 'informacion'])
         ->toJson();
     }
 }
