@@ -219,10 +219,12 @@
                             <td>Vencimiento</td>
                             <th>{{date('d-m-Y', strtotime($factura->vencimiento))}}</th>
                         </tr>
+                        @if($factura->cliente()->contrato())
                         <tr>
                             <td>Dirección</td>
                             <th colspan="3">{{$factura->cliente()->contrato()->address_street ? $factura->cliente()->contrato()->address_street : $factura->cliente()->direccion}}</th>
                         </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
