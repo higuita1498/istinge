@@ -302,7 +302,7 @@ class CRMController extends Controller
             
             $crm->llamada      = $request->llamada;
             //$crm->informacion  = $request->informacion;
-            $crm->informacion  = ($crm->informacion) ? $crm->informacion.'<br>'.$request->informacion : $request->informacion;
+            $crm->informacion  = ($crm->informacion) ? $crm->informacion.'<hr><b>Fecha: </b>'.date('d-m-Y g:i:s A').'<br><b>Gestionado:</b> '.Auth::user()->nombres.'<br><b>Información: </b>'.$request->informacion : '<b>Fecha: </b>'.date('d-m-Y g:i:s A').'<br><b>Gestionado:</b> '.Auth::user()->nombres.'<br><b>Información: </b>'.$request->informacion;
             $crm->promesa_pago = $request->promesa_pago;
             $crm->fecha_pago   = $request->fecha;
             $crm->tiempo       = $request->tiempo;
