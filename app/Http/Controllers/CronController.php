@@ -586,6 +586,35 @@ class CronController extends Controller
         }
     }
 
+    public static function CortarCRM(){
+        $fecha = date('d-m-Y');
+        $i = 0;
+        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
+
+        foreach($notificaciones as $notificacion){
+            $notificacion->estado = 2;
+            $notificacion->notificacion = 1;
+            $notificacion->save();
+            $i++;
+        }
+
+        if (file_exists("CortarCRM.txt")){
+                $file = fopen("CortarCRM.txt", "a");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Corte: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "CRM: ".$i.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
+            }else{
+                $file = fopen("CortarCRM.txt", "w");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Corte: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "CRM: ".$i.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
+            }
+    }
+
     public static function migrarCRM(){
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id as cliente', 'f.id as factura', 'cs.grupo_corte', 'cs.server_configuration_id')->where('f.estatus',1)->where('f.fecha','>=',('2022-01-01'))->where('cs.state','disabled')->where('cs.status',1)->where('contactos.status',1)->groupBy('contactos.id')->get();
         //dd($contactos);

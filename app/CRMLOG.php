@@ -8,6 +8,7 @@ use Auth;
 use DB;
 
 use App\User;
+use App\CRM;
 
 class CRMLOG extends Model
 {
@@ -24,5 +25,10 @@ class CRMLOG extends Model
 
     public function created_by(){
         return User::find($this->created_by);
+    }
+
+    public function crmObj()
+    {
+        return $this->belongsTo(CRM::class, 'id_crm');
     }
 }
