@@ -1,6 +1,7 @@
 @extends('layouts.pdf')
 
 @section('content')
+@php $empresa = Auth::user()->empresa(); @endphp
     <style type="text/css">
         /**
         * Define the width, height, margins and position of the watermark.
@@ -112,23 +113,23 @@
         .divheader-pr{
             width: 100%;
             height:auto;
-            border: 1px solid {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
             background-color:#fff;
             border-radius:5px;
             justify-content:center;
             padding-top: 15px;
             margin-bottom: 2px;
-            color:{{Auth::user()->empresa()->color}};
+            color:{{$empresa->color}};
         }
         
         .divheader-pr a{
-            color:{{Auth::user()->empresa()->color}};
+            color:{{$empresa->color}};
         }
         
         .divheader-datoscli{
             width: 18%;
-            border: 1px solid {{Auth::user()->empresa()->color}};
-            background-color: {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
+            background-color: {{$empresa->color}};
             border-radius: 5px;
             justify-content: center;
             margin-bottom: 7px;
@@ -151,8 +152,8 @@
         
         .divheader-datosfact{
             width: 18%;
-            border: 1px solid {{Auth::user()->empresa()->color}};
-            background-color: {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
+            background-color: {{$empresa->color}};
             border-radius: 5px;
             justify-content: center;
             margin-top:1px;
@@ -169,8 +170,8 @@
         
         .divheader-nota{
             width: 9%;
-            border: 1px solid {{Auth::user()->empresa()->color}};
-            background-color: {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
+            background-color: {{$empresa->color}};
             border-radius: 5px;
             justify-content: center;
             margin-bottom: 2px;
@@ -180,7 +181,7 @@
         }
         
         .nota-content, .div-content-border{
-            border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;margin-top:5px;
+            border:1px solid {{$empresa->color}}; border-radius:5px;margin-top:5px;
         }
         .nota-content p{
             text-align:justify;
@@ -188,8 +189,8 @@
         }
         .divheader-estadocuenta{
             width: 20%;
-            border: 1px solid {{Auth::user()->empresa()->color}};
-            background-color: {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
+            background-color: {{$empresa->color}};
             border-radius: 5px;
             /*margin-bottom: 7px;*/
             /*margin-top: 7px;*/
@@ -224,7 +225,7 @@
         }
         
         .tr-mainvalorreconexion > td li{
-            background-color:{{Auth::user()->empresa()->color}};
+            background-color:{{$empresa->color}};
             border-radius:5px;
             padding: 10px;
             text-align: center;
@@ -239,7 +240,7 @@
         }
         
         .border-tdblue{
-            border: 1px solid {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
             border-radius:5px;
         }
         
@@ -248,7 +249,7 @@
         }
         
         .qr-table td:first-child{
-            border: 1px solid {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
             border-radius:5px;
         }
         
@@ -257,7 +258,7 @@
         }
         
         .td-qrback{
-            background-color:{{Auth::user()->empresa()->color}};
+            background-color:{{$empresa->color}};
             text-align:center;
             border-radius:5px;
         }
@@ -273,7 +274,7 @@
         
         .miclausula-li > td li{
             border-radius: 5px;
-            border: 1px solid {{Auth::user()->empresa()->color}};
+            border: 1px solid {{$empresa->color}};
         }
         
         .tr-meses{
@@ -295,21 +296,22 @@
             display: none;
         }
     </style>
+
     
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
-            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.$empresa->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
             <br><br>
-            <h4>{{Auth::user()->empresa()->nombre}}</h4>
-            <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
-                {{Auth::user()->empresa()->direccion}} <br>
-                {{Auth::user()->empresa()->telefono}}
-                @if(Auth::user()->empresa()->web)
-                    <br>{{Auth::user()->empresa()->web}}
+            <h4>{{$empresa->nombre}}</h4>
+            <p style="line-height: 12px;">{{$empresa->tip_iden('mini')}} {{$empresa->nit}} @if($empresa->dv != null || $empresa->dv === 0) - {{$empresa->dv}} @endif<br>
+                {{$empresa->direccion}} <br>
+                {{$empresa->telefono}}
+                @if($empresa->web)
+                    <br>{{$empresa->web}}
                 @endif
-                <br> <a href="mailto:{{Auth::user()->empresa()->email}}" target="_top">{{Auth::user()->empresa()->email}}</a>
+                <br> <a href="mailto:{{$empresa->email}}" target="_top">{{$empresa->email}}</a>
             </p>
         </div>
         <div style="width: 21%; display: inline-block; text-align: left; vertical-align: top;margin-top: 2%;">
@@ -329,7 +331,7 @@
         <table border="0" class="titulo">
             <tr>
                 <th width="23.5%" class="right smalltd">NOMBRE</th>
-                <td colspan="1" style="">{{$factura->cliente()->nombre}}</td>
+                <td colspan="1" style="">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</td>
             </tr>
             <tr>
                 <th class="right smalltd">NIT O C.C</th>
@@ -359,16 +361,16 @@
             <tbody>
                 <tr>
                 <td style="width:14%;border:none;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         DATOS FACTURA
                     </div>
                 </td>
                 <td style="width:25%;border:none;padding-left:30%;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         FACTURA DE VENTA
                     </div>
                 </td>
-                <td style="border:1px solid {{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
                 </tr>
             </tbody>
         </table>
@@ -416,6 +418,64 @@
         </p>
     </div>
     
+    <div style="margin-top: 1%;">
+    <h4 style="text-align: center">{{$factura->titulo}}
+        <h4>
+            <table border="0" class="desgloce">
+                <thead>
+                    <tr>
+                        <th style="padding: 3px;" width="28%" class="center smalltd">Item</th>
+                        <th style="padding: 3px;" width="14%" class="center smalltd">Referencia</th>
+                        <th style="padding: 3px;" width="8%" class="center smalltd">Cantidad</th>
+                        <th style="padding: 3px;" width="14%" class="center smalltd">Precio</th>
+                        <th style="padding: 3px;" width="12%" class="center smalltd">Iva</th>
+                        <th style="padding: 3px;" width="8%" class="center smalltd">Dcto</th>
+                        <th style="padding: 3px;" width="19%" class="center smalltd">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $cont=0; @endphp
+                    @foreach($items as $item)
+
+                    @php $cont++; @endphp
+                    <tr>
+                        <td style="word-wrap: break-word;" class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->producto()}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
+                        <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->ref}}</td>
+                        <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{round($item->cant,3)}}</td>
+                        <!--<td class="center padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>-->
+                        <td class="center padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{round($item->precio,4)}}</td>
+                        <td class="center border_left">
+                            {{$item->impuesto == 0 ? '0%' : number_format(round($item->impuesto),0) . "%"}} {{isset($item->impuesto_1) ? ', '. number_format(round($item->impuesto_1),0) . "%" : ''}}
+                            {{isset($item->impuesto_2) ? ', '. number_format(round($item->impuesto_2),0) . "%" : ''}} {{isset($item->impuesto_3) ? ', '. number_format(round($item->impuesto_3),0)  . "%": ''}} {{isset($item->impuesto_4) ? ', '. number_format(round($item->impuesto_4),0) . "%" : ''}}
+                            {{isset($item->impuesto_5) ? ', '. number_format(round($item->impuesto_5),0) . "%" : ''}} {{isset($item->impuesto_6) ? ', '. number_format(round($item->impuesto_6),0)  . "%": ''}} {{isset($item->impuesto_7) ? ', '. number_format(round($item->impuesto_7),0) . "%" : ''}}
+
+                        </td>
+                        <td class="center padding-left border_right @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->desc == 0 ? '' :  round($item->desc,4) . "%"}}</td>
+                        <td class="center padding-left border_right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
+                    </tr>
+
+                    @endforeach
+                        <tr>
+                        <td class="border_left border_bottom" style="height: 15px;"></td>
+                        <td class="border_bottom" style="height: 15px;"></td>
+                        <td class="border_bottom" style="height: 15px;"></td>
+                        <td class="border_bottom" style="height: 15px;"></td>
+                        <td class="border_bottom" style="height: 15px;"></td>
+                        <td class="border_bottom" style="height: 15px;"></td>
+                        <td class="border_right border_bottom " style="height: 15px;"></td>
+                        </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr class="foot">
+                        <td colspan="5"> </td>
+                        <th class="right padding-right">Total</th>
+                        <th class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </th>
+                    </tr>
+                </tfoot>
+            </table>
+</div>
+    
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta">
             <p>ESTADO DE CUENTA</p>
@@ -433,11 +493,11 @@
                 <td><li style="background-color:#6cad40;">TOTAL</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio">
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
                 </tr>
                 </tbody>
                 </table>
@@ -475,7 +535,7 @@
                         <table class="table-noborder" style="width:100%;">
                             <tr>
                                 <td class="border-tdblue" style="width:80%;">INTERNET FIJO</td>
-                                <td class="border-tdblue" style="width:20%;">{{Auth::user()->empresa()->moneda}} 0</td>
+                                <td class="border-tdblue" style="width:20%;">{{$empresa->moneda}} 0</td>
                             </tr>
                         </table>
                     </td>
@@ -483,7 +543,7 @@
                         <table class="table-noborder" style="width:100%;">
                             <tr>
                                 <td class="border-tdblue" style="width:80%;">INTERNET Y TELEVISION</td>
-                                <td class="border-tdblue" style="width:20%;">{{Auth::user()->empresa()->moneda}} 0</td>
+                                <td class="border-tdblue" style="width:20%;">{{$empresa->moneda}} 0</td>
                             </tr>
                         </table>
                     </td>
@@ -493,7 +553,7 @@
                         <table class="table-noborder" style="width:100%;">
                             <tr>
                                 <td class="border-tdblue" style="width:80%;">TELEVISION</td>
-                                <td class="border-tdblue" style="width:20%;">{{Auth::user()->empresa()->moneda}} 0</td>
+                                <td class="border-tdblue" style="width:20%;">{{$empresa->moneda}} 0</td>
                             </tr>
                         </table>
                     </td>
@@ -524,12 +584,12 @@
                 <td><li style="background-color:#6cad40;">TOTAL</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio">
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
                 </tr>
                 </tbody>
                 </table>
@@ -552,13 +612,13 @@
                  <table class="tableinterna" width="100%" >
                     <tbody>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px; padding:4px;">INTERESES DE MORA</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px; padding:4px;">INTERESES DE MORA</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px; padding:4px;">IVA</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px; padding:4px;">IVA</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px; padding:4px;">TOTAL MES</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px; padding:4px;">TOTAL MES</td>
                     </tr>
                     </tbody>
                 </table>
@@ -567,13 +627,13 @@
                <table class="tableinterna" width="100%">
                     <tbody>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} 0</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;">{{$empresa->moneda}} 0</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;"> {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;"> {{$empresa->moneda}} {{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px;">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;">{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
                     </tr>
                     </tbody>
                     
@@ -583,7 +643,7 @@
             </tbody>
         </table>
             @if(isset($CUFEvr))
-                <div style="border:1px solid {{Auth::user()->empresa()->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
+                <div style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
             @endif
       </div>
       
@@ -595,7 +655,7 @@
     
     <div class="nota-content">
         <p>
-            <b>OFICINA:</b>  {{Auth::user()->empresa()->direccion}}<br>
+            <b>OFICINA:</b>  {{$empresa->direccion}}<br>
         </p>
     </div>
     
@@ -607,7 +667,7 @@
     
     <div class="nota-content">
         <p>
-            {{ Auth::user()->empresa()->terminos_cond }}
+            {{ $empresa->terminos_cond }}
         </p>
     </div>
 
@@ -623,14 +683,14 @@
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta mi-clausula">
-                <td><li style="background-color:{{Auth::user()->empresa()->color}};">VALOR TOTAL DEL CARGO POR CONEXION</li></td>
-                <td><li style="background-color:{{Auth::user()->empresa()->color}};">SUMA QUE LE FUE DESCONTADA O DIFERIDA DEL VALOR TOTAL DEL CARGO POR CONEXION</li></td>
-                <td><li style="background-color:{{Auth::user()->empresa()->color}};">FECHA DE INICIO DE LA PERMANENCIA MINIMA</li></td>
-                <td><li style="background-color:{{Auth::user()->empresa()->color}};">FECHA DE FIN DE LA PERMANENCIA MINIMA</li></td>
+                <td><li style="background-color:{{$empresa->color}};">VALOR TOTAL DEL CARGO POR CONEXION</li></td>
+                <td><li style="background-color:{{$empresa->color}};">SUMA QUE LE FUE DESCONTADA O DIFERIDA DEL VALOR TOTAL DEL CARGO POR CONEXION</li></td>
+                <td><li style="background-color:{{$empresa->color}};">FECHA DE INICIO DE LA PERMANENCIA MINIMA</li></td>
+                <td><li style="background-color:{{$empresa->color}};">FECHA DE FIN DE LA PERMANENCIA MINIMA</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
-                <td><li>{{Auth::user()->empresa()->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
+                <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{Carbon\Carbon::parse($factura->contract()->created_at)->format('d-m-Y')}}</li></td>
                 <td><li>{{date('d-m-Y', strtotime("+".$factura->contract()->contrato_permanencia_meses." months", strtotime($factura->contract()->created_at)))}}</li></td>
                 </tr>
@@ -655,7 +715,7 @@
                 <tr class="tr-precios">
                     @for ($i = 0; $i < $factura->contract()->contrato_permanencia_meses; $i++)
                         <td>
-                            {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $factura->contract()->contrato_permanencia_meses) * (12-$i)) }}
+                            {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia / $factura->contract()->contrato_permanencia_meses) * (12-$i)) }}
                         </td>
                     @endfor
                 </tr>
@@ -668,12 +728,12 @@
             <tbody>
                 <tr>
                 <td style="width:55%;border:none;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         TOTAL MES
                     </div>
                 </td>
-                <td style="border:1px solid {{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;width:30%;">
-                    {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:30%;">
+                    {{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
                 </td>
                 </tr>
             </tbody>
@@ -720,7 +780,7 @@
         </p>
     </div>
     
-    @if(Auth::user()->empresa()->ventas || Auth::user()->empresa()->soporte || Auth::user()->empresa()->finanzas)
+    @if($empresa->ventas || $empresa->soporte || $empresa->finanzas)
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%; margin-bottom:7px;">
             <p>LINEAS DE ATENCION</p>
@@ -731,14 +791,14 @@
                 <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta">
-                    @if(Auth::user()->empresa()->ventas)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">VENTAS</li></td>@endif
-                    @if(Auth::user()->empresa()->soporte)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">SOPORTE</li></td>@endif
-                    @if(Auth::user()->empresa()->finanzas)<td><li style="background-color:{{Auth::user()->empresa()->color}};height:auto;">FINANZAS</li></td>@endif
+                    @if($empresa->ventas)<td><li style="background-color:{{$empresa->color}};height:auto;">VENTAS</li></td>@endif
+                    @if($empresa->soporte)<td><li style="background-color:{{$empresa->color}};height:auto;">SOPORTE</li></td>@endif
+                    @if($empresa->finanzas)<td><li style="background-color:{{$empresa->color}};height:auto;">FINANZAS</li></td>@endif
                 </tr>
                 <tr class="tr-estadocuenta-precio miclausula-li">
-                    @if(Auth::user()->empresa()->ventas)<td><li style="padding:4px;">{{Auth::user()->empresa()->ventas}}</li></td>@endif
-                    @if(Auth::user()->empresa()->soporte)<td><li style="padding:4px;">{{Auth::user()->empresa()->soporte}}</li></td>@endif
-                    @if(Auth::user()->empresa()->finanzas)<td><li style="padding:4px;">{{Auth::user()->empresa()->finanzas}}</li></td>@endif
+                    @if($empresa->ventas)<td><li style="padding:4px;">{{$empresa->ventas}}</li></td>@endif
+                    @if($empresa->soporte)<td><li style="padding:4px;">{{$empresa->soporte}}</li></td>@endif
+                    @if($empresa->finanzas)<td><li style="padding:4px;">{{$empresa->finanzas}}</li></td>@endif
                 </tr>
                 </tbody>
                 </table>
@@ -752,12 +812,12 @@
             <tbody>
                 <tr>
                 <td style="width:55%;border:none;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         TOTAL MES
                     </div>
                 </td>
-                <td style="border:1px solid {{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;width:30%;">
-                    {{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:30%;">
+                    {{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
                 </td>
                 </tr>
             </tbody>
@@ -770,16 +830,16 @@
             <tbody>
                 <tr>
                 <td style="width:14%;border:none;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         DATOS DEL PAGO
                     </div>
                 </td>
                 <td style="width:25%;border:none;padding-left:30%;">
-                    <div style="background-color:{{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
                         RECIBO DE PAGO
                     </div>
                 </td>
-                <td style="border:1px solid {{Auth::user()->empresa()->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$ingreso->ingreso()->nro}}</td>
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$ingreso->ingreso()->nro}}</td>
                 </tr>
             </tbody>
         </table>
@@ -805,7 +865,7 @@
             </tr>
             <tr>
                 <th class="right smalltd">MONTO PAGADO</th>
-                <td colspan="">{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($ingreso->ingreso()->pago())}}</td>
+                <td colspan="">{{$empresa->moneda}} {{App\Funcion::Parsear($ingreso->ingreso()->pago())}}</td>
             </tr>
         </table>
     </div>
