@@ -117,7 +117,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.estrato as c_estrato', 'contactos.firma_isp')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
@@ -234,7 +234,11 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
                 });
             }
-
+            if($request->c_estrato){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.estrato', 'like', "%{$request->c_estrato}%");
+                });
+            }
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
@@ -358,8 +362,11 @@ class ContratosController extends Controller
             ->editColumn('created_at', function (Contrato $contrato) {
                 return ($contrato->created_at) ? date('d-m-Y', strtotime($contrato->created_at)) : 'N/A';
             })
+            ->editColumn('estrato', function (Contrato $contrato) {
+                return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
+            })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'created_at'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'created_at', 'estrato'])
             ->toJson();
     }
     
