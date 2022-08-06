@@ -115,7 +115,7 @@ class GruposCorteController extends Controller
         ]);
 
         $hora_suspension = explode(":", $request->hora_suspension);
-        $hora_suspension_limit = $hora_suspension[0]+2;
+        $hora_suspension_limit = $hora_suspension[0]+4;
         $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
         
         $grupo = new GrupoCorte;
@@ -137,7 +137,7 @@ class GruposCorteController extends Controller
 
     public function storeBack(Request $request){
         $hora_suspension = explode(":", $request->hora_suspension);
-        $hora_suspension_limit = $hora_suspension[0]+2;
+        $hora_suspension_limit = $hora_suspension[0]+4;
         $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
 
         $grupo                   = new GrupoCorte;
@@ -202,7 +202,7 @@ class GruposCorteController extends Controller
         
         if ($grupo) {
             $hora_suspension = explode(":", $request->hora_suspension);
-            $hora_suspension_limit = $hora_suspension[0]+2;
+            $hora_suspension_limit = $hora_suspension[0]+4;
             $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
 
             $grupo->nombre           = $request->nombre;
