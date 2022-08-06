@@ -61,7 +61,7 @@
     					</tr>
     					<tr>
     						<th>CLIENTE</th>
-    						<td>{{$crm->cliente()->nombre}}</td>
+    						<td>{{$crm->cliente()->nombre}} {{$crm->cliente()->apellidos()}}</td>
     					</tr>
     					<tr>
     						<th>IDENTIFICACIÓN</th>

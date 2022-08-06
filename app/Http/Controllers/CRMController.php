@@ -489,7 +489,7 @@ class CRMController extends Controller
     }
     
     public function contacto($id){
-        $contacto = DB::select("SELECT C.id, C.nombre, C.nit, C.tip_iden, C.telefono1, C.celular FROM contactos AS C WHERE C.id = '$id'");
+        $contacto = DB::select("SELECT C.id, C.nombre, C.apellido1, C.apellido2, C.nit, C.tip_iden, C.telefono1, C.celular FROM contactos AS C WHERE C.id = '$id'");
         if ($contacto) {
             return json_encode($contacto);
         }

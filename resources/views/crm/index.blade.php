@@ -208,7 +208,7 @@
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Cliente" class="form-control rounded selectpicker" id="clienteG" data-size="5" data-live-search="true">
                 							@foreach ($clientes as $cliente)
-                								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+                								<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -276,7 +276,7 @@
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Cliente" class="form-control rounded selectpicker" id="clienteR" data-size="5" data-live-search="true">
                 							@foreach ($clientes as $cliente)
-                								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+                								<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -337,7 +337,7 @@
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Cliente" class="form-control rounded selectpicker" id="clienteT" data-size="5" data-live-search="true">
                 							@foreach ($clientes as $cliente)
-                								<option value="{{ $cliente->id}}">{{ $cliente->nombre}} - {{ $cliente->nit}}</option>
+                								<option value="{{ $cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -809,7 +809,7 @@
 	            data=JSON.parse(data);
 	            
                 $("#modal_nit").empty().text(data[0].nit);
-                $("#modal_nombre").empty().text(data[0].nombre);
+                $("#modal_nombre").empty().text(data[0].nombre+' '+data[0].apellido1+' '+data[0].apellido2);
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
                 
