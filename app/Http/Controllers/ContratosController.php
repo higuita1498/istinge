@@ -1706,6 +1706,7 @@ class ContratosController extends Controller
             'Direccion',
             'Barrio',
             'Corregimiento/Vereda',
+            'Estrato',
             'Plan TV',
             'Plan Internet',
             'Servidor',
@@ -1790,6 +1791,7 @@ class ContratosController extends Controller
                 'contactos.barrio as c_barrio',
                 'contactos.vereda as c_vereda',
                 'contactos.direccion as c_direccion',
+                'contactos.estrato as c_estrato',
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
@@ -1917,18 +1919,19 @@ class ContratosController extends Controller
                 ->setCellValue($letras[5].$i, $contrato->c_direccion)
                 ->setCellValue($letras[6].$i, $contrato->c_barrio)
                 ->setCellValue($letras[7].$i, $contrato->c_vereda)
-                ->setCellValue($letras[8].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
-                ->setCellValue($letras[9].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
-                ->setCellValue($letras[10].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
-                ->setCellValue($letras[11].$i, $contrato->ip)
-                ->setCellValue($letras[12].$i, $contrato->mac_address)
-                ->setCellValue($letras[13].$i, $contrato->interfaz)
-                ->setCellValue($letras[14].$i, $contrato->serial_onu)
-                ->setCellValue($letras[15].$i, $contrato->status())
-                ->setCellValue($letras[16].$i, $contrato->grupo_corte('true'))
-                ->setCellValue($letras[17].$i, $contrato->facturacion())
-                ->setCellValue($letras[18].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[19].$i, ucfirst($contrato->tipo_contrato));
+                ->setCellValue($letras[8].$i, $contrato->c_estrato)
+                ->setCellValue($letras[9].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
+                ->setCellValue($letras[10].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
+                ->setCellValue($letras[11].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
+                ->setCellValue($letras[12].$i, $contrato->ip)
+                ->setCellValue($letras[13].$i, $contrato->mac_address)
+                ->setCellValue($letras[14].$i, $contrato->interfaz)
+                ->setCellValue($letras[15].$i, $contrato->serial_onu)
+                ->setCellValue($letras[16].$i, $contrato->status())
+                ->setCellValue($letras[17].$i, $contrato->grupo_corte('true'))
+                ->setCellValue($letras[18].$i, $contrato->facturacion())
+                ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
+                ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato));
             $i++;
         }
 
