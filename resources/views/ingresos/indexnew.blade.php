@@ -43,7 +43,10 @@
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
 						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Número" id="numero" class="form-control rounded">
+							<input type="text" placeholder="Nro" id="numero" class="form-control rounded">
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
+							<input type="text" placeholder="Comprobante Pago" id="comprobante_pago" class="form-control rounded">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select class="form-control rounded selectpicker" id="cliente" title="Cliente" data-size="5" data-live-search="true">
@@ -144,6 +147,7 @@
 
 				tabla.on('preXhr.dt', function(e, settings, data) {
 					data.numero = $('#numero').val();
+					data.comprobante_pago = $('#comprobante_pago').val();
 					data.cliente = $('#cliente').val();
 					data.fecha = $('#fecha-pago').val();
 					data.estado = $('#estado').val();
@@ -201,6 +205,7 @@
 
 		function cerrarFiltrador() {
 		    $('#numero').val('');
+		    $('#comprobante_pago').val('');
 			$('#cliente').val('').selectpicker('refresh');
 			$('#fecha-pago').val('');
 			$('#estado').val('').selectpicker('refresh');

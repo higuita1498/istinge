@@ -130,6 +130,11 @@ class IngresosController extends Controller
                     $query->orWhere('ingresos.nro', 'like', "%{$request->numero}%");
                 });
             }
+            if($request->comprobante_pago){
+                $ingresos->where(function ($query) use ($request) {
+                    $query->orWhere('ingresos.comprobante_pago', 'like', "%{$request->comprobante_pago}%");
+                });
+            }
             if($request->cliente){
                 $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.cliente', $request->cliente);
@@ -169,6 +174,9 @@ class IngresosController extends Controller
             ->editColumn('nro', function (Ingreso $ingreso) {
                 return isset($ingreso->nro) ? "<a href=" . route('ingresos.show', $ingreso->id) . ">{$ingreso->nro}</div></a>" : '';
             })
+            ->editColumn('comprobante_pago', function (Ingreso $ingreso) {
+                return isset($ingreso->comprobante_pago) ? "<a href=" . route('ingresos.show', $ingreso->id) . ">{$ingreso->comprobante_pago}</div></a>" : '';
+            })
             ->editColumn('cliente', function (Ingreso $ingreso) {
                 return isset($ingreso->nombre) ? "<a href=" . route('contactos.show', $ingreso->cliente) . ">{$ingreso->nombre} {$ingreso->apellido1} {$ingreso->apellido2}</div></a>" : auth()->user()->empresa()->nombre;
             })
@@ -188,7 +196,7 @@ class IngresosController extends Controller
                 return auth()->user()->empresa()->moneda . " {$ingreso->parsear($ingreso->pago())}";
             })
             ->addColumn('acciones', $modoLectura ?  "" : "ingresos.acciones-ingresos")
-            ->rawColumns(['nro', 'cliente', 'acciones'])
+            ->rawColumns(['nro', 'cliente', 'comprobante_pago', 'acciones'])
             ->toJson();
     }
 
