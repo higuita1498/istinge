@@ -110,7 +110,7 @@ class IngresosController extends Controller
         $clientes = (Auth::user()->oficina) ? Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         //$clientes = Contacto::where('empresa', auth()->user()->empresa)->orderBy('nombre','asc')->get();
         $metodos = DB::table('metodos_pago')->where('id', '!=', 8)->where('id', '!=', 7)->get();
-        $tabla = Campos::where('modulo', 5)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 5)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         return view('ingresos.indexnew', compact('bancos','clientes','metodos','tabla'));
     }

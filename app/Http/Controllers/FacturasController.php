@@ -272,7 +272,7 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = false;
-        $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
@@ -287,7 +287,7 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
-        $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
     }
@@ -301,7 +301,7 @@ class FacturasController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
-        $tabla = Campos::where('modulo', 4)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
         return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla'));

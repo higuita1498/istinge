@@ -31,7 +31,7 @@ class ProductosController extends Controller
     
     public function index_asignacion(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', 21)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 21)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $clientes = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->select('contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get();
         $users = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         view()->share(['invertfalse' => true, 'title' => 'Asignaciones de Productos', 'subseccion' => 'asignaciones_pro']);
@@ -40,7 +40,7 @@ class ProductosController extends Controller
 
     public function index_devolucion(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', 21)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 21)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $clientes = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->select('contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get();
         $users = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         view()->share(['invertfalse' => true, 'title' => 'Devoluciones de Productos', 'subseccion' => 'devoluciones_pro']);

@@ -52,7 +52,7 @@ class FacturaspController extends Controller
 
         view()->share(['middel' => true]);
         $tipo = false;
-        $tabla = Campos::where('modulo', 6)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 6)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         return view('facturasp.indexnew', compact('proveedores','tipo','tabla'));
     }

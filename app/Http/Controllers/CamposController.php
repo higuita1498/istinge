@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Empresa;
 use App\Campos;
+use App\User;
 use Carbon\Carbon;
 use Validator;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,7 @@ use DB;
 class CamposController extends Controller{
     public function __construct(){
         $this->middleware('auth');
+        set_time_limit(500);
         view()->share(['seccion' => 'configuracion', 'title' => 'Organización de Campos', 'icon' =>'']);
     }
 
@@ -24,14 +26,7 @@ class CamposController extends Controller{
     public function organizar($id){
         $this->getAllPermissions(Auth::user()->id);
 
-        $visibles = Campos::where('campos.modulo', $id)
-           ->whereExists(function ($query) {
-               $query->select(DB::raw(1))
-                     ->from('campos_usuarios')
-                     ->where('campos_usuarios.id_usuario', Auth::user()->id)
-                     ->whereColumn('campos_usuarios.id_campo', 'campos.id');
-           })
-           ->get();
+        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->select('campos.*')->where('campos_usuarios.id_modulo', $id)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         $ocultos = Campos::where('campos.modulo', $id)
            ->whereNotExists(function ($query) {
@@ -41,8 +36,6 @@ class CamposController extends Controller{
                      ->whereColumn('campos_usuarios.id_campo', 'campos.id');
            })
            ->get();
-
-        //view()->share(['title' => 'Organizar Tabla '.$visibles[0]->modulo()]);
         view()->share(['title' => 'Organizar Tabla '.$visibles[0]->modulo()]);
         return view('configuracion.campos_tabla.organizar')->with(compact('ocultos', 'visibles', 'id'));
     }
@@ -53,14 +46,7 @@ class CamposController extends Controller{
             DB::table('campos_usuarios')->insert(['id_modulo' => $request->id, 'id_usuario' => Auth::user()->id, 'id_campo' => $value, 'orden' => ($key+1), 'estado' => 1]);
         }
         $mensaje='SE HA REGISTRADO SATISFACTORIAMENTE LA CONFIGURACIÓN DE LA TABLA';
-        $visibles = Campos::where('campos.modulo', $request->id)
-           ->whereExists(function ($query) {
-               $query->select(DB::raw(1))
-                     ->from('campos_usuarios')
-                     ->where('campos_usuarios.id_usuario', Auth::user()->id)
-                     ->whereColumn('campos_usuarios.id_campo', 'campos.id');
-           })
-           ->get();
+        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', $request->id)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         return redirect('empresa/'.$visibles[0]->modulo('true'))->with('success', $mensaje);
     }
 
@@ -90,5 +76,24 @@ class CamposController extends Controller{
 
     public function act_desc($id){
 
+    }
+
+    public function aplicar(){
+        Ini_set('max_execution_time', 500);
+        $campos = Campos::all();
+        $usuarios = User::all();
+        foreach ($usuarios as $usuario) {
+            foreach ($campos as $campo) {
+                if($campo->orden != null){
+                    DB::table('campos_usuarios')->insert([
+                        'id_modulo'  => $campo->modulo,
+                        'id_usuario' => $usuario->id,
+                        'id_campo'   => $campo->id,
+                        'orden'      => $campo->orden,
+                        'estado'     => $campo->estado
+                    ]);
+                }
+            }
+        }
     }
 }

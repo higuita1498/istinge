@@ -89,7 +89,7 @@ class CotizacionesController extends Controller
 
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', 19)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 19)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         return view('cotizaciones.index', compact('tabla'));
     }
