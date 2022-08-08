@@ -21,23 +21,47 @@ class Campos extends Model{
     public function modulo($url = false){
         if($url){
             if($this->modulo == 1){
-                return 'clientes.index';
+                return 'contactos/clientes';
             }else if($this->modulo == 2){
-                return 'contratos.index';
+                return 'contratos';
             }else if($this->modulo == 3){
-                return 'inventario.index';
+                return 'inventario';
             }else if($this->modulo == 4){
-                return 'facturas.index';
+                return 'facturas';
             }else if($this->modulo == 5){
-                return 'ingresos.index';
+                return 'ingresos';
             }else if($this->modulo == 6){
-                return 'facturasp.index';
+                return 'facturasp';
             }else if($this->modulo == 7){
-                return 'pagos.index';
+                return 'pagos';
             }else if($this->modulo == 8){
-                return 'pagosrecurrentes.index';
+                return 'pagosrecurrentes';
             }else if($this->modulo == 9){
-                return 'descuentos.index';
+                return 'descuentos';
+            }else if($this->modulo == 10){
+                return 'planes-velocidad';
+            }else if($this->modulo == 11){
+                return 'promesas-pago';
+            }else if($this->modulo == 12){
+                return 'radicados';
+            }else if($this->modulo == 13){
+                return 'monitor-blacklist';
+            }else if($this->modulo == 14){
+                return 'ventas-externas';
+            }else if($this->modulo == 15){
+                return 'mikrotik';
+            }else if($this->modulo == 16){
+                return 'bancos';
+            }else if($this->modulo == 17){
+                return 'oficinas';
+            }else if($this->modulo == 18){
+                return 'notascredito';
+            }else if($this->modulo == 19){
+                return 'cotizaciones';
+            }else if($this->modulo == 20){
+                return 'remisiones';
+            }else if($this->modulo == 21){
+                return 'productos';
             }
         }
 
@@ -82,7 +106,7 @@ class Campos extends Model{
         }else if($this->modulo == 20){
             return 'Remisiones';
         }else if($this->modulo == 21){
-            return 'Produtos (Asignación/Devolución)';
+            return 'Productos (Asignación/Devolución)';
         }
     }
 }

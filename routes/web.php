@@ -970,6 +970,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		/*ORGANIZAR CAMPO TABLAS*/
 		Route::get('/campos/{modulo}/organizar', 'CamposController@organizar')->name('campos.organizar');
 		Route::post('/campos/organizar_store', 'CamposController@organizar_store')->name('campos.organizar_store');
+        Route::get('/campos/aplicar', 'CamposController@aplicar')->name('campos.aplicar');
 		Route::resource('campos', 'CamposController');
 
 		//PUERTOS
