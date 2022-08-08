@@ -117,8 +117,10 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.estrato as c_estrato', 'contactos.firma_isp')
-			->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
+            ->selectRaw('REPLACE(contracts.ip,".","") + 0.0 as ipformat')
+            // ->orderByDesc('ipformat')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
         if ($request->filtro == true) {
             if($request->cliente_id){
@@ -296,8 +298,10 @@ class ContratosController extends Controller
             ->editColumn('mac', function (Contrato $contrato) {
                 return ($contrato->mac_address) ? $contrato->mac_address : 'N/A';
             })
-            ->editColumn('ip', function (Contrato $contrato) {
-                return ($contrato->ip) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
+            ->editColumn('ipformat', function (Contrato $contrato) {
+                // return ($contrato->ip) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
+                return ($contrato->ipformat) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
+                    // return $contrato->ipformat;
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {
                 return $contrato->grupo_corte('true');
@@ -366,7 +370,7 @@ class ContratosController extends Controller
                 return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ip', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'created_at', 'estrato'])
+            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'created_at'])
             ->toJson();
     }
     
