@@ -45,7 +45,7 @@ class PlanesVelocidadController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
 
-        $tabla = Campos::where('modulo', 10)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 10)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
         return view('planesvelocidad.index')->with(compact('mikrotiks','tabla'));
     }

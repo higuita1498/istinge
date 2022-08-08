@@ -130,6 +130,9 @@
     			    	@if(auth()->user()->modo_lectura())
     			    	@else
 	    			    <div class="btn-group dropdown">
+	    			    	@if(isset($_SESSION['permisos']['750']))
+	    			    	<a href="{{route('campos.organizar', 12)}}" class="btn btn-warning mr-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+	    			    	@endif
 	    			    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	    			    		Acciones en Lote
 	    			    	</button>

@@ -67,7 +67,8 @@ class ContactosController extends Controller
     {
         return "ok";
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+
         view()->share(['invert' => true]);
         return view('contactos.indexnew');
     }
@@ -213,7 +214,7 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $contactos = Contacto::where('empresa',Auth::user()->empresa)->get();
         $tipo_usuario = 0;
-        $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos','totalContactos','tipo_usuario','tabla'));
     }
@@ -230,7 +231,7 @@ class ContactosController extends Controller
         $contactos=$this->busqueda($request, [1,2]);
         $totalContactos = Contacto::where('empresa',Auth::user()->empresa)->count();
         $tipo_usuario = 1;
-        $tabla = Campos::where('modulo', 1)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         view()->share(['invert' => true]);
         return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa','totalContactos', 'tipo_usuario','tabla'));
     }

@@ -112,6 +112,15 @@
 		</fieldset>
 	</div>
 
+	<div class="container-fluid">
+    	<div class="row card-description" style="padding: 1% 1%; margin-bottom: 0;">
+    		<div class="col-md-12 text-right">
+    			@if(isset($_SESSION['permisos']['750']))
+    			<a href="{{route('campos.organizar', 6)}}" class="btn btn-warning btn-sm my-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+    			@endif
+    	</div>
+    </div>
+
 	<div class="row card-description">
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-facturasp">

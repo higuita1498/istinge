@@ -29,7 +29,7 @@ class BancosController extends Controller
             $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
         }*/
 
-        $tabla = Campos::where('modulo', 16)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 16)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         view()->share(['middel' => true]);
         return view('bancos.index')->with(compact('tabla'));
  	}

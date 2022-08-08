@@ -8,6 +8,8 @@ use Validator; use Illuminate\Validation\Rule;  use Auth; use DB;
 use Illuminate\Support\Facades\Hash;
 use App\Radicado;
 use App\Oficina;
+use App\Campos;
+
 class UsuariosController extends Controller
 {
     public function __construct(){
@@ -73,8 +75,21 @@ class UsuariosController extends Controller
         if(isset($request->cuenta[4])){ $usuario->cuenta_4 = $request->cuenta[4]; }else{ $usuario->cuenta_4 = null; }
         $usuario->oficina = ($request->oficina == 0) ? NULL : $request->oficina;
         $usuario->save();
+
+        $campos = Campos::all();
+        foreach ($campos as $campo) {
+            if($campo->orden != null){
+                DB::table('campos_usuarios')->insert([
+                    'id_modulo'  => $campo->modulo,
+                    'id_usuario' => $usuario->id,
+                    'id_campo'   => $campo->id,
+                    'orden'      => $campo->orden,
+                    'estado'     => $campo->estado
+                ]);
+            }
+        }
         
-        $mensaje='Se ha creado satisfactoriamente el usuario';
+        $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL USUARIO';
         return redirect('empresa/configuracion/usuarios')->with('success', $mensaje)->with('usuario_id', $usuario->id);
     }
     

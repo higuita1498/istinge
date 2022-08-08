@@ -139,6 +139,9 @@
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
     			@endif
+    			@if(isset($_SESSION['permisos']['750']))
+    			<a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm my-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+    			@endif
                 @if(isset($_SESSION['permisos']['774']))
                 <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
                 @endif

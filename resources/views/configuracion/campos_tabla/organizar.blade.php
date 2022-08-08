@@ -21,7 +21,7 @@
                 {{ csrf_field() }}
                 <input type="hidden" value="{{ $id }}" name="id">
                 <ul class="list-group list-group-sortable-connected list-group-flush" style="min-height: 50px;">
-                    @foreach($tabla as $campo)
+                    @foreach($visibles as $campo)
                         <li class="list-group-item list-group-item-info">{{$campo->nombre}}
                             <input type="hidden" name="table[]" value="{{$campo->id}}">
                         </li>
@@ -37,7 +37,7 @@
         <div class="col-sm-6">
             <h4>Campos No Visibles</h4>
             <ul class="list-group list-group-sortable-connected">
-                @foreach($campos as $campo)
+                @foreach($ocultos as $campo)
                     <li class="list-group-item list-group-item-success">{{$campo->nombre}}
                         <input type="hidden" name="table[]" value="{{$campo->id}}">
                     </li>
@@ -49,7 +49,7 @@
         </div>
         <div class="col-sm-12" style="text-align: right;">
             <hr>
-            <a href="{{route('configuracion.index')}}" class="btn btn-outline-secondary">Cancelar</a>
+            <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">Regresar</a>
             <button class="btn btn-success" type="button" onclick="confirmar('organizar_table', '¿Está seguro que desea guardar esta configuración?');">Guardar</button>
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Empresa;
 use App\Campos;
+use App\User;
 use Carbon\Carbon;
 use Validator;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,7 @@ use DB;
 class CamposController extends Controller{
     public function __construct(){
         $this->middleware('auth');
+        set_time_limit(500);
         view()->share(['seccion' => 'configuracion', 'title' => 'Organización de Campos', 'icon' =>'']);
     }
 
@@ -23,25 +25,29 @@ class CamposController extends Controller{
 
     public function organizar($id){
         $this->getAllPermissions(Auth::user()->id);
-        $tabla = Campos::where('modulo', $id)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-        $campos = Campos::where('modulo', $id)->where('estado', 0)->where('empresa', Auth::user()->empresa)->get();
 
-        view()->share(['title' => 'Organizar Tabla '.$tabla[0]->modulo()]);
-        return view('configuracion.campos_tabla.organizar')->with(compact('campos', 'tabla', 'id'));
+        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->select('campos.*')->where('campos_usuarios.id_modulo', $id)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+
+        $ocultos = Campos::where('campos.modulo', $id)
+           ->whereNotExists(function ($query) {
+               $query->select(DB::raw(1))
+                     ->from('campos_usuarios')
+                     ->where('campos_usuarios.id_usuario', Auth::user()->id)
+                     ->whereColumn('campos_usuarios.id_campo', 'campos.id');
+           })
+           ->get();
+        view()->share(['title' => 'Organizar Tabla '.$visibles[0]->modulo()]);
+        return view('configuracion.campos_tabla.organizar')->with(compact('ocultos', 'visibles', 'id'));
     }
 
     public function organizar_store(Request $request){
-        DB::table('campos')->where('modulo', $request->id)->where('empresa', Auth::user()->empresa)->update(['estado' => 0]);
+        DB::table('campos_usuarios')->where('id_modulo', $request->id)->where('id_usuario', Auth::user()->id)->delete();
         foreach ($request->table as $key => $value) {
-            $campo = Campos::where('id', $value)->where('empresa', Auth::user()->empresa)->first();
-            if ($campo) {
-                $campo->orden  = ($key+1);
-                $campo->estado = 1;
-                $campo->save();
-            }
+            DB::table('campos_usuarios')->insert(['id_modulo' => $request->id, 'id_usuario' => Auth::user()->id, 'id_campo' => $value, 'orden' => ($key+1), 'estado' => 1]);
         }
         $mensaje='SE HA REGISTRADO SATISFACTORIAMENTE LA CONFIGURACIÓN DE LA TABLA';
-        return redirect('empresa/configuracion/campos/'.$request->id.'/organizar')->with('success', $mensaje);
+        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', $request->id)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        return redirect('empresa/'.$visibles[0]->modulo('true'))->with('success', $mensaje);
     }
 
     public function create(){
@@ -70,5 +76,24 @@ class CamposController extends Controller{
 
     public function act_desc($id){
 
+    }
+
+    public function aplicar(){
+        Ini_set('max_execution_time', 500);
+        $campos = Campos::all();
+        $usuarios = User::all();
+        foreach ($usuarios as $usuario) {
+            foreach ($campos as $campo) {
+                if($campo->orden != null){
+                    DB::table('campos_usuarios')->insert([
+                        'id_modulo'  => $campo->modulo,
+                        'id_usuario' => $usuario->id,
+                        'id_campo'   => $campo->id,
+                        'orden'      => $campo->orden,
+                        'estado'     => $campo->estado
+                    ]);
+                }
+            }
+        }
     }
 }

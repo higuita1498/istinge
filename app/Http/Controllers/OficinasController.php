@@ -26,9 +26,9 @@ class OficinasController extends Controller
     
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
-      $tabla = Campos::where('modulo', 17)->where('estado', 1)->where('empresa', Auth::user()->empresa)->orderBy('orden', 'asc')->get();
-      view()->share(['middel' => true]);
-      return view('oficinas.index')->with(compact('tabla'));
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 17)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        view()->share(['middel' => true]);
+        return view('oficinas.index')->with(compact('tabla'));
     }
 
     public function oficina(Request $request){

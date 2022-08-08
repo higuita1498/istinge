@@ -70,12 +70,22 @@
 		</fieldset>
 	</div>
 
+	<div class="container-fluid">
+    	<div class="row card-description" style="padding: 1% 1%; margin-bottom: 0;">
+    		<div class="col-md-12 text-right">
+
+    	</div>
+    </div>
+
 	<div class="row card-description">
 		@if(isset($_SESSION['permisos']['839']))
 			<div class="col-md-12">
 	    		<div class="container-filtercolumn form-inline">
 	                @if(auth()->user()->modo_lectura())
 	                @else
+	                    @if(isset($_SESSION['permisos']['750']))
+	                    <a href="{{route('campos.organizar', 16)}}" class="btn btn-warning mr-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+	                    @endif
 	                    <div class="dropdown mr-1">
 	                    	<button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	                    		Acciones en Lote

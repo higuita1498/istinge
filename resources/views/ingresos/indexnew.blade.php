@@ -92,6 +92,9 @@
 	<div class="row card-description">
 		<div class="col-md-12">
     		<div class="container-filtercolumn">
+    			@if(isset($_SESSION['permisos']['750']))
+    			<a href="{{route('campos.organizar', 5)}}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+    			@endif
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('ingresos.efecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-upload"></i> Cargar Archivo Efecty TXT</a>
     			<a href="{{route('ingresos.efecty_xlsx')}}" class="btn btn-success btn-sm d-none"><i class="fas fa-upload"></i> Cargar Archivo Efecty XLXS</a>
