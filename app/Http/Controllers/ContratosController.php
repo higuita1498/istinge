@@ -121,7 +121,7 @@ class ContratosController extends Controller
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
-        // return $contratos->get();
+        // return $contratos->get(); 
         if ($request->filtro == true) {
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {
