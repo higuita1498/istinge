@@ -236,7 +236,11 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
                 });
             }
-
+            if($request->c_estrato){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.estrato', 'like', "%{$request->c_estrato}%");
+                });
+            }
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
@@ -361,6 +365,9 @@ class ContratosController extends Controller
             })
             ->editColumn('created_at', function (Contrato $contrato) {
                 return ($contrato->created_at) ? date('d-m-Y', strtotime($contrato->created_at)) : 'N/A';
+            })
+            ->editColumn('estrato', function (Contrato $contrato) {
+                return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'created_at'])
@@ -1703,6 +1710,7 @@ class ContratosController extends Controller
             'Direccion',
             'Barrio',
             'Corregimiento/Vereda',
+            'Estrato',
             'Plan TV',
             'Plan Internet',
             'Servidor',
@@ -1746,7 +1754,7 @@ class ContratosController extends Controller
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -1765,7 +1773,7 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -1787,6 +1795,7 @@ class ContratosController extends Controller
                 'contactos.barrio as c_barrio',
                 'contactos.vereda as c_vereda',
                 'contactos.direccion as c_direccion',
+                'contactos.estrato as c_estrato',
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
 
@@ -1914,18 +1923,19 @@ class ContratosController extends Controller
                 ->setCellValue($letras[5].$i, $contrato->c_direccion)
                 ->setCellValue($letras[6].$i, $contrato->c_barrio)
                 ->setCellValue($letras[7].$i, $contrato->c_vereda)
-                ->setCellValue($letras[8].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
-                ->setCellValue($letras[9].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
-                ->setCellValue($letras[10].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
-                ->setCellValue($letras[11].$i, $contrato->ip)
-                ->setCellValue($letras[12].$i, $contrato->mac_address)
-                ->setCellValue($letras[13].$i, $contrato->interfaz)
-                ->setCellValue($letras[14].$i, $contrato->serial_onu)
-                ->setCellValue($letras[15].$i, $contrato->status())
-                ->setCellValue($letras[16].$i, $contrato->grupo_corte('true'))
-                ->setCellValue($letras[17].$i, $contrato->facturacion())
-                ->setCellValue($letras[18].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[19].$i, ucfirst($contrato->tipo_contrato));
+                ->setCellValue($letras[8].$i, $contrato->c_estrato)
+                ->setCellValue($letras[9].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
+                ->setCellValue($letras[10].$i, ($contrato->plan_id) ? $contrato->plan()->name : '')
+                ->setCellValue($letras[11].$i, ($contrato->server_configuration_id) ? $contrato->servidor()->nombre : '')
+                ->setCellValue($letras[12].$i, $contrato->ip)
+                ->setCellValue($letras[13].$i, $contrato->mac_address)
+                ->setCellValue($letras[14].$i, $contrato->interfaz)
+                ->setCellValue($letras[15].$i, $contrato->serial_onu)
+                ->setCellValue($letras[16].$i, $contrato->status())
+                ->setCellValue($letras[17].$i, $contrato->grupo_corte('true'))
+                ->setCellValue($letras[18].$i, $contrato->facturacion())
+                ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
+                ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato));
             $i++;
         }
 
@@ -1935,7 +1945,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
