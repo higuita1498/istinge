@@ -118,10 +118,10 @@ class ContratosController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp')
-            ->selectRaw('REPLACE(contracts.ip,".","") + 0.0 as ipformat')
+            ->selectRaw('REPLACE(contracts.ip,".","") as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
-
+        // return $contratos->get();
         if ($request->filtro == true) {
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {

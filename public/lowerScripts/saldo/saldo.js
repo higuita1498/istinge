@@ -234,8 +234,19 @@ function modalComprobante(nroFila){
 function updateInputModal(nroFila){
 
     //recuperamos la informacion del modal
+    let prefijo = $("#prefijo").val();
+    let nroComprobante = $("#nro_comprobante").val();
+    let cuota = $("#cuota").val();
+    let fecha = $("#fecha_vencimiento").val();
 
+    objInput = {
+        prefijo: prefijo,
+        nroComprobante: nroComprobante,
+        cuota: cuota, 
+        fecha: fecha
+    }
 
+    console.log(objInput);
 
     //parseamos la posible información que haya en el input delnroFila.
     // let input = $("#divInput"+nroFila);
