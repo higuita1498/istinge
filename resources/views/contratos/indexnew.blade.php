@@ -320,6 +320,7 @@
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
+            ordering:true,
 			order: [
 				[0, "desc"]
 			],

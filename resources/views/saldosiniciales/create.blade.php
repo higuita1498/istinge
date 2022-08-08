@@ -113,14 +113,17 @@
                     @endforeach
                 </select>
             </td>
-            <td class="not-active">
+            <td>
                 <div class="d-none justify-content-between" id="divCartera1">
-                    <input type="text" class="form-control form-control-sm" readonly>
-                    <a class="btn btn-primary-sm not-active-a" onclick="modalShow()" style="
-                    padding: 0px;
-                    margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
-                </div>
-            </td>
+                        <input type="text" class="form-control form-control-sm"
+                         prefijo="ISE2524" nroComprobante=""  cuota="" fecha="" tipo="2" id="divInput1"
+                         readonly
+                         >
+                        <a class="btn btn-primary-sm" onclick="modalComprobante({{1}})" style="
+                        padding: 0px;
+                        margin-top: 3px;"><i class="far fa-arrow-alt-circle-down"></i></a>
+                </div></td>
+            <td>
             <td>
                 <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion1">
             </td>
@@ -165,74 +168,9 @@
 
 </form>
 
-  {{-- Modal Detalle de cartera --}}    
-  <div class="modal fade" id="editCartera" tabindex="-1" role="dialog" aria-labelledby="editCartera" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Detalle de cartera / proveedores</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <span>Crea, modifica o cruza saldos de las obligaciones con terceros</span>
-            <div class="row">
-                <div class="form-group col-md-12">
-                    <label class="control-label">¿Qué desea hacer? <span class="text-danger">*</span></label>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label class="form-radio-label">
-                                <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="1" checked> Cruzar con saldo existente
-                                <i class="input-helper"></i></label>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-radio-label">
-                                <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="2"> Crear / Modificar Saldo
-                                <i class="input-helper"></i></label>
-                        </div> 
-                    </div>
-                    <span class="help-block error">
-                        <strong>{{ $errors->first('saldo_radio') }}</strong>
-                    </span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12 detallecartera1">
-                    <input type="text" class="form-control" name="saldo_cruzar" id="saldo_cruzar">
-                </div>
-            </div>
-
-            <div class="row detallecartera2 d-none">
-                    <div class="col-md-3">
-                        <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="5" placeholder="Prefijo">
-                            <option value="FV">FV - Factura de venta</option>
-                            <option value="FC">FC - Factura de compra</option>
-                            <option value="RC">RC - Anticipo de clientes</option>
-                            <option value="RP">RP - Anticipo de proveedores</option>
-                            <option value="CC">CC - Otros</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" placeholder="N* de comprobante" name="nro_comprobante" id="nro_comprobante">
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" placeholder="Cuota" name="cuota" id="cuota">
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control datepicker" id="fecha_vencimiento" value="{{Carbon\Carbon::now()->parse()->format('d-m-Y')}}" name="fecha_vencimiento" disabled="">
-                    </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <a type="button" onclick="update_forma()" class="btn btn-primary">Actualizar</a>
-        </div>
-      </div>
-    </div>
+  {{-- Modal Detalle de Comprbantes contables --}}    
+  <div class="modal fade" id="editModalComprobante" tabindex="-1" role="dialog" aria-labelledby="editModalComprobante" aria-hidden="true">
+    
   </div>
   {{-- End Section Detalle de cartera  --}}
 

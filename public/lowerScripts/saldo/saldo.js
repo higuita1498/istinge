@@ -158,8 +158,100 @@ function totalSaldoInicial(nro){
     $('#totalDebito').html(number_format(totalDebito));
 }
 
-function modalShow(){
-    // alert("ok");
+function modalComprobante(nroFila){
+    
+    //construimos y mostramos el modal con la información.
+    $('#editModalComprobante').html('');
+    $('#editModalComprobante').append(`
+        <div class="modal-dialog modal-lg" role="document" style="width:50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Detalle de cartera / proveedores</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <form>
+                <span>Crea, modifica o cruza saldos de las obligaciones con terceros</span>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="control-label">¿Qué desea hacer? <span class="text-danger">*</span></label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-radio-label">
+                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="1" checked> Cruzar con saldo existente
+                                    <i class="input-helper"></i></label>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-radio-label">
+                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="2"> Crear / Modificar Saldo
+                                    <i class="input-helper"></i></label>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 detallecartera1">
+                        <input type="text" class="form-control" name="saldo_cruzar" id="saldo_cruzar">
+                    </div>
+                </div>
+
+                <div class="row detallecartera2 d-none">
+                        <div class="col-md-3">
+                            <select name="prefijo" id="prefijo" class="form-control form-control-sm selectpicker" data-live-search="true" data-size="5" placeholder="Prefijo">
+                                <option value="FV">FV - Factura de venta</option>
+                                <option value="FC">FC - Factura de compra</option>
+                                <option value="RC">RC - Anticipo de clientes</option>
+                                <option value="RP">RP - Anticipo de proveedores</option>
+                                <option value="CC">CC - Otros</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="N* de comprobante" name="nro_comprobante" id="nro_comprobante">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="Cuota" name="cuota" id="cuota" value="1">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="fecha_vencimiento" value="" name="fecha_vencimiento">
+                        </div>
+                </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <a type="button" onclick="updateInputModal(${nroFila})" class="btn btn-primary">Actualizar</a>
+            </div>
+        </div>
+        </div>
+    `);
+    $("#prefijo").selectpicker('refresh');
+    $("#editModalComprobante").modal('show');
+}
+
+function updateInputModal(nroFila){
+
+    //recuperamos la informacion del modal
+
+
+
+    //parseamos la posible información que haya en el input delnroFila.
+    // let input = $("#divInput"+nroFila);
+
+    // let tipo = input.attr('tipo'); // Tipo, 1= Cruzar con saldo existente, 2 = Crear / Modificar Saldo
+    // let prefijo = input.attr('prefijo');
+    // let nroComprobante = input.attr('nroComprobante');
+    // let cuota = input.attr('cuota');
+    // let fecha = input.attr('fecha');
+
+    // objInput = {
+    //     prefijo: prefijo,
+    //     nroComprobante: nroComprobante,
+    //     cuota: cuota, 
+    //     fecha: fecha
+    // };
 }
 
 function showDetalleCartera(){
