@@ -23,7 +23,7 @@
 			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
-			}, 50000);
+			}, 5000);
 		</script>
 	@endif
 
@@ -36,7 +36,7 @@
 			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
-			}, 50000);
+			}, 5000);
 		</script>
 	@endif
 
@@ -46,7 +46,7 @@
 			<div class="card shadow-sm border-0">
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
-						<div class="col-md-3 pl-1 pt-1 offset-md-1">
+						<div class="col-md-3 pl-1 pt-1">
 							<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
@@ -58,6 +58,12 @@
 								<option value="2">Tarjeta de crédito</option>
 								<option value="3">Efectivo</option>
 								<option value="4">Punto de Venta</option>
+							</select>
+						</div>
+						<div class="col-md-3 pl-1 pt-1">
+						    <select title="Estado" class="form-control rounded selectpicker" id="oculto">
+						        <option value="0" selected="">Disponibles</option>
+						        <option value="1">Ocultos</option>
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-2 text-center">
@@ -167,10 +173,11 @@
 		});
 
         tabla.on('preXhr.dt', function(e, settings, data) {
-			data.nombre  = $('#nombre').val();
-			data.nro_cta = $('#nro_cta').val();
-			data.tipo_cta    = $('#tipo_cta').val();
-			data.filtro  = true;
+			data.nombre   = $('#nombre').val();
+			data.nro_cta  = $('#nro_cta').val();
+			data.tipo_cta = $('#tipo_cta').val();
+			data.oculto   = $('#oculto').val();
+			data.filtro   = true;
         });
 
         $('#filtrar').on('click', function(e) {
@@ -192,7 +199,7 @@
         	}
         });
 
-        $('#tipo_cta').on('change',function() {
+        $('#tipo_cta, #oculto').on('change',function() {
         	getDataTable();
         	return false;
         });
