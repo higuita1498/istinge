@@ -73,6 +73,10 @@ class BancosController extends Controller
             }
         }
 
+        if(Auth::user()->cuenta > 0){
+            $bancos->whereIn('id', [Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4]);
+        }
+
         return datatables()->eloquent($bancos)
         ->editColumn('nombre', function (banco $banco) {
             return "<a href=" . route('bancos.show', $banco->nro) . ">{$banco->nombre}</a>";
