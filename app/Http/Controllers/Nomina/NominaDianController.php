@@ -799,7 +799,7 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
+        $response = $this->enviarJsonDianApi($json, 1);
         // $response['statusCode'] = 200;
 
 
@@ -944,7 +944,7 @@ class NominaDianController extends Controller
             "CodigoQR" => "",
             "InformacionGeneral" => [
                 "Version" => "V1.0: Documento Soporte de Pago de Nómina Electrónica",
-                "Ambiente" => config('app.ambiente_nomina'),
+                "Ambiente" => 1,
                 "TipoXML" => $nomina->emitida == 4 ? "103" : "102",
                 "FechaGen" => date('Y-m-d'),
                 "HoraGen" => date('H:i:sP'),
@@ -1058,7 +1058,7 @@ class NominaDianController extends Controller
                 ],
                 "InformacionGeneral" => [
                     "Version" => "V1.0: Nota de Ajuste de Documento Soporte de Pago de Nómina Electrónica",
-                    "Ambiente" => config('app.ambiente_nomina'),
+                    "Ambiente" => 1,
                     "TipoXML" => "103",
                     "CUNE" => $cuneEliminar,
                     "EncripCUNE" => "CUNE-SHA384",
