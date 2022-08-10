@@ -32,7 +32,7 @@ class BancosController extends Controller
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 16)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         view()->share(['middel' => true]);
         return view('bancos.index')->with(compact('tabla'));
- 	}
+    }
 
     public function banco(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
@@ -56,17 +56,25 @@ class BancosController extends Controller
                     $query->orWhere('tipo_cta', $request->tipo_cta);
                 });
             }
+            if($request->oculto){
+                $bancos->where(function ($query) use ($request) {
+                    $query->orWhere('oculto', $request->oculto);
+                });
+            }else{
+                $bancos->where(function ($query) use ($request) {
+                    $query->orWhere('oculto', 0);
+                });
+            }
         }
-
-        /*(Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
-        if(Auth::user()->rol < 3){
-            $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
-        }*/
 
         if(Auth::user()->empresa()->oficina){
             if(auth()->user()->oficina){
                 $bancos->where('oficina', auth()->user()->oficina);
             }
+        }
+
+        if(Auth::user()->cuenta > 0){
+            $bancos->whereIn('id', [Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4]);
         }
 
         return datatables()->eloquent($bancos)
@@ -452,5 +460,21 @@ class BancosController extends Controller
             'correctos' => $succ,
             'state'     => 'eliminados'
         ]);
+    }
+
+    public function ocultar($id){
+        $banco=Banco::find($id);
+        if ($banco) {
+            if ($banco->oculto == 1) {
+                $banco->oculto = 0;
+                $mensaje = 'SE HA TRASLADADO EL BANCO A LA SECCIÓN DE BANCOS';
+            }else{
+                $banco->oculto = 1;
+                $mensaje = 'SE HA TRASLADADO EL BANCO A LA SECCIÓN DE BANCOS OCULTOS';
+            }
+            $banco->save();
+            return back()->with('success', $mensaje)->with('banco_id', $banco->id);
+        }
+        return back('empresa/bancos')->with('success', 'No existe un registro con ese id');
     }
 }
