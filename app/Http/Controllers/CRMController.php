@@ -34,6 +34,8 @@ use App\Mikrotik;
 use App\Integracion;
 use App\CRMLOG;
 use App\PromesaPago;
+include_once(app_path() .'/../public/routeros_api.class.php');
+use RouterosAPI;
 
 class CRMController extends Controller
 {
@@ -329,6 +331,47 @@ class CRMController extends Controller
                 $promesa_pago->vencimiento = $factura->vencimiento;
                 $promesa_pago->created_by  = Auth::user()->id;
                 $promesa_pago->save();
+
+                /* VERIFICAR SI EL CONTRATO ESTÁ DESHABILITADO PARA HABILITARLO */
+
+                $contrato = $factura->cliente()->contrato();
+                if ($contrato) {
+                    $mikrotik = Mikrotik::find($contrato->server_configuration_id);
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
+
+                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                        $API->write('/ip/firewall/address-list/print', TRUE);
+                        $ARRAYS = $API->read();
+
+                        #ELIMINAMOS DE MOROSOS#
+
+                        $API->write('/ip/firewall/address-list/print', false);
+                        $API->write('?address='.$contrato->ip, false);
+                        $API->write("?list=morosos",false);
+                        $API->write('=.proplist=.id');
+                        $ARRAYS = $API->read();
+                        if(count($ARRAYS)>0){
+                            $API->write('/ip/firewall/address-list/remove', false);
+                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                            $READ = $API->read();
+                        }
+                        #ELIMINAMOS DE MOROSOS#
+
+                        #AGREGAMOS A IP_AUTORIZADAS#
+                        $API->comm("/ip/firewall/address-list/add",
+                            array(
+                                "address" => $contrato->ip,
+                                "list" => 'ips_autorizadas'
+                            )
+                        );
+                        #AGREGAMOS A IP_AUTORIZADAS#
+
+                        $contrato->state = 'enabled';
+                        $contrato->save();
+                        $API->disconnect();
+                    }
+                }
 
                 ### LOG CRM ###
                 $accion_log .= ': Asociando Promesa de Pago N° '.$nro_promesa.'<br>';
