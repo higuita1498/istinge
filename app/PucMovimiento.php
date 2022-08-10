@@ -983,7 +983,7 @@ class PucMovimiento extends Model
         1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
         2: Actualizar el movimiento y borrar el anterior.
     */
-    public static function saldoInicial($request,$opcion=1,$siguienteNumero=null){
+    public static function saldoInicial($request,$opcion=1,$siguienteNumero=null,$detalleFinal){
         $numeracion = Numeracion::where('empresa', Auth::user()->empresa)->first();
         $siguienteNumero = $numeracion->contabilidad+1;
         $numeracion->contabilidad = $siguienteNumero;
@@ -1016,12 +1016,18 @@ class PucMovimiento extends Model
                 $mov->cuenta_id = Puc::find($request->puc_cuenta[$i])->id;
                 $mov->identificacion_tercero = Contacto::find($request->contacto[$i])->nit;
                 $mov->cliente_id = Contacto::find($request->contacto[$i])->id;
-                $mov->consecutivo = $siguienteNumero;
                 $mov->descripcion = $request->descripcion[$i];
                 $mov->credito =  $request->credito[$i];
                 $mov->debito =  $request->debito[$i];
                 $mov->enlace_a = 7;
                 $mov->empresa = $empresa;
+
+                //registro del posible detalle del comprobante.
+                $mov->consecutivo = $detalleFinal[$i]["nroComprobante"] != 0 ? $detalleFinal[$i]["nroComprobante"] : '';
+                $mov->prefijo = $detalleFinal[$i]["prefijo"] != 0 ? $detalleFinal[$i]["prefijo"] : '';
+                $mov->no_cuota = $detalleFinal[$i]["cuota"] != 0 ? $detalleFinal[$i]["cuota"] : '';
+                $mov->fecha_vencimiento = $detalleFinal[$i]["fecha"] != 0 ? $detalleFinal[$i]["fecha"] : '';
+
                 $mov->save();
     
                 $i++;

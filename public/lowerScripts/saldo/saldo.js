@@ -45,8 +45,11 @@ function crearFilaSaldo(){
         </td>
         <td>
             <div class="d-none justify-content-between" id="divCartera${nro}">
-                    <input type="text" class="form-control form-control-sm" readonly>
-                    <a class="btn btn-primary-sm" onclick="modalShow()" style="
+                    <input type="text" class="form-control form-control-sm" 
+                    name="detalleComprobante[]"
+                    prefijo="" nroComprobante=""  cuota="" fecha="" tipo="" id="divInput${nro}"
+                    readonly>
+                    <a class="btn btn-primary-sm" onclick="modalComprobante(${nro})" style="
                     padding: 0px;
                     margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
             </div></td>
@@ -88,6 +91,15 @@ function crearFilaSaldo(){
             }));
     });
 
+    //Valores iniciales para seleccionar un contacto.
+    $('#contacto'+nro).append($('<option>',
+        {
+            value: 0,
+            text : 'Seleccione una opción',
+            selected: true,
+            disabled: true
+        }
+    ));
 
     $.each( contactos, function( key, value ){
         $('#contacto'+nro).append($('<option>',
@@ -150,8 +162,10 @@ function totalSaldoInicial(nro){
 
     if(totalCredito != totalDebito){
         $("#spanError").html("El débito y el crédito están disparejos por: $" + Math.abs(totalCredito - totalDebito));
+        $("#spanError").attr('value',1);
     }else{
         $("#spanError").html(""); 
+        $("#spanError").attr('value',0);
     }
 
     $('#totalCredito').html(number_format(totalCredito));
@@ -180,12 +194,12 @@ function modalComprobante(nroFila){
                         <div class="row">
                             <div class="col-sm-6">
                                 <label class="form-radio-label">
-                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="1" checked> Cruzar con saldo existente
+                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="1" disabled> Cruzar con saldo existente (Próximamente)
                                     <i class="input-helper"></i></label>
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-radio-label">
-                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="2"> Crear / Modificar Saldo
+                                    <input type="radio" class="form-radio-input" name="saldo_radio" onchange="showDetalleCartera()" value="2" checked> Crear / Modificar Saldo
                                     <i class="input-helper"></i></label>
                             </div> 
                         </div>
@@ -193,12 +207,12 @@ function modalComprobante(nroFila){
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 detallecartera1">
+                    <div class="col-md-12 detallecartera1 d-none">
                         <input type="text" class="form-control" name="saldo_cruzar" id="saldo_cruzar">
                     </div>
                 </div>
 
-                <div class="row detallecartera2 d-none">
+                <div class="row detallecartera2">
                         <div class="col-md-3">
                             <select name="prefijo" id="prefijo" class="form-control form-control-sm selectpicker" data-live-search="true" data-size="5" placeholder="Prefijo">
                                 <option value="FV">FV - Factura de venta</option>
@@ -246,23 +260,21 @@ function updateInputModal(nroFila){
         fecha: fecha
     }
 
-    console.log(objInput);
+    if(prefijo == "" || nroComprobante == "" || fecha == "" || cuota== ""){
+        alert("Debe diligenciar todos los campos.")
+        return;
+    }
 
     //parseamos la posible información que haya en el input delnroFila.
-    // let input = $("#divInput"+nroFila);
+    let input = $("#divInput"+nroFila);
+    input.attr('tipo',2);
+    input.attr('prefijo',objInput.prefijo);
+    input.attr('nroComprobante',objInput.nroComprobante);
+    input.attr('cuota',objInput.cuota);
+    input.attr('fecha',objInput.fecha);
+    input.val(objInput.prefijo+'|'+objInput.nroComprobante+"|"+objInput.cuota+"|"+objInput.fecha);
 
-    // let tipo = input.attr('tipo'); // Tipo, 1= Cruzar con saldo existente, 2 = Crear / Modificar Saldo
-    // let prefijo = input.attr('prefijo');
-    // let nroComprobante = input.attr('nroComprobante');
-    // let cuota = input.attr('cuota');
-    // let fecha = input.attr('fecha');
-
-    // objInput = {
-    //     prefijo: prefijo,
-    //     nroComprobante: nroComprobante,
-    //     cuota: cuota, 
-    //     fecha: fecha
-    // };
+    $("#editModalComprobante").modal('hide');
 }
 
 function showDetalleCartera(){
@@ -305,15 +317,47 @@ function validateDetalleCartera(pucId,nro){
         },
         success: function (response) {
 
-            console.log(nro);
-
             if(response == true){
                 $("#divCartera"+nro).addClass('d-flex');
                 $("#divCartera"+nro).removeClass('d-none');
             }else{
+                $("#divInput"+nro).val(0);
                 $("#divCartera"+nro).addClass('d-none');
                 $("#divCartera"+nro).removeClass('d-flex');
             }
         },
     });
 }
+
+function validateComprobante(form){
+
+    let isValid = true;
+
+    $('#table-saldoinicial tbody tr').each(function() {
+        var idFila=$(this).attr('fila');
+
+        if(!$("#puc_cuenta"+idFila).val()){
+            alert("De escoger una categoría en la fila " + idFila);
+            isValid = false;
+            return;
+        }
+
+        if(!$("#contacto"+idFila).val()){
+            alert("De escoger un tercero en la fila " + idFila);
+            isValid = false;
+            return;
+        }
+    });
+
+    if($("#spanError").attr('value') == 1){
+        alert("El crédito y el débito no son iguales");
+        isValid = false;
+        return;
+    }
+
+
+    if(isValid){
+        $("#"+form).submit();
+    }
+
+}   

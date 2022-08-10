@@ -108,6 +108,7 @@
             </td>
             <td>
                 <select name="contacto[]" id="contacto1" class="form-control form-control-sm selectpicker p-0" data-live-search="true" data-size="5" required>
+                    <option value="0" selected disabled>Seleccione una opción</option>
                     @foreach($contactos as $contacto)
                         <option value="{{$contacto->id}}">{{$contacto->nombre}}</option>
                     @endforeach
@@ -116,14 +117,14 @@
             <td>
                 <div class="d-none justify-content-between" id="divCartera1">
                         <input type="text" class="form-control form-control-sm"
-                         prefijo="ISE2524" nroComprobante=""  cuota="" fecha="" tipo="2" id="divInput1"
+                         name="detalleComprobante[]"
+                         prefijo="" nroComprobante=""  cuota="" fecha="" tipo="2" id="divInput1"
                          readonly
                          >
                         <a class="btn btn-primary-sm" onclick="modalComprobante({{1}})" style="
                         padding: 0px;
                         margin-top: 3px;"><i class="far fa-arrow-alt-circle-down"></i></a>
                 </div></td>
-            <td>
             <td>
                 <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion1">
             </td>
@@ -152,7 +153,7 @@
     {{-- Totales--}}
   </table>
   <div class="w-100" style="text-align:right;">
-    <span id="spanError" class="text-danger" style="font-size: 14px;margin-right: 10px;font-weight: 500;">
+    <span id="spanError" value="" class="text-danger" style="font-size: 14px;margin-right: 10px;font-weight: 500;">
 
     </span>
   </div>
@@ -160,7 +161,7 @@
 
   <div class="row ">
     <div class="col-sm-12 text-right" style="padding-top: 1%;">
-      <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
+      <button type="button" id="submitcheck" onclick="validateComprobante('form-saldoinicial')" class="btn btn-success">Guardar</button>
       <a href="{{route('facturas.index')}}" class="btn btn-outline-secondary">Cancelar</a>
     </div>
 

@@ -667,7 +667,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/store', 'SaldosInicialesController@store')->name('saldoinicial.store');
 		Route::get('/validatecartera', 'SaldosInicialesController@validateCartera');
 		Route::get('/show/{nro}', 'SaldosInicialesController@show')->name('saldoinicial.show');
-		Route::get('/edit/{nro}', 'SaldosInicialesController@edit');
+		Route::get('/edit/{nro}', 'SaldosInicialesController@edit')->name('saldoinicial.edit');
 		Route::post('/update', 'SaldosInicialesController@update')->name('saldoinicial.update');
 		Route::get('/index','SaldosInicialesController@index')->name('saldoinicial.index');
 	});

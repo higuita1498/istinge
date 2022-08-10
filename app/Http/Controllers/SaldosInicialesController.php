@@ -107,10 +107,46 @@ class SaldosInicialesController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        $detalleFinal = array();
+        for($i = 0; $i < count($request->detalleComprobante); $i++){
+            
+            $detalleFormateado = explode("|",$request->detalleComprobante[$i]);
+            $arrayTemp = array("prefijo" => 0, "nroComprobante" => 0, "cuota" => 0, "fecha" => 0);
 
-        PucMovimiento::saldoInicial($request);
-        return back()->with('success','Se ha creado correctamente el movimiento contable');
+            for ($k=0; $k < count($detalleFormateado); $k++) { 
+
+                switch ($k) {
+                    case 0:
+                        $arrayTemp["prefijo"] = $detalleFormateado[$k];
+                        break;
+                    
+                    case 1:
+                        $arrayTemp["nroComprobante"] = $detalleFormateado[$k];
+                        break;
+
+                    case 2:
+                        $arrayTemp["cuota"] = $detalleFormateado[$k];
+                        break;
+                    
+                    case 3:
+                        $arrayTemp["fecha"] = $detalleFormateado[$k];
+                        break;
+                    
+                    default:
+                    break;
+                }
+            }
+
+            array_push($detalleFinal,$arrayTemp);
+        }
+        
+        //forma de recorrer el anterior array
+        // foreach($detalleFinal as $final){
+        //     echo ($final["nroComprobante"] . "<br>");
+        // }
+
+        PucMovimiento::saldoInicial($request,1,null,$detalleFinal);
+        return redirect('empresa/comprobantes/index')->with('success','Se ha creado correctamente el movimiento contable');
     }
 
     public function show($nro){
@@ -132,17 +168,18 @@ class SaldosInicialesController extends Controller
     public function edit($nro){
         $this->getAllPermissions(Auth::user()->id);
 
-        $movimientos = PucMovimiento::where('nro',$nro)->where('tipo_comprobante',999)->get();
+        $movimientos = PucMovimiento::where('nro',$nro)->get();
         if(count($movimientos) == 0){
             return back()->with('error', 'No se pudo encontrar el documento: ' . $nro . ".");
         }
 
-        $movimiento = PucMovimiento::where('nro',$nro)->where('tipo_comprobante',999)->first();
+        $movimiento = PucMovimiento::where('nro',$nro)->first();
 
         $tipos = DB::table('tipo_comprobante')->get();
         $puc = Puc::where('empresa',auth()->user()->empresa)
         ->whereRaw('length(codigo) > 6')
         ->get();
+        $contactos = Contacto::where('empresa',auth()->user()->empresa)->get();
         $movimientos = Contacto::where('empresa',auth()->user()->empresa)->get();
 
         view()->share(['title' => 'Editar movimiento ' .$nro]);
