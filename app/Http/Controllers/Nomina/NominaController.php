@@ -30,7 +30,6 @@ use App\SuscripcionPagoNomina;
 use Illuminate\Support\Facades\Mail;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
-include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 include_once(app_path() . '/../public/Spout/Autoloader/autoload.php');
 
 use PHPExcel;
@@ -63,7 +62,7 @@ class NominaController extends Controller
 
         $periodos = Nomina::with('nominaperiodos', 'persona')
             ->where('fk_idempresa', $usuario->empresa)
-            ->groupBy('periodo')
+            ->groupBy('periodo', 'year')
             ->get();
 
         $modoLectura = (object) $usuario->modoLecturaNomina();
@@ -90,30 +89,40 @@ class NominaController extends Controller
         //     return back();
         // }
 
-        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-        //     ->select('tips_modulo_usuario.*')
-        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
-        //     ->where('fk_idusuario',  $usuario->id)
-        //     ->get();
+        $guiasVistas = [];
 
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
         quincenales <<< */
 
         // obtenemos la nomina de la fecha recibida
-        $nomina = Nomina::with('nominaperiodos')
-            ->where('year', $year)
-            ->where('periodo', $periodo)
-            ->where('fk_idempresa',  $usuario->empresa)
-            ->first();
+        
+        $nominasG = Nomina::with('nominaperiodos')
+                            ->where('year', $year)
+                            ->where('periodo', $periodo)
+                            ->where('fk_idempresa',  $usuario->empresa)
+                            ->get();
+        
+        $nomina = $nominasG->random();
 
         if ($nomina->isPagado && !$editar) {
             return redirect()->route('nomina.confirmar', ['year' => $year, 'periodo' => $periodo]);
         }
 
-        // obtenemos los periodos de la fecha recivida
+        // obtenemos los periodos de la fecha recivida, se valida si almenos una de 3 nominas tiene 2 miniperiodos para asi mostrar opciones de quincenas
         $variosPeriodos = $nomina->nominaperiodos;
+        if($variosPeriodos->count() <= 1){
+             $nomina = $nominasG->random();
+             $variosPeriodos = $nomina->nominaperiodos;
+             if($variosPeriodos->count() <= 1){
+                  $nomina = $nominasG->random();
+                  $variosPeriodos = $nomina->nominaperiodos;
+                   if($variosPeriodos->count() <= 1){
+                        $nomina = $nominasG->random();
+                        $variosPeriodos = $nomina->nominaperiodos;
+                   }
+             }
+        }
 
         /* >>> si el tipo es igual a null las nominas con los periodos que traeremos serán del primer periodo, sea mensual o quincenal <<< */
         if (!isset($tipo)) {
@@ -160,9 +169,9 @@ class NominaController extends Controller
             'fk_catgral',
             3
         )->where('fk_nomcuenta_tipo', 7)->get();
-        $categorias2 = Categoria::where('empresa',  $usuario->empresa)->where(
+        $categorias2 = Categoria::where('empresa',  $usuario->empresa)->whereIn(
             'fk_catgral',
-            5
+            [5,10]
         )->where('fk_nomcuenta_tipo', 8)->get();
         $categorias3 = Categoria::where('nombre', 'AUXILIO DE CONECTIVIDAD')->first();
         $categorias4 = Categoria::where('empresa',  $usuario->empresa)->where(
@@ -176,6 +185,7 @@ class NominaController extends Controller
 
         $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
         //        return $mensajePeriodo;
+
 
         $nominaConfiguracionCalculos =  $usuario->empresaObj->nominaConfiguracionCalculos;
 
@@ -243,12 +253,12 @@ class NominaController extends Controller
         })->values();
 
         $modoLectura = (object) $usuario->modoLecturaNomina();
-        // $guiasVistas = Auth::user()->guiasVistas();
+        $guiasVistas = Auth::user()->guiasVistas();
 
         return view(
             'nomina.liquidar',
             [
-                // 'guiasVistas' => $guiasVistas,
+                'guiasVistas' => $guiasVistas,
                 'nominas' => $nominas,
                 'moneda' =>  $usuario->empresaObj->moneda,
                 'categorias1' => $categorias1,
@@ -367,12 +377,7 @@ class NominaController extends Controller
         $tipoPeriodo = $tipo;
         $empresa = Auth::user()->empresa;
 
-        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-        //     ->select('tips_modulo_usuario.*')
-        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
-        //     ->where('fk_idusuario', Auth::user()->id)
-        //     ->get();
+        $guiasVistas = [];
 
 
         $variosPeriodos = Nomina::where('year', $year)
@@ -420,18 +425,8 @@ class NominaController extends Controller
             $numeracionPreferida = NumeracionFactura::where('nomina', 1)
             ->where('preferida', 1)
             ->where('empresa', auth()->user()->empresa)
+            ->where('tipo_nomina',2)
             ->orderByDesc('id')
-            ->first();
-
-            if(!$numeracionPreferida){
-                return back()->with('error', 'No existe una numeración activa preferida');
-            }
-
-
-            $numeracionPreferida = NumeracionFactura::where('nomina', 1)
-            ->orderByDesc('id')
-            ->where('preferida', 1)
-            ->where('empresa', auth()->user()->empresa == 1)
             ->first();
 
             if(!$numeracionPreferida){
@@ -482,7 +477,7 @@ class NominaController extends Controller
             ->get();
 
         $categorias2 = Categoria::where('empresa', $empresa)
-            ->where('fk_catgral', 5)
+            ->whereIn('fk_catgral', [5,10])
             ->where('fk_nomcuenta_tipo', 8)
             ->get();
 
@@ -508,7 +503,7 @@ class NominaController extends Controller
         return view(
             'nomina.ajustar',
             [
-                // 'guiasVistas' => $guiasVistas,
+                'guiasVistas' => $guiasVistas,
                 'nomina' => $nomina,
                 'moneda' => Auth::user()->empresaObj->moneda,
                 'categorias1' => $categorias1,
@@ -724,6 +719,7 @@ class NominaController extends Controller
             ->where('np.isPagado', 1)
             ->select(
                 'np.id',
+                'np.created_at',
                 DB::raw('(select SUM(ne_prestacion.valor_pagar)) as prestacionValor'),
                 DB::raw('(select SUM(ne_prestacion.valor_pagar)) as costo_total_prestacion')
             );
@@ -743,9 +739,9 @@ class NominaController extends Controller
         /* >>> Si no establecemos fecha mostramos los dos ultimos periodos en el historial de la nomina <<< */
         if (!isset($request->fecha_inicial)) {
 
-            $historialNomina = $historialNomina->orderBy('np.fecha_desde')->groupBy('np.fecha_desde')->limit(4)->get();
-            $historialPrestaciones = $historialPrestaciones->orderBy('np.fecha_desde')->groupBy('np.fecha_desde')->limit(4)->get();
-            $historialDetallado = $historialDetallado->orderBy('np.fecha_desde')->groupBy('np.fecha_desde')->limit(4)->get();
+            $historialNomina = $historialNomina->orderBy('np.fecha_desde', 'desc')->groupBy('np.fecha_desde')->limit(6)->get();
+            $historialPrestaciones = $historialPrestaciones->orderBy('np.fecha_desde', 'desc')->groupBy('np.fecha_desde')->limit(6)->get();
+            $historialDetallado = $historialDetallado->orderBy('np.fecha_desde', 'desc')->groupBy('np.fecha_desde')->limit(6)->get();
         } else {
 
             $historialNomina = $historialNomina
@@ -790,8 +786,10 @@ class NominaController extends Controller
 
             foreach ($historialPrestaciones as $h3) {
                 if ($h1->id == $h3->id) {
-                    $detalleClass->prestacionValor = $h3->prestacionValor;
-                    $detalleClass->costo_total += $h3->costo_total_prestacion;
+                    if(strtotime($detalleClass->fecha_hasta) <= strtotime($h3->created_at)){
+                        $detalleClass->prestacionValor = $h3->prestacionValor;
+                        $detalleClass->costo_total += $h3->costo_total_prestacion;
+                    }
                 }
             }
 
@@ -1610,6 +1608,8 @@ class NominaController extends Controller
             return $value;
         });
 
+        $vacacionesCompensadasDinero = NominaDetalleUno::where('fk_nominaperiodo', $id)->where('nombre','LIKE','%VACACIONES COMPENSADAS EN DINERO%')->first();
+
         if ($vacaciones || $incapacidades || $licencias) {
             $nominaPeriodo = NominaPeriodos::find($id);
             $arrayPost['status'] = 'OK';
@@ -1618,8 +1618,11 @@ class NominaController extends Controller
             $arrayPost['incapacidades'] = $incapacidades;
             $arrayPost['licencias'] = $licencias;
             $arrayPost['base'] = $nominaPeriodo->valor_total;
+            $arrayPost['vac_compensadas_dinero'] = $vacacionesCompensadasDinero ? $vacacionesCompensadasDinero->valor_categoria : null;
+            $arrayPost['vac_compensadas_dias'] = $vacacionesCompensadasDinero? $vacacionesCompensadasDinero->dias_compensados_dinero : null;
             $arrayPost['limit_inicio'] = $nominaPeriodo->fecha_desde->subDays(15)->format('Y-m-d');
             $arrayPost['limit_final'] = $nominaPeriodo->fecha_hasta->addDays(15)->format('Y-m-d');
+
             return json_encode($arrayPost);
         } else {
             $arrayPost['status'] = 'error';
@@ -1670,6 +1673,25 @@ class NominaController extends Controller
         } else {
             $i = 0;
         }
+
+        //Compensadas en dinero por retiro
+        // $vacacionesCompensadas= NominaDetalleUno::where('fk_nominaperiodo',$request->id)->where('nombre','LIKE','%VACACIONES COMPENSADAS EN DINERO%')->first();
+        // if($vacacionesCompensadas){
+        //     $vacacionesCompensadas->valor_categoria = $request->vac_compensada_dinero;
+        //     $vacacionesCompensadas->dias_compensados_dinero = $request->vac_compensada_dias;
+        //     $vacacionesCompensadas->save();
+        // }else if($request->vac_compensada_dinero && $request->vac_compensada_dias){
+            
+        //     $vacacionesCompensadas = new  NominaDetalleUno();
+        //     $vacacionesCompensadas->valor_categoria = $request->vac_compensada_dinero;
+        //     $vacacionesCompensadas->dias_compensados_dinero = $request->vac_compensada_dias;
+        //     $vacacionesCompensadas->nombre = 'VACACIONES COMPENSADAS EN DINERO POR RETIRO';
+        //     $vacacionesCompensadas->fk_nominaperiodo = $request->id;
+        //     $vacacionesCompensadas->fk_nomina_cuenta_tipo = 8;
+        //     $vacacionesCompensadas->fk_nomina_cuenta = 3;
+        //     $vacacionesCompensadas->fk_categoria = $request->v_cate;
+        //     $vacacionesCompensadas->save();
+        // }
 
         //INCAPACIDADES
         if (isset($request->i_id)) {
@@ -2256,7 +2278,6 @@ class NominaController extends Controller
 
     public function preferenciaPago()
     {
-
         $this->getAllPermissions(Auth::user()->id);
         view()->share([
             'seccion' => 'nomina',
@@ -2268,10 +2289,9 @@ class NominaController extends Controller
         $bancos = DB::table('ne_bancos')->get();
         $preferencia = NominaPreferenciaPago::where('empresa', auth()->user()->empresa)->first();
         $aseguradoras = DB::table('ne_arl')->get();
-        // $guiasVistas = Auth::user()->guiasVistas();
+        $guiasVistas = Auth::user()->guiasVistas();
 
-
-        return view('nomina.preferencias-pago', compact('mediosPago', 'bancos', 'preferencia', 'aseguradoras'));
+        return view('nomina.preferencias-pago', compact('mediosPago', 'bancos', 'preferencia', 'aseguradoras', 'guiasVistas'));
     }
 
     /**
@@ -2335,9 +2355,9 @@ class NominaController extends Controller
                 exit;
             }
 
-            $date = Carbon::create($request->year, $request->periodo, 1);
+            $date = Carbon::create($request->year, $request->periodo, 1)->locale('es');
             $arrayPost['success'] = true;
-            $arrayPost['nomina'] = ucfirst(date("m", strtotime($date))) . ' ' . $request->year;
+            $arrayPost['nomina'] = ucfirst($date->monthName) . ' ' . $request->year;
             $arrayPost['periodo'] = $request->periodo;
             $arrayPost['year'] = $request->year;
             $arrayPost['empleados'] = Nomina::where('periodo', $request->periodo)->where(
@@ -2374,6 +2394,8 @@ class NominaController extends Controller
         if ($nomina->fk_idempresa != Auth::user()->empresa) {
             return false;
         }
+        
+        $empresa = auth()->user()->empresaObj;
 
         $persona = Persona::find($nomina->fk_idpersona);
         $title = 'RESUMEN DE PAGO ' . $persona->nombre();
@@ -2406,7 +2428,8 @@ class NominaController extends Controller
                 'adicionales',
                 'fechaDesde',
                 'fechaHasta',
-                'numeracion'
+                'numeracion',
+                'empresa'
             )
         );
         return response($pdf->stream())->withHeaders([
@@ -2867,6 +2890,8 @@ class NominaController extends Controller
         $data = $this->nominaDianController->calculoCompletoNomina($nomina->id);
         $totalDetallesNomina = $this->nominaDianController->obtenerTotalDetalleNomina($nomina);
 
+        $empresa = auth()->user()->empresaObj;
+
         $persona = $data['persona'];
         $totalidad = $data['totalidad'];
         $moneda = $data['moneda'];
@@ -2902,7 +2927,8 @@ class NominaController extends Controller
                 'totalDetallesNomina',
                 'numeracion',
                 'nomina',
-                'codqr'
+                'codqr',
+                'empresa'
             )
         );
 
@@ -3076,4 +3102,17 @@ class NominaController extends Controller
             return back()->with('error', $th->getMessage());
         }
     }
+
+
+    public function refrescarNomina($idNominaPeriodo){
+
+        $nominaPeriodo = NominaPeriodos::find($idNominaPeriodo);
+
+        if($nominaPeriodo->nomina->fk_idempresa == Auth::user()->empresa){
+            $nominaPeriodo->editValorTotal();
+        }
+
+        return response()->json(['valorTotal' => $nominaPeriodo->valor_total, 'idPeriodoNomina' => $nominaPeriodo->id]);
+    }
+
 }

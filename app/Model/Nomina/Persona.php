@@ -8,11 +8,12 @@ use DB;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaTerminoContrato;
 use App\Traits\Funciones;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
 
 class Persona extends Model
 {
-    use Funciones;
+    use Funciones, LogsActivity;
 
     
     protected $table = "ne_personas";
@@ -57,6 +58,12 @@ class Persona extends Model
         'is_liquidado'
 
     ];
+    
+    public function getValorAttribute($value)
+    {
+        $valor = doubleval($value);
+        return round($valor, 4);
+    }
 
     public function nombre()
     {

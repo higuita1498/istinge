@@ -721,7 +721,7 @@ class NominaDianController extends Controller
         
         //metodo para retornar el json sin necesidad de ingresar a ningun metodo
         // /empresa/nominadian/validatedian?id=$id
-        // if(Auth::user()->empresa == 1){
+        // if(Auth::user()->empresa == 429){
         //     $jsonIndividual = array(
         //         "Tipo" => "1",
         //         "Novedad" => [
@@ -836,9 +836,17 @@ class NominaDianController extends Controller
 
             /*>>>  Guardamos respuesta de dian y retornamos la nomina emitida  <<<*/
             if ($response['statusCode'] == 409 || $response['statusCode'] == 400 || $response['statusCode'] == 504 || $response['statusCode'] == 500) {
+                
+                $statusMessage = " ";
+                if(isset($response['statusMessage'])){
+                    $statusMessage = $response['statusMessage'];
+                }else if(isset($response['errorMessage'])){
+                    $statusMessage = $response['errorMessage'];
+                }
+
                 $arrayResponseSave = array(
                     'statusCode' => $response['statusCode'],
-                    'statusMessage' => isset($response['statusMessage']) ? $response['statusMessage'] : '',
+                    'statusMessage' => $statusMessage,
                     'warnings' => isset($response['warnings']) ? $response['warnings'] : '',
                     'rechazada' => 1
                 );
@@ -958,7 +966,7 @@ class NominaDianController extends Controller
                 "PrimerNombre" => " ",
                 "OtrosNombres" => " ",
                 "NIT" => $empresa->nit,
-                "DV" => $empresa->dv,
+                "DV" => isset($empresa->dv) ? $empresa->dv : " ",
                 "Pais" => $empresa->fk_idpais,
                 "DepartamentoEstado" => $empresa->departamento()->codigo,
                 "MunicipioCiudad" => $empresa->municipio()->codigo_completo,
@@ -1302,6 +1310,7 @@ class NominaDianController extends Controller
         $hrndfs = $totalDetallesNomina->where('nombre', 'RECARGO NOCTURNO DOMINICAL')->first();
 
         $vacacionesMes = $this->obtenerAlgunosNominaDetalles($nomina);
+        $vacacionesCompensadas = $this->obtenerAlgunosNominaDetalles($nomina, 'VACACIONES COMPENSADAS EN DINERO POR RETIRO');
         $primas = NominaPrestacionSocial::where('fk_idnomina', $nomina->id)->where('nombre', 'prima')->first();
         $cesantias = NominaPrestacionSocial::where('fk_idnomina', $nomina->id)->get();
         $incapacidadesMes = $this->obtenerIncapacidadesMes($nomina);
@@ -1457,7 +1466,17 @@ class NominaDianController extends Controller
                 "Pago" => number_format($value->valor_categoria, 2, '.', ''),
             ];
         }
-
+        
+        if($vacacionesCompensadas){
+                foreach ($vacacionesCompensadas as $key => $value) {
+                $dias = round(($totalidad['diasTrabajados']['total'] * $value->valor_categoria) / $totalidad['pago']['salario'],0);
+                $json['Vacaciones']['VacacionesCompensadas'][$key] = [
+                    "Cantidad" => "".$dias."",
+                    "Pago" => number_format($value->valor_categoria, 2, '.', ''),
+                ];
+            }
+        }
+    
 
         if ($primas) {
             $json["Primas"] = [
@@ -1614,6 +1633,12 @@ class NominaDianController extends Controller
 
         if (count($devengados['Vacaciones']['VacacionesComunes']) > 0) {
             foreach ($devengados['Vacaciones']['VacacionesComunes'] as $item) {
+                $total += $item['Pago'];
+            }
+        }
+        
+        if (count($devengados['Vacaciones']['VacacionesCompensadas']) > 0) {
+            foreach ($devengados['Vacaciones']['VacacionesCompensadas'] as $item) {
                 $total += $item['Pago'];
             }
         }
@@ -2045,12 +2070,20 @@ class NominaDianController extends Controller
     public function obtenerAlgunosNominaDetalles(Nomina $nomina, $tipo = 'VACACIONES')
     {
         $idsNominasPeriodo = $nomina->nominaperiodos()->pluck('id');
-        $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
+        if($tipo == "VACACIONES COMPENSADAS EN DINERO POR RETIRO"){
+              $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
+            ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
+            ->where('nombre', $tipo)
+            ->get();
+        }else{
+              $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
             ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
             ->where('nombre', $tipo)
             ->where('fecha_inicio', '<>', null)
             ->where('fecha_fin', '<>', null)
             ->get();
+        }
+     
         return $data;
     }
 

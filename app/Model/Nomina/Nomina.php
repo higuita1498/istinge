@@ -11,10 +11,11 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomina extends Model
 {
-    use Funciones;
+    use Funciones, LogsActivity;
 
     // ESTADOS DE UNA NOMINA 1= emitida, 2=no emitida, 3= anulada emitida, 4= ajuste sin emitir,  5= ajuste emitido, 6=eliminada'
     const EMITIDA = 1;
@@ -89,7 +90,7 @@ class Nomina extends Model
         ->whereNotIn('emitida', [4,7])
         ->orWhere('periodo',$this->periodo)
         ->where('fk_idempresa', $this->fk_idempresa)
-        ->whereIn('emitida', [1, 5, 6])->count();
+        ->count();
     }
 
     /**
@@ -108,6 +109,7 @@ class Nomina extends Model
         // ->where('p.status',1)
         ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
         ->where('periodo', $this->periodo)
+        ->where('year', $this->year)
         ->whereIn('emitida', [1, 5, 6])
         ->count();
 
@@ -117,6 +119,7 @@ class Nomina extends Model
         ->where('fk_idempresa', $empresa)
         ->where('estado_nomina', 1)
         ->where('periodo', $this->periodo)
+        ->where('year', $this->year)
         ->whereIn('emitida', [2, 4])
         ->count();
 
@@ -126,6 +129,7 @@ class Nomina extends Model
         ->where('fk_idempresa', $empresa)
         ->where('estado_nomina', 1)
         ->where('periodo', $this->periodo)
+        ->where('year', $this->year)
         ->where('cune', 409)
         ->whereNotIn('emitida', [1, 5])
         ->count();
@@ -231,13 +235,16 @@ class Nomina extends Model
                                         return true;
                                 }
                             }
-                            foreach($response->warnings as $err){
-                                if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
-                                        $this->emitida = 1;
-                                        $this->update();
-                                        return true;
+                            if(isset($response->warnings)){
+                                    foreach($response->warnings as $err){
+                                    if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
+                                            $this->emitida = 1;
+                                            $this->update();
+                                            return true;
+                                    }
                                 }
                             }
+                            
                         }
                     }
                    
