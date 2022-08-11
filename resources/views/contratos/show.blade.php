@@ -306,6 +306,12 @@
 							<td>{{ $contrato->canal()->nombre }}</td>
 						</tr>
 						@endif
+						@if($contrato->observaciones)
+						<tr>
+							<th>Observaciones</th>
+							<td>{{ $contrato->observaciones }}</td>
+						</tr>
+						@endif
 						@if($contrato->creador)
 						<tr>
 							<th>Contrato Registrado por</th>

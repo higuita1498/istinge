@@ -580,6 +580,14 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Observaciones</label>
+                                <textarea class="form-control" name="observaciones" >{{ $contrato->observaciones }}</textarea>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('observaciones') }}</strong>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
