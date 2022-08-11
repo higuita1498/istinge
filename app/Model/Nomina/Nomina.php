@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
-use Spatie\Activitylog\Traits\LogsActivity;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomina extends Model
 {
