@@ -367,7 +367,7 @@ class FacturasController extends Controller{
                     $query->orWhere('c.fk_idmunicipio', $request->municipio);
                 });
             }
-            if($request->emision){
+            if($request->emision != null){
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.emitida', $request->emision);
                 });
