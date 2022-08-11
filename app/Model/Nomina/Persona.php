@@ -8,12 +8,11 @@ use DB;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaTerminoContrato;
 use App\Traits\Funciones;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
 
 class Persona extends Model
 {
-    use Funciones, LogsActivity;
+    use Funciones;
 
     
     protected $table = "ne_personas";
