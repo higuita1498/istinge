@@ -77,11 +77,11 @@
                             <a class="nav-link" href="{{route('asignaciones.index')}}" >Asignaciones</a>
                         </li>
                     @endif
-                    @if(isset($_SESSION['permisos']['804']))
+                    {{-- @if(isset($_SESSION['permisos']['804']))
                     <li class="nav-item" id="listado_ping">
                         <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
                     </li>
-                    @endif
+                    @endif --}}
                 </ul>
             </div>
         </li>

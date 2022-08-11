@@ -230,7 +230,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         @if(auth()->user()->rol == 3)
-                        <a class="dropdown-item" href="{{ route('contratos.importarMK') }}" id="btn_mk_all"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK (En desarrollo)</a>
+                        <a class="dropdown-item d-none" href="{{ route('contratos.importarMK') }}" id="btn_mk_all"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK (En desarrollo)</a>
                         @endif
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
