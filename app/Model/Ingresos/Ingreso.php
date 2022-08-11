@@ -15,6 +15,8 @@ use App\Movimiento;
 use DB; use Auth;
 use App\User;
 use App\Puc;
+use App\PucMovimiento;
+
 class Ingreso extends Model
 {
     protected $table = "ingresos";
@@ -111,8 +113,17 @@ class Ingreso extends Model
             $total=0;
             foreach ($ingresos as $ingreso) {
                 $total+=$ingreso->pago;
+                /* Validamos si la factura tiene asociado un anticipo de cliente para hacerlo real 
+                    (se supone que se hace al momento de registrar un ingreso por que ya es un hecho verdadero y no en la forma de pago de 
+                    la factura por que no se ha asociado ningun pago) 
+                */
+                $totalAnticipo = PucMovimiento::
+                    where('tipo_comprobante',3)->
+                    where('recibocaja_id','!=',null)->
+                    where('documento_id',$ingreso->factura)->
+                    sum('debito');
             }
-            return $total;
+            return $total + $totalAnticipo;
         }
         elseif ($this->tipo==2 || $this->tipo==4) {
             return $this->total()->total;

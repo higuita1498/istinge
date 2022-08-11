@@ -490,7 +490,19 @@ class Factura extends Model
     }
 
     public function pagado(){
-        $total=IngresosFactura::where('factura',$this->id)->whereRaw('(SELECT estatus FROM ingresos where id = ingresos_factura.ingreso) <> 2 ')->sum('pago');
+        $total=IngresosFactura::
+        where('factura',$this->id)->
+        whereRaw('(SELECT estatus FROM ingresos where id = ingresos_factura.ingreso) <> 2 ')->
+        sum('pago');
+
+        $totalAnticipo = PucMovimiento::
+        where('tipo_comprobante',3)->
+        where('recibocaja_id','!=',null)->
+        where('documento_id',$this->id)->
+        sum('debito');
+
+        $total = $total + $totalAnticipo;
+
         //$total+=$this->retenido();
         return $total;
     }

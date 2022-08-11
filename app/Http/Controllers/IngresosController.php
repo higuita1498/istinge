@@ -1059,6 +1059,7 @@ class IngresosController extends Controller
 
             //ingresos
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+            
             $mensaje='Se ha modificado satisfactoriamente el ingreso';
             return redirect('empresa/ingresos')->with('success', $mensaje)->with('ingreso_id', $ingreso->id);
         }
