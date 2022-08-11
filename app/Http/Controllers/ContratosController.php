@@ -273,9 +273,9 @@ class ContratosController extends Controller
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
                 if($contrato->ip){
-                    return $contrato->nro ? "<span class='badge badge-".$contrato->plug('true')."' data-toggle='tooltip' data-placement='top' title='".$contrato->plug()."' style='border-radius: 50% !important;padding: 0.3rem 0.4rem !important;'><i class='fa fa-plug'></i></span>   <a href=" . route('contratos.show', $contrato->id) . "><strong>$contrato->nro</strong></a>" : "";
+                    return $contrato->nro ? "<a href=" . route('contratos.show', $contrato->id) . " class='ml-2'><strong>$contrato->nro</strong></a>" : "";
                 }else{
-                    return $contrato->nro ? "<span class='badge badge-".$contrato->plug('true')."' data-toggle='tooltip' data-placement='top' title='".$contrato->plug()."' style='border-radius: 50% !important;padding: 0.3rem 0.4rem !important;'><i class='fa fa-plug'></i></span>   <a href=" . route('contratos.show', $contrato->id) . "><strong>$contrato->nro</strong></a>" : "";
+                    return $contrato->nro ? "<a href=" . route('contratos.show', $contrato->id) . " class='ml-2'><strong>$contrato->nro</strong></a>" : "";
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
