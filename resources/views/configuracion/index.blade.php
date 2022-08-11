@@ -182,12 +182,6 @@
 			<input type="hidden" id="oficinaid" value="{{Auth::user()->empresa()->oficina}}">
 		</div>
 
-		<div class="col-sm-3">
-			<h4 class="card-title">Limpieza del Sistema</h4>
-			<p>Limpia los archivos temporales y caché del sistema.</p>
-			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
-		</div>
-
 		@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
 		<div class="col-sm-3">
 			<h4 class="card-title">Planes</h4>
@@ -212,6 +206,19 @@
 			<a href="#" data-toggle="modal" data-target="#nro_registro">Configurar Nro registros a mostrar</a><br>
 		</div>
 		@endif
+
+		<div class="col-sm-3">
+			<h4 class="card-title">Documentación</h4>
+			<p>Documentos y guías de uso NetworkSoft.</p>
+			<a href="javascript:void">Contabilidad</a> <br>
+			<a href="{{asset('images/Empresas/Empresa1/Gestión Servidor De Correo.pdf')}}" target="_blank">Servidor De Correo</a> <br>
+		</div>
+
+		<div class="col-sm-3">
+			<h4 class="card-title">Limpieza del Sistema</h4>
+			<p>Limpia los archivos temporales y caché del sistema.</p>
+			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
+		</div>
 	</div>
 
 	{{-- <div class="row card-description configuracion">
