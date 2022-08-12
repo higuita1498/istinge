@@ -16,7 +16,7 @@
         </div>
         <hr>
 
-        <input type="hidden" value="1" name="fact_prov" id="fact_prov">
+        {{-- <input type="hidden" value="1" name="fact_prov" id="fact_prov"> --}}
         <input type="hidden" value="{{$factura->tipo == 2 ? '2' : '1'}}" name="facelectronica" id ="facelectornica">
         <input type="hidden" value="1" name="editfactura" id ="editfactura">
         <!--Formulario Facturas-->
