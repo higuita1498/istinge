@@ -4956,16 +4956,33 @@ function getClienteSMS(id){
     $.ajax({
         url: url,
         success: function(data){
+            var apellidos = '';
+            if(data.contacto.apellido1){
+                apellidos += ' '+data.contacto.apellido1;
+            }
+            if(data.contacto.apellido2){
+                apellidos += ' '+data.contacto.apellido2;
+            }
+            var nombre = data.contacto.nombre+' '+apellidos;
 
-            var vencimiento = data.factura.vencimiento.split('-');
-            $("#div_contenido_user").html('').html(`<center>
+            $("#div_contenido_user").html('').append(`<center>
                 <div class="btn-group" role="group" aria-label="">
-                <a href="javascript:montar('`+data.contacto.nombre+`')" class="btn btn-sm btn-secondary">Nombre cliente</a>
-                <a href="javascript:montar('`+data.factura.codigo+`')" class="btn btn-sm btn-secondary">N° Factura</a>
-                <a href="javascript:montar('`+data.contrato.plan+`')" class="btn btn-sm btn-secondary">Plan</a>
-                <a href="javascript:montar('`+vencimiento[2]+`-`+vencimiento[1]+`-`+vencimiento[0]+`')" class="btn btn-sm btn-secondary">Fecha de corte</a>
-                </div>
-                </center>`);
+                    <a href="javascript:montar('`+nombre+`')" class="btn btn-sm btn-secondary">Nombre cliente</a>`);
+            if(data.factura){
+                var vencimiento = data.factura.vencimiento.split('-');
+                $("#div_contenido_user").append(`
+                    <a href="javascript:montar('`+data.factura.codigo+`')" class="btn btn-sm btn-secondary">N° Factura</a>
+                    <a href="javascript:montar('`+vencimiento[2]+`-`+vencimiento[1]+`-`+vencimiento[0]+`')" class="btn btn-sm btn-secondary">Fecha de corte</a>
+                `);
+            }
+            if(data.contrato){
+                $("#div_contenido_user").append(`
+                    <a href="javascript:montar('`+data.contrato.plan+`')" class="btn btn-sm btn-secondary">Plan</a>
+                `);
+            }
+
+            $("#div_contenido_user").append(`</div></center>`);
+
             $("#div_footer, #div_contenido").removeClass('d-none');
             $("#numero_sms").val(data.contacto.celular);
             $("#text_sms").val('');
