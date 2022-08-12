@@ -685,6 +685,7 @@ class CRMController extends Controller
             $notificacion->estado = 2;
             $notificacion->notificacion = 1;
             $notificacion->save();
+
             
             /*$crm = new CRM();
             $crm->cliente = $notificacion->cliente;

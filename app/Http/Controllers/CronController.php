@@ -521,7 +521,7 @@ class CronController extends Controller
         foreach ($contactos as $contacto) {
             $contrato = Contrato::where('client_id', $contacto->id)->first();
 
-            $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+            //$crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
             $crm = new CRM();
             $crm->cliente = $contacto->id;
             $crm->factura = $contacto->factura;
@@ -613,20 +613,6 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }
-    }
-
-    public static function migrarCRM(){
-        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->join('contracts as cs','cs.client_id','=','contactos.id')->select('contactos.id as cliente', 'f.id as factura', 'cs.grupo_corte', 'cs.server_configuration_id')->where('f.estatus',1)->where('f.fecha','>=',('2022-01-01'))->where('cs.state','disabled')->where('cs.status',1)->where('contactos.status',1)->groupBy('contactos.id')->get();
-        //dd($contactos);
-        foreach ($contactos as $contacto) {
-            CRM::where('cliente', $contacto->cliente)->where('factura', $contacto->factura)->whereIn('estado', [0,3])->delete();
-            $crm = new CRM();
-            $crm->cliente = $contacto->cliente;
-            $crm->factura = $contacto->factura;
-            $crm->grupo_corte = $contacto->grupo_corte;
-            $crm->servidor = $contacto->server_configuration_id;
-            $crm->save();
-        }
     }
 
     public static function monitorBlacklist(){
