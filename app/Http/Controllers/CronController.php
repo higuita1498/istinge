@@ -504,15 +504,18 @@ class CronController extends Controller
     public static function CortarPromesas(){
         $i=0;
         $fecha = date('Y-m-d');
+        $hora = date('G:i');
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
+            join('promesa_pago as p', 'p.factura', '=', 'f.id')->
             select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.promesa_pago', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
+            where('p.hora_pago', $hora)->
             get();
 
         //dd($contactos);
@@ -588,8 +591,9 @@ class CronController extends Controller
 
     public static function CortarCRM(){
         $fecha = date('d-m-Y');
+        $hora = date('G:i');
         $i = 0;
-        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado')->get();
+        $notificaciones = CRM::join('factura as f','f.id','=','crm.factura')->where('f.estatus',1)->where('crm.fecha_pago', $fecha)->where('crm.hora_pago', $hora)->select('f.id as factura', 'f.cliente', 'f.estatus', 'crm.id', 'crm.estado', 'crm.fecha_pago')->get();
 
         foreach($notificaciones as $notificacion){
             $notificacion->estado = 2;

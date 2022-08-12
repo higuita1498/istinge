@@ -307,6 +307,7 @@ class CRMController extends Controller
             $crm->informacion  = ($crm->informacion) ? $crm->informacion.'<hr><b>Fecha: </b>'.date('d-m-Y g:i:s A').'<br><b>Gestionado:</b> '.Auth::user()->nombres.'<br><b>Información: </b>'.$request->informacion : '<b>Fecha: </b>'.date('d-m-Y g:i:s A').'<br><b>Gestionado:</b> '.Auth::user()->nombres.'<br><b>Información: </b>'.$request->informacion;
             $crm->promesa_pago = $request->promesa_pago;
             $crm->fecha_pago   = $request->fecha;
+            $crm->hora_pago    = $request->hora_pago;
             $crm->tiempo       = $request->tiempo;
             $crm->created_by   = auth()->user()->id;
             $crm->empresa      = Auth::user()->empresa;
@@ -314,6 +315,7 @@ class CRMController extends Controller
             if($request->promesa_pago && $request->fecha){
                 $factura = Factura::find($crm->factura);
                 $factura->vencimiento = date('Y-m-d', strtotime($request->fecha));
+                $factura->promesa_pago = date('Y-m-d', strtotime($request->fecha));
                 $factura->observaciones = $factura->observaciones.' | Promesa de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->save();
 
