@@ -444,7 +444,7 @@
                             
                             <div class="form-group col-md-6 d-none" id="div_retirado">
                                 <label for=""><strong>¿Cliente Retirado?</strong> <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" id="retirado" name="retirado">
+                                <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" id="retirado" name="retirado" onchange="validarRetirado(this.value)">
                                     <option value="0" selected>No</option>
                                     <option value="1">Si</option>
                                     <option value="2">Si - Retirado Total</option>
@@ -460,8 +460,17 @@
                             </div>
                             
                             <div class="form-group col-md-6 d-none" id="div_fecha">
-                                <label><strong>Fecha de Pago</strong> <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control datepicker" id="fecha" value="{{date('d-m-Y')}}" name="fecha" autocomplete="off">
+                                <label class="control-label">Día máximo de Pago <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control datepickeronly" id="fecha" min="{{date('d-m-Y')}}" name="fecha" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-6 d-none" id="div_hora">
+                                <label class="control-label">Hora máxima de Pago <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" title="Seleccione" name="hora_pago" id="hora_pago" required="">
+                                    <option value="00:00">12:00 AM</option>
+                                    <option value="06:00">6:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="18:00">6:00 PM</option>
+                                </select>
                             </div>
                             
                             <div class="form-group col-md-12 d-none" id="div_informacion">
@@ -804,7 +813,7 @@
 	            $("#btn_reset").click();
 	            $('#fecha').val('');
 	            $('#promesa_pago, #llamada, #retirado, #numero_nuevo, #equivocado').val('').selectpicker('refresh');
-	            $("#div_fecha, #div_promesa, #div_informacion, #div_retirado, #div_equivocado, #div_nuevo").addClass('d-none');
+	            $("#div_fecha, #div_promesa, #div_informacion, #div_retirado, #div_equivocado, #div_nuevo, #div_hora").addClass('d-none');
                 var apellidos = '';
 	            
 	            data=JSON.parse(data);
@@ -820,12 +829,6 @@
                 $("#modal_nombre").empty().text(data[0].nombre+' '+apellidos);
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
-                
-                /*if(data[0].contrato){
-                    $("#modal_contrato").empty().text(data[0].contrato);
-                }else{
-                    $("#modal_contrato").empty().text('Sin contrato');
-                }*/
 	            
 	            $('#modal_gestion').modal({
 	                keyboard: false,
@@ -835,7 +838,6 @@
 	            cargando(false);
 	            
 	            $("#btn_start").click();
-	            //$("#btn_reset").click();
 	        },
 	        error: function(data){
 	            cargando(false);
@@ -878,10 +880,11 @@
 	
 	function validarPromesa(value){
 	    $("#fecha").val('');
+        $('#hora_pago').val('').selectpicker('refresh');
 	    if(value === '1'){
-	        $("#div_fecha").removeClass('d-none');
+	        $("#div_fecha, #div_hora").removeClass('d-none');
 	    }else if(value === '0'){
-	        $("#div_fecha").addClass('d-none');
+	        $("#div_fecha, #div_hora").addClass('d-none');
 	    }
 	}
 	
@@ -895,22 +898,39 @@
 	}
 
 	function validarEquivocado(value){
-	    $('#promesa_pago, #retirado, #informacion').val('').selectpicker('refresh');
-	    $("#informacion, #numero_nuevo").val('');
-	    if(value === '1'){
-	        $("#div_nuevo").removeClass('d-none');
-	        $("#div_promesa, #div_informacion, #div_retirado, #div_fecha").addClass('d-none');
+        $('#promesa_pago, #retirado, #informacion').val('').selectpicker('refresh');
+        $("#informacion, #numero_nuevo").val('');
+        if(value === '1'){
+            $("#div_nuevo").removeClass('d-none');
+            $("#div_promesa, #div_informacion, #div_retirado, #div_fecha, #div_hora").addClass('d-none');
             $('#informacion').removeAttr("required");
             $('#numero_nuevo').prop("required", true);
-	    }else if(value === '0'){
-	        $("#div_nuevo").addClass('d-none');
-	        $("#div_promesa, #div_informacion, #div_retirado, #div_fecha").removeClass('d-none');
+        }else if(value === '0'){
+            $("#div_nuevo, #div_fecha, #div_hora").addClass('d-none');
+            $("#div_informacion, #div_retirado").removeClass('d-none');
             $('#informacion').prop("required", true);
             $('#numero_nuevo').removeAttr("required");
-	    }
-	}
+        }
+    }
+
+    function validarRetirado(value){
+        if(value === '0'){
+            $("#div_promesa").removeClass('d-none');
+            $('#promesa_pago').val('').selectpicker('refresh').prop("required", true);
+        }else{
+            $("#div_promesa, #div_fecha, #div_hora").addClass('d-none');
+            $('#promesa_pago, #hora_pago').val('').selectpicker('refresh').removeAttr("required");
+        }
+    }
 	
 	$(function() {
+        $('.datepickeronly').datepicker({
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            minDate: {{date('d-m-Y')}},
+        });
+
 	    $('.stopwatch').each(function() {
 	        var element = $(this);
 	        var running = element.data('autostart');

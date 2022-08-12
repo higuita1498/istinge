@@ -328,7 +328,8 @@ class CRMController extends Controller
                 $promesa_pago->factura     = $factura->id;
                 $promesa_pago->cliente     = $factura->cliente;
                 $promesa_pago->fecha       = date('Y-m-d');
-                $promesa_pago->vencimiento = $factura->vencimiento;
+                $promesa_pago->vencimiento = date('Y-m-d', strtotime($request->fecha));
+                $promesa_pago->hora_pago   = $request->hora_pago;
                 $promesa_pago->created_by  = Auth::user()->id;
                 $promesa_pago->save();
 
