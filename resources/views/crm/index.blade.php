@@ -438,7 +438,7 @@
                             </div>
                             
                             <div class="form-group col-md-6 d-none" id="div_nuevo">
-                                <label for=""><strong>Número Nuevo</strong></label>
+                                <label for=""><strong>Número Nuevo</strong> <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="numero_nuevo" min="0" name="numero_nuevo" autocomplete="off">
                             </div>
                             
@@ -805,11 +805,19 @@
 	            $('#fecha').val('');
 	            $('#promesa_pago, #llamada, #retirado, #numero_nuevo, #equivocado').val('').selectpicker('refresh');
 	            $("#div_fecha, #div_promesa, #div_informacion, #div_retirado, #div_equivocado, #div_nuevo").addClass('d-none');
+                var apellidos = '';
 	            
 	            data=JSON.parse(data);
+
+                if(data[0].apellido1){
+                    apellidos += ' '+data[0].apellido1;
+                }
+                if(data[0].apellido2){
+                    apellidos += ' '+data[0].apellido2;
+                }
 	            
                 $("#modal_nit").empty().text(data[0].nit);
-                $("#modal_nombre").empty().text(data[0].nombre+' '+data[0].apellido1+' '+data[0].apellido2);
+                $("#modal_nombre").empty().text(data[0].nombre+' '+apellidos);
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
                 
@@ -845,10 +853,16 @@
 	    $("#btn_start").click();
 	    
 	    if($('#llamada').val().length == 0){
-	        cargando(false);
-	        swal('INFORMACIÓN INCOMPLETA', 'COMPLETE LA INFORMACIÓN SOLICITADA PARA GESTIONAR EL CLIENTE', 'warning');
-	        return false;
-	    }
+            cargando(false);
+            swal('INFORMACIÓN INCOMPLETA', 'COMPLETE LA INFORMACIÓN SOLICITADA PARA GESTIONAR EL CLIENTE', 'warning');
+            return false;
+        }
+
+        if($('#llamada').val() == 1 && $("#equivocado").val() == 0 && $('#informacion').val().length == 0){
+            cargando(false);
+            swal('INFORMACIÓN INCOMPLETA', 'COMPLETE LA INFORMACIÓN SOLICITADA PARA GESTIONAR EL CLIENTE', 'warning');
+            return false;
+        }
 	    
         $.post($("#formulario").attr('action'), $("#formulario").serialize(), function(data) {
             $('#btn_cancel').click();
@@ -876,8 +890,8 @@
 	    if(value === '1'){
 	        $("#div_equivocado").removeClass('d-none');
 	    }else if(value === '0'){
-	        $("#div_equivocado, #div_informacion, #div_retirado, #div_fecha").addClass('d-none');
-	    }
+	        $("#div_equivocado, #div_informacion, #div_retirado, #div_fecha, #div_promesa").addClass('d-none');
+            $('#informacion').removeAttr("required");}
 	}
 
 	function validarEquivocado(value){
@@ -886,9 +900,13 @@
 	    if(value === '1'){
 	        $("#div_nuevo").removeClass('d-none');
 	        $("#div_promesa, #div_informacion, #div_retirado, #div_fecha").addClass('d-none');
+            $('#informacion').removeAttr("required");
+            $('#numero_nuevo').prop("required", true);
 	    }else if(value === '0'){
 	        $("#div_nuevo").addClass('d-none');
 	        $("#div_promesa, #div_informacion, #div_retirado, #div_fecha").removeClass('d-none');
+            $('#informacion').prop("required", true);
+            $('#numero_nuevo').removeAttr("required");
 	    }
 	}
 	
