@@ -2785,7 +2785,8 @@ class FacturasController extends Controller{
     public function store_promesa(Request $request) {
         $request->validate([
             'id' => 'required',
-            'promesa_pago' => 'required'
+            'promesa_pago' => 'required',
+            'hora_pago' => 'required',
         ]);
 
         $factura = Factura::where('id', $request->id)->first();
@@ -2799,12 +2800,13 @@ class FacturasController extends Controller{
         $promesa_pago->factura = $factura->id;
         $promesa_pago->cliente = $factura->cliente;
         $promesa_pago->fecha = date('Y-m-d');
-        $promesa_pago->vencimiento = $request->promesa_pago;
+        $promesa_pago->vencimiento = date('Y-m-d', strtotime($request->promesa_pago));
+        $promesa_pago->hora_pago = $request->hora_pago;
         $promesa_pago->created_by = Auth::user()->id;
         $promesa_pago->save();
         
-        $factura->promesa_pago  = $request->promesa_pago;
-        $factura->vencimiento   = $request->promesa_pago;
+        $factura->promesa_pago  = date('Y-m-d', strtotime($request->promesa_pago));
+        $factura->vencimiento   = date('Y-m-d', strtotime($request->promesa_pago));
         $factura->observaciones = 'Añadiendo Promesa de Pago';
         $factura->observaciones = $factura->observaciones.' | Factura Editada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A'). ' para añadir Promesa de Pago Nro. '.$promesa_pago->nro;
         $factura->save();

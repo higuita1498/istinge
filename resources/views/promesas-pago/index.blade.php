@@ -73,8 +73,9 @@
     			@if(isset($_SESSION['permisos']['750']))
     			<a href="{{route('campos.organizar', 11)}}" class="btn btn-warning btn-sm my-1"><i class="fas fa-table"></i> Organizar Tabla</a>
     			@endif
-    	</div>
-    </div>
+	    	</div>
+	    </div>
+	</div>
 
 	<div class="row card-description">
 		<div class="col-md-12">

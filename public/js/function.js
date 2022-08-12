@@ -4381,16 +4381,33 @@ function modificarPromesa(id) {
         success: function(response) {
             cargando(false);
             if (response) {
-                console.log(response);
                 promesa_pago = response.promesa_pago;
                 id = parseInt(id);
+
+                let date = new Date();
+                let day = date.getDate();
+                let month = date.getMonth() + 1;
+                let year = date.getFullYear();
+                if(month < 10){
+                    var fecha = `${day}-0${month}-${year}`; }else{ var fecha = `${day}-${month}-${year}`;
+                }
+
                 $('#div_promesa').html('');
                 $('#div_promesa').append(`
                     <div class="modal-body">
                         <div class="row">
-                            <label class="col-sm-6 col-form-label text-right">Promesa de Pago</label>
-                            <div class="col-sm-6">
-                                <input type="date" class="form-control datepickerinput" id="promesa_pago-${id}" name="promesa_pago" required="" value="`+promesa_pago+`">
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">Día máximo de Pago <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control datepickeronly" id="promesa_pago-${id}" name="promesa_pago" required="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">Hora máxima de Pago <span class="text-danger">*</span></label>
+                                <select class="form-control selectpicker" title="Seleccione" name="hora_pago" id="hora_pago-${id}" required="">
+                                    <option value="00:00">12:00 AM</option>
+                                    <option value="06:00">6:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="18:00">6:00 PM</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -4399,12 +4416,32 @@ function modificarPromesa(id) {
                         <button type="button" class="btn btn-success" onclick="storePromesa(${id})">Guardar</button>
                     </div>`);
                 $('#promesaPago').modal('show');
+
+                $('.datepickeronly').datepicker({
+                    locale: 'es-es',
+                    uiLibrary: 'bootstrap4',
+                    format: 'dd-mm-yyyy',
+                    minDate: fecha,
+                });
+                $(".selectpicker").selectpicker('refresh');
             }
         }
     });
 }
 
 function storePromesa(id) {
+    if($('#promesa_pago-' + id).val().length == 0 || $('#hora_pago-' + id).val().length == 0){
+        swal({
+            title: 'PROMESA DE PAGO',
+            text: 'Por favor complete la información soicitada',
+            type: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#1A59A1',
+            confirmButtonText: 'ACEPTAR',
+        });
+        return false;
+    }
+
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/store_promesa`;
@@ -4419,7 +4456,8 @@ function storePromesa(id) {
         },
         data: {
             id: id,
-            promesa_pago: $('#promesa_pago-' + id).val()
+            promesa_pago: $('#promesa_pago-' + id).val(),
+            hora_pago: $('#hora_pago-' + id).val(),
         },
         success: function(response) {
             cargando(false);
