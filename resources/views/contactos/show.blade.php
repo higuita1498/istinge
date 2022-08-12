@@ -296,7 +296,7 @@
 								<tr>
 									<th width="20%">Dirección IP</th>
 									<td>
-										<a href="http://{{$contrato->ip}}" target="_blank">{{$contrato->ip}} <i class="fas fa-external-link-alt"></i></a>
+										<a href="http://{{ $contrato->ip }}{{ $contrato->puerto ? ':'.$contrato->puerto->nombre : '' }}" target="_blank">{{ $contrato->ip }}{{ $contrato->puerto ? ':'.$contrato->puerto->nombre : '' }} <i class="fas fa-external-link-alt"></i></a>
 									</td>
 								</tr>
 								@endif

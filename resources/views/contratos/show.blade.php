@@ -157,7 +157,7 @@
 						@endif
 						<tr>
 							<th>Dirección IP</th>
-							<td><a href="http://{{ $contrato->ip }}" target="_blank">{{ $contrato->ip }} <i class="fas fa-external-link-alt"></i></a></td>
+							<td><a href="http://{{ $contrato->ip }}{{ $contrato->puerto ? ':'.$contrato->puerto->nombre : '' }}" target="_blank">{{ $contrato->ip }}{{ $contrato->puerto ? ':'.$contrato->puerto->nombre : '' }} <i class="fas fa-external-link-alt"></i></a></td>
 						</tr>
 						@if($contrato->address_street)
 						<tr>
@@ -177,7 +177,7 @@
 						@if($contrato->puerto_conexion)
 						<tr>
 							<th>Puerto de Conexión</th>
-							<td>{{ $contrato->puerto() }}</td>
+							<td>{{ $contrato->puerto->nombre }}</td>
 						</tr>
 						@endif
 						@if($contrato->ip_new)

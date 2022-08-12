@@ -10,6 +10,7 @@ use DB;
 use App\User;
 use App\Oficina;
 use App\Contacto;
+use App\Contrato;
 
 class Radicado extends Model
 {
@@ -131,5 +132,9 @@ class Radicado extends Model
 
     public function cliente(){
         return Contacto::find($this->cliente);
+    }
+
+    public function contrato(){
+        return Contrato::find($this->contrato);
     }
 }

@@ -175,7 +175,8 @@ class Contrato extends Model
     }
 
     public function puerto(){
-        return Puerto::find($this->puerto_conexion)->nombre;
+        return $this->belongsTo(Puerto::class, 'puerto_conexion', 'id');
+        //return Puerto::find($this->puerto_conexion)->nombre;
     }
 
     public function vendedor(){

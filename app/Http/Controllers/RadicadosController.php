@@ -218,7 +218,14 @@ class RadicadosController extends Controller{
             return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
         })
         ->editColumn('ip', function (Radicado $radicado) {
-            return ($radicado->ip) ? $radicado->ip : 'N/A' ;
+            if($radicado->ip){
+                if(isset($radicado->contrato()->puerto_conexion)){
+                    return "<a href='http://".$radicado->ip.":".$radicado->cliente()->contrato()->puerto->nombre."' target='_blank'>{$radicado->ip}:{$radicado->cliente()->contrato()->puerto->nombre} <i class='fas fa-external-link-square-alt'></i></a>";
+                }
+                return "<a href='http://".$radicado->ip."' target='_blank'>{$radicado->ip} <i class='fas fa-external-link-square-alt'></i></a>";
+            }else{
+                return 'N/A' ;
+            }
         })
         ->editColumn('mac_address', function (Radicado $radicado) {
             return ($radicado->mac_address) ? $radicado->mac_address : 'N/A' ;
@@ -248,7 +255,7 @@ class RadicadosController extends Controller{
             return ($radicado->tiempo_fin) ? date('d-m-Y g:i:s A', strtotime($radicado->tiempo_fin)):'N/A';
         })
         ->addColumn('acciones', $modoLectura ?  "" : "radicados.acciones")
-        ->rawColumns(['codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico', 'desconocido', 'tiempo_fin'])
+        ->rawColumns(['ip', 'codigo', 'estatus', 'acciones', 'creado', 'prioridad', 'tecnico', 'desconocido', 'tiempo_fin'])
         ->toJson();
     }
 

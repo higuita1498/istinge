@@ -83,7 +83,7 @@ class WifiController extends Controller
             })
             ->editColumn('ip', function (Wifi $solicitud) {
                 if(isset($solicitud->cliente()->contrato()->puerto_conexion)){
-                    return "<a href='http://".$solicitud->ip.":".$solicitud->cliente()->contrato()->puerto_conexion."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
+                    return "<a href='http://".$solicitud->ip.":".$solicitud->cliente()->contrato()->puerto->nombre."' target='_blank'>{$solicitud->ip}:{$solicitud->cliente()->contrato()->puerto->nombre} <i class='fas fa-external-link-square-alt'></i></a>";
                 }
                 return "<a href='http://".$solicitud->ip."' target='_blank'>{$solicitud->ip} <i class='fas fa-external-link-square-alt'></i></a>";
             })

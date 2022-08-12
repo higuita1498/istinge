@@ -204,7 +204,9 @@
                         @if ($radicado->ip)
                         <tr>
                             <th>Dirección IP</th>
-                            <td>{{ $radicado->ip }}</td>
+                            <td>
+                                <a href="http://{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }}" target="_blank">{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }} <i class="fas fa-external-link-alt"></i></a>
+                            </td>
                         </tr>
                         @endif
                         @if ($radicado->mac_address)
