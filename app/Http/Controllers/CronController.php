@@ -201,7 +201,7 @@ class CronController extends Controller
 
                         array_push($numeros, '57'.$numero);
 
-                        $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                        $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
 
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
                             if($empresa->prorrateo == 1){
@@ -320,7 +320,7 @@ class CronController extends Controller
 
             $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
             if($servicio){
-                $mensaje = "Estimado cliente, se le informa que su factura de internet ha sido generada. ".$empresa->slogan;
+                $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
                         $curl = curl_init();
