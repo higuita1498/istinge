@@ -984,6 +984,7 @@ class PucMovimiento extends Model
         2: Actualizar el movimiento y borrar el anterior.
     */
     public static function saldoInicial($request,$opcion=1,$siguienteNumero=null,$detalleFinal){
+    
         $numeracion = Numeracion::where('empresa', Auth::user()->empresa)->first();
         $siguienteNumero = $numeracion->contabilidad+1;
         $numeracion->contabilidad = $siguienteNumero;
@@ -1042,7 +1043,7 @@ class PucMovimiento extends Model
                 }
             }
 
-            PucMovimiento::saldoInicial($request,1,$siguienteNumero);
+            PucMovimiento::saldoInicial($request,1,$siguienteNumero,$detalleFinal);
         }
         
     }

@@ -52,7 +52,8 @@ function crearFilaSaldo(){
                     <a class="btn btn-primary-sm" onclick="modalComprobante(${nro})" style="
                     padding: 0px;
                     margin-top: 3px;" data-toggle="modal" data-target="#editCartera"><i class="far fa-arrow-alt-circle-down"></i></a>
-            </div></td>
+            </div>
+        </td>
         <td>
             <input type="text" class="form-control form-control-sm" name="descripcion[]" id="descripcion${nro}">
         </td>

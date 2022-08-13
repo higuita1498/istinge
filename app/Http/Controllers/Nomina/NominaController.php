@@ -253,7 +253,7 @@ class NominaController extends Controller
         })->values();
 
         $modoLectura = (object) $usuario->modoLecturaNomina();
-        $guiasVistas = Auth::user()->guiasVistas();
+        $guiasVistas = [];
 
         return view(
             'nomina.liquidar',
@@ -2289,7 +2289,7 @@ class NominaController extends Controller
         $bancos = DB::table('ne_bancos')->get();
         $preferencia = NominaPreferenciaPago::where('empresa', auth()->user()->empresa)->first();
         $aseguradoras = DB::table('ne_arl')->get();
-        $guiasVistas = Auth::user()->guiasVistas();
+        $guiasVistas = [];
 
         return view('nomina.preferencias-pago', compact('mediosPago', 'bancos', 'preferencia', 'aseguradoras', 'guiasVistas'));
     }
