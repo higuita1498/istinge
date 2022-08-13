@@ -206,11 +206,12 @@
                             <th>Dirección IP</th>
                             <td>
                                 @if($radicado->contrato())
-                                @if($radicado->contrato()->puerto_conexion)
-                                <a href="http://{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }}" target="_blank">{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }} <i class="fas fa-external-link-alt"></i></a>
-                                @endif
+                                    @if($radicado->contrato()->puerto_conexion)
+                                        <a href="http://{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }}" target="_blank">{{ $radicado->ip }}{{ $radicado->contrato()->puerto_conexion ? ':'.$radicado->cliente()->contrato()->puerto->nombre : '' }} <i class="fas fa-external-link-alt"></i></a>
+                                    @endif
+                                    <a href="http://{{ $radicado->ip }}" target="_blank">{{ $radicado->ip }} <i class="fas fa-external-link-alt"></i></a>
                                 @else
-                                <a href="http://{{ $radicado->ip }}" target="_blank">{{ $radicado->ip }} <i class="fas fa-external-link-alt"></i></a>
+                                    <a href="http://{{ $radicado->ip }}" target="_blank">{{ $radicado->ip }} <i class="fas fa-external-link-alt"></i></a>
                                 @endif
                             </td>
                         </tr>
