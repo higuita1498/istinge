@@ -117,7 +117,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion as c_direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato')
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
@@ -176,8 +176,6 @@ class ContratosController extends Controller
             if($request->c_direccion){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
-                });
-                $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion}%");
                 });
             }
@@ -340,7 +338,7 @@ class ContratosController extends Controller
                 return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
             })
             ->editColumn('direccion', function (Contrato $contrato) {
-                return ($contrato->address_street) ? $contrato->address_street : $contrato->c_direccion;
+                return ($contrato->address_street) ? $contrato->address_street : $contrato->direccion;
             })
             ->editColumn('celular', function (Contrato $contrato) {
                 return $contrato->c_celular;
