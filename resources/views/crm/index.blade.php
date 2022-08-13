@@ -398,6 +398,7 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('crm.store') }}" style="padding: 0% 7%;" role="form" class="forms-sample" novalidate id="formulario">
                         @csrf
+                        <input type="hidden" name="idCRM" id="idCRM">
                         <div class="row">
                             <div class="form-group col-md-8 offset-md-2">
                                 <div class="stopwatch" data-autostart="false" style="border-radius: 20px;background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};text-align: center;padding: 5%;color: #fff;">
@@ -799,12 +800,12 @@
 		getDataTableT();
 	}
 	
-	function gestionar(idCliente) {
+	function gestionar(idCliente, idCRM) {
 	    cargando(true);
 	    if (window.location.pathname.split("/")[1] === "software") {
-	        var url = '/software/empresa/crm/'+idCliente+'/contacto';
+	        var url = '/software/empresa/crm/'+idCliente+'/'+idCRM+'/contacto';
 	    }else{
-	        var url = '/empresa/crm/'+idCliente+'/contacto';
+	        var url = '/empresa/crm/'+idCliente+'/'+idCRM+'/contacto';
 	    }
 	    
 	    $.ajax({
@@ -829,6 +830,7 @@
                 $("#modal_nombre").empty().text(data[0].nombre+' '+apellidos);
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
+                $("#idCRM").val(idCRM);
 	            
 	            $('#modal_gestion').modal({
 	                keyboard: false,

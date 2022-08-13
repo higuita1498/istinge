@@ -1366,7 +1366,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	//CRM
 	    Route::group(['prefix' => 'crm'], function() {
 	        Route::get('/cartera', 'CRMController@cartera')->name('crm.cartera');
-	        Route::get('{id}/contacto', 'CRMController@contacto')->name('crm.contacto');
+	        Route::get('{id}/{crm}/contacto', 'CRMController@contacto')->name('crm.contacto');
 	        Route::get('/informe', 'CRMController@informe')->name('crm.informe');
 	        Route::get('exportar', 'CRMController@exportar')->name('crm.exportar');
 	        Route::get('/notificacion','CRMController@notificacion')->name('crm.notificacion');

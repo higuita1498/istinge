@@ -283,7 +283,9 @@ class CRMController extends Controller
             'tiempo' => 'required'
         ]);
         
-        $crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->get()->last();
+        //$crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->where('id', $idCRM)->get()->last();
+        $crm = CRM::find($request->idCRM);
+
         $accion_log = '';
         if($crm){
             if($request->llamada == 0){
@@ -534,8 +536,10 @@ class CRMController extends Controller
         
     }
     
-    public function contacto($id){
-        $contacto = DB::select("SELECT C.id, C.nombre, C.apellido1, C.apellido2, C.nit, C.tip_iden, C.telefono1, C.celular FROM contactos AS C WHERE C.id = '$id'");
+    public function contacto($id, $crm){
+        //$contacto = DB::select("SELECT C.id, C.nombre, C.apellido1, C.apellido2, C.nit, C.tip_iden, C.telefono1, C.celular FROM contactos AS C WHERE C.id = '$id'");
+
+        $contacto = Contacto::join('crm', 'crm.cliente', '=', 'contactos.id')->where('contactos.id', $id)->where('crm.id', $crm)->select('contactos.id', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit', 'contactos.tip_iden', 'contactos.telefono1', 'contactos.celular')->get();
         if ($contacto) {
             return json_encode($contacto);
         }
