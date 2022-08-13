@@ -200,7 +200,7 @@
             data.nombre = $('#nombre').val();
             data.apellido = $('#apellido').val();
             data.identificacion = $('#identificacion').val();
-            data.telefono1 = $('#telefono').val();
+            data.celular = $('#telefono').val();
             data.direccion = $('#direccion').val();
             data.barrio = $('#barrio').val();
             data.vereda = $('#vereda').val();
