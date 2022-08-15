@@ -117,6 +117,7 @@ class AvisosController extends Controller
         $succ = 0;
         $cor = 0;
         $numeros = [];
+        $bulk = '';
 
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
@@ -128,6 +129,9 @@ class AvisosController extends Controller
                     $numero = str_replace('+','',$contrato->cliente()->celular);
                     $numero = str_replace(' ','',$numero);
                     array_push($numeros, '57'.$numero);
+
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$plantilla->contenido.'"},';
+
                 }elseif($request->type == 'EMAIL'){
                     $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
                     if($host){
@@ -168,39 +172,27 @@ class AvisosController extends Controller
             if($servicio){
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
-                        $post['toNumber'] = $numeros;
-                        $post['sms'] = $plantilla->contenido;
-
                         $curl = curl_init();
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
                             CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => '',
+                            CURLOPT_ENCODING => "",
                             CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_TIMEOUT => 30,
                             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => 'POST',
-                            CURLOPT_POSTFIELDS => json_encode($post),
-                            CURLOPT_HTTPHEADER => array(
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                            CURLOPT_HTTPHEADER => [
+                                'Content-Type: application/json',
                                 'account: '.$servicio->user,
                                 'apiKey: '.$servicio->api_key,
                                 'token: '.$servicio->pass,
-                                'Content-Type: application/json'
-                            ),
-                        ));
+                                ],
+                        ]);
 
-                        $result = curl_exec ($curl);
-                        $err  = curl_error($curl);
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
                         curl_close($curl);
-
-                        $response = json_decode($result, true);
-                        if(isset($response['error'])){
-                            $fail++;
-                        }else{
-                            $succ++;
-                        }
-                        return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado. SMS Enviados: '.$fail.' - SMS Fallidos: '.$succ);
                     }else{
                         $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                         return redirect('empresa/avisos')->with('danger', $mensaje);
