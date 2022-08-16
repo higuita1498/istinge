@@ -202,7 +202,12 @@ class CronController extends Controller
 
                         array_push($numeros, '57'.$numero);
 
-                        $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                        if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
+                            $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                            $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->parsear($factura->total()->total).'"},';
+                        }else{
+                            $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                        }
 
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
                             if($empresa->prorrateo == 1){
