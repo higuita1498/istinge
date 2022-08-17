@@ -68,8 +68,8 @@
         	</div>
 
         	<div class="col-md-12 form-group {{$plantilla->tipo==1 || $plantilla->tipo==2?'d-none':''}}" id="div_sms">
-        	    <label class="control-label">Contenido (Máximo 120 caracteres)<span class="text-danger">*</span></label>
-        	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="120">{{$plantilla->contenido}}</textarea>
+        	    <label class="control-label">Contenido (Máximo 140 caracteres)<span class="text-danger">*</span></label>
+        	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="140">{{$plantilla->contenido}}</textarea>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('contenido_sms') }}</strong>
         	    </span>
