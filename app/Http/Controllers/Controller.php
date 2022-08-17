@@ -1748,4 +1748,31 @@ class Controller extends BaseController
             'factura' => Factura::where('cliente', $id)->get()->last(),
         ]);
     }
+
+    public function getContractsBarrio($barrio){
+        $contratos = Contrato::query()
+            ->select('contracts.id', 'contracts.state', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+
+        $contratos->where(function ($query) use ($barrio) {
+            $query->orWhere('contactos.direccion', 'like', "%{$barrio}%");
+            $query->orWhere('contracts.address_street', 'like', "%{$barrio}%");
+        });
+
+        return response()->json([
+            'succes'    => true,
+            'search'    => $barrio,
+            'data'      => $contratos->orderBy('contracts.state', 'desc')->get(),
+        ]);
+    }
+
+    public function radicadosBarrio(){
+        $radicados = Radicado::join('contactos as c', 'c.id', '=', 'radicados.cliente')->select('c.barrio', 'radicados.id')->get();
+
+        foreach ($radicados as $radicado){
+            $rad = Radicado::find($radicado->id);
+            $rad->barrio = $radicado->barrio;
+            $rad->save();
+        }
+    }
 }

@@ -447,8 +447,8 @@ class CronController extends Controller
                 $crm = new CRM();
                 $crm->cliente = $contacto->id;
                 $crm->factura = $contacto->factura;
-                $crm->servidor = $contrato->server_configuration_id;
-                $crm->grupo_corte = $contrato->grupo_corte;
+                $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+                $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
                 $crm->save();
 
                 if ($contrato) {
@@ -482,13 +482,13 @@ class CronController extends Controller
                                     }
                                     #ELIMINAMOS DE IP_AUTORIZADAS#
                                 }
-                                $contrato->state = 'disabled';
                                 $i++;
                             }
                             $API->disconnect();
-                            $contrato->save();
                         }
                     }
+                    $contrato->state = 'disabled';
+                    $contrato->save();
                 }
             }
 
