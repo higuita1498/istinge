@@ -317,6 +317,7 @@ class RadicadosController extends Controller{
         $radicado->responsable = Auth::user()->id;
         $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
         $radicado->oficina = $request->oficina;
+        $radicado->barrio = $request->barrio;
         $radicado->save();
 
         if($request->contrato){
@@ -411,6 +412,7 @@ class RadicadosController extends Controller{
             //$radicado->responsable = Auth::user()->id;
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->oficina = $request->oficina;
+            $radicado->barrio = $request->barrio;
             $radicado->save();
 
             $log = new RadicadoLOG;

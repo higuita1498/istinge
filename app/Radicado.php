@@ -22,7 +22,7 @@ class Radicado extends Model
      * @var array
      */
     protected $fillable = [
-        'cliente','fecha','nombre', 'telefono', 'correo', 'direccion', 'contrato', 'desconocido', 'estatus', 'codigo','empresa','firma','prioridad'
+        'cliente','fecha','nombre', 'telefono', 'correo', 'direccion', 'contrato', 'desconocido', 'estatus', 'codigo','empresa','firma','prioridad','barrio'
     ];
 
     protected $appends = ['session'];
