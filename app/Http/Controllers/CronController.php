@@ -428,7 +428,7 @@ class CronController extends Controller
         if($grupos_corte > 0){
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
-                select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
+                select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
                 where('f.vencimiento', $fecha)->
@@ -441,7 +441,7 @@ class CronController extends Controller
 
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
-                $contrato = Contrato::where('client_id', $contacto->id)->first();
+                $contrato = Contrato::find($contacto->contrato_id);
 
                 $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
                 $crm = new CRM();
@@ -451,42 +451,43 @@ class CronController extends Controller
                 $crm->grupo_corte = $contrato->grupo_corte;
                 $crm->save();
 
-                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                $API = new RouterosAPI();
-                $API->port = $mikrotik->puerto_api;
-
                 if ($contrato) {
-                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                        $API->write('/ip/firewall/address-list/print', TRUE);
-                        $ARRAYS = $API->read();
-                        if($contrato->state == 'enabled'){
-                            if($contrato->ip){
-                                $API->comm("/ip/firewall/address-list/add", array(
-                                    "address" => $contrato->ip,
-                                    "comment" => $contrato->servicio,
-                                    "list" => 'morosos'
-                                    )
-                                );
+                    if(isset($contrato->server_configuration_id)){
+                        $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+                        $API = new RouterosAPI();
+                        $API->port = $mikrotik->puerto_api;
 
-                                #ELIMINAMOS DE IP_AUTORIZADAS#
-                                $API->write('/ip/firewall/address-list/print', false);
-                                $API->write('?address='.$contrato->ip, false);
-                                $API->write("?list=ips_autorizadas",false);
-                                $API->write('=.proplist=.id');
-                                $ARRAYS = $API->read();
-                                if(count($ARRAYS)>0){
-                                    $API->write('/ip/firewall/address-list/remove', false);
-                                    $API->write('=.id='.$ARRAYS[0]['.id']);
-                                    $READ = $API->read();
+                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                            $API->write('/ip/firewall/address-list/print', TRUE);
+                            $ARRAYS = $API->read();
+                            if($contrato->state == 'enabled'){
+                                if($contrato->ip){
+                                    $API->comm("/ip/firewall/address-list/add", array(
+                                        "address" => $contrato->ip,
+                                        "comment" => $contrato->servicio,
+                                        "list" => 'morosos'
+                                        )
+                                    );
+
+                                    #ELIMINAMOS DE IP_AUTORIZADAS#
+                                    $API->write('/ip/firewall/address-list/print', false);
+                                    $API->write('?address='.$contrato->ip, false);
+                                    $API->write("?list=ips_autorizadas",false);
+                                    $API->write('=.proplist=.id');
+                                    $ARRAYS = $API->read();
+                                    if(count($ARRAYS)>0){
+                                        $API->write('/ip/firewall/address-list/remove', false);
+                                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                                        $READ = $API->read();
+                                    }
+                                    #ELIMINAMOS DE IP_AUTORIZADAS#
                                 }
-                                #ELIMINAMOS DE IP_AUTORIZADAS#
+                                $contrato->state = 'disabled';
+                                $i++;
                             }
-                            $contrato->state = 'disabled';
-                            $i++;
+                            $API->disconnect();
+                            $contrato->save();
                         }
-                        $API->disconnect();
-                        $contrato->save();
                     }
                 }
             }
