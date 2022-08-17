@@ -410,7 +410,7 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->pagado)}";
         })
         ->addColumn('pendiente', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->porpagar)}";
+            return "{$moneda} {$factura->parsear($factura->porpagar())}";
         })
         ->addColumn('estado', function (Factura $factura) {
             $msj = '';
@@ -527,7 +527,7 @@ class FacturasController extends Controller{
             return "{$moneda} {$factura->parsear($factura->pagado)}";
         })
         ->addColumn('pendiente', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->porpagar)}";
+            return "{$moneda} {$factura->parsear($factura->porpagar())}";
         })
         ->addColumn('estado', function (Factura $factura) {
             return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
