@@ -245,7 +245,7 @@ class RadicadosController extends Controller{
             return ($radicado->tiempo_ini && $radicado->tiempo_fin) ? $radicado->duracion() : 'N/A' ;
         })
         ->editColumn('barrio', function (Radicado $radicado) {
-            return $radicado->cliente()->barrio;
+            return $radicado->barrio;
         })
         ->editColumn('solventado', function (Radicado $radicado) {
             return ($radicado->solventado) ? date('d-m-Y g:i:s A', strtotime($radicado->solventado)) : 'N/A' ;
@@ -317,6 +317,7 @@ class RadicadosController extends Controller{
         $radicado->responsable = Auth::user()->id;
         $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
         $radicado->oficina = $request->oficina;
+        $radicado->barrio = $request->barrio;
         $radicado->save();
 
         if($request->contrato){
@@ -411,6 +412,7 @@ class RadicadosController extends Controller{
             //$radicado->responsable = Auth::user()->id;
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->oficina = $request->oficina;
+            $radicado->barrio = $request->barrio;
             $radicado->save();
 
             $log = new RadicadoLOG;

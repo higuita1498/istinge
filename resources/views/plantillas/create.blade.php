@@ -67,8 +67,8 @@
         	</div>
 
         	<div class="col-md-12 form-group d-none" id="div_sms">
-        	    <label class="control-label">Contenido (Máximo 120 caracteres)<span class="text-danger">*</span></label>
-        	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="120">{{old('contenido_sms')}}</textarea>
+        	    <label class="control-label">Contenido (Máximo 140 caracteres)<span class="text-danger">*</span></label>
+        	    <textarea class="form-control" name="contenido_sms" id="contenido_sms" rows="2" maxlength="140">{{old('contenido_sms')}}</textarea>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('contenido_sms') }}</strong>
         	    </span>

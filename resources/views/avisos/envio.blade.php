@@ -15,6 +15,14 @@
         	        <strong>{{ $errors->first('plantilla') }}</strong>
         	    </span>
         	</div>
+
+        	<div class="col-md-3 form-group">
+	            <label class="control-label">Barrio</label>
+        	    <input class="form-control" type="text" name="barrio" id="barrio">
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('barrio') }}</strong>
+        	    </span>
+        	</div>
         	
         	<div class="col-md-5 form-group {{ $id ? 'd-none':'' }}">
         	    <label class="control-label">Clientes <span class="text-danger">*</span></label>
@@ -33,7 +41,7 @@
         	
         	<div class="col-md-3 form-group" id="seleccion_manual">
 	            <label class="control-label">Selección manual de clientes</label>
-        	    <select name="contrato[]" id="contrato" class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" required multiple data-actions-box="true" data-select-all-text="Todos" data-deselect-all-text="Ninguno">
+        	    <select name="contrato[]" id="contrato_sms" class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" required multiple data-actions-box="true" data-select-all-text="Todos" data-deselect-all-text="Ninguno">
         	        @php $estados=\App\Contrato::tipos();@endphp
         	        @foreach($estados as $estado)
         	        <optgroup label="{{$estado['nombre']}}">
@@ -66,6 +74,50 @@
 
 @section('scripts')
 <script type="text/javascript">
+	window.addEventListener('load', function() {
+		$('#barrio').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		if($('#barrio').val().length > 3){
+        			if (window.location.pathname.split("/")[1] === "software") {
+        				var url = '/software/getContractsBarrio/'+$('#barrio').val();
+        			}else{
+        				var url = '/getContractsBarrio/'+$('#barrio').val();
+        			}
+
+        			cargando(true);
+
+        			$.ajax({
+        				url: url,
+        				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        				method: 'get',
+        				success: function (data) {
+        					console.log(data);
+        					cargando(false);
+
+        					var $select = $('#contrato_sms');
+        					$select.empty();
+        					$.each(data.data,function(key, value){
+        						var apellidos = '';
+        						if(value.apellido1){
+        							apellidos += ' '+value.apellido1;
+        						}
+        						if(value.apellido2){
+        							apellidos += ' '+value.apellido2;
+        						}
+        						$select.append('<option value='+value.id+' class="'+value.state+'">'+value.nombre+' '+apellidos+' - '+value.nit+'</option>');
+        					});
+        					$select.selectpicker('refresh');
+        				},
+        				error: function(data){
+        					cargando(false);
+        				}
+        			});
+        		}
+        		return false;
+        	}
+        });
+    });
+
     function chequeo(){
         if($("#radio_1").is(":checked")){
             $(".enabled").attr('selected','selected');

@@ -32,6 +32,7 @@ Route::get('clear', function () {
 /* IMPORTAR API*/
 Route::post('/import_puc','PucController@import_puc')->name('puc.import_puc');
 Route::get('/updatecontratofactura','FacturasController@updateContratoId');
+Route::get('/radicadosbarrio','Controller@radicadosBarrio');
 
 Route::get('/import_plans','Controller@import_plans')->name('import_plans');
 Route::get('/import_clients','Controller@import_clients')->name('import_clients');
@@ -112,6 +113,7 @@ Route::get('/clear', function() {
 });
 
 Route::get('/getClienteSMS/{id}','Controller@getClienteSMS');
+Route::get('/getContractsBarrio/{barrio}','Controller@getContractsBarrio');
 
 Route::get('pdfmariano', 'ContactosController@pdfmariano')->name('contactos.pdfmariano');
 
