@@ -193,6 +193,25 @@ class AvisosController extends Controller
                         $response = curl_exec($curl);
                         $err = curl_error($curl);
                         curl_close($curl);
+
+                        $response = json_decode($result, true);
+                        if(isset($response['error'])){
+                            if($response['error']['code'] == 1000303){
+                                $msj = 'Cuenta no encontrada';
+                            }else{
+                                $msj = $response['error']['details'];
+                            }
+                            return back()->with('danger', 'Envío Fallido: '.$msj);
+                        }else{
+                            if($response['status'] == '1x000'){
+                                $msj = 'SMS recíbido por hablame exitosamente';
+                            }else if($response['status'] == '1x152'){
+                                $msj = 'SMS entregado al operador';
+                            }else if($response['status'] == '1x153'){
+                                $msj = 'SMS entregado al celular';
+                            }
+                            return back()->with('success', 'Envío Éxitoso: '.$msj);
+                        }
                     }else{
                         $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                         return redirect('empresa/avisos')->with('danger', $mensaje);
