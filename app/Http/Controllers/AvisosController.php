@@ -194,7 +194,7 @@ class AvisosController extends Controller
                         $err = curl_error($curl);
                         curl_close($curl);
 
-                        $response = json_decode($result, true);
+                        $response = json_decode($response, true);
                         if(isset($response['error'])){
                             if($response['error']['code'] == 1000303){
                                 $msj = 'Cuenta no encontrada';
