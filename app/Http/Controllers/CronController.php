@@ -73,6 +73,7 @@ class CronController extends Controller
     }
 
     public static function CrearFactura(){
+        ini_set('max_execution_time', 500);
         $empresa = Empresa::find(1);
 
         if($empresa->factura_auto == 1){
@@ -100,8 +101,6 @@ class CronController extends Controller
                 }else{
                     $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
                 }
-
-                //dd('Plazo: '.(Funcion::diffDates($date, Carbon::now())+1).PHP_EOL.' Fecha: '.Carbon::now()->format('Y-m-d').PHP_EOL.' Vencimiento: '.$date->format('Y-m-d').PHP_EOL.' Fecha Factura: '.Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2).PHP_EOL.' Pago Oportuno: '.Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2));
 
                 foreach ($contratos as $contrato) {
                     $numero++;
@@ -326,97 +325,97 @@ class CronController extends Controller
                 }
             }
 
-            // $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
-            // if($servicio){
-            //     $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
-            //     if($servicio->nombre == 'Hablame SMS'){
-            //         if($servicio->api_key && $servicio->user && $servicio->pass){
-            //             $curl = curl_init();
-            //             curl_setopt_array($curl, [
-            //                 CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
-            //                 CURLOPT_RETURNTRANSFER => true,
-            //                 CURLOPT_ENCODING => "",
-            //                 CURLOPT_MAXREDIRS => 10,
-            //                 CURLOPT_TIMEOUT => 30,
-            //                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //                 CURLOPT_CUSTOMREQUEST => "POST",
-            //                 CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
-            //                 CURLOPT_HTTPHEADER => [
-            //                     'Content-Type: application/json',
-            //                     'account: '.$servicio->user,
-            //                     'apiKey: '.$servicio->api_key,
-            //                     'token: '.$servicio->pass,
-            //                     ],
-            //             ]);
+            $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
+            if($servicio){
+                $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                if($servicio->nombre == 'Hablame SMS'){
+                    if($servicio->api_key && $servicio->user && $servicio->pass){
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                            CURLOPT_HTTPHEADER => [
+                                'Content-Type: application/json',
+                                'account: '.$servicio->user,
+                                'apiKey: '.$servicio->api_key,
+                                'token: '.$servicio->pass,
+                                ],
+                        ]);
 
-            //             $response = curl_exec($curl);
-            //             $err = curl_error($curl);
-            //             curl_close($curl);
-            //         }
-            //     }elseif($servicio->nombre == 'SmsEasySms'){
-            //         if($servicio->user && $servicio->pass){
-            //             $post['to'] = $numeros;
-            //             $post['text'] = $mensaje;
-            //             $post['from'] = "SMS";
-            //             $login = $servicio->user;
-            //             $password = $servicio->pass;
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
+                    }
+                }elseif($servicio->nombre == 'SmsEasySms'){
+                    if($servicio->user && $servicio->pass){
+                        $post['to'] = $numeros;
+                        $post['text'] = $mensaje;
+                        $post['from'] = "SMS";
+                        $login = $servicio->user;
+                        $password = $servicio->pass;
 
-            //             $ch = curl_init();
-            //             curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
-            //             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            //             curl_setopt($ch, CURLOPT_POST, 1);
-            //             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-            //             curl_setopt($ch, CURLOPT_HTTPHEADER,
-            //                 array(
-            //                     "Accept: application/json",
-            //                     "Authorization: Basic ".base64_encode($login.":".$password)));
-            //             $result = curl_exec ($ch);
-            //             $err  = curl_error($ch);
-            //             curl_close($ch);
-            //         }
-            //     }else{
-            //         if($servicio->user && $servicio->pass){
-            //             $post['to'] = $numeros;
-            //             $post['text'] = $mensaje;
-            //             $post['from'] = "";
-            //             $login = $servicio->user;
-            //             $password = $servicio->pass;
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                            array(
+                                "Accept: application/json",
+                                "Authorization: Basic ".base64_encode($login.":".$password)));
+                        $result = curl_exec ($ch);
+                        $err  = curl_error($ch);
+                        curl_close($ch);
+                    }
+                }else{
+                    if($servicio->user && $servicio->pass){
+                        $post['to'] = $numeros;
+                        $post['text'] = $mensaje;
+                        $post['from'] = "";
+                        $login = $servicio->user;
+                        $password = $servicio->pass;
 
-            //             $ch = curl_init();
-            //             curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-            //             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            //             curl_setopt($ch, CURLOPT_POST, 1);
-            //             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-            //             curl_setopt($ch, CURLOPT_HTTPHEADER,
-            //                 array(
-            //                     "Accept: application/json",
-            //                     "Authorization: Basic ".base64_encode($login.":".$password)));
-            //             $result = curl_exec ($ch);
-            //             $err  = curl_error($ch);
-            //             curl_close($ch);
-            //         }
-            //     }
-            // }
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER,
+                            array(
+                                "Accept: application/json",
+                                "Authorization: Basic ".base64_encode($login.":".$password)));
+                        $result = curl_exec ($ch);
+                        $err  = curl_error($ch);
+                        curl_close($ch);
+                    }
+                }
+            }
 
-            // if (file_exists("CrearFactura.txt")){
-            //     $file = fopen("CrearFactura.txt", "a");
-            //     fputs($file, "-----------------".PHP_EOL);
-            //     fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-            //     fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-            //     fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-            //     fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-            //     fputs($file, "-----------------".PHP_EOL);
-            //     fclose($file);
-            // }else{
-            //     $file = fopen("CrearFactura.txt", "w");
-            //     fputs($file, "-----------------".PHP_EOL);
-            //     fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-            //     fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-            //     fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-            //     fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-            //     fputs($file, "-----------------".PHP_EOL);
-            //     fclose($file);
-            // }
+            if (file_exists("CrearFactura.txt")){
+                $file = fopen("CrearFactura.txt", "a");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
+            }else{
+                $file = fopen("CrearFactura.txt", "w");
+                fputs($file, "-----------------".PHP_EOL);
+                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
+                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
+                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
+                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
+                fputs($file, "-----------------".PHP_EOL);
+                fclose($file);
+            }
         }
     }
 
