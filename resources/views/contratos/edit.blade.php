@@ -370,6 +370,7 @@
                                 <label class="control-label">Puerto de Conexión</label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="puerto_conexion" id="puerto_conexion" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="">Ninguno</option>
                                         @foreach($puertos as $puerto)
                                             <option value="{{$puerto->id}}" {{$puerto->id == $contrato->puerto_conexion? 'selected':''}}>{{$puerto->nombre}}</option>
                                         @endforeach
