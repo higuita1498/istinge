@@ -543,14 +543,23 @@ class Factura extends Model
     }
 
     public function porpagar(){
-         $porpagar = Funcion::precision($this->total()->total);
-        return abs($porpagar - $this->pagado() - $this->devoluciones());
-        //return abs($this->total()->total - $this->pagado() - $this->devoluciones() );
+        $porpagar = Funcion::precision($this->total()->total);
+        $pagado = $this->pagado();
+        $total = abs($porpagar - $pagado - $this->devoluciones());
+        if($pagado > $porpagar){
+            return 0;
+        }
+        return $total;
     }
 
     public function porpagarAPI($empresa){
         $porpagar = Funcion::precisionAPI($this->totalAPI($empresa)->total, $empresa);
-        return abs($porpagar - $this->pagado() - $this->devoluciones());
+        $pagado = $this->pagado();
+        $total = abs($porpagar - $pagado - $this->devoluciones());
+        if($pagado > $porpagar){
+            return 0;
+        }
+        return $total;
     }
 
     public function devoluciones(){

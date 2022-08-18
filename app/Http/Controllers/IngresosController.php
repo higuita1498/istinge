@@ -443,6 +443,8 @@ class IngresosController extends Controller
                         */
                         if($factura->total()->total < $request->precio[$key]){
                             $items->pago = $factura->total()->total;
+                            $factura->estatus = 0;
+                            $factura->save();
                         }else{
                             $items->pago=$this->precision($request->precio[$key]);
                         }
