@@ -212,7 +212,7 @@ class AvisosController extends Controller
                             }else if($response['status'] == '1x153'){
                                 $msj = 'SMS entregado al celular';
                             }
-                            return back()->with('success', 'Envío Éxitoso: '.$msj);
+                            return redirect('empresa/avisos')->with('success', 'Envío Éxitoso: '.$msj);
                         }
                     }else{
                         $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
