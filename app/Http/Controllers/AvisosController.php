@@ -198,6 +198,8 @@ class AvisosController extends Controller
                         if(isset($response['error'])){
                             if($response['error']['code'] == 1000303){
                                 $msj = 'Cuenta no encontrada';
+                            }else if($response['error']['code'] == '1x023'){
+                                $msj = 'Debe tener más de 2 contactos seleccionado para hacer uso de los envíos masivos';
                             }else{
                                 $msj = $response['error']['details'];
                             }
