@@ -108,6 +108,7 @@ class Ingreso extends Model
     }
 
     public function pago(){
+        
         if ($this->tipo==1) {
             $ingresos=IngresosFactura::where('ingreso',$this->id)->get();
             $total=0;
@@ -118,10 +119,10 @@ class Ingreso extends Model
                     la factura por que no se ha asociado ningun pago) 
                 */
                 $totalAnticipo = PucMovimiento::
-                    where('tipo_comprobante',3)->
-                    where('recibocaja_id','!=',null)->
-                    where('documento_id',$ingreso->factura)->
-                    sum('debito');
+                    where('tipo_comprobante',1)->
+                    where('enlace_a','=',5)->
+                    where('documento_id',$ingreso->ingreso)->
+                    sum('credito');
             }
             return $total + $totalAnticipo;
         }

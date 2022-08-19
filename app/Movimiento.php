@@ -8,6 +8,7 @@ use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresoR;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosRecurrentes;
+use App\PucMovimiento;
 use Auth;
 
 
@@ -66,6 +67,9 @@ class Movimiento extends Model
         }
         else if ($this->modulo==3) {
             return Gastos::find($this->id_modulo)->detalle();
+        }
+        else if($this->modulo==5){
+            return "saldo a favor en " . Ingreso::find($this->id_modulo)->detalle();
         }
         if (GastosRecurrentes::find($this->id_modulo)) {
                 return GastosRecurrentes::find($this->id_modulo)->detalle();    
