@@ -407,10 +407,18 @@ class IngresosController extends Controller
             
             //Si el tipo de ingreso es de facturas
             if ($ingreso->tipo == 1) {
+                $saldoFavorUsado = 0;
                 foreach ($request->factura_pendiente as $key => $value) {
                     if ($request->precio[$key]) {
                         $precio = $this->precision($request->precio[$key]);
                         $factura = Factura::find($request->factura_pendiente[$key]);
+
+                        /*
+                        vamos a sumar el total del anticipo usado sobre una factura 
+                        (este se aplica cuando se crea la factura de venta en una forma de pago) 
+                        */
+                        $saldoFavorUsado+=$factura->saldoFavorUsado();
+
                         $retencion = 'fact' . $factura->id . '_retencion';
                         $precio_reten = 'fact' . $factura->id . '_precio_reten';
                         if ($request->$retencion) {
@@ -522,6 +530,12 @@ class IngresosController extends Controller
             $ingreso = Ingreso::find($ingreso->id);
             //ingresos
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+
+            //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
+            if($saldoFavorUsado > 0){
+                //la cuenta de anticipo es la 5
+                $this->up_transaccion(5, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);      
+            }
 
             if ($ingreso->tipo == 1) {
                 if($factura->estatus == 0){

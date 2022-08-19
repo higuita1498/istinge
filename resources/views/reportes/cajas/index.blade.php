@@ -130,7 +130,7 @@
                 @endforeach
                 </tbody>
                 <tfoot class="thead-dark">
-                    <td colspan="8"></td>
+                    <td colspan="9"></td>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['salida'])}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
                 </tfoot>

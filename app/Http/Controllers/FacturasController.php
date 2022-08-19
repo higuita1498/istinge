@@ -1206,6 +1206,7 @@ class FacturasController extends Controller{
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+
         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
 
         $limitDate   = (Carbon::parse($factura->created_at))->addDay();

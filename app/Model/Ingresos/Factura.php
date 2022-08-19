@@ -1165,7 +1165,7 @@ public function forma_pago()
         }
     }
 
-    //metodo que busca la 
+    //metodo que busca la forma de pago de una factura 
     public function formaPago(){
         $forma = FormaPago::find($this->cuenta_id);
 
@@ -1222,6 +1222,13 @@ public function forma_pago()
 
     public function created_by(){
         return User::find($this->created_by);
+    }
+
+    //Método que retorna el saldo a favor usado en la forma de pago (cuando agregamos anticipos a la forma de pago)
+    public function saldoFavorUsado(){
+        return PucMovimiento::where('documento_id',$this->id)
+        ->where('recibocaja_id','!=',null)
+        ->sum('debito');
     }
 
 }
