@@ -1,5 +1,29 @@
 @extends('layouts.app')
 @section('content')
+    @if(Session::has('success'))
+		<div class="alert alert-success" >
+			{{Session::get('success')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 5000);
+		</script>
+	@endif
+	@if(Session::has('danger'))
+		<div class="alert alert-danger" >
+			{{Session::get('danger')}}
+		</div>
+
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 10000);
+		</script>
+	@endif
 	<form method="POST" action="{{ route('avisos.envio_aviso') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-retencion">
 	    @csrf
 	    <input type="hidden" value="{{$opcion}}" name="type">
