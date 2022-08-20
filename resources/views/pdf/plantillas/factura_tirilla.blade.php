@@ -193,12 +193,12 @@
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago())}} </td>
                 </tr>
                 @if($factura->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $ingreso->pago())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $ingreso->ingreso()->pago())}} </td>
                 </tr>
                 @endif
             </tbody>
