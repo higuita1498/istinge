@@ -100,7 +100,7 @@
                             {{$movimiento->contacto ? $movimiento->cliente()->nombre  . $movimiento->cliente()->apellidos() : ''}}
                         </td>
                         <td>
-                            {{$movimiento->cliente()->nit}}
+                            {{isset($movimiento->cliente()->nit) ? $movimiento->cliente()->nit : ''}}
                         </td>
                         
                         <td>
