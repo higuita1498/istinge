@@ -3342,20 +3342,20 @@ class ExportarReportesController extends Controller
             if(isset($movimiento->contacto)){
                 $identificacion .= $movimiento->cliente()->tip_iden('corta').' '.$movimiento->cliente()->nit;
             }
-            $nombres = "";}
 
+            $nombres ="";
             if(isset($movimiento->cliente()->nombre)){
                 $nombres.=$movimiento->cliente()->nombre . " ";
             }
 
-            if(isset($movimiento->cliente()->apellidos())){
+            if($movimiento->cliente()->apellidos()){
                 $nombres.=$movimiento->cliente()->apellidos();
             }
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, date('d-m-Y', strtotime($movimiento->fecha)))
                 ->setCellValue($letras[1].$i, $movimiento->id)
-                ->setCellValue($letras[2].$i, $nombres)
+                ->setCellValue($letras[2].$i, $movimiento->cliente()->nombre . " " . $movimiento->cliente()->apellidos())
                 ->setCellValue($letras[3].$i, $identificacion)
                 ->setCellValue($letras[4].$i, $movimiento->banco()->nombre)
                 ->setCellValue($letras[5].$i, $movimiento->categoria())
