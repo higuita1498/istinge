@@ -3344,12 +3344,8 @@ class ExportarReportesController extends Controller
             }
 
             $nombres ="";
-            if(isset($movimiento->cliente()->nombre)){
-                $nombres.=$movimiento->cliente()->nombre . " ";
-            }
-
-            if($movimiento->cliente()->apellidos()){
-                $nombres.=$movimiento->cliente()->apellidos();
+            if($movimiento->cliente()){
+                $nombres.=$movimiento->cliente()->nombre . " " . $movimiento->cliente()->apellidos() ;
             }
 
             $objPHPExcel->setActiveSheetIndex(0)
