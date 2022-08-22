@@ -108,6 +108,7 @@ class Ingreso extends Model
     }
 
     public function pago(){
+        $totalAnticipo = 0;
         
         if ($this->tipo==1) {
             $ingresos=IngresosFactura::where('ingreso',$this->id)->get();
