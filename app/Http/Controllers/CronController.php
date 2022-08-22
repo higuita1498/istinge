@@ -1612,7 +1612,12 @@ class CronController extends Controller
                 $numero = str_replace(' ','',$numero);
                 array_push($numeros, '57'.$numero);
 
-                $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
+                    $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total.'"},';
+                }else{
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                }
             }
         }
 
@@ -1642,6 +1647,8 @@ class CronController extends Controller
                     $response = curl_exec($curl);
                     $err = curl_error($curl);
                     curl_close($curl);
+
+                    isset($response) ? dd($response) : dd($err);
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
                 if($servicio->user && $servicio->pass){
