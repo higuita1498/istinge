@@ -124,7 +124,7 @@
             @foreach($movimientos as $mov)
                 <tr>
                     <td>{{$i}}</td>
-                    <td>{{$mov->codigo_cuenta}}</td>
+                    <td>{{$mov->codigo_cuenta}} - {{$mov->cuenta()->nombre}}</td>
                     <td>{{$mov->cliente->nombre}}</td>
                     <td>{{$mov->asociadoA()}}</td>
                     <td>{{$mov->descripcion}}</td>
