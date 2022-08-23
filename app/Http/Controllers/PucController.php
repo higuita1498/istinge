@@ -96,7 +96,7 @@ class PucController extends Controller
     public function show($codigo){
 
         $empresa = auth()->user()->empresa;
-        $hijos = Puc::where('empresa',$empresa)->where('asociado',$codigo)->get();
+        $hijos = Puc::where('empresa',$empresa)->where('asociado',$codigo)->orderBy('codigo','asc')->get();
 
         foreach($hijos as $hijo){
             if(strlen($hijo->codigo) == 2){
