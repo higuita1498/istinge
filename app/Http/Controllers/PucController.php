@@ -75,7 +75,7 @@ class PucController extends Controller
             $categoria->id_balance=$request->balance;
             $categoria->save();
             $mensaje='Se ha creado satisfactoriamente la categoría';
-            return redirect('empresa/puc')->with('success', $mensaje);
+            return $categoria;
         }else{
             return redirect('empresa/puc')->with('info', 'el codigo ingresado ya está siendo usado');
         }
