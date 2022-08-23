@@ -210,7 +210,7 @@
 		<div class="col-sm-3">
 			<h4 class="card-title">Documentación</h4>
 			<p>Documentos y guías de uso NetworkSoft.</p>
-			<a href="javascript:void">Contabilidad</a> <br>
+			<a href="https://networksoft.online/software/images/Empresas/Empresa1/contabilidad.pdf" target="_blank">Contabilidad</a> <br>
 			<a href="{{asset('images/Empresas/Empresa1/Gestión Servidor De Correo.pdf')}}" target="_blank">Servidor De Correo</a> <br>
 		</div>
 
