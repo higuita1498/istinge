@@ -51,6 +51,8 @@ use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
 use PHPExcel_Shared_ZipArchive;
 
+use App\Producto;
+
 class IngresosController extends Controller
 {
     public function __construct() {
@@ -546,6 +548,17 @@ class IngresosController extends Controller
                     /* * * API MK * * */
 
                     if($contrato){
+                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                        if ($asignacion) {
+                            $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                            $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                            if ($cuotas_pendientes == 0) {
+                                $asignacion->status = 1;
+                            }
+                            $asignacion->save();
+                        }
+
                         if($contrato->server_configuration_id){
                             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 

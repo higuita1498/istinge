@@ -36,6 +36,7 @@ use App\ServidorCorreo;
 use App\Integracion;
 use App\PlanesVelocidad;
 use App\Model\Ingresos\FacturaRetencion;
+use App\Producto;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -185,6 +186,25 @@ class CronController extends Controller
                             $item_reg->producto    = $item->id;
                             $item_reg->ref         = $item->ref;
                             $item_reg->precio      = $item->precio;
+                            $item_reg->descripcion = $item->producto;
+                            $item_reg->id_impuesto = $item->id_impuesto;
+                            $item_reg->impuesto    = $item->impuesto;
+                            $item_reg->cant        = 1;
+                            $item_reg->desc        = $contrato->descuento;
+                            $item_reg->save();
+                        }
+
+                        ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
+
+                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                        if($asignacion){
+                            $item = Inventario::find($asignacion->producto);
+                            $item_reg = new ItemsFactura;
+                            $item_reg->factura     = $factura->id;
+                            $item_reg->producto    = $item->id;
+                            $item_reg->ref         = $item->ref;
+                            $item_reg->precio      = ($asignacion->precio/$asignacion->cuotas);
                             $item_reg->descripcion = $item->producto;
                             $item_reg->id_impuesto = $item->id_impuesto;
                             $item_reg->impuesto    = $item->impuesto;
@@ -1015,6 +1035,17 @@ class CronController extends Controller
                         $contrato = Contrato::where('client_id', $cliente->id)->first();
                         $res = DB::table('contracts')->where('client_id', $cliente->id)->update(["state" => 'enabled']);
 
+                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                        if ($asignacion) {
+                            $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                            $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                            if ($cuotas_pendientes == 0) {
+                                $asignacion->status = 1;
+                            }
+                            $asignacion->save();
+                        }
+
                         # API MK
                         if($contrato->server_configuration_id){
                             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
@@ -1215,6 +1246,17 @@ class CronController extends Controller
                         $cliente = Contacto::where('id', $factura->cliente)->first();
                         $contrato = Contrato::where('client_id', $cliente->id)->first();
                         $res = DB::table('contracts')->where('client_id', $cliente->id)->update(["state" => 'enabled']);
+
+                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                        if ($asignacion) {
+                            $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                            $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                            if ($cuotas_pendientes == 0) {
+                                $asignacion->status = 1;
+                            }
+                            $asignacion->save();
+                        }
 
                         # API MK
                         if($contrato->server_configuration_id){
@@ -1473,6 +1515,17 @@ class CronController extends Controller
                     $cliente = Contacto::where('id', $factura->cliente)->first();
                     $contrato = Contrato::where('client_id', $cliente->id)->first();
                     $res = DB::table('contracts')->where('client_id', $cliente->id)->update(["state" => 'enabled']);
+
+                    $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                    if ($asignacion) {
+                        $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                        $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                        if ($cuotas_pendientes == 0) {
+                            $asignacion->status = 1;
+                        }
+                        $asignacion->save();
+                    }
 
                     # API MK
                     if($contrato){

@@ -61,7 +61,19 @@
                                 @endforeach
                             </select>
                         </div>
-
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Venta" class="form-control selectpicker" id="producto_venta">
+                                <option value="1">Si</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Estado" class="form-control selectpicker" id="status">
+                                <option value="1">Pagado y Asignado</option>
+                                <option value="2">Pendiente de Pago</option>
+                                <option value="3">Asignado</option>
+                            </select>
+                        </div>
                         <div class="col-md-4 pl-1 pt-1">
                             <div class="row">
                                 <div class="col-md-6 pr-1">
@@ -163,6 +175,8 @@
             data.desde      = $('#desde').val();
             data.hasta      = $('#hasta').val();
             data.created_by = $('#created_by').val();
+            data.producto_venta = $("#producto_venta").val();
+            data.status = $("#status").val();
             data.tipo       = 1;
             data.filtro     = true;
         });
@@ -177,6 +191,18 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#nro').on('keyup',function(e) {
+            if(e.which > 32 || e.which == 8) {
+                getDataTable();
+                return false;
+            }
+        });
+
+        $('#cliente, #desde, #hasta, #producto_venta, #status').on('change',function() {
+            getDataTable();
+            return false;
         });
     });
 
@@ -197,6 +223,8 @@
 	function cerrarFiltrador() {
 		$('#nro').val('');
         $('#cliente').val('').selectpicker('refresh');
+        $('#status').val('').selectpicker('refresh');
+        $('#producto_venta').val('').selectpicker('refresh');
         $('#created_by').val('').selectpicker('refresh');
         $("#desde").val('');
         $("#hasta").val('');

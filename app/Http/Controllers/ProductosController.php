@@ -81,6 +81,16 @@ class ProductosController extends Controller
                     $query->orWhere('productos.tipo', $request->tipo);
                 });
             }
+            if($request->status){
+                $productos->where(function ($query) use ($request) {
+                    $query->orWhere('productos.status', $request->status);
+                });
+            }
+            if($request->producto_venta){
+                $productos->where(function ($query) use ($request) {
+                    $query->orWhere('productos.venta', $request->producto_venta);
+                });
+            }
         }
 
         if(Auth::user()->empresa()->oficina){
@@ -106,14 +116,20 @@ class ProductosController extends Controller
             ->editColumn('created_by', function (Producto $producto) {
                 return $producto->created_by()->nombres;
             })
+            ->editColumn('status', function (Producto $producto) {
+                return '<div class="text-'.$producto->status(true).' font-weight-bold">'.$producto->status().'</div>';
+            })
+            ->editColumn('venta', function (Producto $producto) {
+                return $producto->venta();
+            })
             ->addColumn('acciones', $modoLectura ?  "" : "productos.acciones")
-            ->rawColumns(['acciones', 'nro', 'cliente', 'created_at', 'created_by'])
+            ->rawColumns(['acciones', 'nro', 'cliente', 'created_at', 'created_by', 'status', 'venta'])
             ->toJson();
     }
 
     public function create_asignacion(){
         $this->getAllPermissions(Auth::user()->id);
-        view()->share(['title' => 'Nueva Asignación']);
+        view()->share(['title' => 'Nueva Asignación', 'subseccion' => 'asignaciones_pro']);
 
         $contratos = (Auth::user()->oficina) ? Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->where('contracts.oficina', Auth::user()->oficina)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get() : Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get();
         $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->where('pp.nro', '>', 0)->where('inventario.type', 'MODEMS')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
@@ -130,14 +146,23 @@ class ProductosController extends Controller
             $nro = 1;
         }
 
-        $producto             = new Producto;
-        $producto->empresa    = $empresa;
-        $producto->oficina    = ($request->oficina) ? $request->oficina : null;
-        $producto->nro        = $nro;
-        $producto->tipo       = 1;
-        $producto->producto   = $request->producto;
-        $producto->contrato   = $request->contrato;
-        $producto->created_by = Auth::user()->id;
+        $item = Inventario::find($request->producto);
+
+        $producto                    = new Producto;
+        $producto->empresa           = $empresa;
+        $producto->oficina           = ($request->oficina) ? $request->oficina : null;
+        $producto->nro               = $nro;
+        $producto->tipo              = 1;
+        $producto->producto          = $request->producto;
+        $producto->precio            = $item->precio;
+        $producto->impuesto          = $item->impuesto;
+        $producto->contrato          = $request->contrato;
+        $producto->venta             = $request->venta;
+        $producto->tipo_pago         = $request->tipo_pago;
+        $producto->cuotas            = ($request->tipo_pago==1) ? 1 : $request->cuotas;
+        $producto->cuotas_pendientes = ($request->tipo_pago==1) ? 1 : $request->cuotas;
+        $producto->status            = ($request->venta==0) ? 3 : 2;
+        $producto->created_by        = Auth::user()->id;
         $producto->save();
 
         $bodega = Bodega::where('empresa', $empresa)->where('status', 1)->first();
