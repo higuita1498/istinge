@@ -42,8 +42,8 @@
 					<tr @if($retencion->id==Session::get('retencion_id')) class="active_table" @endif>
 						<td>{{$retencion->nombre}}</td>
 						<td>{{$retencion->porcentaje}}</td>
-						<td>{{$retencion->pucCompra()->nombre}}</td>
-						<td>{{$retencion->pucVenta()->nombre}}</td>
+						<td>{{$retencion->pucCompra() ? $retencion->pucCompra()->nombre : 'No asignado.' }}</td>
+						<td>{{$retencion->pucVenta() ? $retencion->pucVenta()->nombre : 'No asignado.'}}</td>
 						<td>{{$retencion->descripcion}}</td>
 						<td>
 							@if($retencion->empresa)

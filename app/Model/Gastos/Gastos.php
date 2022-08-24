@@ -260,7 +260,8 @@ class Gastos extends Model
     /* * * * Asociados a una categoria * * */
     public function gastoAnticipo(){
         $anticipo = GastosCategoria::join('anticipo as an','an.id','=','gastos_categoria.anticipo')
-        ->where('gastos_categoria.gasto',$this->id)->select('an.*')->first();
+        ->join('puc as p','p.id','=','an.cuenta_id')
+        ->where('gastos_categoria.gasto',$this->id)->select('p.*')->first();
 
         if($anticipo){
             return $anticipo;

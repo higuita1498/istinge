@@ -12,7 +12,7 @@
   <div class="row">
       <div class="col-md-6 form-group">
         <label class="control-label">Asociada </label>
-        <input type="text" class="form-control"  disabled="" value="{{$categoria->asociado()->nombre}}">
+        <input type="text" class="form-control"  disabled="" value="{{$categoria->asociado()->nombre}} - {{$categoria->asociado()->codigo}}">
       </div>
       <div class="col-md-6 form-group">
         <label class="control-label">Nombre <span class="text-danger">*</span></label>
@@ -97,7 +97,7 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-  <button type="submit" class="btn btn-success">Guardar</button>
+  <input  type="button" onclick="updatePuc()" class="btn btn-success" id="btnUpdate" value="Actualizar">
 
 </div>
 

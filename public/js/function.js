@@ -2453,8 +2453,8 @@ function llenarSelectAnticipo(value,cliente, nro){
     var facturaRelacionada = null;
 
     /* >>> Consulta para traer los recibos de caja o los egresos con saldo a favor <<< */
-    console.log($("#fact_prov").length);
-    console.log($("#notacredito").length);
+    // console.log($("#fact_prov").length);
+    // console.log($("#notacredito").length);
     if($("#fact_prov").length == 0){
 
         if($("#notacredito").length == 0){
@@ -2512,14 +2512,20 @@ function llenarSelectAnticipo(value,cliente, nro){
                 i++;
             // });
         }else if(value == 0){
-
+            var prefijo = "";
+            if($("#fact_prov").length == 0){
+                prefijo = "RC";
+            }else{
+                prefijo = "RE";
+            }
+            
             $.each( recibos, function( key, val ){
                 $('#selectanticipo'+nro).append($('<option>',
                     {
                         value: val.id,
                         precio: Math.round(val.valor_anticipo),
                         id: "optionAnticipo"+i,
-                        text : "RC-"+val.nro+" - "+ Math.round(val.valor_anticipo)+""
+                        text : prefijo+"-"+val.nro+" - "+ Math.round(val.valor_anticipo)+""
                     }));
                 i++;
             });

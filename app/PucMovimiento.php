@@ -14,6 +14,7 @@ use App\Puc;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use stdClass;
 
 class PucMovimiento extends Model
 {
@@ -1053,7 +1054,16 @@ class PucMovimiento extends Model
     }
 
     public function cuenta(){
-        return Puc::find($this->cuenta_id);
+
+        $puc = Puc::find($this->cuenta_id);
+        
+        if(!$puc){
+            $puc = new stdClass();
+            $puc->nombre = "";
+            return $puc;
+        }
+
+        return $puc;
     }
 
     public function documento(){

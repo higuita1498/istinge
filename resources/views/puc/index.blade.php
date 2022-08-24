@@ -79,7 +79,7 @@
 
 @section('scripts')
   <script>
-      function showCategory(codigo){
+      function showCategory(codigo,createandShow=false){
 
         if (window.location.pathname.split("/")[1] === "software") {
         var url='/software/empresa';
@@ -187,4 +187,10 @@
 
       }
   </script>
+
+  <script src="{{asset('lowerScripts/puc/puc.js')}}"></script>
+@endsection
+
+@section('scripts')
+
 @endsection

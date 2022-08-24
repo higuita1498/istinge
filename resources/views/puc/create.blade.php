@@ -1,5 +1,5 @@
 
-<form method="POST" action="{{ route('puc.store') }}" role="form" class="forms-sample" novalidate id="form-categoria" >
+<form method="POST" action="{{ route('puc.store') }}" role="form" class="forms-sample" novalidate id="form-categoria-store" >
     <div class="modal-header">
       <h5 class="modal-title" id="modal-small-CenterTitle">Nueva categoría</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -10,7 +10,7 @@
       <div class="row">
           <div class="col-md-6 form-group">
             <label class="control-label">Asociada </label>
-            <input type="text" class="form-control"  disabled="" value="{{$categoria->nombre}}">
+            <input type="text" class="form-control"  disabled="" value="{{$categoria->nombre}} - {{$categoria->codigo}}">
           </div>
           <div class="col-md-6 form-group">
             <label class="control-label">Nombre <span class="text-danger">*</span></label>
@@ -93,7 +93,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-      <button type="submit" class="btn btn-success">Guardar</button>
+      <button type="button" onclick="guardarPuc({{$categoria->nro}})" class="btn btn-success" id="btnStore">Guardar</button>
     
     </div>
     

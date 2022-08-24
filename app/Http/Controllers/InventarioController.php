@@ -385,6 +385,7 @@ class InventarioController extends Controller{
     }
     
     public function store(Request $request){
+
         $request->validate([
             'producto' => 'required',
             'impuesto' => 'required|numeric',
@@ -582,7 +583,7 @@ class InventarioController extends Controller{
         //----------------------/LIBRERIA INVENTORY IMAGE-------------------------------//
         
         $mensaje='Registro creado satisfactoriamente el producto';
-        if($inventario->type = 'TV'){
+        if($inventario->type == 'TV'){
             return redirect('empresa/inventario/television')->with('success', 'Se ha registrado satisfactoriamente el plan de televisión')->with('producto_id', $inventario->id);
         }
         return redirect('empresa/inventario')->with('success', $mensaje)->with('producto_id', $inventario->id);
