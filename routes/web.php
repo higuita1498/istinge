@@ -16,6 +16,8 @@ use App\Http\Controllers\Nomina\NominaDianController;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaPeriodos;
 
+Route::get('sendmail','Controller@sendmail');
+
 Route::get('phpinfo', function(){phpinfo();});
 
 Route::get('clear', function () {
