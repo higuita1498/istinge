@@ -1782,8 +1782,7 @@ class Controller extends BaseController
 
     public function sendmail(){
         ini_set('max_execution_time', 500);
-        $host = ServidorCorreo::where('estado', 1)->first();
-
+        $host = ServidorCorreo::where('estado', 1)->get()->last();
         if($host){
             $existing = config('mail');
             $new =array_merge(
@@ -1805,7 +1804,7 @@ class Controller extends BaseController
             'name' => 'Prueba'
         );
 
-        for ($i=0; $i < 6; $i++) {
+        for ($i=0; $i < 2; $i++) {
             Mail::send('emails.welcome', $data, function ($message) {
                 $message->to('frankjmarvala@gmail.com', 'Frank Marval')->subject('Prueba Sendinblue');
             });
