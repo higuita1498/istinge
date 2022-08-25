@@ -87,8 +87,6 @@ class CronController extends Controller
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
-            return $grupos_corte;
-
             foreach($grupos_corte as $grupo_corte){
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
 
