@@ -198,6 +198,7 @@ class PagosController extends Controller
     
     public function store(Request $request){
 
+        return $request;
         if($request->realizar == 2){
             
             $this->storePagoPucCategoria($request);

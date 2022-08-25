@@ -86,6 +86,8 @@ class CronController extends Controller
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
+            return $grupos_corte;
+
             foreach($grupos_corte as $grupo_corte){
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
 
@@ -209,24 +211,24 @@ class CronController extends Controller
                         }
 
                         //>>>>Posible aplicación de Prorrateo al total<<<<//
-                            if($empresa->prorrateo == 1){
-                                $dias = $factura->diasCobradosProrrateo();
-                                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
-                                if($dias != 30){
+                            // if($empresa->prorrateo == 1){
+                            //     $dias = $factura->diasCobradosProrrateo();
+                            //     //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                            //     if($dias != 30){
 
-                                    if(isset($factura->prorrateo_aplicado)){
-                                        $factura->prorrateo_aplicado = 1; //si no se nombra la variable en la primer guardada se genera una copia
-                                        $factura->save(); 
-                                    }
+                            //         if(isset($factura->prorrateo_aplicado)){
+                            //             $factura->prorrateo_aplicado = 1; //si no se nombra la variable en la primer guardada se genera una copia
+                            //             $factura->save(); 
+                            //         }
 
-                                    foreach($factura->itemsFactura as $item){
-                                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
-                                        $item->precio = $precioItemProrrateo;
-                                        $item->save();
-                                    }
-                                }
-                            }
+                            //         foreach($factura->itemsFactura as $item){
+                            //             //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                            //             $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
+                            //             $item->precio = $precioItemProrrateo;
+                            //             $item->save();
+                            //         }
+                            //     }
+                            // }
 
                         //>>>>Fin posible aplicación prorrateo al total<<<<//
 
