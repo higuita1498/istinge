@@ -20,6 +20,24 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group col-md-4">
+                <label class="control-label">¿Desea vender este router? <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="venta" id="venta_input" required="" title="Seleccione">
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4 d-none" id="div_tipo_pago">
+                <label class="control-label">Tipo de Pago <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="tipo_pago" id="tipo_pago" title="Seleccione">
+                    <option value="1">Contado</option>
+                    <option value="2">Cuotas</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4 d-none" id="div_cuotas">
+                <label class="control-label">Nro de Cuotas <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" name="cuotas" id="cuotas" min="1">
+            </div>
             @if(Auth::user()->empresa()->oficina)
                 <div class="form-group col-md-3">
                     <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
@@ -40,4 +58,29 @@
             </div>
         </div>
     </form>
+@endsection
+
+@section('scripts')
+    <script>
+        $('#venta_input').change(function() {
+            if($('#venta_input').val() == 1){
+                $("#tipo_pago").val('').selectpicker('refresh');
+                $("#div_tipo_pago").removeClass('d-none');
+            }else{
+                $("#tipo_pago").val('').selectpicker('refresh');
+                $("#cuotas").val('');
+                $("#div_tipo_pago, #div_cuotas").addClass('d-none');
+            }
+        });
+
+        $('#tipo_pago').change(function() {
+            if($('#tipo_pago').val() == 2){
+                $("#cuotas").val('');
+                $("#div_cuotas").removeClass('d-none');
+            }else{
+                $("#cuotas").val('');
+                $("#div_cuotas").addClass('d-none');
+            }
+        });
+    </script>
 @endsection

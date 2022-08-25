@@ -41,6 +41,10 @@ use App\Mikrotik;
 use App\PlanesVelocidad;
 use App\MovimientoLOG;
 
+use App\ServidorCorreo;
+use Config;
+use Mail;
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests; 
@@ -1774,5 +1778,38 @@ class Controller extends BaseController
             $rad->barrio = $radicado->barrio;
             $rad->save();
         }
+    }
+
+    public function sendmail(){
+        ini_set('max_execution_time', 500);
+        $host = ServidorCorreo::where('estado', 1)->get()->last();
+        if($host){
+            $existing = config('mail');
+            $new =array_merge(
+                $existing, [
+                    'host' => $host->servidor,
+                    'port' => $host->puerto,
+                    'encryption' => '',
+                    'username' => $host->usuario,
+                    'password' => $host->password,
+                    'from' => [
+                        'address' => $host->address,
+                        'name' => $host->name
+                    ],
+                ]
+            );
+            config(['mail'=>$new]);
+        }
+        $data = array(
+            'name' => 'Prueba'
+        );
+
+        for ($i=0; $i < 2; $i++) {
+            Mail::send('emails.welcome', $data, function ($message) {
+                $message->to('frankjmarvala@gmail.com', 'Frank Marval')->subject('Prueba Sendinblue');
+            });
+        }
+
+        return 'enviado';
     }
 }
