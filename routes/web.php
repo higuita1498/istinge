@@ -42,6 +42,7 @@ Route::get('/import_contracts','Controller@import_contracts')->name('import_cont
 Route::get('/import_bmus','Controller@import_bmus')->name('import_bmus');
 Route::get('/import_mikrotiks','Controller@import_mikrotiks')->name('import_mikrotiks');
 Route::get('/generarfactura','CronController@CrearFactura')->name('CrearFactura');
+Route::get('/deleteAll','CronController@deleteFactura');
 Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFacturas');
 Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
 Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');

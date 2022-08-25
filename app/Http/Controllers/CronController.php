@@ -1803,4 +1803,21 @@ class CronController extends Controller
             dd(Contrato::where('server_configuration_id', $mikrotik->id)->where('state', 'disabled')->where('status', 1)->where('disabled', 0)->count());
         }
     }
+
+    public function deleteFactura(){
+
+        $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->get();
+        $eliminadas = 0;
+        foreach($facturas as $f){
+            $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+            $eliminadas++;
+        }   
+        
+        
+        $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->delete();
+        return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
+        
+        //comprobar en bd
+        //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"
+    }
 }
