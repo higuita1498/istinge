@@ -466,7 +466,43 @@
                         </tr>
                 </tbody>
 
-                <tfoot>
+                 <tfoot>
+                    <tr class="foot">
+                        <th colspan="5" class="smalltd">{{$factura->facnotas}}</th>
+                        <td class="right">SubTotal</td>
+                        <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>
+                    </tr>
+                    @if($factura->total()->descuento>0)
+                    <tr class="foot">
+                        <td colspan="5" class="smalltd"></td>
+                        <td class="right">Descuento</td>
+                        <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->descuento)}} </td>
+                    </tr>
+                    <tr class="foot">
+                        <td colspan="5" class="smalltd"></td>
+                        <td class="right">SubTotal</td>
+                        <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->resul)}}</td>
+                    </tr>
+                    @endif
+                    @if($factura->total()->imp)
+                    @foreach($factura->total()->imp as $imp)
+                    @if(isset($imp->total))
+                    <tr class="foot">
+                        <td colspan="4" class="smalltd"></td>
+                        <td colspan="2" class="right">{{$imp->nombre}} ({{round($imp->porcentaje,2)}}%)</td>
+                        <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
+                    </tr>
+                    @endif
+                    @endforeach
+                    @endif
+                    @foreach($retenciones as $retencion)
+
+                    <tr class="foot">
+                        <td colspan="4" class="smalltd"></td>
+                        <td colspan="2" class="right">{{$retencion->retencion()->nombre}} ({{round($retencion->retencion()->porcentaje,2)}}%)</td>
+                        <td class="right padding-right">{{$empresa->moneda}} {{App\Funcion::Parsear($retencion->valor)}}</td>
+                    </tr>
+                    @endforeach
                     <tr class="foot">
                         <td colspan="5"> </td>
                         <th class="right padding-right">Total</th>
