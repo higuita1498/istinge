@@ -357,6 +357,7 @@
         </div>
         <div class="col-md-4 offset-md-1" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
             <h6>Detalles</h6>
+            <p class="text-justify mb-0"><strong>{{ $factura->facturacion_automatica == 0 ? 'Facturación Manual':'Facturación Automática'}}</strong></p>
             @if($factura->created_by)
             <p class="text-justify mb-0"><strong>Creada por:</strong> {{$factura->created_by()->nombres}}</p>
             @endif

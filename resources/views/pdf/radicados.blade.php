@@ -167,6 +167,12 @@
                             <th style="text-align: left; padding-left: 9px;">Correo</th>
                             <td style="padding-left: 9px;">{{$radicado->correo}}</td>
                         </tr>
+                        @if($radicado->barrio)
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">Barrio</th>
+                            <td style="padding-left: 9px;">{{$radicado->barrio}}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Dirección</th>
                             <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
