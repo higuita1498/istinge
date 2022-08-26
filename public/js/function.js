@@ -1944,7 +1944,7 @@ function retencion_calculate(id, reten, recursividad = true, pref = '', seccion 
         });
         $("#" + pref + "precio_reten" + id).val(number_format(total, false));
 
-        if ($('#fact_prov').length > 0) {
+        if ($('#fact_prov').length > 0 || $('#fact_vent').length > 0) {
             if (recursividad) { totalall(); }
             return false;
         }
@@ -1959,6 +1959,7 @@ function retencion_calculate(id, reten, recursividad = true, pref = '', seccion 
     }
 
 }
+
 function totales_ingreso(input=true){
     var total=0; var reten_may=0; 
     let saldoFavor = 0; //este es el saldo sobrante cuando el cliente paga una factura y paga de mas.
