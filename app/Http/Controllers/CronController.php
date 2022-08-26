@@ -104,245 +104,249 @@ class CronController extends Controller
                 }
 
                 foreach ($contratos as $contrato) {
-                    $numero++;
+                    ## Verificamos que el cliente no posea una factura automática abierta, de tenerla no se le genera la nueva factura
+                    $fac = Factura::where('cliente', $contrato->cliente)->where('estatus', 1)->where('facturacion_automatica', 1)->get()->last();
+                    if(!$fac){
+                        $numero++;
 
-                    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                    $nro = NumeracionFactura::tipoNumeracion($contrato);
+                        //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                        $nro = NumeracionFactura::tipoNumeracion($contrato);
 
-                    if(is_null($nro)){
+                        if(is_null($nro)){
 
-                    }else{
-                        if($contrato->fecha_suspension){
-                            $fecha_suspension = $contrato->fecha_suspension;
                         }else{
-                            $fecha_suspension = $grupo_corte->fecha_suspension;
-                        }
-
-                        //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
-                        $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
-
-                        $tipo = 1; //1= normal, 2=Electrónica.
-
-                        $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
-
-                        if($contrato->facturacion == 3 && !$electronica){
-                            return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-                        }elseif($contrato->facturacion == 3 && $electronica){
-                            $tipo = 2;
-                        }
-
-                        $inicio = $nro->inicio;
-                        $nro->inicio += 1;
-                        $factura = new Factura;
-                        $factura->nro           = $numero;
-                        $factura->codigo        = $nro->prefijo.$inicio;
-                        $factura->numeracion    = $nro->id;
-                        $factura->plazo         = $plazo->id;
-                        $factura->term_cond     = $contrato->terminos_cond;
-                        $factura->facnotas      = $contrato->notas_fact;
-                        $factura->empresa       = 1;
-                        $factura->cliente       = $contrato->cliente;
-                        $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
-                        $factura->tipo          = $tipo;
-                        $factura->vencimiento   = $date->format('Y-m-d');
-                        $factura->suspension    = $date->format('Y-m-d');
-                        $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
-                        $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
-                        $factura->bodega        = 1;
-                        $factura->vendedor      = 1;
-                        $factura->prorrateo_aplicado = 0;
-
-                        if($contrato){
-                            $factura->contrato_id = $contrato->id;
-                        }
-
-                        $factura->save();
-
-                        ## Se carga el item a la factura (Plan de Internet) ##
-
-                        if($contrato->plan_id){
-                            $plan = PlanesVelocidad::find($contrato->plan_id);
-                            $item = Inventario::find($plan->item);
-
-                            $item_reg = new ItemsFactura;
-                            $item_reg->factura     = $factura->id;
-                            $item_reg->producto    = $item->id;
-                            $item_reg->ref         = $item->ref;
-                            $item_reg->precio      = $item->precio;
-                            $item_reg->descripcion = $plan->name;
-                            $item_reg->id_impuesto = $item->id_impuesto;
-                            $item_reg->impuesto    = $item->impuesto;
-                            $item_reg->cant        = 1;
-                            $item_reg->desc        = $contrato->descuento;
-                            $item_reg->save();
-                        }
-
-                        ## Se carga el item a la factura (Plan de Televisión) ##
-
-                        if($contrato->servicio_tv){
-                            $item = Inventario::find($contrato->servicio_tv);
-                            $item_reg = new ItemsFactura;
-                            $item_reg->factura     = $factura->id;
-                            $item_reg->producto    = $item->id;
-                            $item_reg->ref         = $item->ref;
-                            $item_reg->precio      = $item->precio;
-                            $item_reg->descripcion = $item->producto;
-                            $item_reg->id_impuesto = $item->id_impuesto;
-                            $item_reg->impuesto    = $item->impuesto;
-                            $item_reg->cant        = 1;
-                            $item_reg->desc        = $contrato->descuento;
-                            $item_reg->save();
-                        }
-
-                        ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
-
-                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-
-                        if($asignacion){
-                            $item = Inventario::find($asignacion->producto);
-                            $item_reg = new ItemsFactura;
-                            $item_reg->factura     = $factura->id;
-                            $item_reg->producto    = $item->id;
-                            $item_reg->ref         = $item->ref;
-                            $item_reg->precio      = ($asignacion->precio/$asignacion->cuotas);
-                            $item_reg->descripcion = $item->producto;
-                            $item_reg->id_impuesto = $item->id_impuesto;
-                            $item_reg->impuesto    = $item->impuesto;
-                            $item_reg->cant        = 1;
-                            $item_reg->desc        = $contrato->descuento;
-                            $item_reg->save();
-                        }
-
-                        $nro->save();
-                        $i++;
-
-                        $numero = str_replace('+','',$factura->cliente()->celular);
-                        $numero = str_replace(' ','',$numero);
-
-                        array_push($numeros, '57'.$numero);
-
-                        if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
-                            $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
-                            $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total.'"},';
-                        }else{
-                            $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
-                        }
-
-                        //>>>>Posible aplicación de Prorrateo al total<<<<//
-                            if($empresa->prorrateo == 1){
-                                $dias = $factura->diasCobradosProrrateo();
-                                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
-                                if($dias != 30){
-
-                                    if(isset($factura->prorrateo_aplicado)){
-                                        DB::table('facturta')->where('id',$factura->id)->update([
-                                         'factura->prorrateo_aplicado' => 1   
-                                        ]);
-                                        //si no se nombra la variable en la primer guardada se genera una copia
-                                    }
-
-                                    foreach($factura->itemsFactura as $item){
-                                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
-                                        $item->precio = $precioItemProrrateo;
-                                        $item->save();
-                                    }
-                                }
+                            if($contrato->fecha_suspension){
+                                $fecha_suspension = $contrato->fecha_suspension;
+                            }else{
+                                $fecha_suspension = $grupo_corte->fecha_suspension;
                             }
 
-                        //>>>>Fin posible aplicación prorrateo al total<<<<//
+                            //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
+                            $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
 
-                        ## ENVIO CORREO ##
-                        // $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
-                        // if($host){
-                        //     $existing = config('mail');
-                        //     $new =array_merge(
-                        //         $existing, [
-                        //             'host' => $host->servidor,
-                        //             'port' => $host->puerto,
-                        //             'encryption' => $host->seguridad,
-                        //             'username' => $host->usuario,
-                        //             'password' => $host->password,
-                        //             'from' => [
-                        //                 'address' => $host->address,
-                        //                 'name' => $host->name
-                        //             ],
-                        //         ]
-                        //     );
-                        //     config(['mail'=>$new]);
+                            $tipo = 1; //1= normal, 2=Electrónica.
 
-                        //     $empresa = Empresa::find($factura->empresa);
-                        //     $emails  = $factura->cliente()->email;
-                        //     $tipo    = 'Factura de venta original';
-                        //     view()->share(['title' => 'Imprimir Factura']);
-                        //     if ($factura) {
-                        //         $items = ItemsFactura::where('factura',$factura->id)->get();
-                        //         $itemscount=ItemsFactura::where('factura',$factura->id)->count();
-                        //         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-                        //         $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
-                        //         //---------------------------------------------//
-                        //         if($factura->emitida == 1){
-                        //             $impTotal = 0;
-                        //             foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
-                        //                 if(isset($totalImp->total)){
-                        //                     $impTotal = $totalImp->total;
-                        //                 }
-                        //             }
+                            $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
 
-                        //             $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
-                        //             $infoEmpresa = Empresa::find($empresa->id);
-                        //             $data['Empresa'] = $infoEmpresa->toArray();
-                        //             $infoCliente = Contacto::find($factura->cliente);
-                        //             $data['Cliente'] = $infoCliente->toArray();
-                        //             /*..............................
-                        //             Construcción del código qr a la factura
-                        //             ................................*/
-                        //             $impuesto = 0;
-                        //             foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
-                        //                 if(isset($imp->total)){
-                        //                     $impuesto = $imp->total;
-                        //                 }
-                        //             }
+                            if($contrato->facturacion == 3 && !$electronica){
+                                return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                            }elseif($contrato->facturacion == 3 && $electronica){
+                                $tipo = 2;
+                            }
 
-                        //             $codqr = "NumFac:" . $factura->codigo . "\n" .
-                        //             "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-                        //             "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-                        //             "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-                        //             "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-                        //             "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
-                        //             "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-                        //             "ValorOtrosImpuestos:" .  0.00 . "\n" .
-                        //             "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
-                        //             "CUFE:" . $CUFEvr;
-                        //             /*..............................
-                        //             Construcción del código qr a la factura
-                        //             ................................*/
-                        //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->stream();
-                        //         }else{
-                        //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->stream();
-                        //         }
-                        //         //-----------------------------------------------//
+                            $inicio = $nro->inicio;
+                            $nro->inicio += 1;
+                            $factura = new Factura;
+                            $factura->nro           = $numero;
+                            $factura->codigo        = $nro->prefijo.$inicio;
+                            $factura->numeracion    = $nro->id;
+                            $factura->plazo         = $plazo->id;
+                            $factura->term_cond     = $contrato->terminos_cond;
+                            $factura->facnotas      = $contrato->notas_fact;
+                            $factura->empresa       = 1;
+                            $factura->cliente       = $contrato->cliente;
+                            $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                            $factura->tipo          = $tipo;
+                            $factura->vencimiento   = $date->format('Y-m-d');
+                            $factura->suspension    = $date->format('Y-m-d');
+                            $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+                            $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
+                            $factura->bodega        = 1;
+                            $factura->vendedor      = 1;
+                            $factura->prorrateo_aplicado = 0;
 
-                        //         $total = Funcion::ParsearAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
-                        //         $key = Hash::make(date("H:i:s"));
-                        //         $toReplace = array('/', '$','.');
-                        //         $key = str_replace($toReplace, "", $key);
-                        //         $factura->nonkey = $key;
-                        //         $factura->save();
-                        //         $cliente = $factura->cliente()->nombre;
-                        //         $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
-                        //         $xmlPath = 'xml/empresa1/FV/FV-'.$factura->codigo.'.xml';
-                        //     }
+                            if($contrato){
+                                $factura->contrato_id = $contrato->id;
+                            }
 
-                        //     Mail::send('emails.emailAPI', compact('factura', 'total', 'cliente', 'empresa'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
-                        //         $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
-                        //         if(file_exists($xmlPath)){
-                        //             $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
-                        //         }
-                        //         $message->to($emails)->subject($tituloCorreo);
-                        //     });
-                        // }
-                        ## ENVIO CORREO ##
+                            $factura->save();
+
+                            ## Se carga el item a la factura (Plan de Internet) ##
+
+                            if($contrato->plan_id){
+                                $plan = PlanesVelocidad::find($contrato->plan_id);
+                                $item = Inventario::find($plan->item);
+
+                                $item_reg = new ItemsFactura;
+                                $item_reg->factura     = $factura->id;
+                                $item_reg->producto    = $item->id;
+                                $item_reg->ref         = $item->ref;
+                                $item_reg->precio      = $item->precio;
+                                $item_reg->descripcion = $plan->name;
+                                $item_reg->id_impuesto = $item->id_impuesto;
+                                $item_reg->impuesto    = $item->impuesto;
+                                $item_reg->cant        = 1;
+                                $item_reg->desc        = $contrato->descuento;
+                                $item_reg->save();
+                            }
+
+                            ## Se carga el item a la factura (Plan de Televisión) ##
+
+                            if($contrato->servicio_tv){
+                                $item = Inventario::find($contrato->servicio_tv);
+                                $item_reg = new ItemsFactura;
+                                $item_reg->factura     = $factura->id;
+                                $item_reg->producto    = $item->id;
+                                $item_reg->ref         = $item->ref;
+                                $item_reg->precio      = $item->precio;
+                                $item_reg->descripcion = $item->producto;
+                                $item_reg->id_impuesto = $item->id_impuesto;
+                                $item_reg->impuesto    = $item->impuesto;
+                                $item_reg->cant        = 1;
+                                $item_reg->desc        = $contrato->descuento;
+                                $item_reg->save();
+                            }
+
+                            ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
+
+                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                            if($asignacion){
+                                $item = Inventario::find($asignacion->producto);
+                                $item_reg = new ItemsFactura;
+                                $item_reg->factura     = $factura->id;
+                                $item_reg->producto    = $item->id;
+                                $item_reg->ref         = $item->ref;
+                                $item_reg->precio      = ($asignacion->precio/$asignacion->cuotas);
+                                $item_reg->descripcion = $item->producto;
+                                $item_reg->id_impuesto = $item->id_impuesto;
+                                $item_reg->impuesto    = $item->impuesto;
+                                $item_reg->cant        = 1;
+                                $item_reg->desc        = $contrato->descuento;
+                                $item_reg->save();
+                            }
+
+                            $nro->save();
+                            $i++;
+
+                            $numero = str_replace('+','',$factura->cliente()->celular);
+                            $numero = str_replace(' ','',$numero);
+
+                            array_push($numeros, '57'.$numero);
+
+                            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
+                                $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total.'"},';
+                            }else{
+                                $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                            }
+
+                            //>>>>Posible aplicación de Prorrateo al total<<<<//
+                                if($empresa->prorrateo == 1){
+                                    $dias = $factura->diasCobradosProrrateo();
+                                    //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                                    if($dias != 30){
+
+                                        if(isset($factura->prorrateo_aplicado)){
+                                            DB::table('facturta')->where('id',$factura->id)->update([
+                                             'factura->prorrateo_aplicado' => 1
+                                            ]);
+                                            //si no se nombra la variable en la primer guardada se genera una copia
+                                        }
+
+                                        foreach($factura->itemsFactura as $item){
+                                            //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                                            $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
+                                            $item->precio = $precioItemProrrateo;
+                                            $item->save();
+                                        }
+                                    }
+                                }
+
+                            //>>>>Fin posible aplicación prorrateo al total<<<<//
+
+                            ## ENVIO CORREO ##
+                            // $host = ServidorCorreo::where('estado', 1)->where('empresa', $factura->empresa)->first();
+                            // if($host){
+                            //     $existing = config('mail');
+                            //     $new =array_merge(
+                            //         $existing, [
+                            //             'host' => $host->servidor,
+                            //             'port' => $host->puerto,
+                            //             'encryption' => $host->seguridad,
+                            //             'username' => $host->usuario,
+                            //             'password' => $host->password,
+                            //             'from' => [
+                            //                 'address' => $host->address,
+                            //                 'name' => $host->name
+                            //             ],
+                            //         ]
+                            //     );
+                            //     config(['mail'=>$new]);
+
+                            //     $empresa = Empresa::find($factura->empresa);
+                            //     $emails  = $factura->cliente()->email;
+                            //     $tipo    = 'Factura de venta original';
+                            //     view()->share(['title' => 'Imprimir Factura']);
+                            //     if ($factura) {
+                            //         $items = ItemsFactura::where('factura',$factura->id)->get();
+                            //         $itemscount=ItemsFactura::where('factura',$factura->id)->count();
+                            //         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
+                            //         $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
+                            //         //---------------------------------------------//
+                            //         if($factura->emitida == 1){
+                            //             $impTotal = 0;
+                            //             foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
+                            //                 if(isset($totalImp->total)){
+                            //                     $impTotal = $totalImp->total;
+                            //                 }
+                            //             }
+
+                            //             $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
+                            //             $infoEmpresa = Empresa::find($empresa->id);
+                            //             $data['Empresa'] = $infoEmpresa->toArray();
+                            //             $infoCliente = Contacto::find($factura->cliente);
+                            //             $data['Cliente'] = $infoCliente->toArray();
+                            //             /*..............................
+                            //             Construcción del código qr a la factura
+                            //             ................................*/
+                            //             $impuesto = 0;
+                            //             foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
+                            //                 if(isset($imp->total)){
+                            //                     $impuesto = $imp->total;
+                            //                 }
+                            //             }
+
+                            //             $codqr = "NumFac:" . $factura->codigo . "\n" .
+                            //             "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                            //             "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                            //             "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                            //             "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+                            //             "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
+                            //             "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+                            //             "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                            //             "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
+                            //             "CUFE:" . $CUFEvr;
+                            //             /*..............................
+                            //             Construcción del código qr a la factura
+                            //             ................................*/
+                            //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->stream();
+                            //         }else{
+                            //             $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->stream();
+                            //         }
+                            //         //-----------------------------------------------//
+
+                            //         $total = Funcion::ParsearAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
+                            //         $key = Hash::make(date("H:i:s"));
+                            //         $toReplace = array('/', '$','.');
+                            //         $key = str_replace($toReplace, "", $key);
+                            //         $factura->nonkey = $key;
+                            //         $factura->save();
+                            //         $cliente = $factura->cliente()->nombre;
+                            //         $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
+                            //         $xmlPath = 'xml/empresa1/FV/FV-'.$factura->codigo.'.xml';
+                            //     }
+
+                            //     Mail::send('emails.emailAPI', compact('factura', 'total', 'cliente', 'empresa'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+                            //         $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+                            //         if(file_exists($xmlPath)){
+                            //             $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+                            //         }
+                            //         $message->to($emails)->subject($tituloCorreo);
+                            //     });
+                            // }
+                            ## ENVIO CORREO ##
+                        }
                     }
                 }
             }
