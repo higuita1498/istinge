@@ -152,10 +152,16 @@
     						<th>Correo</th>
     						<td>{{$radicado->correo}}</td>
     					</tr>
+                        @if($radicado->barrio)
     					<tr>
-    						<th>Dirección</th>
-    						<td>{{$radicado->direccion}}</td>
-    					</tr>
+                            <th>Barrio</th>
+                            <td>{{$radicado->barrio}}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <th>Dirección</th>
+                            <td>{{$radicado->direccion}}</td>
+                        </tr>
     					@if($radicado->creado)
     					<tr>
     						<th>Creado desde</th>
