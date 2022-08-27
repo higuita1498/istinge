@@ -1824,4 +1824,43 @@ class CronController extends Controller
         //comprobar en bd
         //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"
     }
+
+    public static function disabledAndCRM($ip){
+        $i=0;$j=0;$anuladas=0;$ingreso=0;
+
+        $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.client_id','=','contactos.id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'cs.id as contrato_id', 'f.contrato_id')->
+            where('f.estatus',1)->
+            whereIn('f.tipo', [1,2])->
+            where('contactos.status',1)->
+            where('cs.ip',$ip)->
+            get();
+
+        if ($contactos) {
+            foreach($contactos as $item){
+                $contrato = Contrato::find($item->contrato_id);
+                $contrato->state = 'disabled';
+                $contrato->save();
+
+                if($j==0){
+                    $crm = CRM::where('cliente', $item->id)->whereIn('estado', [0, 3])->delete();
+                    $crm = new CRM();
+                    $crm->cliente = $item->id;
+                    $crm->factura = $item->factura;
+                    $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+                    $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                    $crm->save();
+                    $ingreso++;
+                    $j++;
+                }else{
+                    $factura = Factura::find($item->factura);
+                    $factura->estatus = 2;
+                    $factura->save();
+                    $anuladas++;
+                }
+            }
+        }
+        return 'Anuladas: '.$anuladas.' - Ingresados a CRM: '.$ingreso;
+    }
 }
