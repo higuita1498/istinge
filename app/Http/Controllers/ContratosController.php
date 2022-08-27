@@ -1610,6 +1610,7 @@ class ContratosController extends Controller
     public function destroy_to_networksoft($id){
         $contrato = Contrato::find($id);
         if ($contrato) {
+            Ping::where('contrato', $contrato->id)->delete();
             $contrato->delete();
             $mensaje = 'SE HA ELIMINADO EL CONTRATO DE SERVICIOS SATISFACTORIAMENTE';
             return redirect('empresa/contratos')->with('success', $mensaje);
