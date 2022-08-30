@@ -104,7 +104,7 @@
                         <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
                         <td>{{$factura->emitida == 1 ? 'Emitida' : 'No emitida'}}</td>
-                        <td>{{($factura->estatus == 1 ? 'Abierta' : $factura->estatus == 0) ? 'Cerrada' : 'Anulada'}}</td>
+                        <td>{{$factura->estatus()}}</td>
                         <td>{{$factura->total()->subtotal}}</td>
                         <td>{{$factura->total()->valImpuesto}}</td>
                         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->devoluciones())}}</td>

@@ -283,7 +283,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[5].$i, date('d-m-Y', strtotime($factura->fecha)))
                 ->setCellValue($letras[6].$i, date('d-m-Y', strtotime($factura->vencimiento)))
                 ->setCellValue($letras[7].$i, $factura->emitida == 1 ? 'Emitida' : 'No Emitida')
-                ->setCellValue($letras[8].$i, ($factura->estatus == 1 ? 'Abierta' : $factura->estatus == 0) ? 'Cerrada' : 'Anulada')
+                ->setCellValue($letras[8].$i, $factura->estatus())
                 ->setCellValue($letras[9].$i, $factura->total()->subtotal)
                 ->setCellValue($letras[10].$i, $factura->total()->valImpuesto)
                 ->setCellValue($letras[11].$i,$factura->total()->total);
