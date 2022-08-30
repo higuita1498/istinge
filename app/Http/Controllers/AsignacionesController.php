@@ -118,13 +118,13 @@ class AsignacionesController extends Controller
                     imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                     switch($file->getMimeType()){
                         case 'image/jpeg':
-                        imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                        imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                         break;
                         case 'image/png':
-                        imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                        imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                         break;
                         case 'image/gif':
-                        imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                        imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                         break;
                     }
                 }
@@ -176,13 +176,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -235,13 +235,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -294,13 +294,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -352,13 +352,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -411,13 +411,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -469,13 +469,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -527,13 +527,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -586,13 +586,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -668,13 +668,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -727,13 +727,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -786,13 +786,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -845,13 +845,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -903,13 +903,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -962,13 +962,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -1020,13 +1020,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -1078,13 +1078,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
@@ -1137,13 +1137,13 @@ class AsignacionesController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 9);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                         }
                     }
