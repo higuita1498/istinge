@@ -232,27 +232,25 @@ class CronController extends Controller
                             }
 
                             //>>>>Posible aplicación de Prorrateo al total<<<<//
-                                if($empresa->prorrateo == 1){
-                                    $dias = $factura->diasCobradosProrrateo();
-                                    //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
-                                    if($dias != 30){
+                            if($empresa->prorrateo == 1){
+                                $dias = $factura->diasCobradosProrrateo();
+                                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                                if($dias != 30){
 
-                                        if(isset($factura->prorrateo_aplicado)){
-                                            DB::table('facturta')->where('id',$factura->id)->update([
-                                             'factura->prorrateo_aplicado' => 1
+                                        DB::table('factura')->where('id',$factura->id)->update([
+                                         'prorrateo_aplicado' => 1
+                                        ]);
+                                        //si no se nombra la variable en la primer guardada se genera una copia
+
+                                    foreach($factura->itemsFactura as $item){
+                                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
+                                        DB::table('items_factura')->where('id',$item->id)->update([
+                                            'precio' => $precioItemProrrateo
                                             ]);
-                                            //si no se nombra la variable en la primer guardada se genera una copia
-                                        }
-
-                                        foreach($factura->itemsFactura as $item){
-                                            //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                            $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
-                                            $item->precio = $precioItemProrrateo;
-                                            $item->save();
-                                        }
                                     }
                                 }
-
+                            }
                             //>>>>Fin posible aplicación prorrateo al total<<<<//
 
                             ## ENVIO CORREO ##
