@@ -117,6 +117,15 @@
                     </select>
                 </div>
             </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
+              <div class="col-sm-8">
+                  <select name="periodo_cobrado" id="periodo_cobrado" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
+                      <option value="1" {{$empresa->periodo_cobrado==1 ? 'selected' : ''}}>Mes anticipado</option>
+                      <option value="2" {{$empresa->periodo_cobrado==2 ? 'selected' : ''}}>Mes vencido</option>
+                  </select>
+              </div>
+          </div>
             {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Forma de Pago <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">

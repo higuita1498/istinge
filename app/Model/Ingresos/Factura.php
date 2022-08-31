@@ -973,11 +973,24 @@ public function forma_pago()
             $yearInicioCorte = $yearFinCorte = Carbon::parse($this->fecha)->format('Y');
         
             //Calculos para los inicios de corte
+        
+            if($this->periodo_facturacion != null){
+                if($this->periodo_facturacion == 1){
+                    $resto = 1;
+                }else{
+                    $resto = 0;
+                }
+            }elseif($empresa->periodo_facturacion == 1){
+                $resto = 1;
+            }else{
+                $resto = 0;
+            }
+
             if($mesInicioCorte == 1){
                 $mesInicioCorte = 12;
-                $yearInicioCorte = $yearInicioCorte - 1;
+                $yearInicioCorte = $yearInicioCorte - $resto;
             }else{
-                $mesInicioCorte = $mesInicioCorte - 1;
+                $mesInicioCorte = $mesInicioCorte - $resto;
             }
 
             //Calculos para los finales de corte

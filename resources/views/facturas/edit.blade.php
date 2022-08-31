@@ -156,6 +156,15 @@
                         </span>
                     </div>
                     <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
+                        <div class="col-sm-8">
+                            <select name="periodo_facturacion" id="periodo_facturacion" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
+                                <option value="1" @if($factura->periodo_facturacion == 1) {{'selected'}} @endif>Mes anticipado</option>
+                                <option value="2" @if($factura->periodo_facturacion == 2) {{'selected'}} @endif>Mes vencido</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Lista de Precios</label>
                         <div class="col-sm-8">
                             <select name="lista_precios" id="lista_precios" class="form-control selectpicker">
