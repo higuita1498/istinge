@@ -1067,7 +1067,7 @@ public function forma_pago()
                     $fechaContrato = Carbon::parse($fechaContrato);
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
-                    if($diasCobrados == 0){return 30;}
+                    if($diasCobrados == 0){return $mensaje. " total días cobrados: " . 30;}
                     if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
                 }else{
