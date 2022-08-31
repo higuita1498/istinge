@@ -626,6 +626,7 @@ class FacturasController extends Controller{
         //echo $cliente;die;
         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
         $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
+        $empresa =Auth::user()->empresaObj;
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
@@ -651,24 +652,24 @@ class FacturasController extends Controller{
         //se obtiene la fecha de hoy
         $fecha = date('d-m-Y');
 
-        $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+        $bodega = Bodega::where('empresa',$empresa->id)->where('status', 1)->first();
         $inventario = Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
             DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
-            ->where('empresa',Auth::user()->empresa)
+            ->where('empresa',$empresa->id)
             ->where('status', 1)
             ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
             ->orderBy('producto','ASC')
             ->get();
 
-        $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
-        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
-        $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
-        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
-        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
-        $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+        $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
+        $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
+        //$clientes = Contacto::where('empresa',$empresa->id)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->orderBy('nombre', 'ASC')->get();
+        $numeraciones=NumeracionFactura::where('empresa',$empresa->id)->get();
+        $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado',1)->get();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $terminos=TerminosPago::where('empresa',$empresa->id)->get();
+        $impuestos = Impuesto::where('empresa',$empresa->id)->orWhere('empresa', null)->Where('estado', 1)->get();
 
         //Datos necesarios para hacer funcionar la ventana modal
         $dataPro = (new InventarioController)->create();
@@ -677,22 +678,22 @@ class FacturasController extends Controller{
         $extras2 = $dataPro->extras;
         $listas2 = $dataPro->listas;
         $bodegas2 = $dataPro->bodegas;
-        $categorias=Categoria::where('empresa',Auth::user()->empresa)->orWhere('empresa', 1)->whereNull('asociado')->get();
+        $categorias=Categoria::where('empresa',$empresa->id)->orWhere('empresa', 1)->whereNull('asociado')->get();
         $identificaciones=TipoIdentificacion::all();
-        //$vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
-        //$listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
+        //$vendedores = Vendedor::where('empresa',$empresa->id)->where('estado', 1)->get();
+        //$listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',$empresa->id)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // /Datos necesarios para hacer funcionar la ventana modal
 
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
+        $retenciones = Retencion::where('empresa',$empresa->id)->where('modulo',1)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Factura Electrónica', 'subseccion' => 'venta-electronica']);
 
         $title = "Nueva Factura Electrónica";
         $seccion = "facturas";
         $subseccion = "venta-electronica";
 
-        return view('facturas-electronica.create')->with(compact('clientes', 'tipo_documento', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos','cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2','unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion','extras','relaciones'));
+        return view('facturas-electronica.create')->with(compact('empresa','clientes', 'tipo_documento', 'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos','cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones','categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2','unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion','extras','relaciones'));
     }
 
     public function create_cliente($cliente){
