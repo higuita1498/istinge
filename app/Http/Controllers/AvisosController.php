@@ -173,22 +173,45 @@ class AvisosController extends Controller
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
                         $curl = curl_init();
-                        curl_setopt_array($curl, [
-                            CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => "",
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 30,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => "POST",
-                            CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
-                            CURLOPT_HTTPHEADER => [
-                                'Content-Type: application/json',
-                                'account: '.$servicio->user,
-                                'apiKey: '.$servicio->api_key,
-                                'token: '.$servicio->pass,
-                                ],
-                        ]);
+
+                        if(count($request->contrato)>1)
+                            curl_setopt_array($curl, [
+                                CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => "",
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => "POST",
+                                CURLOPT_POSTFIELDS => "{\n  \"bulk\": [\n    ".substr($bulk, 0, -1)."\n  ]\n}",
+                                CURLOPT_HTTPHEADER => [
+                                    'Content-Type: application/json',
+                                    'account: '.$servicio->user,
+                                    'apiKey: '.$servicio->api_key,
+                                    'token: '.$servicio->pass,
+                                    ],
+                            ]);
+                        }else{
+                            $post['toNumber'] = $numero;
+                            $post['sms'] = $plantilla->contenido;
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_POSTFIELDS => json_encode($post),
+                                CURLOPT_HTTPHEADER => array(
+                                    'account: '.$servicio->user,
+                                    'apiKey: '.$servicio->api_key,
+                                    'token: '.$servicio->pass,
+                                    'Content-Type: application/json'
+                                ),
+                            ));
+                        }
 
                         $response = curl_exec($curl);
                         $err = curl_error($curl);
