@@ -340,7 +340,7 @@ class AvisosController extends Controller
                         }else{
                             $msj = $response['error']['details'];
                         }
-                        return back()->with('danger', 'Envío Fallido: '.$msj);
+                        return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => $msj , 'type' => 'error']);
                     }else{
                         if($response['status'] == '1x000'){
                             $msj = 'SMS recíbido por hablame exitosamente';
@@ -349,11 +349,10 @@ class AvisosController extends Controller
                         }else if($response['status'] == '1x153'){
                             $msj = 'SMS entregado al celular';
                         }
-                        return back()->with('success', 'Envío Éxitoso: '.$msj);
+                        return response()->json(['success' => true, 'title' => 'Envío Realizado', 'message' => $msj , 'type' => 'success']);
                     }
                 }else{
-                    $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
-                    return back()->with('danger', $mensaje);
+                    return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => 'El mensaje no se pudo enviar porque falta información en la configuración del servicio', 'type' => 'error']);
                 }
             }elseif($servicio->nombre == 'SmsEasySms'){
                 if($servicio->user && $servicio->pass){
@@ -377,7 +376,7 @@ class AvisosController extends Controller
                     curl_close($ch);
 
                     if ($err) {
-                        return back()->with('danger', 'Envío Fallido');
+                        return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => '', 'type' => 'error']);
                     }else{
                         $response = json_decode($result, true);
                         if(isset($response['error'])){
@@ -408,14 +407,13 @@ class AvisosController extends Controller
                             }else{
                                 $msj = $response['error']['description'];
                             }
-                            return back()->with('danger', 'Envío Fallido: '.$msj);
+                            return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => $msj , 'type' => 'error']);
                         }else{
-                            return back()->with('success', 'Mensaje enviado correctamente.');
+                            return response()->json(['success' => true, 'title' => 'Envío Realizado', 'message' => '', 'type' => 'success']);
                         }
                     }
                 }else{
-                    $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
-                    return back()->with('danger', $mensaje);
+                    return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => 'El mensaje no se pudo enviar porque falta información en la configuración del servicio', 'type' => 'error']);
                 }
             }else{
                 if($servicio->user && $servicio->pass){
@@ -470,18 +468,17 @@ class AvisosController extends Controller
                             }else{
                                 $msj = $response['error']['description'];
                             }
-                            return back()->with('danger', 'Envío Fallido: '.$msj);
+                            return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => $msj , 'type' => 'error']);
                         }else{
-                            return back()->with('success', 'Mensaje enviado correctamente.');
+                            return response()->json(['success' => true, 'title' => 'Envío Realizado', 'message' => '', 'type' => 'success']);
                         }
                     }
                 }else{
-                    $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
-                    return back()->with('danger', $mensaje);
+                    return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => 'El mensaje no se pudo enviar porque falta información en la configuración del servicio', 'type' => 'error']);
                 }
             }
         }else{
-            return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
+            return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => 'Disculpe, no posee ningun servicio de sms habilitado. Por favor habilítelo para disfrutar del servicio', 'type' => 'error']);
         }
     }
 }

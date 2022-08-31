@@ -177,6 +177,8 @@ class RadicadosController extends Controller{
             });
         }
 
+        $radicados = $radicados->orderby('radicados.creado', 'desc');
+
         return datatables()->eloquent($radicados)
         ->editColumn('codigo', function (Radicado $radicado) {
             return "<a href=".route('radicados.show', $radicado->id).">$radicado->codigo</a>";
