@@ -1073,7 +1073,7 @@ public function forma_pago()
                 }else{
                     //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
                     $diasCobrados = $fechaInicio->diffInDays($fechaFin);
-                    if($diasCobrados == 0){return 30;}
+                    if($diasCobrados == 0){return $mensaje . " total días cobrados: " . 30;}
                     if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
                 }
