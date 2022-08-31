@@ -976,29 +976,29 @@ public function forma_pago()
         
             if($this->periodo_facturacion != null){
                 if($this->periodo_facturacion == 1){
-                    $resto = 1;
+                    $numero = 1;
                 }else{
-                    $resto = 0;
+                    $numero = 0;
                 }
             }elseif($empresa->periodo_facturacion == 1){
-                $resto = 1;
+                $numero = 1;
             }else{
-                $resto = 0;
+                $numero = 0;
             }
 
             if($mesInicioCorte == 1){
                 $mesInicioCorte = 12;
-                $yearInicioCorte = $yearInicioCorte - $resto;
+                $yearInicioCorte = $yearInicioCorte - $numero;
             }else{
-                $mesInicioCorte = $mesInicioCorte - $resto;
+                $mesInicioCorte = $mesInicioCorte - $numero;
             }
 
             //Calculos para los finales de corte
             if($mesFinCorte == 12){
                 $mesFinCorte = 1;
-                $yearFinCorte = $yearFinCorte + 1;
+                $yearFinCorte = $yearFinCorte + $numero;
             }else{
-                $mesFinCorte = $mesFinCorte + 1;
+                $mesFinCorte = $mesFinCorte + $numero;
             }
         
             /*
