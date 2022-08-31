@@ -1021,6 +1021,7 @@ public function forma_pago()
             if($grupo->fecha_corte > $diaFinValidar){
                  $diaFinCorte = $diaFinValidar;
             }
+            if($diaFinCorte == 0){$diaFinCorte = 30;}
 
             //construimos el inicio del corte tomando la fecha de la factura (mes y año) y el grupo de corte (el dia)
             $fechaInicio = $inicioCorte = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
@@ -1031,7 +1032,9 @@ public function forma_pago()
 
             //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
             $fechaFin = $finCorte = $diaFinCorte . "-" . $mesYearFactura;
+            
             $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
+           
 
             //Construimos una fecha con el grupo de corte y mes y año de la factura, tambien formateamos la fecha de la factura completamente
             $fechaFactura = Carbon::parse($this->fecha);
