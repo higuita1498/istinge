@@ -54,7 +54,7 @@ Route::get('SMSFacturas/{fecha}','CronController@SMSFacturas')->name('SMSFactura
 Route::get('DeshabilitarContratosMK/{mk}','CronController@DeshabilitarContratosMK')->name('DeshabilitarContratosMK');
 Route::get('/CortarCRM','CronController@CortarCRM')->name('CortarCRM');
 Route::get('disabledAndCRM/{ip}','CronController@disabledAndCRM')->name('disabledAndCRM');
-
+Route::get('sendInvoices/{fecha}','CronController@sendInvoices')->name('sendInvoices');
 
 /*PAYU*/
 
