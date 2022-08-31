@@ -119,6 +119,15 @@
                     </select>
                 </div>
             </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
+              <div class="col-sm-8">
+                  <select name="periodo_facturacion" id="periodo_facturacion" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
+                      <option value="1" {{$empresa->periodo_facturacion==1 ? 'selected' : ''}}>Mes anticipado</option>
+                      <option value="2" {{$empresa->periodo_facturacion==2 ? 'selected' : ''}}>Mes vencido</option>
+                  </select>
+              </div>
+          </div>
         <div class="form-group row">
           <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
         </div>

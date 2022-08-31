@@ -543,9 +543,10 @@ class FacturasController extends Controller{
     public function create($producto=false, $cliente=false){
         $this->getAllPermissions(Auth::user()->id);
         //echo $cliente;die;
-        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        $empresa =Auth::user()->empresaObj;
+        $nro=NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
 
-        $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
+        $tipo_documento = Factura::where('empresa',$empresa->id)->latest('tipo')->first();
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
@@ -571,23 +572,23 @@ class FacturasController extends Controller{
         //se obtiene la fecha de hoy
         $fecha = date('d-m-Y');
 
-        $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+        $bodega = Bodega::where('empresa',$empresa->id)->where('status', 1)->first();
         $inventario = Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
         DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
-        ->where('empresa',Auth::user()->empresa)
+        ->where('empresa',$empresa->id)
         ->where('status', 1)
         ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
         ->orderBy('producto','ASC')
         ->get();
-        $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
-        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
-        $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
-        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
-        $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
-        $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
+        $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
+        $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
+        //$clientes = Contacto::where('empresa',$empresa->id)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->orderBy('nombre', 'ASC')->get();
+        $numeraciones=NumeracionFactura::where('empresa',$empresa->id)->get();
+        $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado',1)->get();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $terminos=TerminosPago::where('empresa',$empresa->id)->get();
+        $impuestos = Impuesto::where('empresa',$empresa->id)->orWhere('empresa', null)->Where('estado', 1)->get();
 
         //Datos necesarios para hacer funcionar la ventana modal
         $dataPro = (new InventarioController)->create();
@@ -600,12 +601,12 @@ class FacturasController extends Controller{
          ->whereRaw('length(codigo) > 6')
          ->get();
         $identificaciones=TipoIdentificacion::all();
-        //$vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
-        //$listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
+        //$vendedores = Vendedor::where('empresa',$empresa->id)->where('estado', 1)->get();
+        //$listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',$empresa->id)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // /Datos necesarios para hacer funcionar la ventana modal
-        $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
+        $retenciones = Retencion::where('empresa',$empresa->id)->where('modulo',1)->get();
         view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Venta', 'subseccion' => 'venta']);
 
         $title = "Nueva Factura de Venta";
@@ -617,7 +618,7 @@ class FacturasController extends Controller{
             'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones',
             'categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2',
             'unidades2', 'extras2', 'listas2','bodegas2','title','seccion','subseccion',
-            'extras','relaciones'));
+            'extras','relaciones','empresa'));
     }
 
     public function create_electronica($producto=false, $cliente=false){
@@ -864,6 +865,7 @@ class FacturasController extends Controller{
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
         $factura->cuenta_id    = $request->relacion;
+        $factura->periodo_facturacion = $request->periodo_facturacion;
         $factura->created_by = Auth::user()->id;
 
         if($contrato){
@@ -1099,6 +1101,7 @@ class FacturasController extends Controller{
                 $factura->tipo_operacion = $request->tipo_operacion;
                 $factura->ordencompra    = $request->ordencompra;
                 $factura->cuenta_id    = $request->relacion;
+                $factura->periodo_facturacion = $request->periodo_facturacion;
                 $factura->save();
 
                 $inner=array();
