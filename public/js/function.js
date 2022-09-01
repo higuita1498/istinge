@@ -5035,3 +5035,45 @@ function limpiar(form){
     document.getElementById(form).reset();
     $("#"+form+' .selectpicker').val('').trigger('change');
 }
+
+$('#searchMAC').click(function() {
+    var ip = $("#ip").val();
+    var mk = $("#server_configuration_id").val();
+
+    if(ip && mk){
+        cargando(true);
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/api/getMAC'+mk+'/'+ip;
+        }else{
+            var url = '/api/getMAC/'+mk+'/'+ip;
+        }
+
+        $.ajax({
+            url: url,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            method: 'get',
+            success: function (data) {
+                cargando(false);
+                $("#mac_address").val(data.mac_address);
+            },
+            error: function(data){
+                cargando(false);
+                Swal.fire({
+                    type: 'error',
+                    title: 'ERROR EN OBTENER DIRECCIÓN MAC',
+                    text: 'INTENTE NUEVAMENTE',
+                    showConfirmButton: false,
+                    timer: 5000
+                })
+            }
+        })
+    }else{
+        Swal.fire({
+            type: 'error',
+            title: 'INTENTE NUEVAMENTE',
+            text: 'Información Incompleta',
+            showConfirmButton: false,
+            timer: 5000
+        })
+    }
+});

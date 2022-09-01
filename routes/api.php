@@ -34,6 +34,7 @@ Route::get('getSegmentos/{mikrotik}', 'Controller@getSegmentos');
 Route::get('getContracts/{id}', 'Controller@getContracts');
 Route::get('getSubnetting/{ip_address}/{prefijo}', 'Controller@getSubnetting');
 Route::get('habilitarContratos/{fecha}', 'CronController@habilitarContratos');
+Route::get('getMAC/{mk}/{ip}', 'Controller@getMAC');
 
 /** EVENTOS WOMPI **/
 Route::post('pagos/wompi', 'CronController@eventosWompi');

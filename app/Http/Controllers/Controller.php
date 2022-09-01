@@ -1780,36 +1780,36 @@ class Controller extends BaseController
         }
     }
 
-    public function sendmail(){
-        ini_set('max_execution_time', 500);
-        $host = ServidorCorreo::where('estado', 1)->get()->last();
-        if($host){
-            $existing = config('mail');
-            $new =array_merge(
-                $existing, [
-                    'host' => $host->servidor,
-                    'port' => $host->puerto,
-                    'encryption' => '',
-                    'username' => $host->usuario,
-                    'password' => $host->password,
-                    'from' => [
-                        'address' => $host->address,
-                        'name' => $host->name
-                    ],
-                ]
-            );
-            config(['mail'=>$new]);
-        }
-        $data = array(
-            'name' => 'Prueba'
-        );
+    public function getMAC($mk, $ip){
+        $mikrotik = Mikrotik::find($mk);
+        $ARRAY = '';
+        if ($mikrotik) {
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
 
-        for ($i=0; $i < 2; $i++) {
-            Mail::send('emails.welcome', $data, function ($message) {
-                $message->to('frankjmarvala@gmail.com', 'Frank Marval')->subject('Prueba Sendinblue');
-            });
-        }
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $API->write('/ip/arp/print', false);
+                $API->write('?address='.$ip, true);
+                //$API->write('=.proplist');
+                $arrays = $API->read();
 
-        return 'enviado';
+                if(count($arrays)>0){
+                    return response()->json([
+                        'success'     => true,
+                        'mac_address' => $arrays[0]['mac-address'],
+                        'dynamic'     => $arrays[0]['dynamic'],
+                        'complete'    => $arrays[0]['complete'],
+                    ]);
+                }else{
+                    return response()->json([
+                        'success' => false,
+                        'icon'    => 'error',
+                        'title'   => 'ERROR',
+                        'text'    => 'NO SE HA PODIDO REALIZAR LA GRÁFICA'
+                    ]);
+                }
+                $API->disconnect();
+            }
+        }
     }
 }
