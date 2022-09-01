@@ -37,6 +37,7 @@ use App\Integracion;
 use App\PlanesVelocidad;
 use App\Model\Ingresos\FacturaRetencion;
 use App\Producto;
+use Auth;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
