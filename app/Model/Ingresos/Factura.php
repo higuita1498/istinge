@@ -963,9 +963,16 @@ public function forma_pago()
     }
 
     public function periodoCobrado($tirilla=false){
+
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
-        where('client_id',$this->cliente)
+        where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
+
+        if(!$grupo){
+            $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+            where('client_id',$this->cliente)
+            ->select('gc.*')->first();
+        }
         
         if($grupo){
             $empresa = Empresa::find($this->empresa);
@@ -1064,7 +1071,7 @@ public function forma_pago()
                     }
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
-                    
+
                     if($diasCobrados == 0){return 30;}
                     if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
@@ -1081,9 +1088,16 @@ public function forma_pago()
     }
     
     public function diasCobradosProrrateo(){
+        
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
-        where('client_id',$this->cliente)
+        where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
+
+        if(!$grupo){
+            $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+            where('client_id',$this->cliente)
+            ->select('gc.*')->first();
+        }
         
         if($grupo){
             $empresa = Empresa::find($this->empresa);
