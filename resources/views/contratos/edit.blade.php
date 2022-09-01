@@ -361,6 +361,9 @@
                                 <label class="control-label">Dirección MAC</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control mac_address" name="mac_address" id="mac_address" value="{{ $contrato->mac_address }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-success btn-sm" type="button" id="searchMAC" style="border-radius: 0 5px 5px 0;"><i class="fa fa-search" style="margin: 2px;"></i></button>
+                                    </div>
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('mac_address') }}</strong>
                                     </span>
