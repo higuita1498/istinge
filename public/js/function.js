@@ -5043,7 +5043,7 @@ $('#searchMAC').click(function() {
     if(ip && mk){
         cargando(true);
         if (window.location.pathname.split("/")[1] === "software") {
-            var url = '/software/api/getMAC'+mk+'/'+ip;
+            var url = '/software/api/getMAC/'+mk+'/'+ip;
         }else{
             var url = '/api/getMAC/'+mk+'/'+ip;
         }
