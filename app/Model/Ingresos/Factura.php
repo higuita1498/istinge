@@ -963,9 +963,16 @@ public function forma_pago()
     }
 
     public function periodoCobrado($tirilla=false){
+
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
-        where('client_id',$this->cliente)
+        where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
+
+        if(!$grupo){
+            $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+            where('client_id',$this->cliente)
+            ->select('gc.*')->first();
+        }
         
         if($grupo){
             $empresa = Empresa::find($this->empresa);
@@ -1053,7 +1060,18 @@ public function forma_pago()
                     $fechaContrato = $yearContrato . "-" . $mesContrato . "-" . $diaContrato;
                     $fechaContrato = Carbon::parse($fechaContrato);
 
+                     /*
+                        para calcular la fecha fin tenemos que tener en cuenta que los cortes se pueden generar los 15
+                        y el contrato el 25, entonces es mayor el contrato y se tiene que tomar la fecha fin del siguiente mes
+                    */
+                    if($diaContrato > $grupo->fecha_corte){
+                        $fechaFin = $yearContrato . "-" . ($mesContrato+1) . "-" .  $grupo->fecha_corte;
+                    }else{
+                        $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
+                    }
+
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+
                     if($diasCobrados == 0){return 30;}
                     if($diasCobrados > 30){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
@@ -1070,9 +1088,16 @@ public function forma_pago()
     }
     
     public function diasCobradosProrrateo(){
+        
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
-        where('client_id',$this->cliente)
+        where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
+
+        if(!$grupo){
+            $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
+            where('client_id',$this->cliente)
+            ->select('gc.*')->first();
+        }
         
         if($grupo){
             $empresa = Empresa::find($this->empresa);
@@ -1118,6 +1143,16 @@ public function forma_pago()
 
                     $fechaContrato = $yearContrato . "-" . $mesContrato . "-" . $diaContrato;
                     $fechaContrato = Carbon::parse($fechaContrato);
+
+                     /*
+                        para calcular la fecha fin tenemos que tener en cuenta que los cortes se pueden generar los 15
+                        y el contrato el 25, entonces es mayor el contrato y se tiene que tomar la fecha fin del siguiente mes
+                    */
+                    if($diaContrato > $grupo->fecha_corte){
+                        $fechaFin = $yearContrato . "-" . ($mesContrato+1) . "-" .  $grupo->fecha_corte;
+                    }else{
+                        $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
+                    }
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
 

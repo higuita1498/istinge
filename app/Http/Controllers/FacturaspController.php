@@ -229,7 +229,7 @@ class FacturaspController extends Controller
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $dataPro = (new InventarioController)->create();
         $categorias = Puc::where('empresa',auth()->user()->empresa)
-         ->whereRaw('length(codigo) > 6')
+         ->whereRaw('length(codigo) > 4')
          ->get();
         //Se crea una instancia de facturas_proveedores y se le summa 1 al codigo
         $facturaP = FacturaProveedores::where('empresa', Auth::user()->empresa)->get()->last();
@@ -343,7 +343,7 @@ class FacturaspController extends Controller
                 }
             }else{
                 $item=explode('_', $request->item[$i])[1];
-                $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('id',  $item)->first();
+                $categorias=Puc::where('empresa',Auth::user()->empresa)->where('id',  $item)->first();
                 $items->producto=$categorias->id;
                 $items->tipo_item=2;
             }
@@ -454,7 +454,9 @@ class FacturaspController extends Controller
             $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
             $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-            $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('estatus', 1)->whereNull('asociado')->get();
+            $categorias=Puc::where('empresa',auth()->user()->empresa)
+            ->whereRaw('length(codigo) > 4')
+            ->get();
             $identificaciones=TipoIdentificacion::all();
             $listas = ListaPrecios::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
             $prefijos=DB::table('prefijos_telefonicos')->get();
@@ -547,7 +549,7 @@ class FacturaspController extends Controller
                         }
                     }else{
                         $item=explode('_', $request->item[$i])[1];
-                        $categorias=Categoria::where('empresa',Auth::user()->empresa)->where('id',  $item)->first();
+                        $categorias=Puc::where('empresa',Auth::user()->empresa)->where('id',  $item)->first();
                         $items->producto=$categorias->id;
                         $items->tipo_item=2;
                     }

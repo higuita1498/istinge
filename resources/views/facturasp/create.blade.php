@@ -128,31 +128,18 @@
               <td  class="no-padding">
                   <div class="resp-item">
                @if($producto) <input type="hidden" id="producto_inv" value="true">   @endif
-                <select class="form-control form-control-sm buscar no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="item[]" id="item1" onchange="rellenar(1, this.value);" required="">
+               <select class="form-control form-control-sm buscar no-padding" title="Seleccione" data-live-search="true" data-size="5" name="item[]" id="item1" onchange="rellenar(1, this.value);" required="">
                 <optgroup label="Ítems">
-                @foreach($inventario as $item)
-                <option value="{{$item->id}}" @if($producto) {{$producto->id==$item->id?'selected':''}}  @endif >{{$item->producto}} - ({{$item->ref}})</option>
-                 @endforeach
-                </optgroup>
-                @foreach($categorias as $categoria)
-                <optgroup label="{{$categoria->nombre}}">
-                    @foreach($categoria->hijos(true) as $categoria1)
-                      <option {{old('categoria')==$categoria1->id?'selected':''}} value="cat_{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}}>{{$categoria1->nombre}}-({{$categoria1->codigo}})</option>
-                      @foreach($categoria1->hijos(true) as $categoria2)
-                          <option class="hijo" {{old('categoria')==$categoria2->id?'selected':''}} value="cat_{{$categoria2->id}}" {{$categoria2->estatus==0?'disabled':''}}>{{$categoria2->nombre}}-({{$categoria2->codigo}})</option>
-                        @foreach($categoria2->hijos(true) as $categoria3)
-                          <option class="nieto" {{old('categoria')==$categoria3->id?'selected':''}} value="cat_{{$categoria3->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria3->nombre}}-({{$categoria3->codigo}})</option>
-                          @foreach($categoria3->hijos(true) as $categoria4)
-                            <option class="bisnieto" {{old('categoria')==$categoria4->id?'selected':''}} value="cat_{{$categoria4->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria4->nombre}}-({{$categoria4->codigo}})</option>
-                          @endforeach
-
-                        @endforeach
-
-                      @endforeach
-                    @endforeach
-                  </optgroup>
+                  @foreach($inventario as $item)
+                  <option value="{{$item->id}}" @if($producto) {{$producto->id==$item->id?'selected':''}} @endif>{{$item->producto}} - ({{$item->ref}})</option>
                   @endforeach
-                </select>
+                </optgroup>
+                <optgroup label="Puc">
+                @foreach($categorias as $categoria)
+                  <option {{old('categoria')==$categoria->id?'selected':''}} value="cat_{{$categoria->id}}" {{$categoria->estatus==0?'disabled':''}}>{{$categoria->nombre}}-({{$categoria->codigo}})</option>
+                  @endforeach
+                </optgroup>
+              </select>
                    <p class="text-left nomargin">
                        <a href="" data-toggle="modal" data-target="#modalproduct" class="modalTr" tr="1">
                            <i class="fas fa-plus"></i> Nuevo Producto
@@ -334,25 +321,12 @@
   {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
   <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
 
-  <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
-                            <optgroup label="{{$categoria->nombre}}">
-                                @foreach($categoria->hijos(true) as $categoria1)
-                                  <option {{old('categoria')==$categoria1->id?'selected':''}} value="cat_{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}}>{{$categoria1->nombre}}</option>
-                                  @foreach($categoria1->hijos(true) as $categoria2)
-                                      <option class="hijo" {{old('categoria')==$categoria2->id?'selected':''}} value="cat_{{$categoria2->id}}" {{$categoria2->estatus==0?'disabled':''}}>{{$categoria2->nombre}}</option>
-                                    @foreach($categoria2->hijos(true) as $categoria3)
-                                      <option class="nieto" {{old('categoria')==$categoria3->id?'selected':''}} value="cat_{{$categoria3->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria3->nombre}}</option>
-                                      @foreach($categoria3->hijos(true) as $categoria4)
-                                        <option class="bisnieto" {{old('categoria')==$categoria4->id?'selected':''}} value="cat_{{$categoria4->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria4->nombre}}</option>
-
-                                      @endforeach
-
-                                    @endforeach
-
-                                  @endforeach
-                                @endforeach
-                            </optgroup>
-                          @endforeach'>
+  <input type="hidden" id="allcategorias" value='
+  <optgroup label="Puc">
+                          @foreach($categorias as $categoria)
+                                  <option {{old('categoria')==$categoria->id?'selected':''}} value="cat_{{$categoria->id}}" {{$categoria->estatus==0?'disabled':''}}>{{$categoria->nombre}}-{{$categoria->codigo}}</option>
+                          @endforeach 
+                        </optgroup>'>
   <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
   <!-- Modal -->
     <div class="modal fade" id="contactoModal" role="dialog">

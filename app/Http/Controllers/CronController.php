@@ -37,6 +37,7 @@ use App\Integracion;
 use App\PlanesVelocidad;
 use App\Model\Ingresos\FacturaRetencion;
 use App\Producto;
+use Auth;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -1842,19 +1843,50 @@ class CronController extends Controller
 
     public function deleteFactura(){
 
-        $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->get();
-        $eliminadas = 0;
-        foreach($facturas as $f){
-            $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
-            $eliminadas++;
-        }   
+        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->get();
+        // $eliminadas = 0;
+        // foreach($facturas as $f){
+        //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+        //     $eliminadas++;
+        // }   
         
         
-        $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->delete();
-        return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
+        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->delete();
+        // return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
         
         //comprobar en bd
         //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"
+    }
+
+    public function aplicateProrrateo(){
+
+        $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')
+        ->where('fecha',"2022-09-01")
+        ->where('estatus',1)->get();
+
+        if(Auth::user()->empresaObj->prorrateo == 1){
+
+            foreach($facturas as $factura){
+                $dias = $factura->diasCobradosProrrateo();
+                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                if($dias != 30){
+                    if(isset($factura->prorrateo_aplicado)){
+                        $factura->prorrateo_aplicado = 1;
+                        $factura->save();
+                    }
+        
+                    foreach($factura->itemsFactura as $item){
+                          
+                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                        $precioItemProrrateo = $this->precision($item->precio * $dias / 30); 
+                        $item->precio = $precioItemProrrateo;
+                        $item->save();
+
+                    }
+                }
+            }
+
+        }
     }
 
     public static function disabledAndCRM($ip){
