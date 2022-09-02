@@ -974,6 +974,9 @@ public function forma_pago()
             ->select('gc.*')->first();
         }
         
+        $empresa = Empresa::find($this->empresa);
+        
+        
         if($grupo){
             $empresa = Empresa::find($this->empresa);
             $mesInicioCorte = $mesFinCorte = Carbon::parse($this->fecha)->format('m');
@@ -1005,9 +1008,10 @@ public function forma_pago()
 
             $diaFinValidar = "1-".$mesFinCorte."-".$yearFinCorte;
             $diaFinValidar = Carbon::parse($diaFinValidar)->endOfMonth()->format('d');
-
+            
             $diaInicioCorte = $diaFinCorte = $grupo->fecha_corte;
-
+        
+            
             if($grupo->fecha_corte > $diaValidar){
                 $diaInicioCorte = $diaValidar;
             }
@@ -1018,14 +1022,12 @@ public function forma_pago()
 
             //construimos el inicio del corte tomando la fecha de la factura (mes y año) y el grupo de corte (el dia)
             $fechaInicio = $inicioCorte = $diaInicioCorte . "-" . $mesInicioCorte . "-" . $yearInicioCorte;
-            $inicioCorte = Carbon::parse($inicioCorte)->addDay()->toFormattedDateString();
-
+            
             //obtenemos el mes y año de la factura actual
             $mesYearFactura = Carbon::parse($this->fecha)->format('m-Y');
 
             //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
             $fechaFin = $finCorte = $diaFinCorte . "-" . $mesYearFactura;
-            $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
 
             //Construimos una fecha con el grupo de corte y mes y año de la factura, tambien formateamos la fecha de la factura completamente
             $fechaFactura = Carbon::parse($this->fecha);
@@ -1033,10 +1035,33 @@ public function forma_pago()
             $inicio = Carbon::parse($inicio);
 
             $diasCobrados = 0;
-            $mensaje = ($tirilla) ? $inicioCorte." - ".$finCorte : "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
 
             $fechaInicio = Carbon::parse($fechaInicio);
+            //sumamos un dia ya que el corte es un 30, empezaria desde el siguiente dia
+            $inicioCorte = $fechaInicio->addDay();
+            
+            if(Carbon::parse($fechaInicio)->format('d') == 31){
+                $inicioCorte = $fechaInicio->addDay();
+            }
+            
             $fechaFin    = Carbon::parse($fechaFin);
+            
+            
+            /* Validacion de mes anticipado o mes vencido */
+            $diaFac = Carbon::parse($this->fecha)->format('d');
+            
+            //si este caso ocurre es por que tengo que cobrar el mes pasado
+            if($diaFac < $grupo->fecha_factura && $empresa->periodo_facturacion == 2){
+                $finCorte = Carbon::parse($finCorte)->subMonth();
+                $inicioCorte =  $inicioCorte->subMonth();
+            }
+            /* Validacion de mes anticipado o mes vencido */
+            
+            $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
+            $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();
+            
+            $mensaje = ($tirilla) ? $inicioCorte." - ".$finCorte : "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
+            
 
             //Primero analizamos si es la primer factura del contrato que vamos a generar
             if($this->contrato_id != null){
@@ -1048,8 +1073,9 @@ public function forma_pago()
                 los primeros dias de uso dependiendo de la creacion del contrato
                 también debemos tener la opción de prorrateo activa en el menú de configuración.
                 */
+            
                 if($factura->id == $this->id && $empresa->prorrateo == 1){
-
+          
                     //Buscamos el contrato al que esta asociada la factura
                     $contrato = Contrato::find($this->contrato_id);
 
@@ -1088,7 +1114,7 @@ public function forma_pago()
     }
     
     public function diasCobradosProrrateo(){
-        
+
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
