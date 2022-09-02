@@ -487,7 +487,7 @@ class MikrotikController extends Controller
         return redirect('empresa/mikrotik')->with('danger', 'No existe un registro con ese id');
     }
     
-    public function graficajson($id){
+    public function graficajson($id, $interfaz){
         $this->getAllPermissions(Auth::user()->id);
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         
@@ -499,7 +499,7 @@ class MikrotikController extends Controller
             $rows = array(); $rows2 = array(); $Type=0; $Interface='ether1';
             if ($Type==0) {  // Interfaces
                 $API->write("/interface/monitor-traffic",false);
-                $API->write("=interface=".$mikrotik->interfaz,false);  
+                $API->write("=interface=".$interfaz,false);
                 $API->write("=once=",true);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);

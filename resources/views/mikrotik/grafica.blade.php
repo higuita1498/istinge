@@ -88,7 +88,7 @@
     	function requestDatta(interfaz) {
     	    if(interfaz){
 	    		$.ajax({
-	    			url: 'graficajson',
+	    			url: 'graficajson/'+interfaz,
 	    			datatype: "json",
 	    			success: function(data) {
 	    				var midata = JSON.parse(data);

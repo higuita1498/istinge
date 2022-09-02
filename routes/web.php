@@ -1285,7 +1285,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/mikrotik/{id}/reiniciar', 'MikrotikController@reiniciar')->name('mikrotik.reiniciar');
 	        Route::get('/{id}/log', 'MikrotikController@log')->name('mikrotik.log');
 	        Route::get('{id}/grafica', 'MikrotikController@grafica')->name('mikrotik.grafica');
-	        Route::get('{id}/graficajson', 'MikrotikController@graficajson')->name('mikrotik.graficajson');
+	        Route::get('{id}/graficajson/{interfaz}', 'MikrotikController@graficajson')->name('mikrotik.graficajson');
 	        Route::get('{id}/ips-autorizadas', 'MikrotikController@ips_autorizadas')->name('mikrotik.ips-autorizadas');
 	        Route::get('{contratos}/autorizar-ips', 'MikrotikController@autorizar_ips')->name('mikrotik.autorizar-ips');
             Route::get('/{mikrotik}/{state}/state_lote', 'MikrotikController@state_lote')->name('mikrotik.state_lote');
