@@ -974,6 +974,8 @@ public function forma_pago()
             ->select('gc.*')->first();
         }
         
+        $empresa = Empresa::find($this->empresa);
+        
         
         if($grupo){
             $empresa = Empresa::find($this->empresa);
@@ -1026,7 +1028,6 @@ public function forma_pago()
 
             //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
             $fechaFin = $finCorte = $diaFinCorte . "-" . $mesYearFactura;
-            $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
 
             //Construimos una fecha con el grupo de corte y mes y año de la factura, tambien formateamos la fecha de la factura completamente
             $fechaFactura = Carbon::parse($this->fecha);
@@ -1044,9 +1045,23 @@ public function forma_pago()
             }
             
             $fechaFin    = Carbon::parse($fechaFin);
+            
+            
+            /* Validacion de mes anticipado o mes vencido */
+            $diaFac = Carbon::parse($this->fecha)->format('d');
+            
+            //si este caso ocurre es por que tengo que cobrar el mes pasado
+            if($diaFac < $grupo->fecha_factura && $empresa->periodo_facturacion == 2){
+                $finCorte = Carbon::parse($finCorte)->subMonth();
+                $inicioCorte =  $inicioCorte->subMonth();
+            }
+            /* Validacion de mes anticipado o mes vencido */
+            
+            $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
             $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();
             
             $mensaje = ($tirilla) ? $inicioCorte." - ".$finCorte : "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
+            
 
             //Primero analizamos si es la primer factura del contrato que vamos a generar
             if($this->contrato_id != null){
@@ -1058,6 +1073,7 @@ public function forma_pago()
                 los primeros dias de uso dependiendo de la creacion del contrato
                 también debemos tener la opción de prorrateo activa en el menú de configuración.
                 */
+            
                 if($factura->id == $this->id && $empresa->prorrateo == 1){
           
                     //Buscamos el contrato al que esta asociada la factura
