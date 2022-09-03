@@ -179,10 +179,12 @@
                         <li class="nav-item" id="venta">
                             <a class="nav-link" href="{{route('facturas.index')}}" >Facturas Estandar</a>
                         </li>
+                        <?php } ?>
+                        <?php if(isset($_SESSION['permisos']['851'])){ ?>
                         <li class="nav-item" id="venta-electronica">
                             <a class="nav-link" href="{{route('facturas.index-electronica')}}" >Facturas Electrónicas</a>
                         </li>
-                    <?php } ?>
+                        <?php } ?>
                     @if(isset($_SESSION['permisos']['774']))
                     <li class="nav-item" id="promesaspago">
                         <a class="nav-link" href="{{route('promesas-pago.index')}}" >Promesas de Pago</a>

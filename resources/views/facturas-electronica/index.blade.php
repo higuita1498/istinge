@@ -9,7 +9,9 @@
 	    </div>
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+		<?php if(isset($_SESSION['permisos']['853'])){ ?>
 		<a href="{{route('facturas.create-electronica')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura Electrónica</a>
+		<?php } ?><
     @endif
 @endsection
 
