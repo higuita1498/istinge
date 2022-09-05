@@ -3397,11 +3397,19 @@ class ExportarReportesController extends Controller
             $this->remisiones($request);
         }else{
             $comprobacionFacturas = Factura::where('factura.empresa',Auth::user()->empresa)
+            ->join('contracts', 'contracts.id', '=', 'factura.contrato_id')
+            ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
             ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1);
+
+            if($request->servidor){
+                $comprobacionFacturas=$comprobacionFacturas->where('mikrotik.id', $request->servidor);
+            }
+           
+
             $dates = $this->setDateRequest($request);
             $comprobacionFacturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
             if($comprobacionFacturas->count() >2100){

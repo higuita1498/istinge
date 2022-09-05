@@ -16,6 +16,15 @@
 		    	@endforeach
 		    </select>
 	  	</div>
+		  <div class="form-group col-md-2">
+		    <label>Servidores</label>
+		    <select class="form-control selectpicker" name="servidor" id="servidor">
+				@foreach($mikrotiks as $mik)
+					<option value="{{$mik->id}}"> {{$mik->nombre}} </option>
+				@endforeach
+				<option {{ !$request->servidor ? 'selected' : ''}} value="">TODOS</option>
+		    </select>
+	  	</div>
 		<div class="form-group col-md-2">
 		    <label></label>
 		    <select class="form-control selectpicker" name="fechas" id="fechas">
