@@ -60,45 +60,20 @@
 
     @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) || isset($_SESSION['permisos']['804']))
         <li class="nav-item" id="contratos">
-            <a class="nav-link" data-toggle="collapse" href="#ui-contrato" aria-expanded="false" aria-controls="ui-contrato">
+            <a class="nav-link"  href="{{route('contratos.index')}}" aria-controls="ui-contrato">
                 <i class="menu-icon fas fa-file-contract"></i>
                 <span class="menu-title">Contratos</span>
-                <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-contrato">
-                <ul class="nav flex-column sub-menu">
-                    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['411']))
-                    <li class="nav-item" id="listado">
-                        <a class="nav-link" href="{{route('contratos.index')}}">Listado</a>
-                    </li>
-                    @endif
-                    {{-- @if(isset($_SESSION['permisos']['804']))
-                    <li class="nav-item" id="listado_ping">
-                        <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
-                    </li>
-                    @endif --}}
-                </ul>
-            </div>
+
         </li>
     @endif
 
     @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
     <li class="nav-item" id="asignacion">
-        <a class="nav-link" data-toggle="collapse" href="#ui-asignacion" aria-expanded="false" aria-controls="ui-asignacion">
+        <a class="nav-link"  href="{{route('asignaciones.index')}}" aria-controls="ui-asignacion">
             <i class="menu-icon fas fa-file-contract"></i>
             <span class="menu-title">Asignaciones</span>
-            <i class="menu-arrow"></i>
         </a>
-        <div class="collapse" id="ui-asignacion">
-            <ul class="nav flex-column sub-menu">
-                @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
-                    <li class="nav-item" id="asignaciones">
-                        <a class="nav-link" href="{{route('asignaciones.index')}}" >Listado</a>
-                    </li>
-                @endif
-
-            </ul>
-        </div>
     </li>
 @endif
     
