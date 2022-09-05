@@ -72,11 +72,6 @@
                         <a class="nav-link" href="{{route('contratos.index')}}">Listado</a>
                     </li>
                     @endif
-                    @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
-                        <li class="nav-item" id="asignaciones">
-                            <a class="nav-link" href="{{route('asignaciones.index')}}" >Asignaciones</a>
-                        </li>
-                    @endif
                     {{-- @if(isset($_SESSION['permisos']['804']))
                     <li class="nav-item" id="listado_ping">
                         <a class="nav-link" href="{{route('pings.index')}}">Pings Fallidos&nbsp;&nbsp;<e id="nro_P"></e></a>
@@ -86,6 +81,26 @@
             </div>
         </li>
     @endif
+
+    @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
+    <li class="nav-item" id="asignacion">
+        <a class="nav-link" data-toggle="collapse" href="#ui-asignacion" aria-expanded="false" aria-controls="ui-asignacion">
+            <i class="menu-icon fas fa-file-contract"></i>
+            <span class="menu-title">Asignaciones</span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="ui-asignacion">
+            <ul class="nav flex-column sub-menu">
+                @if(isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']))
+                    <li class="nav-item" id="asignaciones">
+                        <a class="nav-link" href="{{route('asignaciones.index')}}" >Listado</a>
+                    </li>
+                @endif
+
+            </ul>
+        </div>
+    </li>
+@endif
     
     @if(isset($_SESSION['permisos']['8']) || isset($_SESSION['permisos']['15']) || isset($_SESSION['permisos']['16'])|| isset($_SESSION['permisos']['21']) || isset($_SESSION['permisos']['29']) || isset($_SESSION['permisos']['34']) || isset($_SESSION['permisos']['412']))
         <li class="nav-item" id="inventario">
