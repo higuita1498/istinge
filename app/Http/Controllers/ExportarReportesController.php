@@ -3496,7 +3496,7 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[6].$i, $factura->cliente()->nit)
                     ->setCellValue($letras[7].$i, $factura->cliente()->direccion)
                     ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
-                    ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->servidor()->nombre : '')
+                    ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? ($factura->cliente()->contrato()->servidor()->nombre ?? '') : '')
                     ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->ip : '')
                     ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '');
                 $i++;
