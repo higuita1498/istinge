@@ -2029,7 +2029,7 @@ class ReportesController extends Controller
 
             $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
             view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Facturas Impagas', 'icon' =>'fas fa-chart-line']);
-            $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
+            $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro', 'nombreservidor');
             if (!$request->orderby) {
                 $request->orderby=1; $request->order=1;
             }
@@ -2037,10 +2037,10 @@ class ReportesController extends Controller
             $order=$request->order==1?'DESC':'ASC';
 
             $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
-                ->join('contracts', 'contracts.id', '=', 'factura.contrato_id')
+                ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
                 ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
                 ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa')
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'mikrotik.Nombre as nombreservidor')
                 ->where('factura.tipo','<>',2)
                 ->where('factura.empresa',Auth::user()->empresa)
                 ->where('factura.estatus',1)
