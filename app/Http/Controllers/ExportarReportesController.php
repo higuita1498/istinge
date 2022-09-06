@@ -3450,6 +3450,8 @@ class ExportarReportesController extends Controller
             }
 
             $facturas = Factura::where('factura.empresa',Auth::user()->empresa)
+            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
+            ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
@@ -3457,6 +3459,10 @@ class ExportarReportesController extends Controller
             ->where('factura.estatus',1);
             $dates = $this->setDateRequest($request);
 
+
+            if($request->servidor){
+                $facturas=$facturas->where('mikrotik.id', $request->servidor);
+            }
             /*if ($request->nro>0) {
                 $facturas=$facturas->where('numeracion', $request->nro);
             }*/
