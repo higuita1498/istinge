@@ -21,7 +21,7 @@
             color: #000;
         }
         h4{
-            font-weight: bold;
+            font-weight: bold;m
             text-align: center;
             margin: 0;font-size: 14px;
         }
@@ -193,12 +193,18 @@
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->pagado())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->pagado() + $ingreso->ingreso()->valor_anticipo)}} </td>
                 </tr>
                 @if($factura->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->pagado())}} </td>
+                </tr>
+                @endif
+                 @if($ingreso->ingreso()->valor_anticipo > 0)
+                <tr>
+                    <td style="width: 70%;">Saldo a favor generado:</td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->valor_anticipo)}} </td>
                 </tr>
                 @endif
             </tbody>
