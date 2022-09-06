@@ -346,7 +346,7 @@ class Contacto extends Model
 
     public function radicados(){
         $temp = 0;
-        $temp += Radicado::leftjoin('contactos as c', 'radicados.identificacion', '=', 'c.nit')->where('radicados.identificacion', $this->nit)->count();
+        $temp += Radicado::leftjoin('contactos as c', 'radicados.identificacion', '=', 'c.nit')->where('radicados.empresa',Auth::user()->empresa)->where('radicados.identificacion', $this->nit)->count();
         return $temp;
     }
 
