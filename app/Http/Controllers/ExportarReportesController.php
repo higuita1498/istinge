@@ -3397,7 +3397,7 @@ class ExportarReportesController extends Controller
             $this->remisiones($request);
         }else{
             $comprobacionFacturas = Factura::where('factura.empresa',Auth::user()->empresa)
-            ->join('contracts', 'contracts.id', '=', 'factura.contrato_id')
+            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
             ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
