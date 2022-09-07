@@ -1380,6 +1380,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/notificacion','CRMController@notificacion')->name('crm.notificacion');
 	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
             Route::get('{id}/log', 'CRMController@log')->name('crm.log');
+			Route::get('/etiquetas', 'EtiquetaController@index')->name('crm.etiquetas');
 	    });
 		Route::resource('crm', 'CRMController');
 
