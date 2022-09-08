@@ -2102,7 +2102,7 @@ class ReportesController extends Controller
 
             $mikrotiks = Mikrotik::all();
 
-            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example'));
+            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks'));
 
         }
 
