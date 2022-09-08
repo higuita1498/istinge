@@ -33,7 +33,7 @@ use DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
-
+use App\Mikrotik;
 class ReportesController extends Controller
 {
     /**
