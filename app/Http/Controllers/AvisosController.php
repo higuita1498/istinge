@@ -318,7 +318,8 @@ class AvisosController extends Controller
             }else{
                 return redirect('empresa/avisos')->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
             }
-        }elseif($request->type == 'EMAIL'){
+        
+        if($request->type == 'EMAIL'){
             return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
         }
     }
