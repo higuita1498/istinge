@@ -21,7 +21,7 @@
 		    <label>Servidores</label>
 		    <select class="form-control selectpicker" name="servidor" id="servidor">
 				@foreach($mikrotiks as $mik)
-					<option value="{{$mik->id}}"> {{$mik->nombre}} </option>
+					<option value="{{$mik->id}}" {{$mik->id == $request->servidor ? 'selected' : ''}}> {{$mik->nombre}} </option>
 				@endforeach
 				<option {{ !$request->servidor ? 'selected' : ''}} value="">TODOS</option>
 		    </select>
