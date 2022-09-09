@@ -13,8 +13,8 @@ class EtiquetaController extends Controller
     public function index(){
         $modoLectura = auth()->user()->modo_lectura();
         $this->getAllPermissions(Auth::user()->id);
-        //$etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
-        $etiquetas = [];
+        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
+        //$etiquetas = [];
         view()->share(['invert' => true, 'title' => 'Etiquetas', 'seccion' => 'etiquetas', 'subseccion' => 'etiquetas', 'icon' => '']);
         return view('etiquetas.index', compact('etiquetas'));
     }
@@ -48,6 +48,36 @@ class EtiquetaController extends Controller
         ->addColumn('acciones', $modoLectura ?  "" : "etiquetas.acciones")
         ->rawColumns(['created_at', 'acciones'])
         ->toJson();
+    }
+
+
+    public function store(Request $request){
+
+        $etiqueta = new Etiqueta;
+        $etiqueta->nombre = $request->nombre;
+        $etiqueta->color = $request->color;
+        $etiqueta->empresa_id = auth()->user()->empresa;
+        $etiqueta->save();
+
+        $etiqueta->fecha = $etiqueta->created_at->format('d-m-Y');
+        $etiqueta->acciones = view('etiquetas.acciones', ['etiqueta' => $etiqueta])->render();
+
+
+        return $etiqueta;
+    }
+
+    public function update($id){
+
+        $etiqueta = Etiqueta::where('id', $id)->where('empresa_id', auth()->user()->empresa)->first();
+
+        $etiqueta->nombre = request()->nombre;
+        $etiqueta->color = request()->color;
+
+        $etiqueta->update();
+        $etiqueta->fecha = $etiqueta->created_at->format('d-m-Y');
+        $etiqueta->acciones = view('etiquetas.acciones', ['etiqueta' => $etiqueta])->render();
+
+        return $etiqueta;
     }
 
 

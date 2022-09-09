@@ -1383,6 +1383,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 			Route::get('/etiquetas', 'EtiquetaController@index')->name('crm.etiquetas');
 	    });
 		Route::resource('crm', 'CRMController');
+		Route::resource('etiqueta', 'EtiquetaController');
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');

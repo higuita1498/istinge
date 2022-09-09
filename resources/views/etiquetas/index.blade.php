@@ -6,7 +6,14 @@
 </style>
 @endsection
 
-<a href="{{route('radicados.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Crear nueva</a>
+@include('etiquetas.modals.create')
+@include('etiquetas.modals.edit')
+
+@section('boton')
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-etiqueta">
+    Crear nueva
+</button>
+@endsection
 
 @section('content')
 	@if(Session::has('success'))
@@ -37,14 +44,16 @@
 					              <th>Nombre</th>
 					              <th>Color</th>
 					              <th>Creacion</th>
+								  <th>Acciones</th>
 					          </tr>
 							</thead>
-							<tbody>
+							<tbody id="data-etiquetas">
 								@foreach($etiquetas as $etiqueta)
-										<tr>
+										<tr id="rw-{{ $etiqueta->id }}">
 											<td>{{$etiqueta->nombre}}</a></td>
 											<td>{{$etiqueta->color}}</td>
 											<td>{{$etiqueta->created_at->format('d-m-Y')}}</td>
+											<td>@include('etiquetas.acciones', $etiqueta)</td>
                                         </tr>
 								@endforeach
 							</tbody>
