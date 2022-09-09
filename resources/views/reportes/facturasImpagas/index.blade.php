@@ -21,7 +21,7 @@
 		    <label>Servidores</label>
 		    <select class="form-control selectpicker" name="servidor" id="servidor">
 				@foreach($mikrotiks as $mik)
-					<option value="{{$mik->id}}"> {{$mik->nombre}} </option>
+					<option value="{{$mik->id}}" {{$mik->id == $request->servidor ? 'selected' : ''}}> {{$mik->nombre}} </option>
 				@endforeach
 				<option {{ !$request->servidor ? 'selected' : ''}} value="">TODOS</option>
 		    </select>
@@ -91,7 +91,7 @@
 					<tr>
                         <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a> </td>
                         <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}}  {{$factura->cliente()->apellidos()}} @if($factura->cliente()->celular) | {{$factura->cliente()->celular}}@endif</a></td>
-						<td>{{$factura->nombreservidor}}</td>
+						<td>{{$factura->servidor()->nombre ?? ''}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
                         <td>{{date('d-m-Y', strtotime($factura->vencimiento))}}</td>
                         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->devoluciones())}}</td>

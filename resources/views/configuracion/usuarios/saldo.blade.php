@@ -4,11 +4,12 @@
     <div class="row">
         <div class="col-md-6 form-group">
             <label class="control-label">Saldo Disponible</label>
-            <input type="text" class="form-control" id="saldo" name="saldo" readonly disabled value="{{$usuario->saldo}}">
+            <input type="text" class="form-control mb-1" id="saldo" name="saldo" readonly disabled value="{{$usuario->saldo}}">
+            <a href="javascript:vaciarRecargo({{$usuario->saldo}});"><i class="fas fa-money-check"></i> Vaciar recargo </a>
         </div>
         
         <div class="col-md-6 form-group">
-            <label class="control-label">Saldo a Recargar</label>
+            <label class="control-label" id="titulo-saldo">Saldo a Recargar</label>
             <input type="number" class="form-control" id="recarga" name="recarga" required="" min="1" value="1">
         </div>
     </div>
@@ -48,4 +49,10 @@
             $('#form-recarga').trigger("reset");
         });
     });
+
+    function vaciarRecargo(saldo){
+        $('#titulo-saldo').html('Saldo');
+        $('#recarga').val('-'+saldo);
+    }
+
 </script>

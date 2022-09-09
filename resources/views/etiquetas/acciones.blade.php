@@ -1,0 +1,1 @@
+<a href="javascript:editEtiqueta({{ $etiqueta->id}}, '{{ $etiqueta->nombre }}', '{{ $etiqueta->color}}')">editar</a>

@@ -33,7 +33,7 @@ use DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
-
+use App\Mikrotik;
 class ReportesController extends Controller
 {
     /**
@@ -2043,6 +2043,8 @@ class ReportesController extends Controller
             $order=$request->order==1?'DESC':'ASC';
 
             $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+                ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
+                ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
                 ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa')
                 ->where('factura.tipo','<>',2)
@@ -2055,6 +2057,9 @@ class ReportesController extends Controller
 
             if($request->input('fechas') != 8 || (!$request->has('fechas'))){
                 $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
+            }
+            if($request->servidor){
+                $facturas=$facturas->where('mikrotik.id', $request->servidor);
             }
             $ides=array();
             $facturas=$facturas->OrderBy($orderby, $order)->get();
@@ -2094,7 +2099,10 @@ class ReportesController extends Controller
                 $subtotal=$this->precision($result->total-$result->descuento);
                 $total=$this->precision((float)$subtotal+$result->impuesto);
             }
-            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example'));
+
+            $mikrotiks = Mikrotik::all();
+
+            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks'));
 
         }
 

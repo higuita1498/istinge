@@ -13,6 +13,7 @@ use Auth;
 use DB;
 use App\GrupoCorte;
 use App\Model\Ingresos\Factura;
+use App\Etiqueta;
 
 class CRM extends Model
 {
@@ -78,6 +79,10 @@ class CRM extends Model
         }else if($this->estado == 6){
             return 'GESTIONADO/NRO EQUIVOCADO';
         }
+    }
+
+    public function etiqueta(){
+        return $this->belongsTo(Etiqueta::class);
     }
     
     public function created_by(){

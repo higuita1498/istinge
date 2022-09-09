@@ -282,6 +282,11 @@
                             <a class="nav-link" href="{{route('crm.informe')}}">Informe</a>
                         </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['744']))
+                        <li class="nav-item" id="crm_cartera">
+                            <a class="nav-link" href="{{route('crm.etiquetas')}}">Etiquetas</a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </li>

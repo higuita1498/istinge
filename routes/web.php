@@ -1381,8 +1381,11 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/notificacion','CRMController@notificacion')->name('crm.notificacion');
 	        Route::get('/status/{id}', 'CRMController@status')->name('crm.status');
             Route::get('{id}/log', 'CRMController@log')->name('crm.log');
+			Route::get('/etiquetas', 'EtiquetaController@index')->name('crm.etiquetas');
+			Route::get('/cambiar-etiqueta/{etiqueta}/{crm}', 'CRMController@cambiarEtiqueta')->name('crm.cambiar.etiqueta');
 	    });
 		Route::resource('crm', 'CRMController');
+		Route::resource('etiqueta', 'EtiquetaController');
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');
