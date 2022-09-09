@@ -771,4 +771,15 @@ class CRMController extends Controller
         ->rawColumns(['created_at', 'created_by', 'accion', 'informacion'])
         ->toJson();
     }
+
+    public function cambiarEtiqueta($etiqueta, $crm){
+
+        $crm =  CRM::where('id', $crm)->where('empresa', Auth::user()->empresa)->first();
+
+        $crm->etiqueta_id = $etiqueta;
+
+        $crm->update();
+
+        return $crm->etiqueta;
+    }
 }

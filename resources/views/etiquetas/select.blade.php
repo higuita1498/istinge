@@ -1,5 +1,5 @@
 <div class="dropdown w-100">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="etiqueta-drop-{{$crm->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button style="background-color: {{ $crm->etiqueta ? $crm->etiqueta->color : '' }}" class="btn btn-secondary dropdown-toggle" type="button" id="etiqueta-drop-{{$crm->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     {{ $crm->etiqueta ? $crm->etiqueta->nombre : 'etiquetar' }}
   </button>
   <div class="dropdown-menu" aria-labelledby="etiqueta-drop-{{$crm->id}}">
@@ -11,7 +11,10 @@
 
 <script>
     function cambiarEtiqueta(etiqueta, crm){
-        alert(etiqueta, crm);
+       $.get('/empresa/crm/cambiar-etiqueta/'+etiqueta+'/'+crm, function(response){
+            $('#etiqueta-drop-'+crm).html(response.nombre);
+            $('#etiqueta-drop-'+crm).css('background-color', response.color);
+       });
     }
 </script>
 
