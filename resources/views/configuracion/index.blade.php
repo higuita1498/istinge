@@ -61,6 +61,7 @@
 			<a href="{{route('canales.index')}}">Canales de Venta</a><br>
 			@endif
 			<a href="#" data-toggle="modal" data-target="#periodo_factura">Periodo de Facturación</a><br>
+			<a href="#" data-toggle="modal" data-target="#formato_impresion">Formato de Impresión</a><br>
 			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
 			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
@@ -400,6 +401,31 @@
 	</div>
 	{{-- /PERIODO FACTURACIÓN --}}
 
+	{{-- FORMATO IMPRESION --}}
+	<div class="modal fade show" id="formato_impresion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Configurar formato de impresión</h4>
+				</div>
+				<div class="modal-body">
+					<p>Indique el formato de impresión</p>
+					<div class="col-sm-6 offset-sm-3">
+						<select class="form-control selectpicker" name="formato_impresion" id="val_formato_impresion" required="" title="Seleccione" data-live-search="true" data-size="5">
+							<option value="1" {{ Auth::user()->empresa()->formato_impresion == 1 ? 'selected' : '' }}>Formato CRC</option>
+							<option value="2" {{ Auth::user()->empresa()->formato_impresion == 2 ? 'selected' : '' }}>Formato Estándar</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-success" onclick="storeFormatoImpresion()">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /FORMATO IMPRESION --}}
+
 	{{-- CONFIGURACION CLAUSULAS --}}
 	<div class="modal fade" id="config_clausula" role="dialog">
 		<div class="modal-dialog">
@@ -593,6 +619,39 @@
     			}
     		});
     	}
+
+		function storeFormatoImpresion(){
+			cargando(true);
+    		if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/empresa/configuracion/storeFormatoImpresion`;
+    		}else{
+    			var url = `/empresa/configuracion/storeFormatoImpresion`;
+    		}
+    		$.ajax({
+    			url: url,
+    			method: 'POST',
+    			headers: {
+    				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			},
+    			data: {
+    				formato_impresion: $('#val_formato_impresion').val()
+    			},
+    			success: function(response) {
+    				cargando(false);
+    				swal({
+    					title: response.title,
+    					text: response.message,
+    					type: response.type,
+    					showConfirmButton: true,
+    					confirmButtonColor: '#1A59A1',
+    					confirmButtonText: 'ACEPTAR',
+    				});
+    				if (response.success == true) {
+    					$("#formato_impresion").modal('hide');
+    				}
+    			}
+    		});
+		}
 
     	function storePageLength() {
     		cargando(true);
