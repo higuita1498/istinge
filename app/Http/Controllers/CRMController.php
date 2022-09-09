@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use Auth; 
 use DB;
 use Session;
+use App\Etiqueta;
 
 use Barryvdh\DomPDF\Facade as PDF;
 
@@ -36,6 +37,7 @@ use App\CRMLOG;
 use App\PromesaPago;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
+
 
 class CRMController extends Controller
 {
@@ -73,6 +75,7 @@ class CRMController extends Controller
     
     public function cartera(Request $request, $tipo){
         $modoLectura = auth()->user()->modo_lectura();
+        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratos = CRM::query()
 			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
@@ -160,6 +163,9 @@ class CRMController extends Controller
             })
             ->editColumn('celular', function (CRM $crm) {
                 return "<center>".$crm->c_celular."</center>";
+            })
+            ->addColumn('etiqueta', function(CRM $crm) use($etiquetas){
+                return view('etiquetas.select', compact('etiquetas','crm'));
             })
             ->editColumn('estado', function (CRM $crm) {
                 return "<center><span class='text-{$crm->estado('true')}'><strong>{$crm->estado()}</strong></span></center>";

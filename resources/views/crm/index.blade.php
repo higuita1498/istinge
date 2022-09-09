@@ -187,6 +187,7 @@
     				                <th>Nombre</th>
     				                <th class="text-center">Identificación</th>
     				                <th class="text-center">Teléfono</th>
+									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
     				                {{--<th>Gestionado por</th>--}}
     				                <th class="text-center">Acciones</th>
@@ -255,6 +256,7 @@
     				                <th>Nombre</th>
     				                <th class="text-center">Identificación</th>
     				                <th class="text-center">Teléfono</th>
+									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
@@ -316,6 +318,7 @@
     				                <th>Nombre</th>
     				                <th class="text-center">Identificación</th>
     				                <th class="text-center">Teléfono</th>
+									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
@@ -377,6 +380,7 @@
     				                <th>Nombre</th>
     				                <th class="text-center">Identificación</th>
     				                <th class="text-center">Teléfono</th>
+									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
@@ -523,6 +527,7 @@
 			    {data: 'nombre'},
 			    {data: 'nit'},
 			    {data: 'celular'},
+				{data: 'etiqueta'},
 				{data: 'estado'},
 				//{data: 'created_by'},
 				{data: 'acciones'},
@@ -533,6 +538,7 @@
         
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#cliente').val();
+			data.etiqueta_id = $('#etiqueta').val();
             data.estado = $('#estado').val();
             data.created_by = $('#created_by').val();
             data.grupo_corte = $('#grupo_corteA').val();
@@ -572,6 +578,7 @@
 			    {data: 'nombre'},
 			    {data: 'nit'},
 			    {data: 'celular'},
+				{data: 'etiqueta'},
 				{data: 'estado'},
 				{data: 'created_by'},
 				{data: 'acciones'},
@@ -582,6 +589,7 @@
         
         table.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteG').val();
+			data.etiqueta_id = $('#etiquetaG').val();
             data.estado = $('#estadoG').val();
             data.created_by = $('#created_byG').val();
             data.grupo_corte = $('#grupo_corteG').val();
@@ -621,6 +629,7 @@
 			    {data: 'nombre'},
 			    {data: 'nit'},
 			    {data: 'celular'},
+				{data: 'etiqueta'},
 				{data: 'estado'},
 				{data: 'created_by'},
 				{data: 'acciones'},
@@ -631,6 +640,7 @@
         
         tableR.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteR').val();
+			data.etiqueta_id = $('#estado').val();
             data.estado = $('#estadoR').val();
             data.created_by = $('#created_byR').val();
             data.grupo_corte = $('#grupo_corteR').val();
@@ -670,6 +680,7 @@
 			    {data: 'nombre'},
 			    {data: 'nit'},
 			    {data: 'celular'},
+				{data: 'etiqueta'},
 				{data: 'estado'},
 				{data: 'created_by'},
 				{data: 'acciones'},
@@ -680,6 +691,7 @@
         
         tableT.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteT').val();
+			data.etiqueta_id = $('#etiquetaT').val();
             data.estado = $('#estadoT').val();
             data.created_by = $('#created_byT').val();
             data.grupo_corte = $('#grupo_corteT').val();
@@ -728,6 +740,7 @@
 
 	function cerrarFiltrador() {
 		$('#cliente').val('');
+		$('#etiqueta').val('').selectpicker('refresh');
 		$('#estado').val('').selectpicker('refresh');
 		$('#created_by').val('').selectpicker('refresh');
 		$('#grupo_corte').val('').selectpicker('refresh');
@@ -749,6 +762,7 @@
 
 	function cerrarFiltradorG() {
 		$('#clienteG').val('');
+		$('#etiquetaG').val('').selectpicker('refresh');
 		$('#estadoG').val('').selectpicker('refresh');
 		$('#created_byG').val('').selectpicker('refresh');
 		$('#grupo_corteG').val('').selectpicker('refresh');
@@ -770,6 +784,7 @@
 
 	function cerrarFiltradorR() {
 		$('#clienteR').val('');
+		$('#etiquetaG').val('').selectpicker('refresh');
 		$('#estadoR').val('').selectpicker('refresh');
 		$('#created_byR').val('').selectpicker('refresh');
 		$('#grupo_corteR').val('').selectpicker('refresh');
@@ -791,6 +806,7 @@
 
 	function cerrarFiltradorT() {
 		$('#clienteT').val('');
+		$('#etiquetaG').val('').selectpicker('refresh');
 		$('#estadoT').val('').selectpicker('refresh');
 		$('#created_byT').val('').selectpicker('refresh');
 		$('#grupo_corteT').val('').selectpicker('refresh');
