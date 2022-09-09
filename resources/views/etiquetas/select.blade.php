@@ -11,7 +11,7 @@
 
 <script>
     function cambiarEtiqueta(etiqueta, crm){
-       $.get('/empresa/crm/cambiar-etiqueta/'+etiqueta+'/'+crm, function(response){
+       $.get('{{URL::to('/')}}/empresa/crm/cambiar-etiqueta/'+etiqueta+'/'+crm, function(response){
             $('#etiqueta-drop-'+crm).html(response.nombre);
             $('#etiqueta-drop-'+crm).css('background-color', response.color);
        });

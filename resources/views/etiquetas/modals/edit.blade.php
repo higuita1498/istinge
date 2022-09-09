@@ -56,7 +56,7 @@
             color: color, 
         }
     
-        $.post('/empresa/etiqueta'+'/'+($('#id-etiqueta').val()), data, function(response){
+        $.post('{{URL::to('/')}}/empresa/etiqueta'+'/'+($('#id-etiqueta').val()), data, function(response){
            let etiqueta = response;
           $('#modal-edit-etiqueta').modal('hide');
           $('#rw-'+etiqueta.id).remove();
