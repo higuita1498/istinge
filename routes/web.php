@@ -1059,6 +1059,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
         Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
         Route::post('/storePeriodoFacturacion', 'EmpresasController@storePeriodoFacturacion')->name('empresas.storePeriodoFacturacion');
+        Route::post('/storeFormatoImpresion', 'EmpresasController@storeFormatoImpresion')->name('empresas.storeFormatoImpresion');
 
 	});
 

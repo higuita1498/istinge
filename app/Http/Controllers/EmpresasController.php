@@ -485,7 +485,30 @@ class EmpresasController extends Controller
             return response()->json([
                 'success' => false,
                 'type'    => 'error',
-                'title'   => 'CONFIGURACIÓN NO REALIZADA REALIZADA',
+                'title'   => 'CONFIGURACIÓN NO REALIZADA',
+                'message' => 'Ha ocurrido un error, intente de nuevo',
+            ]);
+        }
+    }
+
+    public function storeFormatoImpresion(Request $request) {
+        $empresa = Empresa::find(Auth::user()->empresa);
+        if ($empresa) {
+            $empresa->formato_impresion = $request->formato_impresion;
+            $empresa->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'CONFIGURACIÓN REALIZADA CON ÉXITO',
+                'message' => ($empresa->formato_impresion==1)?'FORMATO IMPRESIÓN - CRC':'FORMATO DE IMPRESIÓN - ESTÁNDAR',
+
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'type'    => 'error',
+                'title'   => 'CONFIGURACIÓN NO REALIZADA',
                 'message' => 'Ha ocurrido un error, intente de nuevo',
             ]);
         }

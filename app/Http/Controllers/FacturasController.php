@@ -1267,9 +1267,9 @@ class FacturasController extends Controller{
          * * toma en cuenta que para ver los mismos
          * * datos debemos hacer la misma consulta
          * **/
-
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-        $resolucion = NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
+        $empresa = Auth::user()->empresaObj;
+        $factura = Factura::where('empresa',$empresa->id)->where('id', $id)->first();
+        $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
 
         if($factura->tipo == 1){
             view()->share(['title' => 'Descargar Factura']);
@@ -1292,7 +1292,12 @@ class FacturasController extends Controller{
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount', 'tipo'));
-            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+            if($empresa->formato_impresion == 1){
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+            }else
+            {
+                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+            }
             return $pdf->download('factura-'.$factura->codigo.($tipo<>'original'?'-copia':'').'.pdf');
         }
     }
@@ -1309,8 +1314,10 @@ class FacturasController extends Controller{
          * * datos debemos hacer la misma consulta
          * **/
 
+        $empresa = Auth::user()->empresaObj;
+
         $factura = ($especialFe) ? Factura::where('nonkey', $id)->first()
-        : Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        : Factura::where('empresa',$empresa->id)->where('id', $id)->first();
 
         if($factura->tipo == 1){
             view()->share(['title' => 'Imprimir Factura']);
@@ -1329,7 +1336,7 @@ class FacturasController extends Controller{
         }
 
         $resolucion = ($especialFe) ? NumeracionFactura::where('empresa', $factura->empresa)->latest()->first()
-        : NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
+        : NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
 
         if ($factura) {
             $items = ItemsFactura::where('factura',$factura->id)->get();
@@ -1345,7 +1352,7 @@ class FacturasController extends Controller{
                 }
 
                 $CUFEvr = $factura->info_cufe($factura->id, $impTotal);
-                $infoEmpresa = Empresa::find(Auth::user()->empresa);
+                $infoEmpresa = $empresa;
                 $data['Empresa'] = $infoEmpresa->toArray();
                 $infoCliente = Contacto::find($factura->cliente);
                 $data['Cliente'] = $infoCliente->toArray();
@@ -1372,10 +1379,17 @@ class FacturasController extends Controller{
                 /*..............................
                 Construcción del código qr a la factura
                 ................................*/
-
-                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'));
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'));
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr'));
+                }
             }else{
-                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+                }
             }
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
         }
@@ -1434,9 +1448,11 @@ class FacturasController extends Controller{
         }else{
             $tipo='Factura de venta original';
         }
+
+        $empresa = Auth::user()->empresaObj;
         
         view()->share(['title' => 'Imprimir Factura']);
-        $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        $factura = Factura::where('empresa',$empresa->id)->where('id', $id)->first();
         if ($factura) {
             if (!$emails) {
                 $emails=$factura->cliente()->email;
@@ -1460,7 +1476,7 @@ class FacturasController extends Controller{
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount'));
-            $resolucion = NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
+            $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
             $ingreso = IngresosFactura::where('factura',$factura->id)->first();
             //---------------------------------------------//
             if($factura->emitida == 1){
@@ -1472,7 +1488,7 @@ class FacturasController extends Controller{
                 }
 
                 $CUFEvr = $factura->info_cufe($factura->id, $impTotal);
-                $infoEmpresa = Empresa::find(Auth::user()->empresa);
+                $infoEmpresa = $empresa;
                 $data['Empresa'] = $infoEmpresa->toArray();
                 $infoCliente = Contacto::find($factura->cliente);
                 $data['Cliente'] = $infoCliente->toArray();
@@ -1499,9 +1515,17 @@ class FacturasController extends Controller{
                 /*..............................
                 Construcción del código qr a la factura
                 ................................*/
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
+                }
             }else{
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
+                }
             }
             //-----------------------------------------------//
 
@@ -1516,11 +1540,11 @@ class FacturasController extends Controller{
             $factura->nonkey = $key;
             $factura->save();
             $cliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
-            $tituloCorreo = Auth::user()->empresa()->nombre.": Factura N° $factura->codigo";
+            $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
             $xmlPath = 'xml/empresa'.auth()->user()->empresa.'/FV/FV-'.$factura->codigo.'.xml';
             //return $xmlPath;
 
-            $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
+            $host = ServidorCorreo::where('estado', 1)->where('empresa', $empresa->id)->first();
             if($host){
                 $existing = config('mail');
                 $new =array_merge(
@@ -2102,7 +2126,6 @@ class FacturasController extends Controller{
             return redirect('empresa/facturas/facturas_electronica' . $FacturaVenta->nro)->with('error', 'El Cliente ni sus contactos asociados tienen correo registrado');
         }
 
-
         /*..............................
         Construcción del código qr a la factura
         ................................*/
@@ -2143,9 +2166,15 @@ class FacturasController extends Controller{
         if ($factura->tipo_operacion == 3) {
             $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
                 ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
-        } else {                                           
-            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
+        } else {        
+            
+            if($empresa->formato_impresion == 1){
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
                 ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
+            }else{
+                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))
+                ->save(public_path() . "/convertidor" . "/FV-" . $factura->codigo . ".pdf")->stream();
+            }
         }
 
         //Construccion del archivo zip.
@@ -2211,7 +2240,7 @@ class FacturasController extends Controller{
 
         $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('tipo',2)->where('preferida', 1)->first();
 
-        $infoEmpresa = Empresa::find(Auth::user()->empresa);
+        $infoEmpresa = $empresa;
         $data['Empresa'] = $infoEmpresa->toArray();
 
         $FacturaVenta = Factura::find($id);
@@ -2332,7 +2361,11 @@ class FacturasController extends Controller{
                 $detalle_recaudo = $factura->detalleRecaudo();
                 $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'detalle_recaudo', 'vendedor', 'empresa'))->stream();
             } else {
-                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                }
             }
             /*..............................
         Construcción del envío de correo electrónico
@@ -2511,7 +2544,11 @@ class FacturasController extends Controller{
                 $detalle_recaudo = $factura->detalleRecaudo();
                 $pdf = PDF::loadView('pdf.facturatercero', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'detalle_recaudo', 'vendedor', 'empresa'))->stream();
             } else {
-                $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones', 'resolucion', 'codqr', 'CUFEvr', 'vendedor', 'empresa'))->stream();
+                }
             }
 
             return response($pdf->withHeaders(['Content-Type' => 'application/pdf',]));
@@ -2871,8 +2908,10 @@ class FacturasController extends Controller{
          * * toma en cuenta que para ver los mismos
          * * datos debemos hacer la misma consulta
          **/
+
+         $empresa = Auth::user()->empresaObj; 
          
-        $factura = ($especialFe) ? Factura::where('nonkey', $id)->first() : Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        $factura = ($especialFe) ? Factura::where('nonkey', $id)->first() : Factura::where('empresa',$empresa->id)->where('id', $id)->first();
         
         if($factura->tipo == 1){
             view()->share(['title' => 'Imprimir Factura']);
@@ -2891,7 +2930,7 @@ class FacturasController extends Controller{
         }
         
         
-        $resolucion = ($especialFe) ? NumeracionFactura::where('empresa', $factura->empresa)->latest()->first() : NumeracionFactura::where('empresa',Auth::user()->empresa)->latest()->first();
+        $resolucion = ($especialFe) ? NumeracionFactura::where('empresa', $factura->empresa)->latest()->first() : NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
         
         if ($factura) {
             $items = ItemsFactura::where('factura',$factura->id)->get();
@@ -2937,8 +2976,12 @@ class FacturasController extends Controller{
                 /*..............................
                 Construcción del código qr a la factura
                 ................................*/
-                
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'));
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'));
+                }
+                else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'));
+                }
             }else{
                 $fechaActual = date("Y-m-d", strtotime(Carbon::now()));
                 //traemos todas las facturas que el vencimiento haya pasado la fecha actual.
@@ -2962,7 +3005,12 @@ class FacturasController extends Controller{
                 "ValorOtrosImpuestos:" .  0.00 . "\n" .
                 "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n";
                 //   return view('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
+
+                if($empresa->formato_impresion == 1){
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
+                }else{
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
+                }
             }
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
         }
