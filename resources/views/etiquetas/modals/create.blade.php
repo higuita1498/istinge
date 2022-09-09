@@ -12,8 +12,8 @@
         </div>
         <div class="modal-body">
             <form action="{{ route('etiqueta.store') }}" id="store-etiqueta">
-            <input type="text" name="nombre" id="nombre">
-            <input type="text" name="color" id="color">
+            <input type="text" name="nombre" id="nombre" placeholder="Nombre">
+            <input type="text" name="color" id="color" placeholder="Color">
           ...
         </div>
         <div class="modal-footer">
