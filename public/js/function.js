@@ -1964,7 +1964,7 @@ function totales_ingreso(input=true){
     var total=0; var reten_may=0; 
     let saldoFavor = 0; //este es el saldo sobrante cuando el cliente paga una factura y paga de mas.
 
-    $('#s  tbody tr').each(function() {
+    $('#table-facturas  tbody tr').each(function() {
         id=$(this).attr('id');
         var precio=$('#precio'+id).val();
         if (precio) {
