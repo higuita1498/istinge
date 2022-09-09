@@ -52,7 +52,7 @@
 								@foreach($etiquetas as $etiqueta)
 										<tr id="rw-{{ $etiqueta->id }}">
 											<td>{{$etiqueta->nombre}}</a></td>
-											<td>{{$etiqueta->color}}</td>
+											<td style="background-color:{{$etiqueta->color}}">{{$etiqueta->color}}</td>
 											<td>{{$etiqueta->created_at->format('d-m-Y')}}</td>
 											<td>@include('etiquetas.acciones', $etiqueta)</td>
                                         </tr>
