@@ -65,7 +65,7 @@
           $('#data-etiquetas').prepend(`
           <tr>
             <td>${etiqueta.nombre}</td>
-            <td>${etiqueta.color}</td>
+            <td style="background-color:${etiqueta.color}">${etiqueta.color}</td>
             <td>${etiqueta.fecha}</td>
             <td>${etiqueta.acciones}</td>
           </tr>
