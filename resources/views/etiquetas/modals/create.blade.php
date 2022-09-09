@@ -12,8 +12,11 @@
         </div>
         <div class="modal-body">
             <form action="{{ route('etiqueta.store') }}" id="store-etiqueta">
-            <input type="text" name="nombre" id="nombre" placeholder="Nombre">
-            <input type="text" name="color" id="color" placeholder="Color">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" name="nombre" id="nombre" placeholder="Nombre" class="form-control">
+            <br>
+            <label for="color" class="form-label">Seleccione un color</label>
+            <input type="text" name="color" id="color" placeholder="Color" class="" autocomplete="off">
           ...
         </div>
         <div class="modal-footer">

@@ -11,8 +11,11 @@
           </button>
         </div>
         <div class="modal-body">
-            <input type="text" name="nombre" id="edit-nombre">
-            <input type="text" name="color" id="edit-color">
+            <label for="edit-nombre" class="form-label">Nombre</label>
+            <input type="text" name="nombre" id="edit-nombre" class="form-control">
+            <br>
+            <label for="edit-color" class="form-label">Seleccione un color</label>
+            <input type="text" name="color" id="edit-color" class="" autocomplete="off">
             <input type="hidden" id="id-etiqueta">
           ...
         </div>

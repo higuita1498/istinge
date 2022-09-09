@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('style')
+<link rel="stylesheet" href="{{asset('css/jquery.minicolors.css')}}">
 <style>
 
 </style>
@@ -63,3 +64,16 @@
 		</div>
 	</div>
 @endsection
+
+ @section('scripts')
+<script src="{{ asset('js/jquery.minicolors.js') }}"></script>
+
+<script>
+$(function(){
+		$('#color').minicolors();
+		$('#edit-color').minicolors();
+});
+</script>
+
+@endsection
+
