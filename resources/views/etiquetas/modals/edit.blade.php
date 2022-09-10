@@ -56,7 +56,7 @@
             color: color, 
         }
     
-        $.post('/empresa/etiqueta'+'/'+($('#id-etiqueta').val()), data, function(response){
+        $.post('{{URL::to('/')}}/empresa/etiqueta'+'/'+($('#id-etiqueta').val()), data, function(response){
            let etiqueta = response;
           $('#modal-edit-etiqueta').modal('hide');
           $('#rw-'+etiqueta.id).remove();
@@ -65,7 +65,7 @@
           $('#data-etiquetas').prepend(`
           <tr>
             <td>${etiqueta.nombre}</td>
-            <td>${etiqueta.color}</td>
+            <td style="background-color:${etiqueta.color}">${etiqueta.color}</td>
             <td>${etiqueta.fecha}</td>
             <td>${etiqueta.acciones}</td>
           </tr>
