@@ -498,7 +498,7 @@ class CronController extends Controller
                 take(25)->
                 get();
 
-            //dd($contactos);
+            //dd($contactos); 
 
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
