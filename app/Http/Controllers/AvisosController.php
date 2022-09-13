@@ -174,7 +174,7 @@ class AvisosController extends Controller
                     if($servicio->api_key && $servicio->user && $servicio->pass){
                         $curl = curl_init();
 
-                        if(count($request->contrato)>1)
+                        if(count($request->contrato)>1){
                             curl_setopt_array($curl, [
                                 CURLOPT_URL => "https://api103.hablame.co/api/sms/v3/send/marketing/bulk",
                                 CURLOPT_RETURNTRANSFER => true,
@@ -315,9 +315,10 @@ class AvisosController extends Controller
                     }
                 }
                 return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado. SMS Enviados: '.$fail.' - SMS Fallidos: '.$succ);
-            }else{
-                return redirect('empresa/avisos')->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
             }
+        }else{
+                return redirect('empresa/avisos')->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
+        }
         
         if($request->type == 'EMAIL'){
             return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
