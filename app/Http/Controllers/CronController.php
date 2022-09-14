@@ -496,7 +496,7 @@ class CronController extends Controller
                 where('contactos.status',1)->
                 where('cs.state','enabled')->
                 take(25)->
-                get();
+                get(); 
 
             //dd($contactos); 
 
