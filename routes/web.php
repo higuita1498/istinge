@@ -45,7 +45,7 @@ Route::get('/generarfactura','CronController@CrearFactura')->name('CrearFactura'
 Route::get('/deleteAll','CronController@deleteFactura');
 Route::get('/aplicateProrrateo','CronController@aplicateProrrateo');
 Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFacturas');
-Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
+Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS'); 
 Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
 Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');

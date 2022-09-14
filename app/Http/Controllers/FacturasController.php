@@ -1828,7 +1828,7 @@ class FacturasController extends Controller{
         $data = array();
         foreach ($facturas as $factura) {
 
-            if($factura->pagado() >= $factura->total()->total){
+            if($factura->pagado() >= $factura->total()->total && $factura->estatus == 1){
                 $factura->estatus = 0;
                 $factura->save();
             }
