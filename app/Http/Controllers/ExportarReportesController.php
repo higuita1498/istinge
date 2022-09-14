@@ -131,6 +131,11 @@ class ExportarReportesController extends Controller
             // Aquí se escribe en el archivo
             $i=4;
             foreach ($facturas as $factura) {
+
+                if($factura->porpagar() == 0 && $factura->estatus == 1){
+                    $factura->estatus = 0;
+                    $factura->save();
+                }
                 
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue($letras[0].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
@@ -274,6 +279,10 @@ class ExportarReportesController extends Controller
         $i=4;
         $moneda = Auth::user()->empresa()->moneda;
         foreach ($facturas as $factura) {
+            if($factura->porpagar() == 0 && $factura->estatus == 1){
+                $factura->estatus = 0;
+                $factura->save();
+            }
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $factura->codigo)
                 ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
@@ -3492,6 +3501,10 @@ class ExportarReportesController extends Controller
             $i=4;
             
             foreach ($facturas as $factura) {
+                if($factura->porpagar() == 0 && $factura->estatus == 1){
+                    $factura->estatus = 0;
+                    $factura->save();
+                }
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue($letras[0].$i, $factura->codigo)
                     ->setCellValue($letras[1].$i, date('d-m-Y', strtotime($factura->fecha)))

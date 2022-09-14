@@ -389,6 +389,10 @@ class FacturasController extends Controller{
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
+            if($factura->porpagar() == 0 && $factura->estatus == 1){
+                $factura->estatus = 0;
+                $factura->save();
+            }
             return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
         })
         ->editColumn('cliente', function (Factura $factura) {
@@ -506,6 +510,10 @@ class FacturasController extends Controller{
 
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
+            if($factura->porpagar() == 0 && $factura->estatus == 1){
+                $factura->estatus = 0;
+                $factura->save();
+            }
             return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
         })
         ->editColumn('cliente', function (Factura $factura) {
