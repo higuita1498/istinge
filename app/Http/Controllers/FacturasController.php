@@ -1827,6 +1827,12 @@ class FacturasController extends Controller{
 
         $data = array();
         foreach ($facturas as $factura) {
+
+            if($factura->pagado() >= $factura->total()->total){
+                $factura->estatus = 0;
+                $factura->save();
+            }
+
             $nestedData = array();
             $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
             $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
