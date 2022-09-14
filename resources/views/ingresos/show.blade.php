@@ -160,7 +160,7 @@
 						</thead>
 						<tbody>
 							@foreach($items as $item)
-							 @if(count($item->factura()) > 0)
+							@if($item->factura())
 								<tr>
 									<td><a href="{{route('facturas.show', $item->factura()->id)}}" target="_blank">{{$item->factura()->codigo}}</a></td>
 									<td>{{date('d-m-Y', strtotime($item->factura()->fecha))}}</td>
