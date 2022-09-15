@@ -1978,9 +1978,9 @@ class CronController extends Controller
                     /*..............................
                     Construcción del código qr a la factura
                     ................................*/
-                    $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+                    //$pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                 }else{
-                    $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+                    //$pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                 }
                 //-----------------------------------------------//
 
@@ -2015,12 +2015,7 @@ class CronController extends Controller
                 ],
                 'subject' => $tituloCorreo,
                 'htmlContent' => '<html>'.$html.'</html>',
-                'attachment' => [
-                    [
-                        'url'  => config('app.url') . "/convertidor/" . $factura->codigo . ".pdf",
-                        'name' => $factura->codigo . ".pdf"
-                    ]
-                ],
+                
             ];
 
             $fields = json_encode($fields);
@@ -2029,7 +2024,7 @@ class CronController extends Controller
             curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'accept: application/json',
-                'api-key: '.env("SENDINBLUEAPIKEY").'', 'content-type: application/json'
+                'api-key: '.'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'.'', 'content-type: application/json'
             ]);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
@@ -2044,10 +2039,12 @@ class CronController extends Controller
             if(isset($response['messageId'])){
                 $factura->correo_sendinblue = 1;
             }
-
+            
             $factura->response_sendinblue = $response;
             $factura->save();
-            unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
+            //unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
         }
+
+        return 'ok';
     }
 }
