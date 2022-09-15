@@ -2024,7 +2024,7 @@ class CronController extends Controller
             curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'accept: application/json',
-                'api-key: '.'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'.'', 'content-type: application/json'
+                'api-key: '.'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'.'', 'content-type: application/json'
             ]);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
