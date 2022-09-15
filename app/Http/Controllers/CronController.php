@@ -2045,6 +2045,6 @@ class CronController extends Controller
             //unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
         }
 
-        return 'ok';
+        return $facturas;
     }
 }
