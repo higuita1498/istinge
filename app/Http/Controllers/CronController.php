@@ -478,6 +478,12 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }
+
+            /* Enviar correo funcional */
+            foreach($grupos_corte as $grupo_corte){
+                $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                selft::sendInvoices($fechaInvoice);
+            }
         }
     }
 
@@ -1928,7 +1934,7 @@ class CronController extends Controller
         return 'Anuladas: '.$anuladas.' - Ingresados a CRM: '.$ingreso;
     }
 
-    public function sendInvoices($date){
+    public static function sendInvoices($date){
         $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', $date)->where('correo_sendinblue', 0)->get();
         //dd($facturas);
         foreach ($facturas as $factura) {
