@@ -1386,6 +1386,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 		Route::resource('crm', 'CRMController');
 		Route::resource('etiqueta', 'EtiquetaController');
+		Route::get('/etiqueta/eliminar/{id}', 'EtiquetaController@eliminar');
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');
