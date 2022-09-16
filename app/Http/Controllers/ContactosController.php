@@ -1297,4 +1297,21 @@ class ContactosController extends Controller
                 'text'    => 'Inténtelo Nuevamente'
             ]);
     }
+
+    public function updateFechaIsp($id, Request $request){
+
+        if(!$request->fecha_isp){
+            return false;
+        }
+
+       $contacto = Contacto::where('id', $id)->where('empresa', auth()->user()->empresa)->first();
+       $contacto->fecha_isp = Carbon::parse($request->fecha_isp)->format('Y-m-d');
+       $contacto->update();
+
+        return response()->json([
+            'succes' => true,
+            'fecha_isp' => date('d-m-Y', strtotime($contacto->fecha_isp))
+        ]);
+    }
+
 }
