@@ -365,9 +365,13 @@
                         DATOS FACTURA
                     </div>
                 </td>
-                <td style="width:25%;border:none;padding-left:30%;">
+                <td style="width:27%;border:none;padding-left:30%;">
                     <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                        @if($factura->emitida == 1)
+                        FACTURA ELECTRONICA DE VENTA
+                        @else
                         FACTURA DE VENTA
+                        @endif
                     </div>
                 </td>
                 <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
