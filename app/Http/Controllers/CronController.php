@@ -478,6 +478,12 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }
+
+            /* Enviar correo funcional */
+            foreach($grupos_corte as $grupo_corte){
+                $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                selft::sendInvoices($fechaInvoice);
+            }
         }
     }
 
@@ -1928,7 +1934,7 @@ class CronController extends Controller
         return 'Anuladas: '.$anuladas.' - Ingresados a CRM: '.$ingreso;
     }
 
-    public function sendInvoices($date){
+    public static function sendInvoices($date){
         $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', $date)->where('correo_sendinblue', 0)->get();
         //dd($facturas);
         foreach ($facturas as $factura) {
@@ -1978,9 +1984,9 @@ class CronController extends Controller
                     /*..............................
                     Construcción del código qr a la factura
                     ................................*/
-                    $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+                    //$pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                 }else{
-                    $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+                    //$pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                 }
                 //-----------------------------------------------//
 
@@ -2015,12 +2021,7 @@ class CronController extends Controller
                 ],
                 'subject' => $tituloCorreo,
                 'htmlContent' => '<html>'.$html.'</html>',
-                'attachment' => [
-                    [
-                        'url'  => config('app.url') . "/convertidor/" . $factura->codigo . ".pdf",
-                        'name' => $factura->codigo . ".pdf"
-                    ]
-                ],
+                
             ];
 
             $fields = json_encode($fields);
@@ -2044,10 +2045,12 @@ class CronController extends Controller
             if(isset($response['messageId'])){
                 $factura->correo_sendinblue = 1;
             }
-
+            
             $factura->response_sendinblue = $response;
             $factura->save();
-            unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
+            //unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
         }
+
+        return $facturas;
     }
 }
