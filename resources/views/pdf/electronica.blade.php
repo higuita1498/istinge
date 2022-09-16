@@ -910,4 +910,11 @@
         </table>
     </div>
     @endif
+    <div style="width: 100%;height:auto;">
+        <div style="width: 60%; display: inline-block; text-align:left;">
+            @if(isset($codqr))
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="https://gestoru.com/images/cadena_oficial.png">
+            @endif
+        </div>
+    </div>
 @endsection
