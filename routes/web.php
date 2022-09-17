@@ -91,6 +91,7 @@ Route::get('radicados/{tipo}', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
+Route::get('/cartera/contacto/{contacto}', 'CRMController@carteraContacto')->name('cartera.crm.contacto');
 Route::get('reporte', 'CRMController@reporte');
 Route::get('logsCRM/{crm}', 'CRMController@logsCRM');
 Route::get('puertos', 'PuertosController@puertos');

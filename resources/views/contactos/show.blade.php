@@ -390,6 +390,9 @@
 				<li class="nav-item">
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="crm-history-tab" data-toggle="tab" href="#crm-history" role="tab" aria-controls="radicad" aria-selected="false">CRM</a>
+				</li>
 				@endif
 				@endif
 				<li class="nav-item">
@@ -484,6 +487,22 @@
 										<th>Servicio</th>
 										<th>Estatus</th>
 										<th>Adjuntos</th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="crm-history" role="tabpanel" aria-labelledby="crm-history-tab">
+							<input type="hidden" id="url-show-crm-history" value="{{route('cartera.crm.contacto', $contacto->id)}}">
+							<div class="table-responsive mt-3">
+								<table class="text-center table table-light table-striped table-hover" id="table-show-crm-history" style="width: 100%; border: 1px solid #e9ecef;">
+									<thead class="thead-light">
+										<th>Codigo</th>
+										<th>Fecha</th>
+										<th>Estado</th>
+										<th>Estatus</th>
 									</thead>
 									<tbody>
 
