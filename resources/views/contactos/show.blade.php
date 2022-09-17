@@ -391,7 +391,7 @@
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" id="crm-history-tab" data-toggle="tab" href="#crm-history" role="tab" aria-controls="radicad" aria-selected="false">CRM</a>
+					<a class="nav-link" id="crm-history-tab" data-toggle="tab" href="#crm-history" role="tab" aria-controls="crm-history" aria-selected="false">CRM</a>
 				</li>
 				@endif
 				@endif
