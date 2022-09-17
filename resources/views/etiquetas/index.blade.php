@@ -74,7 +74,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<p>Esta seguro que quiere borrar esta etiqueta?. La tiene etiqueta tiene <span id="count-r">0</span> registros asocidos.</p>
+				<p>Esta seguro que quiere borrar esta etiqueta?. La etiqueta tiene <span id="count-r">0</span> registros asocidos.</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" id="btn-eliminar" onclick="destroyEtiqueta()">Eliminar</button>
