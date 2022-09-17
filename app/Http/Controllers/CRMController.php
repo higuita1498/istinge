@@ -200,7 +200,7 @@ class CRMController extends Controller
         $contratos = CRM::query()
 			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
-            ->join('factura', 'crm.factura', '=', 'factura.id')
+            ->leftjoin('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
             ->where('crm.empresa', Auth::user()->empresa)
             ->where('contactos.id', $contacto);
