@@ -55,4 +55,41 @@
 	<a href="#" class="btn btn-outline-primary btn-icons" title="Emitir Factura" onclick="validateDian({{ $id }}, '{{route('xml.factura',$id)}}', '{{$codigo}}')"><i class="fas fa-sitemap"></i></a>
 	@endif
 	<a href="{{route('facturas.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
+	<a onclick="convertirElectronica('{{$codigo}}','{{route('facturas.convertirelectronica',$id)}}')" class="btn btn-outline-info btn-icons" title="Convertir a electrónica"><i class="fas fa-exchange-alt"></i></a>
 @endif
+
+<script>
+	function convertirElectronica(codigo,url){
+		Swal.fire({
+        title: '¿Desea convertir la factura: ' + codigo + ' a electrónica?',
+        text: "No podrás retroceder esta acción",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Si, convertir'
+    }).then((result) => {
+        if (result.value) {
+            window.location.href = url;
+            // const Toast = Swal.mixin({
+            //     toast: true,
+            //     position: 'top-center',
+            //     showConfirmButton: false,
+            //     timer: 1000000000,
+            //     timerProgressBar: true,
+            //     onOpen: (toast) => {
+            //         toast.addEventListener('mouseenter', Swal.stopTimer)
+            //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+            //     }
+            // })
+
+            // Toast.fire({
+            //     type: 'success',
+            //     title: 'Emitiendo factura a la DIAN...',
+            // })
+
+        }
+    })
+	}
+</script>

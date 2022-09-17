@@ -3696,4 +3696,5 @@ class FacturasController extends Controller{
 
         return Response::download($path, "FV-{$factura->codigo}.xml", $headers);
     }
+    
 }
