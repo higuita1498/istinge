@@ -218,11 +218,12 @@ class CRMController extends Controller
             
             $contratos=$contratos->skip($requestData['start'])->take($requestData['length']);
             $contratos=$contratos->orderBy('created_at', 'desc');
-            $contratos=$contratos->get();
+            $contratos=$contratos->distinct()->get();
             $data = array();
             foreach ($contratos as $c) {
+                $link = (route('crm.show', $c->id));
                 $nestedData = array();
-                $nestedData[] = $c->codigo;
+                $nestedData[] = "<a target='_blank' href='{$link}'>{$c->id}</a>";
                 $nestedData[] = date('d-m-Y', strtotime($c->created_at));
                 $nestedData[] = "<center><span class='text-{$c->estado('true')}'><strong>{$c->estado()}</strong></span></center>";
                 $nestedData[] = "<center><span class='text-{$c->factura('true')}'><strong>{$c->factura()}</strong></span></center>";
