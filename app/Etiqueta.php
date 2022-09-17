@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Empresa;
-
+use App\CRM;
 
 class Etiqueta extends Model
 {
@@ -20,5 +20,8 @@ class Etiqueta extends Model
         return $this->belongsTo(Empresa::class);
     }
 
+    public function radicados(){
+        return $this->hasMany(CRM::class);
+    }
 
 }

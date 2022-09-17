@@ -91,6 +91,7 @@ Route::get('radicados/{tipo}', 'RadicadosController@radicados');
 Route::get('descuentos', 'DescuentosController@descuentos');
 Route::get('tipos-gastos', 'TiposGastosController@tipos_gastos');
 Route::get('cartera/{tipo}', 'CRMController@cartera');
+Route::get('/cartera/contacto/{contacto}', 'CRMController@carteraContacto')->name('cartera.crm.contacto');
 Route::get('reporte', 'CRMController@reporte');
 Route::get('logsCRM/{crm}', 'CRMController@logsCRM');
 Route::get('puertos', 'PuertosController@puertos');
@@ -313,6 +314,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('{id}/desasociar', 'ContactosController@desasociar')->name('contactos.desasociar');
         Route::get('createp', 'ContactosController@createp')->name('contactos.createp');
         Route::get('{id}/{archivo}/eliminar', 'ContactosController@eliminarAdjunto')->name('contactos.eliminarAdjunto');
+		Route::post('cambiar-fecha-isp/{id}', 'ContactosController@updateFechaIsp')->name('contactos.cambiar.fechaIsp');
 	});
 	Route::resource('contactos', 'ContactosController');
 
@@ -1386,6 +1388,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 		Route::resource('crm', 'CRMController');
 		Route::resource('etiqueta', 'EtiquetaController');
+		Route::get('/etiqueta/eliminar/{id}', 'EtiquetaController@eliminar');
 
 	//SERVIDOR DE CORREO
 	    Route::resource('servidor-correo', 'ServidorCorreoController');

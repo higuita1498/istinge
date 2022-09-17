@@ -240,12 +240,34 @@
 						@if($contacto->firma_isp)
 						<tr>
 							<th width="20%">Fecha de la firma del Contrato</th>
-							<td>{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</strong></a></td>
+							<td>
+							<a href="javascript:editFechaIsp()"> <span id="fecha-isp-date">{{date('d-m-Y', strtotime($contacto->fecha_isp))}}</span> <i class="fas fa-edit"></i></a>
+							</td>
 						</tr>
 						<tr>
 							<th width="20%">Asignación de Contrato Digital</th>
 							<td><a href="{{ route('asignaciones.imprimir',$id)}}" target="_blank"><strong>Ver Documento</strong></a></td>
 						</tr>
+						<div class="modal" tabindex="-1" role="dialog" id="modal-fecha-isp">
+							<div class="modal-dialog modal-sm" role="document">
+								<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Actualizar fecha</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<form action="{{ route('contactos.cambiar.fechaIsp', $contacto->id) }}" id="form-fechaIsp">
+								<input type="text" class="form-control datepicker" id="fecha_isp" value="{{ date('d-m-Y', strtotime($contacto->fecha_isp)) }}">
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" onclick="updateFechaIsp()">Guardar</button>
+								</div>
+								</div>
+							</div>
+						</div>
 						@endif
 						@if($contacto->router)
 						<tr>
@@ -368,6 +390,9 @@
 				<li class="nav-item">
 					<a class="nav-link" id="radicad-tab" data-toggle="tab" href="#radicad" role="tab" aria-controls="radicad" aria-selected="false">Radicados</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="crm-history-tab" data-toggle="tab" href="#crm-history" role="tab" aria-controls="crm-history" aria-selected="false">CRM</a>
+				</li>
 				@endif
 				@endif
 				<li class="nav-item">
@@ -462,6 +487,22 @@
 										<th>Servicio</th>
 										<th>Estatus</th>
 										<th>Adjuntos</th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="crm-history" role="tabpanel" aria-labelledby="crm-history-tab">
+							<input type="hidden" id="url-show-crm-history" value="{{route('cartera.crm.contacto', $contacto->id)}}">
+							<div class="table-responsive mt-3">
+								<table class="text-center table table-light table-striped table-hover" id="table-show-crm-history" style="width: 100%; border: 1px solid #e9ecef;">
+									<thead class="thead-light">
+										<th>Codigo</th>
+										<th>Fecha</th>
+										<th>Estado</th>
+										<th>Estatus</th>
 									</thead>
 									<tbody>
 
@@ -817,5 +858,18 @@
         		}
         	})
         }
+
+		function editFechaIsp(){
+			$('#modal-fecha-isp').modal('show');
+		}
+
+		function updateFechaIsp(){
+			var token = $('meta[name="csrf-token"]').attr('content');
+
+			$.post($('#form-fechaIsp').attr('action'), {'_token': token, 'fecha_isp': $('#fecha_isp').val() }, function(response){
+				$('#fecha-isp-date').html(response.fecha_isp);
+				$('#modal-fecha-isp').modal('hide');
+			});
+		}
     </script>
 @endsection

@@ -63,6 +63,26 @@
 			
 		</div>
 	</div>
+
+	<div class="modal" tabindex="-1" role="dialog" id="modal-eliminar-etiqueta">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Eliminar una etiqueta</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Esta seguro que quiere borrar esta etiqueta?. La etiqueta tiene <span id="count-r">0</span> registros asocidos.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" id="btn-eliminar" onclick="destroyEtiqueta()">Eliminar</button>
+			</div>
+			</div>
+		</div>
+	</div>
+
 @endsection
 
  @section('scripts')
@@ -73,6 +93,23 @@ $(function(){
 		$('#color').minicolors();
 		$('#edit-color').minicolors();
 });
+
+function destroyEtiqueta(id, facturas, confirm){
+
+	$('#btn-eliminar').attr('onclick', `destroyEtiqueta(${id}, ${facturas}, true)`);
+
+	if(confirm){
+		$.get('{{URL::to('/')}}/empresa/etiqueta/eliminar/'+id, function(response){
+			$('#rw-'+response).remove();
+		});
+		$('#btn-eliminar').attr('onclick', ' ');
+		$('#modal-eliminar-etiqueta').modal('hide');
+	}else{
+		$('#modal-eliminar-etiqueta').modal('show');
+		$('#count-r').html(facturas);
+	}
+}
+
 </script>
 
 @endsection

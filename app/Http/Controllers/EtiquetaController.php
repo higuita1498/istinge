@@ -80,5 +80,21 @@ class EtiquetaController extends Controller
         return $etiqueta;
     }
 
+    public function eliminar($id){
+        $etiqueta = Etiqueta::where('id', $id)->where('empresa_id', auth()->user()->empresa)->first();
+
+        $radicados = $etiqueta->radicados;
+
+        foreach($radicados as $r){
+            $r->etiqueta_id = null;
+            $r->update();
+        }
+
+        $idEtiqueta = $etiqueta->id;
+        $etiqueta->delete();
+        
+        return $idEtiqueta;
+    }
+
 
 }

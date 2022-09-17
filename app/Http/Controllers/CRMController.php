@@ -183,6 +183,62 @@ class CRMController extends Controller
             ->rawColumns(['acciones', 'nombre', 'nit', 'celular', 'estado', 'created_by', 'updated_at', 'estatus'])
             ->toJson();
     }
+
+    public function carteraContacto($contacto, Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+      
+
+        $columns = array(
+            0 => 'radicados.codigo',
+            1 => 'radicados.fecha',
+            2 => 'radicados.estado',
+            3 => 'radicados.status'
+        );
+
+        $requestData =  $request;
+
+        $contratos = CRM::query()
+			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
+            ->join('contactos', 'crm.cliente', '=', 'contactos.id')
+            ->leftjoin('factura', 'crm.factura', '=', 'factura.id')
+            ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
+            ->where('crm.empresa', Auth::user()->empresa)
+            ->where('contactos.id', $contacto);
+        
+
+            if (isset($requestData->search['value'])) {
+                $contratos=$contratos->where(function ($query) use ($requestData) {
+                    $query->where('contactos.nit', 'like', '%'.$requestData->search['value'].'%')
+                    ->orwhere('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
+                    ->orwhere('factura.estatus', 'like', '%'.$requestData->search['value'].'%');
+                });
+            }
+    
+            $totalFiltered=$totalData=$contratos->count();
+            
+            $contratos=$contratos->skip($requestData['start'])->take($requestData['length']);
+            $contratos=$contratos->orderBy('created_at', 'desc');
+            $contratos=$contratos->distinct()->get();
+            $data = array();
+            foreach ($contratos as $c) {
+                $link = (route('crm.show', $c->id));
+                $nestedData = array();
+                $nestedData[] = "<a target='_blank' href='{$link}'>{$c->id}</a>";
+                $nestedData[] = date('d-m-Y', strtotime($c->created_at));
+                $nestedData[] = "<center><span class='text-{$c->estado('true')}'><strong>{$c->estado()}</strong></span></center>";
+                $nestedData[] = "<center><span class='text-{$c->factura('true')}'><strong>{$c->factura()}</strong></span></center>";
+                $data[] = $nestedData;
+            }
+           
+            $json_data = array(
+                "draw" => intval($requestData->draw),
+                "recordsTotal" => intval($totalData),
+                "recordsFiltered" => intval($totalFiltered),
+                "data" => $data
+            );
+
+            return json_encode($json_data);
+    }
     
     public function reporte(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
