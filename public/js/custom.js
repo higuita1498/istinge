@@ -1278,7 +1278,7 @@ $(document).ready(function() {
                 url: $('#url-show-radicados').val(), // json datasource
             },
             error: function() { // error handling
-                $("#table-show-radicados").append('<tbody><tr><td colspan="4" class="table_info">El cliente no tiene radicados asociados</td></tbody>');
+                $("#table-show-radicados").append('<tbody><tr><td colspan="5" class="table_info">El cliente no tiene radicados asociados</td></tbody>');
             }
         });
 
@@ -1324,7 +1324,7 @@ $(document).ready(function() {
                 url: $('#url-show-crm-history').val(), // json datasource
             },
             error: function() { // error handling
-                $("#table-show-crm-history").append('<tbody><tr><td colspan="5" class="table_info">El cliente no tiene radicados asociados</td></tbody>');
+                $("#table-show-crm-history").append('<tbody><tr><td colspan="4" class="table_info">El cliente no tiene radicados asociados</td></tbody>');
             }
         });
 
