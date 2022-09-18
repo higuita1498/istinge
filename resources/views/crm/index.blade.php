@@ -151,14 +151,23 @@
                 							@endforeach
                 						</select>
                     				</div>
-                    				<div class="col-md-3 pl-1 pt-1">
+                    				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidor" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
                 								<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
                 							@endforeach
                 						</select>
                     				</div>
-                    				<div class="col-md-3 pl-1 pt-1">
+									@if(isset($etiquetas))
+									<div class="col-md-2 pl-1 pt-1">
+                    					<select title="Etiqueta" class="form-control rounded selectpicker" id="etiqueta" data-size="5" data-live-search="true">
+                							@foreach($etiquetas as $etiqueta)
+												<option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+											@endforeach
+                						</select>
+                    				</div>
+									@endif
+                    				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Estado" class="form-control rounded selectpicker" id="estado" data-size="5" data-live-search="true">
                 							<option value="A">Sin Gestionar</option>
                 							<option value="3">Gestionado/Sin Contestar</option>
