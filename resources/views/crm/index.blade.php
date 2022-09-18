@@ -236,6 +236,15 @@
                 							@endforeach
                 						</select>
                     				</div>
+									@if(isset($etiquetas))
+									<div class="col-md-2 pl-1 pt-1">
+                    					<select title="Etiqueta" class="form-control rounded selectpicker" id="etiquetaG" data-size="5" data-live-search="true">
+                							@foreach($etiquetas as $etiqueta)
+												<option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+											@endforeach
+                						</select>
+                    				</div>
+									@endif
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Estado" class="form-control rounded selectpicker" id="estadoG" data-size="5" data-live-search="true">
                 							<option value="1">Gestionado</option>
@@ -298,6 +307,15 @@
                 							@endforeach
                 						</select>
                     				</div>
+									@if(isset($etiquetas))
+									<div class="col-md-2 pl-1 pt-1">
+                    					<select title="Etiqueta" class="form-control rounded selectpicker" id="etiquetaR" data-size="5" data-live-search="true">
+                							@foreach($etiquetas as $etiqueta)
+												<option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+											@endforeach
+                						</select>
+                    				</div>
+									@endif
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidorR" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
@@ -360,6 +378,15 @@
                 							@endforeach
                 						</select>
                     				</div>
+									@if(isset($etiquetas))
+									<div class="col-md-2 pl-1 pt-1">
+                    					<select title="Etiqueta" class="form-control rounded selectpicker" id="etiquetaT" data-size="5" data-live-search="true">
+                							@foreach($etiquetas as $etiqueta)
+												<option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+											@endforeach
+                						</select>
+                    				</div>
+									@endif
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidorT" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
@@ -649,7 +676,7 @@
         
         tableR.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteR').val();
-			data.etiqueta_id = $('#estado').val();
+			data.etiqueta_id = $('#etiquetaR').val();
             data.estado = $('#estadoR').val();
             data.created_by = $('#created_byR').val();
             data.grupo_corte = $('#grupo_corteR').val();
@@ -773,6 +800,7 @@
 		$('#clienteG').val('');
 		$('#etiquetaG').val('').selectpicker('refresh');
 		$('#estadoG').val('').selectpicker('refresh');
+		$('#etiquetaG').val('').selectpicker('refresh');
 		$('#created_byG').val('').selectpicker('refresh');
 		$('#grupo_corteG').val('').selectpicker('refresh');
 		$('#servidorG').val('').selectpicker('refresh');
@@ -793,7 +821,7 @@
 
 	function cerrarFiltradorR() {
 		$('#clienteR').val('');
-		$('#etiquetaG').val('').selectpicker('refresh');
+		$('#etiquetaR').val('').selectpicker('refresh');
 		$('#estadoR').val('').selectpicker('refresh');
 		$('#created_byR').val('').selectpicker('refresh');
 		$('#grupo_corteR').val('').selectpicker('refresh');
@@ -815,7 +843,7 @@
 
 	function cerrarFiltradorT() {
 		$('#clienteT').val('');
-		$('#etiquetaG').val('').selectpicker('refresh');
+		$('#etiquetaT').val('').selectpicker('refresh');
 		$('#estadoT').val('').selectpicker('refresh');
 		$('#created_byT').val('').selectpicker('refresh');
 		$('#grupo_corteT').val('').selectpicker('refresh');
