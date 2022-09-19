@@ -10,3 +10,9 @@ Facturas Generadas: 0
 SMS Enviados: 0
 SMS NO Enviados: 0
 -----------------
+-----------------
+Fecha de Generación: 2022-09-19
+Facturas Generadas: 2
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
