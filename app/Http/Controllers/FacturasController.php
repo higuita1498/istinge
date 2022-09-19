@@ -3442,7 +3442,7 @@ class FacturasController extends Controller{
         }
     }
 
-    public function convertirelEctronica($facturaId){
+    public function convertirelEctronica($facturaId, $masivo=false){
         $factura = Factura::find($facturaId);
         $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
 
@@ -3465,8 +3465,21 @@ class FacturasController extends Controller{
         $factura->tipo = 2;
         $factura->fecha=Carbon::now()->format('Y-m-d');
         $factura->save();
+        if($masivo == false){
+            return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
+        }
+    }
 
-        return back()->with('success','Factura con el nuevo código: '.$factura->codigo. ' convertida correctamente.');
+    public function conversionmasivaElectronica($facturas){
+        $facturas = explode(",", $facturas);
+        for ($i=0; $i < count($facturas) ; $i++) {
+            $this->convertirelEctronica($facturas[$i],1);
+        }
+
+        return response()->json([
+            'success' => true,
+            'text'    => 'Conversión masiva de facturas estándar a facturas electrónicas temrinada',
+        ]);
     }
 
     public function emisionMasivaXml($facturas){

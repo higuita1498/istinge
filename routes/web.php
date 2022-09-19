@@ -448,6 +448,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
         Route::get('descarga-efecty', 'FacturasController@downloadEfecty')->name('facturas.downloadefecty');
         Route::get('convertirelectronica/{facturaid}', 'FacturasController@convertirelEctronica')->name('facturas.convertirelectronica');
+		Route::get('conversionmasiva/{facturas}', 'FacturasController@conversionmasivaElectronica');
         Route::get('exportar', 'FacturasController@exportar');
         Route::get('facturas_electronica/exportar', 'FacturasController@exportar');
 	});
