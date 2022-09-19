@@ -242,9 +242,11 @@ class CronController extends Controller
 
                             if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
                                 $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
-                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total.'"},';
+                                $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
+                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                             }else{
-                                $bulk .= '{"numero": "57'.$numero.'", "sms": "Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+                                $bulksms = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                             }
 
                             //>>>>Posible aplicación de Prorrateo al total<<<<//
@@ -277,8 +279,11 @@ class CronController extends Controller
 
             $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
             if($servicio){
-
-                $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                if(isset($bulksms) && $bulksms != ''){
+                    $mensaje = $bulksms;
+                }else{
+                    $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                }
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
                         $curl = curl_init();
