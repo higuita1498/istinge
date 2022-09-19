@@ -55,8 +55,8 @@ class CRMController extends Controller
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
-        
-        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte'));
+        $etiquetas = Etiqueta::where('empresa_id', Auth::user()->empresa)->get();
+        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte', 'etiquetas'));
     }
     
     public function informe(Request $request){
@@ -97,6 +97,11 @@ class CRMController extends Controller
                 }
                 $contratos->where(function ($query) use ($estado) {
                     $query->orWhere('crm.estado', $estado);
+                });
+            }
+            if($request->etiqueta_id){
+                $contratos->where(function ($query) use ($request){
+                    $query->where('crm.etiqueta_id', $request->etiqueta_id);
                 });
             }
             if($request->created_by){
