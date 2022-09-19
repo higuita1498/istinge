@@ -263,7 +263,11 @@ class CronController extends Controller
 
             $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
             if($servicio){
-                $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                if(isset($bulk) && $bulk != ''){
+                    $mensaje = $bulk;
+                }else{
+                    $mensaje = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                }
                 if($servicio->nombre == 'Hablame SMS'){
                     if($servicio->api_key && $servicio->user && $servicio->pass){
                         $curl = curl_init();
