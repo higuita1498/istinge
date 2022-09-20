@@ -26,6 +26,12 @@
 			{{Session::get('message_success')}}
 		</div>
 	@endif
+
+	@if(Session::has('error'))
+	<div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
+		{{Session::get('error')}}
+	</div>
+@endif
 	
 	@if(Session::has('message_denied'))
 		<div class="alert alert-danger" role="alert">
