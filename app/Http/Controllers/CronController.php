@@ -512,7 +512,7 @@ class CronController extends Controller
         $fecha = date('Y-m-d');
         $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
 
-        // if($grupos_corte > 0){
+        if($grupos_corte > 0){
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
@@ -594,7 +594,7 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }
-        // }
+        }
     }
 
     public static function CortarPromesas(){
