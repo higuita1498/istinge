@@ -88,9 +88,16 @@ class CronController extends Controller
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
-            foreach($grupos_corte as $grupo_corte){
-                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->where('contracts.status',1)->where('contracts.state','enabled')->get();
+            // return $grupos_corte;
 
+            foreach($grupos_corte as $grupo_corte){
+                $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
+                join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->
+                where('contracts.status',1)->
+                whereIn('contracts.id',[992,1612])->
+                where('contracts.state','enabled')->get();
+                
+                // return $contratos;
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
                 if($num){
                     $numero = $num->nro;
@@ -105,9 +112,15 @@ class CronController extends Controller
                 }
 
                 foreach ($contratos as $contrato) {
+
                     ## Verificamos que el cliente no posea una factura automática abierta, de tenerla no se le genera la nueva factura
-                    $fac = Factura::where('cliente', $contrato->cliente)->where('estatus', 1)->where('facturacion_automatica', 1)->get()->last();
-                    if(!$fac){
+                    $fac = Factura::where('cliente', $contrato->cliente)
+                    ->where('estatus', 1)
+                    ->where('facturacion_automatica', 1)
+                    ->where('contrato_id',$contrato->id)
+                    ->get()->last();
+
+                    // if(!$fac){
                         $numero++;
 
                         //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
@@ -130,7 +143,8 @@ class CronController extends Controller
                             $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
 
                             if($contrato->facturacion == 3 && !$electronica){
-                                return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                                $tipo = 1;
+                                // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
                             }elseif($contrato->facturacion == 3 && $electronica){
                                 $tipo = 2;
                             }
@@ -257,7 +271,7 @@ class CronController extends Controller
                             }
                             //>>>>Fin posible aplicación prorrateo al total<<<<//
                         }
-                    }
+                    // } Comentando factura abierta del mes pasado
                 }
             }
 
@@ -496,9 +510,10 @@ class CronController extends Controller
     public static function CortarFacturas(){
         $i=0;
         $fecha = date('Y-m-d');
-        $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
+        // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
+        $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
 
-        // if($grupos_corte > 0){
+        if($grupos_corte > 0){
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
@@ -580,7 +595,7 @@ class CronController extends Controller
                 fputs($file, "-----------------".PHP_EOL);
                 fclose($file);
             }
-        // }
+        }
     }
 
     public static function CortarPromesas(){

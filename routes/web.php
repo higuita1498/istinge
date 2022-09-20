@@ -56,7 +56,6 @@ Route::get('DeshabilitarContratosMK/{mk}','CronController@DeshabilitarContratosM
 Route::get('/CortarCRM','CronController@CortarCRM')->name('CortarCRM');
 Route::get('disabledAndCRM/{ip}','CronController@disabledAndCRM')->name('disabledAndCRM');
 Route::get('sendInvoices/{fecha}','CronController@sendInvoices')->name('sendInvoices');
-
 /*PAYU*/
 
 Route::get('/respuestapayu', 'Controller@respuestapayu')->name('respuestapayu');
