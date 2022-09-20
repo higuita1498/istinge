@@ -1468,6 +1468,9 @@ public function facturas_retenciones($id){
         }
 
         $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true); 
+        if($CufeFactRelacionada["statusCode"] == 404){
+            return redirect('empresa/notascredito')->with('error', 'La factura de la nota crédito no ha sido emitida.');
+        }
         $CufeFactRelacionada  = $CufeFactRelacionada["uuid"];
         //--------------Fin Factura Relacionada -----------------------//
 
