@@ -1871,6 +1871,20 @@ class CronController extends Controller
     public function deleteFactura(){
 
         // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->get();
+        
+        // //habilitar contratos
+        // foreach($facturas as $factura){
+        //     $contrato = Contrato::where('id',$factura->contrato_id)->first();
+        //     if($contrato){
+        //         $contrato->state = "enabled";
+        //         $contrato->status = 1;
+        //         $contrato->save();
+        //     }
+          
+        // }
+        
+        // return "ok contratos habilitados";
+        
         // $eliminadas = 0;
         // foreach($facturas as $f){
         //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();

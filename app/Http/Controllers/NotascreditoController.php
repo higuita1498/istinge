@@ -1598,7 +1598,7 @@ public function facturas_retenciones($id){
         if ($statusCode != 200) {
             $message = $res['errorMessage'];
             $errorReason = $res['errorReason'];
-            $statusCode =  $res['statusCode'];
+            $statusCode =  $res['statusCode']; 
 
             //Validamos si depronto la nota crédito fue emitida pero no quedamos con ningun registro de ella.
             $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91", $NotaCredito->nro);
