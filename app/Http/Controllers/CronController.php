@@ -488,7 +488,7 @@ class CronController extends Controller
             /* Enviar correo funcional */
             foreach($grupos_corte as $grupo_corte){
                 $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
-                selft::sendInvoices($fechaInvoice);
+                self::sendInvoices($fechaInvoice);
             }
         }
     }
