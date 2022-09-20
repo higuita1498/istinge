@@ -510,6 +510,7 @@ class CronController extends Controller
     public static function CortarFacturas(){
         $i=0;
         $fecha = date('Y-m-d');
+        // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
         $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
 
         if($grupos_corte > 0){
