@@ -302,4 +302,36 @@ class User extends Authenticatable
     {
         return Oficina::find($this->oficina);
     }
+
+    public function cuentas(){
+
+        $cuentas = [];
+
+        if($this->cuenta){
+            $cuentas[] = $this->cuenta;
+        }
+
+        if($this->cuenta_1){
+            $cuentas[] = $this->cuenta_1;
+        }
+
+        if($this->cuenta_2){
+            $cuentas[] = $this->cuenta_2;  
+        }
+
+        if($this->cuenta_3){
+            $cuentas[] = $this->cuenta_3;
+        }
+
+        if($this->cuenta_4){
+            $cuentas[] = $this->cuenta_4;
+        }
+
+        if($this->cuenta_5){
+            $cuentas[] = $this->cuenta_5;
+        }
+
+        return $cuentas;
+    }
+
 }

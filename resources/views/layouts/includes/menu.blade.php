@@ -552,6 +552,15 @@
             </a>
         </li>
     @endif
+
+    @if(Auth::user()->rol > 1 && auth()->user()->rol == 8)
+    <li class="nav-item" id="reporte-facturas-pagas">
+        <a  class="nav-link" href="{{route('reportes.ventas')}}">
+            <i class="menu-icon fas fa-chart-line"></i>
+            <span class="menu-title">Facturas pagas</span>
+        </a>
+    </li>
+    @endif
     
     <li class="nav-item" id="logout-lateral">
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
