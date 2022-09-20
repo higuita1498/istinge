@@ -359,6 +359,13 @@ class ExportarReportesController extends Controller
             ->where('factura.estatus',0);
             $dates = $this->setDateRequest($request);
             $comprobacionFacturas->where('i.fecha','>=', $dates['inicio'])->where('i.fecha','<=', $dates['fin']);
+
+
+            if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
+                $comprobacionFacturas->whereIn('i.cuenta', Auth::user()->cuentas());
+            }
+
+
             if($comprobacionFacturas->count() >2100){
                 return $this->bigVentas($request);
             }
@@ -414,6 +421,10 @@ class ExportarReportesController extends Controller
             }
             if($request->caja){
                 $facturas=$facturas->where('i.cuenta',$request->caja);
+            }else{
+                if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
+                    $facturas=$facturas->whereIn('i.cuenta', Auth::user()->cuentas());
+                }
             }
             $ides=array();
             $factures=$facturas->get();

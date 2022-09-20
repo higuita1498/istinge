@@ -63,6 +63,12 @@ class ReportesController extends Controller
 
             $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
             $cajas = Banco::where('estatus',1)->get();
+            $cajasUsuario = auth()->user()->cuentas();
+
+            if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
+                $cajas = Banco::whereIn('id', $cajasUsuario)->get();
+            }
+
             view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Facturas Pagadas', 'icon' =>'fas fa-chart-line']);
             $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
             if (!$request->orderby) {
@@ -90,6 +96,10 @@ class ReportesController extends Controller
             }
             if($request->caja){
                 $facturas=$facturas->where('i.cuenta',$request->caja);
+            }else{
+                if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
+                    $facturas=$facturas->whereIn('i.cuenta', $cajasUsuario);
+                }
             }
             $ides=array();
             $facturas=$facturas->OrderBy($orderby, $order)->get();

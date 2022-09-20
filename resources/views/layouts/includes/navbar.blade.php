@@ -15,8 +15,8 @@
         <ul class="navbar-nav navbar-nav-right d-block">
             @if(Auth::user()->rol > 1 && auth()->user()->rol == 8)
             <li class="nav-item dropdown d-none d-inline-block">
-                <span id="div_ganancia" class="d-none d-lg-inline-flex font-weight-bold text-white small saldo" idUser="{{auth()->user()->id}}"" style="background: @if(Auth::user()->ganancia == 0) #fc2919 @else #55de4c @endif;padding: 10px 20px;border-radius: 15px;">GANANCIA: {{Auth::user()->empresa()->moneda}}{{ App\Funcion::Parsear(Auth::user()->ganancia) }}</span>
-                <span id="div_saldo" class="d-none d-lg-inline-flex font-weight-bold text-white small" style="background: @if(Auth::user()->saldo == 0) #fc2919 @else #55de4c @endif;padding: 10px 20px;border-radius: 15px;">SALDO: {{Auth::user()->empresa()->moneda}}{{ App\Funcion::Parsear(Auth::user()->saldo) }}</span>
+                <span id="div_ganancia" class="d-block mt-1 mb-1 d-lg-inline-flex font-weight-bold text-white small saldo" idUser="{{auth()->user()->id}}"" style="background: @if(Auth::user()->ganancia == 0) #fc2919 @else #55de4c @endif;padding: 10px 20px;border-radius: 15px;">GANANCIA: {{Auth::user()->empresa()->moneda}}{{ App\Funcion::Parsear(Auth::user()->ganancia) }}</span>
+                <span id="div_saldo" class="d-block mt-1 mb-1 d-lg-inline-flex font-weight-bold text-white small" style="background: @if(Auth::user()->saldo == 0) #fc2919 @else #55de4c @endif;padding: 10px 20px;border-radius: 15px;">SALDO: {{Auth::user()->empresa()->moneda}}{{ App\Funcion::Parsear(Auth::user()->saldo) }}</span>
             </li>
             @endif
             <li class="nav-item dropdown d-none d-xl-inline-block">
