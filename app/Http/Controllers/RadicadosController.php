@@ -593,7 +593,7 @@ class RadicadosController extends Controller{
         
         $movimientos=$movimientos->skip($requestData['start'])->take($requestData['length']);
         $movimientos=$movimientos->orderBy('fecha', 'desc');
-        $movimientos=$movimientos->get();
+        $movimientos=$movimientos->distinct()->get();
         $data = array();
         foreach ($movimientos as $movimiento) {
             $nestedData = array();
