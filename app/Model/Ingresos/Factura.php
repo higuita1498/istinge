@@ -685,8 +685,8 @@ class Factura extends Model
             $factura->fecha = $factura->created_at;
         }
     
-        $totalIva = 0.00;
-        $totalInc = 0.00;
+        $totalIva = '0.00';
+        $totalInc = '0.00';
     
         foreach ($factura->total()->imp as $key => $imp) {
             if (isset($imp->total) && $imp->tipo == 1) {
