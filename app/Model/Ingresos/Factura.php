@@ -84,6 +84,9 @@ class Factura extends Model
     public function servidor(){
         $cliente = Contacto::where('id',$this->cliente)->first();
         $contrato = Contrato::where('client_id',$cliente->id)->first();
+        if(!$contrato){
+            return '';
+        }
         return DB::table('mikrotik')->where('id',$contrato->server_configuration_id)->first();
     }
 
