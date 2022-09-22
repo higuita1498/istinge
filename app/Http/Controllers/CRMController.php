@@ -232,6 +232,7 @@ class CRMController extends Controller
                 $nestedData[] = date('d-m-Y', strtotime($c->created_at));
                 $nestedData[] = "<center><span class='text-{$c->estado('true')}'><strong>{$c->estado()}</strong></span></center>";
                 $nestedData[] = "<center><span class='text-{$c->factura('true')}'><strong>{$c->factura()}</strong></span></center>";
+                $nestedData[] = "<div class='text-center-c'>".($c->informacion)."</div>";
                 $data[] = $nestedData;
             }
            

@@ -51,6 +51,15 @@
     .btn.btn-icons {
     	border-radius: 50%;
     }
+
+	.text-center-c{
+		width: 100%;
+		margin: .5em;
+		padding: .5em;
+		display: flex;
+		align-items: center;
+	}
+
 </style>
 @endsection
 
@@ -503,6 +512,7 @@
 										<th>Fecha</th>
 										<th>Estado</th>
 										<th>Estatus</th>
+										<th>Información</th>
 									</thead>
 									<tbody>
 
