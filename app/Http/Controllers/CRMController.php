@@ -215,6 +215,7 @@ class CRMController extends Controller
                 $contratos=$contratos->where(function ($query) use ($requestData) {
                     $query->where('contactos.nit', 'like', '%'.$requestData->search['value'].'%')
                     ->orwhere('factura.codigo', 'like', '%'.$requestData->search['value'].'%')
+                    ->orwhere('crm.informacion', 'like', '%'.$requestData->search['value'].'%')
                     ->orwhere('factura.estatus', 'like', '%'.$requestData->search['value'].'%');
                 });
             }
