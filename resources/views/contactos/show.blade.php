@@ -58,6 +58,8 @@
 		padding: .5em;
 		display: flex;
 		align-items: center;
+		white-space: normal;
+		text-align: initial;
 	}
 
 </style>
