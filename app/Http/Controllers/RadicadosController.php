@@ -282,6 +282,7 @@ class RadicadosController extends Controller{
     }
 
     public function store(Request $request){
+       
         $request->validate([
             'cliente' => 'required',
             'fecha' => 'required',
@@ -296,6 +297,14 @@ class RadicadosController extends Controller{
         if(!$request->contrato && $request->servicio != 4){
             $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones';
             return back()->withInput()->with('danger', $mensaje);
+        }
+
+        $codigoRand = '';
+        $repeticiones = 1;
+
+        while($repeticiones != 0){
+            $codigoRand = rand(0, 99999);
+            $repeticiones = Radicado::where('codigo', $codigoRand)->where('empresa', Auth::user()->empresa)->count();
         }
 
         $radicado = new Radicado;
