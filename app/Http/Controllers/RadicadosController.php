@@ -320,7 +320,7 @@ class RadicadosController extends Controller{
         $radicado->servicio = $request->servicio;
         $radicado->tecnico = $request->tecnico;
         $radicado->estatus = $request->estatus;
-        $radicado->codigo = rand(0, 99999);
+        $radicado->codigo = $codigoRand;
         $radicado->prioridad = $request->prioridad;
         $radicado->mac_address = $request->mac_address;
         $radicado->ip = $request->ip;
