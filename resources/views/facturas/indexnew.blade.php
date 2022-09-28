@@ -142,18 +142,28 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
-    		<div class="container-filtercolumn">
+    		<div class="container-filtercolumn form-inline">
     			@if(Auth::user()->empresa()->efecty == 1)
     			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
     			@endif
-				@if(isset($_SESSION['permisos']['830']))
-    			<a class="btn btn-outline-success btn-sm disabled d-none" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-sitemap" style="margin-left:4px; "></i> Convertir a facturas electrónicas en Lote</a>
-    			@endif
+				{{-- @if(isset($_SESSION['permisos']['830']))
+    			<a class="btn btn-outline-success btn-sm disabled mr-1 d-none" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-sitemap"></i> Convertir a facturas electrónicas en Lote</a>
+    			@endif --}}
     			@if(isset($_SESSION['permisos']['750']))
-    			<a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm my-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+    			<a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-table"></i> Organizar Tabla</a>
     			@endif
                 @if(isset($_SESSION['permisos']['774']))
-                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
+                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm mr-1"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
+                @endif
+				@if(isset($_SESSION['permisos']['778']))
+                <div class="dropdown mr-1">
+                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones en Lote
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
+                    </div>
+                </div>
                 @endif
 			</div>
 		</div>
@@ -188,9 +198,9 @@
 
 @section('scripts')
 <script>
-	var tabla = null;
+	var tabla = $('#tabla-facturas');
 	window.addEventListener('load', function() {
-		$('#tabla-facturas').DataTable({
+		var tabla= $('#tabla-facturas').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -210,9 +220,27 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			@if(isset($_SESSION['permisos']['830']))
+            select: true,
             select: {
                 style: 'multi',
             },
+            dom: 'Blfrtip',
+            buttons: [{
+                text: '<i class="fas fa-check"></i> Seleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).select();
+                }
+            },
+            {
+                text: '<i class="fas fa-times"></i> Deseleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).deselect();
+                }
+            }],
             @endif
 			columns: [
 			    @foreach($tabla as $campo)
@@ -221,8 +249,6 @@
 				{data: 'acciones'},
 			]
 		});
-
-		tabla = $('#tabla-facturas');
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
 			data.codigo = $('#codigo').val();
