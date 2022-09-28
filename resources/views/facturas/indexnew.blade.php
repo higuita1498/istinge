@@ -108,6 +108,13 @@
 							<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
+							<select title="Servidor" class="form-control rounded selectpicker" id="servidor">
+								@foreach ($servidores as $servidor)
+								<option value="{{ $servidor->id}}">{{ $servidor->nombre}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-md-2 pl-1 pt-1">
 							<select title="Estado" class="form-control rounded selectpicker" id="estado">
 								<option value="1" selected="">Abiertas</option>
 								<option value="A">Cerradas</option>
@@ -227,6 +234,7 @@
 			data.vencimiento = $('#vencimiento').val();
 			data.comparador = $('#comparador').val();
 			data.total = $('#total').val();
+			data.servidor = $('#servidor').val();
 			data.estado = $('#estado').val();
 			data.filtro = true;
 		});
@@ -363,6 +371,7 @@
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
+		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

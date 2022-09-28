@@ -272,10 +272,11 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = false;
+        $servidores = Mikrotik::where('empresa', $empresaActual)->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -287,9 +288,10 @@ class FacturasController extends Controller{
 
         view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
         $tipo = ($tipo == 'cerradas') ? 'A' : 1;
+        $servidores = Mikrotik::where('empresa', $empresaActual)->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores'));
     }
 
     /*
@@ -302,9 +304,10 @@ class FacturasController extends Controller{
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
-        return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla'));
+        return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla','servidores'));
     }
 
     /*
@@ -319,9 +322,15 @@ class FacturasController extends Controller{
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
+            ->join('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), 
-            DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro',
+            'mk.nombre as servidor','cs.server_configuration_id',
+            DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), 
+            DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 
+            DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), 
+            DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
+            DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
@@ -366,6 +375,11 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('c.fk_idmunicipio', $request->municipio);
                 });
+            }
+            if($request->servidor){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhere('cs.server_configuration_id', $request->servidor);
+            });
             }
             if($request->emision != null){
                 $facturas->where(function ($query) use ($request) {
@@ -441,11 +455,22 @@ class FacturasController extends Controller{
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
+            ->join('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'), DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),         DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo',
+             'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), 
+             DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), 
+             DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), 
+             'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', 
+             'mk.nombre as servidor','cs.server_configuration_id',
+             DB::raw('v.nombre as nombrevendedor'),
+             DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
+             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
+             DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
+
             if($request->codigo){
                 $facturas->where(function ($query) use ($request) {
                     $query->orWhere('factura.codigo', 'like', "%{$request->codigo}%");
@@ -486,6 +511,11 @@ class FacturasController extends Controller{
                 $facturas->where(function ($query) use ($request, $correo) {
                     $query->orWhere('factura.correo', $correo);
                 });
+            }  
+            if($request->servidor){
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhere('cs.server_configuration_id', $request->servidor);
+            });
             }
             if($request->municipio){
                 $facturas->where(function ($query) use ($request) {
