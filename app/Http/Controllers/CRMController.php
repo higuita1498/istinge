@@ -387,7 +387,7 @@ class CRMController extends Controller
                 $factura = Factura::find($crm->factura);
                 $factura->vencimiento = date('Y-m-d', strtotime($request->fecha));
                 $factura->promesa_pago = date('Y-m-d', strtotime($request->fecha));
-                $factura->observaciones = $factura->observaciones.' | Promesa de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
+                $factura->observaciones = $factura->observaciones.' | Compromiso de Pago ('.$request->fecha.') creada por '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->save();
 
                 ### PROMESA DE PAGO ###
