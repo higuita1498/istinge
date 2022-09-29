@@ -40,6 +40,31 @@
         	    </span>
         	</div>
 
+			<div class="col-md-3 form-group">
+	            <label class="control-label">Servidor<span class="text-danger">*</span></label>
+        	    <select name="servidor" id="servidor" class="form-control selectpicker " onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5" required>
+        	        @foreach($servidores as $servidor)
+        	        <option {{old('servidor')==$servidor->id?'selected':''}} value="{{$servidor->id}}">{{$servidor->nombre}}</option>
+        	        @endforeach
+        	    </select>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('servidor') }}</strong>
+        	    </span>
+        	</div>
+
+
+			<div class="col-md-3 form-group">
+	            <label class="control-label">Grupo corte<span class="text-danger">*</span></label>
+        	    <select name="corte" id="corte" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5" required>
+        	        @foreach($gruposCorte as $corte)
+        	        <option {{old('corte')==$corte->id?'selected':''}} value="{{$corte->id}}">{{$corte->nombre}}</option>
+        	        @endforeach
+        	    </select>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('corte') }}</strong>
+        	    </span>
+        	</div>
+
         	<div class="col-md-3 form-group">
 	            <label class="control-label">Barrio</label>
         	    <input class="form-control" type="text" name="barrio" id="barrio">
@@ -71,7 +96,7 @@
         	        <optgroup label="{{$estado['nombre']}}">
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
-        	                    <option class="{{$contrato->state}}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }} {{ $contrato->c_apellido2 }} - {{$contrato->c_nit}}</option>
+        	                    <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }} {{ $contrato->c_apellido2 }} - {{$contrato->c_nit}} (contrato: {{ $contrato->nro }})</option>
         	                @endif
         	            @endforeach
         	        </optgroup>
@@ -131,6 +156,7 @@
         						$select.append('<option value='+value.id+' class="'+value.state+'">'+value.nombre+' '+apellidos+' - '+value.nit+'</option>');
         					});
         					$select.selectpicker('refresh');
+							refreshClient();
         				},
         				error: function(data){
         					cargando(false);
@@ -165,5 +191,35 @@
     		showConfirmButton: false,
     	})
     }
+
+	function refreshClient(){
+
+		let grupoCorte = $('#corte').val();
+		let servidor = $('#servidor').val();
+
+		if(grupoCorte && servidor){
+			options = $(`.servidor-${servidor}.grupo-${grupoCorte}`);
+		}else{
+
+			if(servidor){
+				options = $(`#contrato_sms option[class*="servidor-${servidor}"]`);
+			}
+
+			if(grupoCorte){
+				 options = $(`#contrato_sms option[class*="grupo-${grupoCorte}"]`);
+			}
+
+		}
+		
+		$("#contrato_sms option:selected").prop("selected", false);
+		$("#contrato_sms option:selected").removeAttr("selected");
+
+		options.attr('selected', true);
+		options.prop('selected', true);
+
+		$('#contrato_sms').selectpicker('refresh');
+
+	}
+
 </script>
 @endsection

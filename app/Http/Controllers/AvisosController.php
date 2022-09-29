@@ -17,6 +17,8 @@ use Config;
 use App\ServidorCorreo;
 use App\Integracion;
 use App\Contacto;
+use App\Mikrotik;
+use App\GrupoCorte;
 
 class AvisosController extends Controller
 {
@@ -85,8 +87,11 @@ class AvisosController extends Controller
             $contratos = $contratos->where('contactos.id', $id);
         }
         $contratos = $contratos->get();
+
+        $servidores = Mikrotik::where('empresa', auth()->user()->empresa)->get();
+        $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
 			
-        return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
+        return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id', 'servidores', 'gruposCorte'));
     }
     
     public function email($id = false)
