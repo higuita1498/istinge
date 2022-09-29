@@ -42,7 +42,7 @@
 
 			<div class="col-md-3 form-group">
 	            <label class="control-label">Servidor<span class="text-danger">*</span></label>
-        	    <select name="servidor" id="servidor" class="form-control selectpicker " onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5" required>
+        	    <select name="servidor" id="servidor" class="form-control selectpicker " onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
         	        @foreach($servidores as $servidor)
         	        <option {{old('servidor')==$servidor->id?'selected':''}} value="{{$servidor->id}}">{{$servidor->nombre}}</option>
         	        @endforeach
@@ -55,7 +55,7 @@
 
 			<div class="col-md-3 form-group">
 	            <label class="control-label">Grupo corte<span class="text-danger">*</span></label>
-        	    <select name="corte" id="corte" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5" required>
+        	    <select name="corte" id="corte" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
         	        @foreach($gruposCorte as $corte)
         	        <option {{old('corte')==$corte->id?'selected':''}} value="{{$corte->id}}">{{$corte->nombre}}</option>
         	        @endforeach
