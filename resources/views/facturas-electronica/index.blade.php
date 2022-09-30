@@ -187,9 +187,9 @@
 
 @section('scripts')
 <script>
-	var tabla = null;
+	var tabla = $('#tabla-facturas');
 	window.addEventListener('load', function() {
-		$('#tabla-facturas').DataTable({
+		var tabla = $('#tabla-facturas').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -209,9 +209,27 @@
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
 			@if(isset($_SESSION['permisos']['830']))
+			select: true,
             select: {
                 style: 'multi',
             },
+            dom: 'Blfrtip',
+            buttons: [{
+                text: '<i class="fas fa-check"></i> Seleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).select();
+                }
+            },
+            {
+                text: '<i class="fas fa-times"></i> Deseleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).deselect();
+                }
+            }],
             @endif
 			columns: [
 				@foreach($tabla as $campo)

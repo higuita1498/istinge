@@ -155,7 +155,6 @@
                 @if(isset($_SESSION['permisos']['774']))
                 <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm mr-1"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
                 @endif
-				@if(isset($_SESSION['permisos']['778']))
                 <div class="dropdown mr-1">
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
@@ -164,7 +163,6 @@
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
                     </div>
                 </div>
-                @endif
 			</div>
 		</div>
 		<div class="col-md-12">
