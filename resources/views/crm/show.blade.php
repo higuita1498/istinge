@@ -100,7 +100,7 @@
     						<td>{{$crm->llamada == 0 ? 'No':'Si'}}</td>
     					</tr>
     					<tr>
-    						<th>PROMESA DE PAGO</th>
+    						<th>COMPROMISO DE PAGO</th>
     						<td>{{$crm->promesa_pago == 0 ? 'No':'Si'}}</td>
     					</tr>
                         <tr>
