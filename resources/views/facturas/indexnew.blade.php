@@ -366,7 +366,6 @@
 				})
 			}
 		})
-		console.log(facturas);
 	});
 	});
 
