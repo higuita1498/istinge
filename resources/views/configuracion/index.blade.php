@@ -68,6 +68,8 @@
 			<input type="hidden" id="prorrateoid" value="{{Auth::user()->empresa()->prorrateo}}">
 			<a href="javascript:actDescEfecty()">{{ Auth::user()->empresa()->efecty == 0 ? 'Habilitar':'Deshabilitar' }} Efecty</a><br>
 			<input type="hidden" id="efectyid" value="{{Auth::user()->empresa()->efecty}}">
+			<a href="javascript:facturacionSmsAutomatica()">{{ Auth::user()->empresa()->factura_sms_auto == 0 ? 'Habilitar':'Deshabilitar' }} SMS automaticos</a><br>
+			<input type="hidden" id="facturaSmsAuto" value="{{Auth::user()->empresa()->factura_sms_auto}}">
 		</div>
 
 		<div class="col-sm-3">
@@ -733,6 +735,67 @@
 		                        Swal.fire({
 		                            type: 'success',
 		                            title: 'Factuación automática para los contratos deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#facturaAuto").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+		}
+
+		function facturacionSmsAutomatica() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_facturacionSmsAutomatica';
+			}else{
+				var url = '/configuracion_facturacionSmsAutomatica';
+			}
+
+		    if ($("#facturaSmsAuto").val() == 0) {
+		        $titleswal = "¿Desea habilitar el envio de SMS automaticos?";
+		    }
+
+		    if ($("#facturaSmsAuto").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar el envio de SMS automaticos?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { status: $("#facturaSmsAuto").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Envio de sms automaticos habilitado',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#facturaAuto").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Envio de sms automaticos deshabilitada',
 		                            showConfirmButton: false,
 		                            timer: 5000
 		                        })
