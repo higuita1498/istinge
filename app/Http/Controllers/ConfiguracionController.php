@@ -1848,6 +1848,20 @@ class ConfiguracionController extends Controller
     }
   }
 
+  public function facturacionSmsAutomatica(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->status == 0) {
+      $empresa->factura_sms_auto = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->factura_sms_auto = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
+
   public function limpiarCache(Request $request){
     $empresa = Empresa::find($request->empresa);
 
