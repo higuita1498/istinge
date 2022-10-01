@@ -314,7 +314,7 @@ class FacturasController extends Controller{
     * Método que obtiene una colección de facturas por medio de oracle Datatable.
     */
     public function facturas_electronica(Request $request){
-        
+
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
@@ -3529,23 +3529,35 @@ class FacturasController extends Controller{
     }
 
     public function emisionMasivaXml($facturas){
-        $empresa = Auth::user()->empresa;
-        $facturas = explode(",", $facturas);
 
-        for ($i=0; $i < count($facturas) ; $i++) {
-            $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('modificado', 0)->where('id', $facturas[$i])->first();
 
-            if(isset($factura)){
-                $factura->modificado = 1;
-                $factura->save();
-
-                $this->xmlFacturaVentaMasivo($factura->id, $empresa);
+        try {
+            $empresa = Auth::user()->empresa;
+            $facturas = explode(",", $facturas);
+            set_time_limit(0);
+    
+            for ($i=0; $i < count($facturas) ; $i++) {
+                $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('modificado', 0)->where('id', $facturas[$i])->first();
+    
+                if(isset($factura)){
+                    $factura->modificado = 1;
+                    $factura->save();
+    
+                    $this->xmlFacturaVentaMasivo($factura->id, $empresa);
+                }
             }
+
+            return response()->json([
+                'success' => true,
+                'text'    => 'Emisión masiva de facturas electrónicas temrinada',
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'text'    => 'Emisión en lote terminó con errores',
+            ]);
         }
-        return response()->json([
-            'success' => true,
-            'text'    => 'Emisión masiva de facturas electrónicas temrinada',
-        ]);
     }
 
     public function exportar(Request $request){
