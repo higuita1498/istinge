@@ -117,6 +117,7 @@
 							<select title="Emisión" class="form-control rounded selectpicker" id="emision">
 								<option value="1">Emitida</option>
 								<option value="0">No emitida</option> 	
+								<option value="2">Error emisión</option> 	
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1 d-none">

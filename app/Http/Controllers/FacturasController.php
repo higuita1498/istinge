@@ -314,6 +314,7 @@ class FacturasController extends Controller{
     * Método que obtiene una colección de facturas por medio de oracle Datatable.
     */
     public function facturas_electronica(Request $request){
+        
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
@@ -324,7 +325,7 @@ class FacturasController extends Controller{
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->join('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro',
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro','factura.dian_response',
             'mk.nombre as servidor','cs.server_configuration_id',
             DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'), 
             DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'), 
@@ -332,7 +333,7 @@ class FacturasController extends Controller{
             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
             DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
             ->groupBy('factura.id');
-
+            
         if ($request->filtro == true) {
 
             if($request->codigo){
@@ -383,7 +384,14 @@ class FacturasController extends Controller{
             }
             if($request->emision != null){
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.emitida', $request->emision);
+                    if($request->emision == 1){
+                        $query->orWhere('factura.emitida', $request->emision);
+                    }else if($request->emision == 0){
+                        $query->orWhere('factura.emitida', 0)->where('factura.dian_response',null);
+                    }
+                    else{
+                        $query->orWhere('factura.emitida', 0)->where('factura.dian_response',409);
+                    }
                 });
             }
         }
@@ -433,7 +441,15 @@ class FacturasController extends Controller{
         ->addColumn('estado', function (Factura $factura) {
             $msj = '';
             if (Auth::user()->empresaObj->estado_dian == 1) {
-                $msj = $factura->emitida == 1 ? '- Emitida' : '- No Emitida';
+                if($factura->emitida == 1){
+                    $msj = '- Emitida';
+                }
+                else if($factura->emitida == 0 && $factura->dian_response != 409){
+                    $msj = '- No Emitida';
+                }
+                else if($factura->emitida == 0 && $factura->dian_response == 409){
+                    $msj = '- Error';
+                }
             }
 
             return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . ' ' . $msj . '</span>';
