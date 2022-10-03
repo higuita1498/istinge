@@ -401,5 +401,5 @@
 		$("#estado").selectpicker('refresh');
         window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=2';
 	}
-</script>
+</script> 
 @endsection
