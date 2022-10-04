@@ -978,6 +978,7 @@ class Controller extends BaseController
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
+        groupBy('f.id')->
         get()->last();
 
         if(is_null($contrato)){
@@ -986,6 +987,7 @@ class Controller extends BaseController
             select('contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit', 'contactos.celular', 'contactos.telefono1', 'contactos.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'contactos.direccion', 'contactos.tip_iden', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as price'))->
             where('contactos.nit', $identificacion)->
             where('f.estatus',1)->
+            groupBy('f.id')->
             get()->last();
         }
 
