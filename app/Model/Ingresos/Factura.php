@@ -1075,7 +1075,6 @@ public function forma_pago()
                 los primeros dias de uso dependiendo de la creacion del contrato
                 también debemos tener la opción de prorrateo activa en el menú de configuración.
                 */
-            
                 if($factura->id == $this->id && $empresa->prorrateo == 1){
           
                     //Buscamos el contrato al que esta asociada la factura
@@ -1099,6 +1098,19 @@ public function forma_pago()
                     }
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+
+                    /*
+                        si la fecha no está entre el rango de la creacion del contrato y la fecha de corte entonces cojemos esos dias de
+                        entre: creacion contrato difff fecha corte + el siguiente dia de la fecha de corte hasta la fecha de la factura
+                        
+                        si entra al if entonces ya tenemos la suma de los dias hasta la fecha de corte ahora sumamos los otros días del siguiente
+                        dia 
+                    */
+                    if($diaFac < $diaContrato && $diaFac < $grupo->fecha_corte && $grupo->fecha_corte > $diaContrato){
+                            $fechaInicioNuevoCorte = Carbon::parse($fechaFin)->addDay();
+                            $diasFacturaNuevo = $fechaInicioNuevoCorte->diffInDays($this->fecha);
+                            $diasCobrados+=$diasFacturaNuevo;
+                    }
 
                     if($diasCobrados == 0){return 30;}
                     if($diasCobrados > 30){$diasCobrados=30;}
@@ -1183,6 +1195,20 @@ public function forma_pago()
                     }
 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+
+                    /*
+                        si la fecha no está entre el rango de la creacion del contrato y la fecha de corte entonces cojemos esos dias de
+                        entre: creacion contrato difff fecha corte + el siguiente dia de la fecha de corte hasta la fecha de la factura
+                        
+                        si entra al if entonces ya tenemos la suma de los dias hasta la fecha de corte ahora sumamos los otros días del siguiente
+                        dia 
+                    */
+                    $diaFac = Carbon::parse($this->fecha)->format('d');
+                    if($diaFac < $diaContrato && $diaFac < $grupo->fecha_corte && $grupo->fecha_corte > $diaContrato){
+                            $fechaInicioNuevoCorte = Carbon::parse($fechaFin)->addDay();
+                            $diasFacturaNuevo = $fechaInicioNuevoCorte->diffInDays($this->fecha);
+                            $diasCobrados+=$diasFacturaNuevo;
+                    }
 
                     if($diasCobrados > 30){$diasCobrados=30;}
                     if($diasCobrados == 0){return 30;}
