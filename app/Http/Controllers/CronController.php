@@ -511,7 +511,7 @@ class CronController extends Controller
     public static function CortarFacturas(){
         $i=0;
         $fecha = date('Y-m-d');
-        $swGrupo = 1;
+        $swGrupo = 1; //masivo
         // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
         $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
 
@@ -524,9 +524,10 @@ class CronController extends Controller
                 where('f.vencimiento', $fecha)->
                 where('contactos.status',1)->
                 where('cs.state','enabled')->
+                where('cs.fecha_suspension', null)->
                 take(25)->
                 get(); 
-                $swGrupo = 1;
+                $swGrupo = 1; //masivo
         }else{
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
@@ -538,7 +539,7 @@ class CronController extends Controller
             where('cs.fecha_suspension','!=', null)->
             take(25)->
             get(); 
-            $swGrupo = 0;
+            $swGrupo = 0; // personalizado
         }
 
             //dd($contactos); 
@@ -557,7 +558,9 @@ class CronController extends Controller
 
                 //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
                 if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
+
                     if(isset($contrato->server_configuration_id)){
+
                         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                         $API = new RouterosAPI();
                         $API->port = $mikrotik->puerto_api;
@@ -591,12 +594,9 @@ class CronController extends Controller
                             }
                             $API->disconnect();
                         }
+                        $contrato->state = 'disabled';
+                        $contrato->save();
                     }
-                    $contrato->state = 'disabled';
-                    $contrato->save();
-                }
-                else if($swGrupo == 0 && $contrato && $contrato->fecha_suspension == date('d')){
-
                 }
             }
 
