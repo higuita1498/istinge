@@ -511,6 +511,7 @@ class CronController extends Controller
     public static function CortarFacturas(){
         $i=0;
         $fecha = date('Y-m-d');
+        $swGrupo = 1;
         // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
         $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
 
@@ -525,9 +526,23 @@ class CronController extends Controller
                 where('cs.state','enabled')->
                 take(25)->
                 get(); 
+                $swGrupo = 1;
+        }else{
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.client_id','=','contactos.id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+            where('f.estatus',1)->
+            whereIn('f.tipo', [1,2])->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.fecha_suspension','!=', null)->
+            take(25)->
+            get(); 
+            $swGrupo = 0;
+        }
 
             //dd($contactos); 
-
+            if($contactos){
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
                 $contrato = Contrato::find($contacto->contrato_id);
@@ -540,7 +555,8 @@ class CronController extends Controller
                 $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
                 $crm->save();
 
-                if ($contrato) {
+                //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
+                if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
                     if(isset($contrato->server_configuration_id)){
                         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                         $API = new RouterosAPI();
@@ -578,6 +594,9 @@ class CronController extends Controller
                     }
                     $contrato->state = 'disabled';
                     $contrato->save();
+                }
+                else if($swGrupo == 0 && $contrato && $contrato->fecha_suspension == date('d')){
+
                 }
             }
 
