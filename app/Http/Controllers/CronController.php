@@ -513,9 +513,16 @@ class CronController extends Controller
         $fecha = date('Y-m-d');
         $swGrupo = 1; //masivo
         // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
-        $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
+        $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->get();
+    
+        if($grupos_corte->count() > 0){
 
-        if($grupos_corte > 0){
+            $grupos_corte_array = array();
+            
+            foreach($grupos_corte as $grupo){
+                array_push($grupos_corte_array,$grupo->id);
+            }
+            
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
@@ -524,6 +531,7 @@ class CronController extends Controller
                 where('f.vencimiento', $fecha)->
                 where('contactos.status',1)->
                 where('cs.state','enabled')->
+                whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null)->
                 take(25)->
                 get(); 
@@ -542,7 +550,6 @@ class CronController extends Controller
             $swGrupo = 0; // personalizado
         }
 
-            //dd($contactos); 
             if($contactos){
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
@@ -1889,10 +1896,23 @@ class CronController extends Controller
     }
 
     public function deleteFactura(){
-
-        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->get();
         
-        // //habilitar contratos
+        //facturas creadas automaticamente cancelamos sus contratos o eliminamos
+        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-10-6")->get();
+        
+        //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
+        // $contratos = Contrato::where('grupo_corte',1)->where('state','disabled')->where('updated_at','>=','2022-10-06 00:00:00')->where('updated_at','<=','2022-10-06 06:00:00')->get();
+        // $i = 0;
+        // foreach($contratos as $contrato){
+        //         $contrato->state = "enabled";
+        //         $contrato->status = 1;
+        //         $contrato->save();
+        //         $i++;
+        // }
+        // return "Se habilitaron " . $i . " contratos";
+        //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
+        
+        // //habilitar contratos por factura
         // foreach($facturas as $factura){
         //     $contrato = Contrato::where('id',$factura->contrato_id)->first();
         //     if($contrato){
