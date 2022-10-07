@@ -118,9 +118,11 @@ class ContactosController extends Controller
                     });
                 }
 
+                /*
                 $contactos->where(function ($query) use ($request) {
                    // $query->orWhere('direccion', 'like', "%{$request->direccion}%");
                 });
+                */
             }
             if($request->barrio){
                 $contactos->where(function ($query) use ($request) {
