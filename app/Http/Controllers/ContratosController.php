@@ -174,10 +174,23 @@ class ContratosController extends Controller
                 });
             }
             if($request->c_direccion){
-                $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
-                    $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion}%");
-                });
+    
+                $direccion = $request->c_direccion;
+                $direccion = explode(' ', $direccion);
+                $direccion = array_reverse($direccion);                
+                
+                foreach($direccion as $dir){
+                    $dir = strtolower($dir);
+                    $dir = str_replace("#","",$dir);
+                    //$dir = str_replace("-","",$dir);
+                    //$dir = str_replace("/","",$dir);
+                    
+                    $contratos->where(function ($query) use ($dir) {
+                        $query->orWhere('contactos.direccion', 'like', "%{$dir}%");
+                        $query->orWhere('contracts.address_street', 'like', "%{$dir}%");
+                    });
+                }
+
             }
             if($request->c_barrio){
                 $contratos->where(function ($query) use ($request) {
