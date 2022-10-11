@@ -33,6 +33,15 @@
                     <strong>{{ $errors->first('cliente') }}</strong>
                 </span>
             </div>
+
+            <div class="col-md-4">
+
+                <ul id="list-contratos" class="list-group list-group-horizontal mt-4 mb-4" style="cursor:pointer">
+                    
+                </ul>
+
+            </div>
+
         </div>
         
         <div class="row" id="content" style="display: none;">
@@ -186,12 +195,22 @@
             busqueda_detalles({{$cliente}});
         @endif
 
-        function busqueda_detalles(cliente){
-            if (window.location.pathname.split("/")[1] === "software") {
+        function busqueda_detalles(cliente, contrato = null){
+
+            if(contrato==null){
+                if (window.location.pathname.split("/")[1] === "software") {
                 var url='/software/api/getDetails/'+cliente;
+                }else{
+                    var url = '/api/getDetails/'+cliente;
+                }
             }else{
-                var url = '/api/getDetails/'+cliente;
+                if (window.location.pathname.split("/")[1] === "software") {
+                var url='/software/api/getDetails/'+cliente+'/'+contrato;
+                }else{
+                    var url = '/api/getDetails/'+cliente+'/'+contrato;;
+                }
             }
+         
 
             $.ajax({
                 url: url,
@@ -239,6 +258,28 @@
                         $('#servicio').find('[value=7]').prop('disabled', true);
                         $("#servicio").selectpicker('val', '4');
                     }
+
+                    $('#list-contratos').html('');
+
+                    if(data.contratos.length > 0){
+                        data.contratos.forEach(c => {
+                            $('#list-contratos').append(`                 
+                                <li class="list-group-item" style="padding: 7px; ${(data.contrato.id == c.id) ? 'color:green;' : ''}" onclick="busqueda_detalles(${c.client_id}, ${c.id})">(contrato: ${c.nro}) IP: ${c.ip} ${c.address_street ?? ''}</li>      
+                            `);
+
+                            if((data.contrato.id == c.id)){
+                                if(c.address_street){
+                                    $("#direccion").val('').val(c.address_street);
+                                }
+                                if(c.address_number){
+                                    $("#telefono").val('').val(c.address_number);
+                                }
+                            }
+
+                        });
+
+                    }
+
                 },
                 error: function(data){
                     Swal.fire({

@@ -1323,10 +1323,18 @@ class Controller extends BaseController
         }
     }
     
-    public function getDetails($cliente){
+    public function getDetails($cliente, $contrato = null){
         $cliente  = Contacto::find($cliente);
-        $contrato = Contrato::where('client_id',$cliente->id)->first();
-        return response()->json(['cliente' => $cliente, 'contrato' => $contrato]);
+
+        if($contrato){
+            $contrato = Contrato::where('client_id',$cliente->id)->where('id', $contrato)->first();
+        }else{
+            $contrato = Contrato::where('client_id',$cliente->id)->first();
+        }
+
+        $contratos = Contrato::where('client_id', $cliente->id)->where('status', 1)->latest()->get();
+
+        return response()->json(['cliente' => $cliente, 'contrato' => $contrato, 'contratos' => $contratos]);
     }
     
     public function getMigracion($mikrotik){
