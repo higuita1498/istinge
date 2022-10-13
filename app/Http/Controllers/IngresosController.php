@@ -1372,7 +1372,7 @@ class IngresosController extends Controller
                             $res = DB::table('contracts')->where('client_id',$cliente->id)->update(["state" => 'enabled']);
 
                             /* * * API MK * * */
-                            if($contrato->server_configuration_id){
+                            if($contrato && $contrato->server_configuration_id){
                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
                                 $API = new RouterosAPI();
