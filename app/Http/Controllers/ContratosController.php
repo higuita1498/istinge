@@ -710,6 +710,7 @@ class ContratosController extends Controller
                 $contrato->longitude               = $request->longitude;
                 $contrato->contrato_permanencia    = $request->contrato_permanencia;
                 $contrato->serial_onu              = $request->serial_onu;
+                $contrato->linea                   = $request->linea;
                 $contrato->descuento               = $request->descuento;
                 $contrato->vendedor                = $request->vendedor;
                 $contrato->canal                   = $request->canal;
@@ -1272,6 +1273,7 @@ class ContratosController extends Controller
                     $contrato->servicio_tv             = $request->servicio_tv;
                     $contrato->contrato_permanencia    = $request->contrato_permanencia;
                     $contrato->serial_onu              = $request->serial_onu;
+                    $contrato->linea                   = $request->linea;
                     $contrato->servicio                = $this->normaliza($servicio).'-'.$request->nro;
                     $contrato->server_configuration_id = $mikrotik->id;
                     $contrato->descuento               = $request->descuento;
