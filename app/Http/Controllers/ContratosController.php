@@ -1824,7 +1824,8 @@ class ContratosController extends Controller
                 'contactos.direccion as c_direccion',
                 'contactos.estrato as c_estrato',
             )
-            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->where('contracts.empresa', Auth::user()->empresa);
 
 	    if($request->client_id != null){
             $contratos->where(function ($query) use ($request) {
@@ -3453,4 +3454,5 @@ class ContratosController extends Controller
             'plan'      => $plan->name
         ]);
     }
+
 }
