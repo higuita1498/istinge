@@ -428,6 +428,15 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Línea</label>
+                                  <div class="input-group">
+                                    <input type="text" class="form-control" name="linea" id="linea" value="{{$contrato->linea}}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('linea') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @if(count($servicios)>0)
