@@ -1639,11 +1639,13 @@ class ContratosController extends Controller
         $contrato=Contrato::find($id);
         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
         
-        $API = new RouterosAPI();
-        $API->port = $mikrotik->puerto_api;
         //$API->debug = true;
         if($contrato){
                 if($contrato->plan_id){
+
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
+
                     if ($contrato) {
                         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                             
