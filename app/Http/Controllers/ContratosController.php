@@ -1642,97 +1642,98 @@ class ContratosController extends Controller
         $API = new RouterosAPI();
         $API->port = $mikrotik->puerto_api;
         //$API->debug = true;
-        
-        if($contrato->plan_id){
-            if ($contrato) {
-                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                    
-                    $API->write('/ip/firewall/address-list/print', TRUE);
-                    $ARRAYS = $API->read();
-                    
-                    if($contrato->state == 'enabled'){
-                        #AGREGAMOS A MOROSOS#
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "comment" => $contrato->servicio,
-                            "list" => 'morosos'
-                            )
-                        );
-                        #AGREGAMOS A MOROSOS#
+        if($contrato){
+                if($contrato->plan_id){
+                    if ($contrato) {
+                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                            
+                            $API->write('/ip/firewall/address-list/print', TRUE);
+                            $ARRAYS = $API->read();
+                            
+                            if($contrato->state == 'enabled'){
+                                #AGREGAMOS A MOROSOS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "comment" => $contrato->servicio,
+                                    "list" => 'morosos'
+                                    )
+                                );
+                                #AGREGAMOS A MOROSOS#
 
-                        #ELIMINAMOS DE IP_AUTORIZADAS#
-                        $API->write('/ip/firewall/address-list/print', false);
-                        $API->write('?address='.$contrato->ip, false);
-                        $API->write("?list=ips_autorizadas",false);
-                        $API->write('=.proplist=.id');
-                        $ARRAYS = $API->read();
+                                #ELIMINAMOS DE IP_AUTORIZADAS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=ips_autorizadas",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
 
-                        if(count($ARRAYS)>0){
-                            $API->write('/ip/firewall/address-list/remove', false);
-                            $API->write('=.id='.$ARRAYS[0]['.id']);
-                            $READ = $API->read();
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE IP_AUTORIZADAS#
+
+                                $contrato->state = 'disabled';
+                                $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
+                            }else{
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                
+                                $contrato->state = 'enabled';
+                                $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
+                            }
+                            $API->disconnect();
+                            $contrato->save();
+
+                            /*REGISTRO DEL LOG*/
+                            $movimiento = new MovimientoLOG;
+                            $movimiento->contrato    = $id;
+                            $movimiento->modulo      = 5;
+                            $movimiento->descripcion = $descripcion;
+                            $movimiento->created_by  = Auth::user()->id;
+                            $movimiento->empresa     = Auth::user()->empresa;
+                            $movimiento->save();
+                            
+                            $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
+                            $type = 'success';
+                        } else {
+                            $mensaje='EL CONTRATO NRO. '.$contrato->nro.' NO HA PODIDO SER ACTUALIZADO';
+                            $type = 'danger';
                         }
-                        #ELIMINAMOS DE IP_AUTORIZADAS#
-
-                        $contrato->state = 'disabled';
-                        $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
-                    }else{
-                        #ELIMINAMOS DE MOROSOS#
-                        $API->write('/ip/firewall/address-list/print', false);
-                        $API->write('?address='.$contrato->ip, false);
-                        $API->write("?list=morosos",false);
-                        $API->write('=.proplist=.id');
-                        $ARRAYS = $API->read();
-
-                        if(count($ARRAYS)>0){
-                            $API->write('/ip/firewall/address-list/remove', false);
-                            $API->write('=.id='.$ARRAYS[0]['.id']);
-                            $READ = $API->read();
-                        }
-                        #ELIMINAMOS DE MOROSOS#
-
-                        #AGREGAMOS A IP_AUTORIZADAS#
-                        $API->comm("/ip/firewall/address-list/add", array(
-                            "address" => $contrato->ip,
-                            "list" => 'ips_autorizadas'
-                            )
-                        );
-                        #AGREGAMOS A IP_AUTORIZADAS#
-                        
-                        $contrato->state = 'enabled';
-                        $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
+                        return back()->with($type, $mensaje);
                     }
-                    $API->disconnect();
-                    $contrato->save();
+                }else{
 
-                    /*REGISTRO DEL LOG*/
-                    $movimiento = new MovimientoLOG;
-                    $movimiento->contrato    = $id;
-                    $movimiento->modulo      = 5;
-                    $movimiento->descripcion = $descripcion;
-                    $movimiento->created_by  = Auth::user()->id;
-                    $movimiento->empresa     = Auth::user()->empresa;
-                    $movimiento->save();
+                    if($contrato->state == 'enabled'){
+                        $contrato->state = 'disabled';
+                    }else{
+                        $contrato->state = 'enabled';
+                    }
                     
-                    $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
-                    $type = 'success';
-                } else {
-                    $mensaje='EL CONTRATO NRO. '.$contrato->nro.' NO HA PODIDO SER ACTUALIZADO';
-                    $type = 'danger';
+                    $contrato->update();
+
+                    return back()->with('success', 'EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status());
                 }
-                return back()->with($type, $mensaje);
-            }
-        }else{
-
-            if($contrato->state == 'enabled'){
-                $contrato->state = 'disabled';
-            }else{
-                $contrato->state = 'enabled';
-            }
-            
-            $contrato->update();
-
-            return back()->with('success', 'EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status());
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
