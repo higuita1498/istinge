@@ -783,7 +783,7 @@ class CRMController extends Controller
                 $contrato->save();
             }
             $crm->estado = 5;
-            $crm->save();
+            $crm->update();
             
             return response()->json([
                 'success' => true,
