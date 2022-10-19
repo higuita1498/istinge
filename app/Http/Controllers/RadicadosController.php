@@ -373,7 +373,7 @@ class RadicadosController extends Controller{
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto = $nombre;
-                $radicado->save();
+                $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
 
                 $log = new RadicadoLOG;
@@ -387,7 +387,7 @@ class RadicadosController extends Controller{
 
             if ($request->reporte) {
                 $radicado->reporte = $request->reporte;
-                $radicado->save();
+                $radicado->update();
                 $mensaje='SE HA REGISTRADO EL REPORTE DEL TÉCNICO SATISFACTORIAMENTE.';
 
                 $log = new RadicadoLOG;
@@ -424,7 +424,7 @@ class RadicadosController extends Controller{
             $radicado->valor = ($request->servicio == 4) ? $request->valor : null;
             $radicado->oficina = $request->oficina;
             $radicado->barrio = $request->barrio;
-            $radicado->save();
+            $radicado->update();
 
             $log = new RadicadoLOG;
             $log->id_radicado = $radicado->id;
@@ -468,7 +468,7 @@ class RadicadosController extends Controller{
             if ($radicado->estatus==0) {
                 $radicado->estatus=2;
                 $mensaje='Se ha escalado el caso a soporte técnico';
-                $radicado->save();
+                $radicado->update();
 
                 $log = new RadicadoLOG;
                 $log->id_radicado = $radicado->id;
@@ -495,7 +495,7 @@ class RadicadosController extends Controller{
             }
             $mensaje = 'SE HA SOLVENTADO EL CASO RADICADO';
             $radicado->solventado=Carbon::now()->toDateTimeString();
-            $radicado->save();
+            $radicado->update();
 
             $log = new RadicadoLOG;
             $log->id_radicado = $radicado->id;
@@ -553,7 +553,7 @@ class RadicadosController extends Controller{
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             $radicado->firma = $request->dataImg;
-            $radicado->save();
+            $radicado->update();
             $mensaje='Se ha registrado la firma del cliente.';
 
             $log = new RadicadoLOG;
@@ -641,7 +641,7 @@ class RadicadosController extends Controller{
                 $msj = 'Finalizado el tiempo para solventar el radicado.';
             }
             
-            $radicado->save();
+            $radicado->update();
 
             $log = new RadicadoLOG;
             $log->id_radicado = $radicado->id;
@@ -659,7 +659,7 @@ class RadicadosController extends Controller{
         if($radicado){
             Storage::disk('documentos')->delete($radicado->adjunto);
             $radicado->adjunto = NULL;
-            $radicado->save();
+            $radicado->update();
 
             $log = new RadicadoLOG;
             $log->id_radicado = $radicado->id;
@@ -693,7 +693,7 @@ class RadicadosController extends Controller{
             }
 
             $mensaje = 'EL RADICADO HA SIDO REABIERTO SATISFACTORIAMENTE';
-            $radicado->save();
+            $radicado->update();
 
             $log = new RadicadoLOG;
             $log->id_radicado = $radicado->id;
@@ -941,7 +941,7 @@ class RadicadosController extends Controller{
                     }
                 }
 
-                $radicado->save();
+                $radicado->update();
 
                 $log = new RadicadoLOG;
                 $log->id_radicado = $radicado->id;
