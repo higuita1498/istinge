@@ -81,7 +81,8 @@ class CRMController extends Controller
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
-            ->where('crm.empresa', Auth::user()->empresa);
+            ->where('crm.empresa', Auth::user()->empresa)
+            ->distinct();
             
         if ($request->filtro == true) {
             if($request->cliente){
