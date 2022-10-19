@@ -323,7 +323,7 @@ class FacturasController extends Controller{
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
-            ->join('mikrotik as mk','mk.id','=','cs.server_configuration_id')
+            ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro','factura.dian_response',
             'mk.nombre as servidor','cs.server_configuration_id',
