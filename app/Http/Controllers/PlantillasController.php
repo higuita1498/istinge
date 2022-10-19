@@ -207,7 +207,12 @@ class PlantillasController extends Controller
             if($plantilla->status == 0){
                 $plantilla->status = 1;
                 $mensaje = 'SE HA ACTIVADO SATISFACTORIAMENTE LA PLANTILLA';
-                $search = Plantilla::where('status', 1)->where('tipo', $plantilla->tipo)->where('clasificacion', 'Bienvenida')->count();
+
+                if($plantilla->clasificacion == 'Bienvenida'){
+                    $search = Plantilla::where('status', 1)->where('tipo', $plantilla->tipo)->where('clasificacion', 'Bienvenida')->count();
+                }else{
+                    $search = 0;
+                }
 
                 if($search>0){
                     $mensaje='YA EXISTE UNA PLANTILLA DE BIENVENIDA HABILITADA.';

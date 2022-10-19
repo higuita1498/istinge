@@ -2914,7 +2914,7 @@ class FacturasController extends Controller{
         $factura->save();
 
         /* VERIFICAR SI EL CONTRATO ESTÁ DESHABILITADO PARA HABILITARLO */
-        /*
+    
         $contrato = $factura->cliente()->contrato();
         if ($contrato) {
             $mikrotik = Mikrotik::find($contrato->server_configuration_id);
@@ -2952,7 +2952,7 @@ class FacturasController extends Controller{
                 $API->disconnect();
             }
         }
-        */
+        
         return response()->json([
             'success' => true,
             'type' => 'success',

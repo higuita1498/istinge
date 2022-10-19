@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 |
 */
 Route::get('getInterfaces/{mikrotik}', 'Controller@getInterfaces');
-Route::get('getDetails/{cliente}', 'Controller@getDetails');
+Route::get('getDetails/{cliente}/{contrato?}', 'Controller@getDetails');
 Route::get('getPlanes/{mikrotik}', 'Controller@getPlanes');
 Route::get('{empresa}/getDataSearch/{key}', 'Controller@getAllData');
 Route::get('getMigracion/{mikrotik}', 'Controller@getMigracion');

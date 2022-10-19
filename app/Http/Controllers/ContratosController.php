@@ -117,7 +117,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato')
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato', DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
@@ -174,10 +174,23 @@ class ContratosController extends Controller
                 });
             }
             if($request->c_direccion){
-                $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion}%");
-                    $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion}%");
-                });
+    
+                $direccion = $request->c_direccion;
+                $direccion = explode(' ', $direccion);
+                $direccion = array_reverse($direccion);                
+                
+                foreach($direccion as $dir){
+                    $dir = strtolower($dir);
+                    $dir = str_replace("#","",$dir);
+                    //$dir = str_replace("-","",$dir);
+                    //$dir = str_replace("/","",$dir);
+                    
+                    $contratos->where(function ($query) use ($dir) {
+                        $query->orWhere('contactos.direccion', 'like', "%{$dir}%");
+                        $query->orWhere('contracts.address_street', 'like', "%{$dir}%");
+                    });
+                }
+
             }
             if($request->c_barrio){
                 $contratos->where(function ($query) use ($request) {
@@ -697,6 +710,7 @@ class ContratosController extends Controller
                 $contrato->longitude               = $request->longitude;
                 $contrato->contrato_permanencia    = $request->contrato_permanencia;
                 $contrato->serial_onu              = $request->serial_onu;
+                $contrato->linea                   = $request->linea;
                 $contrato->descuento               = $request->descuento;
                 $contrato->vendedor                = $request->vendedor;
                 $contrato->canal                   = $request->canal;
@@ -873,7 +887,7 @@ class ContratosController extends Controller
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-        select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.apellido1', 'c.apellido2','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion', 'contracts.observaciones')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        select('contracts.plan_id','contracts.id','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.apellido1', 'c.apellido2','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu', 'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion', 'contracts.observaciones')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = ($contrato->server_configuration_id) ? PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get() : PlanesVelocidad::where('status', 1)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -1259,6 +1273,7 @@ class ContratosController extends Controller
                     $contrato->servicio_tv             = $request->servicio_tv;
                     $contrato->contrato_permanencia    = $request->contrato_permanencia;
                     $contrato->serial_onu              = $request->serial_onu;
+                    $contrato->linea                   = $request->linea;
                     $contrato->servicio                = $this->normaliza($servicio).'-'.$request->nro;
                     $contrato->server_configuration_id = $mikrotik->id;
                     $contrato->descuento               = $request->descuento;
@@ -1624,87 +1639,103 @@ class ContratosController extends Controller
         $contrato=Contrato::find($id);
         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
         
-        $API = new RouterosAPI();
-        $API->port = $mikrotik->puerto_api;
         //$API->debug = true;
-        
-        if ($contrato) {
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                
-                $API->write('/ip/firewall/address-list/print', TRUE);
-                $ARRAYS = $API->read();
-                
-                if($contrato->state == 'enabled'){
-                    #AGREGAMOS A MOROSOS#
-                    $API->comm("/ip/firewall/address-list/add", array(
-                        "address" => $contrato->ip,
-                        "comment" => $contrato->servicio,
-                        "list" => 'morosos'
-                        )
-                    );
-                    #AGREGAMOS A MOROSOS#
+        if($contrato){
+                if($contrato->plan_id){
 
-                    #ELIMINAMOS DE IP_AUTORIZADAS#
-                    $API->write('/ip/firewall/address-list/print', false);
-                    $API->write('?address='.$contrato->ip, false);
-                    $API->write("?list=ips_autorizadas",false);
-                    $API->write('=.proplist=.id');
-                    $ARRAYS = $API->read();
+                    $API = new RouterosAPI();
+                    $API->port = $mikrotik->puerto_api;
 
-                    if(count($ARRAYS)>0){
-                        $API->write('/ip/firewall/address-list/remove', false);
-                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                        $READ = $API->read();
+                    if ($contrato) {
+                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                            
+                            $API->write('/ip/firewall/address-list/print', TRUE);
+                            $ARRAYS = $API->read();
+                            
+                            if($contrato->state == 'enabled'){
+                                #AGREGAMOS A MOROSOS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "comment" => $contrato->servicio,
+                                    "list" => 'morosos'
+                                    )
+                                );
+                                #AGREGAMOS A MOROSOS#
+
+                                #ELIMINAMOS DE IP_AUTORIZADAS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=ips_autorizadas",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE IP_AUTORIZADAS#
+
+                                $contrato->state = 'disabled';
+                                $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
+                            }else{
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                
+                                $contrato->state = 'enabled';
+                                $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
+                            }
+                            $API->disconnect();
+                            $contrato->save();
+
+                            /*REGISTRO DEL LOG*/
+                            $movimiento = new MovimientoLOG;
+                            $movimiento->contrato    = $id;
+                            $movimiento->modulo      = 5;
+                            $movimiento->descripcion = $descripcion;
+                            $movimiento->created_by  = Auth::user()->id;
+                            $movimiento->empresa     = Auth::user()->empresa;
+                            $movimiento->save();
+                            
+                            $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
+                            $type = 'success';
+                        } else {
+                            $mensaje='EL CONTRATO NRO. '.$contrato->nro.' NO HA PODIDO SER ACTUALIZADO';
+                            $type = 'danger';
+                        }
+                        return back()->with($type, $mensaje);
                     }
-                    #ELIMINAMOS DE IP_AUTORIZADAS#
-
-                    $contrato->state = 'disabled';
-                    $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
                 }else{
-                    #ELIMINAMOS DE MOROSOS#
-                    $API->write('/ip/firewall/address-list/print', false);
-                    $API->write('?address='.$contrato->ip, false);
-                    $API->write("?list=morosos",false);
-                    $API->write('=.proplist=.id');
-                    $ARRAYS = $API->read();
 
-                    if(count($ARRAYS)>0){
-                        $API->write('/ip/firewall/address-list/remove', false);
-                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                        $READ = $API->read();
+                    if($contrato->state == 'enabled'){
+                        $contrato->state = 'disabled';
+                    }else{
+                        $contrato->state = 'enabled';
                     }
-                    #ELIMINAMOS DE MOROSOS#
-
-                    #AGREGAMOS A IP_AUTORIZADAS#
-                    $API->comm("/ip/firewall/address-list/add", array(
-                        "address" => $contrato->ip,
-                        "list" => 'ips_autorizadas'
-                        )
-                    );
-                    #AGREGAMOS A IP_AUTORIZADAS#
                     
-                    $contrato->state = 'enabled';
-                    $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
-                }
-                $API->disconnect();
-                $contrato->save();
+                    $contrato->update();
 
-                /*REGISTRO DEL LOG*/
-                $movimiento = new MovimientoLOG;
-                $movimiento->contrato    = $id;
-                $movimiento->modulo      = 5;
-                $movimiento->descripcion = $descripcion;
-                $movimiento->created_by  = Auth::user()->id;
-                $movimiento->empresa     = Auth::user()->empresa;
-                $movimiento->save();
-                
-                $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
-                $type = 'success';
-            } else {
-                $mensaje='EL CONTRATO NRO. '.$contrato->nro.' NO HA PODIDO SER ACTUALIZADO';
-                $type = 'danger';
-            }
-            return back()->with($type, $mensaje);
+                    return back()->with('success', 'EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status());
+                }
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
@@ -1809,7 +1840,8 @@ class ContratosController extends Controller
                 'contactos.direccion as c_direccion',
                 'contactos.estrato as c_estrato',
             )
-            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->where('contracts.empresa', Auth::user()->empresa);
 
 	    if($request->client_id != null){
             $contratos->where(function ($query) use ($request) {
@@ -3438,4 +3470,5 @@ class ContratosController extends Controller
             'plan'      => $plan->name
         ]);
     }
+
 }

@@ -34,9 +34,9 @@
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
         @endif
 
-        @if(Auth::user()->id == 3)
-            <a href="{{route('contratos.exportar')}}" class="btn btn-success btn-sm d-none" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
-        @endif
+       
+        <a href="javascript:exportarContratos('{{route('contratos.exportar')}}');" class="btn btn-success btn-sm" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
+        
         @if(isset($_SESSION['permisos']['411']))
         <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
         @endif
@@ -69,6 +69,7 @@
         </script>
     @endif
 
+<form id="form-dinamic-action" method="GET">
     <div class="container-fluid d-none mb-3" id="form-filter">
         <fieldset>
             <legend>Filtro de Búsqueda</legend>
@@ -76,55 +77,55 @@
         		<div class="card-body py-3" style="background: #f9f9f9;">
         			<div class="row">
                         <div class="col-md-2 pl-1 pt-1">
-                            <input type="text" class="form-control" id="nro" placeholder="Nro">
+                            <input type="text" class="form-control" id="nro" name="nro" placeholder="Nro">
                         </div>
                         <div class="col-md-2 pl-1 pt-1">
-                            <input type="text" class="form-control" id="celular" placeholder="Celular">
+                            <input type="text" class="form-control" id="celular" name="celular" placeholder="Celular">
                         </div>
         				<div class="col-md-2 pl-1 pt-1">
-        					<input type="text" class="form-control" id="email" placeholder="Email">
+        					<input type="text" class="form-control" id="email" name="email" placeholder="Email">
         				</div>
         				<div class="col-md-2 pl-1 pt-1">
-        					<input type="text" class="form-control" id="direccion" placeholder="Dirección">
+        					<input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección">
         				</div>
         				<div class="col-md-2 pl-1 pt-1">
-        					<input type="text" class="form-control" id="barrio" placeholder="Barrio">
+        					<input type="text" class="form-control" id="barrio" name="barrio" placeholder="Barrio">
         				</div>
                         <div class="col-md-2 pl-1 pt-1">
-                            <input type="text" class="form-control" id="ip" placeholder="Dirección IP">
+                            <input type="text" class="form-control" id="ip" name="ip" placeholder="Dirección IP">
                         </div>
                         <div class="col-md-2 pl-1 pt-1">
-                            <input type="text" class="form-control" id="mac" placeholder="MAC">
+                            <input type="text" class="form-control" id="mac" name="mac"  placeholder="MAC">
                         </div>
                         <div class="col-md-4 pl-1 pt-1">
-                            <select title="Clientes" class="form-control selectpicker" id="client_id" data-size="5" data-live-search="true">
+                            <select title="Clientes" class="form-control selectpicker" id="client_id" name="client_id" data-size="5" data-live-search="true">
                                 @foreach ($clientes as $cliente)
                                 <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
                                 @endforeach
                             </select>
                         </div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Planes" class="form-control selectpicker" id="plan" data-size="5" data-live-search="true">
+        					<select title="Planes" class="form-control selectpicker" id="plan" name="plan" data-size="5" data-live-search="true">
         						@foreach ($planes as $plan)
         						<option value="{{ $plan->id }}">{{ $plan->name }}</option>
         						@endforeach
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Estado" class="form-control selectpicker" id="state">
+        					<select title="Estado" class="form-control selectpicker" id="state" name="state">
         						<option value="enabled">Habilitado</option>
         						<option value="disabled">Deshabilitado</option>
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Grupo de Corte" class="form-control selectpicker" id="grupo_cort">
+        					<select title="Grupo de Corte" class="form-control selectpicker" id="grupo_cort" name="grupo_cort">
         						@foreach ($grupos as $grupo)
         						<option value="{{ $grupo->id }}">{{ $grupo->nombre }}</option>
         						@endforeach
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Conexión" class="form-control selectpicker" id="conexion_s">
+        					<select title="Conexión" class="form-control selectpicker" id="conexion_s" name="conexion_s">
         						<option value="1">PPPOE</option>
         						<option value="2">DHCP</option>
         						<option value="3">IP Estática</option>
@@ -132,54 +133,54 @@
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s">
+        					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s" name="server_configuration_id_s">
         						@foreach ($servidores as $servidor)
         						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
         						@endforeach
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-        					<select title="Nodo" class="form-control selectpicker" id="nodo_s">
+        					<select title="Nodo" class="form-control selectpicker" id="nodo_s" name="nodo_s">
         						@foreach ($nodos as $nodo)
         						<option value="{{ $nodo->id }}">{{ $nodo->nombre }}</option>
         						@endforeach
         					</select>
         				</div>
         				<div class="col-md-3 pl-1 pt-1">
-                            <select title="Access Point" class="form-control selectpicker" id="ap_s">
+                            <select title="Access Point" class="form-control selectpicker" id="ap_s" name="ap_s">
                                 @foreach ($aps as $ap)
                                 <option value="{{ $ap->id }}">{{ $ap->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3 pl-1 pt-1">
-                            <select title="Vendedor" class="form-control selectpicker" id="vendedor">
+                            <select title="Vendedor" class="form-control selectpicker" id="vendedor" name="vendedor">
                                 @foreach ($vendedores as $vendedor)
                                 <option value="{{ $vendedor->id }}">{{ $vendedor->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3 pl-1 pt-1">
-                            <select title="Canal de Venta" class="form-control selectpicker" id="canal">
+                            <select title="Canal de Venta" class="form-control selectpicker" id="canal" name="canal">
                                 @foreach ($canales as $canal)
                                 <option value="{{ $canal->id }}">{{ $canal->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3 pl-1 pt-1">
-                            <select title="Tipo de Tecnología" class="form-control selectpicker" id="tecnologia_s">
+                            <select title="Tipo de Tecnología" class="form-control selectpicker" id="tecnologia_s" name="tecnologia_s">
                                 <option value="1">Fibra</option>
                                 <option value="2">Inalámbrica</option>
                             </select>
                         </div>
                         <div class="col-md-3 pl-1 pt-1">
-                            <select title="Tipo de Facturción" class="form-control selectpicker" id="facturacion_s">
+                            <select title="Tipo de Facturción" class="form-control selectpicker" id="facturacion_s" name="facturacion_s">
                                 <option value="1">Estándar</option>
                                 <option value="3">Electrónica</option>
                             </select>
                         </div>
                         <div class="col-md-3 pl-1 pt-1">
-                            <select title="Tipo Contrato" class="form-control selectpicker" id="tipo_contrato">
+                            <select title="Tipo Contrato" class="form-control selectpicker" id="tipo_contrato" name="tipo_contrato">
                                 <option value="instalacion">Instalación</option>
                                 <option value="reconexion">Reconexión</option>
                             </select>
@@ -210,6 +211,7 @@
         	</div>
         </fieldset>
     </div>
+</form>
 
     @if(isset($_SESSION['permisos']['405']))
     <div class="row card-description">
@@ -784,5 +786,12 @@
 	    $('#state').val('{{ $tipo }}').selectpicker('refresh');
 	    abrirFiltrador();
 	@endif
+
+    function exportarContratos(url){
+        $('#form-dinamic-action').attr('action', url);
+        $('#form-dinamic-action').submit();
+        $('#form-dinamic-action').attr('action', '');
+    }
+
 </script>
 @endsection

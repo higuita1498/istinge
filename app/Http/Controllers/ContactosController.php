@@ -102,9 +102,27 @@ class ContactosController extends Controller
                 });
             }
             if($request->direccion){
+
+                $direccion = $request->direccion;
+                $direccion = explode(' ', $direccion);
+                $direccion = array_reverse($direccion);                
+                
+                foreach($direccion as $dir){
+                    $dir = strtolower($dir);
+                    $dir = str_replace("#","",$dir);
+                    //$dir = str_replace("-","",$dir);
+                    //$dir = str_replace("/","",$dir);
+                    
+                    $contactos->where(function ($query) use ($dir) {
+                        $query->orWhere('direccion', 'like', "%{$dir}%");
+                    });
+                }
+
+                /*
                 $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('direccion', 'like', "%{$request->direccion}%");
+                   // $query->orWhere('direccion', 'like', "%{$request->direccion}%");
                 });
+                */
             }
             if($request->barrio){
                 $contactos->where(function ($query) use ($request) {

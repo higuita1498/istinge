@@ -40,6 +40,7 @@
         	    </span>
         	</div>
 
+			@if(isset($servidores))
 			<div class="col-md-3 form-group">
 	            <label class="control-label">Servidor<span class="text-danger"></span></label>
         	    <select name="servidor" id="servidor" class="form-control selectpicker " onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
@@ -51,8 +52,9 @@
         	        <strong>{{ $errors->first('servidor') }}</strong>
         	    </span>
         	</div>
+			@endif
 
-
+			@if(isset($gruposCorte))
 			<div class="col-md-3 form-group">
 	            <label class="control-label">Grupo corte<span class="text-danger"></span></label>
         	    <select name="corte" id="corte" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
@@ -64,6 +66,7 @@
         	        <strong>{{ $errors->first('corte') }}</strong>
         	    </span>
         	</div>
+			@endif
 
         	<div class="col-md-3 form-group">
 	            <label class="control-label">Barrio</label>
