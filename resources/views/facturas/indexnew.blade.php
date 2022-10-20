@@ -397,7 +397,7 @@
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
-		getDataTable();
+		getDataTable();   
 	}
 
 	function exportar() {
