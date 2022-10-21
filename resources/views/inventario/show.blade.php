@@ -35,6 +35,10 @@
 						<td>{{$inventario->type}}</td>
 					</tr>
 					<tr>
+						<th>Línea</th>
+						<td>{{$inventario->linea}}</td>
+					</tr>
+					<tr>
 						<th>Precio de Venta</th>
 						<td style="padding: 0 1%  !important; " border="0">
 								<table class="precios_table">
