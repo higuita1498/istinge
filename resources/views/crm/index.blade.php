@@ -180,6 +180,12 @@
                                             @endforeach
                 						</select>
                     				</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_factura" value="" name="fecha_factura" required="">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_at" value="" name="updated_at" required="" title="ultima actualizacion">
+									</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -198,6 +204,8 @@
     				                <th class="text-center">Teléfono</th>
 									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
+									<th class="text-center">Fecha factura</th>
+									<th class="text-center">Ultima actualización</th>
     				                {{--<th>Gestionado por</th>--}}
     				                <th class="text-center">Acciones</th>
     				            </tr>
@@ -259,6 +267,12 @@
                                             @endforeach
                 						</select>
                     				</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_facturaG" value="" name="fecha_factura" required="">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atG" value="" name="updated_at" required="" title="ultima actualizacion">
+									</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -276,6 +290,8 @@
     				                <th class="text-center">Teléfono</th>
 									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
+									<th class="text-center">Fecha factura</th>
+									<th class="text-center">Ultima actualización</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
     				            </tr>
@@ -330,6 +346,12 @@
                                             @endforeach
                 						</select>
                     				</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_facturaR" value="" name="fecha_factura" required="">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atR" value="" name="updated_at" required="" title="ultima actualizacion">
+									</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorR()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarR" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -347,6 +369,8 @@
     				                <th class="text-center">Teléfono</th>
 									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
+									<th class="text-center">Fecha factura</th>
+									<th class="text-center">Ultima actualización</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
     				            </tr>
@@ -401,6 +425,12 @@
                                             @endforeach
                 						</select>
                     				</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_facturaT" value="" name="fecha_factura" required="">
+									</div>
+									<div class="col-md-2 pl-1 pt-1">
+										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atT" value="" name="updated_at" required="" title="ultima actualizacion">
+									</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorT()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarT" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -418,6 +448,8 @@
     				                <th class="text-center">Teléfono</th>
 									<th class="text-center">Etiqueta</th>
     				                <th class="text-center">Estado</th>
+									<th class="text-center">Fecha factura</th>
+									<th class="text-center">Ultima actualización</th>
     				                <th class="text-center">Gestionado por</th>
     				                <th class="text-center">Acciones</th>
     				            </tr>
@@ -565,6 +597,8 @@
 			    {data: 'celular'},
 				{data: 'etiqueta'},
 				{data: 'estado'},
+				{data: 'fecha_factura'},
+				{data: 'updated_at'},
 				//{data: 'created_by'},
 				{data: 'acciones'},
 			]
@@ -579,6 +613,8 @@
             data.created_by = $('#created_by').val();
             data.grupo_corte = $('#grupo_corteA').val();
             data.servidor = $('#servidor').val();
+			data.fecha_factura =  $('#fecha_factura').val();
+			data.updated_at =  $('#updated_at').val();
             data.filtro = true;
         });
         
@@ -616,6 +652,8 @@
 			    {data: 'celular'},
 				{data: 'etiqueta'},
 				{data: 'estado'},
+				{data: 'fecha_factura'},
+				{data: 'updated_at'},
 				{data: 'created_by'},
 				{data: 'acciones'},
 			]
@@ -630,6 +668,8 @@
             data.created_by = $('#created_byG').val();
             data.grupo_corte = $('#grupo_corteG').val();
             data.servidor = $('#servidorG').val();
+			data.fecha_factura =  $('#fecha_facturaG').val();
+			data.updated_at =  $('#updated_atG').val();
             data.filtro = true;
         });
         
@@ -667,6 +707,8 @@
 			    {data: 'celular'},
 				{data: 'etiqueta'},
 				{data: 'estado'},
+				{data: 'fecha_factura'},
+				{data: 'updated_at'},
 				{data: 'created_by'},
 				{data: 'acciones'},
 			]
@@ -681,6 +723,8 @@
             data.created_by = $('#created_byR').val();
             data.grupo_corte = $('#grupo_corteR').val();
             data.servidor = $('#servidorR').val();
+			data.fecha_factura =  $('#fecha_facturaR').val();
+			data.updated_at =  $('#updated_atR').val();
             data.filtro = true;
         });
         
@@ -718,6 +762,8 @@
 			    {data: 'celular'},
 				{data: 'etiqueta'},
 				{data: 'estado'},
+				{data: 'fecha_factura'},
+				{data: 'updated_at'},
 				{data: 'created_by'},
 				{data: 'acciones'},
 			]
@@ -732,6 +778,8 @@
             data.created_by = $('#created_byT').val();
             data.grupo_corte = $('#grupo_corteT').val();
             data.servidor = $('#servidorT').val();
+			data.fecha_factura =  $('#fecha_facturaT').val();
+			data.updated_at =  $('#updated_atT').val();
             data.filtro = true;
         });
         
@@ -783,6 +831,8 @@
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+		$('#fecha_factura').val('');
+		$('#updated_at').val('');
 		getDataTable();
 	}
 	
@@ -806,6 +856,8 @@
 		$('#servidorG').val('').selectpicker('refresh');
 		$('#form-filterG').addClass('d-none');
 		$('#boton-filtrarG').html('<i class="fas fa-search"></i> Filtrar');
+		$('#fecha_facturaG').val('');
+		$('#updated_atG').val('');
 		getDataTableG();
 	}
 	
@@ -828,6 +880,8 @@
 		$('#servidorR').val('').selectpicker('refresh');
 		$('#form-filterR').addClass('d-none');
 		$('#boton-filtrarR').html('<i class="fas fa-search"></i> Filtrar');
+		$('#fecha_facturaR').val('');
+		$('#updated_atR').val('');
 		getDataTableR();
 	}
 	
@@ -850,6 +904,8 @@
 		$('#servidorT').val('').selectpicker('refresh');
 		$('#form-filterT').addClass('d-none');
 		$('#boton-filtrarT').html('<i class="fas fa-search"></i> Filtrar');
+		$('#fecha_facturaT').val('');
+		$('#updated_atT').val('');
 		getDataTableT();
 	}
 	
