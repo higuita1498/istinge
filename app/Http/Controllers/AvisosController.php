@@ -167,10 +167,10 @@ class AvisosController extends Controller
                     );
                     $correo = new NotificacionMailable($datos);
 
-                    if($mail = $contrato->cliente()->email){
+                    if($mailC = $contrato->cliente()->email){
 
-                        if(str_contains($mail, '@')){
-                            Mail::to($mail)->send($correo);
+                        if(str_contains($mailC, '@')){
+                            Mail::to($mailC)->send($correo);
                             $cor++;
                         }
 
