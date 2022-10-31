@@ -32,22 +32,28 @@
 	<input type="hidden" name="back" value="{{ old('back')?old('back'):URL::previous() }}">
 	<input name="_method" type="hidden" value="PATCH">
 	<div class="row">
-		<div class="form-group col-md-4">
+		<div class="form-group col-md-3">
 			<label class="control-label">Nombre del Producto <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" name="producto" id="producto" required="" maxlength="200" value="{{$inventario->producto}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('producto') }}</strong>
 			</span>
 		</div>
-		<div class="form-group col-md-4">
+		<div class="form-group col-md-3">
 			<label class="control-label">Referencia <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" name="ref" id="ref" maxlength="200" value="{{$inventario->ref}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('ref') }}</strong>
 			</span>
 		</div>
-
-		<div class="form-group col-md-4">
+		<div class="form-group col-md-3">
+	  			<label class="control-label">Linea </label>
+				<input type="text" class="form-control" name="linea" id="linea" maxlength="200" value="{{$inventario->linea}}">
+				<span class="help-block error">
+		        	<strong>{{ $errors->first('linea') }}</strong>
+		        </span>
+		</div>
+		<div class="form-group col-md-3">
 			<label class="control-label">Impuesto <span class="text-danger">*</span></label>
 
 			<select class="form-control selectpicker" name="impuesto" id="impuesto" required="" title="Seleccione">

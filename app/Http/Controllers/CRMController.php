@@ -56,7 +56,8 @@ class CRMController extends Controller
         $servidores   = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $etiquetas = Etiqueta::where('empresa_id', Auth::user()->empresa)->get();
-        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte', 'etiquetas'));
+        $ini = Carbon::create(date('Y'), date('m'), date('d'))->startOfMonth()->format('d-m-Y');
+        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte', 'etiquetas', 'ini'));
     }
     
     public function informe(Request $request){
@@ -77,7 +78,7 @@ class CRMController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratos = CRM::query()
-			->select('crm.*', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
+			->select('crm.*', 'factura.fecha as fecha_factura', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
@@ -114,6 +115,18 @@ class CRMController extends Controller
                 $desde = Carbon::parse($request->desde.'00:00:00')->format('Y-m-d H:i:s');
                 $contratos->where(function ($query) use ($desde) {
                     $query->orWhere('crm.updated_at', '>=', $desde);
+                });
+            }
+            if($request->fecha_factura){
+                $fechaFactura = Carbon::parse($request->fecha_factura)->format('Y-m-d');
+                $contratos->where(function ($query) use ($fechaFactura) {
+                    $query->orWhere('factura.fecha', '=', $fechaFactura);
+                });
+            }
+            if($request->updated_at){
+                $updatedAt = Carbon::parse($request->updated_at)->format('Y-m-d');
+                $contratos->where(function ($query) use ($updatedAt) {
+                    $query->orWhere('crm.updated_at', 'like', '%'.$updatedAt.'%');
                 });
             }
             if($request->hasta){
@@ -176,17 +189,20 @@ class CRMController extends Controller
             ->editColumn('estado', function (CRM $crm) {
                 return "<center><span class='text-{$crm->estado('true')}'><strong>{$crm->estado()}</strong></span></center>";
             })
-            ->editColumn('created_by', function (CRM $crm) {
-                return "<center>".$crm->created_by()."</center>";
+            ->editColumn('fecha_factura', function (CRM $crm) {
+                return "<center><span><strong>{$crm->fecha_factura}</strong></span></center>";
             })
             ->editColumn('updated_at', function (CRM $crm) {
-                return "<center>".$crm->updated_at()."</center>";
+                return "<center><span><strong>{$crm->updated_at->format('Y-m-d H:i:s')}</strong></span></center>";
+            })
+            ->editColumn('created_by', function (CRM $crm) {
+                return "<center>".$crm->created_by()."</center>";
             })
             ->editColumn('estatus', function (CRM $crm) {
                 return "<center><span class='text-{$crm->factura('true')}'><strong>{$crm->factura()}</strong></span></center>";
             })
             ->addColumn('acciones', $modoLectura ?  "" : "crm.acciones-cartera")
-            ->rawColumns(['acciones', 'nombre', 'nit', 'celular', 'estado', 'created_by', 'updated_at', 'estatus'])
+            ->rawColumns(['acciones', 'nombre', 'nit', 'celular', 'estado', 'fecha_factura', 'updated_at', 'created_by', 'updated_at', 'estatus'])
             ->toJson();
     }
 
