@@ -166,8 +166,16 @@ class AvisosController extends Controller
                         'date' => date('d-m-Y'),
                     );
                     $correo = new NotificacionMailable($datos);
-                    Mail::to($contrato->cliente()->email)->send($correo);
-                    $cor++;
+
+                    if($mail = $contrato->cliente()->email){
+
+                        if(str_contains($mail, '@')){
+                            Mail::to($mail)->send($correo);
+                            $cor++;
+                        }
+
+                    }
+
                 }
             }
         }
