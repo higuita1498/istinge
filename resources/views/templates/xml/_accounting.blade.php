@@ -8,7 +8,7 @@
         </cac:PartyIdentification>
             @endif
         <cac:PartyName>
-            <cbc:Name>{{$data['nombre']}}</cbc:Name>
+            <cbc:Name>{{$data['nombre']}} {{$data['apellido1']}} {{$data['apellido2']}}</cbc:Name>
         </cac:PartyName>
         @isset($Empresa)
         <cac:PhysicalLocation>
@@ -48,7 +48,7 @@
 </cac:PhysicalLocation>
 @endisset
 <cac:PartyTaxScheme>
-<cbc:RegistrationName>{{$data['nombre']}}</cbc:RegistrationName>
+<cbc:RegistrationName>{{$data['nombre']}} {{$data['apellido1']}} {{$data['apellido2']}}</cbc:RegistrationName>
 <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" @if($data['dv'] != null) schemeID="{{$data['dv']}}" @endif schemeName="{{ \App\Contacto::codigo_ident_static($data['tip_iden'])->codigo_dian }}">{{ $data['nit'] }}</cbc:CompanyID>
 
 @if(isset($Empresa))
@@ -86,7 +86,7 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 </cac:TaxScheme>
 </cac:PartyTaxScheme>
 <cac:PartyLegalEntity>
-<cbc:RegistrationName>{{$data['nombre']}}</cbc:RegistrationName>
+<cbc:RegistrationName>{{$data['nombre']}} {{$data['apellido1']}} {{$data['apellido2']}}</cbc:RegistrationName>
 <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" @if($data['dv'] != null) schemeID="{{$data['dv']}}"  @endif schemeName="{{ \App\Contacto::codigo_ident_static($data['tip_iden'])->codigo_dian }}">{{ $data['nit'] }}</cbc:CompanyID>
 
 @if(isset($nc))

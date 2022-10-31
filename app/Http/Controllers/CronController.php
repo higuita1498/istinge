@@ -121,7 +121,7 @@ class CronController extends Controller
                     ->get()->last();
 
                     // if(!$fac){
-                        $numero++;
+                        $numero=$numero+1;
 
                         //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
                         $nro = NumeracionFactura::tipoNumeracion($contrato);
