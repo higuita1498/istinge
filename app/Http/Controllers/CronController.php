@@ -88,7 +88,7 @@ class CronController extends Controller
 
             $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
-            // return $grupos_corte;
+            $fecha = Carbon::now()->format('Y-m-d');
 
             foreach($grupos_corte as $grupo_corte){
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
@@ -110,10 +110,11 @@ class CronController extends Controller
                 }else{
                     $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
                 }
-
+                
                 foreach ($contratos as $contrato) {
-
-                    ## Verificamos que el cliente no posea una factura automática abierta, de tenerla no se le genera la nueva factura
+                    
+                    if(DB::table('factura')->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
+                        ## Verificamos que el cliente no posea una factura automática abierta, de tenerla no se le genera la nueva factura
                     $fac = Factura::where('cliente', $contrato->cliente)
                     ->where('estatus', 1)
                     ->where('facturacion_automatica', 1)
@@ -272,6 +273,8 @@ class CronController extends Controller
                             //>>>>Fin posible aplicación prorrateo al total<<<<//
                         }
                     // } Comentando factura abierta del mes pasado
+                    }
+                    
                 }
             }
 
