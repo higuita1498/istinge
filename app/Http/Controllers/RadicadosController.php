@@ -155,6 +155,25 @@ class RadicadosController extends Controller{
                     $query->orWhereDate('radicados.tiempo_fin', 'like', "%{$request->tiempo_fin}%");
                 });
             }
+            if($request->direccion){
+    
+                $direccion = $request->c_direccion;
+                $direccion = explode(' ', $direccion);
+                $direccion = array_reverse($direccion);                
+                
+                foreach($direccion as $dir){
+                    $dir = strtolower($dir);
+                    $dir = str_replace("#","",$dir);
+                    //$dir = str_replace("-","",$dir);
+                    //$dir = str_replace("/","",$dir);
+                    
+                    $radicados->where(function ($query) use ($dir) {
+                        $query->orWhere('direccion', 'like', "%{$dir}%");
+                        $query->orWhere('direccion', 'like', "%{$dir}%");
+                    });
+                }
+
+            }
         }
 
         if(Auth::user()->empresa()->oficina){
