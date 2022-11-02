@@ -218,6 +218,9 @@
 										<div class="col-md-2 pl-1 pt-1">
 											<input type="text" placeholder="Fecha Fin" id="tiempo_fin" name="tiempo_fin" class="form-control rounded creacion" autocomplete="off">
 										</div>
+										<div class="col-md-3 pl-1 pt-1">
+											<input type="text" placeholder="Direccion" id="direccion" name="direccion" class="form-control rounded" autocomplete="off">
+										</div>
 									</div>
 									<div class="row">
 										<div class="col-md-12 pl-1 pt-1 text-center">
@@ -332,6 +335,9 @@
 										</div>
 										<div class="col-md-2 pl-1 pt-1">
 											<input type="text" placeholder="Fecha Fin" id="tiempo_finG" name="tiempo_finG" class="form-control rounded creacion" autocomplete="off">
+										</div>
+										<div class="col-md-3 pl-1 pt-1">
+											<input type="text" placeholder="Direccion" id="direccionG" name="direccionG" class="form-control rounded" autocomplete="off">
 										</div>
 									</div>
 									<div class="row">
