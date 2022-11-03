@@ -2,7 +2,7 @@
   <button style="background-color: {{ $crm->etiqueta ? $crm->etiqueta->color : '' }} !important" class="btn btn-secondary dropdown-toggle w-100" type="button" id="etiqueta-drop-{{$crm->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     {{ $crm->etiqueta ? $crm->etiqueta->nombre : 'etiquetar' }}
   </button>
-  <div class="dropdown-menu w-100" aria-labelledby="etiqueta-drop-{{$crm->id}}" style="max-height:400px; overflow: auto">
+  <div class="dropdown-menu w-100" aria-labelledby="etiqueta-drop-{{$crm->id}}" style="max-height:200px; overflow: auto">
     @foreach($etiquetas as $etiqueta)
     <a class="dropdown-item" href="javascript:cambiarEtiqueta({{ $etiqueta->id }}, {{ $crm->id }})">{{ $etiqueta->nombre }}</a>
     @endforeach
