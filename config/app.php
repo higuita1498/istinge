@@ -167,7 +167,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
          SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
          Arcanedev\LogViewer\LogViewerServiceProvider::class,
-
+         Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
     ],
 
     /*
@@ -220,6 +220,7 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'PDFMerger' => Webklex\PDFMerger\Facades\PDFMergerFacade::class,
 
     ],
 
