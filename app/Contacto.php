@@ -325,7 +325,12 @@ class Contacto extends Model
 
     }
 
-    public function contrato(){
+    public function contrato($contrato = null){
+
+        if($contrato){
+          return  Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
+        }
+
         return Contrato::where('client_id', $this->id)->where('status', 1)->first();
     }
 
