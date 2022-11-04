@@ -1191,7 +1191,7 @@ class AsignacionesController extends Controller
         $idContrato = request()->idContrato;
         if($contrato) {
             view()->share(['title' => 'Contrato de Internet']);
-            return view('pdf.contrato', compact('contrato', 'idContrato'));
+            //return view('pdf.contrato', compact('contrato', 'idContrato'));
             $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
