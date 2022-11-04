@@ -340,8 +340,14 @@ class Contacto extends Model
         return 'N/A';
     }
 
-    public function details(){
-        return Contrato::where('client_id', $this->id)->where('status', 1)->first();
+    public function details($contrato = null){
+        if($contrato){
+           $c = Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
+        }else{
+           $c = Contrato::where('client_id', $this->id)->where('status', 1)->first();
+        }
+
+        return $c;
     }
 
     public function radicados(){

@@ -351,6 +351,20 @@
 									<td>{{ $contrato->factura_individual == 1 ?'Si':'No' }}</td>
 								</tr>
 								@endif
+								<tr>
+									<th>Acciones</th>
+									<td>
+									@if(isset($_SESSION['permisos']['402']))
+									<a href="{{route('asignaciones.create', ['contrato' => $contrato->id, 'nro-contrato' => $contrato->nro])}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i>Firmar asignación</a>
+									@endif
+									@if(isset($_SESSION['permisos']['817']))
+									<a href="{{route('asignaciones.imprimir', [$contacto->id, 'idContrato' => $contrato->id, 'nro-contrato' => $contrato->nro])}}" class="btn btn-outline-info btn-sm"><i class="fas fa-print"></i>Imprimir</a>
+									@endif
+									@if(isset($_SESSION['permisos']['818']))
+									<a href="{{route('asignaciones.enviar', [$contacto->id, 'idContrato' => $contrato->id, 'nro-contrato' => $contrato->nro])}}" class="btn btn-outline-info btn-sm"><i class="fas fa-envelope"></i>Enviar</a>
+									@endif
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					    </div>

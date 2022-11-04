@@ -47,13 +47,22 @@ class AsignacionesController extends Controller
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         $clientes = Contacto::where('fecha_isp',null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('fecha_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::where('fecha_isp',null)->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $empresa = Empresa::find(Auth::user()->empresa);
+        $contrato = Contrato::where('id', request()->contrato)->where('empresa', Auth::user()->empresa)->first();
+        $idCliente = $contrato->client_id ?? '';
         view()->share(['title' => 'Asignación de Contrato de Internet']);
-        return view('asignaciones.create')->with(compact('clientes', 'empresa'));
+        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente'));
     }
 
     public function store(Request $request){
+
+        $idContrato = null;
+
+        if($request->contrato){
+            $idContrato = $request->contrato;
+        }
+
         $ext_permitidas = array('image/jpeg','image/png','image/gif');
         if (!$request->id){
             $mensaje='Debe seleccionar un cliente para la asignación del contrato digital';
@@ -71,7 +80,7 @@ class AsignacionesController extends Controller
 
             $contrato->fecha_isp = date('Y-m-d');
             $file = $request->file('documento');
-            $nombre =  'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+            $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
             Storage::disk('documentos')->put($nombre, \File::get($file));
             $contrato->documento = $nombre;
 
@@ -132,7 +141,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgA')){
                 $file = $request->file('imgA');
-                $nombre =  'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgA = $nombre;
 
@@ -191,7 +200,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgB')){
                 $file = $request->file('imgB');
-                $nombre =  'imgB_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgB_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgB = $nombre;
 
@@ -250,7 +259,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgC')){
                 $file = $request->file('imgC');
-                $nombre =  'imgC_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgC_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgC = $nombre;
 
@@ -309,7 +318,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgD')){
                 $file = $request->file('imgD');
-                $nombre =  'imgD_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgD_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgD = $nombre;
                 if(in_array($file->getMimeType(), $ext_permitidas)){
@@ -367,7 +376,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgE')){
                 $file = $request->file('imgE');
-                $nombre =  'imgE_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgE_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgE = $nombre;
 
@@ -426,7 +435,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgF')){
                 $file = $request->file('imgF');
-                $nombre =  'imgF_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgF_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgF = $nombre;
                 if(in_array($file->getMimeType(), $ext_permitidas)){
@@ -484,7 +493,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgG')){
                 $file = $request->file('imgG');
-                $nombre =  'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgG = $nombre;
                 if(in_array($file->getMimeType(), $ext_permitidas)){
@@ -542,7 +551,7 @@ class AsignacionesController extends Controller
 
             if($request->file('imgH')){
                 $file = $request->file('imgH');
-                $nombre =  'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $nombre =  $idContrato.'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $contrato->imgH = $nombre;
 
@@ -1179,9 +1188,11 @@ class AsignacionesController extends Controller
 
     public function imprimir($id){
         $contrato = Contacto::where('id',$id)->where('empresa', Auth::user()->empresa)->first();
+        $idContrato = request()->idContrato;
         if($contrato) {
             view()->share(['title' => 'Contrato de Internet']);
-            $pdf = PDF::loadView('pdf.contrato', compact('contrato'));
+            return view('pdf.contrato', compact('contrato', 'idContrato'));
+            $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
     }
@@ -1255,8 +1266,8 @@ class AsignacionesController extends Controller
                 );
                 config(['mail'=>$new]);
             }
-
-            $pdf = PDF::loadView('pdf.contrato', compact('contrato'))->stream();
+            $idContrato = request()->idContrato;
+            $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'))->stream();
             Mail::send('emails.contrato', compact('contrato'), function($message) use ($pdf, $contrato){
                 $message->attachData($pdf, 'contrato_digital_servicios.pdf', ['mime' => 'application/pdf']);
                 $message->to($contrato->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);

@@ -133,7 +133,7 @@
 
                         <div style="width: 100%;  margin-top: 10px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INFORMACIÓN DEL SUSCRIPTOR</p><br>
-                            <p style="text-align: justify;" class="small pl-2">Contrato No.: <b>{{ $contrato->details() ? $contrato->details()->nro : '' }}</b> </p>
+                            <p style="text-align: justify;" class="small pl-2">Contrato No.: <b>{{ $contrato->details($idContrato) ? $contrato->details($idContrato)->nro : '' }}</b> </p>
                             <p style="text-align: justify;" class="small pl-2">Nombre / Razón Social: <b>{{ $contrato->nombre }} {{ $contrato->apellidos() }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Identificación: <b>{{ $contrato->tip_iden('corta') }} {{ $contrato->nit }}@if($contrato->dv != null || $contrato->dv === 0)-{{$contrato->dv}} @endif</b></p>
                             <p style="text-align: justify;" class="small pl-2">Correo electrónico: <b>{{ $contrato->email }}</b></p>
@@ -146,8 +146,8 @@
                         <div style="width: 100%;  margin-top: 5px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">CONDICIONES COMERCIALES CARACTERÍSTICAS DEL PLAN</p><br>
                             <p style="text-align: justify;" class="small pl-2">Tipo de Cliente: Nuevo <input type="checkbox" /> Modificación <input type="checkbox" /></p>
-                            @if(isset($contrato->contrato()->tecnologia))
-                            <p style="text-align: justify;" class="small pl-2">Tipo red: FTTH <input type="checkbox" {{$contrato->contrato()->tecnologia == 1 ? 'checked="checked' : ''}}> WIRELESS <input type="checkbox" {{$contrato->contrato()->tecnologia == 2 ? 'checked="checked' : ''}}></p><br>
+                            @if(isset($contrato->contrato($idContrato)->tecnologia))
+                            <p style="text-align: justify;" class="small pl-2">Tipo red: FTTH <input type="checkbox" {{$contrato->contrato($idContrato)->tecnologia == 1 ? 'checked="checked' : ''}}> WIRELESS <input type="checkbox" {{$contrato->contrato($idContrato)->tecnologia == 2 ? 'checked="checked' : ''}}></p><br>
                             @endif
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INTERNET</p>
                             <table style="width: 100%; text-align:center; padding:5px;">
@@ -157,21 +157,21 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Down</td>
-                                    <td>{{ isset($contrato->details()->server_configuration_id) ? $contrato->details()->plan()->download : '' }}</td>
+                                    <td>{{ isset($contrato->details($idContrato)->server_configuration_id) ? $contrato->details($idContrato)->plan()->download : '' }}</td>
                                     <td style="font-size: 9px;">Ip Fijo</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Megas Up</td>
-                                    <td>{{ isset($contrato->details()->server_configuration_id) ? $contrato->details()->plan()->upload : '' }}</td>
+                                    <td>{{ isset($contrato->details($idContrato)->server_configuration_id) ? $contrato->details($idContrato)->plan()->upload : '' }}</td>
                                     <td style="font-size: 9px;">Otros</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details()->server_configuration_id) ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</b></td>
+                                    <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details($idContrato)->server_configuration_id) ? App\Funcion::Parsear($contrato->details($idContrato)->plan()->price) : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details()->server_configuration_id) ? App\Funcion::Parsear($contrato->details()->plan()->price) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->details($idContrato)->server_configuration_id) ? App\Funcion::Parsear($contrato->details($idContrato)->plan()->price) : '________' }}</td>
                                 </tr>
                             </table>
 
@@ -195,16 +195,16 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}}{{ isset($contrato->contrato()->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}}{{ isset($contrato->contrato($idContrato)->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato($idContrato)->plan('true')->precio * $contrato->contrato($idContrato)->plan('true')->impuesto)/100)+$contrato->contrato($idContrato)->plan('true')->precio) : '________' }}</td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->contrato()->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contrato->contrato($idContrato)->servicio_tv) ? App\Funcion::Parsear((($contrato->contrato($idContrato)->plan('true')->precio * $contrato->contrato($idContrato)->plan('true')->impuesto)/100)+$contrato->contrato($idContrato)->plan('true')->precio) : '________' }}</td>
                                     @php
                                     $total_tv = 0; $total_internet = 0;
-                                    if (isset($contrato->contrato()->servicio_tv)){
-                                        $total_tv = (($contrato->contrato()->plan('true')->precio * $contrato->contrato()->plan('true')->impuesto)/100)+$contrato->contrato()->plan('true')->precio;
+                                    if (isset($contrato->contrato($idContrato)->servicio_tv)){
+                                        $total_tv = (($contrato->contrato($idContrato)->plan('true')->precio * $contrato->contrato($idContrato)->plan('true')->impuesto)/100)+$contrato->contrato($idContrato)->plan('true')->precio;
                                     }
-                                    if (isset($contrato->contrato()->server_configuration_id)){
-                                        $total_internet = $contrato->contrato()->plan()->price;
+                                    if (isset($contrato->contrato($idContrato)->server_configuration_id)){
+                                        $total_internet = $contrato->contrato($idContrato)->plan()->price;
                                     }
                                     @endphp
                                 </tr>
@@ -358,7 +358,7 @@
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (12-$i)) }}
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato($idContrato)->contrato_permanencia_meses) * (12-$i)) }}
                                     </td>
                                     @endfor
                                 </tr>
@@ -371,7 +371,7 @@
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato()->contrato_permanencia_meses) * (6-$i)) }}
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato($idContrato)->contrato_permanencia_meses) * (6-$i)) }}
                                     </td>
                                     @endfor
                                 </tr>
@@ -384,7 +384,7 @@
                         <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">LARGA DISTANCIA (TELEFONÍA)</p><br>
                         <p style="text-align: justify;" class="small">Nos comprometemos a usar el operador de larga distancia que usted nos indique, para lo cual debe marcar el código de larga distancia del operador que elija.</p><br>
                         <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">COBRO POR RECONEXIÓN DEL SERVICIO</p><br>
-                        <p style="text-align: justify;" class="small">En caso de suspensión del servicio por mora en el pago, podremos cobrarle un valor por reconexión que corresponderá estrictamente a los costos asociados a la operación de reconexión. En caso de servicios empaquetados procede máximo un cobro de reconexión por cada tipo de conexión empleado en la prestación de los servicios. <b>{{ $contrato->contrato()->costo_reconexion > 0 ? 'Costo reconexión: '.Auth::user()->empresa()->moneda.' '.App\Funcion::Parsear($contrato->contrato()->costo_reconexion) : '' }}</b></p><br>
+                        <p style="text-align: justify;" class="small">En caso de suspensión del servicio por mora en el pago, podremos cobrarle un valor por reconexión que corresponderá estrictamente a los costos asociados a la operación de reconexión. En caso de servicios empaquetados procede máximo un cobro de reconexión por cada tipo de conexión empleado en la prestación de los servicios. <b>{{ $contrato->contrato($idContrato)->costo_reconexion > 0 ? 'Costo reconexión: '.Auth::user()->empresa()->moneda.' '.App\Funcion::Parsear($contrato->contrato($idContrato)->costo_reconexion) : '' }}</b></p><br>
                         <p style="padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">El usuario es el ÚNICO responsable por el contenido y la información que se curse a través de la red y del uso que se haga de los equipos o de los servicios.</p>
                         <p style="margin-top: 5px; padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">Los equipos de comunicaciones que ya no use son desechos que no deben ser botados a la caneca, consulte nuestra política de recolección de aparatos en desuso.</p>
                         @if(Auth::user()->empresa()->contrato_digital)

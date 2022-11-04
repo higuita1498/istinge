@@ -50,13 +50,16 @@
 
     <form method="POST" action="{{ route('asignaciones.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-asignacion" enctype="multipart/form-data">
         {{ csrf_field() }}
+        @if(isset($contrato))
+            <input type="hidden" value="{{ $contrato->id }}" name="contrato">
+        @endif
         <div class="row">
             <div class="col-md-5 form-group">
                 <label class="control-label">Cliente <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
                         @foreach($clientes as $cliente)
-                        <option value="{{$cliente->id}}">{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
+                        <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}>{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
                         @endforeach
                     </select>
                 </div>
