@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('content')
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	<a>Recuerda que si haces un cambio en la <strong>fecha de suspensión del grupo de corte,</strong> todas las facturas que tengan su 
+		<strong>fecha de vencimiento</strong> en el mismo mes que se realiza el cambio también cambiarán su fecha de vencimiento</a>
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
 	<form method="POST" action="{{ route('grupos-corte.update', $grupo->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-banco" >
 	    @csrf
 	    <input name="_method" type="hidden" value="PATCH">

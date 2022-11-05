@@ -17,6 +17,7 @@ use App\User;
 use App\Contrato;
 use App\GrupoCorte;
 use App\Campos;
+use App\Model\Ingresos\Factura;
 
 class GruposCorteController extends Controller
 {
@@ -198,12 +199,32 @@ class GruposCorteController extends Controller
             'hora_suspension' => 'required',
         ]);
         
-        $grupo = GrupoCorte::find($id);
+        $grupo = GrupoCorte::find($id);        
         
         if ($grupo) {
             $hora_suspension = explode(":", $request->hora_suspension);
             $hora_suspension_limit = $hora_suspension[0]+4;
             $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
+
+            //Si es diferente es por que hubo un cambio y vamos a actualizar la fecha de suspension de las ultimas facturas creadas
+            if($grupo->fecha_suspension != $request->fecha_suspension){
+
+                $mesActual = date('m');
+                $yearActual = date('Y');
+
+                $facturasGrupo = Factura::join('contracts as c', 'c.id', '=' ,'factura.contrato_id')
+                ->join('grupos_corte as gc','gc.id','=','c.grupo_corte')
+                ->select('factura.*','gc.id as grupo_id')
+                ->whereRaw("DATE_FORMAT(factura.vencimiento, '%m')=" .$mesActual)
+                ->whereRaw("DATE_FORMAT(factura.vencimiento, '%Y')=" .$yearActual)
+                ->where('gc.id',$grupo->id)
+                ->get();
+
+                foreach($facturasGrupo as $fg){
+                    $fg->vencimiento = $yearActual . "-" . $mesActual . "-" . $request->fecha_suspension;
+                    $fg->save();
+                }
+            }
 
             $grupo->nombre           = $request->nombre;
             $grupo->fecha_factura    = $request->fecha_factura;

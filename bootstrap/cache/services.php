@@ -52,6 +52,7 @@
     48 => 'Intervention\\Image\\ImageServiceProvider',
     49 => 'SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider',
     50 => 'Arcanedev\\LogViewer\\LogViewerServiceProvider',
+    51 => 'Webklex\\PDFMerger\\Providers\\PDFMergerServiceProvider',
   ),
   'eager' => 
   array (
@@ -90,6 +91,7 @@
     32 => 'Intervention\\Image\\ImageServiceProvider',
     33 => 'SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider',
     34 => 'Arcanedev\\LogViewer\\LogViewerServiceProvider',
+    35 => 'Webklex\\PDFMerger\\Providers\\PDFMergerServiceProvider',
   ),
   'deferred' => 
   array (

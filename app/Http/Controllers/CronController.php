@@ -1940,6 +1940,57 @@ class CronController extends Controller
         
         //comprobar en bd
         //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"
+        
+        // SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
+        // $facturas = Factura::join('contracts as c','c.id','=','factura.contrato_id')
+        // ->select('factura.*','c.grupo_corte','c.plan_id','c.servicio_tv','c.descuento')
+        // ->where('factura.fecha','2022-11-01')
+        // ->where('c.grupo_corte',1)->get();
+        
+        // $cont = 0;
+        // foreach($facturas as $factura){
+        //     if($factura->total()->total == 0){
+        //         $cont=$cont+1;
+        //         if(!DB::table('items_factura')->where('factura',$factura->id)->first()){
+                    // if($factura->plan_id){
+                    //             $plan = PlanesVelocidad::find($factura->plan_id);
+                    //             $item = Inventario::find($plan->item);
+
+                    //             $item_reg = new ItemsFactura;
+                    //             $item_reg->factura     = $factura->id;
+                    //             $item_reg->producto    = $item->id;
+                    //             $item_reg->ref         = $item->ref;
+                    //             $item_reg->precio      = $item->precio;
+                    //             $item_reg->descripcion = $plan->name;
+                    //             $item_reg->id_impuesto = $item->id_impuesto;
+                    //             $item_reg->impuesto    = $item->impuesto;
+                    //             $item_reg->cant        = 1;
+                    //             $item_reg->desc        = $factura->descuento;
+                    //             $item_reg->save();
+                    //         }
+
+                    //         ## Se carga el item a la factura (Plan de Televisión) ##
+
+                    //         if($factura->servicio_tv){
+                    //             $item = Inventario::find($factura->servicio_tv);
+                    //             $item_reg = new ItemsFactura;
+                    //             $item_reg->factura     = $factura->id;
+                    //             $item_reg->producto    = $item->id;
+                    //             $item_reg->ref         = $item->ref;
+                    //             $item_reg->precio      = $item->precio;
+                    //             $item_reg->descripcion = $item->producto;
+                    //             $item_reg->id_impuesto = $item->id_impuesto;
+                    //             $item_reg->impuesto    = $item->impuesto;
+                    //             $item_reg->cant        = 1;
+                    //             $item_reg->desc        = $factura->descuento;
+                    //             $item_reg->save();
+                    //         }
+        //         }
+        //     }
+        // }
+        // return "ok productos actualizados";
+        //END SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
+
     }
 
     public function aplicateProrrateo(){
