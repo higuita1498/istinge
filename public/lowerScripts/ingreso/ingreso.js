@@ -21,6 +21,13 @@ function saldoContacto(id){
     var _token =   $('meta[name="csrf-token"]').attr('content');
    
     $.get(url,{_token:_token},function(data){
-        $('#total_saldo').val(data);
+        data = JSON.parse(data);
+        $('#total_saldo').val(data.saldo);
+        let opcion = data.contrato;
+        if(opcion == 0){
+          $("#form-ingresos-electronica").addClass('d-none');
+        }else{
+            $("#form-ingresos-electronica").removeClass('d-none');
+        }
     });
 }

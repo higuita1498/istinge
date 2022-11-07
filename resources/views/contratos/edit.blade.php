@@ -77,7 +77,9 @@
     <form method="POST" action="{{ route('contratos.update', $contrato->id ) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
         @csrf
         <input name="_method" type="hidden" value="PATCH">
-
+        <input name="opciones_dian" id="opciones_dian" type="hidden" value="{{$contrato->opciones_dian}}">
+        <input name="contrato_id" id="contrato_id" type="hidden" value="{{$contrato->id}}">
+        
         <div class="row card-description p-0">
             <div class="col-md-4 form-group">
                 <label class="control-label font-weight-bold">Nombre del Cliente</label>
@@ -141,7 +143,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo Factura <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                    <select class="form-control selectpicker" name="facturacion" id="facturacion" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validarTipo()">
                                         <option value="1" {{$contrato->facturacion == 1 ? 'selected' : ''}}>Facturación Estándar</option>
                                         <option value="3" {{$contrato->facturacion == 3 ? 'selected' : ''}} >Facturación Electrónica</option>
                                     </select>
@@ -201,6 +203,7 @@
                                     </span>
                                 </div>
                             </div>
+
                             @if(Auth::user()->empresa()->oficina)
                             <div class="form-group col-md-4">
                                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
@@ -211,6 +214,16 @@
                                 </select>
                             </div>
                             @endif
+                            
+                            @if($contrato->facturacion == 1)
+                            <div class="col-md-4 form-group" id="div_opciones">
+                                <label class="control-label">{{$contrato->opciones_dian == 0 ? 'Habilitar' : 'Deshabilitar'}} opciones de facturacion electórnica?</label>
+                                <div class="input-group">
+                                    <a href="#" onclick="hab_desha()" class="btn btn-outline-primary" style="width:100%;">{{$contrato->opciones_dian == 0 ? 'Habilitar' : 'Deshabilitar'}}</a>
+                                </div>
+                            </div>
+                            @endif
+
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">
@@ -746,5 +759,65 @@
                 }
             });
         });
+
+        function validarTipo(){
+                let type = $("#facturacion").val();
+                if(type == 3){
+                    $("#div_opciones").addClass('d-none');
+                }
+                else{
+                    $("#div_opciones").removeClass('d-none');
+                }
+        }
+
+            function hab_desha(){
+                let opcion = $("#facturacion").val();
+                let estadoDian = $("#opciones_dian").val();
+
+                if (window.location.pathname.split("/")[1] === "software") {
+    			var url = `/software/empresa/contratos/opciones_dian`;
+                }else{
+                    var url = `/empresa/contratos/opciones_dian`;
+                }
+
+                Swal.fire({
+				title: `¿${estadoDian == 1 ? 'Deshabilitar' : 'Habilitar'} opciones de facturación electrónica?`,
+				text: `${estadoDian == 1 ? 'Las opciones de facturacion electrónica para este contrato y esta persona se deshabilitarán' : 'Las opciones de facturacion electrónica para este contrato y esta persona se habilitarán'} `,
+				type: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				cancelButtonText: 'Cancelar',
+				confirmButtonText: `${estadoDian == 1 ? 'Deshabilitar' : 'Habilitar'}`,
+			}).then((result) => {
+				if (result.value) {
+					$.ajax({
+						url: url,
+						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        data: {
+                            contratoId : $("#contrato_id").val(),
+                            opcionDian : estadoDian
+                        },
+						method: 'post',
+						success: function (response) {
+				
+							if (response) {
+								Swal.fire({
+									position: 'top-center',
+									type: 'success',
+									text: response.text,
+									title: response.message,
+									showConfirmButton: false,
+									timer: 5000
+								})
+                                location.reload();						
+							}
+						}
+					});
+				}
+			})
+            }
+
+        
     </script>
 @endsection

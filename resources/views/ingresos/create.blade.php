@@ -432,7 +432,10 @@
         </div>
       </div>
       <hr>
-      <div class="row form-inline fact-table">
+      
+
+      <input type="hidden" @if($contrato) value="{{$contrato->opciones_dian}}" @else value="0" @endif id="input-ingresos-electronica"> 
+      <div class="row form-inline fact-table" id="form-ingresos-electronica">
         <div class="col-md-6">
           <div class="alert alert-warning" role="alert">
             Se tendrán en cuenta todas las facturas que les asocie un pago.
@@ -493,4 +496,14 @@
 
 @section('scripts')
 <script src="{{asset('lowerScripts/ingreso/ingreso.js')}}"></script>
+<script>
+  $(document).ready(function(){
+      //validacion
+      let opcion = $("#input-ingresos-electronica").val();
+
+      if(opcion == 0){
+        $("#form-ingresos-electronica").addClass('d-none');
+      }
+  })
+</script>
 @endsection

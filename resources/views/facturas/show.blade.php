@@ -28,7 +28,7 @@
         @if(auth()->user()->rol <> 8)
             <div class="row" style="margin: -2% 0 0 2%;">
                 <div class="col-md-12">
-                        @if(Auth::user()->empresa()->form_fe == 1 && $factura->emitida == 0 && Auth::user()->empresa()->estado_dian == 1 && Auth::user()->empresa()->technicalkey != null)
+                        @if(Auth::user()->empresa()->form_fe == 1 && $factura->emitida == 0 && Auth::user()->empresa()->estado_dian == 1 && Auth::user()->empresa()->technicalkey != null && $factura->tipo == 2)
                             <a  href="#"  class="btn btn-outline-primary btn-sm"title="Emitir Factura" onclick="validateDian({{ $factura->id }}, '{{route('xml.factura',$factura->id)}}', '{{$factura->codigo}}')" ><i class="fas fa-sitemap"></i>Emitir</a>
                         @endif
                         <a href="{{route('facturas.imprimir',['id' => $factura->id, 'name'=> 'Factura No. '.$factura->codigo.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
@@ -74,7 +74,7 @@
                                     @endif
                                     <a class="dropdown-item" href="{{route('facturas.imprimircopia',$factura->id)}}" target="_blank">Imprimir como Copia</a>
                                     <a class="dropdown-item" href="{{route('facturas.copia',$factura->id)}}" target="_blank">Descargar como Copia</a>
-                                    @if($factura->tipo == 1)
+                                    @if($factura->tipo == 1 && $contrato->opciones_dian == 1)
                                     <a class="dropdown-item" href="{{route('facturas.convertirelectronica',$factura->id)}}">Convertir a factura electrónica</a>
                                     @endif
                                     @if($factura->emitida == 1)

@@ -478,7 +478,7 @@ class FacturasController extends Controller{
              DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'), 
              DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), 
              'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', 
-             'mk.nombre as servidor','cs.server_configuration_id',
+             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',
              DB::raw('v.nombre as nombrevendedor'),
              DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
              DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
@@ -1264,7 +1264,7 @@ class FacturasController extends Controller{
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-
+        $contrato = Contrato::where('client_id',$factura->cliente)->first();
         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
 
         $limitDate   = (Carbon::parse($factura->created_at))->addDay();
@@ -1288,7 +1288,7 @@ class FacturasController extends Controller{
                 view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
             }
             $items = ItemsFactura::where('factura',$factura->id)->get();
-            return view('facturas.show')->with(compact('factura', 'items', 'retenciones', 'realStatus'));
+            return view('facturas.show')->with(compact('factura', 'items', 'retenciones', 'realStatus','contrato'));
         }
         return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
     }

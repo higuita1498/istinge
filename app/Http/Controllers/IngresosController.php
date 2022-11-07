@@ -218,6 +218,10 @@ class IngresosController extends Controller
         }else{
             $numero = 1;
         }
+        $contrato = false;
+        if($cliente){
+            $contrato = Contrato::where('client_id',$cliente)->first();
+        }
 
         //$bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         (Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
@@ -238,26 +242,28 @@ class IngresosController extends Controller
         //tomamos las formas de pago cuando no es un recibo de caja por anticipo
         $formas = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
-        return view('ingresos.create')->with(compact('clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas'));
+        return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas'));
     }
 
     public function saldoContacto($id){
         $cliente = Contacto::find($id);
+        $contrato = Contrato::where('client_id',$id)->first();
         if($cliente->saldo_favor == null){
             $saldo = 0;
         }else{
             $saldo = $cliente->saldo_favor;
         }
-        return json_encode($saldo);
+        return json_encode(['saldo' => $saldo, 'contrato' => $contrato->opciones_dian]);
     }
 
     public function pendiente($cliente, $id=false){
         $this->getAllPermissions(Auth::user()->id);
         $facturas = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('estatus', 1);
         $facturas = $facturas->orderBy('created_at', 'desc')->take(3)->get();
+        $contrato = Contrato::where('client_id',$cliente)->first();
         //$total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
         $total = 1;
-        return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total'));
+        return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total','contrato'));
     }
 
     public function ingpendiente($cliente, $id=false){
@@ -268,6 +274,8 @@ class IngresosController extends Controller
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
         $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
         $new=$facturas;
+        $contrato = Contrato::where('client_id',$cliente)->first();
+
         foreach ($items as $item) {
             foreach ($facturas as $factura) {
                 if ($factura->id==$item->factura) {
@@ -279,7 +287,7 @@ class IngresosController extends Controller
             }
             $entro=false;
         }
-        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 'ingreso', 'retencioness'));
+        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 'ingreso', 'retencioness','contrato'));
     }
 
     public function store(Request $request){
