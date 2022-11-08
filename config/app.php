@@ -167,7 +167,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
          SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
          Arcanedev\LogViewer\LogViewerServiceProvider::class,
-         Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
+        // Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
     ],
 
     /*
