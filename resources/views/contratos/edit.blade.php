@@ -215,14 +215,12 @@
                             </div>
                             @endif
                             
-                            @if($contrato->facturacion == 1)
-                            <div class="col-md-4 form-group" id="div_opciones">
+                            <div class="col-md-4 form-group d-none" id="div_opciones">
                                 <label class="control-label">{{$contrato->opciones_dian == 0 ? 'Habilitar' : 'Deshabilitar'}} opciones de facturacion electórnica?</label>
                                 <div class="input-group">
                                     <a href="#" onclick="hab_desha()" class="btn btn-outline-primary" style="width:100%;">{{$contrato->opciones_dian == 0 ? 'Habilitar' : 'Deshabilitar'}}</a>
                                 </div>
                             </div>
-                            @endif
 
                         </div>
                     </div>
