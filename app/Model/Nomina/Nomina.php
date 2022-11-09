@@ -74,6 +74,11 @@ class Nomina extends Model
         return ucfirst($date->monthName) . ' ' . $this->year;
     }
 
+    public static function monthName($date){
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        return  $mes = $meses[($date->format('n')) - 1];
+    }
+
     /**
      * Cantidad de empleados donde no tengan el estado 4,5 y 6 que representan ajustes de nomina y nominas elminadas.
      *
