@@ -121,7 +121,7 @@ class CronController extends Controller
                     ->where('contrato_id',$contrato->id)
                     ->get()->last();
 
-                    // if(!$fac){
+                    if(!$fac){
                         $numero=$numero+1;
 
                         //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
@@ -272,7 +272,7 @@ class CronController extends Controller
                             }
                             //>>>>Fin posible aplicación prorrateo al total<<<<//
                         }
-                    // } Comentando factura abierta del mes pasado
+                    } //Comentando factura abierta del mes pasado
                     }
                     
                 }
