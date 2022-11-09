@@ -81,7 +81,7 @@
         <input name="contrato_id" id="contrato_id" type="hidden" value="{{$contrato->id}}">
         
         <div class="row card-description p-0">
-            <div class="col-md-4 form-group">
+            <div class="col-md-4 form-group"> 
                 <label class="control-label font-weight-bold">Nombre del Cliente</label>
                 <input type="text" class="form-control readonly"  id="nombre" name="nombre"  required="" value="{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}}" maxlength="200" readonly="">
                 <span class="help-block error">

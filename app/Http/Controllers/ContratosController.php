@@ -909,7 +909,7 @@ class ContratosController extends Controller
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
     
-    public function update(Request $request, $id){
+    public function update(Request $request, $id){ 
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'grupo_corte' => 'required',
