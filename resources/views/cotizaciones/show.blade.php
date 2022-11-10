@@ -4,7 +4,8 @@
     @if(auth()->user()->modo_lectura())
         <div class="alert alert-warning text-left" role="alert">
             <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
-            <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+           <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
+<p>Medios de pago Nequi: 3026003360 Cuenta de ahorros Bancolombia 42081411021 CC 1001912928 Ximena Herrera representante legal. Adjunte su pago para reactivar su membresía</p>
         </div>
     @else
         <a href="{{route('cotizaciones.edit',$factura->cot_nro)}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-edit"></i> Editar</a>
