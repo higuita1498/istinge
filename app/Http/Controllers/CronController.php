@@ -830,7 +830,7 @@ class CronController extends Controller
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
-            select('contactos.celular', 'f.vencimiento')->
+            select('contactos.celular', 'f.vencimiento', 'contactos.id as idContacto')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.pago_oportuno', $fecha)->
@@ -842,8 +842,15 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
-
-            $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
+                $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('pago_oportuno', $fecha)->get();
+                foreach($facturaDetalle as $fd){
+                    $fullname = $fd->cliente()->nombre.' '.$fd->cliente()->apellidos();
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.date('d-m-Y', strtotime($fd->vencimiento)).' Total a pagar '.$fd->totalAPI($empresa->id)->total.'"},';
+                }
+            }else{
+                $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+            }
         }
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
@@ -949,7 +956,7 @@ class CronController extends Controller
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
-            select('contactos.celular')->
+            select('contactos.celular, contactos.id as idContacto')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.vencimiento', $fecha)->
@@ -961,8 +968,15 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
-
-            $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955'){
+                $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('vencimiento', $fecha)->get();
+                foreach($facturaDetalle as $fd){
+                    $fullname = $fd->cliente()->nombre.' '.$fd->cliente()->apellidos();
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.date('d-m-Y', strtotime($fd->vencimiento)).' Total a pagar '.$fd->totalAPI($empresa->id)->total.'"},';
+                }
+            }else{
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "Estimado cliente, se le informa que su factura de internet ha sido generada. '.$empresa->slogan.'"},';
+            }
         }
 
         $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
