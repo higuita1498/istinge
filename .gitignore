@@ -13,3 +13,4 @@ yarn-error.log
 .env
 .phpunit.result.cache
 /resources/views/emails/plantillas
+/bootstrap/cache/services.php
