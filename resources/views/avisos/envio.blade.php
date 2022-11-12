@@ -176,10 +176,12 @@
             $(".enabled").attr('selected','selected');
             $(".disabled").removeAttr("selected");
             //$("#seleccion_manual").addClass('d-none');
+			refreshClient('enabled');
         }else if($("#radio_2").is(":checked")){
             $(".disabled").attr('selected','selected');
             $(".enabled").removeAttr("selected");
             //$("#seleccion_manual").addClass('d-none');
+			refreshClient('disabled');
         }else if($("#radio_3").is(":checked")){
             //$("#seleccion_manual").removeClass('d-none');
         }
@@ -195,23 +197,36 @@
     	})
     }
 
-	function refreshClient(){
+	function refreshClient(estadoCliente = null){
 
 		let grupoCorte = $('#corte').val();
 		let servidor = $('#servidor').val();
 
-		if(grupoCorte && servidor){
-			options = $(`.servidor-${servidor}.grupo-${grupoCorte}`);
+
+		if(estadoCliente){
+
+			if(grupoCorte && servidor){
+				options = $(`.servidor-${servidor}.grupo-${grupoCorte}.${estadoCliente}`);
+			}else{
+				if(servidor){
+					options = $(`.servidor-${servidor}.${estadoCliente}`);
+				}
+				if(grupoCorte){
+					options = $(`.grupo-${servidor}.${estadoCliente}`);
+				}
+			}
+
 		}else{
-
-			if(servidor){
-				options = $(`#contrato_sms option[class*="servidor-${servidor}"]`);
+			if(grupoCorte && servidor){
+				options = $(`.servidor-${servidor}.grupo-${grupoCorte}`);
+			}else{
+				if(servidor){
+					options = $(`#contrato_sms option[class*="servidor-${servidor}"]`);
+				}
+				if(grupoCorte){
+					 options = $(`#contrato_sms option[class*="grupo-${grupoCorte}"]`);
+				}
 			}
-
-			if(grupoCorte){
-				 options = $(`#contrato_sms option[class*="grupo-${grupoCorte}"]`);
-			}
-
 		}
 		
 		$("#contrato_sms option:selected").prop("selected", false);
