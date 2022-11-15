@@ -135,8 +135,9 @@ class AvisosController extends Controller
                     $numero = str_replace('+','',$contrato->cliente()->celular);
                     $numero = str_replace(' ','',$numero);
                     array_push($numeros, '57'.$numero);
-
-                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$plantilla->contenido.'"},';
+                    if(strlen($numero) >= 10  && $plantilla->contenido){
+                        $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$plantilla->contenido.'"},';
+                    }
 
                 }elseif($request->type == 'EMAIL'){
                     $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
