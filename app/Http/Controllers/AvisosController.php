@@ -82,7 +82,7 @@ class AvisosController extends Controller
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)
             ->where('contracts.empresa', Auth::user()->empresa)
-            ->whereNotNull('contactos.telefono1');
+            ->whereNotNull('contactos.celular');
 
         if($id){
             $contratos = $contratos->where('contactos.id', $id);
