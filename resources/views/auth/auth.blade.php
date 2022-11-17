@@ -238,7 +238,7 @@ iframe {
 /*---------------------------------------------*/
 .login100-form-avatar {
   width: 250px;
-  height: 150px;
+  height: 230px;
   overflow: hidden;
   margin: 0 auto;
 }
