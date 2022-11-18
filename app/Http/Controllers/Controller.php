@@ -957,7 +957,7 @@ class Controller extends BaseController
         echo 'Se han generado '.$i.' facturas';
     }
     
-    public function consultar_invoice($identificacion){
+    public function consultar_invoice_old($identificacion){
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
         join('factura as f','f.cliente','c.id')->
         join('items_factura as if','f.id','if.factura')->
@@ -970,7 +970,7 @@ class Controller extends BaseController
         return json_encode($contrato);
     }
 
-    public function consultar_invoice_new($identificacion){
+    public function consultar_invoice($identificacion){
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
         join('factura as f','f.cliente','c.id')->
         join('items_factura as if','f.id','if.factura')->
