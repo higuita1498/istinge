@@ -30,7 +30,7 @@ class DescuentosController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         //$clientes = Contacto::where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->get();
-        $clientes = (Auth::user()->oficina) ? Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->where('tipo_contacto', 0)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $usuarios = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 9)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
