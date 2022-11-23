@@ -83,7 +83,7 @@
         </td> 
         <td class="monetario" style="vertical-align: text-bottom;">
           <input type="hidden" id="editmonto{{$factura->id}}" value="1">
-          <input type="text" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" max="{{App\Funcion::precision($pagar)}}" value="{{$value}}" onkeyup="totales_ingreso();"> 
+          <input type="text" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" value="{{$value}}" onkeyup="totales_ingreso();"> 
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>
 
         </td>

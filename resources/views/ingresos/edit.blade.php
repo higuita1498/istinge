@@ -311,6 +311,7 @@
             </tbody>
           </table>
           <hr>
+          <input type="hidden" name="saldofavor" id="saldofavor" value="0">
           <table style="text-align: right; font-size: 24px !important; width: 100%;">
             <tr>
               <td width="40%">TOTAL</td>

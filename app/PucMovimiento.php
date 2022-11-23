@@ -35,6 +35,24 @@ class PucMovimiento extends Model
        'mes_cierre', 'documento_id', 'cliente_id','cuenta_id','created_at', 'updated_at'
     ];
 
+    /*
+        TIPOS DE COMPROBANTES:
+        1 = recibo de caja
+        2 = Gasto.
+        3 = Factura de venta.
+        4 = Factura de compra.
+        5 = Nota debito.
+        6 = Nota crédito.
+        .
+        .
+        .
+    */
+
+    /* 
+        OPCION:
+        2: Actualizar el movimiento y borrar el anterior.
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    */
     public static function facturaVenta($factura, $opcion, $request, $siguienteNumero=null){
 
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
@@ -236,7 +254,7 @@ class PucMovimiento extends Model
 
      /* 
         OPCION:
-        0: Actualizar el movimiento y borrar el anterior.
+        2: Actualizar el movimiento y borrar el anterior.
         1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
     */
     public static function notaCredito($nota, $opcion, $request, $siguienteNumero=null){
@@ -458,6 +476,11 @@ class PucMovimiento extends Model
           }
     }
 
+    /* 
+        OPCION:
+        2: Actualizar el movimiento y borrar el anterior.
+        1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
+    */
     public static function facturaCompra($factura, $opcion, $request, $siguienteNumero=null){
         
         //opcion 1 es para guardar el movimientos, y miramos que no exista inngun movimiento sobre este documento
@@ -633,7 +656,7 @@ class PucMovimiento extends Model
         2: cuando es el proceso normal, sin saldos a favores ni anticipos
 
         OPCION:
-        0: Actualizar el movimiento y borrar el anterior.
+        2: Actualizar el movimiento y borrar el anterior.
         1: guardar el movimiento, y miramos que no exista inngun movimiento sobre este documento
     */
     public static function ingreso($ingreso, $opcion, $tipo=0, $siguienteNumero=null){
@@ -798,6 +821,26 @@ class PucMovimiento extends Model
             $mov->enlace_a = 4;
             $mov->empresa = $empresa;
             $mov->save();            
+        }
+
+        //Opcion = 2 Actualizamos los moviemintos del nuevo ingreso en el puc
+        else if($opcion == 2){
+ 
+            //obtenemos los movimientos contables de la factura y los eliminamos.
+            $movimientos = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->get();
+            foreach($movimientos as $mov){
+
+                if($mov->enlace_a == 5){ //si es igual a 5 es por que el cliente tiene un saldo a favor por ese valor.
+                    //hay que validar que ese saldo a favor no se haya usado, para poder borrarlo y descontalro del cliente. (PENDIENTE)
+
+                    $mov->eliminarSaldoFavor(1);
+                }
+                //obtenemos los movimientos contables de la factura y los eliminamos.
+               $siguienteNumero = $mov->nro;
+               $mov->delete();
+           }
+            PucMovimiento::ingreso($ingreso,1,$tipo,$siguienteNumero);
+            
         }
         
     }
@@ -1180,6 +1223,22 @@ class PucMovimiento extends Model
                 }
                 $contacto->save();
             }
+        }
+    }
+
+    /*
+    Modulo: 1 = igresos, 2=gastos
+    */
+    public function eliminarSaldoFavor($modulo){
+        if($modulo == 1){ //si el modulo es 1 es por que vamos a borrar un saldo a favor de un recibo de caja
+            $contacto = Contacto::where('id',$this->cliente_id)->first(); 
+            $contacto->saldo_favor = $contacto->saldo_favor - $this->credito;
+            $contacto->save();
+        }
+        else if($modulo == 2){
+            $contacto = Contacto::where('id',$this->cliente_id)->first(); 
+            $contacto->saldo_favor2 = $contacto->saldo_favor2 - $this->debito;
+            $contacto->save();
         }
     }
 
