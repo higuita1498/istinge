@@ -50,7 +50,7 @@ class RadicadosController extends Controller{
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $responsables = User::where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
@@ -63,7 +63,7 @@ class RadicadosController extends Controller{
     public function indexNew(Request $request, $tipo){
         $this->getAllPermissions(Auth::user()->id);
 
-        $clientes = (Auth::user()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $tecnicos = User::where('rol', 4)->where('user_status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('estatus', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 12)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
@@ -295,7 +295,7 @@ class RadicadosController extends Controller{
         $planes = PlanesVelocidad::where('empresa', Auth::user()->empresa)->get();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
-        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         view()->share(['icon'=>'far fa-life-ring', 'title' => 'Nuevo Caso']);
         return view('radicados.create')->with(compact('clientes','identificaciones','paises','departamentos', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','planes','servicios','tecnicos', 'cliente', 'oficinas'));
     }
@@ -375,7 +375,7 @@ class RadicadosController extends Controller{
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $servicios = Servicio::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         $tecnicos = User::where('empresa',Auth::user()->empresa)->where('rol', 4)->get();
-        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         if ($radicado) {
             view()->share(['icon'=>'far fa-life-ring', 'title' => 'Modificar: N° '.$radicado->codigo, 'middel' => true]);
             return view('radicados.edit')->with(compact('radicado','servicios','tecnicos','oficinas'));

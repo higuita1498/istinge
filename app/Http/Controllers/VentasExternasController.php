@@ -151,7 +151,7 @@ class VentasExternasController extends Controller{
         $departamentos = DB::table('departamentos')->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+        $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon' =>'', 'title' => 'Nueva Venta Externa', 'subseccion' => 'ventas-externas', 'middel'=>true]);
 
@@ -221,7 +221,7 @@ class VentasExternasController extends Controller{
             $departamentos    = DB::table('departamentos')->get();
             $vendedores       = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
             $canales          = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-            $oficinas = (Auth::user()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
             view()->share(['title' => 'Editar Venta Externa']);
             return view('ventas_externas.edit')->with(compact('identificaciones', 'paises', 'departamentos','vendedores','canales', 'contacto', 'oficinas'));
