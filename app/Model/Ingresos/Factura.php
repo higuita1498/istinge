@@ -492,7 +492,7 @@ class Factura extends Model
         return Vendedor::where('id',$this->vendedor)->first()->nombre;
     }
 
-    public function pagado(){
+    public function pagado($sumarRetencion = true){
         $total=IngresosFactura::
         where('factura',$this->id)->
         whereRaw('(SELECT estatus FROM ingresos where id = ingresos_factura.ingreso) <> 2 ')->
@@ -504,6 +504,10 @@ class Factura extends Model
         where('documento_id',$this->id)->
         sum('debito');
 
+        if ($sumarRetencion) {
+            $total += $this->retenido(); //le sumamos la retención del ingreso (solamente), ya que no afecta la factura de venta
+        }
+
         $total = $total + $totalAnticipo;
 
         //$total+=$this->retenido();
@@ -511,13 +515,12 @@ class Factura extends Model
     }
 
     public function retenido($por_factura = false){
-        $ingresos=IngresosFactura::where('factura',$this->id)->whereRaw('(SELECT estatus FROM ingresos where id = ingresos_factura.ingreso) <> 2 ')->get();
-        $total=0;
+        $ingresos = IngresosFactura::where('factura', $this->id)->whereRaw('(SELECT estatus FROM ingresos where id = ingresos_factura.ingreso) <> 2 ')->get();
+        $total = 0;
         foreach ($ingresos as $ingreso) {
-            $total+=(float)$ingreso->retencion();
+            $total += (float)$ingreso->retencion();
         }
-        if($por_factura)
-        {
+        if ($por_factura) {
             $total += $this->retenido_factura();
         }
         return $total;
