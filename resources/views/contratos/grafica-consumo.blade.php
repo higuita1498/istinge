@@ -77,6 +77,18 @@
             </a>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <a href="{{ route('contratos.grafica', $contrato->id) }}" target="_blank" class="btn btn-system mb-4">
+                <h5 class="pb-0 mb-0 font-weight-bold">GRÁFIO TIEMPO REAL</h5><p class="mb-0">(descarga y carga)</p>
+                <div class="mb-4 d-none">
+                    <img src="http://{{$url}}/daily.gif" class="d-none img-gafica">
+                </div>
+            </a>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
