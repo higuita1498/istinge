@@ -69,6 +69,7 @@
     @endforeach
   </tbody>
 </table>
+@if(isset($factura))
 <div class="row" style="margin-top: 1%;">
       <div class="col-md-4 offset-md-8">
         <table class="text-right ingresos" id="totales-ingreso">
@@ -99,6 +100,7 @@
         </table>
       </div>
     </div>
+@endif
 @else
 <p class="text-warning text-center">El cliente seleccionado no tiene <b>facturas de venta</b> pendientes por pagar</p>
 @endif

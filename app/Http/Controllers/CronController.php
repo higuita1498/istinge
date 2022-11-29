@@ -956,7 +956,7 @@ class CronController extends Controller
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
-            select('contactos.celular, contactos.id as idContacto')->
+            select('contactos.celular', 'contactos.id as idContacto')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.vencimiento', $fecha)->

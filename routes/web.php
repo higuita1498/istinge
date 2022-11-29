@@ -1443,3 +1443,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         });
         Route::resource('auditoria', 'AuditoriaController');
 });
+
+
+Route::get('/graficos/{id?}', 'GraficosController@index');
+Route::get('/data-grafica/', 'GraficosController@data');
