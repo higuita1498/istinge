@@ -1111,6 +1111,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/planes', 'ReportesController@planes')->name('reportes.planes');
 
 		Route::get('/ivas', 'ReportesController@ivas')->name('reportes.ivas');
+
+		//Reportes contables
+		Route::get('/balances', 'ReportesController@balance')->name('reportes.balance');
 	});
 	//Exportar
 	Route::group(['prefix' => 'exportar'], function() {
