@@ -38,6 +38,18 @@
                 </ul>
             </div>
         </div>
+
+        {{-- <div class="row">
+            <div class="col-md-5 offset-md-1 reportes">
+                <h3><i class="fas fa-chart-line"></i> Contables</h3>
+                <ul class="list-report">
+                    <li><a href="{{route('reportes.balance')}}">Reporte de Balances</a></li>
+                </ul>
+            </div>
+            <div class="col-md-5 offset-md-1 reportes">
+           
+            </div>
+        </div> --}}
     </div>
     <div class="affix"></div>
     @endif

@@ -543,7 +543,7 @@ class Factura extends Model
         $retencion=" ";
         foreach ($ingresos as $key => $ingreso) {
              $retencion .= " ".$ingreso->retencion()->nombre.' ('.$ingreso->retencion()->porcentaje.'%) '.Auth::user()->empresa()->moneda .Funcion::Parsear($ingreso->valor).($key<$ingresos->count()-1?",":'');
-
+            
         }
         return $retencion;
     }
