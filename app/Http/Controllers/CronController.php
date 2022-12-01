@@ -112,16 +112,17 @@ class CronController extends Controller
                 }
                 
                 foreach ($contratos as $contrato) {
-                    
+
                     if(DB::table('factura')->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
-                        ## Verificamos que el cliente no posea una factura automática abierta, de tenerla no se le genera la nueva factura
+                        ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
                     $fac = Factura::where('cliente', $contrato->cliente)
-                    ->where('estatus', 1)
                     ->where('facturacion_automatica', 1)
                     ->where('contrato_id',$contrato->id)
                     ->get()->last();
+                    
+                    // return $fac;
 
-                    if(!$fac){
+                    if(isset($fac->estatus) && $fac->estatus == 0 || !$fac){
                         $numero=round($numero)+1;
 
                         //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
