@@ -2281,11 +2281,11 @@ class FacturasController extends Controller{
             config(['mail'=>$new]);
         }
 
-        // Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
-        //     $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
-        //     $message->from('info@gestordepartes.net', Auth::user()->empresaObj->nombre);
-        //     $message->to($emails)->subject($tituloCorreo);
-        // });
+        Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
+            $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
+            $message->from('info@networksoft.online', Auth::user()->empresaObj->nombre);
+            $message->to($emails)->subject($tituloCorreo);
+        });
 
         // Si quieres puedes eliminarlo después:
         if (isset($nombreArchivoZip)) {
