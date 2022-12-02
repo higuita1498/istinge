@@ -242,7 +242,24 @@ class CronController extends Controller
 
                             array_push($numeros, '57'.$numero);
 
-                            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+                            if($empresa->sms_factura_generada){
+
+                                $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                                $nombreEmpresa = $empresa->nombre;
+                                $codigoFactura = $factura->codigo ?? $factura->nro;
+                                $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                                $fechaVencimiento = $date->format('d-m-Y');
+
+                                $bulksms = $empresa->sms_factura_generada;
+                                $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                                $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                                $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                                $bulksms = str_replace("{valor}", $codigoFactura, $bulksms);
+                                $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+                                
+                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+
+                            }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
                                 $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
                                 $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
                                 $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
@@ -843,7 +860,30 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
-            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+
+            if($empresa->sms_factura_generada){
+
+                $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('pago_oportuno', $fecha)->get();
+
+                foreach($facturaDetalle as $fd){
+
+                        $nombreCliente = trim($fd->cliente()->nombre.' '.$fd->cliente()->apellidos());
+                        $nombreEmpresa = $empresa->nombre;
+                        $codigoFactura = $fd->codigo ?? $fd->nro;
+                        $valorFactura =  $fd->totalAPI($empresa->id)->total;
+                        $fechaVencimiento = date('d-m-Y', strtotime($fd->vencimiento));
+
+                        $bulksms = $empresa->sms_factura_generada;
+                        $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                        $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                        $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                        $bulksms = str_replace("{valor}", $codigoFactura, $bulksms);
+                        $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+                        
+                        $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+                }
+
+            }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
                 $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('pago_oportuno', $fecha)->get();
                 foreach($facturaDetalle as $fd){
                     $fullname = $fd->cliente()->nombre.' '.$fd->cliente()->apellidos();
@@ -969,7 +1009,26 @@ class CronController extends Controller
             $numero = str_replace('+','',$contacto->celular);
             $numero = str_replace(' ','',$numero);
             array_push($numeros, '57'.$numero);
-            if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+            if($empresa->sms_factura_generada){
+                $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('vencimiento', $fecha)->get();
+                foreach($facturaDetalle as $fd){
+
+                    $nombreCliente = trim($fd->cliente()->nombre.' '.$fd->cliente()->apellidos());
+                    $nombreEmpresa = $empresa->nombre;
+                    $codigoFactura = $fd->codigo ?? $fd->nro;
+                    $valorFactura =  $fd->totalAPI($empresa->id)->total;
+                    $fechaVencimiento = date('d-m-Y', strtotime($fd->vencimiento));
+
+                    $bulksms = $empresa->sms_factura_generada;
+                    $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                    $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                    $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                    $bulksms = str_replace("{valor}", $codigoFactura, $bulksms);
+                    $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+                    
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+                }
+            }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
                 $facturaDetalle = Factura::where('cliente', $contacto->idContacto)->whereIn('tipo', [1,2])->where('vencimiento', $fecha)->get();
                 foreach($facturaDetalle as $fd){
                     $fullname = $fd->cliente()->nombre.' '.$fd->cliente()->apellidos();
@@ -1780,7 +1839,24 @@ class CronController extends Controller
                 $numero = str_replace(' ','',$numero);
                 array_push($numeros, '57'.$numero);
 
-                if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+                if($empresa->sms_factura_generada){
+
+                    $nombreCliente = trim($factura->cliente()->nombre.' '.$factura->cliente()->apellidos());
+                    $nombreEmpresa = $empresa->nombre;
+                    $codigoFactura = $factura->codigo ?? $factura->nro;
+                    $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                    $fechaVencimiento = date('d-m-Y', strtotime($factura->vencimiento));
+
+                    $bulksms = $empresa->sms_factura_generada;
+                    $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                    $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                    $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                    $bulksms = str_replace("{valor}", $codigoFactura, $bulksms);
+                    $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+                    
+                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+
+                }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
                     $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
                     $bulk .= '{"numero": "57'.$numero.'", "sms": "'.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.date('d-m-Y', strtotime($factura->vencimiento)).' Total a pagar '.$factura->totalAPI($empresa->id)->total.'"},';
                 }else{
