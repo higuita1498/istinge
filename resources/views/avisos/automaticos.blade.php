@@ -47,7 +47,7 @@
 
         <div class="row">
             <div class="col-12 pl-5 pr-5">
-                <p>Construya el mensaje automático y utilice las variables disponibles {factura}, {empresa}, {valor}, {cliente}, {vencimiento} haciendo uso de las llaves.</p>
+                <p>Construya el mensaje automático y utilice las variables disponibles {factura}, {empresa}, {valor}, {pagado}, {cliente}, {vencimiento} haciendo uso de las llaves.</p>
                 <div class="row">
                     <div class="col-6">
                         <p>Ejemplo:</p>
