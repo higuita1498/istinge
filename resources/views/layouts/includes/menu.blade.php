@@ -408,6 +408,11 @@
                         <a class="nav-link" href="{{route('avisos.index')}}">Envío de Notificaciones</a>
                     </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['710']))
+                    <li class="nav-item" id="envio-automatico">
+                        <a class="nav-link" href="{{route('avisos.automaticos')}}">Envio automatico</a>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </li>
