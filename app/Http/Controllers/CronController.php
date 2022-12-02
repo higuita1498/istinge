@@ -1131,8 +1131,8 @@ class CronController extends Controller
     }
 
     public function eventosWompi(Request $request){
+        $empresa = Empresa::find(1);
         $request = (object) $request->all();
-
         if($request->event == 'transaction.updated'){
             $timestamp = $request->timestamp;
             $request = (object) $request->data['transaction'];
@@ -1273,7 +1273,7 @@ class CronController extends Controller
                                 $fechaVencimiento = date('d-m-Y', strtotime($factura->vencimiento));
                                 $pagoRecibido = Funcion::ParsearAPI($precio, $empresa->id);
 
-                                $bulksms = $empresa->sms_factura_generada;
+                                $bulksms = $empresa->sms_pago;
                                 $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
                                 $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
                                 $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
@@ -1367,6 +1367,7 @@ class CronController extends Controller
     }
 
     public function eventosPayu(Request $request){
+        $empresa = Empresa::find(1);
         if($request->state_pol == 4){
             $timestamp = $request->timestamp;
             $payu = Integracion::where('nombre', 'PayU')->where('tipo', 'PASARELA')->where('lectura', 1)->first();
@@ -1497,7 +1498,27 @@ class CronController extends Controller
                         if($servicio){
                             $numero = str_replace('+','',$cliente->celular);
                             $numero = str_replace(' ','',$numero);
-                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+
+                            if($empresa->sms_pago && isset($factura)){
+                                $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                                $nombreEmpresa = $empresa->nombre;
+                                $codigoFactura = $factura->codigo ?? $factura->nro;
+                                $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                                $fechaVencimiento = date('d-m-Y', strtotime($factura->vencimiento));
+                                $pagoRecibido = Funcion::ParsearAPI($precio, $empresa->id);
+
+                                $bulksms = $empresa->sms_pago;
+                                $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                                $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                                $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                                $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
+                                $bulksms = str_replace("{pagado}", $pagoRecibido, $bulksms);
+                                $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+
+                                $mensaje =  $bulksms;
+                            }else{
+                                 $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                            }
                             if($servicio->nombre == 'Hablame SMS'){
                                 if($servicio->api_key && $servicio->user && $servicio->pass){
                                     $post['numero'] = $numero;
@@ -1641,6 +1662,7 @@ class CronController extends Controller
     }
 
     public function eventosCombopay(Request $request){
+        $empresa = Empresa::find(1);
         if($request->transaction_state == 'payment_approved'){
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
 
@@ -1769,7 +1791,28 @@ class CronController extends Controller
                     if($servicio){
                         $numero = str_replace('+','',$cliente->celular);
                         $numero = str_replace(' ','',$numero);
-                        $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+
+                        if($empresa->sms_pago && isset($factura)){
+                            $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                            $nombreEmpresa = $empresa->nombre;
+                            $codigoFactura = $factura->codigo ?? $factura->nro;
+                            $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                            $fechaVencimiento = date('d-m-Y', strtotime($factura->vencimiento));
+                            $pagoRecibido = Funcion::ParsearAPI($precio, $empresa->id);
+
+                            $bulksms = $empresa->sms_pago;
+                            $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                            $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                            $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                            $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
+                            $bulksms = str_replace("{pagado}", $pagoRecibido, $bulksms);
+                            $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+
+                            $mensaje =  $bulksms;
+                        }else{
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                        }
+
                         if($servicio->nombre == 'Hablame SMS'){
                             if($servicio->api_key && $servicio->user && $servicio->pass){
                                 $post['numero'] = $numero;
