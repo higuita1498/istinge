@@ -192,6 +192,12 @@ class ContratosController extends Controller
                 }
 
             }
+            if($request->c_direccion_precisa){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion_precisa}%");
+                    $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion_precisa}%");
+                });
+            }
             if($request->c_barrio){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contactos.barrio', 'like', "%{$request->c_barrio}%");
@@ -1896,6 +1902,12 @@ class ContratosController extends Controller
         if($request->direccion != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
+            });
+        }
+        if($request->direccion_precisa != null){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion_precisa}%");
+                $query->orWhere('contactos.direccion', 'like', "%{$request->c_direccion_precisa}%");
             });
         }
         if($request->barrio != null){
