@@ -172,8 +172,14 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
 
                         if(str_contains($mailC, '@')){
-                            Mail::to($mailC)->send($correo);
-                            $cor++;
+
+                            try {
+                                Mail::to($mailC)->send($correo);
+                                $cor++;
+                            } catch (\Throwable $th) {
+                                
+                            } 
+                             
                         }
 
                     }
