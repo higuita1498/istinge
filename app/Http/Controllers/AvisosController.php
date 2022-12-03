@@ -182,6 +182,10 @@ class AvisosController extends Controller
             }
         }
 
+        if($request->type == 'EMAIL'){
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
+        }
+
         if($request->type == 'SMS'){
             $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
             if($servicio){
@@ -333,10 +337,6 @@ class AvisosController extends Controller
             }
         }else{
                 return redirect('empresa/avisos')->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
-        }
-        
-        if($request->type == 'EMAIL'){
-            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
         }
     }
 
