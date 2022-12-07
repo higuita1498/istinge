@@ -575,6 +575,11 @@ class CronController extends Controller
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
                 $contrato = Contrato::find($contacto->contrato_id);
+                $promesaExtendida = DB::table('promesa_pago')->where('factura', $contacto->factura)->where('fecha', '>=', $fecha)->count();
+
+                if($promesaExtendida > 0){
+                    continue;
+                }
 
                 $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
                 $crm = new CRM();
