@@ -361,7 +361,7 @@
                                         @if($contrato->contrato($idContrato))
                                         {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato($idContrato)->contrato_permanencia_meses) * (12-$i)) }}
                                         @else
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia }}
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
                                         @endif
                                     </td>
                                     @endfor
