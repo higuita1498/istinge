@@ -89,6 +89,9 @@
         				<div class="col-md-2 pl-1 pt-1">
         					<input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección">
         				</div>
+                        <div class="col-md-2 pl-1 pt-1">
+        					<input type="text" class="form-control" id="direccion_precisa" name="direccion_precisa" placeholder="Dirección exacta">
+        				</div>
         				<div class="col-md-2 pl-1 pt-1">
         					<input type="text" class="form-control" id="barrio" name="barrio" placeholder="Barrio">
         				</div>
@@ -384,6 +387,7 @@
             data.ap = $("#ap_s").val();
             data.c_barrio = $("#barrio").val();
             data.c_direccion = $("#direccion").val();
+            data.c_direccion_precisa = $("#direccion_precisa").val();
             data.c_celular = $("#celular").val();
             data.c_email = $("#email").val();
             data.vendedor = $("#vendedor").val();

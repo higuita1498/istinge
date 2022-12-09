@@ -172,14 +172,24 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
 
                         if(str_contains($mailC, '@')){
-                            Mail::to($mailC)->send($correo);
-                            $cor++;
+
+                            try {
+                                Mail::to($mailC)->send($correo);
+                                $cor++;
+                            } catch (\Throwable $th) {
+                                
+                            } 
+                             
                         }
 
                     }
 
                 }
             }
+        }
+
+        if($request->type == 'EMAIL'){
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
         }
 
         if($request->type == 'SMS'){
@@ -333,10 +343,6 @@ class AvisosController extends Controller
             }
         }else{
                 return redirect('empresa/avisos')->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
-        }
-        
-        if($request->type == 'EMAIL'){
-            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
         }
     }
 
@@ -521,4 +527,27 @@ class AvisosController extends Controller
             return response()->json(['success' => false, 'title' => 'Envío Fallido', 'message' => 'Disculpe, no posee ningun servicio de sms habilitado. Por favor habilítelo para disfrutar del servicio', 'type' => 'error']);
         }
     }
+
+    public function automaticos(){
+        $this->getAllPermissions(Auth::user()->id);
+
+        $empresa = Empresa::find(auth()->user()->empresa);
+
+        view()->share(['subseccion' => 'envio-automatico']);
+
+        return view('avisos.automaticos', compact('empresa'));
+    }
+
+    public function storeAutomaticos(Request $request){
+
+        $empresa = Empresa::find(auth()->user()->empresa);
+
+        $empresa->sms_pago = strip_tags(trim($request->sms_pago));
+        $empresa->sms_factura_generada = strip_tags(trim($request->sms_factura_generada));
+
+        $empresa->update();
+
+        return back()->with(['success' => 'mensajes guardados correctamente']);
+    }
+
 }

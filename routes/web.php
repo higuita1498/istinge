@@ -1324,6 +1324,10 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    });
 	    
 	    Route::resource('avisos', 'AvisosController');
+
+		// Editar Mensajes que se generan automaticamente en el sistema
+		Route::get('/avisos-automaticos', 'AvisosController@automaticos')->name('avisos.automaticos');
+		Route::post('/guardar-avisos-automaticos', 'AvisosController@storeAutomaticos')->name('store.avisos.automaticos');
 	    
 	// PROMESAS DE PAGO
 	    Route::group(['prefix' => 'promesas-pago'], function (){

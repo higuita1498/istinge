@@ -978,7 +978,7 @@ class Controller extends BaseController
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
-        groupBy('f.id')->
+        groupBy('f.id', 'contracts.id')->
         get()->last();
 
         if(is_null($contrato)){
