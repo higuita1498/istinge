@@ -34,6 +34,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use App\Mikrotik;
+use App\PucMovimiento;
+
 class ReportesController extends Controller
 {
     /**
@@ -2614,7 +2616,7 @@ class ReportesController extends Controller
 
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Balance', 'icon' => '']);
 
-        $campos = array('', 'f.codigo', 'c.nombre', 'notas_credito.fecha', 'nro', 'nro', 'nro', 'nro', 'nro');
+        $campos = array('', 'p.nombre', 'p.codigo', 'puc_movimiento.debito', 'puc_movimiento.credito', 'totalfinal');
 
         //Si no existe un request entrante vamos a ordenar por la fecha de la factura descendentemente
         if (!$request->orderby) {
@@ -2640,72 +2642,39 @@ class ReportesController extends Controller
             $hasta = now()->format('Y-m-d');
         }
 
-        $notasc = NotaCredito::join('contactos as c', 'notas_credito.cliente', '=', 'c.id')
-            ->join('notas_factura as nf', 'nf.nota', '=', 'notas_credito.id')
-            ->join('factura as f', 'f.id', '=', 'nf.factura')
-            ->where('notas_credito.empresa', auth()->user()->empresa)
-            ->where('notas_credito.fecha', '>=', $desde)->where('notas_credito.fecha', '<=', $hasta)
-            ->where('notas_credito.emitida',$request->tipo)
-            ->select(
-                'notas_credito.id as id',
-                'notas_credito.nro',
-                'c.id as cliente',
-                'c.nombre',
-                'notas_credito.fecha',
-                'f.id as fid',
-                'f.codigo',
-                'f.nro as fnro',
-                'notas_credito.emitida'
-            )
-            ->orderBy($orderby, $order)->groupBy('notas_credito.id')->get();
+        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')           
+            ->select('puc_movimiento.*','p.nombre as cuentacontable',
+            DB::raw("SUM((`debito`)) as totaldebito"), 
+            DB::raw("SUM((`credito`)) as totalcredito"),
+            DB::raw("ABS(SUM((`credito`)) -  SUM((`debito`))) as totalfinal"))
+            ->orderBy($orderby, $order)
+            ->groupBy('cuenta_id')
+            ->get();
 
+        // if (
+        //     $request->orderby == 4 || $request->orderby == 5 || $request->orderby == 6 || $request->orderby == 7 || $request->orderby == 8
+        // ) {
+        //     switch ($request->orderby) {
 
-        //variable la cual identifica lo que se debe descontar por devoluciones pagadas.
-        $devoluciones = 0;
-        $retenciones = 0;
-        $subtotal = 0;
-        $total = 0;
-        $iva = 0;
-        $saldosR = 0;
+        //         case 4:
+        //             $notasc = $request->order ? $notasc->sortBy('subtotal') : $notasc = $notasc->sortByDesc('subtotal');
+        //             break;
+        //         case 5:
+        //             $notasc = $request->order ? $notasc->sortBy('iva') : $notasc = $notasc->sortByDesc('iva');
+        //             break;
+        //         case 6:
+        //             $notasc = $request->order ? $notasc->sortBy('retenido') : $notasc = $notasc->sortByDesc('retenido');
+        //             break;
+        //         case 7:
+        //             $notasc = $request->order ? $notasc->sortBy('total') : $notasc = $notasc->sortByDesc('total');
+        //             break;
+        //     }
+        // }
+        $movimientosContables = $this->paginate($movimientosContables, 15, $request->page, $request);
+        // $notas = $notasc;
 
-        foreach ($notasc as $nota) {
-            $subtotal = $subtotal + $nota->subtotal = ($nota->total()->subtotal - $nota->total()->descuento);
-            $iva = $iva + $nota->iva = $nota->impuestos_totales();
-            $retenciones = $retenciones + $nota->retenido = $nota->retenido_factura();
-            $total = $total + $nota->total = $nota->total()->total;
-            $saldosR = $saldosR + $nota->saldoRestante = $nota->por_aplicar();
-        }
-
-
-        if (
-            $request->orderby == 4 || $request->orderby == 5 || $request->orderby == 6 || $request->orderby == 7 || $request->orderby == 8
-        ) {
-            switch ($request->orderby) {
-
-                case 4:
-                    $notasc = $request->order ? $notasc->sortBy('subtotal') : $notasc = $notasc->sortByDesc('subtotal');
-                    break;
-                case 5:
-                    $notasc = $request->order ? $notasc->sortBy('iva') : $notasc = $notasc->sortByDesc('iva');
-                    break;
-                case 6:
-                    $notasc = $request->order ? $notasc->sortBy('retenido') : $notasc = $notasc->sortByDesc('retenido');
-                    break;
-                case 7:
-                    $notasc = $request->order ? $notasc->sortBy('total') : $notasc = $notasc->sortByDesc('total');
-                    break;
-            }
-        }
-        $notasc = $this->paginate($notasc, 15, $request->page, $request);
-        $notas = $notasc;
-
-        return view('reportes.balance.index')->with(compact('notas',
-        'subtotal',
-        'total',
-        'request',
-        'iva',
-        'retenciones',
-        'saldosR'));
+        return view('reportes.balance.index')->with(compact('movimientosContables',
+        'request'));
     }
 
 
