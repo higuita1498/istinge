@@ -1146,6 +1146,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/estadoCliente', 'ExportarReportesController@estadoCliente')->name('exportar.estadoCliente');
 		Route::get('/estadoCliente', 'ExportarReportesController@ivas')->name('exportar.ivas');
         Route::get('/radicados', 'ExportarReportesController@radicados')->name('exportar.radicados');
+
+		//rutas para expotar excel contable
+        Route::get('/radicados', 'ExportarReportesController@balance')->name('exportar.balance');
 	});
 
 	//Documentacion escrita

@@ -24,6 +24,7 @@ use App\Model\Inventario\ProductosBodega;
 use App\Movimiento;
 use App\Vendedor;
 use App\Radicado;
+use App\PucMovimiento;
 use Illuminate\Http\Request; use Carbon\Carbon;
 use App\NumeracionFactura;
 use App\Model\Ingresos\NotaCredito;
@@ -4341,5 +4342,152 @@ class ExportarReportesController extends Controller
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
+    }
+
+    public function balance(Request $request){
+         //Acá se obtiene la información a impimir
+         DB::enableQueryLog();
+
+         $objPHPExcel = new PHPExcel();
+         $tituloReporte = "Reporte de Balances desde " . $request->fecha . " hasta " . $request->hasta;
+ 
+         $titulosColumnas = array(
+             'Nombre',
+             'Codigo',
+             'Debito',
+             'Credito',
+             'Saldo Final',
+         );
+         $letras = array(
+             'A',
+             'B',
+             'C',
+             'D',
+             'E',
+             'F',
+             'G',
+             'H',
+             'I',
+             'J',
+             'K',
+             'L',
+             'M',
+             'N',
+             'O',
+             'P',
+             'Q',
+             'R',
+             'S',
+             'T',
+             'U',
+             'V',
+             'W',
+             'X',
+             'Y',
+             'Z'
+         );
+         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+         ->setTitle("Reporte Excel Balances") // Titulo
+         ->setSubject("Reporte Excel Balances") //Asunto
+         ->setDescription("Reporte de Balances") //Descripci���n
+         ->setKeywords("reporte Balances") //Etiquetas
+         ->setCategory("Reporte excel"); //Categorias
+         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+         $objPHPExcel->setActiveSheetIndex(0)
+             ->mergeCells('A1:I1');
+         // Se agregan los titulos del reporte
+         $objPHPExcel->setActiveSheetIndex(0)
+             ->setCellValue('A1', $tituloReporte);
+         $estilo = array(
+             'font' => array('bold' => true, 'size' => 12, 'name' => 'Times New Roman'),
+             'alignment' => array(
+                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+             )
+         );
+         $objPHPExcel->getActiveSheet()->getStyle('A1:E1')->applyFromArray($estilo);
+         $estilo = array(
+             'fill' => array(
+                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                 'color' => array('rgb' => 'd08f50')
+             )
+         );
+         $objPHPExcel->getActiveSheet()->getStyle('A3:E3')->applyFromArray($estilo);
+ 
+ 
+         for ($i = 0; $i < count($titulosColumnas); $i++) {
+             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
+         }
+ 
+         if($request->fechas != 8){
+             if (!$request->fecha) {
+                 $arrayDate = $this->setDateRequest($request);
+                 $desde = $arrayDate['inicio'];
+                 $hasta = $arrayDate['fin'];
+             } else {
+                 $desde = Carbon::parse($request->fecha)->format('Y-m-d');
+                 $hasta = Carbon::parse($request->hasta)->format('Y-m-d');
+             }
+         }else{
+             $desde = '2000-01-01';
+             $hasta = now()->format('Y-m-d');
+         }
+             
+        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')           
+        ->select('puc_movimiento.*','p.nombre as cuentacontable',
+        DB::raw("SUM((`debito`)) as totaldebito"), 
+        DB::raw("SUM((`credito`)) as totalcredito"),
+        DB::raw("ABS(SUM((`credito`)) -  SUM((`debito`))) as totalfinal"))
+        ->orderBy('id', 'DESC')
+        ->groupBy('cuenta_id')
+        ->get();
+
+ 
+         // Aquí se escribe en el archivo
+         $i = 4;
+         foreach ($movimientosContables as $mov) {
+             $objPHPExcel->setActiveSheetIndex(0)
+                 ->setCellValue($letras[0] . $i, $mov->cuentacontable)
+                 ->setCellValue($letras[1] . $i, $mov->codigo_cuenta)
+                 ->setCellValue($letras[2] . $i, Auth::user()->empresa()->moneda . Funcion::Parsear($mov->totaldebito))
+                 ->setCellValue($letras[3] . $i, Auth::user()->empresa()->moneda . Funcion::Parsear($mov->totalcredito))
+                 ->setCellValue($letras[4] . $i, Auth::user()->empresa()->moneda . Funcion::Parsear($mov->totalfinal));
+             $i++;
+         }
+ 
+         $estilo = array(
+             'font' => array('size' => 12, 'name' => 'Times New Roman'),
+             'borders' => array(
+                 'allborders' => array(
+                     'style' => PHPExcel_Style_Border::BORDER_THIN
+                 )
+             ),
+             'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+         );
+         $objPHPExcel->getActiveSheet()->getStyle('A3:E' . $i)->applyFromArray($estilo);
+ 
+ 
+         for ($i = 'A'; $i <= $letras[20]; $i++) {
+             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
+         }
+ 
+         // Se asigna el nombre a la hoja
+         $objPHPExcel->getActiveSheet()->setTitle('Reporte de Balances');
+ 
+         // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+         $objPHPExcel->setActiveSheetIndex(0);
+ 
+         // Inmovilizar paneles
+         $objPHPExcel->getActiveSheet(0)->freezePane('A2');
+         $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
+         $objPHPExcel->setActiveSheetIndex(0);
+         header("Pragma: no-cache");
+         header('Content-type: application/vnd.ms-excel');
+         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+         header('Content-Disposition: attachment;filename="Reporte_balance.xlsx"');
+         header('Cache-Control: max-age=0');
+         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+         $objWriter->save('php://output');
+         exit;
     }
 }
