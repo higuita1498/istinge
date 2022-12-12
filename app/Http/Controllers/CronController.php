@@ -617,7 +617,7 @@ class CronController extends Controller
                                             $contrato->state = 'enabled';
 
                                             $contrato->update();
-
+                                            $API->disconnect();
                                             }
 
                                 }
