@@ -12,11 +12,8 @@
 <p>Medios de pago Nequi: 3026003360 Cuenta de ahorros Bancolombia 42081411021 CC 1001912928 Ximena Herrera representante legal. Adjunte su pago para reactivar su membresía</p>
 	    </div>
 	@else
+    <a href="{{route('grupos-corte.index')}}" class="btn btn-info btn-sm my-1"><i class="fas fa-arrow-circle-left"></i>Regresar</a>
     <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-    <a href="{{route('grupos-corte.opcionmasiva')}}" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Opciones Masivas</a>
-    <?php if (isset($_SESSION['permisos']['725'])) { ?>
-        <a href="{{route('grupos-corte.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Grupo de Corte</a>
-    <?php } ?>
     @endif
 @endsection
 
@@ -51,11 +48,15 @@
 			<div class="card shadow-sm border-0">
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" placeholder="Fecha Corte" id="fecha_corte" class="form-control rounded">
+                        </div>
 						<div class="col-md-3 pl-1 pt-1">
-							<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
-						</div>
-						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Fecha Corte" id="fecha_corte" class="form-control rounded">
+							<select title="Grupo Corte" class="form-control rounded selectpicker" id="grupo_corte">
+                                @foreach($grupos_corte as $grupo)
+						        <option value="{{$grupo->id}}">{{$grupo->nombre}} - {{$grupo->fecha_corte}}</option>
+                                @endforeach
+							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Fecha Suspensión" id="fecha_suspension" class="form-control rounded">
@@ -119,6 +120,21 @@
 @section('scripts')
 <script>
     var tabla = null;
+
+    $(document).ready(function() {
+        $('#fecha_corte').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            // minDate: function () {
+            //     return $('#desde').val();
+            // }
+        });
+
+    });
+
     window.addEventListener('load',
     function() {
 		tabla = $('#tabla-grupos').DataTable({
@@ -133,7 +149,7 @@
 				[0, "desc"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{url("/grupos")}}',
+			ajax: '{{url("/gruposopcionesmasivas")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},

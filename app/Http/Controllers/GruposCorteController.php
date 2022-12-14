@@ -328,4 +328,78 @@ class GruposCorteController extends Controller
             'state'     => 'eliminados'
         ]);
     }
+
+    public function opcion_masiva(){
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Opciones Masivas a Contratos']);
+        $grupos_corte = GrupoCorte::get();
+        return view('grupos-corte.opcionmasiva',compact('grupos_corte'));
+    }
+
+    public function gruposOpcionesMasivas(Request $request){
+        $modoLectura = auth()->user()->modo_lectura();
+        $grupos = GrupoCorte::query()
+            ->where('empresa', Auth::user()->empresa);
+        if ($request->filtro == true) {
+            if($request->nombre){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->fecha_factura){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_factura', 'like', "%{$request->fecha_factura}%");
+                });
+            }
+            if($request->fecha_pago){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_pago', 'like', "%{$request->fecha_pago}%");
+                });
+            }
+            if($request->fecha_corte){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_corte', 'like', "%{$request->fecha_corte}%");
+                });
+            }
+            if($request->fecha_suspension){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('fecha_suspension', 'like', "%{$request->fecha_suspension}%");
+                });
+            }
+            if($request->status >= 0){
+                $grupos->where(function ($query) use ($request) {
+                    $query->orWhere('status', 'like', "%{$request->status}%");
+                });
+            }
+        }
+
+        return datatables()->eloquent($grupos)
+            ->editColumn('id', function (GrupoCorte $grupo) {
+                return $grupo->id;
+            })
+            ->editColumn('nombre', function (GrupoCorte $grupo) {
+                return "<a href=" . route('grupos-corte.show', $grupo->id) . ">{$grupo->nombre}</div></a>";
+            })
+            ->editColumn('fecha_factura', function (GrupoCorte $grupo) {
+                return ($grupo->fecha_factura == 0) ? 'No aplica' : $grupo->fecha_factura;
+            })
+            ->editColumn('fecha_pago', function (GrupoCorte $grupo) {
+                return ($grupo->fecha_pago == 0) ? 'No aplica' : $grupo->fecha_pago;
+            })
+            ->editColumn('fecha_corte', function (GrupoCorte $grupo) {
+                return ($grupo->fecha_corte == 0) ? 'No aplica' : $grupo->fecha_corte;
+            })
+            ->editColumn('fecha_suspension', function (GrupoCorte $grupo) {
+                return ($grupo->fecha_suspension == 0) ? 'No aplica' : $grupo->fecha_suspension;
+            })
+            ->editColumn('hora_suspension', function (GrupoCorte $grupo) {
+                return date('g:i A', strtotime($grupo->hora_suspension));
+            })
+            ->editColumn('status', function (GrupoCorte $grupo) {
+                return "<span class='text-{$grupo->status("true")}'><strong>{$grupo->status()}</strong></span>";
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "grupos-corte.acciones")
+            ->rawColumns(['acciones', 'nombre', 'id', 'status'])
+            ->toJson();
+    }
 }

@@ -107,6 +107,7 @@ Route::get('lcotizaciones', 'CotizacionesController@cotizaciones');
 Route::get('lremisiones', 'RemisionesController@remisiones');
 Route::get('lproductos', 'ProductosController@productos');
 Route::get('auditoria_contratos', 'AuditoriaController@auditoria_contratos');
+Route::get('gruposopcionesmasivas', 'GruposCorteController@gruposOpcionesMasivas');
 /*DATATABLE ORACLE*/
 
 Route::get('/clear', function() {
@@ -1365,6 +1366,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::post('storeBack', 'GruposCorteController@storeBack')->name('grupos-corte.storeBack');
             Route::get('/{grupo}/{state}/state_lote', 'GruposCorteController@state_lote')->name('grupos-corte.state_lote');
             Route::get('/{grupo}/destroy_lote', 'GruposCorteController@destroy_lote')->name('grupos-corte.destroy_lote');
+            Route::get('/opcionmasiva', 'GruposCorteController@opcion_masiva')->name('grupos-corte.opcionmasiva');
 	    });
 	    
 	    Route::resource('grupos-corte', 'GruposCorteController');
