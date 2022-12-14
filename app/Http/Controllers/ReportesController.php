@@ -2058,7 +2058,7 @@ class ReportesController extends Controller
                 ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
                 ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
                 ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa')
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa','c.status')
                 // ->where('factura.tipo','<>',2)
                 ->where('factura.empresa',Auth::user()->empresa)
                 ->where('factura.estatus',1)

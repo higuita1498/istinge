@@ -3426,7 +3426,7 @@ class ExportarReportesController extends Controller
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
-            ->where('contactos.status',1);
+            ->where('c.status',1);
 
             if($request->servidor){
                 $comprobacionFacturas=$comprobacionFacturas->where('mikrotik.id', $request->servidor);
@@ -3484,7 +3484,7 @@ class ExportarReportesController extends Controller
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
-            ->where('contactos.status',1);
+            ->where('c.status',1);
             $dates = $this->setDateRequest($request);
 
 
