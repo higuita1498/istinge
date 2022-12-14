@@ -2073,7 +2073,7 @@ class ReportesController extends Controller
             if($request->servidor){
                 $facturas=$facturas->where('mikrotik.id', $request->servidor);
             }
-            if($request->nro){
+            if($request->nro && $request->nro != 0){
                 $facturas=$facturas->where('factura.numeracion', $request->nro);
             }
             $ides=array();

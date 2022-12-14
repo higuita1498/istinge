@@ -13,7 +13,8 @@
 		    <select class="form-control selectpicker" name="nro">
 		    	@foreach($numeraciones as $nro)
 		    		<option value="{{$nro->id}}" {{$nro->id==$request->nro?'selected':''}}>{{$nro->nombre}}</option>
-		    	@endforeach
+					@endforeach
+		    		<option value="0">Todas</option>
 		    </select>
 	  	</div>
 		@if(isset($mikrotiks))
