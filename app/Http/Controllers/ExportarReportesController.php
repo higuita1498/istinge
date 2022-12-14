@@ -3432,7 +3432,7 @@ class ExportarReportesController extends Controller
             }
 
             if($request->nro && $request->nro != 0){
-                $facturas=$facturas->where('factura.numeracion', $request->nro);
+                $comprobacionFacturas=$comprobacionFacturas->where('factura.numeracion', $request->nro);
             }
            
 
