@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Aviso;
 use App\Plantilla;
 use App\Contrato;
+use App\Model\Ingresos\Factura;
 use Mail;
 use App\Mail\NotificacionMailable;
 use Config;
@@ -127,6 +128,15 @@ class AvisosController extends Controller
 
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
+ 
+            if($request->isAbierta){
+                $factura =  Factura::where('contrato_id')->latest()
+                                             ->first();
+
+                if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
+                    continue;
+                }              
+            }
 
             if ($contrato) {
                 $plantilla = Plantilla::find($request->plantilla);

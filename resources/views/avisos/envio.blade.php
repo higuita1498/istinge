@@ -109,6 +109,14 @@
         	        <strong>{{ $errors->first('cliente') }}</strong>
         	    </span>
         	</div>
+
+			<div class="col-md-3">
+				<div class="form-check form-check-inline d-flex p-3">
+					<input class="form-check-input" type="checkbox" id="isAbierta" name="isAbierta" value="true">
+					<label class="form-check-label" for="isAbierta"  style="font-weight:bold">Solo facturas abiertas</label>
+				</div>
+			</div>
+
        </div>
 	    
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
