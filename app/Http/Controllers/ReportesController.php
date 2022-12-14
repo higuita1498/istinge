@@ -2062,6 +2062,7 @@ class ReportesController extends Controller
                 // ->where('factura.tipo','<>',2)
                 ->where('factura.empresa',Auth::user()->empresa)
                 ->where('factura.estatus',1)
+                ->where('c.status',1)
                 ->groupBy('factura.id');
             $example = $facturas->get()->last();
 

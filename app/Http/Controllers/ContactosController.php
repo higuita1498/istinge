@@ -408,6 +408,7 @@ class ContactosController extends Controller
             $errors->nit='La Identificación esta registrada para otro contacto';
             return back()->withErrors($errors)->withInput();
         }
+        
         $contacto = new Contacto;
         $contacto->empresa=Auth::user()->empresa;
         $contacto->tip_iden=$request->tip_iden;
@@ -555,9 +556,20 @@ class ContactosController extends Controller
         $request->validate([
             'tipo_contacto' => 'required'
         ]);
-        $contacto = Contacto::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
+        $empresa = Auth::user()->empresa;
+        $error = Contacto::where('nit', $request->nit)->where('tip_iden', $request->tip_iden)
+        ->where('id', '<>', $id)
+        ->where('empresa', $empresa)
+        ->first();
+
+    if ($error) {
+        $errors = (object)array();
+        $errors->nit = 'La Identificación esta registrada para otro contacto';
+        return back()->withErrors($errors)->withInput();
+    }
+        $contacto = Contacto::where('id',$id)->where('empresa',$empresa)->first();
         if ($contacto) {
-            $contacto->empresa=Auth::user()->empresa;
+            $contacto->empresa=$empresa;
             $contacto->tip_iden=$request->tip_iden;
             $contacto->dv = $request->dvoriginal;
             $contacto->nit=$request->nit;
