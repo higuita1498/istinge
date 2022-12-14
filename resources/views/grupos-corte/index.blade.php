@@ -13,7 +13,7 @@
 	    </div>
 	@else
     <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-    <a href="{{route('grupos-corte.opcionmasiva')}}" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Opciones Masivas</a>
+    {{-- <a href="{{route('grupos-corte.opcionmasiva')}}" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Opciones Masivas</a> --}}
     <?php if (isset($_SESSION['permisos']['725'])) { ?>
         <a href="{{route('grupos-corte.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Grupo de Corte</a>
     <?php } ?>
