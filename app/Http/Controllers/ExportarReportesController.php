@@ -4496,4 +4496,194 @@ class ExportarReportesController extends Controller
          $objWriter->save('php://output');
          exit;
     }
+
+    public function descargar_resumen_prestacion_social(Request $request)
+    {
+        $objPHPExcel = new PHPExcel();
+        $year = $request->year;
+        $periodo = $request->periodo;
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+
+        $tituloReporte = "Prestaciones sociales ({$request->title}) " . Auth::user()->empresaObj->nombre;
+        $titulosColumnas = array(
+            'Numero identificacion',
+            'Nombre',
+            'Dias trabajados',
+            'Valor base',
+            'Valor por pagar',
+            'Valor total pagado',
+            'Valor pagado en el periodo',
+            'Valor total prima de servicios'
+        );
+        $letras = array(
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z'
+        );
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte Excel Prestaciones sociales") // Titulo
+        ->setSubject("Reporte Excel Prestaciones sociales") //Asunto
+        ->setDescription("Reporte Excel Prestaciones sociales") //Descripci���n
+        ->setKeywords("Reporte Excel Prestaciones sociales") //Etiquetas
+        ->setCategory("Reporte Excel Prestaciones sociales"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:D1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', $tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A2:C2');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'Fecha ' . date('d-m-Y')); // Titulo del reporte
+
+        $estilo = array(
+            'font' => array('bold' => true, 'size' => 12, 'name' => 'Times New Roman'),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A1:V1')->applyFromArray($estilo);
+
+        $estilo = array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => 'c6c8cc')
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:V3')->applyFromArray($estilo);
+
+
+        for ($i = 0; $i < count($titulosColumnas); $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $i = 4;
+        $letra = 0;
+        $dates = $this->setDateRequest($request);
+
+        $nominas = Nomina::with('nominaperiodos')
+            ->where('ne_nomina.year', $year)
+            ->where('fk_idempresa', Auth::user()->empresa);
+
+
+        if ($desde && $hasta) {
+            $nominas->where('periodo', '>=', $desde);
+            $nominas->where('periodo', '<=', $hasta);
+        }
+
+        $nominas = $nominas->get();
+
+        $totalidades = [];
+
+        foreach ($nominas as $nomina) {
+            foreach ($nomina->nominaperiodos as $nominaPeriodo) {
+                if (!isset($totalidades[$nomina->fk_idpersona])) {
+                    $totalidades[$nomina->fk_idpersona] = [];
+                }
+
+                $totalidad = $nominaPeriodo->resumenTotal();
+                $totalidad['idNomina'] = $nomina->id;
+
+                $totalidades[$nomina->fk_idpersona][] = $totalidad;
+            }
+        }
+
+        $totalidadesPersonas = collect($totalidades);
+        $personas = Persona::whereIn('id', $totalidadesPersonas->keys())->get();
+
+        $tipo = $request->tipo;
+
+        foreach ($personas as $key => $persona) {
+            $persona->nominaSeleccionada = $nominas->where('periodo', $periodo)->where('fk_idpersona',
+                $persona->id)->first();
+            if (!$persona->nominaSeleccionada) {
+                unset($personas[$key]);
+                continue;
+            }
+            $persona->prestacionSocial = $persona->nominaSeleccionada->$tipo;
+            if (!$persona->prestacionSocial) {
+                unset($personas[$key]);
+            }
+        }
+
+        $empresa = Empresa::find(Auth::user()->empresa);
+
+
+        foreach ($personas as $persona) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0] . $i, $persona->nro_documento . '')
+                ->setCellValue($letras[1] . $i, $persona->nombre())
+                ->setCellValue($letras[2] . $i, $persona->prestacionSocial->dias_trabajados)
+                ->setCellValue($letras[3] . $i, $persona->prestacionSocial->base)
+                ->setCellValue($letras[4] . $i,
+                    $persona->prestacionSocial->valor - $persona->prestacionSocial->valor_pagar)
+                ->setCellValue($letras[5] . $i, $persona->prestacionSocial->valor_pagar)
+                ->setCellValue($letras[6] . $i, $persona->prestacionSocial->valor)
+                ->setCellValue($letras[7] . $i, $persona->prestacionSocial->valor);
+            $i++;
+        }
+
+        $estilo = array(
+            'font' => array('size' => 12, 'name' => 'Times New Roman'),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:V' . $i)->applyFromArray($estilo);
+
+        for ($i = 'A'; $i <= $letras[20]; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle($tipo);
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Contactos.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
 }
