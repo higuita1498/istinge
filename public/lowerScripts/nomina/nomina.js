@@ -42,8 +42,14 @@ function validateDianNomina(id, rutasuccess, codigo,tipo) {
                 title: 'Emitiendo nomina a la DIAN...',
             })
 
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url='/software/empresa';
+                }else{
+                var url = '/empresa';
+            }
+
             $.ajax({
-                url: '/empresa/nominadian/validatedian',
+                url: url+ '/nominadian/validatedian',
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 method: 'get',
                 data: { id: id,
