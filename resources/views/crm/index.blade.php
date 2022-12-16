@@ -941,6 +941,8 @@
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
                 $("#idCRM").val(idCRM);
+
+				/* aqui etiqueta */
 	            
 	            $('#modal_gestion').modal({
 	                keyboard: false,
