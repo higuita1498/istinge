@@ -31,6 +31,8 @@ use App\Model\Ingresos\NotaCredito;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\PrestacionSocial;
 use stdClass;
+use App\Model\Nomina\Persona;
+use App\Model\Nomina\NominaPeriodos;
 use DB;
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 include_once(app_path() .'/../public/Spout/Autoloader/autoload.php');
