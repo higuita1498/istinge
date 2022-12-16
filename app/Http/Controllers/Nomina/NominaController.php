@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Mail;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 include_once(app_path() . '/../public/Spout/Autoloader/autoload.php');
+include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 
 use PHPExcel;
 use PHPExcel_IOFactory;
