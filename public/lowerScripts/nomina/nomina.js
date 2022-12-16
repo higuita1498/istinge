@@ -1,14 +1,17 @@
-function validateDianNomina(id, rutasuccess, codigo) {
+function validateDianNomina(id, rutasuccess, codigo,tipo) {
 
-    $titleswal = codigo + '<br> ¿Emitir Nomina a la Dian?';
+    let messageTipo = "";
+    if(tipo == 1){
+        messageTipo = "¿Emitir Nómina a la Dian?"
+    }else if(tipo == 2){
+        messageTipo = "¿Emitir Ajuste de Nómina?"
+    }else if(tipo==3){
+        messageTipo = "Emitir Nómina de cancelación?"
+    }
+
+    $titleswal = codigo + '<br>'+ messageTipo;
     $textswal = "No podrás retroceder esta acción";
     $confirmswal = "Si, emitir";
-
-    if (window.location.pathname.split("/")[1] === "software") {
-        var url='/software/empresa';
-    }else{
-        var url = '/empresa';
-    }
 
     Swal.fire({
         title: $titleswal,
@@ -39,21 +42,12 @@ function validateDianNomina(id, rutasuccess, codigo) {
                 title: 'Emitiendo nomina a la DIAN...',
             })
 
-
-            // var btn = document.getElementsByClassName(".swal2-confirm.swal2-styled");
-            // setTimeout(function () {
-            //     btn.setAttribute('disabled', 'disabled');
-            // }, 1);
-            // setTimeout(function () {
-            //     btn.removeAttribute('disabled');
-            // }, 5000);
-
-
             $.ajax({
-                url: url + '/nominadian/validatedian',
+                url: '/empresa/nominadian/validatedian',
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 method: 'get',
-                data: { id: id, },
+                data: { id: id,
+                tipo: tipo },
                 success: function(response) {
 
                     // console.log(response);
@@ -78,7 +72,17 @@ function validateDianNomina(id, rutasuccess, codigo) {
                         $footer = "";
                         $img = "gif-tuerca.gif";
                         messageValidateDian($mensaje, $footer, $img);
-                    } else if (response.statusCode == 409 || response.statusCode == 400 || response.statusCode == 500) {
+                    }else if (response == 'error-numeracion') {
+                        $mensaje = "Se debe escoger una numeración para poder emitir.";
+                        $footer = "";
+                        $img = "gif-tuerca.gif";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if(response == 'eventos-rapidos'){
+                        $mensaje = "Ya se emitió un evento hace muy poco tiempo, intente nuevamente.";
+                        $footer = "";
+                        $img = "gif-tuerca.gif";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else if (response.statusCode == 409 || response.statusCode == 400 || response.statusCode == 500) {
 
                         motivo = "";
                         i = 1;
