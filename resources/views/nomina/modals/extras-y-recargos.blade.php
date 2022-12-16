@@ -251,7 +251,14 @@
 
     function editHoras(id) {
         cargando(true);
-        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit';
+
+        if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+        }else{
+            var url = '/empresa';
+        }
+
+        var url = url+'/nomina/liquidar-nomina/' + id + '/edit';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {
