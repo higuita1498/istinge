@@ -87,11 +87,11 @@
     </button>
 </div>
 @else
-@if(isset($_SESSION['permisos']['159']) || auth()->user()->username == 'gestordepartes')
+{{-- @if(isset($_SESSION['permisos']['159']) || auth()->user()->username == 'gestordepartes') --}}
 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new-nomina" id="btn-generar-nomina">
     <i class="fas fa-plus"></i> Generar Nueva Nómina
 </button>
-@endif
+{{-- @endif --}}
 @endif
 @endsection
 

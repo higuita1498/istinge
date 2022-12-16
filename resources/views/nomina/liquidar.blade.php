@@ -196,22 +196,22 @@
 
 
     <div class="row text-center pt-2">
-        @if(isset($_SESSION['permisos']['163']))
+        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
         <div class="col-4">
             <a href="{{ route('nomina.resumenExcel', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Resumen nómina</a>
         </div>
-        @endif
-        @if(isset($_SESSION['permisos']['164']))
+        {{-- @endif --}}
+        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
         <div class="col-4">
             <a target="_blank" href="{{ route('nomina.novedades', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Reporte novedades</a>
         </div>
-        @endif
+        {{-- @endif --}}
         {{--
         <div class="col-3 d-none">
             <a href="#" style="text-decoration: underline;">Cargar novedades</a>
         </div>
         --}}
-        @if(isset($_SESSION['permisos']['165']))
+        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
         <div class="col-4">
             <div class="btn-group dropdown">
                 <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
@@ -227,7 +227,7 @@
                 </div>
             </div>
         </div>
-        @endif
+        {{-- @endif --}}
     </div>
 
 
