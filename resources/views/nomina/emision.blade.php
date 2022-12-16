@@ -262,9 +262,9 @@
                                                 @endif
                                                 @endif
 
-                                                @if(isset($_SESSION['permisos']['166']))
+                                               {{-- @if(isset($_SESSION['permisos']['166'])) --}} 
                                                 <a title="Imprimir nomina" href="{{ route('nominaCompleta.pdf', $detalles[$i]['idnomina']) }}" target="_blank"><i class="far fa-file-pdf color"></i></a>
-                                                @endif
+                                               {{-- @endif --}}
 
 
                                                 @if(isset($_SESSION['permisos']['167']) && !$modoLectura->success)
