@@ -330,9 +330,9 @@
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}" title="Ver calculos"><i class="far fa-eye color"></i></a>
                                                 {{-- @endif --}}
-                                                @if($nomina->prestacionesSociales->count() == 0)
+                                                @if($nomina->prestacionesSociales->count() == 0 || 1 == 1)
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
-                                                <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank" title="Ver colilla de pago"><i class="far fa-file color"></i></a>
+                                                {{-- <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank" title="Ver colilla de pago"><i class="far fa-file color"></i></a> --}}
                                                 {{-- @endif --}}
                                                 {{-- @else --}}
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
