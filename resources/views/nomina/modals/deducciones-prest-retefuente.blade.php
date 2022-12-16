@@ -120,7 +120,12 @@
 
         function editDeducciones(id){
             cargando(true);
-            var url = '/empresa/nomina/liquidar-nomina/'+id+'/edit_deducciones';
+            if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+            }else{
+            var url = '/empresa';
+            }
+            var url = url+'/empresa/nomina/liquidar-nomina/'+id+'/edit_deducciones';
             var _token = $('meta[name="csrf-token"]').attr('content');
             var i = id;
             $.post(url, {
