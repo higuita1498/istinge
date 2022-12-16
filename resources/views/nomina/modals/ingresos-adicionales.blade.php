@@ -137,12 +137,7 @@
 <script>
     function editAdicionales(id) {
         // cargando(true);
-        if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-		}else{
-					var url = '/empresa';
-		}
-        var url = url+ '/nomina/liquidar-nomina/' + id + '/edit_adicionales';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit_adicionales';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {
@@ -276,12 +271,7 @@
 
     function destroyAdicionales(id) {
         cargando(true);
-        if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-		}else{
-					var url = '/empresa';
-		}
-        var url = url + '/nomina/liquidar-nomina/' + id + '/destroy_adicionales';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/destroy_adicionales';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {

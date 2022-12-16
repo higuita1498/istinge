@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
+// use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomina extends Model
 {
@@ -58,6 +59,11 @@ class Nomina extends Model
         return $this->belongsTo(Persona::class, 'fk_idpersona');
     }
 
+    public static function monthName($date){
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        return  $mes = $meses[($date->format('n')) - 1];
+    }
+
     public function nominaperiodos()
     {
         return $this->hasMany(NominaPeriodos::class, 'fk_idnomina', 'id');
@@ -72,11 +78,6 @@ class Nomina extends Model
     {
         $date = Carbon::create($this->year, $this->periodo, 1)->locale('es');
         return ucfirst($date->monthName) . ' ' . $this->year;
-    }
-
-    public static function monthName($date){
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        return  $mes = $meses[($date->format('n')) - 1];
     }
 
     /**
@@ -165,15 +166,24 @@ class Nomina extends Model
     {
 
         if ($class) {
+             if ($this->cune == 409 && $this->emitida != 1 && $this->emitida != 5) {
+                return 'danger';
+            } 
             if ($this->emitida == 2 || $this->emitida == 0) {
                 return 'danger';
             } else if ($this->emitida == 3) {
-                return 'warning';
+                return 'success';
             } else if ($this->emitida == 1) {
                 return 'success';
             } else if ($this->emitida == 4) {
-                return 'primary';
-            } else {
+                return 'danger';
+            } else if ($this->emitida == 5) {
+                return 'success';
+            } else if ($this->emitida == 6) {
+                return 'success';
+            }  else if ($this->emitida == 7) {
+                return 'danger';
+            }else {
                 return 'dark';
             }
         } else {
@@ -470,4 +480,20 @@ class Nomina extends Model
        
         return $diashabiles;
     }
+
+
+
+    public function liquidacionComprobante(){
+       $comprobante = ComprobanteLiquidacion::select('ne_comprobante_liquidacion.*')
+                                ->join('ne_contratos_persona', 'ne_contratos_persona.fk_idcomprobante_liquidacion', '=', 'ne_comprobante_liquidacion.id')
+                                ->where('fecha_terminacion', '>=', $this->year.'-'.$this->periodo.'-01')
+                                ->where('fecha_terminacion', '<=', $this->year.'-'.$this->periodo.'-31')
+                                ->where('ne_contratos_persona.fk_idpersona', $this->fk_idpersona)
+                                ->latest()
+                                ->first();
+
+        return $comprobante;
+    }
+
+
 }

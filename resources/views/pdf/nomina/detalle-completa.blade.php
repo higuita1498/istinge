@@ -162,12 +162,27 @@
             <div>
                 <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(150)->generate($codqr)) !!} ">
             </div>
+            @else
+            @if(isset($empresa))
+            @php $isImageLogo = true; @endphp
+                <img src="{{asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo)}}" alt="{{$empresa->nombre}}" width="90%" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+            @endif
             @endif
         </div>
         @if(isset($codqr))
         <div style="position:absolute;top:11em;left:0em;text-align:left;text-align:left;width: 100%;">
             <p style="font-size:9px;"><strong>cune: </strong>{{$nomina->cune}}</p>
         </div>
+        @else
+        
+        @if(!isset($isImageLogo) && !isset($codqr))
+        
+         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-bottom: 2%; overflow:hidden; align-self: flex-start;">
+            <img src="{{asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo)}}" alt="{{$empresa->nombre}}" width="90%" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+        </div>
+        
+        @endif
+        
         @endif
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;">
             <h4>{{$user->empresaObj->nombre}}</h4>
@@ -277,12 +292,51 @@
                     @php $adicionales += $p->valor_pagar; @endphp
                 @endforeach
             @endif
+            
+             @foreach($totalDetallesNomina as $categoria)
+                        @if($categoria['fk_nomina_cuenta'] == 2 && $categoria['horas'] > 0)
+                            @if($categoria['nombre'] == 'LICENCIA NO REMUNERADA')
+                                <tr>
+                                    <td width="80%" style="height: 20px;"
+                                        class="left padding-left">{{ strtolower($categoria['nombre'] ? $categoria['nombre'] : 'sin definir') }}</td>
+                                    <td width="20%" style="height: 20px;"
+                                        class="center"> - {{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($categoria['valor_categoria']) }}</td>
+                                </tr>
+                            @endif
+                        @endif
+            @endforeach
+            
             <tr>
                 <th width="80%" style="height: 30px;" class="left padding-left">Total neto a pagar al empleado</th>
                 <th width="20%" style="height: 30px;"
                     class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($totalidad['pago']['total'] + ($adicionales)) }}</th>
             </tr>
         </table>
+    </div>
+    
+    <div>
+        
+        @php $valorLiquidar = 0; @endphp
+        @if($nomina->liquidacionComprobante())
+            @php $valorLiquidar =  $nomina->liquidacionComprobante()->total; @endphp
+            <br>
+            <table border="0" class="titulo">
+                
+                <tr>
+                    <th width="80%" style="height: 30px;" class="left padding-left">Concepto liquidación</th>
+                    <th width="20%" style="height: 30px;">Valor</th>
+                </tr>
+            
+                
+                   <tr>
+                        <td width="80%" style="height: 20px;" class="padding-left">liquidación por retiro</td>
+                        <td width="20%" style="height: 20px;"
+                         class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($valorLiquidar) }}</td>
+                    </tr>
+                 
+                
+            </table>
+        @endif
     </div>
 
     
@@ -300,7 +354,7 @@
                     </tr>
                     @php $totalCategoria = 0; $totalHoras = 0; @endphp
                     @foreach($totalDetallesNomina as $categoria)
-                        @if($categoria['fk_nomina_cuenta'] == 1 && $categoria['fk_nomina_cuenta_tipo'] == 1)
+                        @if($categoria['fk_nomina_cuenta'] == 1 && $categoria['valor_categoria'])
                             <tr>
                                 <td width="60%" style="height: 20px;"
                                     class="left padding-left">{{ $categoria['nombre'] }}</td>
@@ -457,6 +511,15 @@
             </div>
         </div>
     </div>
-
+    <div style="width: 100%;height:auto;">
+        <div style="width: 50%; display: inline-block; text-align:left;">
+            @if(isset($codqr))
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/cadena_oficial.png')}}">
+            @endif
+        </div>
+        <div style="width: 50%; display: inline-block; text-align:right;margin-left:100px;">
+            <img style="width:75%; height:auto; position:absolute; bottom:10px;" src="{{asset('images/logo_factura.png')}}">
+        </div>
+    </div>
 
 @endsection

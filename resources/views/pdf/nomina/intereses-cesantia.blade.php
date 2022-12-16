@@ -242,5 +242,15 @@
         </div>
     </div>
 </div>
+    <div style="width: 100%;height:auto;">
+        <div style="width: 50%; display: inline-block; text-align:left;">
+            @if(isset($codqr))
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/cadena_oficial.png')}}">
+            @endif
+        </div>
+        <div style="width: 50%; display: inline-block; text-align:right;margin-left:100px;">
+            <img style="width:75%; height:auto; position:absolute; bottom:10px;" src="{{asset('images/logo_factura.png')}}">
+        </div>
+    </div>
 
 @endsection

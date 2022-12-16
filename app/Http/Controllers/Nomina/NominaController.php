@@ -27,11 +27,12 @@ use App\SuscripcionNomina;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 use App\SuscripcionPagoNomina;
+use App\Model\Nomina\NominaCalculoFijo;
 use Illuminate\Support\Facades\Mail;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 include_once(app_path() . '/../public/Spout/Autoloader/autoload.php');
-include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
+
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
@@ -48,6 +49,14 @@ class NominaController extends Controller
     public function __construct(NominaDianController $nominaDianController)
     {
         $this->middleware('nomina');
+        // $this->middleware('payrollReadingMode')->only('store_nomina', 'liquidar');
+        // $this->middleware('can_access_to_page:157')->only('emitir');
+        // $this->middleware('can_access_to_page:158')->only('liquidar');
+        // $this->middleware('can_access_to_page:164')->only('informeNovedades');
+        // $this->middleware('can_access_to_page:166')->only('calculosCompleto', 'generarPDFNominaCompleta');
+        // $this->middleware('can_access_to_page:169')->only('ajustar');
+        // $this->middleware('can_access_to_page:167')->only('emitirJson');
+        // $this->middleware('can_access_to_page:168')->only('estadoEliminado');
         $this->nominaDianController = $nominaDianController;
     }
 
@@ -88,6 +97,13 @@ class NominaController extends Controller
         // if($fechaActual->year != $year){
         //     return back();
         // }
+
+        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+        //     ->select('tips_modulo_usuario.*')
+        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
+        //     ->where('fk_idusuario',  $usuario->id)
+        //     ->get();
 
         $guiasVistas = [];
 
@@ -372,10 +388,16 @@ class NominaController extends Controller
 
     public function ajustar($periodo, $year, $persona, $tipo = null)
     {
-        
         $this->getAllPermissions(Auth::user()->id);
         $tipoPeriodo = $tipo;
         $empresa = Auth::user()->empresa;
+
+        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+        //     ->select('tips_modulo_usuario.*')
+        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
+        //     ->where('fk_idusuario', Auth::user()->id)
+        //     ->get();
 
         $guiasVistas = [];
 
@@ -387,7 +409,7 @@ class NominaController extends Controller
             ->nominaperiodos;
 
         if ($tipo == null) {
-            $vPeriodo = $variosPeriodos->first();
+             $vPeriodo = $variosPeriodos->first();
             if ($vPeriodo) {
                 $tipo = $vPeriodo->periodo;
             } else {
@@ -395,73 +417,231 @@ class NominaController extends Controller
             }
         }
 
-        /* >>> Obtenemos la nómina que se le va a realizar un ajuste. <<< */
-        $nomina = Nomina::with(['persona', 'prestacionesSociales'])
-            ->with([
-                'nominaperiodos' => function ($query) use ($tipo) {
-                    $query->where('periodo', $tipo);
+        if(!(request()->editNomina)){
+                /* >>> Obtenemos la nómina que se le va a realizar un ajuste. <<< */
+                $nomina = Nomina::with(['persona', 'prestacionesSociales'])
+                    ->with([
+                        'nominaperiodos' => function ($query) use ($tipo) {
+                            $query->where('periodo', $tipo);
+                        }
+                    ])
+                    ->where('fk_idpersona', $persona)
+                    ->where('ne_nomina.year', $year)
+                    ->where('ne_nomina.periodo', $periodo)
+                    ->where('fk_idempresa', $empresa)
+                    ->first();
+
+                /* >>> Si es la primera vez que ingresa a editar esta nomina creara una copia <<< */
+                if ($tipoPeriodo == null) {
+
+                    $datosNomina = Nomina::with('persona', 'prestacionesSociales', 'nominaperiodos')
+                        ->where('fk_idpersona', $persona)
+                        ->where('ne_nomina.year', $year)
+                        ->where('ne_nomina.periodo', $periodo)
+                        ->where('fk_idempresa', $empresa)
+                        ->first();
+
+                    if($datosNomina->cune == null || $datosNomina->cune == ""){
+                        return redirect()->back();
+                    }
+                    
+                    $numeracionPreferida = NumeracionFactura::where('nomina', 1)
+                    ->where('preferida', 1)
+                    ->where('empresa', auth()->user()->empresa)
+                    ->where('tipo_nomina',2)
+                    ->orderByDesc('id')
+                    ->first();
+
+                    if(!$numeracionPreferida){
+                        return back()->with('error', 'No existe una numeración activa preferida');
+                    }
+
+                    $nominaReplicaId = $this->crearCopiaNominaEstadoInactiva($datosNomina);
+
+                    /* >>> Obtenemos la nómina replicada <<< */
+                    $nomina = Nomina::with(['persona', 'prestacionesSociales'])
+                        ->with([
+                            'nominaperiodos' => function ($query) use ($tipo) {
+                                $query->where('periodo', $tipo);
+                            }
+                        ])
+                        ->where('id', $nominaReplicaId)
+                        ->first();
+                } else {
+
+                    /* >>> Aqui entrara en caso de que  usa la seccion 1- Elige la quincena que deseas editar <<< */
+                    $nomina = Nomina::with(['persona', 'prestacionesSociales'])
+                        ->with([
+                            'nominaperiodos' => function ($query) use ($tipo) {
+                                $query->where('periodo', $tipo);
+                            }
+                        ])
+                        ->where('fk_idpersona', $persona)
+                        ->where('ne_nomina.year', $year)
+                        ->where('ne_nomina.periodo', $periodo)
+                        ->where('fk_idempresa', $empresa)
+                        ->where('estado_nomina', 0)
+                        ->first();
                 }
-            ])
-            ->where('fk_idpersona', $persona)
-            ->where('ne_nomina.year', $year)
-            ->where('ne_nomina.periodo', $periodo)
-            ->where('fk_idempresa', $empresa)
-            ->first();
+        }else{
+            $nomina = Nomina::with([
+                                'nominaperiodos' => function ($query) use ($tipo) {
+                                    $query->where('periodo', $tipo);
+                                }
+                            ])->where('fk_idempresa', $empresa)
+                            ->where('id', request()->editNomina)
+                            ->first();
+        }
 
-        /* >>> Si es la primera vez que ingresa a editar esta nomina creara una copia <<< */
-        if ($tipoPeriodo == null) {
-
-            $datosNomina = Nomina::with('persona', 'prestacionesSociales', 'nominaperiodos')
-                ->where('fk_idpersona', $persona)
-                ->where('ne_nomina.year', $year)
-                ->where('ne_nomina.periodo', $periodo)
-                ->where('fk_idempresa', $empresa)
-                ->first();
-
-            if($datosNomina->cune == null || $datosNomina->cune == ""){
-                return redirect()->back();
-            }
-            
-            $numeracionPreferida = NumeracionFactura::where('nomina', 1)
-            ->where('preferida', 1)
-            ->where('empresa', auth()->user()->empresa)
-            ->where('tipo_nomina',2)
-            ->orderByDesc('id')
-            ->first();
-
-            if(!$numeracionPreferida){
-                return back()->with('error', 'No existe una numeración activa preferida');
-            }
-
-            $nominaReplicaId = $this->crearCopiaNominaEstadoInactiva($datosNomina);
-
-            /* >>> Obtenemos la nómina replicada <<< */
+        if(!$nomina){
             $nomina = Nomina::with(['persona', 'prestacionesSociales'])
-                ->with([
-                    'nominaperiodos' => function ($query) use ($tipo) {
-                        $query->where('periodo', $tipo);
-                    }
-                ])
-                ->where('id', $nominaReplicaId)
-                ->first();
-        } else {
-
-            /* >>> Aqui entrara en caso de que  usa la seccion 1- Elige la quincena que deseas editar <<< */
-            $nomina = Nomina::with(['persona', 'prestacionesSociales'])
-                ->with([
-                    'nominaperiodos' => function ($query) use ($tipo) {
-                        $query->where('periodo', $tipo);
-                    }
-                ])
-                ->where('fk_idpersona', $persona)
-                ->where('ne_nomina.year', $year)
-                ->where('ne_nomina.periodo', $periodo)
-                ->where('fk_idempresa', $empresa)
-                ->where('estado_nomina', 0)
-                ->first();
+                    ->with([
+                        'nominaperiodos' => function ($query) use ($tipo) {
+                            $query->where('periodo', $tipo);
+                        }
+                    ])
+                    ->where('fk_idpersona', $persona)
+                    ->where('ne_nomina.year', $year)
+                    ->where('ne_nomina.periodo', $periodo)
+                    ->where('fk_idempresa', $empresa)
+                    ->first();
         }
 
 
+        if(isset($nominaReplicaId)){
+            if($nomina){
+                foreach($nomina->nominaperiodos()->get() as $n){
+                    $n->editValorTotal();
+                }
+            }
+        }
+
+        
+        view()->share([
+            'seccion' => 'nomina',
+            'title' => "Ajuste de Nómina {$nomina->persona->nombre()}",
+            'icon' => 'fas fa-dollar-sign'
+        ]);
+
+
+
+        $idNomina = $nomina->id;
+
+        $categorias1 = Categoria::where('empresa', $empresa)
+            ->where('fk_catgral', 3)
+            ->where('fk_nomcuenta_tipo', 7)
+            ->get();
+
+        $categorias2 = Categoria::where('empresa', $empresa)
+            ->whereIn('fk_catgral', [5,10])
+            ->where('fk_nomcuenta_tipo', 8)
+            ->get();
+
+        $categorias3 = Categoria::where('nombre', 'AUXILIO DE CONECTIVIDAD')->first();
+
+        $categorias4 = Categoria::where('empresa', $empresa)
+            ->where('fk_catgral', 6)
+            ->where('fk_nomcuenta_tipo', 10)
+            ->get();
+
+        $categorias5 = Categoria::where('nombre', 'PRESTAMO')->first();
+        $categorias6 = Categoria::where('nombre', 'RETENCION EN LA FUENTE')->first();
+
+
+        $preferencia = NominaPreferenciaPago::where('empresa', $empresa)->first();
+
+        $costoPeriodo = $this->nominaDianController->costoPeriodo($tipo, [$idNomina]);
+        $tipoContrato = $nomina->persona->nomina_tipo_contrato->nombre;
+        $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
+        $nominaConfiguracionCalculos = Auth::user()->empresaObj->nominaConfiguracionCalculos;
+
+
+        return view(
+            'nomina.ajustar',
+            [
+                'guiasVistas' => $guiasVistas,
+                'nomina' => $nomina,
+                'moneda' => Auth::user()->empresaObj->moneda,
+                'categorias1' => $categorias1,
+                'categorias2' => $categorias2,
+                'categorias3' => $categorias3,
+                'categorias4' => $categorias4,
+                'categorias5' => $categorias5,
+                'categorias6' => $categorias6,
+                'preferencia' => $preferencia,
+                'periodo' => $periodo,
+                'year' => $year,
+                'tipo' => $tipo,
+                'variosPeriodos' => $variosPeriodos,
+                'mensajePeriodo' => $mensajePeriodo,
+                'costoPeriodo' => $costoPeriodo,
+                'idNomina' => $idNomina,
+                'nominaConfiguracionCalculos' => $nominaConfiguracionCalculos,
+                'tipoContrato' => $tipoContrato,
+                'persona' => $persona
+            ]
+        );
+
+        //        return  $nomina->persona->tipo_contrato;
+    }
+    
+    public function editarAjustar($periodo, $year, $persona, $tipo = null){
+           $this->getAllPermissions(Auth::user()->id);
+        $tipoPeriodo = $tipo;
+        $empresa = Auth::user()->empresa;
+
+        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+        //     ->select('tips_modulo_usuario.*')
+        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
+        //     ->where('fk_idusuario', Auth::user()->id)
+        //     ->get();
+
+        $guiasVistas = [];
+
+
+        $variosPeriodos = Nomina::where('year', $year)
+            ->where('periodo', $periodo)
+            ->where('fk_idempresa', $empresa)
+            ->first()
+            ->nominaperiodos;
+
+        if(request()->editNomina){
+            $tipo = null;
+        }
+
+        if ($tipo == null) {
+             $vPeriodo = $variosPeriodos->first();
+            if ($vPeriodo) {
+                $tipo = $vPeriodo->periodo;
+            } else {
+                return back()->with('error', 'Error al general la nomina del mes ' . $periodo);
+            }
+        }
+
+        $nomina = Nomina::with([
+            'nominaperiodos' => function ($query) use ($tipo) {
+                $query->where('periodo', $tipo);
+            }
+        ])->where('fk_idempresa', $empresa)
+        ->where('id', request()->editNomina)
+        ->first();
+
+        if(!$nomina){
+            $nomina = Nomina::with(['persona', 'prestacionesSociales'])
+                    ->with([
+                        'nominaperiodos' => function ($query) use ($tipo) {
+                            $query->where('periodo', $tipo);
+                        }
+                    ])
+                    ->where('fk_idpersona', $persona)
+                    ->where('ne_nomina.year', $year)
+                    ->where('ne_nomina.periodo', $periodo)
+                    ->where('fk_idempresa', $empresa)
+                    ->where('emitida', 4)
+                    ->first();
+        }
+        
         view()->share([
             'seccion' => 'nomina',
             'title' => "Ajuste de Nómina {$nomina->persona->nombre()}",
@@ -546,7 +726,7 @@ class NominaController extends Controller
 
             /*>>> Hacemos uso del metodo replicate()->fill para replicar un modelo y le pasamos los 
             nuevos atributos que cambiaran del modelo anterior <<<*/
-            $nominaBorrador = $nomina->replicate()->fill(['estado_nomina' => 0, 'tipo' => 2, 'cune_relacionado' => $nomina->cune]);
+            $nominaBorrador = $nomina->replicate()->fill(['estado_nomina' => 0, 'emitida' => 4, 'tipo' => 2, 'cune_relacionado' => $nomina->cune]);
             $nominaBorrador->codigo_dian = $numeracion->prefijo . $numeracion->inicio;
             $nominaBorrador->cune_relacionado = $nomina->cune;
             $numeracion->inicio = $numeracion->inicio + 1;
@@ -590,8 +770,10 @@ class NominaController extends Controller
             ->where('emitida', 1)
             ->first();
 
-        $nominaAnterior->emitida = 3;
-        $nominaAnterior->save();
+            if($nominaAnterior){
+                $nominaAnterior->emitida = 3;
+                $nominaAnterior->save();
+            }
 
         return redirect()->route('nomina-dian.emitir', ['year' => $year, 'periodo' => $periodo]);
     }
@@ -1067,7 +1249,7 @@ class NominaController extends Controller
         $estiloB = array(
             'fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => 'd08f50')
+                'color' => array('rgb' => 'c6c8cc')
             )
         );
         $objPHPExcel->getActiveSheet()->getStyle('A3:F3')->applyFromArray($estiloB);
@@ -2637,7 +2819,7 @@ class NominaController extends Controller
         $estiloB = array(
             'fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => 'd08f50')
+                'color' => array('rgb' => 'c6c8cc')
             )
         );
         $objPHPExcel->getActiveSheet()->getStyle('A3:P3')->applyFromArray($estiloB);
@@ -2805,7 +2987,7 @@ class NominaController extends Controller
         $info_pago = new stdClass();
         //PRODUCCIÓN
         $info_pago->url = "https://checkout.wompi.co/p/";
-        $info_pago->public_key = "pub_prod_Fab6QAeiWFPB1IVzMFIZQKPUZLcNN3nq";
+        $info_pago->public_key = config('app.public_key_wompi');
 
         //SANDBOX
         //$info_pago->public_key = "pub_test_CreiABg6OhVH3vUC5NrWkXTPyAdu6CCZ";
@@ -3113,6 +3295,19 @@ class NominaController extends Controller
         }
 
         return response()->json(['valorTotal' => $nominaPeriodo->valor_total, 'idPeriodoNomina' => $nominaPeriodo->id]);
+    }
+
+    public function eliminarNomina($id){
+
+        // $nominasPeriodos = NominaPeriodos::where('fk_idnomina', $id)->get()->keyBy('id')->keys()->all();
+        // NominaCuentasGeneralDetalle::whereIn('fk_nominaperiodo', $nominasPeriodos)->delete();
+        // NominaDetalleUno::whereIn('fk_nominaperiodo', $nominasPeriodos)->delete();
+        // NominaCalculoFijo::whereIn('fk_nominaperiodo', $nominasPeriodos)->delete();
+        // NominaPrestacionSocial::where('fk_idnomina', $id)->delete();
+        // NominaPeriodos::where('fk_idnomina', $id)->delete();
+        // Nomina::where('id',$id)->delete();
+
+        return "nomina eliminada";
     }
 
 }

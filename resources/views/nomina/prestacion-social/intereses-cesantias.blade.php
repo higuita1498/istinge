@@ -25,12 +25,26 @@
 </script>
 @endif
 
+<script type="text/javascript">
+            setTimeout(function() {
+                $('.alert').hide();
+                $('.active_table').attr('class', ' ');
+            }, 9000);
+</script>
+
 <div class="container-fluid">
 
     <div class="row">
         <div class="col-12">
+        @if($request->ajuste)
+        <a href="{{ route('nomina.ajustar', ['periodo' => $request->periodo, 'year' => $request->year, 'persona' => $request->persona, 'tipo' => 2, 'editNomina' => $request->editNomina]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
+        @else
             <a href="{{ route('nomina.liquidar', ['periodo' => $periodo, 'year' => $year]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
+        @endif
             @include('nomina.includes.periodo', ['mensajePeriodo' => str_replace('de', ' de ', str_replace('-', ' - ', $rango))])
+        </div>
+        <div class="alert alert-info">
+            Observe y edite las prestaciones sociales de las nominas que no han sido emitidas
         </div>
     </div>
 
@@ -302,7 +316,7 @@
 
         if (deuda < 0) {
             deuda = 0;
-            valor_pagar.val(subtotal);
+            // valor_pagar.val(subtotal);
         }
 
         let formatPago = (subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,').slice(0, -3);

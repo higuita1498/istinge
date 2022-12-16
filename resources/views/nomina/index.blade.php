@@ -60,7 +60,7 @@
     }
 
     .color {
-        color: #d08f50;
+        color: #022454;
         background: #e9ecef;
         font-weight: bold;
         padding: 5px;
@@ -69,7 +69,7 @@
     }
 
     .color:hover {
-        border: solid 1px #d08f50;
+        border: solid 1px #022454;
     }
 
     .w-77 {
@@ -80,20 +80,18 @@
 
 @section('boton')
 @if($modoLectura->success)
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
     <a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 @else
-{{--@if(isset($_SESSION['permisos']['159']) || auth()->user()->username == 'gestordepartes')--}}
-@if(isset($_SESSION['permisos']['789']))
+@if(isset($_SESSION['permisos']['159']) || auth()->user()->username == 'gestordepartes')
 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#new-nomina" id="btn-generar-nomina">
     <i class="fas fa-plus"></i> Generar Nueva Nómina
 </button>
 @endif
-{{--@endif--}}
 @endif
 @endsection
 
@@ -119,7 +117,6 @@
 
 {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([9])->diff(auth()->user()->guiasVistas()->keyBy('nro_tip')->keys())->all()]) --}}
 
-@if(isset($_SESSION['permisos']['788']))
 <div class="row card-description">
     <div class="col-md-12">
         <div class="table-responsive">
@@ -187,7 +184,6 @@
         </div>
     </div>
 </div>
-@endif
 
 <div class="modal fade bd-example-modal-lg" id="new-nomina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -291,11 +287,11 @@
 <script>
     $(document).ready(function() {
 
-        // firstTip = $('.tour-tips').first().attr('nro_tip');
+        firstTip = $('.tour-tips').first().attr('nro_tip');
 
-        // if (firstTip) {
-        //     nuevoTip(firstTip);
-        // }
+        if (firstTip) {
+            nuevoTip(firstTip);
+        }
 
     });
 </script>

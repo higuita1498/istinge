@@ -18,8 +18,8 @@ class NominaPrestacionSocialController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('can_access_to_page:161')->only('imprimir');
-        // $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
+        $this->middleware('can_access_to_page:161')->only('imprimir');
+        $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
     }
 
     public function prima(Request $request)
@@ -43,6 +43,7 @@ class NominaPrestacionSocialController extends Controller
 
 
         $nominas = Nomina::with('nominaperiodos')
+            ->whereNotIn('emitida', [1, 3, 5, 6])
             ->where('ne_nomina.year', $year)
             ->where('periodo', '>=', $desde)
             ->where('periodo', '<=', $hasta)
@@ -52,14 +53,14 @@ class NominaPrestacionSocialController extends Controller
            $nominas = $nominas->where('fk_idpersona', $request->persona);
         }
 
-        $nominas = $nominas->get();
+        $nominas = $nominas->latest()->get();
 
 
         $totalidades = [];
 
         foreach ($nominas as $key => $nomina) {
             if($nomina->persona->is_liquidado){
-                unset($nominas[$key]);
+              //  unset($nominas[$key]);
             }
 
             foreach ($nomina->nominaperiodos as $nominaPeriodo) {
@@ -80,7 +81,7 @@ class NominaPrestacionSocialController extends Controller
         foreach ($personas as $key => $persona) {
             $totalidad = collect($totalidadesPersonas[$persona->id]);
             $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
-            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.total');
+            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
             $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
             $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario')) * 30) / $base['diasTrabajados']) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($data['diasPeriodos'] = $totalidad->groupBy('idNomina')->count())));
             if ($base['diasTrabajados'] <= 30) {
@@ -186,7 +187,7 @@ class NominaPrestacionSocialController extends Controller
 
         foreach ($nominas as $key => $nomina) {
             if($nomina->persona->is_liquidado){
-                unset($nominas[$key]);
+               // unset($nominas[$key]);
             }
             foreach ($nomina->nominaperiodos as $nominaPeriodo) {
                 if (!isset($totalidades[$nomina->fk_idpersona])) {
@@ -206,20 +207,28 @@ class NominaPrestacionSocialController extends Controller
         foreach ($personas as $key => $persona) {
             $totalidad = collect($totalidadesPersonas[$persona->id]);
             $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
-            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.total');
+            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
             $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
             $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario') * 30) / $base['diasTrabajados'])) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($totalidad->groupBy('idNomina')->count())));
             $base['valorTotal'] = ($base['salarioSubsidio'] * $base['diasTrabajados']) / 360;
             $persona->totalidades = $base;
             $persona->nominaSeleccionada = Nomina::with('nominaperiodos')
+                                                ->whereNotIn('ne_nomina.emitida', [1, 3, 5, 6])
                                                 ->where('ne_nomina.year', $year)
                                                 ->where('ne_nomina.periodo', $periodo)
                                                 ->where('fk_idempresa', Auth::user()->empresa)
                                                 ->where('fk_idpersona', $persona->id)
+                                                ->latest()
                                                 ->first();
         }
-
-        $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa)->where('status', 1)->where('is_liquidado', 0)->get();
+        
+        $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa);
+        
+        if($request->persona){
+            $personasVigentes->where('id', $request->persona);
+        }
+        
+        $personasVigentes->get();
     
         foreach($personasVigentes as $kV => $pV){
             
@@ -246,7 +255,7 @@ class NominaPrestacionSocialController extends Controller
                 if($totalidad->count() > 0){
 
                     $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
-                    $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.total');
+                    $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
                     $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
                     $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario') * 30) / $base['diasTrabajados'])) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($totalidad->count())));
                     $base['valorTotal'] = ($base['salarioSubsidio'] * $base['diasTrabajados']) / 360;
@@ -299,7 +308,7 @@ class NominaPrestacionSocialController extends Controller
 
         foreach ($nominas as $key => $nomina) {
             if($nomina->persona->is_liquidado){
-                unset($nominas[$key]);
+               // unset($nominas[$key]);
             }
             foreach ($nomina->nominaperiodos as $nominaPeriodo) {
                 if (!isset($totalidades[$nomina->fk_idpersona])) {
@@ -319,7 +328,7 @@ class NominaPrestacionSocialController extends Controller
         foreach ($personas as $key => $persona) {
             $totalidad = collect($totalidadesPersonas[$persona->id]);
             $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
-            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.total');
+            $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
 
             $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
             $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario') * 30) / $base['diasTrabajados'])) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($totalidad->groupBy('idNomina')->count())));
@@ -329,17 +338,25 @@ class NominaPrestacionSocialController extends Controller
 
             $persona->totalidades = $base;
             $persona->nominaSeleccionada = Nomina::with('nominaperiodos')
+                                                ->whereNotIn('ne_nomina.emitida', [1, 3, 5, 6])
                                                 ->where('ne_nomina.year', $year)
                                                 ->where('ne_nomina.periodo', $periodo)
                                                 ->where('fk_idempresa', Auth::user()->empresa)
                                                 ->where('fk_idpersona', $persona->id)
+                                                ->latest()
                                                 ->first();
         }
 
 
 
 
-        $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa)->where('status', 1)->where('is_liquidado', 0)->get();
+        $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa);
+        
+         if($request->persona){
+            $personasVigentes->where('id', $request->persona);
+        }
+        
+        $personasVigentes->get();
 
         foreach($personasVigentes as $kV => $pV){
 
@@ -365,7 +382,7 @@ class NominaPrestacionSocialController extends Controller
                 if($totalidad->count() > 0){
 
                     $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
-                    $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.total');
+                    $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
         
                     $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
                     $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario') * 30) / $base['diasTrabajados'])) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($totalidad->count())));

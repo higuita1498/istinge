@@ -52,7 +52,7 @@
     }
 
     .text-gestor {
-        color: #d08f50;
+        color: #022454;
     }
 
     .table-responsive {
@@ -66,8 +66,8 @@
 
     .nav-tabs .nav-link.active,
     .nav-tabs .nav-item.show .nav-link {
-        color: #d08f50;
-        border-color: #ffffff #ffffff #d08f50;
+        color: #022454;
+        border-color: #ffffff #ffffff #022454;
     }
 
     .nav-tabs .nav-link {
@@ -232,7 +232,7 @@
                                     </tr>
                                     <tr style="background: #E0E0E0; font-weight: bold;">
                                         <td>Subsidio de transporte</td>
-                                        <td>$ 106.454</td>
+                                        <td></td>
                                         <td>{{ $nomina::parsear($totalidad['diasTrabajados']['total']) }}</td>
                                         <td>$ {{ $nomina::parsear($totalidad['salarioSubsidio']['subsidioTransporte']) }}</td>
                                     </tr>
@@ -255,13 +255,16 @@
                                 <tbody>
                                     <tr>
                                         <td>Salario</td>
-                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['salario']) }}</td< /tr>
+                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['salario']) }}</td>
+                                    </tr>
                                     <tr>
                                         <td>Horas extras, ordinarias, recargos y adicionales</td>
-                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['ingresosyExtras']) }}</td< /tr>
+                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['ingresosyExtras']) }}</td>
+                                    </tr>
                                     <tr>
                                         <td>Vacaciones, Incapacidades y Licencias</td>
-                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['vacaciones']) }}</td< /tr>
+                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['vacaciones'] + (isset($totalidad['pago']['licencias']) ? $totalidad['pago']['licencias'] : 0)) }}</td>
+                                    </tr>
                                     <tr style="background: #E0E0E0; font-weight: bold;">
                                         <td>IBC Seguridad Social</td>
                                         <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['total']) }}</td>
@@ -336,9 +339,9 @@
                                     <td>$ {{$nomina::parsear($totalidad['seguridadSocial']['pension'])}}</td>
                                 </tr>
                                 <tr>
-                                    <td>Riesgo 1 - Mínimo</td>
+                                    <td>{{ $persona->clase_riesgo() }}</td>
                                     <td>$ {{$nomina::parsear($totalidad['ibcSeguridadSocial']['salario']) }}</td>
-                                    <td>0.522%</td>
+                                    <td>{{ isset($totalidad['seguridadSocial']['valorRiesgo']) ? ($totalidad['seguridadSocial']['valorRiesgo'] * 100) : '-' }} %</td>
                                     <td>$ {{$nomina::parsear($totalidad['seguridadSocial']['riesgo1'])}}</td>
                                 </tr>
                                 <tr style="background: #E0E0E0; font-weight: bold;">

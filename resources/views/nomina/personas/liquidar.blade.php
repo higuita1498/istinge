@@ -74,7 +74,7 @@
             <div class="form-group">
                 <label class="control-label">Fecha de contratación<span class="text-danger">*</span></label>
 
-                <input type="text" class="form-control liquidar"  id="fechaContratacion" value="{{$fechaContratacion->format('d-m-Y')}}" name="fechaContratacion">
+                <input type="text" class="form-control liquidar-fecha"  id="fechaContratacion" value="{{$fechaContratacion->format('d-m-Y')}}" name="fechaContratacion">
 
                 <span class="help-block error">
                     <strong>{{ $errors->first('fechaContratacion') }}</strong>
@@ -85,7 +85,7 @@
             <div class="form-group">
                 <label class="control-label">Fecha de terminación<span class="text-danger">*</span></label>
 
-                <input type="text" class="form-control liquidar"  id="fechaTerminacion" value="{{date('d-m-Y')}}" name="fechaTerminacion">
+                <input type="text" class="form-control liquidar-fecha"  id="fechaTerminacion" value="{{date('d-m-Y')}}" name="fechaTerminacion">
 
                 <span class="help-block error">
                     <strong>{{ $errors->first('fechaTerminacion') }}</strong>
@@ -95,7 +95,7 @@
             <div class="form-group">
                 <label class="control-label">Días a liquidar<span class="text-danger">*</span></label>
 
-                <input type="number" value="{{ $diasLiquidar }}" class="form-control liquidar" id="diasLiquidar" name="diasLiquidar" readonly="readonly">
+                <input type="number" value="{{ $diasLiquidar }}" class="form-control" id="diasLiquidar" name="diasLiquidar" onchange="resumenLiquidacion(false);">
 
                 <span class="help-block error">
                     <strong>{{ $errors->first('diasLiquidar') }}</strong>
@@ -106,7 +106,7 @@
             <div class="form-group">
                 <label class="control-label">Días de vacaciones<span class="text-danger">*</span></label>
 
-                <input type="number" class="form-control liquidar"  id="diasVacaciones" name="diasVacaciones" value="{{ ($vacAcumuladas / 360) }}"  step="any">
+                <input type="number" class="form-control liquidar"  id="diasVacaciones" name="diasVacaciones" value="{{ ($vacAcumuladas) }}"  step="any">
 
                 <span class="help-block error">
                     <strong>{{ $errors->first('diasVacaciones') }}</strong>
@@ -132,7 +132,7 @@
             </div>
 
             <div class="form-group col-md-12">
-                <label class="control-label">Vacaciones <span class="text-danger">*</span></label>
+                <label class="control-label"> Base Vacaciones <span class="text-danger">*</span></label>
                 <input type="text" class="form-control liquidar" name="vacaciones" id="vacaciones" maxlength="200" value="{{ number_format($vacaciones) }}" required="">
                 <span class="help-block error">
                     <strong>{{ $errors->first('vacaciones') }}</strong>
@@ -327,8 +327,9 @@
             </div>
 
             <div class="col-6">
+                <a href="javascript:editTotal();"><i class="fas fa-edit"></i></a>
                 <p style="text-align: right; border-top: 1px solid #000;" id="r-total">173.105</p>
-                <input type="hidden" name="total" id="total" />
+                <input type="number" style="display:none" class="form-control" name="total" id="total" />
             </div>
 
         </div>
@@ -408,7 +409,11 @@ $(function(){
 
     resumenLiquidacion();
     $('.liquidar').on('change', function(){
-        resumenLiquidacion();
+        resumenLiquidacion(false);
+    });
+
+    $('.liquidar-fecha').on('change', function(){
+        resumenLiquidacion(true);
     });
 
 });
@@ -416,9 +421,11 @@ $(function(){
 
 
 
-function resumenLiquidacion(){
+function resumenLiquidacion(isDias = true){
 
-    calcDiasLiquidar();
+    if(isDias){
+        calcDiasLiquidar();
+    }
 
     if($('input[name="isPrueba"]:checked').val() == '1'){
         $('#isCausal1').prop('checked', true);
@@ -477,6 +484,7 @@ function resumenLiquidacion(){
     $('#r-indemnizacion').text(formatNumber(indemnizacion));
     $('#r-otros').text(formatNumber(otrosIngresos =  parseFloat($('#otrosIngresos').val().replace(/,/g, ""))));
     $('#r-total').text(formatNumber(total = (vacaciones + cesantias + interesesC + prima + indemnizacion + otrosIngresos)));
+    total = Math.round(total);
     $('#total').val(total);
 
     refreshMask();
@@ -535,6 +543,16 @@ function refreshMask(){
     $('#otrosIngresos').val(otrosIngresos);
     $('#valorPrestamos').val(valorPrestamos);
     $('#otrasDeducciones').val(otrasDeducciones);
+}
+
+function editTotal(){
+    $('#total').attr('type', 'number');
+    $('#total').css('display', 'block');
+    $('#total').focus();
+    $('#total').after('<span style="font-size:12px;">El valor total es el dato que se informa a la DIAN, puedes editarlo.</span>');
+    $('#total').on('keyup', function(){
+        $('#r-total').text(formatNumber($('#total').val()));
+    })
 }
 
 </script>

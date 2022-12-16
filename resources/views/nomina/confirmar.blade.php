@@ -99,7 +99,11 @@
 
 </div>
 
+@if($request->ajuste)
+<a href="{{ route('nomina.ajustar', ['periodo' => $request->periodo, 'year' => $request->year, 'persona' => $request->persona]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
+@else
 <a href="{{ route('nomina.liquidar', ['periodo' => $request->periodo, 'year' => $request->year, 'editar' => 'true', $request->periodo_quincenal, 'periodo_quincenal' => $request->periodo_quincenal]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
+@endif
 
 <div class="row">
     <div class="col-12">
@@ -122,7 +126,7 @@
                 <ul style="list-style: none;">
                     <li><a href="{{ route('nomina.agrupadas', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="fas fa-grip-vertical"></i> <span>Agrupadas</span></li> </a>
                     <li><a href="{{ route('nomina.individuales', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="far fa-user"></i> <span>Individuales</span></li> </a>
-                    {{-- <li><a href="{{ route('liquidar-nomina.correo', ['periodo' => $request->periodo, 'year' => $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-envelope"></i> <span>Notificar pago via email</span></li> </a> --}}
+                    <li><a href="{{ route('liquidar-nomina.correo', ['periodo' => $request->periodo, 'year' => $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-envelope"></i> <span>Notificar pago via email</span></li> </a>
                 </ul>
             </div>
         </div>
@@ -170,11 +174,11 @@
     $(document).ready(function() {
 
 
-        // firstTip = $('.tour-tips').first().attr('nro_tip');
+        firstTip = $('.tour-tips').first().attr('nro_tip');
 
-        // if (firstTip) {
-        //     nuevoTip(firstTip);
-        // }
+        if (firstTip) {
+            nuevoTip(firstTip);
+        }
 
     });
 </script>

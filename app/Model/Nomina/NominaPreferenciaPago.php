@@ -25,37 +25,24 @@ class NominaPreferenciaPago extends Model
 			$day = 16;
 		}
 
-		$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        $fecha = $year. "-" . $periodo . "-" . $day;
-        $date = Carbon::parse($fecha);
-        $mes = $meses[($date->format('n')) - 1];
-
-    	$date = Carbon::create($year, $periodo, $day);
-    	$end = Carbon::create($year, $periodo, $day)->endOfMonth();
-		// $end = date("Y-m-t", strtotime($fecha));
-		// $end = Carbon::parse($end);
-
+    	$date = Carbon::create($year, $periodo, $day)->locale('es');
+    	$end = Carbon::create($year, $periodo, $day)->locale('es')->endOfMonth();
 
     	if($this->frecuencia_pago == 1){
     		if ($date->format('d') <= 15) {
-    			return '1 - 15 de '.ucfirst($mes).' - '.$date->format('Y');
+    			return '1 - 15 de '.ucfirst($date->monthName).' - '.$date->format('Y');
     		}else{
-    			return $day . ' - '.$end->format('d').' de '.ucfirst($mes).' - '.$date->format('Y');
+    			return $day . ' - '.$end->format('d').' de '.ucfirst($date->monthName).' - '.$date->format('Y');
     		}
     	}elseif ($this->frecuencia_pago == 2) {
-    		return '1 - '.$end->format('d').' de '.ucfirst($mes).' - '.$date->format('Y');
+    		return '1 - '.$end->format('d').' de '.ucfirst($date->monthName).' - '.$date->format('Y');
     	}
     	return '';
     }
 
     function periodoCompleto($periodo, $year){
-
-		$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        $fecha = $year. "-" . $periodo . "-1";
-        $date = Carbon::parse($fecha);
-        $mes = $meses[($date->format('n')) - 1];
         
-    	$date = Carbon::create($year, $periodo, 1);
-    	return ucfirst($mes).' - '.$date->format('Y');
+    	$date = Carbon::create($year, $periodo, 1)->locale('es');
+    	return ucfirst($date->monthName).' - '.$date->format('Y');
     }
 }

@@ -157,8 +157,11 @@
     </style>
 
     <div style="width: 100%;height:auto;">
-        <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-bottom: 2%; overflow:hidden; text-align:left;">
-        </div>
+        <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-bottom: 1%; overflow:hidden; align-self: flex-start;">
+        @if(isset($empresa))
+        <img src="{{asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo)}}" alt="{{$empresa->nombre}}" width="90%" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+        @endif
+    </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;">
             <h4>{{$user->empresaObj->nombre}}</h4>
             <p style="line-height: 12px;">{{$user->empresaObj->tip_iden('mini')}} {{$user->empresaObj->nit}} @if($user->empresaObj->dv != null || $user->empresaObj->dv === 0)
@@ -223,7 +226,7 @@
             <tr>
                 <td width="80%" style="height: 20px;" class="padding-left">Salario</td>
                 <td width="20%" style="height: 20px;"
-                    class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['pago']['salario'])}}</td>
+                    class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['pagoContratado']['deducido'])}}</td>
             </tr>
             <tr>
                 <td width="80%" style="height: 20px;" class="padding-left">Subsidio de transporte</td>
@@ -284,6 +287,22 @@
                 @endif
 
             @endif
+            
+            
+            @foreach($nominaPeriodo->nominaDetallesUno as $categoria)
+                        @if($categoria->fk_nomina_cuenta == 2 && $categoria->fecha_inicio)
+                            @if(!($categoria->is_remunerado()))
+                            <tr>
+                                <td width="80%" style="height: 20px;"
+                                    class="left padding-left">{{ strtolower($categoria->nombre ? $categoria->nombre : 'sin definir') }}</td>
+                                <td width="20%" style="height: 20px;"
+                                    class="center"> - {{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($categoria->valor_categoria) }}</td>
+                            </tr>
+                           @endif
+                        @endif
+            @endforeach
+            
+            
             <tr>
                 <th width="80%" style="height: 30px;" class="left padding-left">Total neto a pagar al empleado</th>
                 <th width="20%" style="height: 30px;"
@@ -305,7 +324,7 @@
                     </tr>
                     @php $totalCategoria = 0; $totalHoras = 0; @endphp
                     @foreach($nominaPeriodo->nominaDetallesUno as $categoria)
-                        @if($categoria->fk_nomina_cuenta == 1 && $categoria->fk_nomina_cuenta_tipo == 1)
+                        @if($categoria->fk_nomina_cuenta == 1 && $categoria->valor_categoria)
                             <tr>
                                 <td width="60%" style="height: 20px;"
                                     class="left padding-left">{{ $categoria->nombre }}</td>
@@ -424,13 +443,13 @@
                     </tr>
                     <tr>
                         <td width="65%" style="height: 20px;" class="left padding-left">Salud</td>
-                        <td width="15%" style="height: 20px;" class="center">4%</td>
+                        <td width="15%" style="height: 20px;" class="center">{{ $totalidad['retenciones']['porcentajeSalud'] }}%</td>
                         <td width="20%" style="height: 20px;"
                             class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($totalidad['retenciones']['salud']) }}</td>
                     </tr>
                     <tr>
                         <td width="65%" style="height: 20px;" class="left padding-left">Pension</td>
-                        <td width="15%" style="height: 20px;" class="center">4%</td>
+                        <td width="15%" style="height: 20px;" class="center">{{ $totalidad['retenciones']['porcentajePension'] }}%</td>
                         <td width="20%" style="height: 20px;"
                             class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($totalidad['retenciones']['pension']) }}</td>
                     </tr>
@@ -470,6 +489,17 @@
             <div style="display: inline-block; width: 44%; border-top: 1px solid #000;">
                 <p class="small"> ACEPTADA, FIRMA Y/O SELLO Y FECHA</p>
             </div>
+        </div>
+    </div>
+    
+        <div style="width: 100%;height:auto;">
+        <div style="width: 50%; display: inline-block; text-align:left;">
+            @if(isset($codqr))
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/cadena_oficial.png')}}">
+            @endif
+        </div>
+        <div style="width: 50%; display: inline-block; text-align:right;margin-left:100px;">
+            <img style="width:75%; height:auto; position:absolute; bottom:10px;" src="{{asset('images/logo_factura.png')}}">
         </div>
     </div>
 

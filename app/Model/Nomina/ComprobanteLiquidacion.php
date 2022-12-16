@@ -50,10 +50,18 @@ class ComprobanteLiquidacion extends Model
                 $diasSalario += $diaAdicional * $anosAdicionales;
         }
 
-        $total['indemnizacion'] = (($this->base_salario  / 30) * $diasSalario);
+        if(!$this->is_justa_causa){
+            $total['indemnizacion'] = (($this->base_salario  / 30) * $diasSalario);
+        }else{
+            $total['indemnizacion'] = 0;
+        }
         $total['otrosIngresos']  = floatval($this->otros_ingresos);
 
         $total['total'] = ($total['vacaciones'] + $total['cesantias'] + $total['interesesCesantias'] + $total['prima'] + $total['indemnizacion'] + $total['otrosIngresos']);
+
+        if($this->total){
+            $total['total'] = $this->total;
+        }
 
         if($nomina){
             $total['nomina'] = floatval($this->total_nomina ?? 0);

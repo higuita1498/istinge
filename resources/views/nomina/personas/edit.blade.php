@@ -132,7 +132,7 @@
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Salario Base <span class="text-danger">*</span></label>
-			<select class="form-control selectpicker" name="salario_base" id="salario_base" required="" title="Seleccione" data-live-search="true" data-size="5">
+			<select class="form-control selectpicker" name="salario_base" id="salario_base" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validarBase();">
 				@foreach($salario_bases as $salario_base)
 				<option {{$persona->fk_salario_base==$salario_base->id?'selected':''}} value="{{$salario_base->id}}">{{$salario_base->nombre}}</option>
 				@endforeach
@@ -144,7 +144,7 @@
 
 		<div class="form-group col-md-3">
 			<label class="control-label">Valor <span class="text-danger">*</span></label>
-			<input type="text" class="form-control valor" name="valor" id="valor" required="" maxlength="10" value="{{$persona->valor}}">
+			<input type="text" class="form-control valor" name="valor" id="valor" required="" maxlength="20" value="{{$persona->valor}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('valor') }}</strong>
 			</span>
@@ -489,5 +489,12 @@
 				minDate: $('#fecha_contratacion').val()
 			});
 	});
+
+        function validarBase(){
+            if($('#salario_base').val() == 2){
+                Swal.fire('Recuerde que el salario integral debe ser mayor o igual a 10SMLV');
+            }
+        }
+
 </script>
 @endsection

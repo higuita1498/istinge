@@ -182,8 +182,12 @@ class NominaPeriodos extends Model
                                         //AQUI ENTRA CUANDO SE ECHO EL MISMO MES EL MISMO AÑO Y SE CONTRATO EL MISMO MES Y EL MISMO AÑO
                                         //NO SE HACE NADA PORQUE LOS ANTERIORES CONTRATOS SE LIQUIDAN JUNTO AL COMPROBANTE DE LIQUIDACION POR ENDE NO SE TOMAN EN CUENTA EN ESTE PERIODO.
                                         if($fechaTerminacion->format('d') >= 1){
-                                            // $diasRestados -= $inicio->diffInDays($fechaTerminacion) + 1;   
-                                             
+                                            $diasRestados = 0;
+                                            $diasRestados += $inicio->diffInDays($fechaContratacion);   
+                                            $diasRestados += $fechaTerminacion->diffInDays($hasta);
+                                            
+                                            
+                                          
                                              // 
                                         }
                                         
@@ -245,7 +249,7 @@ class NominaPeriodos extends Model
 
         /* >>> Obtenemos valores_totales (en dinero) de vacaciones, salario, ingresos e incapacidades <<< */
         $ibcSeguridadSocial['vacaciones'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 4)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
-        $ibcSeguridadSocial['salario']= (($this->pago_empleado / 30) * $this->diasTrabajados()) - $ibcSeguridadSocial['vacaciones'];
+        $ibcSeguridadSocial['salario']= (($this->pago_empleado / 30) * $this->diasTrabajados());
         $ibcSeguridadSocial['ingresosyExtras'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->whereIn('fk_nomina_cuenta', [1,3])->whereNotIn('fk_nomina_cuenta_tipo', [8, 9])->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $ibcSeguridadSocial['incapacidades'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 5)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
 
@@ -291,7 +295,6 @@ class NominaPeriodos extends Model
 
         /* >>> Cálculo final del ibc seguridad social <<< */
         $ibcSeguridadSocial['total'] = $subtotal = $licenciaPaga + $ibcSeguridadSocial['vacaciones'] + $ibcSeguridadSocial['salario'] + $ibcSeguridadSocial['ingresosyExtras'];
-
 
         /* >>> Obtenemos los valores de salud y pension configurados desde el modulo de calculos fijos. <<< */
         $empresa = Auth::user()->empresa;
@@ -441,7 +444,7 @@ class NominaPeriodos extends Model
         $totalidad['ibcSeguridadSocial']['salarioParcial'] = $diasValidosTrabajados * $totalidad['salarioSubsidio']['valorDia'];
         //Valor real trabajado, contando unicamente con liquidaciones de la persona
         $totalidad['pagoContratado']['total'] = $diasValidosTrabajados * $this->pago_empleado / 30;
-
+        $totalidad['pagoContratado']['deducido'] = $totalidad['pagoContratado']['total'];
         $totalidad['diasTrabajados']['ausencia'] = $this->diasAusenteDetalle();
         $totalidad['diasTrabajados']['total'] = $totalidad['diasTrabajados']['diasPeriodo'] - array_sum($totalidad['diasTrabajados']['ausencia']);
         $totalidad['ibcSeguridadSocial']['licencias'] = 0;
@@ -455,20 +458,36 @@ class NominaPeriodos extends Model
                 $totalidad['ibcSeguridadSocial']['salarioParcial'] -= $licencia->valor_categoria;
                 $licenciaNoRemunerada += $licencia->valor_categoria;
                 $totalidad['pagoContratado']['total'] -= $licencia->valor_categoria;
+                $totalidad['pagoContratado']['deducido'] -= $licencia->valor_categoria;
             }else{
                 $totalidad['pago']['licencias'] += $licencia->valor_categoria;
                 $totalidad['ibcSeguridadSocial']['salario'] -= $licencia->valor_categoria;
                 $totalidad['ibcSeguridadSocial']['salarioParcial'] -= $licencia->valor_categoria;
+                $totalidad['pagoContratado']['deducido'] -= $licencia->valor_categoria;
             }
         }
 
-        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + ($totalidad['pagoContratado']['total']) + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
+        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + ($totalidad['pagoContratado']['deducido']) + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
 
         $totalidad['retenciones']['salud'] = floatval($calculosFijosCollect->where('tipo', 'reten_salud')->first()->valor ?? 0);
         $totalidad['retenciones']['pension'] = floatval($calculosFijosCollect->where('tipo', 'reten_pension')->first()->valor ?? 0);
         $totalidad['retenciones']['total'] += $totalidad['retenciones']['salud'] + $totalidad['retenciones']['pension'];
-        $totalidad['retenciones']['porcentajeSalud'] =  round($totalidad['retenciones']['salud'] * 100 / $totalidad['ibcSeguridadSocial']['total']);
-        $totalidad['retenciones']['porcentajePension'] =  round($totalidad['retenciones']['pension'] * 100 / $totalidad['ibcSeguridadSocial']['total']);
+
+        $retencionesSalud = $totalidad['retenciones']['salud'];
+        $retencionesPension = $totalidad['retenciones']['pension'];
+
+        if ($retencionesSalud > 0 && $retencionesPension > 0) {
+
+            if($this->nomina->persona->fk_salario_base == 2){
+                $totalidad['retenciones']['porcentajeSalud'] =  round($retencionesSalud * 100 / ($totalidad['ibcSeguridadSocial']['total'] * (70 / 100)));
+                $totalidad['retenciones']['porcentajePension'] =  round($retencionesPension * 100 / ($totalidad['ibcSeguridadSocial']['total'] * (70 / 100)));
+            }else{
+                $totalidad['retenciones']['porcentajeSalud'] =  round($retencionesSalud * 100 / $totalidad['ibcSeguridadSocial']['total']);
+                $totalidad['retenciones']['porcentajePension'] =  round($retencionesPension * 100 / $totalidad['ibcSeguridadSocial']['total']);
+            }
+        
+        }
+        
         
         /*>>> Valor neto pago empleado <<<*/
         $subtotal += floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);

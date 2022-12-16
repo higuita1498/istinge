@@ -75,6 +75,22 @@
                                     </div>
                                 </div>
 
+                                {{-- <div class="row border-bottom">
+                                    <div class="col-12 col-md-4">
+                                        <p>Compensadas en dinero por retiro</p>
+                                    </div>
+                                    <div class="col-12 col-md-8 text-center px-0">
+                                        <div class="row mt-2 row-dates-v">
+                                            <div class="col-4">
+                                                <input class="form-control" name="vac_compensada_dias" id="vac_compensada_dias" type="number" placeholder="Cantidad días">
+                                            </div>
+                                            <div class="col-4">
+                                                <input class="form-control" name="vac_compensada_dinero" id="vac_compensada_dinero" type="number" placeholder="Cantidad dinero">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
                                 <div class="row p-3 border-bottom d-none">
                                     <div class="col-8 align-self-center">
                                         <p>¿Pago anticipado?</p>
@@ -210,10 +226,10 @@
             total_dias_licencia_no_remunerado: $('#total-dias-licencia-no-remunerado').val(),
             subsidio_transporte: $('#subsidio-transporte').val(),
             dias_pagos: $('#dias-pagos').val(),
+            vac_compensada_dinero: $("#vac_compensada_dinero").val(),
+            vac_compensada_dias: $("#vac_compensada_dias").val(),
             _token: $('input[name="_token"]').val()
         };
-
-        console.log(data);
 
         $.post($("#vacacionesUpdate").attr('action'), data, function(dato) {
             if (dato['status'] == 'OK') {
@@ -339,12 +355,7 @@
 
     function editVacaciones(id) {
         cargando(true);
-        if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-		}else{
-					var url = '/empresa';
-		}
-        var url = url + '/nomina/liquidar-nomina/' + id + '/edit_vacaciones';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit_vacaciones';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {
@@ -375,6 +386,9 @@
                 $('#pago' + resul.vacaciones[0]['pago_anticipado']).attr('checked', true);
                 $("#dias_compensados_dinero").val(resul.vacaciones[0]['dias_compensados_dinero']);
             }
+
+            $("#vac_compensada_dias").val(resul.vac_compensadas_dias);
+            $("#vac_compensada_dinero").val(resul.vac_compensadas_dinero);
 
             //INCAPACIDADES
             for (var j = 0; j < resul.incapacidades.length; j++) {
@@ -434,12 +448,7 @@
 
     function destroyVacaciones(id) {
         cargando(true);
-         if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-		}else{
-					var url = '/empresa';
-		}
-        var url = url +'/nomina/liquidar-nomina/' + id + '/destroy_vacaciones';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/destroy_vacaciones';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {

@@ -227,7 +227,7 @@
 <div style="width: 100%; text-align: center;font-weight: bold; margin-top: 20px;">
     <h2>RESUMEN LIQUIDACION</h2>
 </div>
-
+@php $diferencia = 0; @endphp
 <div>
     <table border="0" class="titulo">
         <tr>
@@ -240,33 +240,51 @@
             <td width="60%" style="height: 20px;" class="padding-left">Valor nomina del periodo</td>
             <td width="20%" style="height: 20px;" class="center">#</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['nomina'])}}</td>
+            @php $diferencia += $totalidad['nomina']; @endphp
         </tr>
         @endif
         <tr>
             <td width="60%" style="height: 20px;" class="padding-left">Vacaciones</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($liquidacion->base_vacaciones)}}</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['vacaciones'])}}</td>
+            @php $diferencia += $totalidad['vacaciones']; @endphp
         </tr>
         <tr>
             <td width="60%" style="height: 20px;" class="padding-left">Cesantías</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($liquidacion->base_cesantias)}}</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['cesantias'])}}</td>
+            @php $diferencia += $totalidad['cesantias']; @endphp
         </tr>
         <tr>
             <td width="60%" style="height: 20px;" class="padding-left">Intereses a las Cesantías</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($liquidacion->base_cesantias)}}</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['interesesCesantias'])}}</td>
+            @php $diferencia += $totalidad['interesesCesantias']; @endphp
         </tr>
         <tr>
             <td width="60%" style="height: 20px;" class="padding-left">Prima de Servicios</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($liquidacion->base_prima)}}</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['prima'])}}</td>
+            @php $diferencia += $totalidad['prima']; @endphp
         </tr>
         @if(isset($totalidad['indemnizacion']) && $totalidad['indemnizacion'] > 0)
         <tr>
             <td width="60%" style="height: 20px;" class="padding-left">Indemnización</td>
             <td width="20%" style="height: 20px;" class="center">#</td>
             <td width="20%" style="height: 20px;" class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['indemnizacion'])}}</td>
+            @php $diferencia += $totalidad['indemnizacion']; @endphp
+        </tr>
+        @endif
+
+        @if($diferencia != $totalidad['total'])
+        <tr>
+            <td width="60%" style="height: 20px;" class="padding-left">Diferencia</td>
+            <td width="20%" style="height: 20px;" class="center">#</td>
+            @if($diferencia >= $totalidad['total'])
+            <td width="20%" style="height: 20px;" class="center"> - {{$user->empresaObj->moneda}} {{App\Funcion::Parsear($diferencia - $totalidad['total'])}}</td>
+            @else
+            <td width="20%" style="height: 20px;" class="center"> {{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['total'] - $diferencia)}}</td>
+            @endif
         </tr>
         @endif
         <tr>
@@ -287,5 +305,15 @@
         </div>
     </div>
 </div>
+    <div style="width: 100%;height:auto;">
+        <div style="width: 50%; display: inline-block; text-align:left;">
+            @if(isset($codqr))
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/cadena_oficial.png')}}">
+            @endif
+        </div>
+        <div style="width: 50%; display: inline-block; text-align:right;margin-left:100px;">
+            <img style="width:75%; height:auto; position:absolute; bottom:10px;" src="{{asset('images/logo_factura.png')}}">
+        </div>
+    </div>
 
 @endsection

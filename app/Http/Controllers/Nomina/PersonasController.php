@@ -27,7 +27,12 @@ class PersonasController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('nomina');
+        // $this->middleware('payrollReadingMode')->only('create', 'edit', 'update', 'destroy', 'store');
 
+        // $this->middleware('can_access_to_page:170')->only('create');
+        // $this->middleware('can_access_to_page:171')->only('edit');
+        // $this->middleware('can_access_to_page:174')->only('show');
     }
 
     /**
@@ -134,6 +139,7 @@ class PersonasController extends Controller
          
 
         $personas = $personas->where('fk_empresa', $usuario->empresa);
+        $cantidad = $personas->OrderBy($orderby, $order)->count();
         $personas = $personas->OrderBy($orderby, $order)->paginate(15)->appends($appends);
         $cargos = DB::table('ne_cargos')->get();
         $sedes = DB::table('ne_sede_trabajo')->get();
@@ -147,10 +153,13 @@ class PersonasController extends Controller
         //     ->where('fk_idusuario', $usuario->id)
         //     ->get();
 
+        $guiasVistas = [];
+
         $modoLectura = (object) $usuario->modoLecturaNomina();
 
-        return view('nomina.personas.index')->with(compact(
+        return view('nomina.personas.index', ['guiasVistas' => $guiasVistas])->with(compact(
             'personas',
+            'cantidad',
             'request',
             'busqueda',
             'cargos',
@@ -304,6 +313,8 @@ class PersonasController extends Controller
             $persona->dias_descanso = $dias_descanso;
             $persona->fk_iddepartamento = $request->departamento;
             $persona->fk_idmunicipio = $request->municipio;
+            
+       
 
             /* >>> DATOS PAGO <<< */
 
@@ -519,7 +530,7 @@ class PersonasController extends Controller
             }
             
             /* >>> Si se cambia el valor de pago y la ultima nomina no ha sido emitida <<< */
-            if($persona->valor != $valorNuevoPago = str_replace('.', '', $request->valor)){
+            if($persona->valor != $valorNuevoPago = (float) str_replace('.', '', $request->valor)){
 
                 $nomina = Nomina::where('fk_idpersona', $persona->id)->orderBy('year','desc')->orderBy('periodo','desc')->first();
                 
@@ -545,14 +556,14 @@ class PersonasController extends Controller
 
                 if(now()->year == $yearPeriodo){
                     $nomina = Nomina::where('year', $yearPeriodo)->where('periodo', $mesPeriodo)->where('fk_idpersona', $persona->id)->first();
-                    foreach ($nomina->nominaperiodos as $nominaPeriodo) {
+                    foreach (optional($nomina)->nominaperiodos as $nominaPeriodo) {
                         // if($nominaPeriodo->is_liquidado == false){
                         $nominaPeriodo->editValorTotal();
                         // }
                     }
     
                     if ($nomina) {
-                        foreach ($nomina->nominaperiodos as $nominaPeriodo) {
+                        foreach (optional($nomina)->nominaperiodos as $nominaPeriodo) {
                             // if($nominaPeriodo->is_liquidado == false){
                             $nominaPeriodo->editValorTotal();
                             // }
@@ -568,7 +579,7 @@ class PersonasController extends Controller
                     $nomina = Nomina::where('year', $yearPeriodo)->where('periodo', $mesPeriodo)->where('fk_idpersona', $persona->id)->first();
     
                     if ($nomina) {
-                        foreach ($nomina->nominaperiodos as $nominaPeriodo) {
+                        foreach (optional($nomina)->nominaperiodos as $nominaPeriodo) {
                             //  if($nominaPeriodo->is_liquidado == false){ Así esté liquidado debe calcular el nuevo valor
                             $nominaPeriodo->editValorTotal();
                             //  }
@@ -928,7 +939,7 @@ class PersonasController extends Controller
             if(!$nomina){
                 $nomina = new Nomina();
             }else{
-                if($nomina->emitida != 1 && $nomina->emitida != 3 && $nomina->emitida != 5){
+                if($nomina->emitida != 1 && $nomina->emitida != 3 && $nomina->emitida != 5 && $nomina->emitida != 6){
                     $nominasPeriodos = NominaPeriodos::where('fk_idnomina', $nomina->id)->get()->keyBy('id')->keys()->all();
                     NominaCuentasGeneralDetalle::whereIn('fk_nominaperiodo', $nominasPeriodos)->delete();
                     NominaDetalleUno::whereIn('fk_nominaperiodo', $nominasPeriodos)->delete();
@@ -1241,7 +1252,7 @@ class PersonasController extends Controller
             $nominaPeriodos =  $nomina->nominaperiodos;
             foreach ($nominaPeriodos as $periodo) {
                 $totalidad = $periodo->resumenTotal();
-                $sumaMesesPago += $totalidad['pago']['total'];
+                $sumaMesesPago += $totalidad['pago']['salario'];
                 $vacaciones += $totalidad['pago']['salario'];
                 $prima += $totalidad['salarioSubsidio']['total'];
                 $cesantias += $totalidad['salarioSubsidio']['total'];
@@ -1260,7 +1271,7 @@ class PersonasController extends Controller
         $salarioBase = $sumaMesesPago / $nominas->count();
         $prima = $prima / $nominas->count();
         $cesantias = $cesantias / $nominas->count();
-
+        $vacaciones = $vacaciones / $nominas->count();
 
         $diasLiquidar = $fechaContratacion->diffInDays(now()) + 1;
 
@@ -1320,17 +1331,15 @@ class PersonasController extends Controller
         $comprobanteLiquidacion->total = $request->total;
 
         $totalNomina = NominaPeriodos::join('ne_nomina', 'ne_nomina.id', '=', 'ne_nomina_periodos.fk_idnomina')
-            ->select('ne_nomina_periodos.valor_total')
+            ->select('ne_nomina_periodos.valor_total', 'ne_nomina_periodos.id', 'ne_nomina_periodos.fecha_desde')
             ->where('ne_nomina.fk_idpersona', $request->idPersona)
             ->where('ne_nomina.year', date('Y', strtotime($comprobanteLiquidacion->fecha_terminacion)))
             ->where('ne_nomina.periodo', date('n', strtotime($comprobanteLiquidacion->fecha_terminacion)))
-            ->where('ne_nomina_periodos.fecha_hasta', '<=', $comprobanteLiquidacion->fecha_terminacion)
-            ->where('ne_nomina_periodos.fecha_desde', '<=', $comprobanteLiquidacion->fecha_terminacion)
-            ->first();
+           // ->where('ne_nomina_periodos.fecha_hasta', '<=', $comprobanteLiquidacion->fecha_terminacion)
+            ->limit(2)
+            ->get();
 
-        if ($totalNomina) {
-            $comprobanteLiquidacion->total_nomina = $totalNomina->valor_total;
-        }
+        $comprobanteLiquidacion->total_nomina = 0;
 
         $comprobanteLiquidacion->save();
 
@@ -1351,6 +1360,29 @@ class PersonasController extends Controller
         $persona->status = 0;
         $persona->is_liquidado    = 1;
         $persona->update();
+
+
+        if ($totalNomina->count() > 0) {
+            foreach($totalNomina as $t){
+                
+                $periodoN = NominaPeriodos::find($t->id);
+                $periodoN->editValorTotal();
+                
+                if(strtotime($comprobanteLiquidacion->fecha_terminacion) < strtotime($periodoN->fecha_desde)){
+                    NominaCuentasGeneralDetalle::where('fk_nominaperiodo', $periodoN->id)->delete();
+                    NominaDetalleUno::where('fk_nominaperiodo', $periodoN->id)->delete();
+                    NominaCalculoFijo::where('fk_nominaperiodo', $periodoN->id)->delete();
+                    $periodoN->delete();
+                    continue;
+                }
+
+                $comprobanteLiquidacion->total_nomina += $periodoN->valor_total;
+
+            }
+        }
+
+        $comprobanteLiquidacion->update();
+
 
         return redirect()->route('personas.show', $persona->id);
     }

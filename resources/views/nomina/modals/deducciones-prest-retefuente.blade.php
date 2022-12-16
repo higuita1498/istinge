@@ -120,13 +120,7 @@
 
         function editDeducciones(id){
             cargando(true);
-
-            if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-            }else{
-                        var url = '/empresa';
-            }
-            var url = url + '/nomina/liquidar-nomina/'+id+'/edit_deducciones';
+            var url = '/empresa/nomina/liquidar-nomina/'+id+'/edit_deducciones';
             var _token = $('meta[name="csrf-token"]').attr('content');
             var i = id;
             $.post(url, {
@@ -204,7 +198,7 @@
 
                 $('input[name="deducciones_valor[]"]').mask('000.000.000', {reverse: true});
                 $('input[name="prestamos_valor[]"]').mask('000.000.000', {reverse: true});
-                $('#retefuente_valor').mask('000.000.000', {reverse: true});
+                //$('#retefuente_valor').mask('000.000.000', {reverse: true});
                 $('#deducciones-1').modal("show");
             });
         }
@@ -240,12 +234,7 @@
 
         function destroyDeducciones(id){
             cargando(true);
-            if (window.location.pathname.split("/")[1] === "software") {
-					var url='/software/empresa';
-            }else{
-                        var url = '/empresa';
-            }
-            var url = url+ '/nomina/liquidar-nomina/'+id+'/destroy_deducciones';
+            var url = '/empresa/nomina/liquidar-nomina/'+id+'/destroy_deducciones';
             var _token = $('meta[name="csrf-token"]').attr('content');
             var i = id;
             $.post(url, {

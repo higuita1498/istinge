@@ -38,7 +38,11 @@
                         <option value="1" {{ isset($preferencia) && $preferencia ? ($preferencia->frecuencia_pago == 1 ? 'selected' : '') : '' }}>Frecuencia Quincenal</option>
                         <option value="2" {{ isset($preferencia) && $preferencia ? ($preferencia->frecuencia_pago == 2 ? 'selected' : '') : '' }}>Frecuencia Mensual</option>
                     </select>
-                    
+                    @error('frecuencia_pago')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                     <input type="hidden" value="{{ isset($preferencia) && $preferencia ? $preferencia->frecuencia_pago : '' }}" id="preferenciahidden" />
                 </div>
             </div>
@@ -50,7 +54,11 @@
                         <option value="{{$medio->id}}" {{ isset($preferencia) ? ($preferencia->medio_pago == $medio->id ? 'selected' : '') : '' }}>{{$medio->metodo}}</option>
                         @endforeach
                     </select>
-                  
+                    @error('medio_pago')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6">
@@ -61,7 +69,11 @@
                         <option value="{{$banco->id}}" {{ isset($preferencia) ? ($preferencia->banco == $banco->id ? 'selected' : '') : '' }}>{{$banco->nombre}}</option>
                         @endforeach
                     </select>
-                  
+                    @error('banco')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6">
@@ -71,14 +83,22 @@
                         <option value="1" {{ isset($preferencia) ? ($preferencia->tipo_cuenta == 1 ? 'selected' : '') : '' }}>Cuenta de ahorros</option>
                         <option value="2" {{ isset($preferencia) ? ($preferencia->tipo_cuenta == 2 ? 'selected' : '') : '' }}>Cuenta corriente</option>
                     </select>
-                   
+                    @error('tipo_cuenta')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="frecuencia_pago">Número de cuenta</label>
                     <input type="number" class="form-control" name="nro_cuenta" id="nro_cuenta" value="{{$preferencia->nro_cuenta ?? ''}}">
-                   
+                    @error('nro_cuenta')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6 d-none">
@@ -87,7 +107,11 @@
                     <select class="form-control selectpicker" id="operador_pago" name="operador_pago" title="Seleccione el operador de pago" data-live-search="true" data-size="5">
                         <option value=""></option>
                     </select>
-                  
+                    @error('operador_pago')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6">
@@ -98,14 +122,22 @@
                         <option value="{{ $aseguradora->id}}" {{isset($preferencia) ? ($preferencia->arl == $aseguradora->id ? 'selected' : '') : '' }}>{{ $aseguradora->nombre }}</option>
                         @endforeach
                     </select>
-                  
+                    @error('arl')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="fecha_constitucion">Fecha de constitución <a><i data-tippy-content="Se refiere a la fecha de creación de la empresa" class="icono far fa-question-circle"></i></a></label>
                     <input type="text" class="form-control datepicker" readonly name="fecha_constitucion" id="fecha_constitucion" value="{{$preferencia->fecha_constitucion  ?? ''}}">
-                  
+                    @error('fecha_constitucion')
+                    <span class="help-block error">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                 </div>
             </div>
         </div>

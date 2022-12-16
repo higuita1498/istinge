@@ -25,7 +25,7 @@
 <div class="container-fluid">
     <div class="row mt-4">
         <div class="col-md-12">
-            <button class="btn btn-rounded float-right mb-2 mr-2" style="background-color: #D08F50; color: white;" data-toggle="modal" data-target="#historial-pedidos">
+            <button class="btn btn-rounded float-right mb-2 mr-2" style="background-color: #022454; color: white;" data-toggle="modal" data-target="#historial-pedidos">
                 <i class="fas fa-file-alt"></i>
                 Reporte de pagos</button>
             <div class="table-responsive">
@@ -103,8 +103,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary rounded" data-dismiss="modal">Cancelar</button>
-                    <button  id="generar" type="button" class="btn text-white rounded" style="background-color:#D08F50;">Generar Reporte</button>
+                    <button type="button" class="btn btn-primary rounded" data-dismiss="modal">Cancelar</button>
+                    <button  id="generar" type="button" class="btn btn-success text-white rounded" style="background-color:#022454;">Generar Reporte</button>
                 </div>
             </div>
             </form>

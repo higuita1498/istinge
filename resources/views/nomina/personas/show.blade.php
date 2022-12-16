@@ -61,7 +61,7 @@
 	}
 
 	.text-gestor {
-		color: #d08f50;
+		color: #022454;
 	}
 
 	#table-show-empleados>thead>tr>th {
@@ -88,7 +88,7 @@
 	}
 
 	.color {
-		color: #d08f50;
+		color: #022454;
 		background: #e9ecef;
 		font-weight: bold;
 		padding: 5px;
@@ -97,7 +97,7 @@
 	}
 
 	.color:hover {
-		border: solid 1px #d08f50;
+		border: solid 1px #022454;
 	}
 </style>
 
@@ -130,9 +130,7 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
-						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
-						@endif
 						@endif
 					</div>
 				</div>
@@ -198,9 +196,7 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
-						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
-						@endif
 						@endif
 					</div>
 				</div>
@@ -236,9 +232,7 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
-						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
-						@endif
 						@endif
 					</div>
 				</div>
@@ -270,9 +264,7 @@
 					</div>
 					<div class="col-md-6">
 						@if (!$modoLectura->success)
-						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
-						@endif
 						@endif
 					</div>
 				</div>
@@ -324,9 +316,7 @@
 					</div>
 					<div class="col-md-4">
 						@if (!$modoLectura->success)
-						@if(isset($_SESSION['permisos']['784']))
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
-						@endif
 						@endif
 					</div>
 				</div>
@@ -481,7 +471,7 @@
 									<tr>
 										<td>
 											<a href="{{ route('nomina.liquidar', ['periodo' => $nomina->periodo, 'year'=> $nomina->year, 'editar' => true, 'tipo' => $periodo->periodo]) }}" target="_blank">
-												{{ $periodo->fecha_desde->format('d') }}-{{ $periodo->fecha_hasta->format('d') }}/{{ ucfirst(App\Model\Nomina\Nomina::monthName($periodo->fecha_desde)) }}/{{ $periodo->fecha_desde->format('Y') }}
+												{{ $periodo->fecha_desde->format('d') }}-{{ $periodo->fecha_hasta->format('d') }}/{{ ucfirst($periodo->fecha_desde->monthName) }}/{{ $periodo->fecha_desde->format('Y') }}
 											</a>
 										</td>
 										@php

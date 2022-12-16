@@ -596,7 +596,7 @@ class NominaDianController extends Controller
      */
     public function validate_dian(Request $request)
     {
-        $data = $this->emitirJson($request->id);
+        $data = $this->emitirJson($request->id, $request->tipo);
         return response()->json($data, 200);
     }
 
@@ -604,16 +604,23 @@ class NominaDianController extends Controller
     /**
      * Método que transofmra en un json la información de las nominas que se van a emitir y las envia a la DIAN.
      * recibe como parametros el id de la nomina a enviar a la dian.
-     *
+     * Tipo: 1 = nomina normal, 2= ajuste de nomina, 3= eliminar nomina
      * @return json
      */
-    public function emitirJson($nominaId)
+    public function emitirJson($nominaId,$tipo)
     {
         $nomina = Nomina::findOrFail($nominaId);
+        
+        //validacion para no emitir varis eventos en un mismo lapso de tiempo (4 minuto).
+        $ultimaModificacion = Carbon::parse($nomina->updated_at);
+        $horaMinActual = Carbon::now();
+        if($ultimaModificacion->diffInMinutes($horaMinActual) < 2){
+            // return "eventos-rapidos";
+        }
 
         $rechazada = json_decode($nomina->json_dian);
-    
-        $numeracionFactura = $this->obtenerNumeracion($nomina);
+
+        $numeracionFactura = $this->obtenerNumeracion($nomina,$tipo);
 
         if (!$numeracionFactura) {
             return "nomina-vencida";
@@ -630,49 +637,37 @@ class NominaDianController extends Controller
 
         $json = "";
         $jsonEdit = $this->nominaElectronica($nomina);
-        
+
         /* validar y descargar xml rapido desde aqui 
         if(auth()->user()->empresa == 21){
             dd($this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, 'NE7'));
         }
         */
 
-        if($nomina->estado() == 'Rechazada'){
-            
-            if($nomina->codigo_dian){
-                
-                 $validateProcesado = $this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, $nomina->codigo_dian);
-            
-                      
-                      if(is_object($validateProcesado)){
-                            if(isset($validateProcesado->statusCodeDIAN) && $validateProcesado->statusCodeDIAN == 'APR'){
-                                
-                                if($validateProcesado->XMLdocument){
-                                    
-                                    
-                                    if($validateProcesado->statusDescription == 'Procesado Correctamente.'){
-                                     
-                                           $nomina->emitida = 1;
-                                           $nomina->update();
-                                           return '';
-                                     
-                                    }
-                                    
-                                }
-                                
-                                
-                            }
-                      }
+        if ($nomina->estado() == 'Rechazada' && $nomina->codigo_dian) {
 
-            }
-          
             
-            /*
-            if($nomina->validarRechazada() == true){
-               
-                return '';
+            if($nomina->codigo_dian == null && $nomina->tipo != 2 || $nomina->tipo == 3){
+            $nomina->codigo_dian = $numeracionFactura->prefijo . $numeracionFactura->inicio;
+            $nomina->save();
+            }   
+
+            $validateProcesado = $this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, $nomina->codigo_dian);
+
+            if (is_object($validateProcesado)) {
+                if (isset($validateProcesado->statusCodeDIAN) && $validateProcesado->statusCodeDIAN == 'APR') {
+
+                    if ($validateProcesado->XMLdocument) {
+
+
+                        if ($validateProcesado->statusDescription == 'Procesado Correctamente.') {
+                            $nomina->emitida = 1;
+                            $nomina->update();
+                            return '';
+                        }
+                    }
+                }
             }
-            */
         }
 
         /*>>> Generamos el consecutivo de la dian en este punto al momento de comenzar una emisión <<<*/
@@ -682,9 +677,13 @@ class NominaDianController extends Controller
             $nomina->fk_idnumeracion = $numeracionFactura->id;
             $nomina->save();
             $numeracionFactura->inicio = $numeroNumeracion + 1;
+            $numeracionFactura->preferida = 1;
             $numeracionFactura->save();
         } else {
-            $repetidaDian =  Nomina::where('id', '!=', $nominaId)->where('fk_idempresa', auth()->user()->empresa)->where('codigo_dian', $nomina->codigo_dian)->first();
+            $repetidaDian =  Nomina::where('id', '!=', $nominaId)
+                ->where('fk_idempresa', auth()->user()->empresa)
+                ->where('codigo_dian', $nomina->codigo_dian)
+                ->first();
             if ($repetidaDian) {
                 $nomina->codigo_dian = null;
                 $nomina->update();
@@ -709,19 +708,19 @@ class NominaDianController extends Controller
         $DocEmp = "" . $jsonEdit['Trabajador']['NumeroDocumento'] . "";
 
         //tipo 102 es nomina individual y 103 es nomina individual de ajuste
-        if($nomina->emitida == Nomina::NO_EMITIDA){
+        if ($nomina->emitida == Nomina::NO_EMITIDA) {
             $tipoXML = 102;
-        }else{
+        } else {
             $tipoXML = 103;
         }
         $SoftwarePin = 75315;
         $TipAmb = 1;
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
-        
+
         //metodo para retornar el json sin necesidad de ingresar a ningun metodo
         // /empresa/nominadian/validatedian?id=$id
-        // if(Auth::user()->empresa == 429){
+        // if(Auth::user()->empresa == 160){
         //     $jsonIndividual = array(
         //         "Tipo" => "1",
         //         "Novedad" => [
@@ -736,7 +735,7 @@ class NominaDianController extends Controller
         //     dd($json);
         // }
 
-        if ($nomina->emitida == Nomina::NO_EMITIDA) {
+        if ($nomina->emitida == Nomina::NO_EMITIDA && $tipo == 1) {
 
             $jsonIndividual = array(
                 "Tipo" => "1",
@@ -753,7 +752,7 @@ class NominaDianController extends Controller
             // Return solamente para mirar el json.
             // return $json;
 
-        } elseif ($nomina->emitida == Nomina::AJUSTE_SIN_EMITIR) {
+        } elseif ($nomina->emitida == Nomina::AJUSTE_SIN_EMITIR && $tipo == 2 ) {
 
             /*>>>  Obtenemos la nomina asociada al ajuste.  <<<*/
             $nominaAsociada = Nomina::where('cune', $nomina->cune_relacionado)->where('emitida', 3)->first();
@@ -772,7 +771,7 @@ class NominaDianController extends Controller
             $json = array_merge($jsonIndividual, $jsonEdit);
 
             $newJson = array_merge($jsonIndividual, $jsonEdit);
-            
+
             $newJson['InformacionGeneral']['Version'] = "V1.0: Nota de Ajuste de Documento Soporte de Pago de Nómina Electrónica";
 
             $json = array(
@@ -783,12 +782,12 @@ class NominaDianController extends Controller
 
             // Return solamente para mirar el json.
             // return $json;
-            
-        } elseif ($nomina->emitida == Nomina::EMITIDA) {
 
-            $numeracionEliminar = NumeracionFactura::where('tipo_nomina',3)->where('empresa',$nomina->fk_idempresa)->where('preferida',1)->first();
-            if(!$numeracionEliminar){
-                return redirect()->back()->with('error','Debe escoger una numeración de tipo eliminar.');
+        } elseif ($nomina->emitida == Nomina::EMITIDA && $tipo == 3) {
+
+            $numeracionEliminar = NumeracionFactura::where('tipo_nomina', 3)->where('empresa', $nomina->fk_idempresa)->where('preferida', 1)->first();
+            if (!$numeracionEliminar) {
+                return redirect()->back()->with('error', 'Debe escoger una numeración de tipo eliminar.');
             }
 
             $json = $this->nominaAjusteTipoEliminar($nomina, $numeracionEliminar, $cuneHasheado);
@@ -799,7 +798,7 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        $response = $this->enviarJsonDianApi($json, 1);
+        $response = $this->enviarJsonDianApi($json,1);
         // $response['statusCode'] = 200;
 
 
@@ -809,26 +808,25 @@ class NominaDianController extends Controller
                 if ($nomina->emitida == Nomina::AJUSTE_SIN_EMITIR) {
                     $nomina->emitida = Nomina::AJUSTE_EMITIDO;
                     $nomina->cune_relacionado = $cuneHasheado;
-                    if(isset($response['cune'])){
+                    if (isset($response['cune'])) {
                         $nomina->cune_relacionado = $response['cune'];
-                    }elseif(isset($response['uuid'])){
+                    } elseif (isset($response['uuid'])) {
                         $nomina->cune_relacionado = $response['uuid'];
                     }
                 } else if ($nomina->emitida == Nomina::EMITIDA) {
 
                     $nomina->emitida = Nomina::ELIMINADA;
-                    if(isset($numeracionEliminar)){
+                    if (isset($numeracionEliminar)) {
                         $nroEliminada = $numeracionEliminar->inicio;
                         $nomina->codigo_dian_eliminado = $numeracionEliminar->prefijo . $nroEliminada;
                         $numeracionEliminar->inicio = $numeracionEliminar->inicio + 1;
                         $numeracionEliminar->save();
                     }
-                    
                 } else {
                     $nomina->emitida = Nomina::EMITIDA;
-                    if(isset($response['cune'])){
+                    if (isset($response['cune'])) {
                         $nomina->cune = $response['cune'];
-                    }elseif(isset($response['uuid'])){
+                    } elseif (isset($response['uuid'])) {
                         $nomina->cune = $response['uuid'];
                     }
                 }
@@ -836,11 +834,11 @@ class NominaDianController extends Controller
 
             /*>>>  Guardamos respuesta de dian y retornamos la nomina emitida  <<<*/
             if ($response['statusCode'] == 409 || $response['statusCode'] == 400 || $response['statusCode'] == 504 || $response['statusCode'] == 500) {
-                
+
                 $statusMessage = " ";
-                if(isset($response['statusMessage'])){
+                if (isset($response['statusMessage'])) {
                     $statusMessage = $response['statusMessage'];
-                }else if(isset($response['errorMessage'])){
+                } else if (isset($response['errorMessage'])) {
                     $statusMessage = $response['errorMessage'];
                 }
 
@@ -852,7 +850,7 @@ class NominaDianController extends Controller
                 );
 
                 /*>>>  cuando el cune tiene una valor igual a 409 es por que se rechazó  <<<*/
-                if($nomina->emitida != Nomina::EMITIDA){
+                if ($nomina->emitida != Nomina::EMITIDA) {
                     $nomina->cune = 409;
                 }
             } else {
@@ -868,10 +866,11 @@ class NominaDianController extends Controller
 
 
         $nomina->json_dian = json_encode($arrayResponseSave);
+        $nomina->updated_at = Carbon::now();
         $nomina->save();
 
-        if($nomina->estado() == 'Rechazada'){
-            if($nomina->validarRechazada() == true){
+        if ($nomina->estado() == 'Rechazada') {
+            if ($nomina->validarRechazada() == true) {
                 /* mensaje personalizado */
                 return '';
             }
@@ -886,12 +885,21 @@ class NominaDianController extends Controller
      *
      * @return json
      */
-    public function obtenerNumeracion($nomina)
+    public function obtenerNumeracion($nomina,$tipo=null)
     {
 
         $currentDate = date('Y-m-d');
-
-        if ($nomina->tipo == 2) {
+        
+        if($tipo == 3){
+               return NumeracionFactura::where('nomina', 1)
+                ->orderByDesc('id')
+                ->where('preferida', 1)
+                ->where('tipo_nomina', 3)
+                ->where('empresa', auth()->user()->empresa)
+                ->first();
+        }
+        
+        else if ($nomina->tipo == 2) {
             return NumeracionFactura::where('nomina', 1)
                 ->orderByDesc('id')
                 ->where('preferida', 1)
@@ -952,7 +960,7 @@ class NominaDianController extends Controller
             "CodigoQR" => "",
             "InformacionGeneral" => [
                 "Version" => "V1.0: Documento Soporte de Pago de Nómina Electrónica",
-                "Ambiente" => "1",
+                "Ambiente" => config('app.ambiente_nomina'),
                 "TipoXML" => $nomina->emitida == 4 ? "103" : "102",
                 "FechaGen" => date('Y-m-d'),
                 "HoraGen" => date('H:i:sP'),
@@ -1028,8 +1036,12 @@ class NominaDianController extends Controller
 
         $nomina->fecha_emision = Carbon::now();
         $nomina->save();
-        
-        if($metodo == 10){
+
+        if ($nomina->liquidacionComprobante()) {
+            $json['Periodo']['FechaRetiro'] = $nomina->liquidacionComprobante()->fecha_terminacion;
+        }
+
+        if ($metodo == 10) {
             unset($json['Pago']['Banco'], $json['Pago']['TipoCuenta'], $json['Pago']['NumeroCuenta']);
         }
 
@@ -1056,7 +1068,7 @@ class NominaDianController extends Controller
                 "NumeroSecuenciaXML" => [
                     "Prefijo" => $numeracion->prefijo,
                     "Consecutivo" => preg_replace('/[^0-9]+/', '', $numeracion->inicio),
-                    "Numero" => $numeracion->prefijo.$numeracion->inicio
+                    "Numero" => $numeracion->prefijo . $numeracion->inicio
                 ],
                 "LugarGeneracionXML" => [
                     "Pais" => "CO",
@@ -1066,7 +1078,7 @@ class NominaDianController extends Controller
                 ],
                 "InformacionGeneral" => [
                     "Version" => "V1.0: Nota de Ajuste de Documento Soporte de Pago de Nómina Electrónica",
-                    "Ambiente" => "1",
+                    "Ambiente" => config('app.ambiente_nomina'),
                     "TipoXML" => "103",
                     "CUNE" => $cuneEliminar,
                     "EncripCUNE" => "CUNE-SHA384",
@@ -1103,7 +1115,15 @@ class NominaDianController extends Controller
         $this->getAllPermissions($usuario->id);
         $empresa = auth()->user()->empresaObj;
 
+        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+        //     ->select('tips_modulo_usuario.*')
+        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
+        //     ->where('fk_idusuario', $usuario->id)
+        //     ->get();
+
         $guiasVistas = [];
+
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
         quincenales <<< */
@@ -1155,7 +1175,7 @@ class NominaDianController extends Controller
         $mensajePeriodo = $preferencia->periodo($periodo, $year, $tipo);
         $date = Carbon::create($year, $periodo, 1)->locale('es');
 
-   
+
         $i = 0;
         $swUnaVez = 0;
         $emitidas = 0;
@@ -1165,7 +1185,7 @@ class NominaDianController extends Controller
         $totalDeducciones = 0;
 
         foreach ($nominas as $nomina) {
-            
+
             $jsonDevengados = $this->estructuraJsonDevengados($nomina->id);
             $devengadosTotal = $this->sumaDevengadosTotal($jsonDevengados);
             $devengadosTotalV += $devengadosTotal;
@@ -1175,7 +1195,7 @@ class NominaDianController extends Controller
 
             $totalPago = $devengadosTotal - $deduccionesTotal;
             $totalPagoV += $totalPago;
-            
+
             $ingresos = 0;
             $extras = 0;
             $vacaciones = 0;
@@ -1183,12 +1203,16 @@ class NominaDianController extends Controller
             $total = 0;
             $estado = '';
             $prestacionesSociales = $nomina->prestacionesSociales;
-            
+
             foreach ($nomina->nominaperiodos as $nominaPeriodo) {
                 $total += $nominaPeriodo->valor_total;
             }
 
-            foreach($prestacionesSociales as $p){
+            if ($nomina->liquidacionComprobante()) {
+                /* $total+= $nomina->liquidacionComprobante()->total; */
+            }
+
+            foreach ($prestacionesSociales as $p) {
                 $total += $p->valor_pagar;
                 $totalPagoV += $p->valor_pagar;
                 $devengadosTotalV += $p->valor_pagar;
@@ -1210,6 +1234,7 @@ class NominaDianController extends Controller
             $detalles[$i]['nota'] = $nomina->nota;
             $detalles[$i]['codigo_dian'] = $nomina->codigo_dian;
             $detalles[$i]['codigo_dian_eliminado'] = $nomina->codigo_dian_eliminado;
+            $detalles[$i]['tipo'] = $nomina->tipo;
 
             if ($detalles[$i]['estado'] == 'Emitida' || $detalles[$i]['estado'] == 'Anulada emitida' || $detalles[$i]['estado'] == 'Ajuste emitido' || $detalles[$i]['estado'] == 'Eliminada') {
                 $emitidas++;
@@ -1225,7 +1250,7 @@ class NominaDianController extends Controller
         }
 
         $i = 0;
-        
+
 
         /*
         $pagoTotal = 0;
@@ -1244,7 +1269,7 @@ class NominaDianController extends Controller
             }
         }
         */
-    
+
         if ($personas == $emitidas) {
             $isFinalizado = true;
         } else {
@@ -1252,8 +1277,8 @@ class NominaDianController extends Controller
         }
 
         $modoLectura = (object) $usuario->modoLecturaNomina();
-        
-         view()->share([
+
+        view()->share([
             'seccion' => 'nomina',
             'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
             'icon' => 'fas fa-sitemap'
@@ -1296,7 +1321,7 @@ class NominaDianController extends Controller
         $totalidad = $data['totalidad'];
         $totalidad['pago']['salario'];
         $totalidad['salarioSubsidio']['subsidioTransporte'];
-        
+
         // if(auth()->user()->empresa == 1){
         //     dd($totalidad);
         // }
@@ -1321,8 +1346,8 @@ class NominaDianController extends Controller
         $auxilio = $this->auxilio($nomina);
         $otrosConceptos = $this->otrosConceptos($nomina);
         $comisiones = $this->comisiones($nomina);
-        
-        /* >>> SueldoTrabajado se toma de ese elemento ya que es el pago neto de lo que gana el empleado x los días trabajados. <<< */ 
+
+        /* >>> SueldoTrabajado se toma de ese elemento ya que es el pago neto de lo que gana el empleado x los días trabajados. <<< */
         $json = [
             "Basico" => [
                 "DiasTrabajados" => strval($totalidad['diasTrabajados']['total']),
@@ -1451,7 +1476,7 @@ class NominaDianController extends Controller
             "Dotacion" => "00.00",
             "ApoyoSost" => "00.00",
             "Teletrabajo" => "00.00",
-            "BonifRetiro" => "00.00",
+            // "BonifRetiro" => $nomina->liquidacionComprobante() ? $nomina->liquidacionComprobante()->total : '00.00',
             "Indemnizacion" => "00.00",
             "Reintegro" => "00.00",
         ];
@@ -1466,17 +1491,17 @@ class NominaDianController extends Controller
                 "Pago" => number_format($value->valor_categoria, 2, '.', ''),
             ];
         }
-        
-        if($vacacionesCompensadas){
-                foreach ($vacacionesCompensadas as $key => $value) {
-                $dias = round(($totalidad['diasTrabajados']['total'] * $value->valor_categoria) / $totalidad['pago']['salario'],0);
+
+        if ($vacacionesCompensadas) {
+            foreach ($vacacionesCompensadas as $key => $value) {
+                $dias = round(($totalidad['diasTrabajados']['total'] * $value->valor_categoria) / $totalidad['pago']['salario'], 0);
                 $json['Vacaciones']['VacacionesCompensadas'][$key] = [
-                    "Cantidad" => "".$dias."",
+                    "Cantidad" => "" . $dias . "",
                     "Pago" => number_format($value->valor_categoria, 2, '.', ''),
                 ];
             }
         }
-    
+
 
         if ($primas) {
             $json["Primas"] = [
@@ -1568,22 +1593,20 @@ class NominaDianController extends Controller
          *    Bonificaciones
          *================================**/
         if ($bonificaciones->isNotEmpty()) {
-            if($bonificaciones->count() == 2){
+            if ($bonificaciones->count() == 2) {
                 $json['Bonificaciones']['Bonificacion'] = [
-                [
-                    $bonificaciones[0]['tipo_nomina_cuenta'] => number_format($bonificaciones[0]['valor'], 2, '.', ''),
-                    $bonificaciones[1]['tipo_nomina_cuenta'] => number_format($bonificaciones[1]['valor'], 2, '.', ''),
-                ]
-            ];
+                    [
+                        $bonificaciones[0]['tipo_nomina_cuenta'] => number_format($bonificaciones[0]['valor'], 2, '.', ''),
+                        $bonificaciones[1]['tipo_nomina_cuenta'] => number_format($bonificaciones[1]['valor'], 2, '.', ''),
+                    ]
+                ];
+            } elseif ($bonificaciones->count() == 1) {
+                $json['Bonificaciones']['Bonificacion'] = [
+                    [
+                        $bonificaciones[0]['tipo_nomina_cuenta'] => number_format($bonificaciones[0]['valor'], 2, '.', ''),
+                    ]
+                ];
             }
-            elseif($bonificaciones->count() == 1){
-                 $json['Bonificaciones']['Bonificacion'] = [
-                [
-                    $bonificaciones[0]['tipo_nomina_cuenta'] => number_format($bonificaciones[0]['valor'], 2, '.', ''),
-                ]
-            ];
-            }
-            
         }
 
         /**=================================
@@ -1629,14 +1652,14 @@ class NominaDianController extends Controller
             $devengados['HEDs']['HED'][0]['Pago'] + $devengados['HENs']['HEN'][0]['Pago'] + $devengados['HRNs']['HRN'][0]['Pago'] +
             $devengados['HEDDFs']['HEDDF'][0]['Pago'] + $devengados['HRDDFs']['HRDDF'][0]['Pago'] + $devengados['HENDFs']['HENDF'][0]['Pago'] +
             $devengados['HRNDFs']['HRNDF'][0]['Pago'];
-        
+
 
         if (count($devengados['Vacaciones']['VacacionesComunes']) > 0) {
             foreach ($devengados['Vacaciones']['VacacionesComunes'] as $item) {
                 $total += $item['Pago'];
             }
         }
-        
+
         if (count($devengados['Vacaciones']['VacacionesCompensadas']) > 0) {
             foreach ($devengados['Vacaciones']['VacacionesCompensadas'] as $item) {
                 $total += $item['Pago'];
@@ -1688,24 +1711,28 @@ class NominaDianController extends Controller
                 $total += $item;
             }
         }
-        
-        if(isset($devengados['Primas']['Pago'])){
-            $total+=$devengados['Primas']['Pago'];
+
+        if (isset($devengados['Primas']['Pago'])) {
+            $total += $devengados['Primas']['Pago'];
         }
-        
-        if(isset($devengados['Cesantias']['PagoIntereses'])){
-            $total+=$devengados['Cesantias']['PagoIntereses'];
+
+        if (isset($devengados['Cesantias']['PagoIntereses'])) {
+            $total += $devengados['Cesantias']['PagoIntereses'];
         }
-        
-        if(isset($devengados['Cesantias']['Pago'])){
-            $total+=$devengados['Cesantias']['Pago'];
+
+        if (isset($devengados['Cesantias']['Pago'])) {
+            $total += $devengados['Cesantias']['Pago'];
         }
-        
+
         if (count($devengados['Licencias']['LicenciaR']) > 0) {
             foreach ($devengados['Licencias']['LicenciaR'] as $item) {
-                $total += $item['Pago'];
+                //$total += $item['Pago'];
             }
         }
+
+        // if(floatval($devengados['BonifRetiro']) > 0){
+        //     $total+=$devengados['BonifRetiro'];
+        // }
 
         return $total;
     }
@@ -1771,19 +1798,19 @@ class NominaDianController extends Controller
             "Reintegro" => "00.00",
             "Deuda" => "00.00",
         ];
-        
+
         $idnominaPeriodos = NominaPeriodos::where('fk_idnomina', $nomina->id)->get()->pluck('id');
-        
+
         /**==========================================
-        *   SUMA DE PENSION VOLUNTARIA.
-        *========================================**/
+         *   SUMA DE PENSION VOLUNTARIA.
+         *========================================**/
         $pensionVoluntaria = NominaDetalleUno::whereIn('fk_nominaperiodo', $idnominaPeriodos)
-        ->where(function ($query) {
-            $query->where('nombre', 'APORTES VOLUNTARIOS A FONDOS DE PENSIONES');
-        })->get();
+            ->where(function ($query) {
+                $query->where('nombre', 'APORTES VOLUNTARIOS A FONDOS DE PENSIONES');
+            })->get();
         $totalPensionVoluntaria = $pensionVoluntaria->sum('valor_categoria');
-        if($totalPensionVoluntaria > 0){
-                    $json['PensionVoluntaria'] = $totalPensionVoluntaria.'';
+        if ($totalPensionVoluntaria > 0) {
+            $json['PensionVoluntaria'] = $totalPensionVoluntaria . '';
         }
 
         $otrasDeduciones = $this->otrasDeducciones($nomina);
@@ -1850,10 +1877,10 @@ class NominaDianController extends Controller
         if (count($deducciones['OtrasDeducciones']['OtraDeduccion']) > 0) {
             $otrasDeduciones = $deducciones['OtrasDeducciones']['OtraDeduccion'][0];
         }
-        
+
         $anticipos = 0;
         if (count($deducciones['Anticipos']['Anticipo']) > 0) {
-             $anticipos = $deducciones['Anticipos']['Anticipo'][0];
+            $anticipos = $deducciones['Anticipos']['Anticipo'][0];
         }
 
 
@@ -2070,20 +2097,20 @@ class NominaDianController extends Controller
     public function obtenerAlgunosNominaDetalles(Nomina $nomina, $tipo = 'VACACIONES')
     {
         $idsNominasPeriodo = $nomina->nominaperiodos()->pluck('id');
-        if($tipo == "VACACIONES COMPENSADAS EN DINERO POR RETIRO"){
-              $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
-            ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
-            ->where('nombre', $tipo)
-            ->get();
-        }else{
-              $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
-            ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
-            ->where('nombre', $tipo)
-            ->where('fecha_inicio', '<>', null)
-            ->where('fecha_fin', '<>', null)
-            ->get();
+        if ($tipo == "VACACIONES COMPENSADAS EN DINERO POR RETIRO") {
+            $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
+                ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
+                ->where('nombre', $tipo)
+                ->get();
+        } else {
+            $data = NominaDetalleUno::select('nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin')
+                ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
+                ->where('nombre', $tipo)
+                ->where('fecha_inicio', '<>', null)
+                ->where('fecha_fin', '<>', null)
+                ->get();
         }
-     
+
         return $data;
     }
 
@@ -2108,7 +2135,8 @@ class NominaDianController extends Controller
         return $data;
     }
 
-    public function obtenerLicenciaNoRemunerada(Nomina $nomina){
+    public function obtenerLicenciaNoRemunerada(Nomina $nomina)
+    {
         $idsNominasPeriodo = $nomina->nominaperiodos()->pluck('id');
         $data = NominaDetalleUno::select('codigo', 'nombre', 'valor_categoria', 'fecha_inicio', 'fecha_fin', 'tipo_incapacidad')
             ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
@@ -2185,7 +2213,6 @@ class NominaDianController extends Controller
             ->get();
 
         return $ingresosAdicionales->sum('valor_categoria');
-        
     }
 
     /**
@@ -2202,8 +2229,8 @@ class NominaDianController extends Controller
             ->whereIn('fk_nominaperiodo', $idsNominasPeriodo)
             ->where(function ($query) {
                 $query->where('nombre', 'HONORARIOS')
-                ->orWhere('nombre', 'OTROS INGRESOS NO PRESTACIONALES')
-                ->orWhere('nombre', 'BONO CANASTA');
+                    ->orWhere('nombre', 'OTROS INGRESOS NO PRESTACIONALES')
+                    ->orWhere('nombre', 'BONO CANASTA');
             })->get();
 
         return $ingresosAdicionales;

@@ -24,6 +24,13 @@
         box-shadow: 2px 2px 7px 0 #00000057;
     }
 
+
+    h2{
+        color: white;
+    }
+
+    
+
     .process-left:after {
         content: "";
         border-top: 15px solid #ffffff;
@@ -55,7 +62,7 @@
     }
 
     .process-step {
-        background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        background: #41a17f !important;
         text-align: center;
         width: 80%;
         margin: 0 auto;
@@ -73,7 +80,7 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        border: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border: 8px solid #107468;
         box-shadow: 0 0 0px 4px #5c5c5c;
         margin: auto 0;
         position: absolute;
@@ -98,7 +105,7 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        border: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border: 8px solid #107468;
         box-shadow: 0 0 0px 4px #5c5c5c;
         margin: auto 0;
         position: absolute;
@@ -138,9 +145,9 @@
     .process-step:after {
         content: "";
         border-top: 8px solid #04889800;
-        border-bottom: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-bottom: 8px solid #107468;
         border-left: 8px solid #04889800;
-        border-right: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-right: 8px solid #107468;
         display: inline-grid;
         position: absolute;
         left: -16px;
@@ -150,8 +157,8 @@
     .process-step:before {
         content: "";
         border-top: 8px solid #ff000000;
-        border-bottom: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
-        border-left: 8px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+        border-bottom: 8px solid #107468;
+        border-left: 8px solid #107468;
         border-right: 8px solid #ff000000;
         display: inline-grid;
         position: absolute;
@@ -485,7 +492,7 @@
                                         @csrf
                                         <center>
                                             <div class="form-group" style="width:87%;">
-                                                <input type="text" style={{$empresa->nomina_dian == 1 ? "width:97%;border-color:#00c700!important;" : 'width:100%;'}} class="form-control mb-2 mr-sm-2" id="test_id" name="test_id" placeholder="Código TestSetId" style="width: 300px;" value="{{$empresa->test_nomina}}">
+                                                <input type="text" style={{$empresa->nomina_dian == 1 ? "width:97%;border-color:#00c700!important;" : 'width:100%;'}} class="form-control mb-2 mr-sm-2" id="test_id" name="test_id" placeholder="Código TestSetId" style="width: 300px;" {{$empresa->test_nomina ? 'readonly' : ''}} value="{{$empresa->test_nomina}}">
                                             </div>
                                         </center>
                                         {{-- <button type="submit" class="btn btn-primary mb-2"><i class="fas fa-play"></i>Iniciar Prueba</button> --}}
@@ -501,7 +508,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6 d-flex">
-                                        <img src="https://img.icons8.com/color/48/000000/1-c.png" class="img-responsive mb-2" />
+                                        <img src="https://img.icons8.com/dotty/80/000000/1-circle.png" class="img-responsive mb-2" />
                                         @if ($empresa->nomina_dian)
                                         <button type="button" class="btn btn-primary mb-2 disabled"><i class="fas fa-play"></i>Enviar nómina individual</button>
                                         @else
@@ -509,7 +516,7 @@
                                         @endif
                                     </div>
                                     <div class="col-sm-6 d-flex">
-                                        <img src="https://img.icons8.com/color/48/000000/2-c.png" class="img-responsive mb-2" />
+                                        <img src="https://img.icons8.com/dotty/80/000000/2-circle.png" class="img-responsive mb-2" />
                                         @if ($empresa->nomina_dian)
                                         <button type="button" class="btn btn-primary mb-2 disabled"><i class="fas fa-play"></i>Enviar nómina ajuste</button>
                                         @else
@@ -558,14 +565,8 @@
             })
         });
 
-        if (window.location.pathname.split("/")[1] === "software") {
-        var url='/software/empresa/nominadian/proceso-habilitacion';
-        }else{
-            var url = '/empresa/nominadian/proceso-habilitacion';
-        }
-
         $.ajax({
-            url: url,
+            url: '/empresa/nominadian/proceso-habilitacion',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

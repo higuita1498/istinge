@@ -8,7 +8,7 @@
         }
 
         .color {
-            color: #d08f50;
+            color: #022454;
             background: #e9ecef;
             font-weight: bold;
             padding: 5px;
@@ -17,7 +17,7 @@
         }
 
         .color:hover {
-            border: solid 1px #d08f50;
+            border: solid 1px #022454;
         }
 
         .w-77 {
@@ -62,6 +62,59 @@
     @include('partials.nomina.periods')
 
     @include('partials.nomina.pago-persona-costo-empresa',["person" => "persona"])
+
+    <div class="row text-center pt-2">
+        @if(isset($_SESSION['permisos']['163']))
+        <div class="col-4">
+            <a href="{{ route('nomina.resumenExcel', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Resumen nómina</a>
+        </div>
+        @endif
+        @if(isset($_SESSION['permisos']['164']))
+        <div class="col-4">
+            <a target="_blank" href="{{ route('nomina.novedades', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Reporte novedades</a>
+        </div>
+        @endif
+        {{--
+        <div class="col-3 d-none">
+            <a href="#" style="text-decoration: underline;">Cargar novedades</a>
+        </div>
+        --}}
+        @if(isset($_SESSION['permisos']['165']))
+        <div class="col-4">
+            <div class="btn-group dropdown">
+                @if($nomina->persona)
+                
+                   <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
+                    Prestaciones sociales
+                </a>
+                <div class="dropdown-menu px-3">
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('nomina.prestacion-social', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo, 'persona' => $nomina->persona->id, 'ajuste' => true, 'editNomina' => $nomina->id]) }}" style="text-decoration: underline;">- Prima de servicios</a>
+                    <br>
+                    <a href="{{ route('nomina.prestacion-social.cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo, 'persona' => $nomina->persona->id, 'ajuste' => true, 'editNomina' => $nomina->id]) }}" style="text-decoration: underline;">- Cesantias</a>
+                    <br>
+                    <a href="{{ route('nomina.prestacion-social.intereses-cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo,  'persona' => $nomina->persona->id, 'ajuste' => true, 'editNomina' => $nomina->id]) }}" style="text-decoration: underline;">- Intereses a las Cesantias</a>
+                </div>
+                
+                
+                    @else
+                
+                <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
+                    Prestaciones sociales
+                </a>
+                <div class="dropdown-menu px-3">
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('nomina.prestacion-social', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Prima de servicios</a>
+                    <br>
+                    <a href="{{ route('nomina.prestacion-social.cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Cesantias</a>
+                    <br>
+                    <a href="{{ route('nomina.prestacion-social.intereses-cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Intereses a las Cesantias</a>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endif
+    </div>
 
 
     <div class="row">
@@ -263,7 +316,7 @@
 
 
 
-
+    @if(isset($nominaPeriodo))
     {{-- MODAL VACACIONES, INCAPACIDADES Y LICENCIAS --}}
     @include('nomina.modals.vacaciones-incap')
 
@@ -274,6 +327,7 @@
     {{-- MODAL DEDUCCIONES --}}
     @include('nomina.modals.deducciones-prest-retefuente')
     {{-- MODAL DEDUCCIONES --}}
+    @endif
 
 
 @section('scripts')
@@ -351,8 +405,9 @@
             const periodo = {{$periodo}};
             const type = $("#periodo_quincenal").val();
             const persona = {{$persona}};
+            const idNomina = {{$idNomina}};
             // alert(periodo + " - " + periodo + " - " + type);
-            const url = '/empresa/nomina/ajustar-nomina/' + periodo + '/' + year + '/' + persona + '/' + type;
+            const url = '/empresa/nomina/editar-ajustar-nomina/' + periodo + '/' + year + '/' + persona + '/' + type + '?editNomina='+idNomina;
             $('#form-buscarnomina').attr('action', url);
             $('#form-buscarnomina').submit();
         }

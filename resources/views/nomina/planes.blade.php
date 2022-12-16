@@ -192,8 +192,8 @@
     }
 
     .plan {
-        border: solid 1px #1a59a1 !important;
-        color: #1a59a1;
+        border: solid 1px #107468 !important;
+        color: #107468;
         padding: 1rem !important;
     }
 </style>
@@ -228,7 +228,7 @@
                             <li><span class="fa-li"><i class="fas fa-users"></i></span>De 1 a 6 empleados</li>
                         </ul>
                         <hr>
-                        @if($personal <= 6) <a href="{{route('nomina.plan_pago',$valor = 15000)}}" class="btn btn-block btn-primary text-uppercase">¡OBTENER!</a>
+                        @if($personal <= 6) <a href="{{route('nomina.plan_pago',$valor = 15000)}}" class="btn btn-block btn-secondary text-uppercase">¡OBTENER!</a>
                         @else
                         <a href="javascript:noDisponible();" class="btn btn-block btn-secondary text-uppercase">NO DISPONIBLE</a>
                         @endif
@@ -246,7 +246,7 @@
                             <li><span class="fa-li"><i class="fas fa-users"></i></span>De 7 a 15 empleados</li>
                         </ul>
                         <hr>
-                        @if($personal <= 15) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 20000)}}" class="btn btn-block btn-primary text-uppercase">¡OBTENER!</a>
+                        @if($personal <= 15) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 20000)}}" class="btn btn-block btn-secondary text-uppercase">¡OBTENER!</a>
                         @else
                         <a href="javascript:;" class="btn btn-block btn-secondary text-uppercase">NO DISPONIBLE</a>
                         @endif
@@ -265,7 +265,7 @@
                             <li><span class="fa-li"><i class="fas fa-users"></i></span>De 16 a 25 empleados</li>
                         </ul>
                         <hr>
-                        @if($personal <= 25) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 30000)}}" class="btn btn-block btn-primary text-uppercase">¡OBTENER!</a>
+                        @if($personal <= 25) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 30000)}}" class="btn btn-block btn-secondary text-uppercase">¡OBTENER!</a>
                         @else
                         <a href="javascript:;" class="btn btn-block btn-secondary text-uppercase">NO DISPONIBLE</a>
                         @endif
@@ -282,7 +282,7 @@
                             <li><span class="fa-li"><i class="fas fa-users"></i></span>De 26 a 50 empleados</li>
                         </ul>
                         <hr>
-                        @if($personal <= 50) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 40000)}}" class="btn btn-block btn-primary text-uppercase">¡OBTENER!</a>
+                        @if($personal <= 50) <a class="btn-obtener-conf"><a href="{{route('nomina.plan_pago',$valor = 40000)}}" class="btn btn-block btn-secondary text-uppercase">¡OBTENER!</a>
                         @else
                         <a href="javascript:;" class="btn btn-block btn-secondary text-uppercase">NO DISPONIBLE</a>
                         @endif
@@ -297,7 +297,7 @@
                     <div class="card-body text-center">
                         <p>Si tu empresa no se acomoda a ninguno de los planes que ofrecemos, nosotros podemos personalizar tu plan y llegar a un acuerdo.</p>
                         <div class="separador"></div>
-                        <center><a style="width:38%;" href="//api.whatsapp.com/send?phone=573226501735&amp;text=Hola%20quiero%20personalizar%20un%20plan%20de%20nomina%20electronica%20para%20mi%20empresa" target="_blank" class="btn btn-block btn-primary text-uppercase"><span class="small" style="font-weight: bolder">Contáctanos</span></a></center>
+                        <center><a style="width:38%;" href="//api.whatsapp.com/send?phone=573226501735&amp;text=Hola%20quiero%20personalizar%20un%20plan%20de%20nomina%20electronica%20para%20mi%20empresa" target="_blank" class="btn btn-block btn-secondary text-uppercase"><span class="small" style="font-weight: bolder">Contáctanos</span></a></center>
                     </div>
                 </div>
             </div>
