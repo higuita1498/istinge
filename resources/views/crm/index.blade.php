@@ -554,6 +554,33 @@
                             
                             <input type="hidden" class="form-control" id="idcliente" name="idcliente">
                             <input type="hidden" class="form-control" id="tiempo" name="tiempo">
+
+
+							<div class="dropdown w-100">
+								<button  class="btn btn-secondary dropdown-toggle w-100" type="button" id="etiqueta-drop-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									{{ 'etiquetar' }}
+								</button>
+								<div class="dropdown-menu w-100" aria-labelledby="etiqueta-drop-default" style="max-height:200px; overflow: auto">
+									@foreach($etiquetas as $etiqueta)
+									<a class="dropdown-item" href="javascript:cambiarEtiquetaD({{ $etiqueta->id }})">{{ $etiqueta->nombre }}</a>
+									@endforeach
+								</div>
+							</div>
+
+							<script>
+								function cambiarEtiquetaD(etiqueta){
+
+									 crm = $("#idCRM").val();
+
+									$.get('{{URL::to('/')}}/empresa/crm/cambiar-etiqueta/'+etiqueta+'/'+crm, function(response){
+											$('#etiqueta-drop-'+crm).html(response.nombre);
+											$('#etiqueta-drop-'+crm).css('background-color', response.color);
+											$('#etiqueta-drop-default').html(response.nombre);
+											$('#etiqueta-drop-default').css('background-color', response.color);
+									});
+								}
+							</script>
+
                         </div>
                     </form>
                 </div>
@@ -941,6 +968,11 @@
                 $("#modal_celular").empty().text(data[0].celular);
                 $("#idcliente").val(data[0].id);
                 $("#idCRM").val(idCRM);
+				$('#etiqueta-drop-default').html('Editar etiqueta');
+				$('#etiqueta-drop-default').css('background-color', 'white');
+
+
+				/* aqui etiqueta */
 	            
 	            $('#modal_gestion').modal({
 	                keyboard: false,
