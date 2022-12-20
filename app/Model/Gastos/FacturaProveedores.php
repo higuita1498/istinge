@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\FormaPago;
 use App\Puc;
 use DB;
+use App\Vendedor;
 use App\PucMovimiento;
 
 
@@ -105,6 +106,7 @@ class FacturaProveedores extends Model
         $totales["reten"]=Retencion::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
         $items=ItemsFacturaProv::where('factura',$this->id)->get();
         $result=0; $desc=0; $impuesto=0;
+        $totales["TaxExclusiveAmount"] = 0;
         foreach ($items as $item) {
             $result=$item->precio*$item->cant;
             $totales['subtotal']+=$result;
@@ -133,6 +135,11 @@ class FacturaProveedores extends Model
                         }
                     }
                 }
+            }
+
+            //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
+            if ($item->impuesto != null) {
+            $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
             }
         }
 
@@ -350,4 +357,76 @@ class FacturaProveedores extends Model
         return $gastos;
     }
 
+    public function comprador()
+    {
+        $comprador = Vendedor::where('empresa', Auth::user()->empresa)->where('estado', 1)->where('id', $this->comprador)->first();
+        if ($comprador) {
+            return $comprador;
+        } else {
+            $comprador = new \stdClass();
+            $comprador->nombre = auth()->user()->empresaObj->nombre;
+            return $comprador;
+        }
+    }
+
+    public function estadoModulo()
+    {
+        // $etiqueta = DB::table('modulo_empresa')
+        //     ->where('empresa_id', auth()->user()->empresa)
+        //     ->where('modulo_id', 4)
+        //     ->first();
+        $etiqueta = [];
+        return  false;
+
+        return (bool) isset($etiqueta) ?  $etiqueta->estado : false;
+    }
+
+    public function clienteObj()
+    {
+        return $this->belongsTo(Contacto::class, 'proveedor');
+    }
+
+    public function forma_pago()
+    {
+        $terminos = TerminosPago::find($this->plazo);
+
+        if ($terminos) {
+            if ($terminos->dias > 0) {
+                //cbc:PaymentMeans/ID  2 = Crédito
+                $formapago = 2;
+            } elseif ($terminos->dias == 0) {
+                //cbc:PaymentMeans/ID  1 = De Contado
+                $formapago = 1;
+            }
+        } else {
+            //-- Si no hay un plazo es por que se escogio manual, y obviamente se va a escoger un fecha futura entonces la forma de pago será a credito
+            //cbc:PaymentMeans/ID  2 = Crédito
+            $formapago = 2;
+        }
+        return $formapago;
+    }
+
+    public function isItemSinIva()
+    {
+
+        $items = ItemsFacturaProv::where('factura', $this->id)->get();
+
+        foreach ($items as $item) {
+            if ($item->id_impuesto == 0) {
+                return true;
+            }
+        }
+
+
+        return false;
+    }
+
+    public function redondeo($total)
+    {
+        $decimal = explode(".", $total);
+        if (isset($decimal[1]) && $decimal[1] > 50) {
+            $total = round($total);
+        }
+        return $total;
+    }
 }

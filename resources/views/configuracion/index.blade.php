@@ -99,6 +99,19 @@
 		@endif
 
 		<div class="col-sm-3">
+			<h4 class="card-title">Documentos Soporte</h4>
+			<p>Configura la información de los documentos soporte por las compras que realices a sujetos no obligados a expedir factura.</p>
+			@if($empresa->equivalente == 0)
+			<a href="#" onclick="docEquivalente()">Habilitar documentos soporte</a><br>
+			<input type="hidden" id="docEquivalente" value="{{$empresa->equivalente}}">
+			@else
+			<a href="#" onclick="docEquivalente()">Deshabilitar documentos soporte</a><br>
+			<input type="hidden" id="docEquivalente" value="{{$empresa->equivalente}}">
+			<a class="doc-equivalente-class" href="{{route('configuracion.numeraciones_equivalentes')}}">Numeraciones</a><br>
+			@endif
+		</div>
+
+		<div class="col-sm-3">
 			<h4 class="card-title">Categorias</h4>
 			<p>Organice a su medida el plan único de cuentas.</p>
 			{{-- <a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br> --}}
@@ -590,6 +603,69 @@
 
 @section('scripts')
     <script>
+
+	function docEquivalente() {
+		if ($("#docEquivalente").val() == 1) {
+			$titleswal = "¿Deshabilitar documentos soporte?";
+			$textswal = "Ya no podrá crear documentos soporte desde las facturas de proveedores";
+			$confirmswal = "Si, Deshabilitar";
+		} else {
+			$titleswal = "¿Habilitar documentos soporte?";
+			$textswal = "Tendrá la opcion de escoger el tipo de documento equivalente desde crear facturas de proveedores.";
+			$confirmswal = "Si, Habilitar";
+		}
+
+		Swal.fire({
+			title: $titleswal,
+			text: $textswal,
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			cancelButtonText: 'Cancelar',
+			confirmButtonText: $confirmswal,
+		}).then((result) => {
+			if (result.value) {
+
+				$.ajax({
+					url: '/empresa/configuracion/configuracion_actdesc_equivalentes',
+					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+					method: 'post',
+					data: { status: $("#docEquivalente").val() },
+					success: function(data) {
+
+						if (data == 1) {
+							Swal.fire({
+								position: 'top-center',
+								type: 'success',
+								title: 'Documentos Soporte habilitados',
+								showConfirmButton: false,
+								timer: 2500
+							})
+							$("#docEquivalente").val(1);
+
+						} else {
+							Swal.fire({
+								position: 'top-center',
+								type: 'success',
+								title: 'Documentos Soporte Deshabilitados',
+								showConfirmButton: false,
+								timer: 2500
+							})
+							$("#docEquivalente").val(0);
+						}
+
+						setTimeout(function() {
+							location.reload();
+						}, 2500);
+
+					}
+				});
+
+			}
+		})
+	}
+
     	function storePeriodoFacturacion() {
     		cargando(true);
     		if (window.location.pathname.split("/")[1] === "software") {

@@ -3560,18 +3560,25 @@ function validateDianByCorreo(id,rutasuccess){
     })
 }
 
-function validateDian(id,rutasuccess,codigo)
-{
+function validateDian(id, rutasuccess, codigo, emails = false, facturasp = 0) {
 
     $titleswal = codigo + '<br> Emitir factura a la Dian?';
-    $textswal  = "No podrás retroceder esta acción";
+    $textswal = "No podrás retroceder esta acción";
     $confirmswal = "Si, emitir";
 
-    if (window.location.pathname.split("/")[1] === "software") {
+    if (window.location.pathname.split("/")[1] === "software" && facturasp == 1) {
+        var url='/software/validatedian/invoiceproveedor';
+    }
+    else if(facturasp == 1){
+        var url = '/validatedian/invoiceproveedor';
+    }
+    else if(window.location.pathname.split("/")[1] === "software" && facturasp == 0){
         var url='/software/validatedian/invoice';
-    }else{
+    }
+    else{
         var url = '/validatedian/invoice';
     }
+
 
     Swal.fire({
         title: $titleswal,
@@ -3583,191 +3590,170 @@ function validateDian(id,rutasuccess,codigo)
         cancelButtonText: 'Cancelar',
         confirmButtonText: $confirmswal,
     }).then((result) => {
-      if (result.value) {
+        if (result.value) {
 
-        $.ajax({
-            url: url,
-            headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            method:'post',
-            data:{id:id,},
-            success: function(validate)
-            {
-            //-- Validaciones de ley 042 --//
-            if(validate.responsabilidad == 0)
-            {
-                $mensaje = "Para emitir a la Dian debes configurar el nuevo listado de responsabilidades dado por a resolucion 042 del 2020.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tus responsabilidades</a>";
-                $img     = "respo.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }else
-            //-- Validaciones por numeración --//
-             if (validate.numeracion.inicioverdadero == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un inicio en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "inicioverdadero.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.final == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un final en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "final.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.desde == null) {
-                $mensaje = "Para emitir a la Dian se debe tener una fecha de inicio en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "desde.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.hasta == null) {
-                $mensaje = "Para emitir a la Dian se debe tener una fecha de fin en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "hasta.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            else if (validate.numeracion.nroresolucion == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un número de resolución en la numeración de la factura.";
-                $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
-                $img     = "nroresolucion.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            //-- /Validaciones por numeración -- //
+            var btn = document.getElementsByClassName(".swal2-confirm");
+            setTimeout(function() { btn.setAttribute('disabled', 'disabled'); }, 1);
+            setTimeout(function() { btn.removeAttribute('disabled'); }, 5000);
 
-            //-- Validaciones por la empresa  --//
-            else if (validate.responsabilidades == 0) {
-                $mensaje = "Para emitir a la Dian se deben tener configuradas las responsabilidades de la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "responsabilidades.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
+            $.ajax({
+                url: url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                method: 'post',
+                data: { id: id, },
+                success: function(validate) {
 
-            else if(validate.empresa.fk_idpais == null)
-            {
-                $mensaje = "Para emitir a la Dian se debe tener un país asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "pais.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.fk_iddepartamento == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "departamento.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.fk_idmunicipio == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un municipio asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "municipio.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.empresa.dv == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un dígito de verificacion asociado a la empresa.";
-                $footer  = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
-                $img     = "dv.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            //-- /Validaciones por la empresa  --//
-
-             //-- Validaciones para el cliente  --//
-
-             else if(validate.cliente.fk_idpais == null)
-             {
-                $mensaje = "Para emitir a la Dian se debe tener un país asociado al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "pais.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if(validate.cliente.telefono1 == null && validate.cliente.celular == null)
-             {
-                $mensaje = "Para emitir a la Dian se debe tener un telefono asociado al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "pais.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.cliente.fk_iddepartamento == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "departamento.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if (validate.cliente.fk_idmunicipio == null) {
-                $mensaje = "Para emitir a la Dian se debe tener un municipio asociado al cliente.";
-                $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-                $img     = "municipio.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-
-            else if(validate.cliente.email == null || validate.cliente.email == "")
-            {
-             $mensaje = "Para emitir a la Dian se debe tener un correo asociado al cliente.";
-             $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-             $img     = "correo.png";
-             messageValidateDian($mensaje, $footer, $img);
-         }
-
-         else if (validate.cliente.tip_iden == 6 && validate.cliente.tipo_persona == null) {
-            $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es tipo natural o jurídico, además se debe elegir si es responsable de iva o no responsable de iva.";
-            $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-            $img     = "tipo_persona.png";
-            messageValidateDian($mensaje, $footer, $img);
-        }
-        else if (validate.cliente.tip_iden == 6 && validate.cliente.responsableiva == null) {
-            $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es responsable de iva o no responsable de iva.";
-            $footer  = "<a target='_blank' href='contactos/"+validate.cliente.id+"/edit'>Configura tu cliente </a>";
-            $img     = "responsableiva.png";
-            messageValidateDian($mensaje, $footer, $img);
-        }
-            //-- /Validaciones para el cliente  --//
-
-            //-- Validaciones para la factura --//
-            else if (validate.total <= 0) {
-                $mensaje = "El total de la factura debe ser mayor a $0 pesos.";
-                $footer  = "";
-                $img     = "total.png";
-                messageValidateDian($mensaje, $footer, $img);
-            }
-            // else if(validate.emitida == false)
-            // {
-            //     $mensaje = "Se debe emitir la factura anterior para no perder el consecutivo.";
-            //     $footer  = "";
-            //     $img     = "emitida.png";
-            //     messageValidateDian($mensaje, $footer, $img);
-            // }
-
-            //-- /Validaciones para la factura --//
-            else { window.location.href = rutasuccess;
-
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-center',
-                    showConfirmButton: false,
-                    timer: 1000000000,
-                    timerProgressBar: true,
-                    onOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    //-- Validaciones por numeración --//
+                    /*if (validate.numeracion.prefijo == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un prefijo en la numeración de la factura.";
+                        $footer  = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img     = "prefijo.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }else*/
+                
+                    if (validate.numeracion == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un una numeración preferida.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "inicioverdadero.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.numeracion.inicioverdadero == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un inicio en la numeración de la factura.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "inicioverdadero.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.numeracion.final == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un final en la numeración de la factura.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "final.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.numeracion.desde == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener una fecha de inicio en la numeración de la factura.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "desde.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.numeracion.hasta == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener una fecha de fin en la numeración de la factura.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "hasta.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.numeracion.nroresolucion == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un número de resolución en la numeración de la factura.";
+                        $footer = "<a target='_blank' href='configuracion/numeraciones'>Configura tus numeraciones</a>";
+                        $img = "nroresolucion.png";
+                        messageValidateDian($mensaje, $footer, $img);
                     }
-                })
+                    //-- /Validaciones por numeración -- //
 
-                Toast.fire({
-                    type: 'success',
-                    title: 'Emitiendo factura a la DIAN...',
-                })
+                    //-- Validaciones por la empresa  --//
+                    else if (validate.responsabilidades == 0) {
+                        $mensaje = "Para emitir a la Dian se deben tener configuradas las responsabilidades de la empresa.";
+                        $footer = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img = "responsabilidades.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.empresa.fk_idpais == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un país asociado a la empresa.";
+                        $footer = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img = "pais.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.empresa.fk_iddepartamento == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados a la empresa.";
+                        $footer = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img = "departamento.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.empresa.fk_idmunicipio == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un municipio asociado a la empresa.";
+                        $footer = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img = "municipio.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.empresa.dv == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un dígito de verificacion asociado a la empresa.";
+                        $footer = "<a target='_blank' href='configuracion/create'>Configura tu empresa </a>";
+                        $img = "dv.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.empresa.acepto_contrato == 0) {
+                        $mensaje = "Para emitir a la Dian debes aceptar el contrato de mandato de los documentos emitidos.";
+                        $footer = "<a target='_blank' href='/empresa/configuracion'>Configura tu empresa</a>";
+                        $img = "contrato.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }
+                    //-- /Validaciones por la empresa  --//
 
-            }
+                    //-- Validaciones para el cliente  --//
+                    else if (validate.cliente.fk_idpais == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un país asociado al cliente.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "pais.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.cliente.fk_idpais == "CO" && validate.cliente.fk_iddepartamento == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un departamento y municipio asociados al cliente.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "departamento.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.cliente.fk_idpais == "CO" && validate.cliente.fk_idmunicipio == null) {
+                        $mensaje = "Para emitir a la Dian se debe tener un municipio asociado al cliente.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "municipio.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.cliente.email == null || validate.cliente.email == "") {
+                        $mensaje = "Para emitir a la Dian se debe tener un correo asociado al cliente.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "correo.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.cliente.tip_iden == 6 && validate.cliente.tipo_persona == null) {
+                        $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es tipo natural o jurídico, además se debe elegir si es responsable de iva o no responsable de iva.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "tipo_persona.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } else if (validate.cliente.tip_iden == 6 && validate.cliente.responsableiva == null) {
+                        $mensaje = "El cliente " + validate.cliente.nombre + " tiene nit. Para emitir a la Dian se debe elegir si el cliente es responsable de iva o no responsable de iva.";
+                        $footer = "<a target='_blank' href='contactos/" + validate.cliente.id + "/edit'>Configura tu cliente </a>";
+                        $img = "responsableiva.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    }
+                    //-- /Validaciones para el cliente  --//
 
+                    //-- Validaciones para la factura --//
+                    else if (validate.total <= 0) {
+                        $mensaje = "El total de la factura debe ser mayor a $0 pesos.";
+                        $footer = "";
+                        $img = "total.png";
+                        messageValidateDian($mensaje, $footer, $img);
+                    } 
+                    // else if (validate.emitida == false) {
+                    //     $mensaje = "Se debe emitir la factura anterior para no perder el consecutivo.";
+                    //     $footer = "";
+                    //     $img = "emitida.png";
+                    //     messageValidateDian($mensaje, $footer, $img);
+                    // }
+
+                    //-- /Validaciones para la factura --//
+                    else {
+                        window.location.href = rutasuccess + '/' + emails;
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-center',
+                            showConfirmButton: false,
+                            timer: 1000000000,
+                            timerProgressBar: true,
+                            onOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Emitiendo documento electrónico a la DIAN...',
+                        })
+
+                    }
+
+                }
+            })
         }
     })
 }
-})
-}
-
 function confirmSendDian(rutasuccess,codigo)
 {
     Swal.fire({

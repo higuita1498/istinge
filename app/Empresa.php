@@ -8,6 +8,7 @@ use App\Model\Ingresos\NotaCredito;
 use Illuminate\Database\Eloquent\Model;
 use App\User; use App\TipoIdentificacion;
 use Auth; use DB; use StdClass;
+use App\Responsabilidad;
 use Carbon\Carbon;
 use Cassandra\Collection;
 class Empresa extends Model
@@ -291,10 +292,6 @@ public function totalEmissions(){
         return false;
     }
 
-    public function responsabilidades()
-    {
-        return DB::table('empresa_responsabilidad')->where('id_empresa', $this->id)->get();
-    }
 
      public function nominaConfiguracionCalculos()
     {
@@ -310,5 +307,32 @@ public function totalEmissions(){
     public function suscripcion(){
         return Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
     }
+
+    public function responsabilidades()
+    {
+        return $this->belongsToMany(Responsabilidad::class, 'empresa_responsabilidad', 'id_empresa', 'id_responsabilidad');
+    }
+
+        //Validamos que la empresa tenga alguna de las responsabilidades dictadas en al articulo 042 del 2020
+        public function validateResp()
+        {
+            $resp = 0;
+    
+            $empresa  = Empresa::select('id')
+                ->with('responsabilidades')
+                ->where('id', auth()->user()->empresa)
+                ->first();
+    
+            $listaResponsabilidadesDian = [5, 7, 12, 20, 29];
+    
+            foreach ($empresa->responsabilidades as $responsabilidad) {
+    
+                if (in_array($responsabilidad->pivot->id_responsabilidad, $listaResponsabilidadesDian)) {
+                    $resp = 1;
+                }
+            }
+    
+            return $resp;
+        }
 
 }

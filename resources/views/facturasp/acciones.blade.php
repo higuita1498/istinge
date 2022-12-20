@@ -14,5 +14,8 @@
     @else
         <a href="{{route('facturasp.imprimir.nombre', ['id' => $id, 'name'=> 'Factura Proveedor No. '.$nro.'.pdf'])}}"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>
     @endif
+    @if(Auth::user()->empresaObj->form_fe == 1 && $emitida == 0 && Auth::user()->empresaObj->estado_dian == 1 && Auth::user()->empresaObj->technicalkey != null && $codigo_dian != null)
+    <a href="#" class="btn btn-outline-primary btn-icons" title="Emitir Factura" onclick="validateDian({{ $id }}, '{{route('xml.facturaproveedor',$id)}}', '{{$codigo_dian}}', {{0}}, {{1}})"><i class="fas fa-sitemap"></i></a>
+    @endif
     <a href="{{route('facturasp.showmovimiento', $id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
 @endif

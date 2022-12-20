@@ -58,6 +58,30 @@
 
       </div>
       <div class="col-md-6 offset-md-1">
+        @if(auth()->user()->empresaObj->equivalente == 1)
+        <div class="form-group row">
+  
+          <style>
+            .form-check .form-check-label .input-helper:before {
+              left: 3px;
+            }
+          </style>
+  
+          <label class="col-sm-4 col-form-label">¿Documento Soporte?<span class="text-danger">*</span></label>
+          <div class="form-check form-check-flat">
+            <label class="form-check-label">
+              <input type="checkbox" class="form-check-input" name="equivalente" id="equivalente" value="1">
+              <i class="input-helper"></i><i class="input-helper"></i></label>
+          </div>
+  
+        </div>
+        @endif
+        <div class="form-group row" id="cod_dian" style="display: none">
+          <label class="col-sm-4 col-form-label">Número Dian</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="codigo_dian" name="codigo_dian" required maxlength="35" value="" readonly>
+          </div>
+        </div>
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">Número de factura</label>
           <div class="col-sm-8">
@@ -475,6 +499,61 @@
 
       });
 
+  </script>
+
+{{-- Documento Soporte --}}
+  <script>
+     $(document).ready(function() {
+    if ($("#doc_soporte").val() == 1) {
+      $("#equivalente").click();
+    }
+  });
+
+  $("#equivalente").change(function (){
+
+    if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa';
+          }else{
+            var url = '/empresa';
+          }
+        
+        if( $('#equivalente').prop('checked') ) {
+          $(".loader").show();
+          $.ajax({
+          url: url+'/facturasp/docequivalente',
+          headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          method:'post',
+          // data:{status:$("#docEquivalente").val()},
+          success: function(data)
+          {
+              
+            if(data != 0)
+            {
+                if(data.error){
+                    alert(data.error);
+                  }else{
+                    $("#cod_dian").show();
+                    $("#codigo_dian").val(data.prefijo + data.inicio);
+                  }
+            }else{
+                $("#equivalente").prop("checked", false);
+                alert("Debe escoger una numeracion como preferida o activarala");
+            }
+            
+            $(".loader").hide();
+          }
+        });
+      }else{
+        $("#cod_dian").hide();
+      }
+    });
+    
+    if($("#dian").val())
+    {
+        $("#cod_dian").show();
+        $("#equivalente").prop("checked", true);  
+        $("#codigo_dian").val($("#dian").val());
+    }
   </script>
 
 @endsection

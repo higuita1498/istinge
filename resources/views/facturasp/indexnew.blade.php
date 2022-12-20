@@ -172,9 +172,12 @@
 			data.nro = $('#nro').val();
 			data.codigo = $('#codigo').val();
 			data.proveedor = $('#proveedor').val();
+			data.comprador = $('#comprador').val();
 			data.creacion = $('#creacion').val();
 			data.vencimiento = $('#vencimiento').val();
-			data.estado = $('#estado').val();
+			data.comparador = $('#comparador').val();
+			data.total = $('#total').val();
+			data.estatus = $('#estado').val();
 			data.filtro = true;
 		});
 
@@ -190,28 +193,16 @@
 			}
 		});
 
-		$('#nro, #codigo').on('keyup',function(e) {
-            if(e.which > 32 || e.which == 8) {
-                getDataTable();
-                return false;
-            }
-        });
-
-        $('#proveedor, #creacion, #vencimiento, #estado').on('change',function() {
-            getDataTable();
-            return false;
-        });
-
 		$('.vencimiento').datepicker({
 			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
+			uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd',
 		});
 
 		$('.creacion').datepicker({
 			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
+			uiLibrary: 'bootstrap4',
+			format: 'yyyy-mm-dd',
 		});
 	});
 

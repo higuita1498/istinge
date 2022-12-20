@@ -121,174 +121,179 @@ class CronController extends Controller
                     ->get()->last();
                     
                     // return $fac;
-
+                    
+                    //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
                     if(isset($fac->estatus) && $fac->estatus == 0 || !$fac){
-                        $numero=round($numero)+1;
-
-                        //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                        $nro = NumeracionFactura::tipoNumeracion($contrato);
-
-                        if(is_null($nro)){
-
-                        }else{
-                            if($contrato->fecha_suspension){
-                                $fecha_suspension = $contrato->fecha_suspension;
+                        
+                        //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
+                        if(isset($fac->estatus) && $fac->vencimiento > $fecha || !$fac){
+                            $numero=round($numero)+1;
+                        
+                            //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                            $nro = NumeracionFactura::tipoNumeracion($contrato);
+    
+                            if(is_null($nro)){
+    
                             }else{
-                                $fecha_suspension = $grupo_corte->fecha_suspension;
-                            }
-
-                            //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
-                            $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
-
-                            $tipo = 1; //1= normal, 2=Electrónica.
-
-                            $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
-
-                            if($contrato->facturacion == 3 && !$electronica){
-                                $tipo = 1;
-                                // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-                            }elseif($contrato->facturacion == 3 && $electronica){
-                                $tipo = 2;
-                            }
-
-                            $inicio = $nro->inicio;
-                            $nro->inicio += 1;
-                            $factura = new Factura;
-                            $factura->nro           = $numero;
-                            $factura->codigo        = $nro->prefijo.$inicio;
-                            $factura->numeracion    = $nro->id;
-                            $factura->plazo         = $plazo->id;
-                            $factura->term_cond     = $contrato->terminos_cond;
-                            $factura->facnotas      = $contrato->notas_fact;
-                            $factura->empresa       = 1;
-                            $factura->cliente       = $contrato->cliente;
-                            $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
-                            $factura->tipo          = $tipo;
-                            $factura->vencimiento   = $date->format('Y-m-d');
-                            $factura->suspension    = $date->format('Y-m-d');
-                            $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
-                            $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
-                            $factura->bodega        = 1;
-                            $factura->vendedor      = 1;
-                            $factura->prorrateo_aplicado = 0;
-                            $factura->facturacion_automatica = 1;
-
-                            if($contrato){
-                                $factura->contrato_id = $contrato->id;
-                            }
-
-                            $factura->save();
-
-                            ## Se carga el item a la factura (Plan de Internet) ##
-
-                            if($contrato->plan_id){
-                                $plan = PlanesVelocidad::find($contrato->plan_id);
-                                $item = Inventario::find($plan->item);
-
-                                $item_reg = new ItemsFactura;
-                                $item_reg->factura     = $factura->id;
-                                $item_reg->producto    = $item->id;
-                                $item_reg->ref         = $item->ref;
-                                $item_reg->precio      = $item->precio;
-                                $item_reg->descripcion = $plan->name;
-                                $item_reg->id_impuesto = $item->id_impuesto;
-                                $item_reg->impuesto    = $item->impuesto;
-                                $item_reg->cant        = 1;
-                                $item_reg->desc        = $contrato->descuento;
-                                $item_reg->save();
-                            }
-
-                            ## Se carga el item a la factura (Plan de Televisión) ##
-
-                            if($contrato->servicio_tv){
-                                $item = Inventario::find($contrato->servicio_tv);
-                                $item_reg = new ItemsFactura;
-                                $item_reg->factura     = $factura->id;
-                                $item_reg->producto    = $item->id;
-                                $item_reg->ref         = $item->ref;
-                                $item_reg->precio      = $item->precio;
-                                $item_reg->descripcion = $item->producto;
-                                $item_reg->id_impuesto = $item->id_impuesto;
-                                $item_reg->impuesto    = $item->impuesto;
-                                $item_reg->cant        = 1;
-                                $item_reg->desc        = $contrato->descuento;
-                                $item_reg->save();
-                            }
-
-                            ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
-
-                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-
-                            if($asignacion){
-                                $item = Inventario::find($asignacion->producto);
-                                $item_reg = new ItemsFactura;
-                                $item_reg->factura     = $factura->id;
-                                $item_reg->producto    = $item->id;
-                                $item_reg->ref         = $item->ref;
-                                $item_reg->precio      = ($asignacion->precio/$asignacion->cuotas);
-                                $item_reg->descripcion = $item->producto;
-                                $item_reg->id_impuesto = $item->id_impuesto;
-                                $item_reg->impuesto    = $item->impuesto;
-                                $item_reg->cant        = 1;
-                                $item_reg->desc        = $contrato->descuento;
-                                $item_reg->save();
-                            }
-
-                            $nro->save();
-                            $i++;
-
-                            $numero = str_replace('+','',$factura->cliente()->celular);
-                            $numero = str_replace(' ','',$numero);
-
-                            array_push($numeros, '57'.$numero);
-
-                            if($empresa->sms_factura_generada){
-
-                                $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
-                                $nombreEmpresa = $empresa->nombre;
-                                $codigoFactura = $factura->codigo ?? $factura->nro;
-                                $valorFactura =  $factura->totalAPI($empresa->id)->total;
-                                $fechaVencimiento = $date->format('d-m-Y');
-
-                                $bulksms = $empresa->sms_factura_generada;
-                                $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
-                                $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
-                                $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
-                                $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
-                                $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
-                                
-                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
-
-                            }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
-                                $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
-                                $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
-                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
-                            }else{
-                                $bulksms = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
-                                $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
-                            }
-
-                            //>>>>Posible aplicación de Prorrateo al total<<<<//
-                            if($empresa->prorrateo == 1){
-                                $dias = $factura->diasCobradosProrrateo();
-                                //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
-                                if($dias != 30){
-
-                                        DB::table('factura')->where('id',$factura->id)->update([
-                                         'prorrateo_aplicado' => 1
-                                        ]);
-                                        //si no se nombra la variable en la primer guardada se genera una copia
-
-                                    foreach($factura->itemsFactura as $item){
-                                        //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                                        $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
-                                        DB::table('items_factura')->where('id',$item->id)->update([
-                                            'precio' => $precioItemProrrateo
+                                if($contrato->fecha_suspension){
+                                    $fecha_suspension = $contrato->fecha_suspension;
+                                }else{
+                                    $fecha_suspension = $grupo_corte->fecha_suspension;
+                                }
+    
+                                //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
+                                $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
+    
+                                $tipo = 1; //1= normal, 2=Electrónica.
+    
+                                $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
+    
+                                if($contrato->facturacion == 3 && !$electronica){
+                                    $tipo = 1;
+                                    // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                                }elseif($contrato->facturacion == 3 && $electronica){
+                                    $tipo = 2;
+                                }
+    
+                                $inicio = $nro->inicio;
+                                $nro->inicio += 1;
+                                $factura = new Factura;
+                                $factura->nro           = $numero;
+                                $factura->codigo        = $nro->prefijo.$inicio;
+                                $factura->numeracion    = $nro->id;
+                                $factura->plazo         = $plazo->id;
+                                $factura->term_cond     = $contrato->terminos_cond;
+                                $factura->facnotas      = $contrato->notas_fact;
+                                $factura->empresa       = 1;
+                                $factura->cliente       = $contrato->cliente;
+                                $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                                $factura->tipo          = $tipo;
+                                $factura->vencimiento   = $date->format('Y-m-d');
+                                $factura->suspension    = $date->format('Y-m-d');
+                                $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+                                $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
+                                $factura->bodega        = 1;
+                                $factura->vendedor      = 1;
+                                $factura->prorrateo_aplicado = 0;
+                                $factura->facturacion_automatica = 1;
+    
+                                if($contrato){
+                                    $factura->contrato_id = $contrato->id;
+                                }
+    
+                                $factura->save();
+    
+                                ## Se carga el item a la factura (Plan de Internet) ##
+    
+                                if($contrato->plan_id){
+                                    $plan = PlanesVelocidad::find($contrato->plan_id);
+                                    $item = Inventario::find($plan->item);
+    
+                                    $item_reg = new ItemsFactura;
+                                    $item_reg->factura     = $factura->id;
+                                    $item_reg->producto    = $item->id;
+                                    $item_reg->ref         = $item->ref;
+                                    $item_reg->precio      = $item->precio;
+                                    $item_reg->descripcion = $plan->name;
+                                    $item_reg->id_impuesto = $item->id_impuesto;
+                                    $item_reg->impuesto    = $item->impuesto;
+                                    $item_reg->cant        = 1;
+                                    $item_reg->desc        = $contrato->descuento;
+                                    $item_reg->save();
+                                }
+    
+                                ## Se carga el item a la factura (Plan de Televisión) ##
+    
+                                if($contrato->servicio_tv){
+                                    $item = Inventario::find($contrato->servicio_tv);
+                                    $item_reg = new ItemsFactura;
+                                    $item_reg->factura     = $factura->id;
+                                    $item_reg->producto    = $item->id;
+                                    $item_reg->ref         = $item->ref;
+                                    $item_reg->precio      = $item->precio;
+                                    $item_reg->descripcion = $item->producto;
+                                    $item_reg->id_impuesto = $item->id_impuesto;
+                                    $item_reg->impuesto    = $item->impuesto;
+                                    $item_reg->cant        = 1;
+                                    $item_reg->desc        = $contrato->descuento;
+                                    $item_reg->save();
+                                }
+    
+                                ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
+    
+                                $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+    
+                                if($asignacion){
+                                    $item = Inventario::find($asignacion->producto);
+                                    $item_reg = new ItemsFactura;
+                                    $item_reg->factura     = $factura->id;
+                                    $item_reg->producto    = $item->id;
+                                    $item_reg->ref         = $item->ref;
+                                    $item_reg->precio      = ($asignacion->precio/$asignacion->cuotas);
+                                    $item_reg->descripcion = $item->producto;
+                                    $item_reg->id_impuesto = $item->id_impuesto;
+                                    $item_reg->impuesto    = $item->impuesto;
+                                    $item_reg->cant        = 1;
+                                    $item_reg->desc        = $contrato->descuento;
+                                    $item_reg->save();
+                                }
+    
+                                $nro->save();
+                                $i++;
+    
+                                $numero = str_replace('+','',$factura->cliente()->celular);
+                                $numero = str_replace(' ','',$numero);
+    
+                                array_push($numeros, '57'.$numero);
+    
+                                if($empresa->sms_factura_generada){
+    
+                                    $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                                    $nombreEmpresa = $empresa->nombre;
+                                    $codigoFactura = $factura->codigo ?? $factura->nro;
+                                    $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                                    $fechaVencimiento = $date->format('d-m-Y');
+    
+                                    $bulksms = $empresa->sms_factura_generada;
+                                    $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                                    $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                                    $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                                    $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
+                                    $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+                                    
+                                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+    
+                                }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+                                    $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                                    $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
+                                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+                                }else{
+                                    $bulksms = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                                    $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
+                                }
+    
+                                //>>>>Posible aplicación de Prorrateo al total<<<<//
+                                if($empresa->prorrateo == 1){
+                                    $dias = $factura->diasCobradosProrrateo();
+                                    //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+                                    if($dias != 30){
+    
+                                            DB::table('factura')->where('id',$factura->id)->update([
+                                             'prorrateo_aplicado' => 1
                                             ]);
+                                            //si no se nombra la variable en la primer guardada se genera una copia
+    
+                                        foreach($factura->itemsFactura as $item){
+                                            //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                                            $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
+                                            DB::table('items_factura')->where('id',$item->id)->update([
+                                                'precio' => $precioItemProrrateo
+                                                ]);
+                                        }
                                     }
                                 }
+                                //>>>>Fin posible aplicación prorrateo al total<<<<//
                             }
-                            //>>>>Fin posible aplicación prorrateo al total<<<<//
                         }
                     } //Comentando factura abierta del mes pasado
                     }

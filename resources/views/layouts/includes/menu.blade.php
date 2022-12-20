@@ -237,6 +237,11 @@
                     <li class="nav-item" id="facturas_proveedores">
                         <a class="nav-link" href="{{route('facturasp.index')}}" >Facturas de Proveedores</a>
                     </li>
+
+                    <li class="nav-item" id="facturas_proveedores">
+                        <a class="nav-link" href="{{ route('facturasp.lista_documentos_soporte') }}">Documentos
+                            Soporte <span class="badge badge-info ml-1">Nuevo</span></a>
+                    </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['251'])){ ?>
                     <li class="nav-item" id="pagos">

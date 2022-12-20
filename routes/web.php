@@ -145,6 +145,8 @@ Route::post('factura/guiaenvio/asociar','FacturasController@asociarGuiaEnvio')->
 
 // Rutas referentes a la Dian
 Route::post('/validatedian/invoice', 'FacturasController@validate_dian');
+Route::post('/validatedian/invoiceproveedor', 'FacturaspController@validate_dian');
+
 Route::get('/emitirjson/{nominaId}', 'Nomina\NominaController@emitirJson');
 Route::get('/nomina-json/{nomina}', 'Nomina\NominaController@emitirJson')->name('nomina.json');
 Route::post('/validatetechnicalkeydian', 'FacturasController@validate_technicalkey_dian');
@@ -783,6 +785,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::group(['prefix' => 'facturasp'], function() {
 		Route::get('/proveedor/{id}', 'FacturaspController@proveedor_factura_json')->name('facturasp.proveedor.json');
 		Route::get('/{id}/json', 'FacturaspController@facturap_json')->name('facturasp.json');
+		Route::get('xmlproveedor/{id}/{emails?}', 'FacturaspController@xmlFacturaProveedor')->name('xml.facturaproveedor');
+
 
         Route::get('/{id}/pdf', 'FacturaspController@pdf')->name('facturasp.pdf');
         Route::get('/{id}/copia', 'FacturaspController@copia')->name('facturasp.copia');
@@ -799,10 +803,17 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 		Route::get('/movimiento/{id}', 'FacturaspController@showMovimiento')->name('facturasp.showmovimiento');
         Route::get('exportar', 'FacturaspController@exportar');
+
+		/*Funcion ajax para llamar numeracion de documentos soporte*/
+		Route::post('/docequivalente', 'FacturaspController@NumEquivalenteAjax');
+		Route::get('/listadocumentossoporte', 'FacturaspController@lista_documentos_soporte')->name('facturasp.lista_documentos_soporte');
+		Route::get('/documentos_soporte', 'FacturaspController@documentos_soporte')->name('facturasp.documentos_soporte');
+		Route::post('/anular/{id}', 'FacturaspController@anular')->name('facturap.anular');
 	});
 
 
 	Route::resource('facturasp', 'FacturaspController');
+	Route::get('createdocsoporte', 'FacturaspController@createDocsoporte')->name('facturasp.createSoporte');
 	Route::get('facturaspid/{id}', 'FacturaspController@showId')->name('facturasp.showid');
 
     Route::get('/{id}/pdf', 'FacturaspController@pdf')->name('facturasp.pdf');
@@ -1058,12 +1069,40 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::resource('integracion-gmaps', 'IntegracionGmapsController');
 
 
-
-
-
         Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
         Route::post('/storePeriodoFacturacion', 'EmpresasController@storePeriodoFacturacion')->name('empresas.storePeriodoFacturacion');
         Route::post('/storeFormatoImpresion', 'EmpresasController@storeFormatoImpresion')->name('empresas.storeFormatoImpresion');
+		
+		//DOCUMENTO SOPORTE.
+        Route::get(
+            '/numeraciones-equivalente',
+            'ConfiguracionController@numeraciones_equivalente'
+        )->name('configuracion.numeraciones_equivalentes');
+        Route::post('/configuracion_actdesc_equivalentes', 'ConfiguracionController@actdesc_equivalentes');
+        Route::get(
+            '/numeraciones_equivalente/create',
+            'ConfiguracionController@numeracion_equivalente_create'
+        )->name('numeraciones_equivalente.create');
+        Route::post(
+            '/numeraciones_equivalente/store',
+            'ConfiguracionController@numeracion_equivalente_store'
+        )->name('numeraciones_equivalente.store');
+        Route::get(
+            '/numeraciones_equivalente/{id}/edit',
+            'ConfiguracionController@numeracion_equivalente_edit'
+        )->name('numeraciones_equivalente.edit');
+        Route::post(
+            '/numeraciones_equivalente/{id}/update',
+            'ConfiguracionController@numeracion_equivalente_update'
+        )->name('numeraciones_equivalente.update');
+        Route::delete(
+            '/numeracion_equivalente/{id}/destroy',
+            'ConfiguracionController@numeracion_equivalente_destroy'
+        )->name('numeraciones_equivalente.destroy');
+        Route::post(
+            '/numeracion_equivalente/{id}/act_desc',
+            'ConfiguracionController@numeraciones_equivalente_act_desc'
+        )->name('numeraciones_equivalente.act_desc');
 
 	});
 

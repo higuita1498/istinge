@@ -2234,4 +2234,143 @@ class ConfiguracionController extends Controller
       ]);
     }
   }
+
+     /**
+     * Activar o descativar el modo de facturas soporte desde el modulo de configuracion
+     * @return int
+     */
+    public function actdesc_equivalentes(Request $request)
+    {
+        $empresa = Empresa::find(auth()->user()->empresa);
+
+        if ($request->status == 0) {
+            $empresa->equivalente = 1;
+        } else {
+            $empresa->equivalente = 0;
+        }
+        $empresa->save();
+
+        return response()->json($empresa->equivalente);
+    }
+
+      /**
+     * Tabla principal de numeraciones de documentos soporte
+     * @return view
+     */
+    public function numeraciones_equivalente()
+    {
+        $this->getAllPermissions(Auth::user()->id);
+
+        view()->share(['title' => 'Numeraciones de Documentos Soportes']);
+        $numeraciones = NumeracionFactura::where('empresa', auth()->user()->empresa)->where('num_equivalente', 1)->get();
+        return view('configuracion.numeracion-equivalente.index')->with(compact('numeraciones'));
+    }
+
+        /**
+     * Lleva al formulario de creacion de numeraciones soporte
+     * @return view
+     */
+    public function numeracion_equivalente_create()
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Crear numeración Documentos Soporte']);
+        return view('configuracion.numeracion-equivalente.create');
+    }
+
+    /**
+     * Guarda la numearcion de facturas soporte y retorna a la vista principal
+     * @return view
+     */
+    public function numeracion_equivalente_store(Request $request)
+    {
+        $numeracion = new NumeracionFactura();
+        $numeracion->nombre = $request->nombre;
+        $numeracion->prefijo = $request->prefijo;
+        $numeracion->inicio = $request->inicio;
+        $numeracion->inicioverdadero = $request->inicio;
+        $numeracion->final = $request->final;
+        if ($request->desde) {
+            $numeracion->desde = Carbon::parse($request->desde)->format('Y-m-d');
+        }
+        if ($request->hasta) {
+            $numeracion->hasta = Carbon::parse($request->hasta)->format('Y-m-d');
+        }
+        $numeracion->preferida = $request->preferida;
+        $numeracion->nroresolucion = $request->nroresolucion;
+        $numeracion->resolucion = $request->resolucion;
+        $numeracion->num_equivalente =  1;
+        $numeracion->empresa = auth()->user()->empresa;
+
+        $numeracion->save();
+
+        $numeraciones = NumeracionFactura::where('empresa', auth()->user()->empresa)
+            ->where('preferida', 1)
+            ->where('num_equivalente', 1)
+            ->where('id', '!=', $numeracion->id)
+            ->get();
+
+        foreach ($numeraciones as $numeracion) {
+            $numeracion->update(['preferida' => 0]);
+        }
+
+        $mensaje = 'Se ha creado satisfactoriamente la numeración';
+        return redirect('empresa/configuracion/numeraciones-equivalente')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+    }
+
+    /**
+     * Lleva al formulario de creacion de numeraciones soporte
+     * @return view
+     */
+    public function numeracion_equivalente_edit($id)
+    {
+        $numeracion = NumeracionFactura::find($id);
+
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['title' => 'Editar numeración Documentos Soporte']);
+        return view('configuracion.numeracion-equivalente.edit', compact('numeracion'));
+    }
+
+    /**
+     * Actualiza la numeracion equivalente y retorna a la vista principal
+     * @return view
+     */
+    public function numeracion_equivalente_update(Request $request)
+    {
+        $numeracion = NumeracionFactura::find($request->id);
+        $numeracion->nombre = $request->nombre;
+        $numeracion->prefijo = $request->prefijo;
+        $numeracion->inicio = $request->inicio;
+        $numeracion->inicioverdadero = $request->inicioverdadero;
+        $numeracion->final = $request->final;
+
+        if ($request->desde) {
+            $numeracion->desde = Carbon::parse($request->desde)->format('Y-m-d');
+        }
+        if ($request->hasta) {
+            $numeracion->hasta = Carbon::parse($request->hasta)->format('Y-m-d');
+        }
+        $numeracion->preferida = $request->preferida;
+        $numeracion->nroresolucion = $request->nroresolucion;
+        $numeracion->resolucion = $request->resolucion;
+        $numeracion->num_equivalente =  1;
+        $numeracion->empresa = auth()->user()->empresa;
+
+        $numeracion->save();
+
+        $mensaje = 'Se actualizó la numeración correctamente';
+        return redirect('empresa/configuracion/numeraciones-equivalente')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+    }
+
+    /**
+     * Elimina la numeracion equivalente y retorna a la vista principal
+     * @return view
+     */
+    public function numeracion_equivalente_destroy($id)
+    {
+        $numeracion = NumeracionFactura::find($id);
+        $numeracion->delete();
+        $mensaje = 'Se elminó la numeración correctamente';
+        return redirect('empresa/configuracion/numeraciones-equivalente')->with('success', $mensaje)->with('numeracion_id', $numeracion->id);
+    }
+
 }

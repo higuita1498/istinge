@@ -29,6 +29,8 @@ use App\FormaPago;
 use App\PucMovimiento;
 use App\Puc;
 use App\Campos;
+use App\NumeracionFactura;
+use App\User;
 
 include_once(app_path() . '/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel;
@@ -60,84 +62,93 @@ class FacturaspController extends Controller
     public function facturasp(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
-        $moneda = auth()->user()->empresa()->moneda;
+        $moneda = auth()->user()->empresaObj->moneda;
 
-        $facturas = FacturaProveedores::query()
-            ->leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
+        $facturas = FacturaProveedores::leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
             ->join('items_factura_proveedor as if', 'factura_proveedores.id', '=', 'if.factura')
-            ->select('factura_proveedores.id', 'factura_proveedores.tipo',  'factura_proveedores.codigo', 'factura_proveedores.nro',
-                DB::raw('c.nombre as nombreproveedor'), 'factura_proveedores.proveedor', 'factura_proveedores.fecha_factura',
-                'factura_proveedores.vencimiento_factura', 'factura_proveedores.estatus')
+            ->select('factura_proveedores.*')
             ->where('factura_proveedores.empresa', $identificadorEmpresa)
-            ->where('factura_proveedores.tipo',1)
+            ->where('factura_proveedores.tipo', 1)
+            ->where('codigo_dian', null)
+            ->where(function ($query) {
+                return $query->where('factura_proveedores.modo', 1)
+                    ->orWhere('factura_proveedores.modo', null);
+            })
+            ->when($request->nro, function ($query) use ($request) {
+                return $query->where('factura_proveedores.nro', 'like', "%{$request->nro}%");
+            })
+            ->when($request->codigo, function ($query) use ($request) {
+                return $query->where(function ($newQuery) use ($request) {
+                    $newQuery->where('factura_proveedores.codigo', 'like', "%{$request->codigo}%")
+                        ->orWhere('factura_proveedores.codigo_dian', 'like', "%{$request->codigo}%");
+                });
+            })
+            ->when($request->proveedor, function ($query) use ($request) {
+                return $query->where('factura_proveedores.proveedor', $request->proveedor);
+            })
+            ->when($request->comprador, function ($query) use ($request) {
+                return $query->where('factura_proveedores.comprador', $request->comprador);
+            })
+            ->when($request->creacion, function ($query) use ($request) {
+                return $query->whereDate('factura_proveedores.fecha_factura', $request->creacion);
+            })
+            ->when($request->vencimiento, function ($query) use ($request) {
+                return $query->whereDate('factura_proveedores.vencimiento_factura', $request->vencimiento);
+            })
+            ->when($request->estatus, function ($query) use ($request) {
+                return $query->where('factura_proveedores.estatus', (int) $request->estatus);
+            })
+            ->when($request->etiqueta, function ($query) use ($request) {
+                return $query->where('factura_proveedores.etiqueta_id', $request->etiqueta);
+            })
+            ->when($request->created_by, function ($query) use ($request) {
+                return $query->where('factura_proveedores.created_by', $request->created_by);
+            })
+            ->when($request->total && $request->comparador, function ($query) use ($request) {
+                return $query->havingRaw('(SUM(
+                    (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
+                    (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) )'
+                    . $request->comparador . ' ?', [$request->total]);
+            })
             ->groupBy('factura_proveedores.id');
 
-        if ($request->filtro == true) {
-            if($request->codigo){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura_proveedores.codigo', 'like', "%{$request->codigo}%");
-                });
-            }
-            if($request->nro){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura_proveedores.nro', 'like', "%{$request->nro}%");
-                });
-            }
-            if($request->proveedor){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura_proveedores.proveedor', $request->proveedor);
-                });
-            }
-            if($request->creacion){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura_proveedores.fecha_factura', $request->creacion);
-                });
-            }
-            if($request->vencimiento){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura_proveedores.vencimiento_factura', $request->vencimiento);
-                });
-            }
-            if($request->estado){
-                $status = ($request->estado == 'A') ? 0 : $request->estado;
-                $facturas->where(function ($query) use ($request, $status) {
-                    $query->orWhere('factura_proveedores.estatus', $status);
-                });
-            }
-        }
 
         return datatables()->eloquent($facturas)
-        ->editColumn('nro', function (FacturaProveedores $factura) {
-            return $factura->id ? "<a href=" . route('facturasp.showid', $factura->id) . ">$factura->nro</a>" : "";
-        })
-        ->editColumn('codigo', function (FacturaProveedores $factura) {
-            return $factura->id ? "<a href=" . route('facturasp.showid', $factura->id) . ">$factura->codigo</a>" : "";
-        })
-        ->editColumn('proveedor', function (FacturaProveedores $factura) {
-            return  $factura->proveedor ? "<a href=" . route('contactos.show', $factura->proveedor) . ">{$factura->nombreproveedor} {$factura->proveedor()->apellidos()}</a>" : "";
-        })
-        ->editColumn('creacion', function (FacturaProveedores $factura) {
-            return date('d-m-Y', strtotime($factura->fecha_factura));
-        })
-        ->editColumn('vencimiento', function (FacturaProveedores $factura) {
-            return (date('Y-m-d') > $factura->vencimiento_factura && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento_factura)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento_factura));
-        })
-        ->addColumn('total', function (FacturaProveedores $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total()->total)}";
-        })
-        ->addColumn('pagado', function (FacturaProveedores $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->pagado())}";
-        })
-        ->addColumn('pagar', function (FacturaProveedores $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->porpagar())}";
-        })
-        ->addColumn('estado', function (FacturaProveedores $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
-        })
-        ->addColumn('acciones', $modoLectura ?  "" : "facturasp.acciones")
-        ->rawColumns(['nro', 'codigo', 'proveedor', 'creacion', 'vencimiento', 'estado', 'acciones'])
-        ->toJson();
-    }
+            ->editColumn('nro', function (FacturaProveedores $factura) {
+                return $factura->nro ? "<a href=" . route('facturasp.show', $factura->id) . ">$factura->nro</a>" : "";
+            })
+            ->editColumn('codigo', function (FacturaProveedores $factura) {
+                return ($factura->codigo_dian != null) ? "<a href=" . route('facturasp.show', $factura->id) . ">$factura->codigo_dian</a>" : "<a href=" . route('facturasp.show', $factura->id) . ">$factura->codigo</a>";
+            })
+            ->editColumn('proveedor', function (FacturaProveedores $factura) {
+                return  $factura->proveedor()->nombre ? "<a href=" . route('contactos.show', $factura->proveedor) . ">{$factura->proveedor()->nombre}</a>" : "";
+            })
+            ->editColumn('creacion', function (FacturaProveedores $factura) {
+                return date('d-m-Y', strtotime($factura->fecha_factura));
+            })
+            ->editColumn('comprador', function (FacturaProveedores $factura) {
+                return  $factura->comprador ? "<a href=" . route('contactos.show', $factura->comprador) . ">{$factura->comprador()->nombre}</a>" : "";
+            })
+            ->editColumn('vencimiento', function (FacturaProveedores $factura) {
+                return (date('Y-m-d') > $factura->vencimiento_factura && $factura->estatus == 1) ? '<span class="text-danger">' . date('Y-m-d', strtotime($factura->vencimiento_factura)) . '</span>' : date('Y-m-d', strtotime($factura->vencimiento_factura));
+            })
+            ->addColumn('total', function (FacturaProveedores $factura) use ($moneda) {
+                return "{$moneda} {$factura->parsear($factura->total()->total)}";
+            })
+            ->addColumn('pagado', function (FacturaProveedores $factura) use ($moneda) {
+                return "{$moneda} {$factura->parsear($factura->pagado())}";
+            })
+            ->addColumn('pagar', function (FacturaProveedores $factura) use ($moneda) {
+                return   $factura->porpagar() >= 0 ? "{$moneda} {$factura->parsear($factura->porpagar())}" : "$moneda 0";
+            })
+            ->addColumn('estado', function (FacturaProveedores $factura) {
+                $msj = '';
+                return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . ' ' . $msj . '</span>';
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "facturasp.acciones")
+            ->rawColumns(['nro', 'codigo', 'proveedor', 'creacion', 'vencimiento', 'estado', 'acciones'])
+            ->toJson();    
+        }
 
     public function indexOLD(Request $request){
         $this->getAllPermissions(Auth::user()->id);
@@ -269,9 +280,11 @@ class FacturaspController extends Controller
     }
     
     public function store(Request $request){
-        if( FacturaProveedores::where('empresa',auth()->user()->empresa)->count() > 0){
+
+        $empresa =  auth()->user()->empresa;
+        if( FacturaProveedores::where('empresa',$empresa)->count() > 0){
             //Tomamos el tiempo en el que se crea el registro
-            Session::put('posttimer', FacturaProveedores::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
+            Session::put('posttimer', FacturaProveedores::where('empresa',$empresa)->get()->last()->created_at);
             $sw = 1;
             //Recorremos la sesion para obtener la fecha
             if(isset($ultimoingreso)){
@@ -289,6 +302,17 @@ class FacturaspController extends Controller
                     return redirect('empresa/facturasp')->with('success', $mensaje);
                 }
             }
+        }
+
+        $codigoRepetido  = FacturaProveedores::select('id', 'empresa', 'proveedor', 'codigo', 'codigo_dian')
+            ->where('empresa', $empresa)
+            ->where('codigo', $request->codigo)
+            ->where('proveedor', $request->proveedor)
+            ->first();
+
+        if ($codigoRepetido) {
+            return back()
+                ->with('error', "Ya existe una factura con el número {$request->codigo} para el mismo cliente.");
         }
 
         $last = FacturaProveedores::where('empresa', Auth::user()->empresa)->select('nro')->where('tipo', 1)->get()->last();
@@ -312,6 +336,31 @@ class FacturaspController extends Controller
         $factura->bodega=$request->bodega;
         $factura->codigo=$request->codigo;
         $factura->cuenta_id    = $request->relacion;
+
+        /* Si le estamos comprando a una persona no obligada a factruar */
+        if ($request->equivalente) {
+
+            /* Validamos que el código dian de la factura o haya sido asignado aún */
+            if (FacturaProveedores::where('empresa', $empresa)->where('codigo_dian', $request->codigo_dian)->first()) {
+                $mensaje = "El número dian {$request->codigo_dian} ya ha sido usado en otra factura de proveedor. Intente nuevamente";
+                return redirect()->back()->with('error', $mensaje);
+            }
+            $factura->codigo_dian = $request->codigo_dian;
+
+            $nro = NumeracionFactura::where('empresa', $empresa)->where('preferida', 1)->where('estado', 1)->where('num_equivalente', 1)->first();
+
+            if (!$nro) {
+                $mensaje = 'Debes crear o activar una numeración para facturas de proveedores y elegirla como preferida';
+                return redirect()->back()->with('error', $mensaje);
+            }
+
+            //Actualiza el nro de inicio para la numeracion seleccionada
+            $inicio = $nro->inicio;
+            $nro->inicio += 1;
+            $nro->save();
+            $factura->numeracion = $nro->id;
+        }
+
         $factura->save();
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -399,6 +448,11 @@ class FacturaspController extends Controller
         else if ($request->new) {
             return redirect('empresa/facturasp/create')->with('success', $mensaje)->with('print', $print);
         }
+
+        if ($request->equivalente) {
+            return redirect('empresa/facturasp/listadocumentossoporte')->with('success', $mensaje)->with('codigo', $factura->id);
+        }
+
         return redirect('empresa/facturasp')->with('success', $mensaje)->with('codigo', $factura->id);
     }
     
@@ -1076,5 +1130,620 @@ class FacturaspController extends Controller
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
+    }
+
+    public function NumEquivalenteAjax(Request $request)
+    {
+        try {
+            $numeracion = NumeracionFactura::where('empresa', auth()->user()->empresa)->where('preferida', 1)->where('estado', 1)->where('num_equivalente', 1)->first();
+
+            if ($numeracion) {
+                return response()->json($numeracion);
+            } else {
+                return 0;
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()]);
+
+            // return back()->with('error', $th->getMessage())->withInput();
+        }
+    }
+
+    public function lista_documentos_soporte(Request $request)
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['seccion' => 'gastos', 'title' => 'Documentos Soporte', 'icon' => 'fas fa-minus', 'subseccion' => 'facturas_proveedores']);
+
+        $factura = new FacturaProveedores();
+        // $estadoModulo = $factura->estadoModulo();
+
+        $empresa = auth()->user()->empresa;
+        $proveedores = Contacto::where('empresa',  $empresa)->whereIn('tipo_contacto', [1, 2])->get();
+        $compradores = Vendedor::where('empresa', $empresa)->where('estado', 1)->get();
+        $usuarios = User::where('empresa', $empresa)->get();
+
+        // $etiquetas = EtiquetaEstado::where('empresa', $empresa)
+        //     ->where('estatus', 1)
+        //     ->where('tipo', 4)
+        //     ->with('color')
+        //     ->get();
+
+        $etiquetas = [];
+
+
+        return view('doc-soporte.index', compact('proveedores', 'compradores', 'usuarios', 'etiquetas'));
+    }
+
+    public function documentos_soporte(Request $request)
+    {
+        $modoLectura = auth()->user()->modo_lectura();
+        $identificadorEmpresa = auth()->user()->empresa;
+        $moneda = auth()->user()->empresaObj->moneda;
+
+
+        $facturas = FacturaProveedores::leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
+            ->join('items_factura_proveedor as if', 'factura_proveedores.id', '=', 'if.factura')
+            ->select('factura_proveedores.*')
+            ->where('factura_proveedores.empresa', $identificadorEmpresa)
+            ->where('factura_proveedores.tipo', 1)
+            ->where('codigo_dian', '!=', null)
+            ->where(function ($query) {
+                return $query->where('factura_proveedores.modo', 1)
+                    ->orWhere('factura_proveedores.modo', null);
+            })
+            ->when($request->nro, function ($query) use ($request) {
+                return $query->where('factura_proveedores.nro', 'like', "%{$request->nro}%");
+            })
+            ->when($request->codigo, function ($query) use ($request) {
+                return $query->where(function ($newQuery) use ($request) {
+                    $newQuery->where('factura_proveedores.codigo', 'like', "%{$request->codigo}%")
+                        ->orWhere('factura_proveedores.codigo_dian', 'like', "%{$request->codigo}%");
+                });
+            })
+            ->when($request->proveedor, function ($query) use ($request) {
+                return $query->where('factura_proveedores.proveedor', $request->proveedor);
+            })
+            ->when($request->comprador, function ($query) use ($request) {
+                return $query->where('factura_proveedores.comprador', $request->comprador);
+            })
+            ->when($request->creacion, function ($query) use ($request) {
+                return $query->whereDate('factura_proveedores.fecha_factura', $request->creacion);
+            })
+            ->when($request->vencimiento, function ($query) use ($request) {
+                return $query->whereDate('factura_proveedores.vencimiento_factura', $request->vencimiento);
+            })
+            ->when($request->estatus, function ($query) use ($request) {
+                return $query->where('factura_proveedores.estatus', (int) $request->estatus);
+            })
+            ->when($request->etiqueta, function ($query) use ($request) {
+                return $query->where('factura_proveedores.etiqueta_id', $request->etiqueta);
+            })
+            ->when($request->created_by, function ($query) use ($request) {
+                return $query->where('factura_proveedores.created_by', $request->created_by);
+            })
+            ->when($request->total && $request->comparador, function ($query) use ($request) {
+                return $query->havingRaw('(SUM(
+                    (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+
+                    (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) )'
+                    . $request->comparador . ' ?', [$request->total]);
+            })
+            ->groupBy('factura_proveedores.id');
+
+        // $etiquetas = EtiquetaEstado::where('empresa', $identificadorEmpresa)
+        //     ->where('estatus', 1)
+        //     ->where('tipo', 4)
+        //     ->with('color')
+        //     ->get();
+
+        $etiquetas = [];
+
+
+        return datatables()->eloquent($facturas)
+            ->editColumn('nro', function (FacturaProveedores $factura) {
+                return $factura->nro ? "<a href=" . route('facturasp.show', $factura->id) . ">$factura->nro</a>" : "";
+            })
+            ->editColumn('codigo', function (FacturaProveedores $factura) {
+                return ($factura->codigo_dian != null) ? "<a href=" . route('facturasp.show', $factura->id) . ">$factura->codigo_dian</a>" : "<a href=" . route('facturasp.show', $factura->id) . ">$factura->codigo</a>";
+            })
+            ->editColumn('proveedor', function (FacturaProveedores $factura) {
+                return  $factura->proveedor()->nombre ? "<a href=" . route('contactos.show', $factura->proveedor) . ">{$factura->proveedor()->nombre}</a>" : "";
+            })->editColumn('comprador', function (FacturaProveedores $factura) {
+                return  $factura->comprador ? "<a href=" . route('contactos.show', $factura->comprador) . ">{$factura->comprador()->nombre}</a>" : "";
+            })
+            ->addColumn('fecha', function (FacturaProveedores $factura) {
+                return date('Y-m-d', strtotime($factura->fecha_factura));
+            })
+            ->editColumn('vencimiento', function (FacturaProveedores $factura) {
+                return (date('Y-m-d') > $factura->vencimiento_factura && $factura->estatus == 1) ? '<span class="text-danger">' . date('Y-m-d', strtotime($factura->vencimiento_factura)) . '</span>' : date('Y-m-d', strtotime($factura->vencimiento_factura));
+            })
+            ->addColumn('total', function (FacturaProveedores $factura) use ($moneda) {
+                return "{$moneda} {$factura->parsear($factura->total()->total)}";
+            })
+            ->addColumn('impuesto', function (FacturaProveedores $factura) use ($moneda) {
+                return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
+            })
+            ->addColumn('pagado', function (FacturaProveedores $factura) use ($moneda) {
+                return "{$moneda} {$factura->parsear($factura->pagado())}";
+            })
+            ->addColumn('pendiente', function (FacturaProveedores $factura) use ($moneda) {
+                return   $factura->porpagar() >= 0 ? "{$moneda} {$factura->parsear($factura->porpagar())}" : "$moneda 0";
+            })
+            ->addColumn('etiqueta', function (FacturaProveedores $factura) use ($etiquetas) {
+                $factura->etiqueta;
+                if ($factura->estadoModulo()) {
+                    return view('facturasp.etiqueta', compact('etiquetas', 'factura'));
+                }
+                return '';
+            })
+            ->addColumn('estatus', function (FacturaProveedores $factura) {
+                $msj = '';
+                if (Auth::user()->empresaObj->estado_dian == 1 && Auth::user()->empresaObj->equivalente == 1) {
+                    $msj = $factura->emitida == 1 ? '- Emitida' : '- No Emitida';
+                }
+
+                return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . ' ' . $msj . '</span>';
+            })
+            ->addColumn('observaciones', function (FacturaProveedores $factura) {
+                if ($factura->observaciones) {
+                    return "<a href='javascript:modificarObservaciones(" . $factura->id . ")'><p id='observacion-parrafo-" . $factura->id . "' title='" . $factura->observaciones . "'>" . substr($factura->observaciones, 0, 24) . "</p></a>";
+                } else {
+                    return "<a class='btn btn-default btn-sm rounded p-0 m-0 float-left' href='javascript:modificarObservaciones(" . $factura->id . ")'><p id='observacion-parrafo-" . $factura->id . "'>agregar<i class='far fa-plus-square icon-md' style='font-size:18px'></i></p></a>";
+                }
+            })
+            ->addColumn('created_by', function (FacturaProveedores $factura) {
+                return  $factura->created_by ? $factura->created_by()->nombres : "";
+            })
+            ->addColumn('acciones', $modoLectura ?  "" : "facturasp.acciones")
+            ->rawColumns(['nro', 'codigo', 'proveedor', 'comprador', 'vencimiento', 'estatus', 'observaciones', 'acciones'])
+            ->toJson();
+    }
+
+    public function anular($id)
+    {
+        $factura = FacturaProveedores::where('empresa', Auth::user()->empresa)->where('id', $id)->first();
+        if ($factura) {
+            if ($factura->estatus == 1) {
+                $factura->estatus = 7;
+                $factura->update();
+                return back()->with('success', 'Se ha anulado la factura');
+            } elseif ($factura->estatus == 7) {
+                $factura->estatus = 1;
+                $factura->update();
+                return back()->with('success', 'Se cambiado a abierta la factura');
+            }
+
+            return redirect('empresa/facturasp')->with('success', 'La factura no esta abierta');
+        }
+
+        return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
+    }
+
+    public function xmlFacturaProveedor($id, $emails = false)
+    {
+        $facturaP = FacturaProveedores::find($id);
+
+        if (!$facturaP) {
+            return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
+        }
+
+        $facturaP->emitida = $facturaP->emitida;
+        $facturaP->save();
+
+        if (FacturaProveedores::where('empresa', auth()->user()->empresa)->count() > 0) {
+            //Tomamos el tiempo en el que se crea el registro
+            Session::put('posttimer', FacturaProveedores::where('empresa', auth()->user()->empresa)->orderBy('updated_at', 'desc')->first()->updated_at);
+            $sw = 1;
+            if (isset($ultimoingreso)) {
+                //Recorremos la sesion para obtener la fecha
+                foreach (Session::get('posttimer') as $key) {
+                    if ($sw == 1) {
+                        $ultimoingreso = $key;
+                        $sw = 0;
+                    }
+                }
+                //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+                //Si el tiempo es de menos de 10 segundos mandamos al listado general
+                if ($diasDiferencia <= 10) {
+                    $mensaje = "La factura electrónica ya ha sido enviada.";
+                    return redirect('empresa/facturas')->with('success', $mensaje);
+                }
+            }
+
+            if (isset($ultimoingreso)) {
+                //Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creación
+                $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
+
+                //Si el tiempo es de menos de 10 segundos mandamos al listado general
+                if ($diasDiferencia <= 10) {
+                    $mensaje = "La factura electrónica ya ha sido enviada.";
+                    return redirect('empresa/facturas')->with('success', $mensaje);
+                }
+            }
+        }
+
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 1)->where('nomina', 0)->where('preferida', 1)->first();
+        if (!$ResolucionNumeracion) {
+            return back()->with('message_denied', "No existe la numeración equivalente, revise la resolución y emita nuevamente.");
+        }
+        $infoEmpresa = Auth::user()->empresaObj;
+        $data['Empresa'] = $infoEmpresa->toArray();
+
+        $retenciones = FacturaProveedoresRetenciones::where('factura', $facturaP->id)->get();
+
+        $impTotal = 0;
+
+        foreach ($facturaP->total()->imp as $totalImp) {
+            if (isset($totalImp->total)) {
+                $impTotal += $totalImp->total;
+            }
+        }
+        $items = ItemsFacturaProv::where('factura', $id)->get();
+
+        $decimal = explode(".", $impTotal);
+        if (
+            isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
+            || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
+        ) {
+            $impTotal = round($impTotal, 2);
+        } else {
+            $impTotal = round($impTotal, 2);
+        }
+
+        $CUFEvr = $facturaP->info_cufe($facturaP->id, $impTotal);
+        $infoCliente = Contacto::find($facturaP->proveedor);
+        $data['Cliente'] = $infoCliente->toArray();
+
+
+        $responsabilidades_empresa = DB::table('empresa_responsabilidad as er')
+            ->join('responsabilidades_facturacion as rf', 'rf.id', '=', 'er.id_responsabilidad')
+            ->select('rf.*')
+            ->where('er.id_empresa', '=', Auth::user()->empresa)->where('er.id_responsabilidad', 5)
+            ->orWhere('er.id_responsabilidad', 7)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 12)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 20)->where('er.id_empresa', '=', Auth::user()->empresa)
+            ->orWhere('er.id_responsabilidad', 29)->where('er.id_empresa', '=', Auth::user()->empresa)->get();
+
+        //-- Construccion del pdf a enviar con el código qr + el envío del archivo xml --//
+        if ($facturaP) {
+            if (empty($emails)) {
+                $emails = array();
+            } else {
+                $emails = explode(",", $emails);
+            }
+            array_push($emails, $facturaP->cliente()->email);
+            $emails = $facturaP->cliente()->email;
+            if ($facturaP->cliente()->asociados('number') > 0) {
+                $email = $emails;
+                $emails = array();
+                if ($email) {
+                    $emails[] = $email;
+                }
+                foreach ($facturaP->cliente()->asociados() as $asociado) {
+                    if ($asociado->notificacion == 1 && $asociado->email) {
+                        $emails[] = $asociado->email;
+                    }
+                }
+            }
+
+            $tituloCorreo =  $data['Empresa']['nit'] . ";" . $data['Empresa']['nombre'] . ";" . $facturaP->codigo_dian . ";05;" . $data['Empresa']['nombre'];
+            $isImpuesto = 1;
+            $facturaP->vencimiento = $facturaP->vencimiento_factura;
+
+            // if(auth()->user()->empresa == 1)
+            // {
+            //          return $xml = response()->view('templates.xml.05',compact('CUFEvr','ResolucionNumeracion','facturaP', 'data','items','retenciones','responsabilidades_empresa','emails','impTotal','isImpuesto'))->header('Cache-Control', 'public')
+            //             ->header('Content-Description', 'File Transfer')
+            //             ->header('Content-Disposition', 'attachment; filename=FC-'.$facturaP->codigo_dian.'.xml')
+            //             ->header('Content-Transfer-Encoding', 'binary')
+            //             ->header('Content-Type', 'text/xml');
+            // }
+
+            //-- Generación del XML a enviar a la DIAN -- //
+            $xml = view('templates.xml.05', compact('CUFEvr', 'ResolucionNumeracion', 'facturaP', 'data', 'items', 'retenciones', 'responsabilidades_empresa', 'emails', 'impTotal', 'isImpuesto'));
+
+            //-- Envío de datos a la DIAN --//
+            $res = $this->EnviarDatosDian($xml);
+
+            //-- Decodificación de respuesta de la DIAN --//
+            $res = json_decode($res, true);
+
+            // dd($res);
+
+            if (isset($res['errorType'])) {
+                if ($res['errorType'] == "KeyError") {
+                    return back()->with('message_denied', "La dian está presentando problemas para emitir documentos electrónicos, inténtelo más tarde.");
+                }
+            }
+
+            if (!isset($res['statusCode']) && isset($res['message'])) {
+                return redirect('/empresa/facturasp/listadocumentossoporte')->with('message_denied', $res['message']);
+            }
+
+            $statusCode = Arr::exists($res, 'statusCode') ? $res['statusCode'] : null; //200
+
+            if (!isset($statusCode)) {
+                return back()->with('message_denied', isset($res['message']) ? $res['message'] : 'Error en la emisión del docuemento, intente nuevamente en un momento');
+            }
+
+            //-- Guardamos la respuesta de la dian solo cuando son errores--//
+            if ($statusCode != 200) {
+                // dd($statusCode);
+                $statusCode = array('statusCode' => $statusCode);
+                $facturaP->dian_response = $statusCode;
+                $facturaP->save();
+            }
+
+            //-- Validación 1 del status code (Cuando hay un error) --//
+            if ($statusCode != 200) {
+                $message = $res['errorMessage'];
+                $errorReason = $res['errorReason'];
+
+                //Validamos si depronto la factura fue emitida pero no quedamos con ningun registro de ella.
+                $statusJson = $this->validateStatusDocumentoSoporte($facturaP->cliente()->nit, $facturaP->codigo_dian, "05", $infoEmpresa->nit);
+
+                $statusJson = json_decode($statusJson, true);
+
+                if ($statusJson["statusCode"] == 200) {
+
+                    //linea comentada por ahorro de espacio en bd, ay que esta información de las facturas procesadas se puede obtener mediante consulta api.
+                    // $facturaP->dian_response = $saveNoJson;
+                    $message = "Documento soporte emitido correctamente por validación";
+                    $facturaP->emitida = 1;
+                    $facturaP->fecha_expedicion = Carbon::now();
+
+                    //Llave unica para acceso por correo
+                    $key = Hash::make(date("H:i:s"));
+                    $toReplace = array('/', '$', '.');
+                    $key = str_replace($toReplace, "", $key);
+                    $facturaP->nonkey = $key;
+
+                    $facturaP->save();
+                    // $this->generateXmlPdfEmail($statusJson['document'], $facturaP, $emails, $data, $CUFEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+
+                    $res = $statusJson;
+                } else {
+                    return back()->with('message_denied', $message)->with('errorReason', $errorReason);
+                }
+            }
+
+            $document = $res['document'];
+
+            //-- estátus de que la factura ha sido aprobada --//
+            if ($statusCode == 200) {
+
+                //Llave unica para acceso por correo
+                $key = Hash::make(date("H:i:s"));
+                $toReplace = array('/', '$', '.');
+                $key = str_replace($toReplace, "", $key);
+                $facturaP->nonkey = $key;
+                $facturaP->save();
+                //
+
+                $message = "Factura emitida correctamente";
+                $facturaP->emitida = 1;
+                $facturaP->fecha_expedicion = Carbon::now();
+                $facturaP->save();
+                // $this->generateXmlPdfEmail($document, $facturaP, $emails, $data, $CUFEvr, $items, $ResolucionNumeracion, $tituloCorreo);
+            }
+            return back()->with('message_success', $message);
+        }
+    }
+
+    public function validate_dian(Request $request)
+    {
+        $factura = FacturaProveedores::find($request->id);
+
+        $factura->load('clienteObj');
+
+        $empresa  = Empresa::select('id', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'dv', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'dv')
+            ->with('responsabilidades')
+            ->where('id', auth()->user()->empresa)
+            ->first();
+
+        $responsabilidades = $empresa->responsabilidades->count();
+
+        $numeracion = NumeracionFactura::where('empresa', $empresa->id)
+            ->where('id', $factura->numeracion)
+            ->first();
+
+        $cliente  = $factura->clienteObj;
+
+        //Inicializamos la variable para ver si tiene las nuevas responsabilidades que no da la dian 042
+        $resp = 0;
+
+        foreach ($empresa->responsabilidades as $responsabilidad) {
+
+            $listaResponsabilidadesDian = [5, 7, 12, 20, 29];
+
+            if (in_array($responsabilidad->pivot->id_responsabilidad, $listaResponsabilidadesDian)) {
+                $resp = 1;
+            }
+        }
+
+
+        if ($cliente->tip_iden != 6) {
+            $cliente->tipo_persona      = 1; //-- Persona Natural
+            $cliente->responsableiva    = 2; //-- No responsable de iva
+            $cliente->save();
+        }
+
+
+        //-- Validación de si la ultima factura creada fue emitida o si es la primer factura a emitir que la deje --//
+        if ($numeracion) {
+            if ($numeracion->prefijo != null || $numeracion->prefijo != "") {
+                $numero = intval(preg_replace('/[^0-9]+/', '', $factura->codigo), 10);
+                //$codigo    = substr($factura->codigo, strlen($numeracion->prefijo), strlen($numero));
+                $codigo = $numero;
+            } else {
+                $codigo = $factura->codigo;
+            }
+        }
+        $emitida = false;
+        if ($numeracion) {
+            //Si tenemos una pasada factura a la que estamos intentando emitir entra a este if
+            if (FacturaProveedores::where('empresa', Auth::user()->empresa)->where('numeracion', $factura->numeracion)->where('codigo', $numeracion->prefijo . ($codigo - 1))->count() > 0) {
+                $ultfact = FacturaProveedores::where('empresa', Auth::user()->empresa)->where('numeracion', $factura->numeracion)->where('codigo', $numeracion->prefijo . ($codigo - 1))->first();
+
+                if ($ultfact->emitida == null || $ultfact->emitida == 2 || $ultfact->emitida == 0) { //-- si es null o es 2(no emitida) o 0 no emitida
+                    $emitida = false;
+                } else {
+                    $emitida = true;
+                }
+            } elseif ($codigo == $numeracion->inicioverdadero) { //-- si no entra es por que hay la posibilidad de que sea la primer factura emitida de esa numeración
+                $emitida = true;
+            } else { //cambió el prefijo de una numeracion existente ademas hay mas facturas con esa numeración sin emitir
+                /*
+            Actualizacion: Como no es igual al inicioverdadero es muy probable que no 
+            se este emitiendo desde el numero de inicio verdadero si no que arranco un poco mas
+            adelante.
+            */
+                $emitida = true;
+            }
+        }
+
+        return response()->json([
+            "numeracion" => $numeracion, "responsabilidades" => $responsabilidades, "empresa" => $empresa,
+            "cliente" => $cliente, "total" => $factura->total()->total,
+            "emitida" => $emitida, "responsabilidad" => $resp
+        ]);
+    }
+
+    public function createDocsoporte($proveedor = false, $producto = false)
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        view()->share(['icon' => '', 'title' => 'Nueva Facturas de Proveedores', 'subseccion' => 'facturas_proveedores']);
+
+        $empresaActual = auth()->user()->empresa;
+        $terminos = TerminosPago::where('empresa', $empresaActual)->get();
+
+        $modulo = new FacturaProveedores();
+        $estadoModulo = $modulo->estadoModulo();
+
+        $bodega = Bodega::where('empresa', $empresaActual)->where('status', 1)->first();
+        $inventario =
+            Inventario::select(
+                'inventario.id',
+                'inventario.tipo_producto',
+                'inventario.producto',
+                'inventario.ref',
+                DB::raw('(Select nro from productos_bodegas where bodega=' . $bodega->id . ' and producto=inventario.id LIMIT 1) as nro')
+            )
+            ->where('empresa', $empresaActual)
+            ->where('status', 1)
+            ->where('tipo_producto', '<>', 3)
+            ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega=' . $bodega->id . '), true)')
+            ->get();
+
+
+        $bodegas = Bodega::where('empresa', $empresaActual)->where('status', 1)->get();
+
+        $retenciones = Retencion::where('empresa', $empresaActual)->get();
+
+        $terminos = TerminosPago::where('empresa', $empresaActual)->get();
+
+        $clientes = Contacto::select('id', 'nombre', 'nit')
+            ->where('empresa', $empresaActual)
+            ->whereIn('tipo_contacto', [1, 2])
+            ->get();
+
+        $impuestos = Impuesto::where('estado', 1)
+            ->where(function ($query) use ($empresaActual) {
+                $query->where('empresa', $empresaActual)
+                    ->orWhereNull('empresa');
+            })
+            ->get();
+
+        $categorias = Categoria::where('empresa', $empresaActual)->where('estatus', 1)->whereNull('asociado')->get();
+        $extras = CamposExtra::where('empresa', $empresaActual)->where('status', 1)->get();
+        $identificaciones = TipoIdentificacion::all();
+        $vendedores = Vendedor::where('empresa', $empresaActual)->where('estado', 1)->get();
+        $listas = ListaPrecios::where('empresa', $empresaActual)->where('status', 1)->get();
+        $tipos_empresa = TipoEmpresa::where('empresa', $empresaActual)->get();
+        $prefijos = DB::table('prefijos_telefonicos')->get();
+
+        $dataPro = (new InventarioController())->create();
+
+        //Se crea una instancia de facturas_proveedores y se le summa 1 al codigo
+        $facturaP = FacturaProveedores::where('empresa', $empresaActual)->get()->last();
+
+        if (!$facturaP) {
+            $codigoFactura = 0;
+        } else {
+            $codigoFactura = $facturaP->codigo;
+        }
+
+        //dd($codigoFactura++);
+        $codigoFactura++;
+        $categorias2 = $dataPro->categorias;
+        $unidades2 = $dataPro->unidades;
+        $medidas2 = $dataPro->medidas;
+        $impuestos2 = $dataPro->impuestos;
+        $extras2 = $dataPro->extras;
+        $listas2 = $dataPro->listas;
+        $bodegas2 = $dataPro->bodegas;
+        $identificaciones2 = $dataPro->identificaciones;
+        $tipos_empresa2 = $dataPro->tipos_empresa;
+        $prefijos2 = $dataPro->prefijos;
+        $vendedores2 = $dataPro->vendedores;
+
+
+        $grupos = Inventario::where('tipo_producto', 3)->where('status', 1)->where('empresa', $empresaActual)->with('grupoItems')->get();
+
+        // $etiquetas = EtiquetaEstado::where('empresa', auth()->user()->empresa)
+        //     ->where('estatus', 1)
+        //     ->where('tipo', 4)
+        //     ->with('color')
+        //     ->get();
+
+        //obtiene las formas de pago relacionadas con este modulo (Facturas)
+        $relaciones = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
+
+
+        $etiquetas = [];
+        $colores = [];
+        // $colores =  CrmColor::all();
+
+
+        view()->share(['icon' => '', 'title' => 'Nuevo Documento Soporte', 'subseccion' => 'facturas_proveedores']);
+
+        $docsoporte = true;
+
+        return view('facturasp.create', compact(
+            'inventario',
+            'bodegas',
+            'clientes',
+            'impuestos',
+            'categorias',
+            'retenciones',
+            'terminos',
+            'proveedor',
+            'producto',
+            'identificaciones',
+            'tipos_empresa',
+            'prefijos',
+            'vendedores',
+            'listas',
+            'categorias2',
+            'unidades2',
+            'medidas2',
+            'impuestos2',
+            'extras2',
+            'listas2',
+            'bodegas2',
+            'identificaciones2',
+            'tipos_empresa2',
+            'prefijos2',
+            'vendedores2',
+            'codigoFactura',
+            'terminos',
+            'extras',
+            'grupos',
+            'etiquetas',
+            'colores',
+            'estadoModulo',
+            'docsoporte',
+            'relaciones'
+        ));
     }
 }
