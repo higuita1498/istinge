@@ -615,6 +615,12 @@
 			$confirmswal = "Si, Habilitar";
 		}
 
+		if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+            }else{
+            var url = '/empresa';
+            }
+
 		Swal.fire({
 			title: $titleswal,
 			text: $textswal,
@@ -628,7 +634,7 @@
 			if (result.value) {
 
 				$.ajax({
-					url: '/empresa/configuracion/configuracion_actdesc_equivalentes',
+					url: url+'/configuracion/configuracion_actdesc_equivalentes',
 					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 					method: 'post',
 					data: { status: $("#docEquivalente").val() },
