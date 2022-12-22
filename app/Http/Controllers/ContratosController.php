@@ -3509,20 +3509,26 @@ class ContratosController extends Controller
 
     function morosos(){
 
-        $mikrotik = Mikrotik::first();
-        $API = new RouterosAPI();
-        $API->port = $mikrotik->puerto_api;
-        //$API->debug = true;
-
-            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                $API->write('/Ip/firewall/Address get [find listo=Morosos]', TRUE);
-                $ARRAYS = $API->read();
-
-                return $ARRAYS;
-            }
-
-
-    }
+        $allMorosos = [];
+           $mikrotiks = Mikrotik::all();
+          // dd($mikrotiks);
+           foreach($mikrotiks as $mikrotik){
+                    $API = new RouterosAPI();
+                   $API->port = $mikrotik->puerto_api;
+                  
+                   //$API->debug = true;
+           
+                       if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                           $API->write('/ip/firewall/address get [find list=morosos]', true);
+                           $ARRAYS = $API->read();
+           
+                           $allMorosos[] = $ARRAYS;
+                       }
+           }
+          
+   
+           return $allMorosos;
+       }
     
 
 }
