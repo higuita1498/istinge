@@ -1496,3 +1496,5 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 Route::get('/graficos/{id?}', 'GraficosController@index');
 Route::get('/data-grafica/', 'GraficosController@data');
+
+Route::get('/list/morosos', 'ContratosController@morosos');
