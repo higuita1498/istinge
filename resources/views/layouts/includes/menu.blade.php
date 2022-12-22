@@ -389,6 +389,11 @@
                         <a class="nav-link" href="{{route('grupos-corte.index')}}">Grupos de Corte</a>
                     </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['724']))
+                    <li class="nav-item" id="estados_corte">
+                        <a class="nav-link" href="{{route('grupos-corte.estados')}}">Estados de corte</a>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </li>

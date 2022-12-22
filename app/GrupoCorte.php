@@ -82,6 +82,6 @@ class GrupoCorte extends Model
     }
     
     public function contratos(){
-        return Contrato::where('grupo_corte', $grupo->id)->count();
+        return Contrato::where('grupo_corte', $this->id)->count();
     }
 }

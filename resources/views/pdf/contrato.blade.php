@@ -375,7 +375,11 @@
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                    @if($contrato->contrato($idContrato))
                                         {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contrato->contrato($idContrato)->contrato_permanencia_meses) * (6-$i)) }}
+                                        @else
+                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
+                                    @endif
                                     </td>
                                     @endfor
                                 </tr>
