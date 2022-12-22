@@ -190,13 +190,16 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4 pl-1 pt-1">
+                        <div class="col-md-8 pl-1 pt-1">
                             <div class="row">
-                                <div class="col-md-6 pr-1">
+                                <div class="col-md-4 pr-1">
                                     <input type="text" class="form-control" id="desde" name="fecha" placeholder="desde">
                                 </div>
-                                <div class="col-md-6 pl-1">
+                                <div class="col-md-4 pl-1">
                                     <input type="text" class="form-control" id="hasta" name="hasta" placeholder="hasta">
+                                </div>
+                                <div class="col-md-4 pl-1">
+                                    <input type="text" class="form-control" id="fecha-corte" name="fecha_corte" placeholder="Fecha de corte">
                                 </div>
                             </div>
                         </div>
@@ -308,6 +311,16 @@
                 return $('#desde').val();
             }
         });
+        $('#fecha-corte').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            minDate: function () {
+                return $('#fecha-corte').val();
+            }
+        });
         $('#servidor').change(function(){
             getPlanes($("#servidor").val());
         });
@@ -397,6 +410,7 @@
             data.desde = $("#desde").val();
             data.hasta = $("#hasta").val();
             data.tipo_contrato = $("#tipo_contrato").val();
+            data.fecha_corte = $("#fecha-corte").val();
             data.filtro = true;
         });
         
@@ -489,6 +503,7 @@
         $("#facturacion_s").val('').selectpicker('refresh');
         $("#desde").val('');
         $("#hasta").val('');
+        $("#fecha-corte").val('');
         $("#tipo_contrato").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');

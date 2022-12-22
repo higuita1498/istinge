@@ -243,6 +243,21 @@ class ContratosController extends Controller
                     $query->whereDate('contracts.created_at', '<=', Carbon::parse($request->hasta)->format('Y-m-d'));
                 });
             }
+            if($request->fecha_corte){
+                    $idContratos = Contrato::select('contracts.*')
+                                    ->join('contactos', 'contactos.id', '=', 'contracts.client_id')
+                                    ->join('factura as f','f.cliente','=','contactos.id')
+                                    ->whereDate('f.vencimiento', Carbon::parse($request->fecha_corte)->format('Y-m-d'))
+                                    ->groupBy('contracts.id')
+                                    ->get()
+                                    ->keyBy('id')
+                                    ->keys()
+                                    ->all();
+
+                    $contratos->where(function ($query) use ($idContratos) {
+                        $query->whereIn('contracts.id', $idContratos);
+                    });
+            }
             if($request->tipo_contrato){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.tipo_contrato', $request->tipo_contrato);
