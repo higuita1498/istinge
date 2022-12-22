@@ -438,7 +438,7 @@ class GruposCorteController extends Controller
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
-                select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+                select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.codigo', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
                 where('f.vencimiento', $fecha)->
@@ -457,7 +457,7 @@ class GruposCorteController extends Controller
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
             join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
-            select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+            select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'f.codigo', 'cs.state', 'f.contrato_id')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.vencimiento', $fecha)->
@@ -468,13 +468,14 @@ class GruposCorteController extends Controller
             if($grupo){
                 $contactos->where('gp.id', $grupo);
             }
+            
 
             $contactos = $contactos->get()->all(); 
+           // dd($contactos);
             $swGrupo = 0; // personalizado
         }
 
         if($contactos){
-            $empresa = Empresa::find(1);
             foreach ($contactos as $key => $contacto) {
                 $contrato = Contrato::find($contacto->contrato_id);
                 $promesaExtendida = DB::table('promesa_pago')->where('factura', $contacto->factura)->where('vencimiento', '>=', $fecha)->count();
@@ -484,13 +485,15 @@ class GruposCorteController extends Controller
                 }
             }
         }
-
+    
         $contactos = collect($contactos);
+        $totalFacturas = $contactos->count();
         $contactos = $contactos->groupBy('idGrupo');
-        $gruposFaltantes = GrupoCorte::whereIn('id', $contactos->keys());
+        $gruposFaltantes = GrupoCorte::whereIn('id', $contactos->keys())->get();
 
 
-        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha'));
+
+        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha', 'totalFacturas'));
     }
 
 
