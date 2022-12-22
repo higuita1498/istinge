@@ -8,9 +8,11 @@
 
 <div class="row">
     <div class="col-12 w-100">
-           <h4 style="text-align:center"> <a href="{{ route('CortarFacturas', ['fechaCorte' => $fecha]) }}">Existen {{ $totalFacturas }} facturas abiertas con fecha de vencimiento: {{ $fecha }} (enviar max: 25)</a> </h4>
+           <h4 style="text-align:center"> <a href="{{ route('CortarFacturas', ['fechaCorte' => $fecha]) }}">Existen {{ $totalFacturas }} facturas abiertas con fecha de vencimiento: {{ $fecha }} (clic para enviar max: 25)</a> </h4>
     </div>
+    <br>
 </div>
+<br>
 <div id="accordion">
     @forelse($gruposFaltantes as $gp)
         <div class="card">
