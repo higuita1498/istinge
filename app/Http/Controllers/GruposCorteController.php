@@ -18,6 +18,7 @@ use App\Contrato;
 use App\GrupoCorte;
 use App\Campos;
 use App\Model\Ingresos\Factura;
+use App\Contacto;
 
 class GruposCorteController extends Controller
 {
@@ -402,4 +403,95 @@ class GruposCorteController extends Controller
             ->rawColumns(['acciones', 'nombre', 'id', 'status'])
             ->toJson();
     }
+
+    public function estadosGruposCorte($grupo = null, $fecha = null){
+
+        $this->getAllPermissions(Auth::user()->id);
+        
+        view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'estados_corte', 'title' => 'Estados de corte', 'icon' => 'fas fa-project-diagram']);
+
+        if($grupo == 'all'){
+            $grupo = null;
+        }
+
+        if(!$fecha){
+            $fecha = date('Y-m-d');
+        }
+
+        if($grupo != null){
+            $grupoSeleccionado = GrupoCorte::find($grupo);
+            $fecha =  date('Y-m').'-'.$grupoSeleccionado->fecha_suspension;
+        }
+
+        $swGrupo = 1; //masivo
+        // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
+        $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->where('fecha_suspension','!=',0)->get();
+        $perdonados = 0;
+
+
+        if($grupos_corte->count() > 0){
+            $grupos_corte_array = array();    
+            foreach($grupos_corte as $grupo){
+                array_push($grupos_corte_array,$grupo->id);
+            }
+            
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+                join('contracts as cs','cs.client_id','=','contactos.id')->
+                join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
+                select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+                where('f.estatus',1)->
+                whereIn('f.tipo', [1,2])->
+                where('f.vencimiento', $fecha)->
+                where('contactos.status',1)->
+                where('cs.state','enabled')->
+                whereIn('cs.grupo_corte',$grupos_corte_array)->
+                where('cs.fecha_suspension', null);
+               
+                if($grupo){
+                    $contactos->where('gp.id', $grupo);
+                }
+
+                $contactos = $contactos->get()->all(); 
+                $swGrupo = 1; //masivo
+        }else{
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.client_id','=','contactos.id')->
+            join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
+            select('gp.nombre as grupo', 'gp.id as idGrupo', 'contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+            where('f.estatus',1)->
+            whereIn('f.tipo', [1,2])->
+            where('f.vencimiento', $fecha)->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.fecha_suspension','!=', null);
+            
+            if($grupo){
+                $contactos->where('gp.id', $grupo);
+            }
+
+            $contactos = $contactos->get()->all(); 
+            $swGrupo = 0; // personalizado
+        }
+
+        if($contactos){
+            $empresa = Empresa::find(1);
+            foreach ($contactos as $key => $contacto) {
+                $contrato = Contrato::find($contacto->contrato_id);
+                $promesaExtendida = DB::table('promesa_pago')->where('factura', $contacto->factura)->where('vencimiento', '>=', $fecha)->count();
+                if($promesaExtendida > 0){
+                    unset($contactos[$key]);
+                    $perdonados++;
+                }
+            }
+        }
+
+        $contactos = collect($contactos);
+        $contactos = $contactos->groupBy('idGrupo');
+        $gruposFaltantes = GrupoCorte::whereIn('id', $contactos->keys());
+
+
+        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha'));
+    }
+
+
 }

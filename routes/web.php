@@ -1406,6 +1406,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/{grupo}/{state}/state_lote', 'GruposCorteController@state_lote')->name('grupos-corte.state_lote');
             Route::get('/{grupo}/destroy_lote', 'GruposCorteController@destroy_lote')->name('grupos-corte.destroy_lote');
             Route::get('/opcionmasiva', 'GruposCorteController@opcion_masiva')->name('grupos-corte.opcionmasiva');
+			Route::get('/estados-del-corte/{idGrupo?}/{fecha?}', 'GruposCorteController@estadosGruposCorte')->name('grupos-corte.estados');
 	    });
 	    
 	    Route::resource('grupos-corte', 'GruposCorteController');
