@@ -3519,7 +3519,7 @@ class ContratosController extends Controller
                    //$API->debug = true;
            
                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                           $API->write('/ip/firewall/address get [find list=morosos]', true);
+                           $API->write('ip/firewall/address get [find list=morosos]', true);
                            $ARRAYS = $API->read();
            
                            $allMorosos[] = $ARRAYS;
