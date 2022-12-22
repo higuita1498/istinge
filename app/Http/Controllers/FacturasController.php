@@ -2465,21 +2465,23 @@ class FacturasController extends Controller{
     public function validate_dian(Request $request)
     {
         $factura = Factura::find($request->id);
-        $responsabilidades = Auth::user()->contador_responsabilidades();
         $numeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('tipo',2)->where('id', $factura->numeracion)->first();
-        $empresa  = Auth::user()->empresaObj;
+        $empresa  = Empresa::select('id', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'dv', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'dv')
+        ->with('responsabilidades')
+        ->where('id', auth()->user()->empresa)
+        ->first();        
         $cliente  = $factura->cliente();
         
         //Inicializamos la variable para ver si tiene las nuevas responsabilidades que no da la dian 042
         $resp = 0;
-        if($responsabilidades > 0){
-            foreach (Empresa::find(auth()->user()->empresa)->responsabilidades() as $respo) {
-                if (
-                    $respo->id_responsabilidad == 5 || $respo->id_responsabilidad == 7 || $respo->id_responsabilidad == 12
-                    || $respo->id_responsabilidad == 20 || $respo->id_responsabilidad == 29
-                    ) {
-                        $resp = 1;
-                    }
+        $responsabilidades = $empresa->responsabilidades->count();
+    
+        foreach ($empresa->responsabilidades as $responsabilidad) {
+
+            $listaResponsabilidadesDian = [5, 7, 12, 20, 29];
+
+            if (in_array($responsabilidad->pivot->id_responsabilidad, $listaResponsabilidadesDian)) {
+                $resp = 1;
             }
         }
 
@@ -2489,9 +2491,7 @@ class FacturasController extends Controller{
             $cliente->save();
         }
 
-
         //-- Validación de si la ultima factura creada fue emitida o si es la primer factura a emitir que la deje --//
-
         if ($numeracion->prefijo != null || $numeracion->prefijo != "") {
             $numero = intval(preg_replace('/[^0-9]+/', '', $factura->codigo), 10);
             $codigo    = substr($factura->codigo, strlen($numeracion->prefijo), strlen($numero));
