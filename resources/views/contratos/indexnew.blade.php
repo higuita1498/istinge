@@ -199,7 +199,7 @@
                                     <input type="text" class="form-control" id="hasta" name="hasta" placeholder="hasta">
                                 </div>
                                 <div class="col-md-4 pl-1">
-                                    <input type="text" class="form-control" id="fecha-corte" name="fecha_corte" placeholder="Fecha de corte">
+                                    <input type="text" class="form-control" id="fecha-corte" name="fecha_corte" placeholder="Fecha de corte Facturas">
                                 </div>
                             </div>
                         </div>
