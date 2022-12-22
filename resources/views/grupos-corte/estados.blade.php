@@ -36,7 +36,7 @@
         @empty
 
         <div class="alert alert-info center" role="alert">
-                No hay facturas pendientes con fecha de vencimiento {{ $fecha }}
+                No hay facturas pendientes con fecha de vencimiento: {{ $fecha }}
         </div>
 
     @endforelse
