@@ -1145,7 +1145,8 @@ class IngresosController extends Controller
                 $items = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->get();
             }
             $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
-            $pdf = PDF::loadView('pdf.ingreso', compact('ingreso', 'items', 'retenciones', 'itemscount'));
+            $empresa = Empresa::find($ingreso->empresa);
+            $pdf = PDF::loadView('pdf.ingreso', compact('ingreso', 'items', 'retenciones', 'itemscount','empresa'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
     }

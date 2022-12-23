@@ -302,6 +302,10 @@ class Ingreso extends Model
     public function totalAnticipo(){
         dd("Hola");
     }
-    
+
+    public function retenciones()
+    {
+        return $this->hasMany('App\Model\Ingresos\IngresosRetenciones', 'ingreso');
+    }
 
 }
