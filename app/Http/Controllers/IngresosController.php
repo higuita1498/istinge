@@ -554,12 +554,15 @@ class IngresosController extends Controller
                     $contrato = Contrato::where('id',$factura->contrato_id)->first();
                     if($contrato){
                         $contrato->state = "enabled";
+                        $contrato->save();
                     }
                     if(!$contrato){
                         $contrato = Contrato::where('client_id', $cliente->id)->first();
-                        $contrato->state = "enabled";
+                        if($contrato){
+                            $contrato->state = "enabled";
+                            $contrato->save();
+                        }
                     }
-                    $contrato->save();
 
                     /* * * API MK * * */
 
