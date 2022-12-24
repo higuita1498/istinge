@@ -323,6 +323,7 @@ class RadicadosController extends Controller{
 
                 if($nombreServicio != 'notificacion de data creditos' && 
                    $nombreServicio != 'notificacion de datacreditos' && 
+                   $nombreServicio != 'notificacion datacredito' && 
                    $nombreServicio != 'notificacion de datacredito'
                    ){
                         $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
@@ -454,6 +455,7 @@ class RadicadosController extends Controller{
     
                     if($nombreServicio != 'notificacion de data creditos' && 
                        $nombreServicio != 'notificacion de datacreditos' && 
+                       $nombreServicio != 'notificacion datacredito' && 
                        $nombreServicio != 'notificacion de datacredito'
                        ){
                             $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
