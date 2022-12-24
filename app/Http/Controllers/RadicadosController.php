@@ -313,10 +313,28 @@ class RadicadosController extends Controller{
             'prioridad' => 'required'
         ]);
 
-        if(!$request->contrato && $request->servicio != 4){
-            $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones';
-            return back()->withInput()->with('danger', $mensaje);
+        $servicio = Servicio::find($request->servicio);
+        
+        if($servicio){
+
+            if(!$request->contrato && $request->servicio != 4){
+
+                $nombreServicio = trim(strtolower($servicio->nombre));
+
+                if($nombreServicio != 'notificacion de data creditos' && 
+                   $nombreServicio != 'notificacion de datacreditos' && 
+                   $nombreServicio != 'notificacion de datacredito'
+                   ){
+                        $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
+                        return back()->withInput()->with('danger', $mensaje);
+                    }
+
+            }
+
+        }else{
+            return back()->withInput()->with('danger', 'No se encontro el tipo de servicio');
         }
+
 
         $codigoRand = '';
         $repeticiones = 1;
@@ -425,10 +443,31 @@ class RadicadosController extends Controller{
                 'estatus' => 'required',
                 'desconocido' => 'required'
             ]);
-            if(!$request->contrato && $request->servicio != 4){
-                $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones';
-                return back()->withInput()->with('danger', $mensaje);
+            
+            $servicio = Servicio::find($request->servicio);
+
+            if($servicio){
+
+                if(!$request->contrato && $request->servicio != 4){
+    
+                    $nombreServicio = trim(strtolower($servicio->nombre));
+    
+                    if($nombreServicio != 'notificacion de data creditos' && 
+                       $nombreServicio != 'notificacion de datacreditos' && 
+                       $nombreServicio != 'notificacion de datacredito'
+                       ){
+                            $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
+                            return back()->withInput()->with('danger', $mensaje);
+                        }
+    
+                }
+    
+            }else{
+                return back()->withInput()->with('danger', 'No se encontro el tipo de servicio');
             }
+
+
+
 
             $radicado->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
             $radicado->telefono = $request->telefono;
