@@ -500,8 +500,14 @@ class GruposCorteController extends Controller
                                      where('vencimiento', $fecha)->
                                      where('estatus', 1)->
                                      whereIn('tipo', [1,2])->
-                                     where('cs.state','disabled')->
-                                     groupBy('factura.id')->
+                                     where('cs.state','disabled');
+
+        if($grupo){
+            $facturasCortadas = $facturasCortadas->where('gp.id', $grupo);
+        }
+
+
+        $facturasCortadas = $facturasCortadas->groupBy('factura.id')->
                                      orderby('id', 'desc')->
                                      get();
 

@@ -68,10 +68,10 @@
                 <td><a href="{{ route('facturas.show', $facturaC->id) }}" target="_blank">{{ $facturaC->codigo ?? $facturaC->nro }}</a></td>
                 <td><a href="{{ route('contactos.show', $facturaC->cliente) }}" target="_blank"> {{ $facturaC->nombreCliente }} </a></td>
                 <td><a href="{{ route('grupos-corte.show', $facturaC->idGrupo) }}" target="_blank"> {{ $facturaC->nombreGrupo }} </a></td>
-                <td>{{ date('d-m-Y', strtotime($facturaC->fecha))  }}</td>
-                <td>{{ date('d-m-Y', strtotime($facturaC->pago_oportuno)) }}</td>
-                <td>{{ date('d-m-Y', strtotime($facturaC->vencimiento)) }}</td>
-                <td>{{ date('d-m-Y', strtotime($facturaC->suspension)) }}</td>
+                <td>@if($facturaC->fecha) {{ date('d-m-Y', strtotime($facturaC->fecha))  }} @endif</td>
+                <td>@if($facturaC->pago_oportuno) {{ date('d-m-Y', strtotime($facturaC->pago_oportuno)) }} @endif</td>
+                <td>@if($facturaC->vencimiento) {{ date('d-m-Y', strtotime($facturaC->vencimiento)) }} @endif</td>
+                <td>@if($facturaC->suspension) {{ date('d-m-Y', strtotime($facturaC->suspension)) }} @endif</td>
                 <td>{{ $facturaC->hora_suspension }}</td>
             </tr>
             @endforeach
