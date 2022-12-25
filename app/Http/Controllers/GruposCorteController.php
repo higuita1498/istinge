@@ -491,9 +491,25 @@ class GruposCorteController extends Controller
         $contactos = $contactos->groupBy('idGrupo');
         $gruposFaltantes = GrupoCorte::whereIn('id', $contactos->keys())->get();
 
+        $grupos_corte = GrupoCorte::get();
 
+        $facturasCortadas = Factura::select('factura.*', 'contactos.nombre as nombreCliente', 'gp.nombre as nombreGrupo', 'gp.hora_suspension', 'gp.id as idGrupo')->
+                                     join('contactos', 'contactos.id', '=', 'factura.cliente')->
+                                     join('contracts as cs','cs.client_id','=','contactos.id')->
+                                     join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
+                                     where('vencimiento', $fecha)->
+                                     where('estatus', 1)->
+                                     whereIn('tipo', [1,2])->
+                                     where('cs.state','disabled')->
+                                     groupBy('factura.id')->
+                                     orderby('id', 'desc')->
+                                     get();
 
-        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha', 'totalFacturas'));
+        
+
+        $request = request();
+                                     
+        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request'));
     }
 
 
