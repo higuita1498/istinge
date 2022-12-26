@@ -30,7 +30,7 @@
             <div class="row" style="margin: -2% 0 0 2%;">
                 <div class="col-md-12">
                         @if(Auth::user()->empresa()->form_fe == 1 && $factura->emitida == 0 && Auth::user()->empresa()->estado_dian == 1 && Auth::user()->empresa()->technicalkey != null && $factura->tipo == 2)
-                            <a  href="#"  class="btn btn-outline-primary btn-sm"title="Emitir Factura" onclick="validateDian({{ $factura->id }}, '{{route('xml.factura',$factura->id)}}', '{{$factura->codigo}}')" ><i class="fas fa-sitemap"></i>Emitir</a>
+                            <a  href="#"  class="btn btn-outline-primary btn-sm"title="Emitir Factura" onclick="validateDian({{ $factura->id }}, '{{route('xml.factura',$factura->id)}}', '{{ ($factura->codigo ? $factura->codigo : null) }}')" ><i class="fas fa-sitemap"></i>Emitir</a>
                         @endif
                         <a href="{{route('facturas.imprimir',['id' => $factura->id, 'name'=> 'Factura No. '.$factura->codigo.'.pdf'])}}" class="btn btn-outline-primary btn-sm "title="Imprimir" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
                         @if(Auth::user()->empresa()->tirilla == 1 && $factura->estatus==0 && $factura->total()->total == $factura->pagado())
