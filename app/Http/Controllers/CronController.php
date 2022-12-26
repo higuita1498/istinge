@@ -106,7 +106,7 @@ class CronController extends Controller
                 }
 
                 if(Carbon::now()->format('d')*1 > $grupo_corte->fecha_suspension){
-                    $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->addMonth()->format('m'), $grupo_corte->fecha_suspension,0);
+                    $date = Carbon::create(Carbon::now()->addMonth()->format('Y'), Carbon::now()->addMonth()->format('m'), $grupo_corte->fecha_suspension,0);
                 }else{
                     $date = Carbon::create(Carbon::now()->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
                 }
