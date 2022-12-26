@@ -3675,7 +3675,7 @@ function validateDian(id, rutasuccess, codigo, emails = false, facturasp = 0) {
 
                     //-- /Validaciones para la factura --//
                     else {
-                        if ($emails) {
+                        if (emails) {
                             window.location.href = rutasuccess + '/' + emails;
                         } else {
                             window.location.href = rutasuccess;
