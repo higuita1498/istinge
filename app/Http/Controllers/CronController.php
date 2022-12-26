@@ -123,10 +123,10 @@ class CronController extends Controller
                     // return $fac;
                     
                     //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
-                    if(isset($fac->estatus) && $fac->estatus == 0 || !$fac){
+                    if(isset($fac->estatus) || !$fac){
                         
                         //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
-                        if(isset($fac->estatus) && $fac->vencimiento > $fecha || !$fac){
+                        if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac || $fecha != $fac->fecha){
                             $numero=round($numero)+1;
                         
                             //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
