@@ -472,6 +472,7 @@
                     <form method="POST" action="{{ route('crm.store') }}" style="padding: 0% 7%;" role="form" class="forms-sample" novalidate id="formulario">
                         @csrf
                         <input type="hidden" name="idCRM" id="idCRM">
+						<input type="hidden" name="modalGestion" id="modalGestion" value="1">
                         <div class="row">
                             <div class="form-group col-md-8 offset-md-2">
                                 <div class="stopwatch" data-autostart="false" style="border-radius: 20px;background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};text-align: center;padding: 5%;color: #fff;">
@@ -566,6 +567,14 @@
 									@endforeach
 								</div>
 							</div>
+
+							<div class="float-right mt-3 pl-3">
+									<label class="form-check-label">
+										<span style="font-size:12px; font-weight:bold">Generar y enviar correo</span>
+										<input type="checkbox" class="forma-check" name="send_mail" value="1" checked>
+										<i class="input-helper"></i>
+									</label>
+                			</div>
 
 							<script>
 								function cambiarEtiquetaD(etiqueta){

@@ -368,6 +368,12 @@ class CRMController extends Controller
             'llamada' => 'required',
             'tiempo' => 'required'
         ]);
+
+        $comunicar = true;
+
+        if(request()->modalGestion){
+            $comunicar = request()->send_mail;
+        }
         
         //$crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->where('id', $idCRM)->get()->last();
         $crm = CRM::find($request->idCRM);
@@ -467,10 +473,10 @@ class CRMController extends Controller
                 ### LOG CRM ###
                 $accion_log .= ': Asociando Promesa de Pago N° '.$nro_promesa.'<br>';
 
-                ### EVÍO DE SMS AL CLIENTE ###
+                ### EVÍO DE SMS AL CLIENTE ##
 
                 $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                if($servicio){
+                if($servicio && $comunicar){
                     $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
                     $factura = Factura::find($crm->factura);
 
