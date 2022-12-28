@@ -570,7 +570,7 @@
 
 							<div class="float-right mt-3 pl-3">
 									<label class="form-check-label">
-										<span style="font-size:12px; font-weight:bold">Generar y enviar correo</span>
+										<span style="font-size:12px; font-weight:bold">Generar y enviar notificación</span>
 										<input type="checkbox" class="forma-check" name="send_mail" value="1" checked>
 										<i class="input-helper"></i>
 									</label>
