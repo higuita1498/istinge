@@ -155,7 +155,7 @@
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidor" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
-                								<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
+                								<option value="{{ $servidor->id}}">{{ $servidor->name ?? $servidor->nombre }}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -241,7 +241,7 @@
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidorG" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
-                								<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
+                								<option value="{{ $servidor->id}}">{{ $servidor->name ?? $servidor->nombre}}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -336,7 +336,7 @@
                     				<div class="col-md-3 pl-1 pt-1">
                     					<select title="Servidor" class="form-control rounded selectpicker" id="servidorR" data-size="5" data-live-search="true">
                 							@foreach ($servidores as $servidor)
-                								<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
+                								<option value="{{ $servidor->id}}">{{ $servidor->name ?? $servidor->nombre}}</option>
                 							@endforeach
                 						</select>
                     				</div>
@@ -413,16 +413,16 @@
                     				</div>
 									@endif
                     				<div class="col-md-3 pl-1 pt-1">
-                    					<select title="Servidor" class="form-control rounded selectpicker" id="servidorT" data-size="5" data-live-search="true">
+                    					<select title="Servidor" class="form-control rounded selectpicker" id="servidorT" data-size="10" data-live-search="true">
                 							@foreach ($servidores as $servidor)
-                								<option value="{{ $servidor->id}}">{{ $servidor->name}}</option>
+                								<option value="{{ $servidor->id}}">{{ $servidor->name ?? $servidor->nombre }}</option>
                 							@endforeach
                 						</select>
                     				</div>
                     				<div class="col-md-2 pl-1 pt-1">
                     					<select title="Corte" class="form-control rounded selectpicker" id="grupo_corteT" data-size="5" data-live-search="true">
                 							@foreach ($grupos_corte as $grupo)
-                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre}}</option>
+                                                <option value="{{ $grupo->id}}">{{ $grupo->nombre }}</option>
                                             @endforeach
                 						</select>
                     				</div>
