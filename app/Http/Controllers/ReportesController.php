@@ -2562,7 +2562,7 @@ class ReportesController extends Controller
             $total=$this->precision((float)$subtotal+$result->impuesto);
         }
         $grupos_corte = GrupoCorte::where('status',1)->get();
-        return view('reportes.facturasElectronicas.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example','grupos_corte'));
+        return view('reportes.facturasEstandar.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example','grupos_corte'));
     }
 
     public function notasCredito(Request $request){
