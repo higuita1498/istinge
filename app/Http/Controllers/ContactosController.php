@@ -560,6 +560,7 @@ class ContactosController extends Controller
         $error = Contacto::where('nit', $request->nit)->where('tip_iden', $request->tip_iden)
         ->where('id', '<>', $id)
         ->where('empresa', $empresa)
+        ->where('status', 1)
         ->first();
 
     if ($error) {

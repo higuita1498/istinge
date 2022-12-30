@@ -78,7 +78,7 @@ class CRMController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratos = CRM::query()
-			->select('crm.*', 'factura.fecha as fecha_factura', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio')
+			->select('crm.*', 'factura.fecha as fecha_factura', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio', DB::raw('(select count(factura.id) from factura where factura.cliente = crm.cliente and factura.estatus = 1) AS facAbiertas'))
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->join('factura', 'crm.factura', '=', 'factura.id')
             ->join('items_factura', 'items_factura.factura', '=', 'factura.id')
@@ -175,7 +175,14 @@ class CRMController extends Controller
         
         return datatables()->eloquent($contratos)
             ->editColumn('nombre', function (CRM $crm) {
-                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre} {$crm->c_apellido1} {$crm->c_apellido2}</div></a>";
+
+                if($crm->facAbiertas > 0){
+                    $color = 'color:red';
+                }else{
+                    $color = 'color:green';
+                }
+
+                return "<a href=" . route('contactos.show', $crm->cliente) . " target='_blank'>{$crm->c_nombre} {$crm->c_apellido1} {$crm->c_apellido2} <span style='{$color}'>({$crm->facAbiertas})</span></div></a>";
             })
             ->editColumn('nit', function (CRM $crm) {
                 return "<center>".$crm->c_nit."</center>";
@@ -368,6 +375,12 @@ class CRMController extends Controller
             'llamada' => 'required',
             'tiempo' => 'required'
         ]);
+
+        $comunicar = true;
+
+        if(request()->modalGestion){
+            $comunicar = request()->send_mail;
+        }
         
         //$crm = CRM::where('cliente', $request->idcliente)->where('empresa', Auth::user()->empresa)->where('id', $idCRM)->get()->last();
         $crm = CRM::find($request->idCRM);
@@ -467,10 +480,10 @@ class CRMController extends Controller
                 ### LOG CRM ###
                 $accion_log .= ': Asociando Promesa de Pago N° '.$nro_promesa.'<br>';
 
-                ### EVÍO DE SMS AL CLIENTE ###
+                ### EVÍO DE SMS AL CLIENTE ##
 
                 $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                if($servicio){
+                if($servicio && $comunicar){
                     $mensaje = "Hola, usted ha realizado una promesa de pago para el ".$request->fecha.". Lo esperamos en ".auth()->user()->empresa()->nombre;
                     $factura = Factura::find($crm->factura);
 

@@ -3732,7 +3732,7 @@ class FacturasController extends Controller{
         exit;
     }
 
-    function xml($nro){
+    function xml($nro, $optional = null){
         $empresa = auth()->user()->empresaObj;
 
         $factura = Factura::where('empresa', $empresa->id)->where('id', $nro)->first();
