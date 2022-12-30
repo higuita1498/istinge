@@ -18,6 +18,7 @@
                     <li><a href="{{route('reportes.ventas')}}">Reporte de Facturas Pagadas</a></li>
                     <li><a href="{{route('reportes.facturasImpagas')}}">Reporte de Facturas Impagas</a></li>
                     <li><a href="{{route('reportes.facturasElectronicas')}}">Reporte de Facturas Electrónicas</a></li>
+                    <li><a href="{{route('reportes.facturasElectronicas')}}">Reporte de Facturas Estándar</a></li>
                     <li><a href="{{route('reportes.notasCredito')}}">Reporte de Notas de Crédito</a></li>
                     <li><a href="{{route('reportes.transacciones')}}" >Reporte de Transacciones</a></li>
                     <li><a href="{{route('reportes.cajas')}}" >Reporte de Cajas</a></li>

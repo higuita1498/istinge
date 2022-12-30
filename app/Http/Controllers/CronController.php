@@ -2119,7 +2119,7 @@ class CronController extends Controller
         }
     }
 
-    public function deleteFactura(){
+    public function deleteFactura(){ 
         
         //facturas creadas automaticamente cancelamos sus contratos o eliminamos
         // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-10-6")->get();
@@ -2165,54 +2165,72 @@ class CronController extends Controller
         // SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
         // $facturas = Factura::join('contracts as c','c.id','=','factura.contrato_id')
         // ->select('factura.*','c.grupo_corte','c.plan_id','c.servicio_tv','c.descuento')
-        // ->where('factura.fecha','2022-11-01')
-        // ->where('c.grupo_corte',1)->get();
+        // ->where('factura.fecha','2022-12-20')
+        // ->get();
         
         // $cont = 0;
         // foreach($facturas as $factura){
-        //     if($factura->total()->total == 0){
-        //         $cont=$cont+1;
-        //         if(!DB::table('items_factura')->where('factura',$factura->id)->first()){
-                    // if($factura->plan_id){
-                    //             $plan = PlanesVelocidad::find($factura->plan_id);
-                    //             $item = Inventario::find($plan->item);
+            
+            
+            //#SOPORTE FECHA DE VENCIMIENTO MAL INGRESADA CAMBIO MASIVO //
+            // if(Carbon::parse($factura->vencimiento)->format('Y') == "2022"){
+            // $cont=$cont+1;
+            //  $dia = Carbon::parse($factura->vencimiento)->format('d');
+            //  $mes = Carbon::parse($factura->vencimiento)->format('m');
+            //  $year = "2023";
+            //  $fechaCompleta = $year . "-" . $mes . "-" . $dia;
+            //  $factura->vencimiento = $fechaCompleta;
+            //  $factura->suspension = $fechaCompleta;
+            //  $factura->save();
+            // }
+            //#SOPORTE FECHA DE VENCIMIENTO MAL INGRESADA CAMBIO MASIVO //
+            
+            // if($factura->total()->total == 0){
+            //     $cont=$cont+1;
+            //     if(!DB::table('items_factura')->where('factura',$factura->id)->first()){
+            //         $factura->estatus = 1;
+            //         $factura->save();
+            //         if($factura->plan_id){
+            //                     $plan = PlanesVelocidad::find($factura->plan_id);
+            //                     $item = Inventario::find($plan->item);
 
-                    //             $item_reg = new ItemsFactura;
-                    //             $item_reg->factura     = $factura->id;
-                    //             $item_reg->producto    = $item->id;
-                    //             $item_reg->ref         = $item->ref;
-                    //             $item_reg->precio      = $item->precio;
-                    //             $item_reg->descripcion = $plan->name;
-                    //             $item_reg->id_impuesto = $item->id_impuesto;
-                    //             $item_reg->impuesto    = $item->impuesto;
-                    //             $item_reg->cant        = 1;
-                    //             $item_reg->desc        = $factura->descuento;
-                    //             $item_reg->save();
-                    //         }
+            //                     $item_reg = new ItemsFactura;
+            //                     $item_reg->factura     = $factura->id;
+            //                     $item_reg->producto    = $item->id;
+            //                     $item_reg->ref         = $item->ref;
+            //                     $item_reg->precio      = $item->precio;
+            //                     $item_reg->descripcion = $plan->name;
+            //                     $item_reg->id_impuesto = $item->id_impuesto;
+            //                     $item_reg->impuesto    = $item->impuesto;
+            //                     $item_reg->cant        = 1;
+            //                     $item_reg->desc        = $factura->descuento;
+            //                     $item_reg->save();
+            //                 }
 
-                    //         ## Se carga el item a la factura (Plan de Televisión) ##
+            //         //         ## Se carga el item a la factura (Plan de Televisión) ##
 
-                    //         if($factura->servicio_tv){
-                    //             $item = Inventario::find($factura->servicio_tv);
-                    //             $item_reg = new ItemsFactura;
-                    //             $item_reg->factura     = $factura->id;
-                    //             $item_reg->producto    = $item->id;
-                    //             $item_reg->ref         = $item->ref;
-                    //             $item_reg->precio      = $item->precio;
-                    //             $item_reg->descripcion = $item->producto;
-                    //             $item_reg->id_impuesto = $item->id_impuesto;
-                    //             $item_reg->impuesto    = $item->impuesto;
-                    //             $item_reg->cant        = 1;
-                    //             $item_reg->desc        = $factura->descuento;
-                    //             $item_reg->save();
-                    //         }
-        //         }
-        //     }
+            //                 if($factura->servicio_tv){
+            //                     $item = Inventario::find($factura->servicio_tv);
+            //                     $item_reg = new ItemsFactura;
+            //                     $item_reg->factura     = $factura->id;
+            //                     $item_reg->producto    = $item->id;
+            //                     $item_reg->ref         = $item->ref;
+            //                     $item_reg->precio      = $item->precio;
+            //                     $item_reg->descripcion = $item->producto;
+            //                     $item_reg->id_impuesto = $item->id_impuesto;
+            //                     $item_reg->impuesto    = $item->impuesto;
+            //                     $item_reg->cant        = 1;
+            //                     $item_reg->desc        = $factura->descuento;
+            //                     $item_reg->save();
+            //                 }
+            //     }
+            // }
         // }
-        // return "ok productos actualizados";
+        // return "ok productos actualizados" . $cont;
         //END SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
 
     }
+
 
     public function aplicateProrrateo(){
 

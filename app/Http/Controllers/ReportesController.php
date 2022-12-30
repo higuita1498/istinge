@@ -6,6 +6,7 @@ use App\User;
 use App\Categoria;
 use App\Banco;
 use App\Contacto;
+use App\GrupoCorte;
 use App\Model\Gastos\FacturaProveedores;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosCategoria;
@@ -2453,22 +2454,72 @@ class ReportesController extends Controller
 
         $dates = $this->setDateRequest($request);
 
-        // if($request->incluir == 1){
-        //     $mesInicio = Carbon::parse(strtotime($dates['inicio']))->format('m');
-        //     $yearInicio = Carbon::parse(strtotime($dates['inicio']))->format('Y');
-        //     $diaInicio = Carbon::parse(strtotime($dates['inicio']))->format('d');
-            
-        //     if($mesInicio == 1){
-        //         $yearInicio = $yearInicio-1;
-        //         $mesInicio = 12;
-        //     }else{
-        //         $mesInicio=$mesInicio-1;
-        //     }
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
+        }
+        $ides=array();
+        $facturas=$facturas->OrderBy($orderby, $order)->get();
 
-        //     $diaMesAnterior = $yearInicio."-".$mesInicio."-01";
-        //     $diaMesAnterior = Carbon::parse(strtotime($diaMesAnterior))->endOfMonth()->format('d');
-        //     $dates['inicio'] = $yearInicio."-".$mesInicio."-".$diaMesAnterior;
-        // }
+        foreach ($facturas as $factura) {
+            $ides[]=$factura->id;
+        }
+
+        foreach ($facturas as $invoice) {
+            $invoice->subtotal = $invoice->total()->subsub;
+            $invoice->iva = $invoice->impuestos_totales();
+            $invoice->retenido = $factura->retenido(true);
+            $invoice->total = $invoice->total()->total - $invoice->devoluciones();
+        }
+        if($request->orderby == 4 || $request->orderby == 5  || $request->orderby == 6 || $request->orderby == 7 ){
+            switch ($request->orderby){
+                case 4:
+                    $facturas = $request->order  ? $facturas->sortBy('subtotal') : $facturas = $facturas->sortByDesc('subtotal');
+                    break;
+                case 5:
+                    $facturas = $request->order ? $facturas->sortBy('iva') : $facturas = $facturas->sortByDesc('iva');
+                    break;
+                case 6:
+                    $facturas = $request->order ? $facturas->sortBy('retenido') : $facturas = $facturas->sortByDesc('retenido');
+                    break;
+                case 7:
+                    $facturas = $request->order ? $facturas->sortBy('total') : $facturas = $facturas->sortByDesc('total');
+                    break;
+            }
+        }
+        $facturas = $this->paginate($facturas, 15, $request->page, $request);
+
+        $subtotal=$total=0;
+        if ($ides) {
+            $result=DB::table('items_factura')->whereIn('factura', $ides)->select(DB::raw("SUM((`cant`*`precio`)) as 'total', SUM((precio*(`desc`/100)*`cant`)+0)  as 'descuento', SUM((precio-(precio*(if(`desc`,`desc`,0)/100)))*(`impuesto`/100)*cant) as 'impuesto'  "))->first();
+            $subtotal=$this->precision($result->total-$result->descuento);
+            $total=$this->precision((float)$subtotal+$result->impuesto);
+        }
+        return view('reportes.facturasEstandar.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example'));
+    }
+
+    public function facturasEstandar(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        DB::enableQueryLog();
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Facturas Estándar', 'icon' =>'fas fa-chart-line']);
+
+        $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
+        if (!$request->orderby) {
+            $request->orderby=1; $request->order=1;
+        }
+        $orderby=$campos[$request->orderby];
+        $order=$request->order==1?'DESC':'ASC';
+
+        $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+            ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
+                'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'factura.emitida'
+                )
+            ->where('factura.tipo',1)
+            ->where('factura.empresa',Auth::user()->empresa)
+            ->groupBy('factura.id');
+            
+        $example = $facturas->get()->last();
+
+        $dates = $this->setDateRequest($request);
 
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
@@ -2510,7 +2561,8 @@ class ReportesController extends Controller
             $subtotal=$this->precision($result->total-$result->descuento);
             $total=$this->precision((float)$subtotal+$result->impuesto);
         }
-        return view('reportes.facturasElectronicas.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example'));
+        $grupos_corte = GrupoCorte::where('status',1)->get();
+        return view('reportes.facturasElectronicas.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example','grupos_corte'));
     }
 
     public function notasCredito(Request $request){
