@@ -113,7 +113,7 @@
 				@endforeach
 			</tbody>
 			<tfoot class="thead-dark">
-				<td colspan="10"></td>
+				<td colspan="9"></td>
 				<th  class="text-right">Total</th>
 				<th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($total)}}</th>
 			</tfoot>
