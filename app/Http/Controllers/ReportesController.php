@@ -2494,7 +2494,7 @@ class ReportesController extends Controller
             $subtotal=$this->precision($result->total-$result->descuento);
             $total=$this->precision((float)$subtotal+$result->impuesto);
         }
-        return view('reportes.facturasEstandar.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example'));
+        return view('reportes.facturasElectronicas.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example'));
     }
 
     public function facturasEstandar(Request $request){
