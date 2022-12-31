@@ -131,7 +131,7 @@ class WifiController extends Controller
                 
                 $correo = new WifiMailable($datos);
                 $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
-                if($host){
+                if($host && $solicitud->cliente()->email){
                     $existing = config('mail');
                     $new =array_merge(
                         $existing, [
