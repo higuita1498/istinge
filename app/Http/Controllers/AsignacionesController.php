@@ -1189,12 +1189,14 @@ class AsignacionesController extends Controller
     public function imprimir($id){
         $contrato = Contacto::where('id',$id)->where('empresa', Auth::user()->empresa)->first();
         $idContrato = request()->idContrato;
-        
+        if($contrato) {
             view()->share(['title' => 'Contrato de Internet']);
             //return view('pdf.contrato', compact('contrato', 'idContrato'));
             $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
-        
+        }else{
+            return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
+        }
     }
 
     public function show_campos_asignacion(){
