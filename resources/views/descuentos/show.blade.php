@@ -53,6 +53,10 @@
                             <td>{{ $descuento->updated_by() }} / {{ date('d-m-Y g:i:s A', strtotime($descuento->updated_at)) }}</td>
                         </tr>
                         @endif
+                        <tr style="white-space: normal;">
+                            <th>Comentario</th>
+                            <td style="white-space: normal;">{{ $descuento->comentario }}</td>
+                        </tr>
                         </tbody>
                 </table>
             </div>

@@ -172,6 +172,7 @@ class DescuentosController extends Controller
         
         if($descuento){
             if($descuento->estado == 2){
+                $descuento->comentario = $request->comentario;
                 $descuento->estado = 1;
                 $descuento->updated_by = Auth::user()->id;
 

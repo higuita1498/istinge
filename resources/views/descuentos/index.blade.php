@@ -212,6 +212,8 @@
 				title: '¿Está seguro que desea aprobar el descuento a la factura?',
 				text: 'Esta acción no se puede revertir',
 				type: 'question',
+				input: 'textarea',
+				inputValue: 'comentario',
 				showCancelButton: true,
 				confirmButtonColor: '#00ce68',
 				cancelButtonColor: '#d33',
@@ -219,6 +221,9 @@
 				cancelButtonText: 'Cancelar',
 			}).then((result) => {
 				if (result.value) {
+					if(result.value == 'comentario'){
+						result.value = null;
+					}
 					cargando(true);
 					$.ajax({
 						url: `{{ route('descuentos.aprobar') }}`,
@@ -228,6 +233,7 @@
 						},
 						data: {
 							id: id,
+							comentario: result.value,
 						},
 						success: function(data) {
 							cargando(false);
