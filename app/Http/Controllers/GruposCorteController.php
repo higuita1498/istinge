@@ -421,6 +421,7 @@ class GruposCorteController extends Controller
         if($grupo != null){
             $grupoSeleccionado = GrupoCorte::find($grupo);
             $fecha =  date('Y-m').'-'.$grupoSeleccionado->fecha_suspension;
+            $fecha = Carbon::create($fecha)->format('Y-m-d');
         }
 
         $swGrupo = 1; //masivo
@@ -429,7 +430,7 @@ class GruposCorteController extends Controller
         $perdonados = 0;
 
 
-        if($grupos_corte->count() > 0){
+        if(false){
             $grupos_corte_array = array();    
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
@@ -463,7 +464,7 @@ class GruposCorteController extends Controller
             where('f.vencimiento', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            where('cs.fecha_suspension','!=', null);
+            where('cs.fecha_suspension', null);
             
             if($grupo){
                 $contactos->where('gp.id', $grupo);
@@ -534,7 +535,17 @@ class GruposCorteController extends Controller
 
         $request = request();
 
-        $cantidadContratos = Contrato::join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')->count();
+        $cantidadContratos = Contrato::select('contracts.id')
+                                        ->join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')
+                                        ->where('grupos_corte.fecha_suspension', Carbon::create($fecha)->format('d') * 1)
+                                        ->where('grupos_corte.status', 1);
+
+
+                                        if($grupo){
+                                            $cantidadContratos->where('grupos_corte.id', $grupo);
+                                        }
+                        
+        $cantidadContratos = $cantidadContratos->count();
                                      
         return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'grupo', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request', 'facturasGeneradas', 'cantidadContratos'));
     }

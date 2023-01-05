@@ -43,21 +43,22 @@
 
     @endforelse
 </div>
-<div class="row ml-3 mt-5">
-<div class="col-4">
-<h5 style="font-weight:bold">CANTIDAD DE CONTRATOS: {{ $cantidadContratos }}<h5>
-</div>
-</div>
+
 <div class="row ml-3 mt-5">
 @if(!$request->generadas)
 <div class="col-4">
-    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha, 'generadas' => 'facturas']) }}" target="_blank"><h5>Ver ({{ $facturasGeneradas->count() }}) Facturas generadas en la fecha</h5></a>
+    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha, 'generadas' => 'facturas']) }}"><h5>Ver ({{ $facturasGeneradas->count() }}) Facturas generadas en la fecha</h5></a>
 </div>
 @else
 <div class="col-4">
     <a href="{{ route('grupos-corte.estados', [$grupo, $fecha]) }}" target="_blank"><h5>Ver ({{ $facturasCortadas->count() }}) Facturas vencidas y cortadas</h5></a>
 </div>
 @endif
+</div>
+<div class="row ml-3 mt-2">
+<div class="col-4">
+<h5 style="font-weight:bold">CANTIDAD DE CONTRATOS: {{ $cantidadContratos }}<h5>
+</div>
 </div>
 <div class="row card-description w-100">
 <div class="col-md-12">
