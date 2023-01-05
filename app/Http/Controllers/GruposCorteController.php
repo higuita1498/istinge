@@ -536,7 +536,7 @@ class GruposCorteController extends Controller
 
         $cantidadContratos = Contrato::select('contracts.id')
                                         ->join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')
-                                        ->where('grupos_corte.fecha_suspension', dd(Carbon::create($fecha)->format('d')))
+                                        ->where('grupos_corte.fecha_suspension', Carbon::create($fecha)->format('d') * 1)
                                         ->where('grupos_corte.status', 1);
 
 
