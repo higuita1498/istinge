@@ -43,11 +43,31 @@
 
     @endforelse
 </div>
-
-
+<div class="row ml-3 mt-5">
+<div class="col-4">
+<h5 style="font-weight:bold">CANTIDAD DE CONTRATOS: {{ $cantidadContratos }}<h5>
+</div>
+</div>
+<div class="row ml-3 mt-5">
+@if(!$request->generadas)
+<div class="col-4">
+    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha, 'generadas' => 'facturas']) }}" target="_blank"><h5>Ver ({{ $facturasGeneradas->count() }}) Facturas generadas en la fecha</h5></a>
+</div>
+@else
+<div class="col-4">
+    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha]) }}" target="_blank"><h5>Ver ({{ $facturasCortadas->count() }}) Facturas vencidas y cortadas</h5></a>
+</div>
+@endif
+</div>
 <div class="row card-description w-100">
 <div class="col-md-12">
+    @if($request->generadas)
+    <h3 style="text-align: center">Facturas generadas ({{ $facturasGeneradas->count() }})</h3>
+    @php $data = $facturasGeneradas; @endphp
+    @else
+    @php $data = $facturasCortadas; @endphp
     <h3 style="text-align: center">Facturas vencidas y cortadas ({{ $facturasCortadas->count() }})</h3>
+    @endif
     <table class="table table-striped table-hover w-100" id="table-cortadas">
         <thead class="thead-dark">
             <tr>
@@ -63,7 +83,7 @@
         </thead>
         <tbody>
             
-            @foreach($facturasCortadas as $facturaC)
+            @foreach($data as $facturaC)
             <tr>
                 <td><a href="{{ route('facturas.show', $facturaC->id) }}" target="_blank">{{ $facturaC->codigo ?? $facturaC->nro }}</a></td>
                 <td><a href="{{ route('contactos.show', $facturaC->cliente) }}" target="_blank"> {{ $facturaC->nombreCliente }} </a></td>

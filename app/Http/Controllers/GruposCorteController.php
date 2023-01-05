@@ -511,11 +511,32 @@ class GruposCorteController extends Controller
                                      orderby('id', 'desc')->
                                      get();
 
+
+        
+        $facturasGeneradas = Factura::select('factura.*', 'contactos.nombre as nombreCliente', 'gp.nombre as nombreGrupo', 'gp.hora_suspension', 'gp.id as idGrupo')->
+                                     join('contactos', 'contactos.id', '=', 'factura.cliente')->
+                                     join('contracts as cs','cs.client_id','=','contactos.id')->
+                                     join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
+                                     where('vencimiento', $fecha)->
+                                     whereIn('tipo', [1,2])->
+                                     where('factura.facturacion_automatica', 1);
+
+        if($grupo){
+            $facturasGeneradas = $facturasGeneradas->where('gp.id', $grupo);
+        }
+
+
+        $facturasGeneradas =  $facturasGeneradas->groupBy('factura.id')->
+                                     orderby('id', 'desc')->
+                                     get();
+
         
 
         $request = request();
+
+        $cantidadContratos = Contrato::join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')->count();
                                      
-        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request'));
+        return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'grupo', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request', 'facturasGeneradas', 'cantidadContratos'));
     }
 
 
