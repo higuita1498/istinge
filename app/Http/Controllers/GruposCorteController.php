@@ -429,7 +429,7 @@ class GruposCorteController extends Controller
         $perdonados = 0;
 
 
-        if($grupos_corte->count() > 0){
+        if(false){
             $grupos_corte_array = array();    
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
