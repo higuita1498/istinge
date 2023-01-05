@@ -47,7 +47,7 @@
 <div class="row ml-3 mt-5">
 @if(!$request->generadas)
 <div class="col-4">
-    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha, 'generadas' => 'facturas']) }}" target="_blank"><h5>Ver ({{ $facturasGeneradas->count() }}) Facturas generadas en la fecha</h5></a>
+    <a href="{{ route('grupos-corte.estados', [$grupo, $fecha, 'generadas' => 'facturas']) }}"><h5>Ver ({{ $facturasGeneradas->count() }}) Facturas generadas en la fecha</h5></a>
 </div>
 @else
 <div class="col-4">
