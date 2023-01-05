@@ -319,6 +319,18 @@ class FacturasController extends Controller{
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
 
+        $orderByDefault = null;
+        $orderDefault = null;
+
+        if ($request->order && is_array($request->order)) {
+            foreach ($request->order as $or) {
+                if (isset($or['column']) && $or['column'] == '0') {
+                    $orderByDefault = 'id';
+                    $orderDefault = $or['dir'];
+                }
+            }
+        }
+
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
@@ -409,6 +421,10 @@ class FacturasController extends Controller{
             }
         }
 
+        if ($orderByDefault) {
+            $facturas->orderby($orderByDefault, $orderDefault);
+        }
+
         return datatables()->eloquent($facturas)
         ->editColumn('codigo', function (Factura $factura) {
             if($factura->porpagar() == 0 && $factura->estatus == 1){
@@ -466,6 +482,18 @@ class FacturasController extends Controller{
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
+
+        $orderByDefault = null;
+        $orderDefault = null;
+
+        if ($request->order && is_array($request->order)) {
+            foreach ($request->order as $or) {
+                if (isset($or['column']) && $or['column'] == '0') {
+                    $orderByDefault = 'id';
+                    $orderDefault = $or['dir'];
+                }
+            }
+        }
 
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
@@ -552,6 +580,10 @@ class FacturasController extends Controller{
             if(auth()->user()->oficina){
                 $facturas->where('cs.oficina', auth()->user()->oficina);
             }
+        }
+
+        if ($orderByDefault) {
+            $facturas->orderby($orderByDefault, $orderDefault);
         }
 
         return datatables()->eloquent($facturas)
