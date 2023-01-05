@@ -421,6 +421,7 @@ class GruposCorteController extends Controller
         if($grupo != null){
             $grupoSeleccionado = GrupoCorte::find($grupo);
             $fecha =  date('Y-m').'-'.$grupoSeleccionado->fecha_suspension;
+            $fecha = Carbon::create($fecha)->format('Y-m-d');
         }
 
         $swGrupo = 1; //masivo
