@@ -464,7 +464,7 @@ class GruposCorteController extends Controller
             where('f.vencimiento', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            where('cs.fecha_suspension','!=', null);
+            where('cs.fecha_suspension', null);
             
             if($grupo){
                 $contactos->where('gp.id', $grupo);
