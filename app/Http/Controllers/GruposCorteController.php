@@ -534,7 +534,11 @@ class GruposCorteController extends Controller
 
         $request = request();
 
-        $cantidadContratos = Contrato::join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')->count();
+        $cantidadContratos = Contrato::select('contracts.id')
+                                        ->join('grupos_corte', 'grupos_corte.id', '=', 'contracts.grupo_corte')
+                                        ->where('grupos_corte.fecha_suspension', Carbon::create($fecha)->format('d'))
+                                        ->where('grupos_corte.status', 1)
+                                        ->count();
                                      
         return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'grupo', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request', 'facturasGeneradas', 'cantidadContratos'));
     }
