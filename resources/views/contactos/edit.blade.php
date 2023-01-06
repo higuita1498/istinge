@@ -233,6 +233,7 @@
                 <select class="form-control selectpicker" id="router" name="router" title="Seleccione">
                     <option value="Si" {{ $contacto->router == 'Si' ? 'selected':'' }}>Si</option>
                     <option value="No" {{ $contacto->router == 'No' ? 'selected':'' }}>No</option>
+					<option value="En servicio" {{ $contacto->router == 'En servicio' ? 'selected':'' }}>En servicio</option>
                 </select>
                 <span class="help-block error">
                     <strong>{{ $errors->first('router') }}</strong>
