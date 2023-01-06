@@ -32,6 +32,7 @@ use App\Campos;
 use App\NumeracionFactura;
 use App\User;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 
 include_once(app_path() . '/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel;
