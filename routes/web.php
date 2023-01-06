@@ -768,7 +768,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	Route::resource('remisiones', 'RemisionesController');
 	Route::group(['prefix' => 'pagos'], function() {
-		Route::get('/create/{cliente}/{factura}', 'PagosController@create')->name('pagos.create_id');
+		Route::get('/create/{cliente?}/{factura?}/{banco?}/{devolucion?}', 'PagosController@create')->name('pagos.create_id');
+		// Route::get('/create/{cliente}/{factura}', 'PagosController@create')->name('pagos.create_id');
 		Route::get('/create_cuenta/{cuenta}', 'PagosController@create')->name('pagos.create_cuenta');
 
 		Route::get('/pendiente/{cliente}/{id?}', 'PagosController@pendiente')->name('pagos.pendiente');
