@@ -1822,4 +1822,29 @@ class Controller extends BaseController
             }
         }
     }
+
+    public function validateStatusDocumentoSoporte($nitEmisor, $idDocumento, $codigoTipo, $nitReceptor){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/consulta/documentos?nit_emisor=" .$nitEmisor ."&id_documento=" .$idDocumento. "&codigo_tipo_documento=". $codigoTipo. "&nit_receptor=".$nitReceptor,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Partnership-Id: 1128464945',
+            'efacturaAuthorizationToken: 62808bf1-d446-46ee-8120-00162e95c059'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
+    }
 }
