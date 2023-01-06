@@ -318,6 +318,10 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('createp', 'ContactosController@createp')->name('contactos.createp');
         Route::get('{id}/{archivo}/eliminar', 'ContactosController@eliminarAdjunto')->name('contactos.eliminarAdjunto');
 		Route::post('cambiar-fecha-isp/{id}', 'ContactosController@updateFechaIsp')->name('contactos.cambiar.fechaIsp');
+
+		Route::get('/editsaldo/{contactoid}', 'ContactosController@editSaldo');
+		Route::get('/historialsaldo/{contactoid}', 'ContactosController@historialSaldo');
+		Route::post('/storesaldo', 'ContactosController@storeSaldo');
 	});
 	Route::resource('contactos', 'ContactosController');
 

@@ -470,14 +470,7 @@ class FacturaspController extends Controller
 
     public function showId($id){
         $this->getAllPermissions(Auth::user()->id);
-        $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-        $retenciones = FacturaProveedoresRetenciones::where('factura', $factura->id)->get();
-        if ($factura) {
-            view()->share(['title' => 'Factura de Proveedor: '.$factura->nro, 'icon' =>'']);
-            $items = ItemsFacturaProv::where('factura',$factura->id)->get();
-            return view('facturasp.show')->with(compact('factura', 'items','retenciones'));
-        }
-        return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
+        return $this->show($id);
     }
     
     public function edit($id){

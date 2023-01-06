@@ -381,7 +381,18 @@
 						</tr>
 						<tr>
 							<th width="20%">Saldo a favor Pagos / Ingresos</th>
-							<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor)}}</td>
+							<td>
+								<div style="display:inline-flex;float;left;">
+									<p id="textsaldofavor">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor)}}</p>
+									{{-- @if(isset($_SESSION['permisos']['856']))
+									<a href="javascript:modificarSaldo({{$contacto->id}})" style="font-size: 0.8em;margin-left: 10px;">
+										<i class="fas fa-pencil-alt"></i></a>
+									<a href="javascript:historialSaldos({{$contacto->id}})" style="font-size: 0.8em;margin-left: 10px;">
+										<i class="far fa-eye"></i>
+									</a>
+									@endif --}}
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<th width="20%">Saldo a favor Pagos / Egresos</th>
@@ -826,6 +837,11 @@
 	@endif
 
     <input type="hidden" value="{{$contacto->id}}" id="idContacto">
+
+	<!-- Modal notas -->
+	<div class="modal fade" id="modalSaldo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
+	<!-- Modal historial saldos -->
+	<div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
 @endsection
 
 @section('scripts')
@@ -897,6 +913,150 @@
 				$('#fecha-isp-date').html(response.fecha_isp);
 				$('#modal-fecha-isp').modal('hide');
 			});
+		}
+
+		function modificarSaldo(contactoId){
+			var valor;
+	  		var tipo;
+
+			if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+            }else{
+            var url = '/empresa';
+            }
+  
+		  $.ajax({
+			  url: url+`/contactos/editsaldo/${contactoId}`,
+			  method: 'GET',
+			  headers: {
+				  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			  },
+			  success: function(response) {
+				  if (response) {
+					  contacto = response;
+		
+					  $('#modalSaldo').html('');
+					  $('#modalSaldo').append(`<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							  <div class="modal-content">
+								  <div class="modal-header">
+									  <h5 class="modal-title" id="exampleModalLabel">Editar saldo a favor</h5>
+									  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										  <span aria-hidden="true">&times;</span>
+									  </button>
+								  </div>
+								  <div class="modal-body">
+									<p>Ingrese el saldo a favor sin puntos.</p>
+									  <div class="form-group">
+										<label for="ancho">saldo</label>
+					  					<input type="text" name="saldo_favor" id="saldo_favor" class="form-control" value="${contacto.saldo_favor}">
+									  </div>
+									
+									  <div id="custom-target"></div>
+								  </div>
+								  <div class="modal-footer">
+									  <a  class="btn btn-secondary" data-dismiss="modal">Cerrar</a>
+									  <a  class="btn btn-primary text-white" onclick="guardarSaldo(${contactoId})">Guardar</a>
+								  </div>
+							  </div>
+							  </div>`);
+				$('#modalSaldo').modal('show');
+				}
+			  }
+		  });
+		}
+
+		function guardarSaldo(contactoId){
+			var saldo_favor = $('#saldo_favor').val();
+		  	var contactoId = contactoId;
+
+			if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+            }else{
+            var url = '/empresa';
+            }
+		  
+		  $.ajax({
+			url: url+`/contactos/storesaldo`,
+			headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+			method: 'POST',
+			beforeSend: function() {
+			  cargando(true);
+			},
+			headers: {
+			  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			data: {
+			  saldo_favor: saldo_favor,
+			  contactoId: contactoId,
+			},
+			success: function(response) {
+			  cargando(false);
+			  if (response) {
+				document.getElementById("textsaldofavor").innerHTML = "$" + response.saldo_favor;
+				Swal.fire({
+					position: 'top-center',
+					type: 'success',
+					title: 'Saldo a favor actualizado',
+					showConfirmButton: false,
+					timer: 2500
+                })
+			  }
+			  $('#modalSaldo').modal('hide');
+			}
+		  });
+		}
+
+		function historialSaldos(contactoId){
+			if (window.location.pathname.split("/")[1] === "software") {
+			var url='/software/empresa';
+            }else{
+            var url = '/empresa';
+            }
+
+
+			$.ajax({
+			  url: url+`/contactos/historialsaldo/${contactoId}`,
+			  method: 'GET',
+			  headers: {
+				  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			  },
+			  success: function(response) {
+				  if (response) {
+					  contacto = response;
+						let html = "";
+					  for (var i = 0, len = response.length; i < len; i++) {
+						html+=`<li>
+							Fecha: ${response[i].fecha} el usuario ${response[i].nombre} ${response[i].accion}
+							</li>`;
+					  }
+		
+					  $('#modalHistorial').html('');
+					  $('#modalHistorial').append(`<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							  <div class="modal-content">
+								  <div class="modal-header">
+									  <h5 class="modal-title" id="exampleModalLabel">Historial de cambios saldo a favor</h5>
+									  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										  <span aria-hidden="true">&times;</span>
+									  </button>
+								  </div>
+								  	<div class="modal-body">
+										<ul>
+											${html}
+										</ul>
+									</div>
+									
+									  <div id="custom-target"></div>
+									  <div class="modal-footer">
+										  <a  class="btn btn-secondary" data-dismiss="modal">Cerrar</a>
+									  </div>
+								  </div>
+							  </div>
+							  </div>`);
+				$('#modalHistorial').modal('show');
+				}
+			  }
+		  });
+
 		}
     </script>
 @endsection

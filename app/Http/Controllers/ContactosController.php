@@ -13,6 +13,7 @@ use DB;
 use Session;
 use ZipArchive;
 
+use App\Funcion;
 use App\Cotizacion;
 use App\Empresa;
 use App\Contrato;
@@ -1345,4 +1346,34 @@ class ContactosController extends Controller
         ]);
     }
 
+    function editSaldo($contactoId){
+        $contacto = Contacto::find($contactoId);
+        if($contacto){
+            return response()->json($contacto);
+        }
+    }
+
+    function storeSaldo(Request $request){
+        $contacto = Contacto::find($request->contactoId);
+
+        //Programacion para guardar registro de quien hizo el cambio en tabla de historial.
+        DB::table('log_saldos')->insert([
+            'id_contacto' => $contacto->id,
+            'accion' => "modificó el saldo anterior: " . Funcion::Parsear($contacto->saldo_favor) . ' al actual: ' . $request->saldo_favor,
+            'created_by' => Auth::user()->id,
+            'fecha' => Carbon::now()->format('Y-m-d'),
+            'created_at' => Carbon::now()
+        ]);
+
+        $contacto->saldo_favor = $request->saldo_favor;
+        $contacto->save();
+
+        return response()->json($contacto);
+    }
+
+    public function historialSaldo($contactoId){
+        $historial = DB::table('log_saldos')->join('usuarios as u','u.id','log_saldos.created_by')
+        ->select('log_saldos.*','u.nombres as nombre')->where('id_contacto',$contactoId)->get();
+        return response()->json($historial);
+    }
 }
