@@ -2,13 +2,13 @@
 <cbc:AdditionalAccountID>@if($data['tipo_persona']!=null)@if($data['tipo_persona'] =='n'||$data['tipo_persona']==1){{2}}@elseif($data['tipo_persona']=='j'|| $data['tipo_persona']==2){{1}}@endif
 @else{{2}}@endif</cbc:AdditionalAccountID> {{--TIPO DE ORGANIZACION JURIDICA:1 PERSONAL:2--}}
 <cac:Party>
-        {{-- @if ($data['tipo_persona'] =='n' || $data['tipo_persona'] == 1) --}}
+        @if ($data['tipo_persona'] =='n' || $data['tipo_persona'] == 1)
         <cac:PartyIdentification>
             <cbc:ID  schemeName="{{ \App\Contacto::codigo_ident_static($data['tip_iden'])->codigo_dian }}">{{ $data['nit'] }}</cbc:ID>
         </cac:PartyIdentification>
-            {{-- @endif --}}
+            @endif
         <cac:PartyName>
-            <cbc:Name>{{$data['nombre']}}</cbc:Name>
+            <cbc:Name>{{$data['nombre']}} @if(isset($Cliente)){{$data['apellido1']}} {{$data['apellido2']}} @endif</cbc:Name>
         </cac:PartyName>
         @isset($Empresa)
         <cac:PhysicalLocation>
@@ -48,7 +48,7 @@
 </cac:PhysicalLocation>
 @endisset
 <cac:PartyTaxScheme>
-<cbc:RegistrationName>{{$data['nombre']}}</cbc:RegistrationName>
+<cbc:RegistrationName>{{$data['nombre']}} @if(isset($Cliente)){{$data['apellido1']}} {{$data['apellido2']}} @endif</cbc:RegistrationName>
 <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" @if($data['dv'] != null) schemeID="{{$data['dv']}}" @endif schemeName="{{ \App\Contacto::codigo_ident_static($data['tip_iden'])->codigo_dian }}">{{ $data['nit'] }}</cbc:CompanyID>
 
 @if(isset($Empresa))
@@ -86,7 +86,7 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 </cac:TaxScheme>
 </cac:PartyTaxScheme>
 <cac:PartyLegalEntity>
-<cbc:RegistrationName>{{$data['nombre']}}</cbc:RegistrationName>
+<cbc:RegistrationName>{{$data['nombre']}} @if(isset($Cliente)){{$data['apellido1']}} {{$data['apellido2']}}@endif</cbc:RegistrationName>
 <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" @if($data['dv'] != null) schemeID="{{$data['dv']}}"  @endif schemeName="{{ \App\Contacto::codigo_ident_static($data['tip_iden'])->codigo_dian }}">{{ $data['nit'] }}</cbc:CompanyID>
 
 @if(isset($nc))
@@ -116,8 +116,10 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 <cac:Contact>
 @if(isset($data['telefono1']))
 <cbc:Telephone>{{$data['telefono1']}}</cbc:Telephone>
-@else
+@elseif(isset($data['telefono']))
 <cbc:Telephone>{{$data['telefono']}}</cbc:Telephone>
+@elseif(isset($data['celular']))
+<cbc:Telephone>{{$data['celular']}}</cbc:Telephone>
 @endif
 
 @php 

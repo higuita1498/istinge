@@ -21,7 +21,7 @@ if ($retencion->retencion()->tipo == 1) {
 	}
 }
 //-- Si existe una retencion en la fuente (tipo = 2) debo de obtener el total del subtotal asociado a esa retefuente para el xml --//
-else if($retencion->retencion()->tipo == 2 || $retencion->retencion()->tipo == 3 || $retencion->retencion()->tipo == 4)
+else if($retencion->retencion()->tipo == 2 || $retencion->retencion()->tipo == 3)
 {
 	if ($FacturaVenta->total()->descuento > 0) {
 		echo number_format($FacturaVenta->total()->subtotal - $FacturaVenta->total()->descuento, 2, '.','');
@@ -36,11 +36,7 @@ else if($retencion->retencion()->tipo == 2 || $retencion->retencion()->tipo == 3
 <cbc:Percent>{{ $retencion->retencion }}</cbc:Percent>
 <cac:TaxScheme>
 <cbc:ID>@if($retencion->retencion()->tipo == 1){{"05"}}@elseif($retencion->retencion()->tipo == 2){{"06"}}@else{{"ZZ"}}@endif</cbc:ID>
-@if(isset($facturap))
-<cbc:Name>@if($retencion->retencion()->tipo == 2){{"ReteRenta"}}@elseif($retencion->retencion()->tipo == 1){{"ReteIVA"}}@endif</cbc:Name>
-@else
 <cbc:Name>{{ $retencion->retencion()->nombre }}</cbc:Name>
-@endif
 </cac:TaxScheme>
 </cac:TaxCategory>
 </cac:TaxSubtotal>

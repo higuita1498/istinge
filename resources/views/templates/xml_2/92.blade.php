@@ -14,16 +14,15 @@
 
     <cbc:CustomizationID>10</cbc:CustomizationID>
     <cbc:ProfileExecutionID>1</cbc:ProfileExecutionID>
-    <cbc:ID>{{ $notaDebito->nro }}</cbc:ID>
+    <cbc:ID>{{ $NotaDebito->nro }}</cbc:ID>
     <cbc:UUID schemeID="1" schemeName="CUDE-SHA384">{{$CUDEvr}}</cbc:UUID>
-    <cbc:IssueDate>{{ Carbon\Carbon::parse($notaDebito->created_at)->format('Y-m-d') }}</cbc:IssueDate>
-    <cbc:IssueTime>{{ Carbon\Carbon::parse($notaDebito->created_at)->format('H:i:s') }}-05:00</cbc:IssueTime>
-    <cbc:CreditNoteTypeCode>95</cbc:CreditNoteTypeCode>
-    <cbc:Note>{{ $notaDebito->observaciones }}</cbc:Note>
+    <cbc:IssueDate>{{ Carbon\Carbon::parse($NotaDebito->created_at)->format('Y-m-d') }}</cbc:IssueDate>
+    <cbc:IssueTime>{{ Carbon\Carbon::parse($NotaDebito->created_at)->format('H:i:s') }}-05:00</cbc:IssueTime>
+    <cbc:Note>{{ $NotaDebito->observaciones }}</cbc:Note>
     <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
     <cbc:LineCountNumeric>{{count($items)}}</cbc:LineCountNumeric>
 
-    @php $FacturaVenta = $notaDebito; @endphp
+    @php $FacturaVenta = $NotaDebito; @endphp
     {{-- BillingReference --}}
     @include('templates.xml._billing_reference')
     {{-- AccountingSupplierParty --}}
