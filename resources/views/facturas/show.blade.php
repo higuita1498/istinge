@@ -158,6 +158,27 @@
 </div>
 <!-- FIN BANNER DE VALORES -->
 
+ <!-- BANNER DE VALORES -->
+ @if($factura->contrato_id != null)
+ <div class="card-body" style="margin-bottom:-29px;">
+<div class="row" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:0% !important;">
+    <div class="stretch-card" style="border: 1px solid #fff !important;margin-left:15px;">
+        <div class="card card-statistics" style="background-color: #fff !important;">
+            <div class="clearfix">
+                <div class="float-center">
+                    <p class="mb-0 text-center">Contrato asociado</p>
+                    <div class="fluid-container">
+                        <h4 class="font-weight-medium text-center mb-0">No. <a href="{{route('contratos.show',$factura->contrato_id)}}" target="_blank">{{$factura->contrato()->nro}}</a></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- FIN BANNER DE VALORES -->
+@endif
+
 @if(Session::has('success') || Session::has('error'))
   @if(Session::has('success'))
   <div class="alert alert-success alert-view-show">

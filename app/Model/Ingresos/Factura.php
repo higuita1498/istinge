@@ -80,6 +80,12 @@ class Factura extends Model
         $cliente = Contacto::where('id',$this->cliente)->first();
         return Contrato::where('client_id',$cliente->id)->first();
     }
+
+    public function contratoAsociado(){
+        $contrato = Contrato::find($this->contrato_id);
+
+        if($contrato){return $contrato;}
+    }
     
     public function servidor(){
         $cliente = Contacto::where('id',$this->cliente)->first();
