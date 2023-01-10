@@ -587,6 +587,16 @@ class CronController extends Controller
                 $contrato = Contrato::find($contacto->contrato_id);
                 $promesaExtendida = DB::table('promesa_pago')->where('factura', $contacto->factura)->where('vencimiento', '>=', $fecha)->count();
 
+
+                $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+                $crm = new CRM();
+                $crm->cliente = $contacto->id;
+                $crm->factura = $contacto->factura;
+                $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+                $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                $crm->save();
+
+
                 if($promesaExtendida > 0){
 
                             if($contrato->state != 'enabled'){
@@ -637,13 +647,7 @@ class CronController extends Controller
                     continue;
                 }
 
-                $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
-                $crm = new CRM();
-                $crm->cliente = $contacto->id;
-                $crm->factura = $contacto->factura;
-                $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
-                $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
-                $crm->save();
+            
 
                 //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
                 if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
