@@ -207,6 +207,7 @@
                                 <label>Año</label>
                                 <select name="year" id="year" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
                                     <option value="{{ 2021 }}" selected="">{{ 2021 }}</option>
+                                    <option value="{{ 2022 }}" selected="">{{ 2022 }}</option>
                                     <option value="{{ date('Y') }}" selected="">{{ date('Y') }}</option>
                                 </select>
                             </div>
@@ -222,7 +223,7 @@
                                     <option value="4" {{ 4 <= $mesActual ? '' : 'disabled' }}>Abril</option>
                                     <option value="5" {{ 5 <= $mesActual ? '' : 'disabled' }}>Mayo</option>
                                     <option value="6" {{ 6 <= $mesActual ? '' : 'disabled' }}>Junio</option>
-                                    <option value="7" {{ 7 <= $mesActual ? '' : 'disabled' }}>Julio</option>
+                                    <option value="7" {{ 7 <= $mesActual ? '' : '' }}>Julio</option>
                                     <option value="8" {{ 8 <= $mesActual ? '' : 'disabled' }}>Agosto</option>
                                     <option value="9" {{ 9 <= $mesActual ? '' : 'disabled' }}>Septiembre</option>
                                     <option value="10" {{ 10 <= $mesActual ? '' : 'disabled' }}>Octubre</option>
