@@ -652,6 +652,13 @@ class CronController extends Controller
                 //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
                 if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
 
+                    //segundo filtro de validacion, validando por rango de fechas
+                    $diasHabilesNocobro = 0;
+                    if($contrato->tipo_nosuspension == 1 &&  $contrato->fecha_desde_nosuspension <= $fecha && $contrato->fecha_hasta_nosuspension >= $fecha){
+                        $diasHabilesNocobro = 1;
+                    }
+                    
+                    if($diasHabilesNocobro == 0){
                     if(isset($contrato->server_configuration_id)){
 
                         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
@@ -690,6 +697,7 @@ class CronController extends Controller
                         $contrato->state = 'disabled';
                         $contrato->save();
                     }
+                }
                 }
             }
 

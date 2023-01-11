@@ -740,6 +740,13 @@ class ContratosController extends Controller
                 $contrato->tipo_contrato           = $request->tipo_contrato;
                 $contrato->observaciones              = $request->observaciones;
 
+
+                if($request->tipo_suspension_no == 1){
+                    $contrato->tipo_nosuspension = 1;
+                    $contrato->fecha_desde_nosuspension = $request->fecha_desde_nosuspension;
+                    $contrato->fecha_hasta_nosuspension = $request->fecha_hasta_nosuspension;
+                }
+
                 if($request->factura_individual){
                     $contrato->factura_individual = $request->factura_individual;
                 }
@@ -908,7 +915,20 @@ class ContratosController extends Controller
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-        select('contracts.plan_id','contracts.id','contracts.opciones_dian','contracts.nro','contracts.state','contracts.interfaz','c.nombre','c.apellido1', 'c.apellido2','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address','contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router','contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz','contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte', 'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu', 'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion', 'contracts.observaciones')->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
+        select('contracts.plan_id','contracts.id','contracts.opciones_dian','contracts.nro','contracts.state','contracts.interfaz',
+        'c.nombre','c.apellido1', 'c.apellido2','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address',
+        'contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router',
+        'contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz',
+        'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte',
+         'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 
+         'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 
+         'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 
+         'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 
+         'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu',
+          'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 
+          'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion', 
+          'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension')
+          ->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = ($contrato->server_configuration_id) ? PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get() : PlanesVelocidad::where('status', 1)->get();
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -922,7 +942,7 @@ class ContratosController extends Controller
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
-        
+
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Editar Contrato: '.$contrato->nro]);
             return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
@@ -1305,6 +1325,12 @@ class ContratosController extends Controller
                     $contrato->tecnologia              = $request->tecnologia;
                     $contrato->tipo_contrato           = $request->tipo_contrato;
                     $contrato->observaciones              = $request->observaciones;
+
+                    if($request->tipo_suspension_no == 1){
+                        $contrato->tipo_nosuspension = 1;
+                        $contrato->fecha_desde_nosuspension = $request->fecha_desde_nosuspension;
+                        $contrato->fecha_hasta_nosuspension = $request->fecha_hasta_nosuspension;
+                    }
 
                     if($request->oficina){
                         $contrato->oficina = $request->oficina;
