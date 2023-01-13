@@ -1200,12 +1200,16 @@ public function forma_pago()
                     if($diaContrato > $grupo->fecha_corte){
                         if($mesContrato+1 == 13){
                             $yearContrato = $yearContrato+1;
+                            if($mesContrato+1 == 13){
+                                $mesContrato = 01;
+                            }
                         }
-                        $fechaFin = $yearContrato . "-" . ($mesContrato+1) . "-" .  $grupo->fecha_corte;
+                        $fechaFin = $yearContrato . "-" . ($mesContrato) . "-" .  $grupo->fecha_corte;
                     }else{
                         $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                     }
-
+                    
+                    $fechaFin = Carbon::parse($fechaFin);
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
 
                     /*
