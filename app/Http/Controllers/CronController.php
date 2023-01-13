@@ -116,7 +116,7 @@ class CronController extends Controller
                     if(DB::table('factura')->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
                         ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
                     $fac = Factura::where('cliente', $contrato->cliente)
-                    ->where('facturacion_automatica', 1)
+                    // ->where('facturacion_automatica', 1)
                     ->where('contrato_id',$contrato->id)
                     ->get()->last();
                     
