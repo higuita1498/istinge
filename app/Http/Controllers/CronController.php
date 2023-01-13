@@ -2136,7 +2136,7 @@ class CronController extends Controller
     public function deleteFactura(){ 
         
         //facturas creadas automaticamente cancelamos sus contratos o eliminamos
-        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-10-6")->get();
+        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('created_at','>',"2023-01-12")->get();
         
         //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
         // $contratos = Contrato::where('grupo_corte',1)->where('state','disabled')->where('updated_at','>=','2022-10-06 00:00:00')->where('updated_at','<=','2022-10-06 06:00:00')->get();
@@ -2165,12 +2165,15 @@ class CronController extends Controller
         
         // $eliminadas = 0;
         // foreach($facturas as $f){
+            
+        //     if($f->pagado() == 0){
         //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
         //     $eliminadas++;
+        //     $f->delete();
+        //     }
         // }   
         
         
-        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('fecha',"2022-08-25")->delete();
         // return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
         
         //comprobar en bd
