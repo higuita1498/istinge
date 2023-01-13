@@ -38,7 +38,7 @@ class WifiController extends Controller
     public function solicitudes(Request $request){
         $modoLectura = auth()->user()->modo_lectura();
         $solicitudes = Wifi::query()
-        ->join('contracts', 'contracts.id', '=', 'wifi.id_cliente')
+        ->leftjoin('contracts', 'contracts.id', '=', 'wifi.id_cliente')
         ->select('wifi.*')
             ->where('wifi.empresa', Auth::user()->empresa);
 

@@ -301,7 +301,7 @@ public function totalEmissions(){
     public function getSalarioMinimo()
     {
         $salario = NominaConfiguracionCalculos::where('fk_idempresa', $this->id)->where('nro', 4)->first();
-        return $salario ? floatval($salario->valor) : 908526;
+        return $salario ? floatval($salario->valor) : 1160000;
     }
 
     public function suscripcion(){
