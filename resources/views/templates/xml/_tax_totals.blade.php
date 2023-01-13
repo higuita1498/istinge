@@ -18,6 +18,7 @@
             @endif
         @if(isset($imp->total) && $imp->tipo == 1)
         
+        
         <cac:TaxSubtotal>
             <cbc:TaxableAmount currencyID="COP">{{number_format($imp->totalprod, 2, '.', '')}}</cbc:TaxableAmount>
             <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total), 2, '.', '')}}</cbc:TaxAmount>
