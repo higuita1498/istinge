@@ -20,7 +20,7 @@
         
         <cac:TaxSubtotal>
             <cbc:TaxableAmount currencyID="COP">{{number_format($imp->totalprod, 2, '.', '')}}</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total, 2), 2, '.', '')}}</cbc:TaxAmount>
+            <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total), 2, '.', '')}}</cbc:TaxAmount>
             <cac:TaxCategory>
             <cbc:Percent>{{number_format($imp->porcentaje, 2, '.', '')}}</cbc:Percent>
             <cac:TaxScheme>
