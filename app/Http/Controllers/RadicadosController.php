@@ -106,7 +106,7 @@ class RadicadosController extends Controller{
             }
             if($request->cliente){
                 $radicados->where(function ($query) use ($request) {
-                    $query->orWhere('radicados.identificacion', 'like', "%{$request->cliente}%");
+                    $query->orWhere('radicados.identificacion', $request->cliente);
                 });
             }
             if($request->telefono){
@@ -649,7 +649,9 @@ class RadicadosController extends Controller{
         ->select('radicados.*')
         ->where('radicados.empresa',Auth::user()->empresa);
         
-        if ($contacto) { $movimientos=$movimientos->where('radicados.identificacion', $contacto); }
+        if ($contacto) { 
+            $movimientos=$movimientos->where('radicados.identificacion', $contacto);
+         }
         if (isset($requestData->search['value'])) {
             $movimientos=$movimientos->where(function ($query) use ($requestData) {
                 $query->where('radicados.identificacion', 'like', '%'.$requestData->search['value'].'%')
