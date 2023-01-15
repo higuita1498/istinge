@@ -1847,4 +1847,47 @@ class Controller extends BaseController
         curl_close($curl);
         return $response;
     }
+
+    public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos){
+       
+        $empresa = auth()->user()->empresa();
+
+        $fields = [
+            'to' => [
+                [
+                    'email' => $emails,
+                    'name' => $nombreCliente
+                ]
+            ],
+            'sender' => [
+                'name' => $empresa->nombre,
+                'email' => $empresa->email
+            ],
+            'subject' => $titulo,
+            'htmlContent' => '<html>'.$html.'</html>',
+            
+        ];
+
+        $fields = json_encode($fields);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'accept: application/json',
+            'api-key: '.$empresa->api_key_mail.'', 'content-type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        $response = curl_exec($ch);
+
+        $response = json_decode($response, true);
+
+        return $response;
+    }
+
+
 }
