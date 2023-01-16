@@ -717,7 +717,7 @@ class PagosController extends Controller
                 );
                 config(['mail'=>$new]);
             }
-            Mail::send('emails.pago', compact('gasto'), function($message) use ($pdf, $emails, $gasto){
+            self::sendMail('emails.pago', compact('gasto'), function($message) use ($pdf, $emails, $gasto){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject('Envío de comprobante de egreso #'.$gasto->nro);
                 $message->attachData($pdf, 'gasto.pdf', ['mime' => 'application/pdf']);

@@ -474,7 +474,7 @@ class OrdenesController extends Controller
         );
         config(['mail'=>$new]);
       }
-      Mail::send('emails.orden_compra', compact('orden'), function($message) use ($pdf, $emails, $orden)
+      self::sendMail('emails.orden_compra', compact('orden'), function($message) use ($pdf, $emails, $orden)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
         $message->to($emails)->subject('Orden de Compra #'.$orden->orden_nro);

@@ -1890,4 +1890,8 @@ class Controller extends BaseController
     }
 
 
+    public static function sendMail(){
+        return true;
+    }
+
 }

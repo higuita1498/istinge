@@ -1265,7 +1265,7 @@ public function facturas_retenciones($id){
         config(['mail'=>$new]);
     }
 
-    Mail::send('emails.notascredito', compact('nota','total','cliente'), function($message) use ($pdf, $emails,$nota,$xmlPath)
+    self::sendMail('emails.notascredito', compact('nota','total','cliente'), function($message) use ($pdf, $emails,$nota,$xmlPath)
     {
       $message->attachData($pdf, 'NotaCredito.pdf', ['mime' => 'application/pdf']);
       
@@ -1288,7 +1288,7 @@ public function facturas_retenciones($id){
              $total = Funcion::Parsear($nota->total()->total);
              $cliente = $nota->cliente()->nombre;
 
-            Mail::send('emails.notascredito', compact('nota', 'cliente', 'total'), function($message) use ($pdf, $emails, $nota, $tituloCorreo)
+            self::sendMail('emails.notascredito', compact('nota', 'cliente', 'total'), function($message) use ($pdf, $emails, $nota, $tituloCorreo)
             {
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject($tituloCorreo);
@@ -1830,7 +1830,7 @@ public function facturas_retenciones($id){
             $zip->addFile($ruta_pdf, "NC-" . $nota->nro . ".pdf");
             $resultado = $zip->close();
 
-            Mail::send('emails.notascredito', compact('nota', 'total', 'cliente'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $nota, $nombreArchivoZip, $tituloCorreo) {
+            self::sendMail('emails.notascredito', compact('nota', 'total', 'cliente'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $nota, $nombreArchivoZip, $tituloCorreo) {
                 $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
 
 

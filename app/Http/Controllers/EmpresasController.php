@@ -281,7 +281,7 @@ class EmpresasController extends Controller
       $numeracion->empresa= $empresa->id;
       $numeracion->save();
 
-        Mail::send('emails.welcomeEmpresa',  ['data' => $data], function($msj) use ($data){
+        self::sendMail('emails.welcomeEmpresa',  ['data' => $data], function($msj) use ($data){
             $msj->subject('Bienvenid@ '.$data->nombre);
             $msj->to($data->email);
         });

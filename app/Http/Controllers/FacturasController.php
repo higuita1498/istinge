@@ -1649,7 +1649,7 @@ class FacturasController extends Controller{
                 config(['mail'=>$new]);
             }
 
-            Mail::send('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+            self::sendMail('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
                 $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
                 if(file_exists($xmlPath)){
                     $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
@@ -2313,7 +2313,7 @@ class FacturasController extends Controller{
             config(['mail'=>$new]);
         }
 
-        Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
+        self::sendMail('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
             $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
             $message->from('info@networksoft.online', Auth::user()->empresaObj->nombre);
             $message->to($emails)->subject($tituloCorreo);
@@ -2484,7 +2484,7 @@ class FacturasController extends Controller{
                 config(['mail'=>$new]);
             }
 
-            Mail::send('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta) {
+            self::sendMail('emails.email', compact('factura', 'total', 'cliente', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta) {
                 $message->attachData($pdf, 'FV-' . $FacturaVenta->codigo . '.pdf', ['mime' => 'application/pdf']);
                 $message->attach($ruta_xmlresponse);
                 $message->from('info@networksoft.online', Auth::user()->empresaObj->nombre);
@@ -2686,7 +2686,7 @@ class FacturasController extends Controller{
                             config(['mail'=>$new]);
                         }
 
-                        Mail::send('emails.dian.felicidades', compact('empresa', 'rango_numeracion'), function ($message) use ($emails, $tituloCorreo) {
+                        self::sendMail('emails.dian.felicidades', compact('empresa', 'rango_numeracion'), function ($message) use ($emails, $tituloCorreo) {
                             $message->from('info@networksoft.online', 'Facturación Electrónica - Gestor de Partes');
                             $message->to($emails)->subject($tituloCorreo);
                         });
