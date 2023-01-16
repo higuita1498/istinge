@@ -250,7 +250,7 @@
                                                 @endif
                                                 {{--<a href="{{ route('nomina.liquidar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year']]) }}" title="Editar Nómina"><i class="far fa-edit color"></i></a>--}}
 
-                                                @if(isset($_SESSION['permisos']['169']) && !$modoLectura->success)
+                                                @if((isset($_SESSION['permisos']['169']) || isset($_SESSION['permisos']['792'])) && !$modoLectura->success)
                                                 @if($detalles[$i]['estado'] != 'Emitida')
                                                 @if($detalles[$i]['tipo'] == 2)
                                                     <a href="{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], 'persona' => $detalles[$i]['idpersona'], 'editNomina' => $detalles[$i]['idnomina'] ]) }}"><i class="far fa-edit color"></i></a>
