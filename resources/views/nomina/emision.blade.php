@@ -267,7 +267,7 @@
                                                {{-- @endif --}}
 
 
-                                                @if(isset($_SESSION['permisos']['167']) && !$modoLectura->success)
+                                                @if((isset($_SESSION['permisos']['167']) || isset($_SESSION['permisos']['792'])) && !$modoLectura->success)
                                                  @if (!$empresa->nomina_dian)
                                                     @if($detalles[$i]['emitida'] == 4)
                                                     <a href="#" title="Emitir Ajuste de Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',2)">
