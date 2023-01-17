@@ -583,7 +583,7 @@ class RadicadosController extends Controller{
                     config(['mail'=>$new]);
                 }
 
-                self::sendMail('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                self::sendMail('emails.radicado', compact('radicado'), compact('radicado'), function($message) use ($radicado){
                     $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
                 });
             }
@@ -1032,7 +1032,7 @@ class RadicadosController extends Controller{
                             config(['mail'=>$new]);
                         }
 
-                        self::sendMail('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                        self::sendMail('emails.radicado', compact('radicado'), compact('radicado'), function($message) use ($radicado){
                             $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
                         });
                     }

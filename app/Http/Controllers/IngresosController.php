@@ -1203,7 +1203,7 @@ class IngresosController extends Controller
                 config(['mail'=>$new]);
             }
 
-            self::sendMail('emails.ingreso', compact('ingreso'), function($message) use ($pdf, $emails, $ingreso, $asunto){
+            self::sendMail('emails.ingreso', compact('ingreso'), compact('pdf', 'emails', 'ingreso', 'asunto'), function($message) use ($pdf, $emails, $ingreso, $asunto){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject($asunto);
                 $message->attachData($pdf, 'recibo.pdf', ['mime' => 'application/pdf']);

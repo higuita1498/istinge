@@ -1613,6 +1613,9 @@ class FacturasController extends Controller{
                     $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
                 }
             }
+
+            $pdf = null;
+
             //-----------------------------------------------//
 
             $data = array(
@@ -1649,7 +1652,7 @@ class FacturasController extends Controller{
                 config(['mail'=>$new]);
             }
 
-            self::sendMail('emails.email', compact('factura', 'total', 'cliente'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+            self::sendMail('emails.email', compact('factura', 'total', 'cliente'), compact('pdf', 'emails', 'tituloCorreo', 'xmlPath'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
                 $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
                 if(file_exists($xmlPath)){
                     $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);

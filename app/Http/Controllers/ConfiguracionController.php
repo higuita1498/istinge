@@ -1729,7 +1729,7 @@ class ConfiguracionController extends Controller
             'email'=> 'info@gestordepartes.net',
         );
         $tituloCorreo = "Solicitud de facturación electrónica en proceso";
-        self::sendMail('emails.notificacionFe', compact("clave", "empresa"), function($message) use ($email,$tituloCorreo)
+        self::sendMail('emails.notificacionFe', compact("clave", "empresa"), compact('email','tituloCorreo'), function($message) use ($email,$tituloCorreo)
         {
             $message->to($email)->subject($tituloCorreo);
         });

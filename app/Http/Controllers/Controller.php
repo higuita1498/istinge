@@ -1890,7 +1890,23 @@ class Controller extends BaseController
     }
 
 
-    public static function sendMail(){
+    public static function sendMail($vista, $data, $usedData, $fn){
+    
+        $html = '';
+
+        if($vista){
+            $html = view($vista, $data)->render();
+        }
+
+        /*
+        $reflection = new \ReflectionFunction($fn);
+        $message = new \stdClass();
+        $data = $reflection->invoke($message);
+        */
+
+        //dd($usedData);
+        //self::sendInBlue($html, );
+
         return true;
     }
 

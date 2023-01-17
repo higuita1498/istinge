@@ -1046,7 +1046,7 @@ $codqr = "NumFac:" . $NotaDebito->codigo . "\n" .
       );
       config(['mail'=>$new]);
     }
-    self::sendMail('emails.notasdebito', compact('nota','total','cliente'), function($message) use ($pdf, $emails,$ruta_xmlresponse,$nota)
+    self::sendMail('emails.notasdebito', compact('nota','total','cliente'), compact('pdf', 'emails', 'ruta_xmlresponse', 'nota'), function($message) use ($pdf, $emails,$ruta_xmlresponse,$nota)
     {
       $message->attachData($pdf, 'NotaCredito.pdf', ['mime' => 'application/pdf']);
       $message->attach($ruta_xmlresponse);
