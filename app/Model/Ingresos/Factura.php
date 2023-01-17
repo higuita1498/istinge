@@ -1101,7 +1101,13 @@ public function forma_pago()
                         y el contrato el 25, entonces es mayor el contrato y se tiene que tomar la fecha fin del siguiente mes
                     */
                     if($diaContrato > $grupo->fecha_corte){
-                        $fechaFin = $yearContrato . "-" . ($mesContrato+1) . "-" .  $grupo->fecha_corte;
+
+                        if(($mesContrato+1) == 13){
+                            $fechaFin = (intval($yearContrato) + 1) . "-" . "01" . "-" . $grupo->fecha_corte;
+                        }else{
+                            $fechaFin = $yearContrato . "-" . ($mesContrato+1) . "-" .  $grupo->fecha_corte;
+                        }
+
                     }else{
                         $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                     }
