@@ -1602,19 +1602,17 @@ class FacturasController extends Controller{
                 Construcción del código qr a la factura
                 ................................*/
                 if($empresa->formato_impresion == 1){
-                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
+                   $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
                 }else{
-                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
+                   $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr','ingreso'))->stream();
                 }
             }else{
                 if($empresa->formato_impresion == 1){
-                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
+                   $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
                 }else{
-                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
+                   $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'))->stream();
                 }
             }
-
-            $pdf = null;
 
             //-----------------------------------------------//
 

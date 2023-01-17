@@ -1851,7 +1851,7 @@ class Controller extends BaseController
     public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos){
        
         $empresa = auth()->user()->empresa();
-
+    
         $fields = [
             'to' => [
                 [
@@ -1885,7 +1885,7 @@ class Controller extends BaseController
         $response = curl_exec($ch);
 
         $response = json_decode($response, true);
-
+        
         return $response;
     }
 
@@ -1893,6 +1893,7 @@ class Controller extends BaseController
     public static function sendMail($vista, $data, $usedData, $fn){
     
         $html = '';
+        $adjuntos = [];
 
         if($vista){
             $html = view($vista, $data)->render();
@@ -1904,10 +1905,42 @@ class Controller extends BaseController
         $data = $reflection->invoke($message);
         */
 
-        //dd($usedData);
-        //self::sendInBlue($html, );
 
-        return true;
+        if(isset($usedData['tituloCorreo'])){
+            $titulo = $usedData['tituloCorreo']; 
+        }else{
+            $titulo = 'Comunicado ' . auth()->user()->empresa()->nombre;
+        }
+
+
+        if(isset($usedData['emails'])){
+            $emails = $usedData['emails'];
+        }
+
+        if(isset($data['cliente'])){
+            $nombreCliente = $data['cliente'];
+        }
+
+        if(isset($usedData['pdf'])){
+            $adjuntos[] = $usedData['pdf'];
+        }
+
+        if(isset($usedData['xmlPath'])){
+            $adjuntos[] = $usedData['xmlPath'];
+        }
+
+
+        if(!is_array($emails)){
+            $emails = [$emails];
+        }
+        
+
+        try {
+            self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
+        } catch (\Throwable $t) {
+        // exception is raised and it'll be handled here 
+        // $e->getMessage() contains the error message 
+        }
     }
 
 }
