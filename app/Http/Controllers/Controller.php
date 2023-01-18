@@ -1888,7 +1888,6 @@ class Controller extends BaseController
             $response = curl_exec($ch);
             
             $response = json_decode($response, true);
-            dd($response);
         }
         
     }
