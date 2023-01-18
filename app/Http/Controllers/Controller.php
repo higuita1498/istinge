@@ -1925,8 +1925,10 @@ class Controller extends BaseController
         }
 
         if(isset($usedData['pdf'])){
-            if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
-                $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
+            if($usedData['pdf']){
+                if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
+                    $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
+                }
             }
         }
 
