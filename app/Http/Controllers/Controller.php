@@ -1849,7 +1849,7 @@ class Controller extends BaseController
     }
 
     public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos = []){
-       
+      
         $empresa = auth()->user()->empresa();
         foreach($emails as $email){
             $fields = [
@@ -1867,10 +1867,10 @@ class Controller extends BaseController
                 'htmlContent' => '<html>'.$html.'</html>',
             ];
 
-            if(is_array($adjunto) && count($adjuntos) > 0){
+            if(is_array($adjuntos) && count($adjuntos) > 0){
                 $fields['attachment'] = $adjuntos;
             }
-
+          
             $fields = json_encode($fields);
          
             $ch = curl_init();
@@ -1888,6 +1888,7 @@ class Controller extends BaseController
             $response = curl_exec($ch);
             
             $response = json_decode($response, true);
+            dd($response);
         }
         
     }
