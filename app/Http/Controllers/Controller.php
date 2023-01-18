@@ -1925,7 +1925,7 @@ class Controller extends BaseController
         }
 
         if(isset($usedData['pdf'])){
-            if($usedData['pdf']){
+            if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
                     $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
                 }
@@ -1933,9 +1933,11 @@ class Controller extends BaseController
         }
 
         if(isset($usedData['xmlPath'])){
-            if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
-                $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
-            } 
+            if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
+                if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
+                    $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
+                } 
+            }
         }
 
         if(!is_array($emails)){
