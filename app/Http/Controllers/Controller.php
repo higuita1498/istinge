@@ -1848,7 +1848,7 @@ class Controller extends BaseController
         return $response;
     }
 
-    public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos){
+    public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos = []){
        
         $empresa = auth()->user()->empresa();
         foreach($emails as $email){
@@ -1867,7 +1867,7 @@ class Controller extends BaseController
                 'htmlContent' => '<html>'.$html.'</html>',
             ];
 
-            if(count($adjuntos) > 0){
+            if(is_array($adjunto) && count($adjuntos) > 0){
                 $fields['attachment'] = $adjuntos;
             }
 
