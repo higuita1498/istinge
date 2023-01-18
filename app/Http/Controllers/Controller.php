@@ -1924,7 +1924,7 @@ class Controller extends BaseController
             $nombreCliente = $data['cliente'];
         }
 
-        if(isset($usedData['pdf'])){
+        if(isset($usedData['pdff'])){
             if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
                     $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
