@@ -1660,7 +1660,7 @@ class ConfiguracionController extends Controller
           //diciendo que el cliente ya ha sido activado
           $emails = $empresa->email;
           $tituloCorreo = "Set de Pruebas Habilitado";
-          self::sendMail('emails.dian.settestid', compact('empresa'), function ($message) use ($emails, $tituloCorreo) {
+          self::sendMail('emails.dian.settestid', compact('empresa'), compact('emails', 'tituloCorreo'), function ($message) use ($emails, $tituloCorreo) {
               $message->from('info@gestordepartes.net', 'Facturación Electrónica - Network Soft');
               $message->to($emails)->subject($tituloCorreo);
           });

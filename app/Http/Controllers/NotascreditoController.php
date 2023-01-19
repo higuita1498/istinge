@@ -1830,7 +1830,7 @@ public function facturas_retenciones($id){
             $zip->addFile($ruta_pdf, "NC-" . $nota->nro . ".pdf");
             $resultado = $zip->close();
 
-            self::sendMail('emails.notascredito', compact('nota', 'total', 'cliente'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $nota, $nombreArchivoZip, $tituloCorreo) {
+            self::sendMail('emails.notascredito', compact('nota', 'total', 'cliente'), compact('pdf', 'emails', 'ruta_xmlresponse', 'nota', 'nombreArchivoZip', 'tituloCorreo'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $nota, $nombreArchivoZip, $tituloCorreo) {
                 $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
 
 
