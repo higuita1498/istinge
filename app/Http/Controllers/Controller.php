@@ -1926,6 +1926,8 @@ class Controller extends BaseController
 
         if(isset($data['cliente'])){
             $nombreCliente = $data['cliente'];
+        }else{
+            $nombreCliente = 'Usuario';
         }
 
         if(isset($usedData['pdff'])){

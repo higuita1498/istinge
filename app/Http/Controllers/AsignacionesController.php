@@ -1271,7 +1271,8 @@ class AsignacionesController extends Controller
             $idContrato = request()->idContrato;
             $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'))->stream();
             $email = $contrato->email;
-            self::sendMail('emails.contrato', compact('contrato'), compact('pdf', 'contrato', 'email'), function($message) use ($pdf, $contrato){
+            $cliente = $contrato->nombre;;
+            self::sendMail('emails.contrato', compact('contrato'), compact('pdf', 'contrato', 'email', 'cliente'), function($message) use ($pdf, $contrato){
                 $message->attachData($pdf, 'contrato_digital_servicios.pdf', ['mime' => 'application/pdf']);
                 $message->to($contrato->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);
             });
