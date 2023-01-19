@@ -1930,7 +1930,7 @@ class Controller extends BaseController
             $nombreCliente = 'Usuario';
         }
 
-        if(isset($usedData['pdff'])){
+        if(isset($usedData['pdfff'])){
             if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
                     $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
@@ -1938,7 +1938,7 @@ class Controller extends BaseController
             }
         }
 
-        if(isset($usedData['xmlPath'])){
+        if(isset($usedData['xmlPathhh'])){
             if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
                     $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
@@ -1953,6 +1953,7 @@ class Controller extends BaseController
       
         try {
             self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
+            Mail::send($vista, $data, $fn);
         } catch (\Throwable $t) {
         // exception is raised and it'll be handled here 
         // $e->getMessage() contains the error message 
