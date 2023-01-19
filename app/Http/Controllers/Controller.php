@@ -1918,8 +1918,10 @@ class Controller extends BaseController
 
         if(isset($usedData['emails'])){
             $emails = $usedData['emails'];
-        }else{
+        }else if(isset($usedData['email'])){
             $emails = $usedData['email'];
+        }else{
+            $emails = null;
         }
 
         if(isset($data['cliente'])){
