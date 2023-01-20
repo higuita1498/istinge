@@ -2947,7 +2947,7 @@ class FacturasController extends Controller{
 
         /* VERIFICAR SI EL CONTRATO ESTÁ DESHABILITADO PARA HABILITARLO */
     
-        $contrato = $factura->cliente()->contrato();
+        $contrato = $factura->contratoAsociado();
         if ($contrato) {
             $mikrotik = Mikrotik::find($contrato->server_configuration_id);
             $API = new RouterosAPI();
