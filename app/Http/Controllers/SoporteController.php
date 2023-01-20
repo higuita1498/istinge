@@ -64,7 +64,7 @@ class SoporteController extends Controller
       }
     }
 
-//Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creaci¨®n
+//Tomamos la diferencia entre la hora exacta acutal y hacemos una diferencia con la ultima creaciï¿½ï¿½n
     $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
 
 //Si el tiempo es de menos de 30 segundos mandamos al listado general
@@ -121,7 +121,7 @@ class SoporteController extends Controller
     $data['empresaid']=Auth::user()->empresa;
     $data['soporte']=$soporte->id;
 
-    Mail::send('emails.soporte',  ['data' => $data], function($msj) use ($data){
+    self::sendMail('emails.soporte',  ['data' => $data], function($msj) use ($data){
         $msj->subject($data->titulo);
         $msj->to('monicadategeek@gmail.com');
     });
@@ -223,7 +223,7 @@ class SoporteController extends Controller
       if (Auth::user()->empresa) {
         $data['usuario']=Auth::user()->nombres;
         $data['email']=Auth::user()->email;
-        Mail::send('emails.soporte',  ['data' => $data], function($msj) use ($data){
+        self::sendMail('emails.soporte',  ['data' => $data], function($msj) use ($data){
           $msj->subject($data->titulo);
           $msj->to('monicadategeek@gmail.com');
         });
@@ -233,7 +233,7 @@ class SoporteController extends Controller
         $data['email']=$soporte->usuario(true)->email;
         $data['modulo']=$soporte->modulo();
         
-        Mail::send('emails.soporte',  ['data' => $data], function($msj) use ($data){
+        self::sendMail('emails.soporte',  ['data' => $data], function($msj) use ($data){
             $msj->subject($data->titulo);
             $msj->to($data->email);
       });

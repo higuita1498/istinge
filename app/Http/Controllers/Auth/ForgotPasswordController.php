@@ -60,7 +60,7 @@ class ForgotPasswordController extends Controller
         $sql="SELECT pr.email, pr.token, wu.nombres, wu.email FROM usuarios wu, password_resets pr where pr.email=wu.email and pr.email='".$request->email."' ";
         $result =DB::select($sql)[0];
         $data =(array) $result;
-        Mail::send('emails.forgotpass',  ['data' => $data], function($msj) use ($data){
+        self::sendMail('emails.forgotpass',  ['data' => $data], function($msj) use ($data){
             $msj->subject('olvido su contraseña');
             $msj->to($data['email']);
         });

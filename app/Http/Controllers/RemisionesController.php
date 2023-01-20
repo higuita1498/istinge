@@ -597,7 +597,7 @@ $categorias=Categoria::where('empresa',Auth::user()->empresa)
         );
         config(['mail'=>$new]);
       }
-      Mail::send('emails.remision', compact('remision'), function($message) use ($pdf, $emails, $remision)
+      self::sendMail('emails.remision', compact('remision'), compact('pdf', 'emails', 'remision'), function($message) use ($pdf, $emails, $remision)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
         $message->to($emails)->subject('Remisión #'.$remision->nro);

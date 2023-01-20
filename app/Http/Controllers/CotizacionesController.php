@@ -720,7 +720,7 @@ class CotizacionesController extends Controller
                 config(['mail'=>$new]);
             }
 
-            Mail::send('emails.cotizacion', compact('factura'), function($message) use ($pdf, $emails, $factura){
+            self::sendMail('emails.cotizacion', compact('factura'), compact('pdf', 'emails', 'factura'), function($message) use ($pdf, $emails, $factura){
                 $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
                 $message->to($emails)->subject('Cotización #'.$factura->cot_nro);
                 $message->attachData($pdf, 'cotizacion.pdf', ['mime' => 'application/pdf']);

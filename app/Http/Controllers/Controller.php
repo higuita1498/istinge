@@ -1847,4 +1847,117 @@ class Controller extends BaseController
         curl_close($curl);
         return $response;
     }
+
+    public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos = []){
+      
+        $empresa = auth()->user()->empresa();
+        foreach($emails as $email){
+            $fields = [
+                'to' => [
+                    [
+                        'email' => $email,
+                        'name' => $nombreCliente
+                    ]
+                ],
+                'sender' => [
+                    'name' => $empresa->nombre,
+                    'email' => $empresa->email
+                ],
+                'subject' => $titulo,
+                'htmlContent' => '<html>'.$html.'</html>',
+            ];
+
+            if(is_array($adjuntos) && count($adjuntos) > 0){
+                $fields['attachment'] = $adjuntos;
+            }
+          
+            $fields = json_encode($fields);
+         
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'accept: application/json',
+                'api-key: '.$empresa->api_key_mail.'', 'content-type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $response = curl_exec($ch);
+            
+            $response = json_decode($response, true);
+        }
+        
+    }
+
+
+    public static function sendMail($vista, $data, $usedData, $fn){
+    
+        $html = '';
+        $adjuntos = [];
+
+        if($vista){
+            $html = view($vista, $data)->render();
+        }
+
+        /*
+        $reflection = new \ReflectionFunction($fn);
+        $message = new \stdClass();
+        $data = $reflection->invoke($message);
+        */
+
+
+        if(isset($usedData['tituloCorreo'])){
+            $titulo = $usedData['tituloCorreo']; 
+        }else{
+            $titulo = 'Comunicado ' . auth()->user()->empresa()->nombre;
+        }
+
+
+        if(isset($usedData['emails'])){
+            $emails = $usedData['emails'];
+        }else if(isset($usedData['email'])){
+            $emails = $usedData['email'];
+        }else{
+            $emails = null;
+        }
+
+        if(isset($data['cliente'])){
+            $nombreCliente = $data['cliente'];
+        }else{
+            $nombreCliente = 'Usuario';
+        }
+
+        if(isset($usedData['pdfff'])){
+            if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
+                if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
+                    $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
+                }
+            }
+        }
+
+        if(isset($usedData['xmlPathhh'])){
+            if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
+                if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
+                    $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
+                } 
+            }
+        }
+
+        if(!is_array($emails)){
+            $emails = [$emails];
+        }
+        
+      
+        try {
+            self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
+            Mail::send($vista, $data, $fn);
+        } catch (\Throwable $t) {
+        // exception is raised and it'll be handled here 
+        // $e->getMessage() contains the error message 
+        }
+    }
+
 }

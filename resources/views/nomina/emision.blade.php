@@ -250,16 +250,16 @@
                                                 @endif
                                                 {{--<a href="{{ route('nomina.liquidar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year']]) }}" title="Editar Nómina"><i class="far fa-edit color"></i></a>--}}
 
-                                                @if(isset($_SESSION['permisos']['169']) && !$modoLectura->success)
-                                                @if($detalles[$i]['estado'] != 'Emitida')
-                                                @if($detalles[$i]['tipo'] == 2)
-                                                    <a href="{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], 'persona' => $detalles[$i]['idpersona'], 'editNomina' => $detalles[$i]['idnomina'] ]) }}"><i class="far fa-edit color"></i></a>
-                                                @else
-                                                    <a class="disabled" title="Solo se puede editar nominas que ya hayan sido emitidas"><i class="far fa-edit color"></i></a>
-                                                @endif
-                                                @else
-                                                    <a href="#" onclick="confirmarAjusteNomina(`{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year'], $detalles[$i]['idpersona']]) }}`)" title="Ajustar nomina"><i class="far fa-edit color"></i></a>
-                                                @endif
+                                                @if((isset($_SESSION['permisos']['169']) || isset($_SESSION['permisos']['792'])  ||  isset($_SESSION['permisos']['790'])) && !$modoLectura->success)
+                                                    @if($detalles[$i]['estado'] != 'Emitida')
+                                                        @if($detalles[$i]['tipo'] == 2)
+                                                            <a href="{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], 'persona' => $detalles[$i]['idpersona'], 'editNomina' => $detalles[$i]['idnomina'] ]) }}"><i class="far fa-edit color"></i></a>
+                                                        @else
+                                                            <a class="disabled" title="Solo se puede editar nominas que ya hayan sido emitidas"><i class="far fa-edit color"></i></a>
+                                                        @endif
+                                                    @else
+                                                        <a href="#" onclick="confirmarAjusteNomina(`{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year'], $detalles[$i]['idpersona']]) }}`)" title="Ajustar nomina"><i class="far fa-edit color"></i></a>
+                                                    @endif
                                                 @endif
 
                                                {{-- @if(isset($_SESSION['permisos']['166'])) --}} 
@@ -267,7 +267,7 @@
                                                {{-- @endif --}}
 
 
-                                                @if(isset($_SESSION['permisos']['167']) && !$modoLectura->success)
+                                                @if((isset($_SESSION['permisos']['167']) || isset($_SESSION['permisos']['792'])) && !$modoLectura->success)
                                                  @if (!$empresa->nomina_dian)
                                                     @if($detalles[$i]['emitida'] == 4)
                                                     <a href="#" title="Emitir Ajuste de Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',2)">

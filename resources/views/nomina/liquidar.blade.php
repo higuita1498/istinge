@@ -1146,7 +1146,13 @@
         var periodo = '{{$periodo}}';
         var type = $("#periodo_quincenal").val();
         // alert(periodo + " - " + periodo + " - " + type);
+
         var url = '/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
+
+        if(window.location.pathname.split("/")[1] === "software"){
+            var url = '/software/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
+        }
+
         $('#form-buscarnomina').attr('action', url);
         $('#form-buscarnomina').submit();
     }

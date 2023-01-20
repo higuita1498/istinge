@@ -259,7 +259,7 @@ public function registronormal(Request $request)
         $data['tip_iden']=$empresa->tip_iden();
         //$data['tipo_persona']=$empresa->tipo_persona();
 
-        /*Mail::send('emails.welcomeEmpresa',  ['data' => $data], function($msj) use ($data){
+        /*self::sendMail('emails.welcomeEmpresa',  ['data' => $data], function($msj) use ($data){
             $msj->subject('Bienvenid@ '.$data->nombre);
             $msj->to($data->email);
         });*/

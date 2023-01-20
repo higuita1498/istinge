@@ -106,7 +106,7 @@ class RadicadosController extends Controller{
             }
             if($request->cliente){
                 $radicados->where(function ($query) use ($request) {
-                    $query->orWhere('radicados.identificacion', 'like', "%{$request->cliente}%");
+                    $query->orWhere('radicados.identificacion', $request->cliente);
                 });
             }
             if($request->telefono){
@@ -583,7 +583,10 @@ class RadicadosController extends Controller{
                     config(['mail'=>$new]);
                 }
 
-                Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                $emails = [$radicado->correo];
+                $tituloCorreo = Auth::user()->empresa()->nombre.': Reporte de Radicado';
+
+                self::sendMail('emails.radicado', compact('radicado'), compact('radicado', 'emails', 'tituloCorreo'), function($message) use ($radicado){
                     $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
                 });
             }
@@ -649,7 +652,9 @@ class RadicadosController extends Controller{
         ->select('radicados.*')
         ->where('radicados.empresa',Auth::user()->empresa);
         
-        if ($contacto) { $movimientos=$movimientos->where('radicados.identificacion', $contacto); }
+        if ($contacto) { 
+            $movimientos=$movimientos->where('radicados.identificacion', $contacto);
+         }
         if (isset($requestData->search['value'])) {
             $movimientos=$movimientos->where(function ($query) use ($requestData) {
                 $query->where('radicados.identificacion', 'like', '%'.$requestData->search['value'].'%')
@@ -1030,7 +1035,7 @@ class RadicadosController extends Controller{
                             config(['mail'=>$new]);
                         }
 
-                        Mail::send('emails.radicado', compact('radicado'), function($message) use ($radicado){
+                        self::sendMail('emails.radicado', compact('radicado'), compact('radicado'), function($message) use ($radicado){
                             $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
                         });
                     }

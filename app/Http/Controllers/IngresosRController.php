@@ -349,7 +349,7 @@ class IngresosRController extends Controller
         config(['mail'=>$new]);
       }
 
-      Mail::send('emails.ingreso', compact('ingreso'), function($message) use ($pdf, $emails, $ingreso)
+      self::sendMail('emails.ingreso', compact('ingreso'), compact('pdf', 'emails', 'ingreso'), function($message) use ($pdf, $emails, $ingreso)
       {
         $message->from(Auth::user()->empresa()->email, Auth::user()->empresa()->nombre);
         $message->to($emails)->subject('Recibo de Caja #'.$ingreso->nro);
