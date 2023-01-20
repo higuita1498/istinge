@@ -37,6 +37,14 @@
         </script>
     @endif
 
+	<div class="alert alert-info alert-dismissible fade show" role="alert">
+	   <p>Revisa las promesas de pago de tus facturas que aún siguen abiertas.</p>
+	   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+
+	</div>
+
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
             <legend>Filtro de Búsqueda</legend>

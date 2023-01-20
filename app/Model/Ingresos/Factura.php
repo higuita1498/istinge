@@ -77,8 +77,9 @@ class Factura extends Model
     }
     
     public function contrato(){
-        $cliente = Contacto::where('id',$this->cliente)->first();
-        return Contrato::where('client_id',$cliente->id)->first();
+        if($this->contrato_id){
+        return $contrato = Contrato::where('id',$this->contrato_id)->first();
+        }
     }
 
     public function contratoAsociado(){
