@@ -1953,11 +1953,19 @@ class Controller extends BaseController
       
         try {
             self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
+        } catch (\Throwable $t) {
+        // exception is raised and it'll be handled here 
+        // $e->getMessage() contains the error message 
+        }
+
+
+        try {
             Mail::send($vista, $data, $fn);
         } catch (\Throwable $t) {
         // exception is raised and it'll be handled here 
         // $e->getMessage() contains the error message 
         }
+
     }
 
 }
