@@ -28,6 +28,23 @@
 	    @csrf
 	    <input type="hidden" value="{{$opcion}}" name="type">
 	    <div class="row">
+
+			<div class="col-md-2 form-group">
+				@if(!request()->vencimiento)
+					<label>Facturas vencidas (opcional)</label>
+					<input type="text" class="form-control datepicker"  id="vencimiento" value="" name="vencimiento">
+				@else
+				<a href="{{ url()->current() }}">
+				<button type="button" class="btn btn-primary position-relative">
+					Vencidas: {{ request()->vencimiento }}
+					<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+					  X
+					</span>
+				</button>
+				</a>
+				@endif
+			</div>
+
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Plantilla <span class="text-danger">*</span></label>
         	    <select name="plantilla" id="plantilla" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
@@ -110,6 +127,7 @@
         	    </span>
         	</div>
 
+
 			<div class="col-md-3">
 				<div class="form-check form-check-inline d-flex p-3">
 					<input class="form-check-input" type="checkbox" id="isAbierta" name="isAbierta" value="true">
@@ -134,7 +152,22 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+	var ultimoVencimiento = null;
+
+
 	window.addEventListener('load', function() {
+
+		$('#vencimiento').on('change', function(){
+			if($(this).val() == ultimoVencimiento){
+				
+			}else{
+				ultimoVencimiento = $(this).val();
+				window.location.href =  window.location.pathname + '?' + 'vencimiento=' + ultimoVencimiento;
+			}
+		});
+
+
 		$('#barrio').on('keyup',function(e) {
         	if(e.which > 32 || e.which == 8) {
         		if($('#barrio').val().length > 3){

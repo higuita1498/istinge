@@ -88,6 +88,14 @@ class AvisosController extends Controller
         if($id){
             $contratos = $contratos->where('contactos.id', $id);
         }
+
+        if(request()->vencimiento){
+            $contratos->join('factura', 'factura.contrato_id', '=', 'contracts.id')
+                      ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
+                      ->groupBy('contracts.id');
+        }
+
+
         $contratos = $contratos->get();
 
         $servidores = Mikrotik::where('empresa', auth()->user()->empresa)->get();
@@ -111,6 +119,14 @@ class AvisosController extends Controller
         if($id){
             $contratos = $contratos->where('contactos.id', $id);
         }
+
+        if(request()->vencimiento){
+            $contratos->join('factura', 'factura.contrato_id', '=', 'contracts.id')
+                      ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
+                      ->groupBy('contracts.id');
+        }
+
+
         $contratos = $contratos->get();
 
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
