@@ -81,7 +81,7 @@ class AvisosController extends Controller
         $plantillas = Plantilla::where('status', 1)->where('tipo', 0)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-			->where('contracts.status', 1)
+			/* ->where('contracts.status', 1) */
             ->where('contracts.empresa', Auth::user()->empresa)
             ->whereNotNull('contactos.celular');
 
@@ -105,7 +105,7 @@ class AvisosController extends Controller
         $plantillas = Plantilla::where('status', 1)->where('tipo', 1)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->where('contracts.status', 1)
+           /* ->where('contracts.status', 1) */
             ->where('contracts.empresa', Auth::user()->empresa);
 
         if($id){
