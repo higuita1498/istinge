@@ -279,7 +279,13 @@ class AvisosController extends Controller
                             }else{
                                 $msj = $response['error']['details'];
                             }
-                            return back()->with('danger', 'Envío Fallido: '.$msj);
+
+                            if(is_array($msj)){
+                                return back()->with('danger', 'Envío Fallido: '. implode(",", $msj));
+                            }else{
+                                return back()->with('danger', 'Envío Fallido: '.$msj);
+                            }
+
                         }else{
                             if($response['status'] == '1x000'){
                                 $msj = 'SMS recíbido por hablame exitosamente';
