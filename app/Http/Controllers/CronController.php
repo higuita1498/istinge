@@ -641,9 +641,7 @@ class CronController extends Controller
                                             $contrato->update();
                                             $API->disconnect();
                                             }
-
                                 }
-
                             }
 
                     continue;

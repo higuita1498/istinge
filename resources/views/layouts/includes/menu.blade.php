@@ -253,12 +253,12 @@
                         <a class="nav-link" href="{{route('pagosrecurrentes.index')}}" >Pagos Recurrentes</a>
                     </li>
                     <?php } ?>
-                    <?php if(isset($_SESSION['permisos']['85'])){ ?>
+                    <?php if(isset($_SESSION['permisos']['266'])){ ?>
                     <li class="nav-item" id="debito">
                         <a class="nav-link" href="{{route('notasdebito.index')}}" >Notas Débito</a>
                     </li>
                     <?php } ?>
-                    <?php if(isset($_SESSION['permisos']['90'])){ ?>
+                    <?php if(isset($_SESSION['permisos']['271'])){ ?>
                     <li class="nav-item" id="ordenes">
                         <a class="nav-link" href="{{route('ordenes.index')}}" >Órdenes de Compra</a>
                     </li>
