@@ -47,6 +47,7 @@ class NominaPrestacionSocialController extends Controller
             ->where('ne_nomina.year', $year)
             ->where('periodo', '>=', $desde)
             ->where('periodo', '<=', $hasta)
+            ->where('estado_nomina',1)
             ->where('fk_idempresa', Auth::user()->empresa);
 
         if($request->persona){

@@ -126,7 +126,7 @@ class CronController extends Controller
                     if(isset($fac->estatus) || !$fac){
                         
                         //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
-                        if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac){
+                        if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac || isset($fac->estatus) && $fac->estatus == 2){
                             if(!$fac || isset($fac) && $fecha != $fac->fecha){
                             $numero=round($numero)+1;
                         
