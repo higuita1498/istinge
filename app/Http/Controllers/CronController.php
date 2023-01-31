@@ -162,7 +162,7 @@ class CronController extends Controller
                                 $factura->nro           = $numero;
                                 $factura->codigo        = $nro->prefijo.$inicio;
                                 $factura->numeracion    = $nro->id;
-                                $factura->plazo         = $plazo->id;
+                                $factura->plazo         = isset($plazo->id) ? $plazo->id : '';
                                 $factura->term_cond     = $contrato->terminos_cond;
                                 $factura->facnotas      = $contrato->notas_fact;
                                 $factura->empresa       = 1;
