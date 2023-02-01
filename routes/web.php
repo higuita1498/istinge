@@ -19,6 +19,7 @@ use App\Model\Nomina\NominaPeriodos;
 Route::get('sendmail','Controller@sendmail');
 
 Route::get('phpinfo', function(){phpinfo();});
+Route::get('/crear-nomina-eliminada', 'NominaController@generarNominaEliminada');
 
 Route::get('clear', function () {
     $exitCode = Artisan::call('config:clear');

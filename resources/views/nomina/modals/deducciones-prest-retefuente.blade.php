@@ -125,7 +125,7 @@
             }else{
             var url = '/empresa';
             }
-            var url = url+'/empresa/nomina/liquidar-nomina/'+id+'/edit_deducciones';
+            var url = url+'/nomina/liquidar-nomina/'+id+'/edit_deducciones';
             var _token = $('meta[name="csrf-token"]').attr('content');
             var i = id;
             $.post(url, {
