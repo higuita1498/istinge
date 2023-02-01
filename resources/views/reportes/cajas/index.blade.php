@@ -93,7 +93,7 @@
                         <td><a href="{{$movimiento->show_url()}}">{{date('d-m-Y', strtotime($movimiento->fecha))}}</a></td>
                         <td>
                             <a href="{{$movimiento->show_url()}}">
-                                {{$movimiento->id}}
+                                {{$movimiento->id_modulo}}
                             </a>
                         </td>
                         <td>

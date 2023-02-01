@@ -116,8 +116,10 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 <cac:Contact>
 @if(isset($data['telefono1']))
 <cbc:Telephone>{{$data['telefono1']}}</cbc:Telephone>
+@elseif(isset($data['telefono2']))
+<cbc:Telephone>{{$data['telefono2']}}</cbc:Telephone>
 @else
-<cbc:Telephone>{{$data['telefono']}}</cbc:Telephone>
+<cbc:Telephone>{{$data['celular']}}</cbc:Telephone>
 @endif
 
 @php 
