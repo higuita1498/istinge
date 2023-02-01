@@ -3311,4 +3311,16 @@ class NominaController extends Controller
         return "nomina eliminada";
     }
 
+    public function generarNominaEliminada(){
+        $persona = Persona::find(7);
+        $tipoContrato = NominaTipoContrato::find($persona->fk_tipo_contrato);
+        $data = app(PersonasController::class)->nominaPersona(
+            $persona,
+            2022,
+            12,
+            $tipoContrato
+        );
+    }
+
+
 }
