@@ -167,7 +167,7 @@ class CronController extends Controller
                                 $factura->facnotas      = $contrato->notas_fact;
                                 $factura->empresa       = 1;
                                 $factura->cliente       = $contrato->cliente;
-                                $factura->fecha         = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                                $factura->fecha         = $fecha;
                                 $factura->tipo          = $tipo;
                                 $factura->vencimiento   = $date->format('Y-m-d');
                                 $factura->suspension    = $date->format('Y-m-d');
