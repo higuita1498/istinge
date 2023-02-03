@@ -1930,20 +1930,27 @@ class Controller extends BaseController
             $nombreCliente = 'Usuario';
         }
 
-        if(isset($usedData['pdfff'])){
+        if(isset($usedData['pdf'])){
+            /*
             if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
                     $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
                 }
             }
+            */
+
+            $adjuntos[] = ['name' => 'document.pdf', 'content' => chunk_split(base64_encode($usedData['pdf']))];
         }
 
-        if(isset($usedData['xmlPathhh'])){
+        if(isset($usedData['xmlPath'])){
+            /*
             if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
                     $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
                 } 
             }
+            */
+            //$adjuntos[] = base64_encode($usedData['xml']);
         }
 
         if(!is_array($emails)){
