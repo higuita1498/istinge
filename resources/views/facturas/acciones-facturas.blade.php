@@ -13,7 +13,7 @@
     @endif
 	@if($estatus==1)
 		<a href="{{route('ingresos.create_id', ['cliente'=>$cliente, 'factura'=>$id])}}" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
-		@if($correo==0)
+		@if($correo==0 && $emitida != 1)
         <a href="{{route('facturas.edit',$id)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
         @endif
         @if(isset($_SESSION['permisos']['775']))
