@@ -586,9 +586,9 @@ class RadicadosController extends Controller{
                 $emails = [$radicado->correo];
                 $tituloCorreo = Auth::user()->empresa()->nombre.': Reporte de Radicado';
 
-                self::sendMail('emails.radicado', compact('radicado'), compact('radicado', 'emails', 'tituloCorreo'), function($message) use ($radicado){
-                    $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
-                });
+                // self::sendMail('emails.radicado', compact('radicado'), compact('radicado', 'emails', 'tituloCorreo'), function($message) use ($radicado){
+                //     $message->to($radicado->correo)->subject(Auth::user()->empresa()->nombre.': Reporte de Radicado');
+                // });
             }
 
             return back()->with('success', $mensaje);
