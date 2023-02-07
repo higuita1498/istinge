@@ -168,7 +168,9 @@
                 <div class="float-center">
                     <p class="mb-0 text-center">Contrato asociado</p>
                     <div class="fluid-container">
+                        @if(isset($factura->contrato()->nro))
                         <h4 class="font-weight-medium text-center mb-0">No. <a href="{{route('contratos.show',$factura->contrato_id)}}" target="_blank">{{$factura->contrato()->nro}}</a></h4>
+                        @endif
                     </div>
                 </div>
             </div>
