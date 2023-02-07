@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Traits;
-
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 
 trait ConsumesExternalServices
