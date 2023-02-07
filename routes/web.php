@@ -264,6 +264,16 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
         Route::post('/personalizados/{id}/borrar','PlanesController@personalizados_destroy')->name('p_personalizados.destroy');
     });
 
+	Route::group(['prefix' => 'recepcion'], function () {
+        Route::get('/documentos', 'RecepcionComprobantesController@documents');
+        Route::get('/listadocumentos', 'RecepcionComprobantesController@index')->name('recepcion.index');
+        Route::post('/modificaracuserecibostore', 'RecepcionComprobantesController@storeModificarAcuseRecibo');
+        Route::get('/modificaracuserecibo/{id}', 'RecepcionComprobantesController@modificarAcuseRecibo')->name('recepcion.modificarAcuseRecibo');
+        Route::get('/modificarrecepcionbien/{id}', 'RecepcionComprobantesController@modificarRecepcionBien')->name('recepcion.modificarAcuseRecibo');
+        Route::post('/aceptorechazodocumento', 'RecepcionComprobantesController@aceptoRechzaoDocumento');
+    });
+    Route::resource('recepcion', 'RecepcionComprobantesController');
+
 
     Route::group(['prefix' => 'suscripcion'], function() {
         Route::get('listado', 'SuscripcionController@index')->name('listado.index');

@@ -242,6 +242,10 @@
                         <a class="nav-link" href="{{ route('facturasp.lista_documentos_soporte') }}">Documentos
                             Soporte <span class="badge badge-info ml-1">Nuevo</span></a>
                     </li>
+
+                    <li class="nav-item" id="ordenes">
+                        <a class="nav-link" href="{{ route('recepcion.index') }}">Recepción de Comprobantes</a>
+                    </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['251'])){ ?>
                     <li class="nav-item" id="pagos">
