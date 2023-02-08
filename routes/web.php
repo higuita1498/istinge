@@ -13,8 +13,11 @@
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Nomina\NominaController;
 use App\Http\Controllers\Nomina\NominaDianController;
+use App\Http\Controllers\ContactosController;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaPeriodos;
+
+
 
 Route::get('sendmail','Controller@sendmail');
 
@@ -1517,3 +1520,6 @@ Route::get('/graficos/{id?}', 'GraficosController@index');
 Route::get('/data-grafica/', 'GraficosController@data');
 
 Route::get('/list/morosos', 'ContratosController@morosos');
+
+//redirecciona clientes al CRM
+Route::get('/clientes/cambiar/{id}','ContactosController@cambiares')->name('cliente.cambiares');

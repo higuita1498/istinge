@@ -628,6 +628,7 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
+
 			columns: [
 			    {data: 'nombre'},
 			    {data: 'nit'},
@@ -644,6 +645,7 @@
         tabla = $('#table_sin_gestionar');
         
         tabla.on('preXhr.dt', function(e, settings, data) {
+            console.log(data);
             data.cliente = $('#cliente').val();
 			data.etiqueta_id = $('#etiqueta').val();
             data.estado = $('#estado').val();

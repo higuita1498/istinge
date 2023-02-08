@@ -13,6 +13,8 @@ use DB;
 use Session;
 use ZipArchive;
 
+use App\CRM;
+
 use App\Funcion;
 use App\Cotizacion;
 use App\Empresa;
@@ -1375,5 +1377,43 @@ class ContactosController extends Controller
         $historial = DB::table('log_saldos')->join('usuarios as u','u.id','log_saldos.created_by')
         ->select('log_saldos.*','u.nombres as nombre')->where('id_contacto',$contactoId)->get();
         return response()->json($historial);
+    }
+
+    //funcion que redirecciona
+    public function cambiares($id){
+        //##################################################################
+     $count = DB::table('crm')->where('cliente', $id)->count();
+      if($count!=0){
+            return redirect('/empresa/crm');
+       }else{
+        $fec = Carbon::create(date('Y'), date('m'), date('d'))->format('Y-m-d');
+        $t = DB::table('factura')
+              ->where('cliente', $id)
+               ->selectRaw('MAX(pago_oportuno) AS fechamax')->get();
+        //sacar la factura el numero una vez obtenido la fecha maxima
+        $numfac = DB::table('factura')
+                 ->where('pago_oportuno', $t[0]->fechamax)
+                 ->where('cliente', $id)
+                 ->select('id as idfac')->get();
+        //##################################################
+        //validar la fecha para que deje guardar en el crm 
+        if($fec > $t[0]->fechamax){
+            //si la factura esta vencida entonces verificar el cmr y sino registrar
+            $datos = DB::table('contactos')->where('id', $id)->get();
+            $Reg = new CRM();
+            $Reg->cliente = $datos[0]->id;
+            $Reg->estado = 0;
+            $Reg->factura =$numfac[0]->idfac;
+            $Reg->notificacion = 0;
+            $Reg->grupo_corte = 1;
+            $Reg->save();
+            return redirect('/empresa/crm');
+        }else{
+            Session::flash('novence','Esta factura aun no vence');
+            return back();
+        }
+
+      }
+       
     }
 }
