@@ -465,6 +465,17 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	});
 	Route::resource('facturas', 'FacturasController');
 
+	
+	Route::group(['prefix' => 'recepcion'], function () {
+        Route::get('/documentos', 'RecepcionComprobantesController@documents');
+        Route::get('/listadocumentos', 'RecepcionComprobantesController@index')->name('recepcion.index');
+        Route::post('/modificaracuserecibostore', 'RecepcionComprobantesController@storeModificarAcuseRecibo');
+        Route::get('/modificaracuserecibo/{id}', 'RecepcionComprobantesController@modificarAcuseRecibo')->name('recepcion.modificarAcuseRecibo');
+        Route::get('/modificarrecepcionbien/{id}', 'RecepcionComprobantesController@modificarRecepcionBien')->name('recepcion.modificarAcuseRecibo');
+        Route::post('/aceptorechazodocumento', 'RecepcionComprobantesController@aceptoRechzaoDocumento');
+    });
+    Route::resource('recepcion', 'RecepcionComprobantesController');
+
 	//NOMINA
     Route::group(['namespace' => 'Nomina', 'prefix' => 'nomina', 'middleware' => ['nomina']], function () {
 
