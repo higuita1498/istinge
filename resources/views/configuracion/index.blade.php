@@ -714,7 +714,7 @@
     		}
     		$.ajax({
     			url: url,
-    			method: 'POST',
+    			method: 'GET',
     			headers: {
     				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     			},
