@@ -170,7 +170,7 @@
                             <a class="nav-link" href="{{route('facturas.index')}}" >Facturas Estandar</a>
                         </li>
                         <?php } ?>
-                        <?php if(isset($_SESSION['permisos']['851'])){ ?>
+                        <?php if(isset($_SESSION['permisos']['851']) || isset($_SESSION['permisos']['420'])){ ?>
                         <li class="nav-item" id="venta-electronica">
                             <a class="nav-link" href="{{route('facturas.index-electronica')}}" >Facturas Electrónicas</a>
                         </li>
