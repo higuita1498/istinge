@@ -813,17 +813,6 @@ class NotascreditoController extends Controller
                 $items->impuesto_1 = null;
                 $items->id_impuesto_2 = null;
                 $items->impuesto_2 = null;
-                $items->id_impuesto_3 = null;
-                $items->impuesto_3 = null;
-                $items->id_impuesto_4 = null;
-                $items->impuesto_4 = null;
-                $items->id_impuesto_5 = null;
-                $items->impuesto_5 = null;
-                $items->id_impuesto_6 = null;
-                $items->impuesto_6 = null;
-                $items->id_impuesto_7 = null;
-                $items->impuesto_7 = null;
-
                 $data  = $request->all();
 
                 if (isset($data['impuesto' . $z])) {
