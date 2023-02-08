@@ -604,7 +604,7 @@ class NotascreditoController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         //Validaciones con respecto a la nueva programacion del cda.
         if ($request->tipo_operacion == 3) {
             if (count($request->item) > 1) {
@@ -640,17 +640,6 @@ class NotascreditoController extends Controller
                     if ($data['impuesto' . $z]) {
                         for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
                             $porcentaje = Impuesto::find($data['impuesto' . $z][$x])->porcentaje;
-                            if ($porcentaje > 0) {
-                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
-                            }
-                        }
-                    }
-                }
-                //en caso tal de no tener el desarrollo de multiples ivas
-                elseif(isset($data['impuesto'])){
-                    if ($data['impuesto']) {
-                        for ($x = 0; $x < count($data['impuesto']); $x++) {
-                            $porcentaje = Impuesto::find($data['impuesto'][$x])->porcentaje;
                             if ($porcentaje > 0) {
                                 $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
                             }
@@ -720,7 +709,7 @@ class NotascreditoController extends Controller
             $nota->cliente       = $request->cliente;
             $nota->tipo          = $request->tipo;
             $nuevaFecha = Carbon::parse($request->fecha)->format('Y-m-d');
-            // $nuevaFecha != $nota->fecha ? $nota->tiempo_creacion = now() : '';
+            $nuevaFecha != $nota->fecha ? $nota->tiempo_creacion = now() : '';
             $nota->fecha = $nuevaFecha;
             $nota->observaciones = mb_strtolower($request->observaciones);
             $nota->notas         = $request->notas;
@@ -754,11 +743,12 @@ class NotascreditoController extends Controller
                     $totalreten = 0;
                 }
                 //Sumamos detalle de recaudo
+
                 $nota->total_valor += $request->detalle_monto;
             }
 
             $nota->save();
-    
+
             //Compruebo que existe la bodega y la uso
             //$bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
             if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -797,36 +787,42 @@ class NotascreditoController extends Controller
                 }
 
                 /*INICIO DE CALCULOS PARA SACAR EL SALDO A FAVOR AL CONTACTO*/
+                if (!is_null($request->descuento) && count($request->descuento) > 0) {
+                    if ($request->descuento[$i]) {
+                        $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->descuento[$i] / 100;
+                        $precioItem = ($request->precio[$i] * $request->cant[$i]) - $descuento;
 
-                if ($request->desc[$i]) {
-                    $descuento = ($request->precio[$i] * $request->cant[$i]) * $request->desc[$i] / 100;
-                    $precioItem = ($request->precio[$i] * $request->cant[$i]) - $descuento;
+                        $impuestoItem = 0;
+                        $tmp = $precioItem + $impuestoItem;
 
-                    $impuestoItem = 0;
-                    $tmp = $precioItem + $impuestoItem;
-
-                    $montoFactura += $tmp;
+                        $montoFactura += $tmp;
+                    }/*else{
+                        $precioItem = $request->precio[$i] * $request->cant[$i];
+                        $impuestoItem = ($precioItem * $impuesto->porcentaje) / 100;
+                        $montoFactura += $precioItem + $impuestoItem;
+                    }*/
                 }
+
 
                 /*FIN DE CALCULOS*/
 
                 //MULTI IMPUESTOS
                 $items->id_impuesto = null;
                 $items->impuesto = null;
-                // $items->id_impuesto_1 = null;
-                // $items->impuesto_1 = null;
-                // $items->id_impuesto_2 = null;
-                // $items->impuesto_2 = null;
-                // $items->id_impuesto_3 = null;
-                // $items->impuesto_3 = null;
-                // $items->id_impuesto_4 = null;
-                // $items->impuesto_4 = null;
-                // $items->id_impuesto_5 = null;
-                // $items->impuesto_5 = null;
-                // $items->id_impuesto_6 = null;
-                // $items->impuesto_6 = null;
-                // $items->id_impuesto_7 = null;
-                // $items->impuesto_7 = null;
+                $items->id_impuesto_1 = null;
+                $items->impuesto_1 = null;
+                $items->id_impuesto_2 = null;
+                $items->impuesto_2 = null;
+                $items->id_impuesto_3 = null;
+                $items->impuesto_3 = null;
+                $items->id_impuesto_4 = null;
+                $items->impuesto_4 = null;
+                $items->id_impuesto_5 = null;
+                $items->impuesto_5 = null;
+                $items->id_impuesto_6 = null;
+                $items->impuesto_6 = null;
+                $items->id_impuesto_7 = null;
+                $items->impuesto_7 = null;
 
                 $data  = $request->all();
 
@@ -836,24 +832,6 @@ class NotascreditoController extends Controller
                             $id_cat = 'id_impuesto_' . $x;
                             $cat = 'impuesto_' . $x;
                             $impuesto = Impuesto::where('id', $data['impuesto' . $z][$x])->first();
-                            if ($impuesto) {
-                                if ($x == 0) {
-                                    $items->id_impuesto = $impuesto->id;
-                                    $items->impuesto = $impuesto->porcentaje;
-                                } elseif ($x > 0) {
-                                    $items->$id_cat = $impuesto->id;
-                                    $items->$cat = $impuesto->porcentaje;
-                                }
-                            }
-                        }
-                    }
-                    //en caso tal de no tener los multiples ivas
-                }else if(isset($data['impuesto'])){
-                    if ($data['impuesto']) {
-                        for ($x = 0; $x < count($data['impuesto']); $x++) {
-                            $id_cat = 'id_impuesto_' . $x;
-                            $cat = 'impuesto_' . $x;
-                            $impuesto = Impuesto::where('id', $data['impuesto'][$x])->first();
                             if ($impuesto) {
                                 if ($x == 0) {
                                     $items->id_impuesto = $impuesto->id;
@@ -958,16 +936,8 @@ class NotascreditoController extends Controller
                 }
                 $cliente->saldo_favor = $cliente->saldo_favor + $factura->pagado();
                 $cliente->save();
-
-            }
-            
-            foreach($nota->itemsNota as $item){
-                foreach($item->cuentasContable() as $cuentaItem){
-                    $nota->modelDetalle()->factura()->formaPagoRequest(1);
-                }
             }
 
-            PucMovimiento::notaCredito($nota,2,$request);
             $mensaje = 'Se ha modificado satisfactoriamente la nota de Crédito';
             return redirect('empresa/notascredito')->with('success', $mensaje)->with('nota_id', $nota->id);
         }
