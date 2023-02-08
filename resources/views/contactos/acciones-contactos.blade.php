@@ -6,6 +6,7 @@
 @endif
 <a href="{{route('contactos.show',$id)}}" class="btn btn-outline-info btn-icons"><i class="far fa-eye"></i></i></a>
 <a href="{{route('contactos.edit',$id)}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+
 @if ($email && $contract != 'N/A')
 <a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="btn btn-outline-success btn-icons" title="Enviar Notificación por EMAIL"><i class="fas fa-envelope-open-text"></i></a>
 @endif
@@ -28,5 +29,5 @@
 <button class="btn btn-outline-danger btn-icons mr-1" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$id}}', '¿Está seguro que deseas eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 @endif
 
-
 <a href="{{route('factura.create.cliente', $id)}}" class="btn btn-outline-warning btn-icons" title="Crear una factura" target="_blank"><i class="fas fa-file-invoice-dollar"></i></a>
+<a href="{{route('cliente.cambiares',$id)}}" class="btn btn-outline-primary btn-icons" title="redireccionar a CRM"><i class="fas fa-file-contract"></i></a>
