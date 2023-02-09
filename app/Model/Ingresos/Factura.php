@@ -1037,7 +1037,14 @@ public function forma_pago()
             
             //obtenemos el mes y año de la factura actual
             $mesYearFactura = Carbon::parse($this->fecha)->format('m-Y');
-
+            
+            $validateFin = "01-".$mesYearFactura;
+            $validateFin= Carbon::parse($validateFin)->endOfMonth()->format('d');
+            
+            if($validateFin < $diaFinCorte && $diaFinCorte == 30 || $validateFin < $diaFinCorte && $diaFinCorte == 31){
+                $diaFinCorte = $validateFin;
+            }
+            
             //fecha fin corte es la combiancion del grupo de corte, osea la fecha_corte y mes factura es el mes año de la factura
             $fechaFin = $finCorte = $diaFinCorte . "-" . $mesYearFactura;
 
@@ -1058,17 +1065,18 @@ public function forma_pago()
             
             $fechaFin    = Carbon::parse($fechaFin);
             
-            
             /* Validacion de mes anticipado o mes vencido */
             $diaFac = Carbon::parse($this->fecha)->format('d');
             
             //si este caso ocurre es por que tengo que cobrar el mes pasado
-            if($diaFac < $grupo->fecha_factura && $empresa->periodo_facturacion == 2){
-                $finCorte = Carbon::parse($finCorte)->subMonth();
-                $inicioCorte =  $inicioCorte->subMonth();
-            }
-            /* Validacion de mes anticipado o mes vencido */
             
+            // if($diaFac < $grupo->fecha_factura && $empresa->periodo_facturacion == 2){
+            //     $finCorte = Carbon::parse($finCorte)->subMonth();
+            //     $inicioCorte =  $inicioCorte->subMonth();
+            // }
+            //se comenta por que etsaba creando conflicto
+            
+            /* Validacion de mes anticipado o mes vencido */
             $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
             $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();
             
@@ -1085,6 +1093,7 @@ public function forma_pago()
                 los primeros dias de uso dependiendo de la creacion del contrato
                 también debemos tener la opción de prorrateo activa en el menú de configuración.
                 */
+      
                 if($factura->id == $this->id && $empresa->prorrateo == 1){
           
                     //Buscamos el contrato al que esta asociada la factura
@@ -1112,7 +1121,7 @@ public function forma_pago()
                     }else{
                         $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                     }
-
+                
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
 
                     /*
