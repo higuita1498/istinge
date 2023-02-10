@@ -412,6 +412,9 @@
 				<li class="nav-item">
 					<a class="nav-link active" id="profile-tab" data-toggle="tab" href="#facturas_venta" role="tab" aria-controls="facturas_venta" aria-selected="false">Facturas Generadas</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="remi-tab" data-toggle="tab" href="#remi" role="tab" aria-controls="remi" aria-selected="false">Remisiones</a>
+				</li>
 				@if($contacto->tipo_contacto>0)
 				<li class="nav-item">
 					<a class="nav-link" id="facturas_compra-tab" data-toggle="tab" href="#facturas_compra" role="tab" aria-controls="facturas_compra" aria-selected="false">Facturas de Compra</a>
@@ -476,6 +479,28 @@
 		    					<tbody></tbody>
 		    				</table>
 						</div>
+					</div>
+					  {{-- Remisiones  --}}
+					  <div class="tab-pane fade" id="remi" role="tabpanel" aria-labelledby="remi-tab">
+						<input type="hidden" id="url-show-remisiones"
+							value="{{ route('remisiones.datatable.cliente', $contacto->id) }}">
+						<table class="table table-light table-striped table-hover " id="table-show-remisiones"
+							style="width: 100%; border: 1px solid #e9ecef;">
+							<thead class="thead-light">
+								<tr>
+									<th>Código</th>
+									<th>Cliente</th>
+									<th>Creación</th>
+									<th>Vencimiento</th>
+									<th>Estado</th>
+									<th>Total</th>
+									<th>Pagado</th>
+									<th>Por pagar</th>
+									<th>Acciones</th>
+								</tr>
+	
+							</thead>
+						</table>
 					</div>
 					<div class="tab-pane fade" id="facturas_compra" role="tabpanel" aria-labelledby="facturas_compra-tab">
 						<input type="hidden" id="url-show-facturas-compras" value="{{route('facturap.datatable.cliente', $contacto->id)}}">

@@ -672,83 +672,92 @@ $categorias=Categoria::where('empresa',Auth::user()->empresa)
      return json_encode($json_data);
   }
 
-  public function datatable_cliente(Request $request, $cliente){
-    // storing  request (ie, get/post) global array to a variable
-    $requestData =  $request;
-    $columns = array(
-    // datatable column index  => database column name
-        0 => 'remisiones.nro',
-        1 => 'nombrecliente',
-        2 => 'remisiones.fecha',
-        3 => 'remisiones.vencimiento',
-        4 => 'remisiones.estatus',
-        5 => 'total',
-        6 => 'pagado',
-        7 => 'porpagar',
-    );
-    $facturas = Remision::join('contactos as c', 'remisiones.cliente', '=', 'c.id')
-        ->join('items_remision as if', 'remisiones.id', '=', 'if.remision')
-        ->select('remisiones.*', DB::raw('c.nombre as nombrecliente'),
-            DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-            DB::raw('((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) as pagado'),
-            DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -  ((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) ) as porpagar'))
-        ->where('remisiones.empresa',Auth::user()->empresa)
-        ->where('remisiones.cliente',$cliente);
+  public function datatable_cliente(Request $request, $cliente)
+  {
+      // storing  request (ie, get/post) global array to a variable
+      $requestData =  $request;
+      $columns = array(
+          // datatable column index  => database column name
+          0 => 'remisiones.nro',
+          1 => 'nombrecliente',
+          2 => 'remisiones.fecha',
+          3 => 'remisiones.vencimiento',
+          4 => 'remisiones.estatus',
+          5 => 'total',
+          6 => 'pagado',
+          7 => 'porpagar',
+      );
+      $facturas = Remision::join('contactos as c', 'remisiones.cliente', '=', 'c.id')
+          ->join('items_remision as if', 'remisiones.id', '=', 'if.remision')
+          ->select(
+              'remisiones.*',
+              DB::raw('c.nombre as nombrecliente'),
+              DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
+              DB::raw('((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) as pagado'),
+              DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -  ((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) ) as porpagar')
+          )
+          ->where('remisiones.empresa', Auth::user()->empresa)
+          ->where('remisiones.cliente', $cliente)
+          ->groupBy('if.remision');
 
-    if ($requestData->search['value']) {
-      // if there is a search parameter, $requestData['search']['value'] contains search parameter
-       $facturas=$facturas->where(function ($query) use ($requestData) {
-          $query->where('remisiones.nro', 'like', '%'.$requestData->search['value'].'%')
-          ->orwhere('c.nombre', 'like', '%'.$requestData->search['value'].'%');
-        });
-    }
-    $facturas=$facturas->groupBy('if.remision');
-    $totalFiltered=$totalData=$facturas->count();
-    $facturas->orderby($columns[$requestData['order'][0]['column']], $requestData['order'][0]['dir'])->skip($requestData['start'])->take($requestData['length']);
+      $totalResult = count($facturas->get());
 
-    $facturas=$facturas->get();
+      if ($requestData->search['value']) {
+          // if there is a search parameter, $requestData['search']['value'] contains search parameter
+          $facturas = $facturas->where(function ($query) use ($requestData) {
+              $query->where('remisiones.nro', 'like', '%' . $requestData->search['value'] . '%')
+                  ->orwhere('c.nombre', 'like', '%' . $requestData->search['value'] . '%');
+          });
+      } else {
+          $facturas->skip($requestData['start'])->take($requestData['length']);
+      }
 
-    $data = array();
-    foreach ($facturas as $factura) {
-       $nestedData = array();
-        $nestedData[] = '<a href="'.route('remisiones.show',$factura->id).'">'.$factura->nro.'</a>';
-        $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blanck">'.$factura->nombrecliente.'</a>';
-        $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
-        $nestedData[] = date('d-m-Y', strtotime($factura->vencimiento));
-        $nestedData[] = '<spam class="text-'.$factura->estatus(true, true).'">'.$factura->estatus().'</spam>';
-        $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->total()->total);
-        $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->pagado());
-        $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->porpagar());
 
-        $boton = '<a href="'.route('remisiones.show',$factura->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a> 
-              <a href="'.route('remisiones.imprimir',['id' => $factura->nro, 'name'=> 'Remision No. '.$factura->nro.'.pdf']).'" target="_black"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>';
+      $facturas->orderby($columns[$requestData['order'][0]['column']], $requestData['order'][0]['dir']);
 
-          if($factura->estatus==1){
-            $boton .= '<a  href="'.route('ingresosr.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>           
-                <a href="'.route('remisiones.edit',$factura->nro).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>        ';
+      $facturas = $facturas->get();
+
+      $data = array();
+      foreach ($facturas as $factura) {
+
+          $nestedData = array();
+          $nestedData[] = '<a href="' . route('remisiones.show', $factura->nro) . '">' . $factura->nro . '</a>';
+          $nestedData[] = '<a href="' . route('contactos.show', $factura->cliente) . '" target="_blanck">' . $factura->nombrecliente . '</a>';
+          $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
+          $nestedData[] = date('d-m-Y', strtotime($factura->vencimiento));
+          $nestedData[] = '<spam class="text-' . $factura->estatus(true, true) . '">' . $factura->estatus() . '</spam>';
+          $nestedData[] = Auth::user()->empresaObj->moneda . Funcion::Parsear($factura->total()->total);
+          $nestedData[] = Auth::user()->empresaObj->moneda . Funcion::Parsear($factura->pagado());
+          $nestedData[] = Auth::user()->empresaObj->moneda . Funcion::Parsear($factura->porpagar());
+
+          $boton = '<a href="' . route('remisiones.show', $factura->nro) . '" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
+            <a href="' . route('remisiones.imprimir', ['id' => $factura->nro, 'name' => 'Remision No. ' . $factura->nro . '.pdf']) . '" target="_black"  class="btn btn-outline-primary btn-icons" title="Imprimir"><i class="fas fa-print"></i></a>';
+
+          if ($factura->estatus == 1) {
+              $boton .= '<a  href="empresa/ingresosr/create/'. $factura->cliente()->id .'/'. $factura->nro .'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
+              <a href="' . route('remisiones.edit', $factura->nro) . '"  class="btn btn-outline-light btn-icons" title="Editar"><i class="fas fa-edit"></i></a>        ';
           }
 
-          $boton.=' <form action="'.route('remisiones.anular',$factura->nro).'" method="POST" class="delete_form" style="display: none;" id="anular-factura'.$factura->id.'">'.csrf_field().'</form>';
-          if($factura->estatus==1){
-            $boton .= '<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar('."'anular-factura".$factura->id."', '¿Está seguro de que desea anular la remisión?', ' ');".'"><i class="fas fa-minus"></i></button> ';
+          $boton .= ' <form action="' . route('remisiones.anular', $factura->nro) . '" method="POST" class="delete_form" style="display: none;" id="anular-factura' . $factura->id . '">' . csrf_field() . '</form>';
+          if ($factura->estatus == 1) {
+              $boton .= '<button class="btn btn-outline-danger  btn-icons" type="button" title="Anular" onclick="confirmar(' . "'anular-factura" . $factura->id . "', '¿Está seguro de que desea anular la remisión?', ' ');" . '"><i class="fas fa-minus"></i></button> ';
+          } elseif ($factura->estatus == 2) {
+              $boton .= '<button class="btn btn-outline-success  btn-icons" type="submit" title="Abrir" onclick="confirmar(' . "'anular-factura" . $factura->id . "', '¿Está seguro de que desea abrir la remisión?', ' ');" . '"><i class="fas fa-unlock-alt"></i></button>';
           }
-          else if($factura->estatus==2){
-            $boton.='<button class="btn btn-outline-success  btn-icons" type="submit" title="Abrir" onclick="confirmar('."'anular-factura".$factura->id."', '¿Está seguro de que desea abrir la remisión?', ' ');".'"><i class="fas fa-unlock-alt"></i></button>';
-          }
 
 
 
-        $nestedData[]=$boton;
-        $data[] = $nestedData;
-    }
-     $json_data = array(
-        "draw" => intval($requestData->draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw.
-        "recordsTotal" => intval($totalData),  // total number of records
-        "recordsFiltered" => intval($totalFiltered), // total number of records after searching, if there is no searching then totalFiltered = totalData
-        "data" => $data   // total data array
-    );
+          $nestedData[] = $boton;
+          $data[] = $nestedData;
+      }
+      $json_data = array(
+          "draw" => intval($requestData->draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw.
+          "iTotalRecords" => intval(count($data)),  // total number of records
+          "iTotalDisplayRecords" => intval($totalResult), // total number of records after searching, if there is no searching then totalFiltered = totalData
+          "aaData" => $data   // total data array
+      );
 
-     return json_encode($json_data);
+      return json_encode($json_data);
   }
 
   public function anular($id){
