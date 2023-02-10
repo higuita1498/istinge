@@ -1474,7 +1474,7 @@ public function facturas_retenciones($id){
                     //dd($CufeFactRelacionada);
         }
         */
-        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true); 
+        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true)['uuid']; 
         //--------------Fin Factura Relacionada -----------------------//
 
 

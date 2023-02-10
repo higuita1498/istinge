@@ -20,7 +20,7 @@
         
         <cac:TaxSubtotal>
             <cbc:TaxableAmount currencyID="COP">{{number_format($imp->totalprod, 2, '.', '')}}</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total, 2), 2, '.', '')}}</cbc:TaxAmount>
+            <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total), 2, '.', '')}}</cbc:TaxAmount>
             <cac:TaxCategory>
             <cbc:Percent>{{number_format($imp->porcentaje, 2, '.', '')}}</cbc:Percent>
             <cac:TaxScheme>
@@ -86,7 +86,7 @@
         <cbc:RoundingAmount currencyID="COP">0</cbc:RoundingAmount>
         <cac:TaxSubtotal>
         <cbc:TaxableAmount currencyID="COP">{{number_format($imp->totalprod, 2, '.', '')}}</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total, 2), 2, '.', '')}}</cbc:TaxAmount>
+        <cbc:TaxAmount currencyID="COP">{{number_format(round($imp->total), 2, '.', '')}}</cbc:TaxAmount>
         <cac:TaxCategory>
         <cbc:Percent>{{number_format($imp->porcentaje, 2, '.', '')}}</cbc:Percent>
         <cac:TaxScheme>
@@ -104,11 +104,11 @@
 @php $sw = 0; @endphp
 @isset($impuestoItem)
     <cac:TaxTotal>
-        <cbc:TaxAmount currencyID="COP">{{number_format(round($item->itemImpDescuento(), 2), 2, '.', '')}}</cbc:TaxAmount>
+        <cbc:TaxAmount currencyID="COP">{{number_format(round($item->itemImpDescuento()), 2, '.', '')}}</cbc:TaxAmount>
         @for($i = 0; $i < 7; $i++) @if(isset($item->totalImpSingular()[$i]["imp".$i]))<cac:TaxSubtotal>
             @php $sw = 1; @endphp
             <cbc:TaxableAmount currencyID="COP">{{number_format($item->total(), 2, '.', '')}}</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">{{number_format(round($item->totalImpSingular()[$i]["imp".$i], 2), 2, '.', '')}}</cbc:TaxAmount>
+            <cbc:TaxAmount currencyID="COP">{{number_format(round($item->totalImpSingular()[$i]["imp".$i]), 2, '.', '')}}</cbc:TaxAmount>
             <cac:TaxCategory>
                 <cbc:Percent>{{number_format($item->itemImpuestoSingular()[$i]["imp".$i], 2, '.', '')}}</cbc:Percent>
                  <cac:TaxScheme>

@@ -137,6 +137,9 @@ class ItemsNotaCredito extends Model
            }
            
            return $text;
+       }else if($this->id_impuesto == 0){
+        $text = "IVA";
+        return $text;
        }
        return '';
    }
