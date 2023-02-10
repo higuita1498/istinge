@@ -16,43 +16,42 @@
 @endsection
 
 @section('content')
-	@if(Session::has('success'))
-		<div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
-			{{Session::get('success')}}
-		</div>
-	@endif
-	
-	@if(Session::has('message_success'))
-		<div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
-			{{Session::get('message_success')}}
-		</div>
-	@endif
-
-	@if(Session::has('error'))
-	<div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
-		{{Session::get('error')}}
-	</div>
+@if (Session::has('success'))
+<div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
+	{{ Session::get('success') }}
+</div>
 @endif
-	
-	@if(Session::has('message_denied'))
-		<div class="alert alert-danger" role="alert">
-			{{Session::get('message_denied')}}
-			@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
-			@if(count(Session::get('errorReason')) > 0)
-			@php $cont = 0 @endphp
-			@foreach(Session::get('errorReason') as $error)
-			@php $cont = $cont + 1; @endphp
-			{{$cont}} - {{$error}} <br>
-			@endforeach
-			@else
-			{{ Session::get('errorReason') }}
+
+@if (Session::has('message_success'))
+<div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
+	{{ Session::get('message_success') }}
+</div>
+@endif
+
+
+@if (Session::has('message_denied'))
+<div class="alert alert-danger" role="alert">
+	@if (Session::get('statusCode') == 400)
+		{{ 'La Dian está presentando problemas en este momento.' }}
+	@else
+		{{ Session::get('message_denied') }}
+		@if (Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
+			@if (count(Session::get('errorReason')) > 0)
+				@php $cont = 0 @endphp
+				@foreach (Session::get('errorReason') as $error)
+					@php $cont = $cont + 1; @endphp
+					{{ $cont }} - {{ $error }} <br>
+				@endforeach
+				{{-- @else
+{{ Session::get('errorReason') }} --}}
 			@endif
-			@endif
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+		@endif
 	@endif
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+@endif
 
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
