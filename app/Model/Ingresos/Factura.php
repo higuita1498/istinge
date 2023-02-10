@@ -676,16 +676,15 @@ class Factura extends Model
 
     public function info_cufe($id, $impTotal)
     {
-    
         $factura = Factura::find($id);
         $technicalKey = "";
-    
+
         if ($factura->technicalkey == null) {
             $technicalKey = Auth::user()->empresaObj->technicalkey;
         } else {
             $technicalKey = $factura->technicalkey;
         }
-    
+
         //Validacion de desarrollo nuevo solamente para facturas nuevas desde el 15 de dic de 2021.
         if (Carbon::parse($factura->created_at)->format('Y-m-d') >= "2021-12-15") {
             if ($factura->tiempo_creacion) {
@@ -697,25 +696,26 @@ class Factura extends Model
             $horaFac = $factura->created_at;
             $factura->fecha = $factura->created_at;
         }
-    
-        $totalIva = '0.00';
-        $totalInc = '0.00';
-    
+
+        $totalIva = 0.00;
+        $totalInc = 0.00;
+
         foreach ($factura->total()->imp as $key => $imp) {
             if (isset($imp->total) && $imp->tipo == 1) {
-                $totalIva = number_format(round($imp->total), 2, '.', '');
+                $totalIva = $impTotal;
             } elseif (isset($imp->total) && $imp->tipo == 3) {
                 $totalInc = $impTotal;
             }
         }
-    
+
+
         $infoCufe = [
             'Numfac' => $factura->codigo,
             'FecFac' => Carbon::parse($factura->fecha)->format('Y-m-d'),
             'HorFac' => Carbon::parse($horaFac)->format('H:i:s') . '-05:00',
             'ValFac' => number_format($factura->total()->subtotal - $factura->total()->descuento, 2, '.', ''),
             'CodImp' => '01',
-            'ValImp' => $totalIva,
+            'ValImp' => number_format($totalIva, 2, '.', ''),
             'CodImp2' => '04',
             'ValImp2' => number_format($totalInc, 2, '.', ''),
             'CodImp3' => '03',
@@ -726,8 +726,9 @@ class Factura extends Model
             'ClvTec' => $technicalKey,
             'TipoAmb' => 1,
         ];
-    
+
         $CUFE = $infoCufe['Numfac'] . $infoCufe['FecFac'] . $infoCufe['HorFac'] . $infoCufe['ValFac'] . $infoCufe['CodImp'] . $infoCufe['ValImp'] . $infoCufe['CodImp2'] . $infoCufe['ValImp2'] . $infoCufe['CodImp3'] . $infoCufe['ValImp3'] . $infoCufe['ValTot'] . $infoCufe['NitFE'] . $infoCufe['NumAdq'] . $infoCufe['ClvTec'] . $infoCufe['TipoAmb'];
+
         return hash('sha384', $CUFE);
     }
 
