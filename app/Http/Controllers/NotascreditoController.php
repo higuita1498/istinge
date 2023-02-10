@@ -1604,14 +1604,14 @@ public function facturas_retenciones($id){
             $statusCode =  $res['statusCode']; 
 
             //Validamos si depronto la nota crédito fue emitida pero no quedamos con ningun registro de ella.
-            $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91", $NotaCredito->nro);
+            $saveNoJson = $statusJson = $this->validateStatusDianNota(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91");
 
             //Decodificamos repsuesta y la guardamos en la variable status json
             $statusJson = json_decode($statusJson, true);
 
             if ($statusJson["statusCode"] != 200) {
                 //Validamos enviando la solciitud de esta manera, ya que funciona de varios modos
-                $res = $saveNoJson = $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91", "");
+                $res = $saveNoJson = $statusJson = $this->validateStatusDianNota(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91");
 
                 //Decodificamos repsuesta y la guardamos en la variable status json
                 $statusJson = json_decode($statusJson, true);

@@ -487,6 +487,33 @@ class Controller extends BaseController
         return $response;
     }
 
+        //Metodo para devolver json de rspuesta para saber si existe o no una nota crédito
+        public function validateStatusDianNota($nitemisor, $idDocumento, $codigoTipo)
+        {
+            $curl = curl_init();
+    
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/consulta/documentos?nit_emisor=" . $nitemisor . "&id_documento=" . $idDocumento . "&codigo_tipo_documento=" . $codigoTipo . "",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    "efacturaAuthorizationToken: 62808bf1-d446-46ee-8120-00162e95c059",
+                    "Content-Type: text/plain",
+                    "Partnership-Id: 1128464945"
+                ),
+            ));
+    
+            $response = curl_exec($curl);
+    
+            curl_close($curl);
+            return $response;
+        }
+
     public function change_pass($nombre,$identificacion){
         $curl = curl_init();
         $empresa = Empresa::find(1);
