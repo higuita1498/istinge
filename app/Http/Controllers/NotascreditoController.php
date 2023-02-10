@@ -1462,16 +1462,19 @@ public function facturas_retenciones($id){
             isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
             || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
         ) {
-            $impTotal = round($impTotal);
+            $impTotal = round($impTotal, 2);
         } else {
-            $impTotal = round($impTotal);
+            $impTotal = round($impTotal, 2);
         }
-
+        $impTotal = number_format($impTotal, 2, '.', '');
+        /*
+        if(auth()->user()->empresa == 114){
+            //dd($impTotal);
+                    //$CufeFactRelacionada  = $FacturaRelacionada->info_cufe($nroFacturaRelacionada, $impTotal);
+                    //dd($CufeFactRelacionada);
+        }
+        */
         $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true); 
-        if($CufeFactRelacionada["statusCode"] == 404){
-            return redirect('empresa/notascredito')->with('error', 'La factura de la nota crédito no ha sido emitida.');
-        }
-        $CufeFactRelacionada  = $CufeFactRelacionada["uuid"];
         //--------------Fin Factura Relacionada -----------------------//
 
 
