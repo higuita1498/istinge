@@ -77,6 +77,7 @@
                     <th>Comprobante</th>
                     <th>Contacto</th>
                     <th>Identificación</th>
+                    <th>Realizó</th>
                     <th>Cuenta</th>
                     <th>Categoría</th>
                     <th>Estado</th>
@@ -101,6 +102,9 @@
                         </td>
                         <td>
                             {{isset($movimiento->cliente()->nit) ? $movimiento->cliente()->nit : ''}}
+                        </td>
+                        <td>
+                            {{isset($movimiento->created_by()->nombres()) ? $movimiento->created_by()->nombres() : ''}}
                         </td>
                         
                         <td>
