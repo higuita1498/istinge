@@ -86,7 +86,7 @@ class CronController extends Controller
             $fail = 0;
             $succ = 0;
 
-            return $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
+            $grupos_corte = GrupoCorte::where('fecha_factura', $date)->where('status', 1)->get();
 
             $fecha = Carbon::now()->format('Y-m-d');
 
