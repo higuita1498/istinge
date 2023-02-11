@@ -177,4 +177,12 @@ class Movimiento extends Model
             return Gastos::find($this->id_modulo)->notas;
         }
     }
+
+    public function padre(){
+        if ($this->modulo==1) {
+            return Ingreso::find($this->id_modulo);
+        }else if ($this->modulo==3) {
+            return Gastos::find($this->id_modulo);
+        }
+    }
 }

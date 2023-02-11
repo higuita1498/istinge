@@ -104,7 +104,7 @@
                             {{isset($movimiento->cliente()->nit) ? $movimiento->cliente()->nit : ''}}
                         </td>
                         <td>
-                            {{$movimiento->categoria()->created_by()->nombres() ? $movimiento->categoria()->created_by()->nombres() : ''}}
+                            {{$movimiento->padre()->created_by()->nombres() ? $movimiento->padre()->created_by()->nombres() : ''}}
                         </td>
                         
                         <td>
