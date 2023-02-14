@@ -3447,12 +3447,26 @@ class ExportarReportesController extends Controller
             $dates = $this->setDateRequest($request, true);*/
 
         //Código base tomado de datatable_movimientos
-
+        
+        if(!isset($request->servidor) ||  $request->servidor == 0){
         $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
             ->where('fecha', '>=', $dates['inicio'])
             ->where('fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa);
+        }else{
+            $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
+            ->leftjoin('factura as f','f.id','if.factura')
+            ->leftjoin('contracts as co','co.id','f.contrato_id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('movimientos.fecha', '>=', $dates['inicio'])
+            ->where('movimientos.fecha', '<=', $dates['fin'])
+            ->where('movimientos.modulo',1)
+            ->where('co.server_configuration_id',$request->servidor)
+            ->where('movimientos.empresa',Auth::user()->empresa);
+
+        }
 
         if($request->caja){
             $movimientos->where('banco',$banco->id);
@@ -3460,6 +3474,8 @@ class ExportarReportesController extends Controller
         if($request->tipo>0){
             $movimientos->where('movimientos.tipo',$request->tipo);
         }
+
+
 
         $movimientos=  $movimientos->orderBy('fecha', 'DESC')->get();
 

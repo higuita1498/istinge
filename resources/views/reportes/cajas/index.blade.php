@@ -5,7 +5,7 @@
     <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <form id="form-reporte">
         <div class="row card-description">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
                 <label>Caja</label>
                 <select class="form-control selectpicker" name="caja" id="caja" title="Seleccione" data-live-search="true" data-size="6">
 {{-- php $tipos_cuentas=\App\Banco::tipos();@endphp
@@ -18,6 +18,15 @@
                             @endforeach
                         {{-- </optgroup>
                     @endforeach --}}
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Servidor</label>
+                <select class="form-control selectpicker" name="servidor" title="Seleccione" data-live-search="true" data-size="6">
+                    @foreach($servidores as $servidor)
+                    <option value="{{$servidor->id}}" {{$request->servidor==$servidor->id?'selected':''}}>{{$servidor->nombre}}</option>
+                    @endforeach
+                    <option value="0">Ninguno</option>
                 </select>
             </div>
             <div class="form-group col-md-2">
@@ -134,7 +143,7 @@
                 @endforeach
                 </tbody>
                 <tfoot class="thead-dark">
-                    <td colspan="9"></td>
+                    <td colspan="10"></td>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['salida'])}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
                 </tfoot>

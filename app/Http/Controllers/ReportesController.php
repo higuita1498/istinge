@@ -36,6 +36,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 use App\Mikrotik;
 use App\PucMovimiento;
+use App\Servidor;
 
 class ReportesController extends Controller
 {
@@ -1928,23 +1929,8 @@ class ReportesController extends Controller
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Cajas', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
         $dates = $this->setDateRequest($request);
-        /*if($request->fecha == 8)
-            $dates = $this->setDateRequest($request, true);*/
-
-        //Código base tomado de datatable_movimientos
-
-        $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
-            ->where('movimientos.empresa',Auth::user()->empresa);
-
-        $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
-            ->where('movimientos.empresa',Auth::user()->empresa);
-        $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
+        $empresa =Auth::user()->empresa;
+        $example = Movimiento::where('empresa', $empresa)->get()->last();
 
         if($request->fecha){
             $appends['fecha']=$request->fecha;
@@ -1952,8 +1938,50 @@ class ReportesController extends Controller
         if($request->fecha){
             $appends['hasta']=$request->hasta;
         }
+
+        if(!isset($request->servidor) ||  $request->servidor == 0){
+
+            $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+                ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+                ->where('fecha', '>=', $dates['inicio'])
+                ->where('fecha', '<=', $dates['fin'])
+                ->where('movimientos.empresa',$empresa);
+
+            $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+                ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+                ->where('fecha', '>=', $dates['inicio'])
+                ->where('fecha', '<=', $dates['fin'])
+                ->where('movimientos.empresa',$empresa);
+            
+        }
+        elseif($request->servidor){
+
+            $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
+            ->leftjoin('factura as f','f.id','if.factura')
+            ->leftjoin('contracts as co','co.id','f.contrato_id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('movimientos.fecha', '>=', $dates['inicio'])
+            ->where('movimientos.fecha', '<=', $dates['fin'])
+            ->where('movimientos.modulo',1)
+            ->where('co.server_configuration_id',$request->servidor)
+            ->where('movimientos.empresa',$empresa);
+
+             $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
+            ->leftjoin('factura as f','f.id','if.factura')
+            ->leftjoin('contracts as co','co.id','f.contrato_id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('movimientos.fecha', '>=', $dates['inicio'])
+            ->where('movimientos.fecha', '<=', $dates['fin'])
+            ->where('movimientos.modulo',1)
+            ->where('co.server_configuration_id',$request->servidor)
+            ->where('movimientos.empresa',$empresa);
+
+        }
+
         if($request->caja){
-            //$banco = Banco::where('empresa',Auth::user()->empresa)->where('nro', $request->caja)->first();dd($request->caja);
+            //$banco = Banco::where('empresa',$empresa)->where('nro', $request->caja)->first();dd($request->caja);
             $movimientos->where('banco',$request->caja);
             $movimientosTodos->where('banco',$request->caja);
         }
@@ -1977,11 +2005,14 @@ class ReportesController extends Controller
 
         $cajas = Banco::where('estatus',1)->get();
 
+        $servidores = Mikrotik::where('status', 1)->where('empresa', $empresa)->get();
+
         return view('reportes.cajas.index')
             ->with('movimientos', $movimientos)
             ->with('request', $request)
             ->with('example', $example)
             ->with('totales', $totales)
+            ->with('servidores', $servidores)
             ->with('cajas', $cajas);
     }
     
