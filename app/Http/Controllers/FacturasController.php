@@ -1011,6 +1011,7 @@ class FacturasController extends Controller{
             $descuento->factura    = $items->factura;
             $descuento->descuento  = $desc;
             $descuento->created_by = Auth::user()->id;
+            $descuento->comentario_2 = $request->comentario_2;
             $descuento->save();
         }
 
@@ -1254,6 +1255,7 @@ class FacturasController extends Controller{
                     $descuento->factura    = $items->factura;
                     $descuento->descuento  = $desc;
                     $descuento->created_by = Auth::user()->id;
+                    $descuento->comentario_2 = $request->comentario_2;
                     $descuento->save();
                 }
 

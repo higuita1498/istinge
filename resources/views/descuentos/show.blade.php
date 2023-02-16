@@ -57,6 +57,10 @@
                             <th>Comentario</th>
                             <td style="white-space: normal;">{{ $descuento->comentario }}</td>
                         </tr>
+                        <tr style="white-space: normal;">
+                            <th>Comentario del vendedor</th>
+                            <td style="white-space: normal;">{{ $descuento->comentario_2 }}</td>
+                        </tr>
                         </tbody>
                 </table>
             </div>

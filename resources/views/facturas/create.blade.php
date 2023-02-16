@@ -65,6 +65,9 @@
   <!--Formulario Facturas-->
 	<form method="POST" action="{{ route('facturas.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
 		{{ csrf_field() }}
+
+    @include('facturas.includes.comment-descuento', ['comentario2' => null ])
+
         <input type="hidden" value="1" name="fact_vent" id="fact_vent">
 		<div class="row text-right">
 			<div class="col-md-5">
