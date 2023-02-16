@@ -174,7 +174,7 @@
                     <tr>
                         <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->producto()}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
                         <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->ref}}</td>
-                        <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->cant}}</td>
+                        <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{round($item->cant)}}</td>
                         <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->desc == 0 ? '' :  $item->desc . "%"}}</td>
                         <td class="right padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                         <td class="right padding-right border_right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
