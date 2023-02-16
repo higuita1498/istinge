@@ -1249,6 +1249,9 @@ class FacturasController extends Controller{
                 }
 
                 if($desc > 0){
+
+                    $oldDescuento = Descuento::where('factura', $items->factura)->where('estado', 2)->first();
+
                     Descuento::where('factura', $items->factura)->where('estado', 2)->delete();
 
                     $descuento = new Descuento;
@@ -1256,6 +1259,14 @@ class FacturasController extends Controller{
                     $descuento->descuento  = $desc;
                     $descuento->created_by = Auth::user()->id;
                     $descuento->comentario_2 = $request->comentario_2;
+                    if($oldDescuento && $oldDescuento->comentario){
+                        $descuento->comentario = $oldDescuento->comentario;
+                    }
+                    if(!$descuento->comentario_2){
+                        if($oldDescuento && $oldDescuento->comentario_2){
+                            $descuento->comentario_2 = $oldDescuento->comentario_2;
+                        }
+                    }
                     $descuento->save();
                 }
 
