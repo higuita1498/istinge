@@ -441,8 +441,7 @@ class RadicadosController extends Controller{
                 'direccion' => 'required|max:200',
                 'fecha' => 'required',
                 'servicio' => 'required',
-                'estatus' => 'required',
-                'desconocido' => 'required'
+                'estatus' => 'required'
             ]);
             
             $servicio = Servicio::find($request->servicio);
@@ -475,7 +474,9 @@ class RadicadosController extends Controller{
             $radicado->telefono = $request->telefono;
             $radicado->correo = $request->correo;
             $radicado->direccion = $request->direccion;
-            $radicado->desconocido = $request->desconocido;
+            if($request->desconocido){
+                $radicado->desconocido = $radicado->desconocido.', '.$request->desconocido;
+            }
             $radicado->servicio = $request->servicio;
             $radicado->tecnico = $request->tecnico;
             $radicado->estatus = $request->estatus;
