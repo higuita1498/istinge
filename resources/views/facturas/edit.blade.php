@@ -22,6 +22,9 @@
         <!--Formulario Facturas-->
         <form method="POST" action="{{ route('facturas.update', $factura->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample"  id="form-factura" >
             {{ csrf_field() }}
+
+            @include('facturas.includes.comment-descuento', ['comentario2' => $factura->comentario_2 ])
+
             <input type="hidden" value="{{back()->getTargetUrl()}}" name="page">
             <input name="_method" type="hidden" value="PATCH">
             <div class="row text-right">

@@ -1493,11 +1493,16 @@ function total(id) {
                 desc = (total * desc) / 100;
                 //total=total-desc;
                 total = parseFloat(total) - parseFloat(desc);
+                modalDescuento();
             }
         }
         $('#total' + id).val(number_format(total));
     }
     totalall();
+}
+
+function modalDescuento(){
+    $('#modalDescuento').modal('show');
 }
 
 /*Saca la cuenta total de todos los items en facturas*/

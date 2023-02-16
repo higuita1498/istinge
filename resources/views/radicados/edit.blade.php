@@ -135,7 +135,8 @@
 
     <div class="col-md-12 form-group">
       <label class="control-label">Observaciones <span class="text-danger">*</span></label>
-      <textarea  class="form-control form-control-sm min_max_100" id="desconocido" required="" name="desconocido" value="{{ $radicado->desconocido }}">{{ $radicado->desconocido }}</textarea>
+      <p style="color:gray; font-weight:500; text-align:justify;">{{ $radicado->desconocido }}</p>
+      <textarea  class="form-control form-control-sm min_max_100" id="desconocido" name="desconocido"></textarea>
       <span class="help-block error">
         <strong>{{ $errors->first('desconocido') }}</strong>
       </span>
