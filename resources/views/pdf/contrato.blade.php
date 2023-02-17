@@ -323,7 +323,7 @@
                                 <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de inicio de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
-                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->created_at)->format('d-m-Y')}}</p>
+                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->details($idContrato)->created_at)->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -334,7 +334,7 @@
                                 <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de finalización de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
-                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->created_at)->addYear()->format('d-m-Y')}}</p>
+                                        <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contrato->details($idContrato)->created_at)->addYear()->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
                             </tbody>

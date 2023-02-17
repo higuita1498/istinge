@@ -349,7 +349,7 @@ class Contacto extends Model
         if($contrato){
            $c = Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
         }else{
-           $c = Contrato::where('client_id', $this->id)->where('status', 1)->first();
+           $c = Contrato::where('client_id', $this->id)->where('status', 1)->latest()->first();
         }
 
         return $c;

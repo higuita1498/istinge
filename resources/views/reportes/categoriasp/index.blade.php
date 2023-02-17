@@ -32,6 +32,16 @@
 			                  			@if($categoria4->estatus==1)
 				                  			<option {{$request->categoria==$categoria4->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria4->id?'selected':'')}} value="{{$categoria4->id}}">{{$categoria4->nombre}} - {{$categoria1->codigo}}</option>
 				                  		@endif
+                                          @foreach($categoria4->hijos(true) as $categoria5)
+                                            @if($categoria5->estatus==1)
+                                                <option {{$request->categoria==$categoria5->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria5->id?'selected':'')}} value="{{$categoria5->id}}">{{$categoria5->nombre}} - {{$categoria5->codigo}}</option>
+                                            @endif
+                                            @foreach($categoria5->hijos(true) as $categoria6)
+                                                @if($categoria6->estatus==1)
+                                                    <option {{$request->categoria==$categoria6->id?'selected':( Auth::user()->empresa()->categoria_default==$categoria6->id?'selected':'')}} value="{{$categoria6->id}}">{{$categoria6->nombre}} - {{$categoria6->codigo}}</option>
+                                                @endif
+                                            @endforeach
+                                          @endforeach
 			                  		@endforeach
 		                  		@endforeach
 	                  		@endforeach
