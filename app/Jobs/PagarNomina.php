@@ -54,7 +54,7 @@ class PagarNomina implements ShouldQueue
 
         foreach ($this->nominas as $i => $nomina) {
 
-            Mail::to($correoPersonas[$i])
+            // Mail::to($correoPersonas[$i])
                 ->queue(new NominaPagada($subject, $nomina, $empresa, $this->pdfs[$i], $personas[$i]));
         }
     }

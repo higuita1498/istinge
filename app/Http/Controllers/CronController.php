@@ -910,7 +910,7 @@ class CronController extends Controller
                     );
                     config(['mail'=>$new]);
                 }
-                Mail::to($empresa->email)->send($correo);
+                // Mail::to($empresa->email)->send($correo);
             }
         }
     }

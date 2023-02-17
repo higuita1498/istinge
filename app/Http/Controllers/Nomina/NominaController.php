@@ -342,7 +342,7 @@ class NominaController extends Controller
         $pdf = "/empresa{$empresa->id}/nominas/reporte/{$fileName}";
 
 
-        Mail::to($nomina->persona->correo)
+        // Mail::to($nomina->persona->correo)
             ->queue(new NominaLiquidada($nomina, $empresa, $pdf));
 
 
@@ -374,7 +374,7 @@ class NominaController extends Controller
             $pdf = "/empresa{$empresa->id}/nominas/reporte/{$fileName}";
 
 
-            Mail::to($nomina->persona->correo)
+            // Mail::to($nomina->persona->correo)
                 ->queue(new NominaEmitida($nomina, $empresa, $pdf));
 
 
