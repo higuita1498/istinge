@@ -342,8 +342,8 @@ class NominaController extends Controller
         $pdf = "/empresa{$empresa->id}/nominas/reporte/{$fileName}";
 
 
-        Mail::to($nomina->persona->correo)
-            ->queue(new NominaLiquidada($nomina, $empresa, $pdf));
+        // Mail::to($nomina->persona->correo)
+        //     ->queue(new NominaLiquidada($nomina, $empresa, $pdf));
 
 
         return back()->with('success', 'Se ha enviado la nómina por correo con éxito');
