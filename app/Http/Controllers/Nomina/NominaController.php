@@ -343,7 +343,7 @@ class NominaController extends Controller
 
 
         // Mail::to($nomina->persona->correo)
-            ->queue(new NominaLiquidada($nomina, $empresa, $pdf));
+        //     ->queue(new NominaLiquidada($nomina, $empresa, $pdf));
 
 
         return back()->with('success', 'Se ha enviado la nómina por correo con éxito');
@@ -375,7 +375,7 @@ class NominaController extends Controller
 
 
             // Mail::to($nomina->persona->correo)
-                ->queue(new NominaEmitida($nomina, $empresa, $pdf));
+                // ->queue(new NominaEmitida($nomina, $empresa, $pdf));
 
 
             return back()->with('success', 'Se ha enviado la nómina por correo con éxito');
