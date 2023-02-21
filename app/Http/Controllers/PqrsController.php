@@ -144,8 +144,9 @@ class PqrsController extends Controller
                 );
                 config(['mail'=>$new]);
             }
-    
-            Mail::to($pqrs->email)->send($correo);
+            
+            self::sendInBlue($correo->build()->render(), $correo->subject, [$pqrs->email], $correo->name, []);
+            // Mail::to($pqrs->email)->send($correo);
             
             return redirect('empresa/pqrs')->with('success', 'Se ha registrado la respuesta al PQRS satisfactoriamente.');
         }

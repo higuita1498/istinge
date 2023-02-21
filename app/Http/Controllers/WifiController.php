@@ -148,7 +148,7 @@ class WifiController extends Controller
                     );
                     config(['mail'=>$new]);
                 }
-                Mail::to($solicitud->cliente()->email)->send($correo);
+               // // Mail::to($solicitud->cliente()->email)->send($correo);
             } else {
                 $mensaje = 'Cambio de contraseña cancelada';
                 $solicitud->status = 1;
@@ -207,7 +207,7 @@ class WifiController extends Controller
                         );
                         config(['mail'=>$new]);
                     }
-                    Mail::to($solicitud->cliente()->email)->send($correo);
+                  //  // Mail::to($solicitud->cliente()->email)->send($correo);
                     $succ++;
                 } else {
                     $fail++;

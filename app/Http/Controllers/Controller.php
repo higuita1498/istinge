@@ -1977,7 +1977,12 @@ class Controller extends BaseController
                 } 
             }
             */
-            //$adjuntos[] = base64_encode($usedData['xml']);
+
+            if(file_exists($usedData['xmlPath'])){
+                $url = config('app.url') . '/' . $usedData['xmlPath'];
+                $file = file_get_contents($url);
+                $adjuntos[] = ['name' => 'xml.xml', 'content' => chunk_split(base64_encode($file))];
+            }
         }
 
         if(!is_array($emails)){

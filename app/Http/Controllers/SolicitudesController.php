@@ -115,7 +115,7 @@ class SolicitudesController extends Controller
           );
           config(['mail'=>$new]);
         }
-        Mail::to($solicitud->email)->send($correo);
+        // Mail::to($solicitud->email)->send($correo);
         return redirect('empresa/solicitudes')->with('success', 'Se ha registrado la respuesta a la solicitud de servicio satisfactoriamente.');
     }
     return back('empresa/solicitudes')->with('success', 'No existe un registro con ese id');
