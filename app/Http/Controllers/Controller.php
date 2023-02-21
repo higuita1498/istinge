@@ -1980,8 +1980,18 @@ class Controller extends BaseController
 
             if(file_exists($usedData['xmlPath'])){
                 $url = config('app.url') . '/' . $usedData['xmlPath'];
-                $file = file_get_contents($url);
-                $adjuntos[] = ['name' => 'xml.xml', 'content' => chunk_split(base64_encode($file))];
+                
+                $file = null;
+
+                try {
+                    $file = file_get_contents($url);
+                } catch (\Throwable $t) {
+                    $file = null;
+                }
+
+                if($file){
+                    $adjuntos[] = ['name' => 'xml.xml', 'content' => chunk_split(base64_encode($file))];
+                }
             }
         }
 
