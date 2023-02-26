@@ -71,13 +71,30 @@
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
     </div> 
+    <div class="cls-realizar-inv"> 
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Forma de pago</label>
+        <div class="col-sm-8">
+          <select class="form-control selectpicker" name="forma_pago" id="forma_pago" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
+            @foreach($formas as $f)
+            <option value="{{$f->id}}">{{$f->codigo}} - {{$f->nombre}}</option>
+            @endforeach
+          </select>
+        </div>
+        
+      <span class="help-block error">
+            <strong>{{ $errors->first('realizar') }}</strong>
+      </span>
+    </div> 
+  </div>
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
       <label class="col-sm-4 col-form-label">Donde ingresa el dinero</label>
       <div class="col-sm-8">
         <select class="form-control selectpicker" name="puc" id="puc" title="Seleccione" data-live-search="true" data-size="5">
           @foreach($categorias as $categoria)
-            <option value="{{$categoria->id}}" >{{$categoria->nombre}} {{$categoria->codigo}}</option>
+            <option value="{{$categoria->id}}" {{isset($cuentaIngresoDinero) && $cuentaIngresoDinero == $categoria->id ? 'selected' : ''}}>
+              {{$categoria->nombre}} {{$categoria->codigo}}</option>
           @endforeach
         </select>
       </div>
@@ -87,11 +104,27 @@
     </span>
        </div>
   </div> 
+  <div class="form-group row cls-realizar d-none" >
+    <div class="form-group row ">
+  <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
+  <div class="col-sm-8">
+    <select class="form-control selectpicker" name="anticipo" id="anticipo" title="Seleccione" data-live-search="true" data-size="5" required>
+      @foreach($anticipos as $anticipo)
+        <option value="{{$anticipo->id}}" {{isset($cuentaAnticipo) && $cuentaAnticipo == $anticipo->id ? 'selected' : ''}}>{{$anticipo->nombre}} - {{$anticipo->codigo}}</option>
+      @endforeach
+    </select>
+  </div>
+  
+    <span class="help-block error">
+          <strong>{{ $errors->first('anticipo') }}</strong>
+    </span>
+    </div>
+  </div> 
     <div class="cls-realizar d-none" >
       <div class="form-group row ">
-        <label class="col-sm-4 col-form-label">Valor Recibido</label>
+        <label class="col-sm-4 col-form-label">Valor Recibido <span class="text-danger">*</span></label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido">
+          <input type="number" class="form-control" name="valor_recibido" id="valor_recibido"  value="{{isset($valorAnticipo) ? $valorAnticipo : ''}}" required>
         </div>
         
       <span class="help-block error">
@@ -134,6 +167,8 @@
   		</div>
 
     <h5>TIPO DE TRANSACCIÓN</h5>
+    {{-- Si esto es verdadero no necestiamos asociar facturas ni categorias, solamente se permite cambia la modificacion dle anticipo --}}
+    @if($ingreso->anticipo != 1)
     <div class="row" style=" margin-top: 5%; text-align: center;">
       <div class="col-md-12">
         <h6>¿Asociar este ingreso a una factura de venta existente en SCA?</h6>
@@ -182,27 +217,10 @@
                 @foreach($items as $item)
                 @php $cont+=1; @endphp
                   <tr id="{{$cont}}">
-                    <td  class="no-padding">  
-                    <input type="hidden" name="id_cate{{$cont}}" value="{{$item->id}}">                        
+                    <td  class="no-padding">                          
                       <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria{{$cont}}" required="" onchange="enabled({{$cont}});" >
                         @foreach($categorias as $categoria)
-                          <optgroup label="{{$categoria->nombre}}">
-                              @foreach($categoria->hijos(true) as $categoria1)
-                                <option {{old('categoria')==$categoria1->id?'selected':''}} value="{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}} {{$categoria1->id==$item->categoria?'selected':''}}>{{$categoria1->nombre}}</option>
-                                @foreach($categoria1->hijos(true) as $categoria2)
-                                    <option class="hijo" {{old('categoria')==$categoria2->id?'selected':''}} value="{{$categoria2->id}}" {{$categoria2->estatus==0?'disabled':''}} {{$categoria2->id==$item->categoria?'selected':''}}>{{$categoria2->nombre}}</option>
-                                  @foreach($categoria2->hijos(true) as $categoria3)
-                                    <option class="nieto" {{old('categoria')==$categoria3->id?'selected':''}} value="{{$categoria3->id}}" {{$categoria3->estatus==0?'disabled':''}} {{$categoria3->id==$item->categoria?'selected':''}}>{{$categoria3->nombre}}</option>
-                                    @foreach($categoria3->hijos(true) as $categoria4)
-                                      <option class="bisnieto" {{old('categoria')==$categoria4->id?'selected':''}} value="{{$categoria4->id}}" {{$categoria3->estatus==0?'disabled':''}} {{$categoria4->id==$item->categoria?'selected':''}}>{{$categoria4->nombre}}</option>
-
-                                    @endforeach
-
-                                  @endforeach
-
-                                @endforeach
-                              @endforeach
-                          </optgroup>
+                          <option value="{{$categoria->id}}" {{$item->categoria == $categoria->id ? 'selected' : ''}}>{{$categoria->nombre}} - {{$categoria->codigo}}</option>
                         @endforeach
                       </select>
                     </td>
@@ -324,6 +342,7 @@
       </div>
   		</div>
 </div>
+@endif
   		
   		<hr>
   		<div class="row" >
@@ -341,6 +360,7 @@
     <input type="hidden" id="impuestos" value="{{json_encode($impuestos)}}">
     <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
     <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
+    <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
 
     <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
     <optgroup label="{{$categoria->nombre}}">
@@ -361,4 +381,19 @@
         @endforeach
     </optgroup>
   @endforeach'>
+@endsection
+
+@section('scripts')
+<script src="{{asset('lowerScripts/ingreso/ingreso.js')}}"></script>
+<script>
+  $(document).ready(function(){
+    showAnti();
+    //validacion
+    let opcion = $("#input-ingresos-electronica").val();
+
+    if(opcion == 0){
+      $("#form-ingresos-electronica").addClass('d-none');
+    }
+  })
+</script>
 @endsection

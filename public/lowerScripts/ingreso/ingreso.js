@@ -17,12 +17,14 @@ function showAnti(){
 }
 
 function saldoContacto(id){
+    //public function saldoContacto de ingresoscontroller
     var url= 'contacto/'+id;
     var _token =   $('meta[name="csrf-token"]').attr('content');
-   
+
     $.get(url,{_token:_token},function(data){
         data = JSON.parse(data);
         $('#total_saldo').val(data.saldo);
+        $("#saldofavorcliente").val(data.saldo);
         let opcion = data.contrato;
         if(opcion == 0){
           $("#form-ingresos-electronica").addClass('d-none');

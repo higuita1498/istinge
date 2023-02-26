@@ -262,7 +262,7 @@ class NotaCredito extends Model
 
 
         foreach ($items as $item) {
-            if ($item->id_impuesto == 0) {
+            if ($item->impuesto == 0) {
                 return true;
             }
         }

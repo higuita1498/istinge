@@ -1380,19 +1380,23 @@ public function diasCobradosProrrateo(){
     public function recibosAnticipo($edit = 0){
         //obtenemos los ingresos que tiene un anticpo vigente.
         $ingresosArray=array();
-        if($edit){
-            $ingresosEdit = PucMovimiento::
-            join('ingresos as i','i.id','recibocaja_id')
-            ->where('tipo_comprobante',3)
-            ->where('documento_id',$this->id)
-            ->select('i.id')
-            ->get();
-        
-            foreach ($ingresosEdit as $id) {
-                $ingresosArray[]=$id->id;
+
+        if(count($this->pagos()) > 0){
+            foreach ($this->pagos() as $id) {
+                $ingresosAsociados[]=$id->ingreso;
             }
         }
+        // dd($this->id);
+        if($edit){
+            $asientosUsados = PucMovimiento::where('enlace_a',4)->whereIn('documento_id',$ingresosAsociados)->get();
 
+            foreach ($asientosUsados as $id) {
+                if($id->recibocaja_id != null){
+                    $ingresosArray[]=$id->recibocaja_id;
+                }
+            }
+        }
+        
         if(count($ingresosArray) > 0){
             $ingresos = Ingreso::where('cliente',$this->cliente)
             ->where('anticipo',1)
@@ -1406,7 +1410,6 @@ public function diasCobradosProrrateo(){
             ->get();
         }
        
-
         return $ingresos;
     }
 

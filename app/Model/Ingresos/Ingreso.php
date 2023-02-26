@@ -308,4 +308,32 @@ class Ingreso extends Model
         return $this->hasMany('App\Model\Ingresos\IngresosRetenciones', 'ingreso');
     }
 
+    //metodo que asigna al request (guardar o editar) de una factura
+    public function formaPagoRequest($cuenta_id,$idIngreso=null){
+
+        if($idIngreso == null){
+                $forma = FormaPago::find($cuenta_id);
+        
+                if($forma){
+                    return Puc::find($forma->cuenta_id); 
+                }
+            //si es igual a cero es por que se trata de un anticipo.
+            }else{
+                //buscamos la cuenta contable que tiene asociada el ingreso
+                $pm= PucMovimiento::where('documento_id',$idIngreso)->where('tipo_comprobante',1)->where('enlace_a',5)->first();
+    
+                if($pm){
+                    return Puc::find($pm->cuenta_id);
+                }
+            }
+        }
+
+       //Método que retorna el saldo a favor usado en la forma de pago (cuando agregamos anticipos a la forma de pago)
+       public function saldoFavorUsado(){
+        return PucMovimiento::where('documento_id',$this->id)
+        // ->where('recibocaja_id',null)
+        ->where('enlace_a',5)
+        ->sum('credito');
+    }
+
 }
