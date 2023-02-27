@@ -243,7 +243,13 @@ class IngresosController extends Controller
         //tomamos las formas de pago cuando no es un recibo de caja por anticipo
         $formas = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
-        return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas'));
+        //obtiene las formas de pago relacionadas con este modulo (Facturas)
+        $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
+
+        return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura', 
+        'bancos', 'metodos_pago', 'impuestos', 
+        'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas','relaciones'));
     }
 
     public function saldoContacto($id){
@@ -264,6 +270,7 @@ class IngresosController extends Controller
         $contrato = Contrato::where('client_id',$cliente)->first();
         //$total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
         $total = 1;
+ 
         return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total','contrato'));
     }
 
@@ -277,6 +284,10 @@ class IngresosController extends Controller
         $new=$facturas;
         $contrato = Contrato::where('client_id',$cliente)->first();
 
+        //obtiene las formas de pago relacionadas con este modulo (Facturas)
+        $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+        $formasPago = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->whereIn('enlace_a',[4,5])->get();
+
         foreach ($items as $item) {
             foreach ($facturas as $factura) {
                 if ($factura->id==$item->factura) {
@@ -288,12 +299,23 @@ class IngresosController extends Controller
             }
             $entro=false;
         }
-        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 'ingreso', 'retencioness','contrato'));
+
+        foreach($facturas as $factura){
+            foreach($factura->recibosAnticipo(1) as $recibo){
+                // dd($recibo->saldoFavorUsado());
+            }
+            
+        }
+        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 
+        'ingreso', 'retencioness','contrato','formasPago','relaciones'
+    ));
     }
 
     public function store(Request $request){
-
+        // dd($request);
+        //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
         if($request->realizar == 2){
+            //Cuando se realiza el ingreso por categoría.
             $this->storeIngresoPucCategoria($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
@@ -411,8 +433,8 @@ class IngresosController extends Controller
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
-            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : '';
-            $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
+            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : ''; // variables que me indican si se trata de un anticipo 
+            $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : ''; //variables que me indican si se trata de un anticipo
             $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
             
@@ -527,10 +549,10 @@ class IngresosController extends Controller
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                PucMovimiento::ingreso($ingreso,1,1);    
+                PucMovimiento::ingreso($ingreso,1,1,$request);    
             }else{
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::ingreso($ingreso,1,2);   
+                PucMovimiento::ingreso($ingreso,1,2,$request);   
             }
 
             //sumo a las numeraciones el recibo
@@ -890,6 +912,51 @@ class IngresosController extends Controller
         PucMovimiento::ingreso($ingreso,1,0);        
     } 
 
+    public function updateIngresoPucCategoria($request,$id){
+
+        //sumo a las numeraciones el recibo
+        $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+        // dd($ingreso,$request);
+        $ingreso->empresa = Auth::user()->empresa;
+        $ingreso->cliente = $request->cliente;
+        $ingreso->cuenta = $request->cuenta;
+        $ingreso->metodo_pago = $request->metodo_pago;
+        $ingreso->notas = $request->notas;
+        $ingreso->tipo = 2;
+        $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+        $ingreso->observaciones = mb_strtolower($request->observaciones);
+        $ingreso->created_by = Auth::user()->id;
+        $ingreso->anticipo = 1;
+        $ingreso->valor_anticipo = $request->valor_recibido;
+        $ingreso->save();
+
+        $impuesto = Impuesto::where('porcentaje',0)->first();
+
+        //Registramos el ingreso de anticipo en una sola cuenta del puc.        
+        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+        // dd($items);
+        foreach($items as $item){
+        $item->valor = $this->precision($request->valor_recibido);
+        $item->id_impuesto = $impuesto->id;
+        $item->impuesto = $impuesto->porcentaje;
+        $item->ingreso = $ingreso->id;
+        $item->categoria = $request->puc;
+        $item->anticipo = $request->anticipo; //hace referencia a la pk de la tabla anticipo
+        $item->cant = 1;
+        $item->save();
+        }
+
+        $contacto = Contacto::find($request->cliente);
+        $contacto->saldo_favor+=$request->valor_recibido;
+        $contacto->save(); 
+
+        //ingresos
+        $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+
+        //mandamos por parametro el ingreso y el 1 (guardar)
+        PucMovimiento::ingreso($ingreso,2,0);        
+    } 
+
     public function showMovimiento($id){
         $this->getAllPermissions(Auth::user()->id);
         $ingreso = Ingreso::find($id);
@@ -929,6 +996,12 @@ class IngresosController extends Controller
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+
+        //tomamos las formas de pago cuando no es un recibo de caja por anticipo
+        $formas = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
+        $formasPago = PucMovimiento::where('documento_id',$ingreso->id)->where('tipo_comprobante',1)->whereIn('enlace_a',[4,5])->get();
+
         if ($ingreso) {
             view()->share(['icon' =>'', 'title' => 'Modificar Ingreso (Recibo de Caja) #'.$ingreso->nro]);
             if ($ingreso->tipo==3) {
@@ -941,24 +1014,59 @@ class IngresosController extends Controller
             $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
             $metodos_pago =DB::table('metodos_pago')->get();
             $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
-            $categorias=Categoria::where('empresa',Auth::user()->empresa)->whereNull('asociado')->get();
+            $categorias = Puc::where('empresa',auth()->user()->empresa)
+            ->whereRaw('length(codigo) > 6')
+            ->get();
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $items= $retencionesIngreso=array();
-            $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+            $items = IngresosFactura::where('ingreso',$ingreso->id);
+            
             if($ingreso->tipo==2){
-                $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+                $items = IngresosCategoria::where('ingreso',$ingreso->id);
                 $retencionesIngreso = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
             }
-            return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso', 'categorias', 'bancos', 'metodos_pago', 'impuestos','items', 'retenciones'));
+            
+            $cuentaIngresoDinero = false;
+            $cuentaAnticipo = false;
+            $valorAnticipo = false;
+            if($ingreso->anticipo == 1){
+                $itemAnticipo = $items->first();
+                $cuentaIngresoDinero = $itemAnticipo->categoria; //hace referencia a la pk de la tabla puc
+                $cuentaAnticipo = $itemAnticipo->anticipo; //hace referencia a la pk de la tabla anticipo
+                $valorAnticipo = round($itemAnticipo->valor);
+            }
+
+            $items = $items->get();
+
+            //obtiene los anticipos relacionados con este modulo (Ingresos)
+            $anticipos = Anticipo::where('relacion',1)->orWhere('relacion',3)->get();
+
+            //obtiene las formas de pago relacionadas con este modulo (Facturas)
+            $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
+
+            return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso', 
+            'categorias', 'bancos', 'metodos_pago', 'impuestos','items', 'retenciones','formasPago','anticipos','formas'
+            ,'cuentaIngresoDinero','cuentaAnticipo','valorAnticipo','relaciones'));
         }
         return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
     }
 
     public function update(Request $request, $id){
-
+        //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
+        if($request->realizar == 2){
+            
+            //Cuando se realiza el ingreso por categoría.
+            $this->updateIngresoPucCategoria($request,$id);
+            $mensaje='SE HA ACTUALIZADO SATISFACTORIAMENTE EL ANTICIPO';
+            return redirect('empresa/ingresos')->with('success', $mensaje);
+            
+        }
+        
         //pendiente metodo de actualizar un ingreso por categorias, (en elos movimeintos del puc)
-
+        
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
+
         if ($ingreso) {
             if ($ingreso->tipo==3) {
                 return redirect('empresa/ingresos')->with('error', 'No puede editar un pago de nota de débito');
@@ -1118,10 +1226,10 @@ class IngresosController extends Controller
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                PucMovimiento::ingreso($ingreso,2,1);    
+                PucMovimiento::ingreso($ingreso,2,1,$request);    
             }else{
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::ingreso($ingreso,2,2);   
+                PucMovimiento::ingreso($ingreso,2,2,$request);   
             }
 
             //ingresos

@@ -70,6 +70,38 @@
   </tbody>
 </table>
 @if(isset($factura))
+    <br>
+    {{-- FORMAS DE PAGO Y RETENCIONES PARA CUANDO ENTRA DINERO (RECIBO DE CAJA) POR UNA CATEGORIA --}}
+    <div class="row saldofavorcreate">
+      <div class="col-md-5 no-padding">
+      </div>
+      <div class="col-md-7">
+        <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+            <table class="table table-striped table-sm" id="table-formaspago">
+              <thead class="thead-dark">
+                <th width="50%">Cuenta</th>
+                <th width="25%">Cruce</th>
+                <th width="20%" class="no-padding">Valor</th>
+                <th width="5%"></th>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-md-6">
+                <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago();" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+              </div>
+              <div class="col-md-6 d-flex justify-content-between pt-3">
+                <h5>Total:</h5>
+                <span>$</span><span id="anticipototal">0</span>  
+              </div>
+              <div class="col-md-12">
+                <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+              </div>
+            </div>
+        </div>
+    </div>
+
 <div class="row" style="margin-top: 1%;">
       <div class="col-md-4 offset-md-8">
         <table class="text-right ingresos" id="totales-ingreso">

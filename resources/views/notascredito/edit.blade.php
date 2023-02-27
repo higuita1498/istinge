@@ -193,11 +193,24 @@
                                     <input type="text" class="form-control form-control-sm calcularLinea " cont="{{$cont}}" id="desc{{$cont}}" onkeyup="total({{round($cont)}})" name="desc[]" placeholder="%" value="{{$item->desc}}" onkeypress="return event.charCode >= 46 && event.charCode <=57" min="0" max="100">
                                 </td>
                                 <td>
-                                    <select class="form-control form-control-sm selectpicker calcularLinea impuestos" cont="{{$cont}}" name="impuesto[]" id="impuesto{{$cont}}" title="Impuesto" required multiple  onchange="impuestoFacturaDeVenta(this.id); totalall();">
-                                        @foreach($impuestos as $impuesto)
-                                            <option value="{{round($impuesto->id)}}" porc="{{round($impuesto->porcentaje)}}" {{$item->id_impuesto==$impuesto->id && $item->id_impuesto != NULL ?'selected':''}} {{$item->id_impuesto_1==$impuesto->id && $item->id_impuesto_1 != NULL ?'selected':''}} {{$item->id_impuesto_2==$impuesto->id && $item->id_impuesto_2 != NULL ?'selected':''}} {{$item->id_impuesto_3==$impuesto->id && $item->id_impuesto_3 != NULL ?'selected':''}} {{$item->id_impuesto_4==$impuesto->id && $item->id_impuesto_4 != NULL ?'selected':''}} {{$item->id_impuesto_5==$impuesto->id && $item->id_impuesto_5 != NULL ?'selected':''}} {{$item->id_impuesto_6==$impuesto->id && $item->id_impuesto_6 != NULL ?'selected':''}} {{$item->id_impuesto_7==$impuesto->id && $item->id_impuesto_7 != NULL ?'selected':''}}>{{$impuesto->nombre}} - {{round($impuesto->porcentaje)}}%</option>
-                                        @endforeach
-                                    </select>
+                                        <select class="form-control form-control-sm selectpicker calcularLinea impuestos"
+                                            cont="{{ $cont }}" name="impuesto{{ $cont }}[]"
+                                            id="impuesto{{ $cont }}" title="Impuesto" required multiple
+                                            onchange="impuestoFacturaDeVenta(this.id); totalall();">
+                                            @foreach ($impuestos as $impuesto)
+                                                <option value="{{ round($impuesto->id) }}"
+                                                    porc="{{ round($impuesto->porcentaje) }}"
+                                                    {{ $item->id_impuesto == $impuesto->id && $item->id_impuesto != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_1 == $impuesto->id && $item->id_impuesto_1 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_2 == $impuesto->id && $item->id_impuesto_2 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_3 == $impuesto->id && $item->id_impuesto_3 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_4 == $impuesto->id && $item->id_impuesto_4 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_5 == $impuesto->id && $item->id_impuesto_5 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_6 == $impuesto->id && $item->id_impuesto_6 != null ? 'selected' : '' }}
+                                                    {{ $item->id_impuesto_7 == $impuesto->id && $item->id_impuesto_7 != null ? 'selected' : '' }}>
+                                                    {{ $impuesto->nombre }} - {{ round($impuesto->porcentaje) }}%</option>
+                                            @endforeach
+                                        </select>
                                 </td>
                                 <td  style="padding-top: 1% !important;">
                                     <div class="resp-descripcion">

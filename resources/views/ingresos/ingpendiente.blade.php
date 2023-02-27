@@ -91,6 +91,72 @@
     @endforeach
   </tbody>
 </table>
+
+
+<br>
+{{-- FORMAS DE PAGO Y RETENCIONES PARA CUANDO ENTRA DINERO (RECIBO DE CAJA) POR UNA CATEGORIA --}}
+<div class="row">
+  <div class="col-md-5 no-padding">
+  </div>
+  <div class="col-md-7">
+    <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+    <table class="table table-striped table-sm" id="table-formaspago">
+      <thead class="thead-dark">
+        <th width="50%">Cuenta</th>
+        <th width="25%">Cruce</th>
+        <th width="20%" class="no-padding">Valor</th>
+        <th width="5%"></th>
+      </thead>
+      <tbody>
+        @php $cont=0; $totalformas= 0; @endphp
+          @foreach($formasPago as $forma) 
+
+        @php $cont+=1; $totalformas+=$forma->debito; @endphp
+          <tr id="forma{{$cont}}" fila="{{$cont}}">
+            <td  class="no-padding">
+                <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="formapago[]" id="formapago{{$cont}}" onchange="llenarSelectAnticipo(this.value, $factura->cliente);" required="" >
+                    @if($forma->recibocaja_id != null || $forma->enlace_a == 5)
+                    <option value="0" selected>Agregar un anticipo</option>
+                    @endif
+                    @foreach($relaciones as $relacion)
+                        <option value="{{$relacion->id}}" {{$relacion->id == $forma->formapago_id ? 'selected': ''}}>{{$relacion->codigo}} - {{$relacion->nombre}}</option>
+                    @endforeach
+                </select>
+              </td>
+              <td  class="no-padding" id="tdanticipo{{$cont}}">
+                  <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo{{$cont}}">
+                    @if($forma->recibocaja_id != null || $forma->enlace_a == 5)
+                    @foreach($factura->recibosAnticipo(1) as $recibo)
+                        @php $valorUsar = $recibo->saldoFavorUsado(); @endphp
+                        <option value="{{$recibo->id}}" id="optionAnticipo{{$cont}}" precio="{{round($recibo->valor_anticipo+$valorUsar,4)}}" {{$recibo->id == $forma->recibocaja_id ? 'selected': ''}}>RC-{{$recibo->nro}} - {{round($recibo->valor_anticipo+$valorUsar,4)}}</option>
+                    @endforeach
+                    @endif
+                  </select>
+              </td>
+              <td class="monetario">
+                <input type="hidden" value='0' id="lock_forma{{$cont}}">
+                <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->debito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="valor forma de pago" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
+              </td>
+            <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>                          
+          </tr>
+          @endforeach
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-md-6">
+        <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago();" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+      </div>
+      <div class="col-md-6 d-flex justify-content-between pt-3">
+        <h5>Total:</h5>
+        <span>$</span><span id="anticipototal">{{$totalformas}}</span>  
+      </div>
+      <div class="col-md-12">
+        <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+      </div>
+    </div>
+</div>
+</div>
+
  
  <div class="row" style="margin-top: 1%;">
       <div class="col-md-4 offset-md-8">

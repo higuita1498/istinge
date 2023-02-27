@@ -1642,6 +1642,7 @@ function total_linea_formapago(nro) {
     let total = 0;
 
     $('#table-formaspago tbody tr').each(function() {
+        
         var id = $(this).attr('fila');
         id = $("#precioformapago" + id);
         var totalLinea = id.val();
@@ -1978,6 +1979,9 @@ function totales_ingreso(input = true) {
     //notificamos el saldo a favor
     if (saldoFavor > 0) {
 
+        //ocultamos por el momento las formas de pago ya que vamos aingresar esl a cuenta del anticipo.
+        $(".saldofavorcreate").addClass('d-none');
+
         //seteamos el input type hidden del saldo a favor
         $("#saldofavor").val(saldoFavor);
 
@@ -1993,6 +1997,7 @@ function totales_ingreso(input = true) {
         $(".cls-anticipo").addClass('d-block');
         $(".cls-anticipo").removeClass('d-none');
     } else {
+        $(".saldofavorcreate").removeClass('d-none');
         $(".cls-anticipo").addClass('d-none');
         $(".cls-anticipo").removeClass('d-block');
     }
@@ -2354,9 +2359,16 @@ function CrearFilaRetencion() {
     $("#precio_reten" + nro).attr("disabled", "disabled");
 }
 
-function CrearFilaFormaPago() {
+function CrearFilaFormaPago(categoria = false) {
 
-    var nro = $('#table-formaspago tbody tr').length + 1;
+    let tabla = "";
+    if(categoria){
+        tabla = "table-formaspago-cat";
+    }else{
+        tabla = "table-formaspago";
+    }
+
+    var nro = $('#'+tabla+' tbody tr').length + 1;
     if ($('#forma' + nro).length > 0) {
         for (i = 1; i <= nro; i++) {
             if ($('#forma' + i).length == 0) {
@@ -2383,7 +2395,7 @@ function CrearFilaFormaPago() {
 
     var formasPago = JSON.parse($('#formaspago').val());
 
-    $('#table-formaspago tbody').append(
+    $('#'+tabla+' tbody').append(
         `<tr  id="forma${nro}" fila="${nro}">` +
         `
         <td  class="no-padding">
@@ -2392,7 +2404,7 @@ function CrearFilaFormaPago() {
           </select>
         </td>
         <td  class="no-padding" id="tdanticipo${nro}">
-            <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo${nro}">
+            <select class="form-control form-control-sm selectpicker no-padding" onchange="inputAnticipo(${nro})" title="Seleccione" data-live-search="true" data-size="5" name="selectanticipo[]" id="selectanticipo${nro}">
 
             </select>
         </td>
@@ -2431,6 +2443,13 @@ function CrearFilaFormaPago() {
 
     $('#formapago' + nro).selectpicker('refresh');
     $('#selectanticipo' + nro).selectpicker('refresh');
+
+}
+
+function inputAnticipo(nro){
+
+    let valorAnticipo = $("selectanticipo"+nro+'>option:selected').attr('precio');
+    console.log(valorAnticipo);
 
 }
 
@@ -2902,7 +2921,7 @@ function showfacturas(cliente) {
             facturas = JSON.parse(data.responseText);
 
             cliente = facturas.cliente;
-            console.log(cliente);
+            // console.log(cliente);
             facturas = JSON.parse(facturas.items);
             $.each(facturas, function(key, value) {
                 $('#select_factura').append($('<option>', {
@@ -3139,7 +3158,7 @@ function tipoMV(id) {
     var campo_id = id; //obtenemos el id que se esta seleccionando
     if ($.trim(campo_id) != '') {
         $.get(url, { campo_id: campo_id }, function(campos) {
-            console.log(campos);
+            // console.log(campos);
             $('#fabricante').empty();
             $('#linea').empty();
             $('#categoria').empty();
@@ -4028,7 +4047,7 @@ function notificacionRadicado() {
                 //setTimeout(function(){ notificacion(); }, 3000);
             },
             error: function(data) {
-                console.log(data);
+                // console.log(data);
                 cargando(false);
             }
         });

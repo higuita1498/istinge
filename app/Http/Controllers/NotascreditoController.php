@@ -269,7 +269,7 @@ class NotascreditoController extends Controller
                 //Acumulado de total en notas creditos de la factura.
                 $precioNotas += $notas->nota()->total()->total;
             }
-
+            
             if (round($precioNotas) > round($fc->total()->total)) {
                 return redirect()->back()->with('error', "La nota crédito supera el valor de la factura de venta");
             }
@@ -625,7 +625,7 @@ class NotascreditoController extends Controller
             $descuento = 0;
             $z = 1;
 
-            //MULTI IMPUESTOS
+             //MULTI IMPUESTOS
             for ($i = 0; $i < count($request->precio); $i++) {
                 $total += ($request->cant[$i] * $request->precio[$i]);
 
@@ -635,22 +635,11 @@ class NotascreditoController extends Controller
                 }
 
                 $data  = $request->all();
-
+                
                 if (isset($data['impuesto' . $z])) {
                     if ($data['impuesto' . $z]) {
                         for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
                             $porcentaje = Impuesto::find($data['impuesto' . $z][$x])->porcentaje;
-                            if ($porcentaje > 0) {
-                                $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
-                            }
-                        }
-                    }
-                }
-                //en caso tal de no tener el desarrollo de multiples ivas
-                elseif(isset($data['impuesto'])){
-                    if ($data['impuesto']) {
-                        for ($x = 0; $x < count($data['impuesto']); $x++) {
-                            $porcentaje = Impuesto::find($data['impuesto'][$x])->porcentaje;
                             if ($porcentaje > 0) {
                                 $impuesto += (($request->cant[$i] * $request->precio[$i] - $descuento) * $porcentaje) / 100;
                             }
@@ -1474,7 +1463,12 @@ public function facturas_retenciones($id){
                     //dd($CufeFactRelacionada);
         }
         */
-        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true)['uuid']; 
+        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true); 
+        if(!isset($CufeFactRelacionada['uuid'])){
+            return redirect('empresa/notascredito')->with('message_denied', 'No existe el uuid de la factura a la que esta relacionada la nota crédito.');
+        }else{
+            $CufeFactRelacionada = $CufeFactRelacionada['uuid'];
+        }
         //--------------Fin Factura Relacionada -----------------------//
 
 

@@ -329,19 +329,49 @@
           </table>
           <button class="btn btn-outline-primary" onclick="CrearFilaCategorias();" type="button" style="margin-top: 5%; margin-bottom: 1%;">Agregar línea</button>
 
-          <h5>¿ TE APLICARON ALGUNA RETENCIÓN ?</h5>
-          <div class="col-md-7 no-padding">
-            <table class="table table-striped table-sm" id="table-retencion">
-              <thead class="thead-dark">
-                <th width="60%">Tipo de Retención</th>
-                <th width="34%">Valor</th>
-                <th width="5%"></th>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-            <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button>
+
+          {{-- FORMAS DE PAGO Y RETENCIONES PARA CUANDO ENTRA DINERO (RECIBO DE CAJA) POR UNA CATEGORIA --}}
+          <div class="row">
+            <div class="col-md-5 no-padding">
+              <h5>¿ TE APLICARON ALGUNA RETENCIÓN ?</h5>
+              <table class="table table-striped table-sm" id="table-retencion">
+                <thead class="thead-dark">
+                  <th width="60%">Tipo de Retención</th>
+                  <th width="34%">Valor</th>
+                  <th width="5%"></th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button>
+            </div>
+            <div class="col-md-7">
+              <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+                  <table class="table table-striped table-sm" id="table-formaspago-cat">
+                    <thead class="thead-dark">
+                      <th width="50%">Cuenta</th>
+                      <th width="25%">Cruce</th>
+                      <th width="20%" class="no-padding">Valor</th>
+                      <th width="5%"></th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <button class="btn btn-outline-primary" onclick="CrearFilaFormaPago(true);" type="button" style="margin-top: 2%;">Agregar forma de pago</button><a><i data-tippy-content="Agrega nuevas formas de pago haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-between pt-3">
+                      <h5>Total:</h5>
+                      <span>$</span><span id="anticipototal">0</span>  
+                    </div>
+                    <div class="col-md-12">
+                      <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
+                    </div>
+                  </div>
+              </div>
           </div>
+          
 
       <div class="row" style="margin-top: 5%;">
         <div class="col-md-4 offset-md-8">
@@ -472,6 +502,10 @@
     <input type="hidden" id="impuestos" value="{{json_encode($impuestos)}}">
     <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
     <input type="hidden" id="simbolo" value="{{Auth::user()->empresa()->moneda}}">
+    <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
+
+    {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
+    <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
 
     <input type="hidden" id="allcategorias" value='@foreach($categorias as $categoria)
   <optgroup label="{{$categoria->nombre}}">
