@@ -1770,6 +1770,10 @@ class ContratosController extends Controller
                             $crm->cliente = $contrato->cliente()->id;
                             $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
                             $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                            $crm->estado = 0;
+                            if($lastFact = $contrato->lastFactura()){
+                                $crm->factura = $lastFact->id;
+                            }
                             $crm->save();
                             
                             $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
@@ -1793,6 +1797,10 @@ class ContratosController extends Controller
                     $crm->cliente = $contrato->cliente()->id;
                     $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
                     $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                    $crm->estado = 0;
+                    if($lastFact = $contrato->lastFactura()){
+                        $crm->factura = $lastFact->id;
+                    }
                     $crm->save();
 
                     $contrato->update();
