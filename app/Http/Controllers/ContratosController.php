@@ -45,6 +45,7 @@ use App\Segmento;
 use App\Campos;
 use App\Puerto;
 use App\Oficina;
+use App\CRM;
 
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel; 
@@ -1762,6 +1763,14 @@ class ContratosController extends Controller
                             $movimiento->created_by  = Auth::user()->id;
                             $movimiento->empresa     = Auth::user()->empresa;
                             $movimiento->save();
+
+
+                            //crm registro
+                            $crm = new CRM();
+                            $crm->cliente = $contrato->cliente()->id;
+                            $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+                            $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                            $crm->save();
                             
                             $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
                             $type = 'success';
@@ -1779,6 +1788,13 @@ class ContratosController extends Controller
                         $contrato->state = 'enabled';
                     }
                     
+                    //crm registro
+                    $crm = new CRM();
+                    $crm->cliente = $contrato->cliente()->id;
+                    $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+                    $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+                    $crm->save();
+
                     $contrato->update();
 
                     return back()->with('success', 'EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status());
