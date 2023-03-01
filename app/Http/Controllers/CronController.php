@@ -594,6 +594,7 @@ class CronController extends Controller
                 $crm = new CRM();
                 $crm->cliente = $contacto->id;
                 $crm->factura = $contacto->factura;
+                $crm->estado = 0;
                 $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
                 $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
                 $crm->save();
