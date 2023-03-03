@@ -974,7 +974,6 @@ public function forma_pago()
         }
         return '';
     }
-
     public function periodoCobrado($tirilla=false){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
@@ -1055,6 +1054,7 @@ public function forma_pago()
             $inicio = Carbon::parse($inicio);
 
             $diasCobrados = 0;
+            $diasdeMas = 0;
 
             $fechaInicio = Carbon::parse($fechaInicio);
             //sumamos un dia ya que el corte es un 30, empezaria desde el siguiente dia
@@ -1121,6 +1121,15 @@ public function forma_pago()
 
                     }else{
                         $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
+                            
+                            /*
+                                validamos por que pudieron haber creado el contrato el mismo dia de facturacion pero despues de que hizo la generacion de facturas
+                                entonces puede estar regalanado vrios dias.
+                            */
+                            //si entra acá es por que antes vamos a sumar los dias que no cobro en la primera generacion de la factura a la factura del siguiente mes
+                            if($mesContrato != Carbon::parse($fechaFactura)->format('m')){
+                                $diasdeMas = 30;
+                            }
                     }
                 
                     $diasCobrados = $fechaContrato->diffInDays($fechaFin);
@@ -1139,7 +1148,7 @@ public function forma_pago()
                     }
 
                     if($diasCobrados == 0){return 30;}
-                    if($diasCobrados > 30){$diasCobrados=30;}
+                    if($diasCobrados > 30 && $diasdeMas == 0){$diasCobrados=30;}
                     $mensaje.= ($tirilla) ? "" : " total días cobrados: " . $diasCobrados;
                 }else{
                     //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
@@ -1233,6 +1242,7 @@ public function diasCobradosProrrateo(){
         $inicio = Carbon::parse($inicio);
 
         $diasCobrados = 0;
+        $diasdeMas = 0;
 
         $fechaInicio = Carbon::parse($fechaInicio);
         //sumamos un dia ya que el corte es un 30, empezaria desde el siguiente dia
@@ -1261,7 +1271,6 @@ public function diasCobradosProrrateo(){
         
         $mensaje = "";
         
-
         //Primero analizamos si es la primer factura del contrato que vamos a generar
         if($this->contrato_id != null){
 
@@ -1298,10 +1307,21 @@ public function diasCobradosProrrateo(){
                     }
 
                 }else{
+                    // contrato = 26 de enero, facturacion 25 de enero, corte 30 de enero
+                    // caso hipotetico: 1 de feb
+                    
+                    /*
+                        validamos por que pudieron haber creado el contrato el mismo dia de facturacion pero despues de que hizo la generacion de facturas
+                        entonces puede estar regalanado vrios dias.
+                    */
+                    //si entra acá es por que antes vamos a sumar los dias que no cobro en la primera generacion de la factura a la factura del siguiente mes
+                    if($mesContrato != Carbon::parse($fechaFactura)->format('m')){
+                        $diasdeMas = 30;
+                    }
                     $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                 }
             
-                $diasCobrados = $fechaContrato->diffInDays($fechaFin);
+                $diasCobrados = $fechaContrato->diffInDays($fechaFin)+$diasdeMas;
 
                 /*
                     si la fecha no está entre el rango de la creacion del contrato y la fecha de corte entonces cojemos esos dias de
@@ -1317,7 +1337,7 @@ public function diasCobradosProrrateo(){
                 }
 
                 if($diasCobrados == 0){return 30;}
-                if($diasCobrados > 30){$diasCobrados=30;}
+                if($diasCobrados > 30 && $diasdeMas==0){$diasCobrados=30;}
                 $diasCobrados=$diasCobrados;
             }else{
                 //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
