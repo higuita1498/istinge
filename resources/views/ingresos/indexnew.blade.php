@@ -57,7 +57,7 @@
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Fecha" id="fecha-pago" class="form-control rounded">
+							<input type="text" placeholder="Fecha" id="fecha-pago-dp" class="form-control rounded">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select id="banco" class="form-control rounded selectpicker m-0 p-0" title="Cuenta" data-width="150px" data-size="5" data-live-search="true">
@@ -153,7 +153,7 @@
 					data.numero = $('#numero').val();
 					data.comprobante_pago = $('#comprobante_pago').val();
 					data.cliente = $('#cliente').val();
-					data.fecha = $('#fecha-pago').val();
+					data.fecha = $('#fecha-pago-dp').val();
 					data.estado = $('#estado').val();
 					data.banco = $('#banco').val();
 					data.metodo = $('#metodo').val();
@@ -179,13 +179,13 @@
 		            }
 		        });
 
-		        $('#cliente, #banco, #metodo, #fecha-pago').on('change',function() {
+		        $('#cliente, #banco, #metodo, #fecha-pago-dp').on('change',function() {
 		            getDataTable();
 		            return false;
 		        });
 
 		
-				$('#fecha-pago').datepicker({
+				$('#fecha-pago-dp').datepicker({
 									uiLibrary: 'bootstrap4',
 									iconsLibrary: 'fontawesome',
 									locale: 'es-es',
@@ -214,7 +214,7 @@
 		    $('#numero').val('');
 		    $('#comprobante_pago').val('');
 			$('#cliente').val('').selectpicker('refresh');
-			$('#fecha-pago').val('');
+			$('#fecha-pago-dp').val('');
 			$('#estado').val('').selectpicker('refresh');
 			$('#banco').val('').selectpicker('refresh');
 			$('#metodo').val('').selectpicker('refresh');
