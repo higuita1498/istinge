@@ -1400,6 +1400,7 @@ public function diasCobradosProrrateo(){
     public function recibosAnticipo($edit = 0){
         //obtenemos los ingresos que tiene un anticpo vigente.
         $ingresosArray=array();
+        $ingresosAsociados=array();
 
         if(count($this->pagos()) > 0){
             foreach ($this->pagos() as $id) {
