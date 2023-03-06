@@ -179,7 +179,7 @@
 		            }
 		        });
 
-		        $('#cliente, #banco, #metodo').on('change',function() {
+		        $('#cliente, #banco, #metodo, #fecha-pago-dp').on('change',function() {
 		            getDataTable();
 		            return false;
 		        });
