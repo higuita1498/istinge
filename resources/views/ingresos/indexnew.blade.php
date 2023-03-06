@@ -184,12 +184,15 @@
 		            return false;
 		        });
 
+		
 				$('#fecha-pago').datepicker({
-					locale: 'es-es',
-					uiLibrary: 'bootstrap4',
-					format: 'yyyy-mm-dd',
-					iconsLibrary: 'fontawesome',
-				});
+									uiLibrary: 'bootstrap4',
+									iconsLibrary: 'fontawesome',
+									locale: 'es-es',
+									uiLibrary: 'bootstrap4',
+									format: 'yyyy-mm-dd'
+								});
+
 
 			});
 
