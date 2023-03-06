@@ -185,7 +185,7 @@
 		        });
 
 		
-				$('#fecha-pago-dp').datepicker({
+				jQuery('#fecha-pago-dp').datepicker({
 									uiLibrary: 'bootstrap4',
 									iconsLibrary: 'fontawesome',
 									locale: 'es-es',
