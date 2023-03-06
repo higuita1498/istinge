@@ -9,7 +9,7 @@
     </button>
 </div>
 @else
-@if(isset($_SESSION['permisos']['170']))
+@if(isset($_SESSION['permisos']['170']) || isset($_SESSION['permisos']['783']))
 <a id="crear-persona-empleado" href="{{route('personas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Persona</a>
 @endif
 @endif

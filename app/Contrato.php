@@ -177,6 +177,11 @@ class Contrato extends Model
         return 'N/A';
     }
 
+    public function lastFactura(){
+        $factura = Factura::where('cliente', $this->client_id)->where('contrato_id', $this->id)->latest()->first();
+        return $factura;
+    }
+
     public function puerto(){
         return $this->belongsTo(Puerto::class, 'puerto_conexion', 'id');
         //return Puerto::find($this->puerto_conexion)->nombre;

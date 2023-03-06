@@ -364,6 +364,7 @@
 									@if(isset($_SESSION['permisos']['818']))
 									<a href="{{route('asignaciones.enviar', [$contacto->id, 'idContrato' => $contrato->id, 'nro-contrato' => $contrato->nro])}}" class="btn btn-outline-info btn-sm"><i class="fas fa-envelope"></i>Enviar</a>
 									@endif
+									<a href="{{route('contratos.crm.forzar', $contacto->id)}}" class="btn btn-outline-info btn-sm">+ CRM</a>
 									</td>
 								</tr>
 							</tbody>

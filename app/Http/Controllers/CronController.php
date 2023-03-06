@@ -303,6 +303,13 @@ class CronController extends Controller
                 }
             }
 
+
+             /* Enviar correo funcional */
+             foreach($grupos_corte as $grupo_corte){
+                $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
+                self::sendInvoices($fechaInvoice);
+            }
+
             ## ENVIO SMS ##
             if($empresa->factura_sms_auto){
                 $servicio = Integracion::where('empresa', 1)->where('tipo', 'SMS')->where('status', 1)->first();
@@ -528,11 +535,7 @@ class CronController extends Controller
                 fclose($file);
             }
 
-            /* Enviar correo funcional */
-            foreach($grupos_corte as $grupo_corte){
-                $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
-                self::sendInvoices($fechaInvoice);
-            }
+           
         }
     }
 
@@ -594,6 +597,7 @@ class CronController extends Controller
                 $crm = new CRM();
                 $crm->cliente = $contacto->id;
                 $crm->factura = $contacto->factura;
+                $crm->estado = 0;
                 $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
                 $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
                 $crm->save();

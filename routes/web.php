@@ -1284,6 +1284,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
         Route::get('importarMK', 'ContratosController@importarMK')->name('contratos.importarMK');
         Route::post('opciones_dian', 'ContratosController@opcion_dian');
+
+		Route::get('registro-crm/{contrato}', 'ContratosController@forzarCrm')->name('contratos.crm.forzar');
+
 	});
 
 	Route::resource('contratos', 'ContratosController');
