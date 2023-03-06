@@ -57,7 +57,7 @@
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Fecha" id="fecha-pago-dp" class="form-control rounded">
+							<input type="text" placeholder="Fecha" id="fecha-pago-dp" class="form-control rounded dp-fecha-i">
 						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select id="banco" class="form-control rounded selectpicker m-0 p-0" title="Cuenta" data-width="150px" data-size="5" data-live-search="true">
@@ -185,7 +185,7 @@
 		        });
 
 		
-				jQuery('#fecha-pago-dp').datepicker({
+				jQuery('.dp-fecha-i').datepicker({
 									uiLibrary: 'bootstrap4',
 									iconsLibrary: 'fontawesome',
 									locale: 'es-es',
