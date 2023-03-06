@@ -184,14 +184,16 @@
 		            return false;
 		        });
 
-		
-				jQuery('.dp-fecha-i').datepicker({
+
+				setTimeout(() => {
+								jQuery('.dp-fecha-i').datepicker({
 									uiLibrary: 'bootstrap4',
 									iconsLibrary: 'fontawesome',
 									locale: 'es-es',
 									uiLibrary: 'bootstrap4',
 									format: 'yyyy-mm-dd'
 								});
+				}, 1000);
 
 
 			});
