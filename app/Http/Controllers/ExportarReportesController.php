@@ -3596,7 +3596,7 @@ class ExportarReportesController extends Controller
                 $comprobacionFacturas=$comprobacionFacturas->where('mikrotik.id', $request->servidor);
             }
             if($request->grupo){
-                $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
+                $comprobacionFacturas=$comprobacionFacturas->where('contracts.grupo_corte', $request->grupo);
             }
             if($request->nro && $request->nro != 0){
                 $comprobacionFacturas=$comprobacionFacturas->where('factura.numeracion', $request->nro);
