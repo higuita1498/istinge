@@ -2106,6 +2106,9 @@ class ReportesController extends Controller
             if($request->servidor){
                 $facturas=$facturas->where('mikrotik.id', $request->servidor);
             }
+            if($request->grupo){
+                $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
+            }
             if($request->nro && $request->nro != 0){
                 $facturas=$facturas->where('factura.numeracion', $request->nro);
             }
@@ -2149,8 +2152,9 @@ class ReportesController extends Controller
             }
 
             $mikrotiks = Mikrotik::all();
+            $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
 
-            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks'));
+            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks', 'gruposCorte'));
 
         }
 
