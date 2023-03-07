@@ -497,6 +497,7 @@ class ExportarReportesController extends Controller
         }else{
 
             $comprobacionFacturas = Factura::where('factura.empresa',Auth::user()->empresa)
+            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
@@ -513,6 +514,9 @@ class ExportarReportesController extends Controller
                 $comprobacionFacturas->whereIn('i.cuenta', Auth::user()->cuentas());
             }
 
+            if($request->grupo){
+                $comprobacionFacturas=$comprobacionFacturas->where('contracts.grupo_corte', $request->grupo);
+            }
 
             if($comprobacionFacturas->count() >2100){
                 return $this->bigVentas($request);
@@ -552,6 +556,7 @@ class ExportarReportesController extends Controller
             }
 
             $facturas = Factura::where('factura.empresa',Auth::user()->empresa)
+            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
             ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
@@ -573,6 +578,9 @@ class ExportarReportesController extends Controller
                 if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
                     $facturas=$facturas->whereIn('i.cuenta', Auth::user()->cuentas());
                 }
+            }
+            if($request->grupo){
+                $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
             }
             $ides=array();
             $factures=$facturas->get();
