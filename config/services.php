@@ -38,16 +38,17 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
-        'google' => [
-    'client_id' => env('GOOGLE_CLIENT_ID', '158732244393-43jq11h2quvqu2g0dl9371fjk0d0rj3t.apps.googleusercontent.com'),
-    'client_secret' => env('GOOGLE_CLIENT_SECRET','fDenYVQ3NpJOReIcmS90s1qO'),
-    'redirect' => 'https://gestordepartes.net/login/google/callback',
-], 
+    
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID', '158732244393-43jq11h2quvqu2g0dl9371fjk0d0rj3t.apps.googleusercontent.com'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET','fDenYVQ3NpJOReIcmS90s1qO'),
+        'redirect' => 'https://gestordepartes.net/login/google/callback',
+    ], 
 
-'eventsDocument' => [
-    'base_uri' => env('EVENTS_DOCUMENTS_BASE_URI'),
-    'token' => env('EVENTS_DOCUMENTS_TOKEN'),
-    'ambiente' => env('EVENTS_DOCUMENTS_AMBIENTE')
-],
+    'eventsDocument' => [
+        'base_uri' => env('EVENTS_DOCUMENTS_BASE_URI'),
+        'token' => env('EVENTS_DOCUMENTS_TOKEN'),
+        'ambiente' => env('EVENTS_DOCUMENTS_AMBIENTE')
+    ],
 
 ];
