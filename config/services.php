@@ -44,4 +44,10 @@ return [
     'redirect' => 'https://gestordepartes.net/login/google/callback',
 ], 
 
+'eventsDocument' => [
+    'base_uri' => env('EVENTS_DOCUMENTS_BASE_URI'),
+    'token' => env('EVENTS_DOCUMENTS_TOKEN'),
+    'ambiente' => env('EVENTS_DOCUMENTS_AMBIENTE')
+],
+
 ];
