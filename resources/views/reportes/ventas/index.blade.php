@@ -24,6 +24,17 @@
 		    	@endforeach
 		    </select>
 	  	</div>
+		@if(isset($gruposCorte))
+		<div class="form-group col-md-2">
+			<label>Grupos corte</label>
+			<select class="form-control selectpicker" name="grupo" id="grupo">
+				@foreach($gruposCorte as $gp)
+					<option value="{{$gp->id}}" {{$gp->id == $request->grupo ? 'selected' : ''}}> {{$gp->nombre}} </option>
+				@endforeach
+				<option {{ !$request->grupo ? 'selected' : ''}} value="">TODOS</option>
+			</select>
+		</div>
+		@endif
 		<div class="form-group col-md-2">
 		    <label></label>
 		    <select class="form-control selectpicker" name="fechas" id="fechas">

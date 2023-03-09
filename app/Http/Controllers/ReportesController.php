@@ -82,6 +82,7 @@ class ReportesController extends Controller
             $order=$request->order==1?'DESC':'ASC';
 
             $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+                ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
                 ->join('items_factura as if', 'factura.id', '=', 'if.factura')
                 ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
                 ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
@@ -104,6 +105,9 @@ class ReportesController extends Controller
                 if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
                     $facturas=$facturas->whereIn('i.cuenta', $cajasUsuario);
                 }
+            }
+            if($request->grupo){
+                $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
             }
             $ides=array();
             $facturas=$facturas->OrderBy($orderby, $order)->get();
@@ -143,7 +147,12 @@ class ReportesController extends Controller
                 $subtotal=$this->precision($result->total-$result->descuento);
                 $total=$this->precision((float)$subtotal+$result->impuesto);
             }
-            return view('reportes.ventas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas'));
+
+
+            $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
+
+
+            return view('reportes.ventas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas', 'gruposCorte'));
 
         }
 
@@ -2106,6 +2115,9 @@ class ReportesController extends Controller
             if($request->servidor){
                 $facturas=$facturas->where('mikrotik.id', $request->servidor);
             }
+            if($request->grupo){
+                $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
+            }
             if($request->nro && $request->nro != 0){
                 $facturas=$facturas->where('factura.numeracion', $request->nro);
             }
@@ -2149,8 +2161,9 @@ class ReportesController extends Controller
             }
 
             $mikrotiks = Mikrotik::all();
+            $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
 
-            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks'));
+            return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks', 'gruposCorte'));
 
         }
 
