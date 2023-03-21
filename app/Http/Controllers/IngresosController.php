@@ -312,7 +312,7 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        // dd($request);
+        // return $request;
         //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
         if($request->realizar == 2){
             //Cuando se realiza el ingreso por categoría.
@@ -585,6 +585,8 @@ class IngresosController extends Controller
                             $contrato->save();
                         }
                     }
+
+                    return $contrato;
 
                     /* * * API MK * * */
 

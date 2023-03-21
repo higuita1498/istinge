@@ -19,8 +19,8 @@ class ReceptionDocumentService
 
     public function __construct()
     {
-        $this->token = config('services.documents.token');
-        $this->baseUri = config('services.documents.base_uri');
+        $this->token = config('services.eventsDocument.token');
+        $this->baseUri = config('services.eventsDocument.base_uri');
     }
 
     public function resolveAuthorization(&$queryParams, &$formParams, &$headers)
