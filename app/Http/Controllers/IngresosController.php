@@ -586,7 +586,7 @@ class IngresosController extends Controller
                         }
                     }
 
-                    return $contrato;
+                    // return $contrato;
 
                     /* * * API MK * * */
 
