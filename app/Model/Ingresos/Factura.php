@@ -1162,7 +1162,7 @@ public function forma_pago()
         }
     }
     
-public function diasCobradosProrrateo(){
+    public function diasCobradosProrrateo(){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
     where('contracts.id',$this->contrato_id)
@@ -1240,6 +1240,7 @@ public function diasCobradosProrrateo(){
         $fechaFactura = Carbon::parse($this->fecha);
         $inicio = $grupo->fecha_corte . "-" . $mesYearFactura;
         $inicio = Carbon::parse($inicio);
+        
 
         $diasCobrados = 0;
         $diasdeMas = 0;
@@ -1315,12 +1316,16 @@ public function diasCobradosProrrateo(){
                         entonces puede estar regalanado vrios dias.
                     */
                     //si entra acá es por que antes vamos a sumar los dias que no cobro en la primera generacion de la factura a la factura del siguiente mes
-                    if($mesContrato != Carbon::parse($fechaFactura)->format('m')){
+                    $fechaFacturaGrupoCorte = $grupo->fecha_factura . "-" . $mesYearFactura;
+               
+               
+                    //Aqui decimos que si fechafactura del grupo de corte que se ejecuto es menor a la fecha que se creo el contrato entonces si sume los dias
+                    if($mesContrato != Carbon::parse($fechaFactura)->format('m') && Carbon::parse($fechaFacturaGrupoCorte) < Carbon::parse($contrato->created_at)){
                         $diasdeMas = 30;
                     }
                     $fechaFin = $yearContrato . "-" . $mesContrato . "-" .  $grupo->fecha_corte;
                 }
-            
+                
                 $diasCobrados = $fechaContrato->diffInDays($fechaFin)+$diasdeMas;
 
                 /*
@@ -1330,11 +1335,12 @@ public function diasCobradosProrrateo(){
                     si entra al if entonces ya tenemos la suma de los dias hasta la fecha de corte ahora sumamos los otros días del siguiente
                     dia 
                 */
-                if($diaFac < $diaContrato && $diaFac < $grupo->fecha_corte && $grupo->fecha_corte > $diaContrato){
-                        $fechaInicioNuevoCorte = Carbon::parse($fechaFin)->addDay();
-                        $diasFacturaNuevo = $fechaInicioNuevoCorte->diffInDays($this->fecha);
-                        $diasCobrados+=$diasFacturaNuevo;
-                }
+                    if($diaFac < $diaContrato && $diaFac < $grupo->fecha_corte && $grupo->fecha_corte > $diaContrato){
+                            $fechaInicioNuevoCorte = Carbon::parse($fechaFin)->addDay();
+                            $diasFacturaNuevo = $fechaInicioNuevoCorte->diffInDays($this->fecha);
+                            $diasCobrados+=$diasFacturaNuevo;
+                    }
+                
 
                 if($diasCobrados == 0){return 30;}
                 if($diasCobrados > 30 && $diasdeMas==0){$diasCobrados=30;}
