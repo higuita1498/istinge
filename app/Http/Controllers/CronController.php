@@ -559,19 +559,23 @@ class CronController extends Controller
                 array_push($grupos_corte_array,$grupo->id);
             }
             
+            //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
-                where('f.vencimiento', $fecha)->
                 where('contactos.status',1)->
                 where('cs.state','enabled')->
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
+                whereDate('f.vencimiento', '<=', now())->
                 where('cs.fecha_suspension', null)->
+                orderBy('f.created_at', 'desc')->
+                groupby('cs.id')->
                 take(25)->
                 get(); 
                 $swGrupo = 1; //masivo
+                
         }else{
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
