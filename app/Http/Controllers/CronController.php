@@ -569,9 +569,10 @@ class CronController extends Controller
                 where('cs.state','enabled')->
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null)->
+                where('cs.server_configuration_id','!=',null)->
                 whereDate('f.vencimiento', '<=', now())->
                 orderBy('f.id', 'desc')->
-                take(25)->
+                take(20)->
                 get(); 
                 $swGrupo = 1; //masivo
                 
@@ -584,7 +585,7 @@ class CronController extends Controller
             where('contactos.status',1)->
             where('cs.state','enabled')->
             where('cs.fecha_suspension','!=', null)->
-            take(25)->
+            take(20)->
             get(); 
             $swGrupo = 0; // personalizado
         }
