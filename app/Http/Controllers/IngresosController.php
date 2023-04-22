@@ -246,7 +246,6 @@ class IngresosController extends Controller
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
-
         return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura', 
         'bancos', 'metodos_pago', 'impuestos', 
         'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas','relaciones'));

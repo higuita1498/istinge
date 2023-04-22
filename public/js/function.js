@@ -684,7 +684,7 @@ function notif(id) {
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar = false, type = 1) {
-
+    alert("pablo iganciooo");
     var it = 1;
     if ($("#facelectornica").val() != null) {
         if ($("#facelectornica").val() == 2) {
@@ -733,6 +733,8 @@ function contacto(selected, modificar = false, type = 1) {
             } else {
                 $("#saldofavorcliente").val(data.saldo_favor);
             }
+
+            console.log(data);
 
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
@@ -2419,6 +2421,7 @@ function CrearFilaFormaPago(categoria = false) {
 
     //Añadimos una nueva opcion al select si el cliente tiene un saldo a favor disponible para usar en facturas.
     var saldoFavorCliente = $("#saldofavorcliente").val();
+    alert(saldoFavorCliente);
     if (saldoFavorCliente > 0 && $("#notacredito").length == 0) {
         $('#formapago' + nro).append($('<option>', {
             value: 0,
