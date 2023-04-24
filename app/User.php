@@ -44,12 +44,9 @@ class User extends Authenticatable
         return $this->belongsTo('App\Roles', 'rol');
     }
 
-    /**
-     * @throws ModelNotFoundException
-     */
     public function empresa()
     {
-        return Empresa::where('id', $this->empresa)->firstOrFail();
+        return Empresa::where('id', $this->empresa)->first();
     }
 
     public function tipo_fac()

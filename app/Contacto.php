@@ -356,10 +356,7 @@ class Contacto extends Model
         }
     }
 
-    /**
-     * @throws ModelNotFoundException
-     */
-    public function contrato($contractId = null): Contrato
+    public function contrato($contractId = null)
     {
         if ($contractId) {
             return  Contrato::where('client_id', $this->id)->where('id', $contractId)->first();
@@ -367,7 +364,7 @@ class Contacto extends Model
 
         return Contrato::where('client_id', $this->id)
             ->where('status', 1)
-            ->firstOrFail();
+            ->first();
     }
 
     public function contract($details = false)
@@ -382,15 +379,15 @@ class Contacto extends Model
         return 'N/A';
     }
 
-    /**
-     * @throws ModelNotFoundException
-     */
-    public function details($contrato = null): Contrato
+    public function details($contrato = null)
     {
         if ($contrato) {
-            return Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
+            $c = Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
+        } else {
+            $c = Contrato::where('client_id', $this->id)->where('status', 1)->latest()->first();
         }
-        Contrato::where('client_id', $this->id)->where('status', 1)->latest()->firstOrFail();
+
+        return $c;
     }
 
     public function radicados()
