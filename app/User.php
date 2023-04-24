@@ -4,11 +4,14 @@ namespace App;
 
 use App\Model\Ingresos\Factura;
 use Carbon\Carbon;
-use Illuminate\Notifications\Notifiable; use App\Empresa;
+use Illuminate\Notifications\Notifiable;
+use App\Empresa;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Auth; use DB;
+use Auth;
+use DB;
 use App\Contrato;
 use App\Oficina;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class User extends Authenticatable
 {
@@ -22,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'nombres', 'nro',  'cedula', 'image', 'email', 'telefono', 'empresa', 'username', 'password', 'user_status','rol','saldo','created_at', 'updated_at'
+        'nombres', 'nro',  'cedula', 'image', 'email', 'telefono', 'empresa', 'username', 'password', 'user_status', 'rol', 'saldo', 'created_at', 'updated_at'
     ];
 
     protected $appends = ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'];
@@ -36,90 +39,96 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function roles(){
-         return $this->belongsTo('App\Roles', 'rol');
-
+    public function roles()
+    {
+        return $this->belongsTo('App\Roles', 'rol');
     }
 
-    public function empresa(){
-        return Empresa::where('id',$this->empresa)->first();
-
+    /**
+     * @throws ModelNotFoundException
+     */
+    public function empresa()
+    {
+        return Empresa::where('id', $this->empresa)->firstOrFail();
     }
 
-    public function tipo_fac(){
-        return Empresa::where('id',$this->empresa)->first()->tipo_fac;
+    public function tipo_fac()
+    {
+        return Empresa::where('id', $this->empresa)->first()->tipo_fac;
     }
 
-    public function estatus($clase=false){
+    public function estatus($clase = false)
+    {
         if ($clase) {
-           return $this->user_status==1?'text-success':'text-danger';
-        }
-        else{
-           return $this->user_status==1?'Activo':'Inactivo';
-
+            return $this->user_status == 1 ? 'text-success' : 'text-danger';
+        } else {
+            return $this->user_status == 1 ? 'Activo' : 'Inactivo';
         }
     }
 
     public function suscripcion()
     {
-        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
+        $suscripcion = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->first();
         return $suscripcion->ilimitado;
     }
 
-    public function modo_lectura(){
-        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
-        if($suscripcion->ilimitado){
+    public function modo_lectura()
+    {
+        $suscripcion = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->first();
+        if ($suscripcion->ilimitado) {
             return false;
         }
 
-        if (Auth::user()->rol >= 2){
+        if (Auth::user()->rol >= 2) {
             return ($suscripcion->fec_corte < date('Y-m-d') || ($this->contratos()));
-            return ($suscripcion->fec_corte < date('Y-m-d')) || ($this->facturasHechas()) || ($this->ingresosMaximos() || ($this->rechazado())) ;
+            return ($suscripcion->fec_corte < date('Y-m-d')) || ($this->facturasHechas()) || ($this->ingresosMaximos() || ($this->rechazado()));
         }
-
     }
 
-    public function contador_responsabilidades(){
-        return DB::table('empresa_responsabilidad')->where('id_empresa',Auth::user()->empresa)->count();
+    public function contador_responsabilidades()
+    {
+        return DB::table('empresa_responsabilidad')->where('id_empresa', Auth::user()->empresa)->count();
     }
 
-    public function facturasHechas(){
+    public function facturasHechas()
+    {
 
         $suscripcion    = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
 
-        if (!$suscripcion){
+        if (!$suscripcion) {
             return (Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last())->facturasHechas();
         }
 
         return $suscripcion->facturasHechas();
-
     }
 
-    public function ingresosMaximos(){
+    public function ingresosMaximos()
+    {
 
         $suscripcion        = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
         $tmpSuscripcion     = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last();
-        if ($tmpSuscripcion->ilimitado){
+        if ($tmpSuscripcion->ilimitado) {
             return false;
         }
 
-        if (!$suscripcion){
+        if (!$suscripcion) {
             $ingresos   = (Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last())->ingresos()['ingresos'];
-            if ($this->unlimited()){
+            if ($this->unlimited()) {
                 return false;
             }
 
-            if(is_array($this->checkPlan()))
+            if (is_array($this->checkPlan())) {
                 return !$this->verifyLimitsPersonalPlan($ingresos, 'ingresos');
+            }
 
             return ($ingresos > 5000000) ? true : false;
         }
 
         return $suscripcion->ingresosLimit();
-
     }
 
-    public function unlimited(){
+    public function unlimited()
+    {
 
         $suscripcionFree    = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->last();
         $suscripcionFree    = Carbon::parse($suscripcionFree->created_at);
@@ -127,10 +136,11 @@ class User extends Authenticatable
         return Carbon::now()->diffInMonths($suscripcionFree) >= 1 ? false : true;
     }
 
-    public function rechazado(){
+    public function rechazado()
+    {
 
         $suscripcion        = SuscripcionPago::where('id_empresa', Auth::user()->empresa)->get()->last();
-        if(!$suscripcion){
+        if (!$suscripcion) {
             return false;
         }
 
@@ -145,13 +155,14 @@ class User extends Authenticatable
     public function canDo(String $action)
     {
         $action         = DB::table('permisos_botones')->where('nombre_permiso', 'like', "%$action%")
-                            ->get();
-        if (count($action) == 0)
+            ->get();
+        if (count($action) == 0) {
             return null;
+        }
 
         $action         = $action->last()->id;
         $can            = DB::table('permisos_usuarios')->where('id_usuario', $this->id)
-                                ->where('id_permiso', $action)->get()->last();
+            ->where('id_permiso', $action)->get()->last();
         return $can != null;
     }
 
@@ -166,7 +177,7 @@ class User extends Authenticatable
     public function verifyLimitsPersonalPlan($field, String $indexAssoc)
     {
         $checkPlan = $this->checkPlan();
-        if(is_array($checkPlan)){
+        if (is_array($checkPlan)) {
             return ($checkPlan['pago']) ? (($field > $checkPlan[$indexAssoc]) ? false : true) : false;
         }
     }
@@ -179,14 +190,13 @@ class User extends Authenticatable
     private function checkPlan()
     {
         $empresa = Empresa::find(Auth::user()->empresa);
-        $plan = ($empresa->p_personalizado != 0) ? DB::table('planes_personalizados')->find($empresa->p_personalizado) : '' ;
+        $plan = ($empresa->p_personalizado != 0) ? DB::table('planes_personalizados')->find($empresa->p_personalizado) : '';
         return ($empresa->p_personalizado == 0) ? true : array(
             'nombre' => $plan->nombre,
             'facturas' => $plan->facturas,
             'ingresos' => $plan->ingresos,
             'pago' => $this->payPersonalPlan()
         );
-
     }
 
     /**
@@ -201,26 +211,27 @@ class User extends Authenticatable
             ->get();
         return count($suscripcion) > 0 ? true : false;
     }
-    
+
     public function usado()
     {
-        return Radicado::where('tecnico',$this->id)->orWhere('responsable',$this->id)->count();
+        return Radicado::where('tecnico', $this->id)->orWhere('responsable', $this->id)->count();
     }
 
-    public function rol($clase=false){
+    public function rol($clase = false)
+    {
         if ($clase) {
-            if($this->rol==2){
+            if ($this->rol == 2) {
                 return 'text-warning';
-            }elseif($this->rol==3){
+            } elseif ($this->rol == 3) {
                 return 'text-primary';
-            }elseif($this->rol==4){
+            } elseif ($this->rol == 4) {
                 return 'text-success';
-            }elseif($this->rol==5){
+            } elseif ($this->rol == 5) {
                 return 'text-danger';
-            }elseif($this->rol>6){
+            } elseif ($this->rol > 6) {
                 return 'text-info';
             }
-        }else{
+        } else {
             return Roles::find($this->rol)->rol;
         }
     }
@@ -230,21 +241,21 @@ class User extends Authenticatable
         return $this->belongsTo('App\Empresa', 'empresa');
     }
 
-     /**
+    /**
      * @return bool $fechaCorteSuscripcion
      * @return bool $cantidadPersonasValidas
      */
     public function modoLecturaNomina()
     {
-        if(1==1){
+        if (1 == 1) {
             return [
                 'success' => false,
                 'message' => ''
             ];
-        }else{
+        } else {
             $usuario = auth()->user();
-            $suscripcion = SuscripcionNomina::where('id_empresa',  $usuario->empresa)->first();
-    
+            $suscripcion = SuscripcionNomina::where('id_empresa', $usuario->empresa)->first();
+
             if (isset($suscripcion) && $usuario->rol >= 2) {
                 switch ($suscripcion) {
                     case $suscripcion->fec_corte < date('Y-m-d'):
@@ -267,32 +278,32 @@ class User extends Authenticatable
                         break;
                 }
             }
-    
+
             return [
                 'success' => false,
                 'message' => 'No existe ua suscripción activa'
             ];
         }
-        
     }
 
-      /**
-    *
-    * Método que recupera la cantidad de personas que se pueden obtener segun el plan escogido por la empresa.
-    *
-    */
+    /**
+     *
+     * Método que recupera la cantidad de personas que se pueden obtener segun el plan escogido por la empresa.
+     *
+     */
     public function personal()
     {
         return (SuscripcionNomina::where('id_empresa', Auth::user()->empresa)->get()->last())->personal();
     }
 
-    public function contratos($nro = false){
-        $suscripcion = Suscripcion::where('id_empresa',Auth::user()->empresa)->get()->first();
-        if($suscripcion->ilimitado == 0){
+    public function contratos($nro = false)
+    {
+        $suscripcion = Suscripcion::where('id_empresa', Auth::user()->empresa)->get()->first();
+        if ($suscripcion->ilimitado == 0) {
             return false;
         }
         $contratos = Contrato::where('empresa', Auth::user()->empresa)->where('status', 1)->count();
-        if($nro){
+        if ($nro) {
             return ($contratos > 1500) ? true : false;
         }
         return $contratos;
@@ -303,35 +314,35 @@ class User extends Authenticatable
         return Oficina::find($this->oficina);
     }
 
-    public function cuentas(){
+    public function cuentas()
+    {
 
         $cuentas = [];
 
-        if($this->cuenta){
+        if ($this->cuenta) {
             $cuentas[] = $this->cuenta;
         }
 
-        if($this->cuenta_1){
+        if ($this->cuenta_1) {
             $cuentas[] = $this->cuenta_1;
         }
 
-        if($this->cuenta_2){
-            $cuentas[] = $this->cuenta_2;  
+        if ($this->cuenta_2) {
+            $cuentas[] = $this->cuenta_2;
         }
 
-        if($this->cuenta_3){
+        if ($this->cuenta_3) {
             $cuentas[] = $this->cuenta_3;
         }
 
-        if($this->cuenta_4){
+        if ($this->cuenta_4) {
             $cuentas[] = $this->cuenta_4;
         }
 
-        if($this->cuenta_5){
+        if ($this->cuenta_5) {
             $cuentas[] = $this->cuenta_5;
         }
 
         return $cuentas;
     }
-
 }
