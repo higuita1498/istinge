@@ -561,7 +561,7 @@ class CronController extends Controller
             
             //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
-                join('contracts as cs','cs.client_id','=','contactos.id')->
+                join('contracts as cs','cs.id','=','f.contrato_id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
@@ -597,9 +597,10 @@ class CronController extends Controller
                 $factura = Factura::find($contacto->factura);
                 
                 $ultimaFacturaRegistrada = Factura::
-                                where('cliente',$factura->cliente)
-                                ->orderBy('created_at', 'desc')
-                                ->value('id');
+                where('cliente',$factura->cliente)
+                ->where('contrato_id',$factura->contrato_id)
+                ->orderBy('created_at', 'desc')
+                ->value('id');
                                 
                 if($factura->id == $ultimaFacturaRegistrada){
  
