@@ -15,3 +15,8 @@ yarn-error.log
 /resources/views/emails/plantillas
 /bootstrap/cache/services.php
 /bootstrap/cache/config.php
+
+# cache files
+.php-cs-fixer.cache
+_ide_helper.php
+.phpstorm.meta.php

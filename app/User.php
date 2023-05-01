@@ -201,7 +201,7 @@ class User extends Authenticatable
             ->get();
         return count($suscripcion) > 0 ? true : false;
     }
-    
+
     public function usado()
     {
         return Radicado::where('tecnico',$this->id)->orWhere('responsable',$this->id)->count();
@@ -244,7 +244,7 @@ class User extends Authenticatable
         }else{
             $usuario = auth()->user();
             $suscripcion = SuscripcionNomina::where('id_empresa',  $usuario->empresa)->first();
-    
+
             if (isset($suscripcion) && $usuario->rol >= 2) {
                 switch ($suscripcion) {
                     case $suscripcion->fec_corte < date('Y-m-d'):
@@ -267,13 +267,13 @@ class User extends Authenticatable
                         break;
                 }
             }
-    
+
             return [
                 'success' => false,
                 'message' => 'No existe ua suscripción activa'
             ];
         }
-        
+
     }
 
       /**
@@ -316,7 +316,7 @@ class User extends Authenticatable
         }
 
         if($this->cuenta_2){
-            $cuentas[] = $this->cuenta_2;  
+            $cuentas[] = $this->cuenta_2;
         }
 
         if($this->cuenta_3){
