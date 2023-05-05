@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    
+
     'api_key'=>env('API_KEY'),
 
     /*
@@ -224,4 +224,9 @@ return [
 
     ],
 
+    // Esta nueva configuración es importante, ya que algunos entornos no tienen
+    // la localización de la carpeta `public` por defecto. Esto no debería
+    // afectar las rutas que ya están, o si el archivo de variables de entorno
+    // no tiene la variable `ASSET_URL`.
+    'asset_url'=>env('ASSET_URL'),
 ];
