@@ -47,10 +47,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
-        
+
         'documentos' => [
             'driver' => 'local',
-            'root'   => public_path('../../public_html/adjuntos/documentos'),
+            'root'   => public_path('/adjuntos/documentos'),
             'visibility' => 'public',
          ],
 
