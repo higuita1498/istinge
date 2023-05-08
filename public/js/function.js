@@ -684,7 +684,7 @@ function notif(id) {
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar = false, type = 1) {
-    alert("pablo iganciooo");
+    // alert("pablo iganciooo");
     var it = 1;
     if ($("#facelectornica").val() != null) {
         if ($("#facelectornica").val() == 2) {

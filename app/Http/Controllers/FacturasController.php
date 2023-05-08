@@ -1231,8 +1231,11 @@ class FacturasController extends Controller{
                     $items->id_impuesto=$request->impuesto[$i];
                     $items->impuesto=$impuesto->porcentaje;
                     $items->cant=$request->cant[$i];
-                    //$items->desc=$request->desc[$i];
-                    $desc=$request->desc[$i];
+                    $desc = 0;
+                    if(isset($request->desc[$i])){             
+                        $desc=$request->desc[$i];
+                        $items->desc=$desc;
+                    }
                     $items->save();
                     $inner[]=$items->id;
                 }

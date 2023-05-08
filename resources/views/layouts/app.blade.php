@@ -43,16 +43,16 @@
                 border-color: #f9fafd #f9f9f9 #eaedf7 #eaedf7;
             }
             .sidebar {
-                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                background: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .configuracion > div {
-                border: 4px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                border: 4px solid {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .configuracion h4 {
                 color: #000;
             }
             .text-primary {
-                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .configuracion > div > a {
                 color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
@@ -61,36 +61,36 @@
                 background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .notice-info {
-                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                border-color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .btn-link {
-                color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .sidebar .nav .sub-menu .nav-item .nav-link:hover, #sidebar > ul > li > a:hover {
                 color: #c7c7c7;
             }
             .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
                 color: #fff;
-                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                background-color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
                 color: #fff;
-                background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
+                background-color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
                 border-color: #dee2e6 #dee2e6 #fff;
             }
             .card-notificacion {
                 border-radius: 20px;
                 background: #fff!important;
-                border: solid 2px {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+                border: solid 2px {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
             }
             .card-notificacion:hover {
                 border-radius: 20px;
-                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+                background: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
                 border: solid 2px #fff;
             }
             .bg-th {
-                background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
-                border-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;
+                background: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
+                border-color: {{Auth::user()->username == 'desarrollo' ? '#022454' : (isset(Auth::user()->empresa()->color) ? Auth::user()->empresa()->color : '#022454') }};
                 color: #fff !important;
             }
             .table-bordered {
