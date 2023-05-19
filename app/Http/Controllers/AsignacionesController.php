@@ -1347,7 +1347,7 @@ class AsignacionesController extends Controller
 
             $email = $contact->email;
             $cliente = $contact->nombre;
-            self::sendMail('emails.contrato', compact('contrato'), compact('pdf', 'contrato', 'email', 'cliente'), function ($message) use ($pdf, $contact) {
+            self::sendMail('emails.contrato', compact('contact'), compact('pdf', 'contact', 'email', 'cliente'), function ($message) use ($pdf, $contact) {
                 $message->attachData($pdf, 'contrato_digital_servicios.pdf', ['mime' => 'application/pdf']);
                 $message->to($contact->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);
             });
