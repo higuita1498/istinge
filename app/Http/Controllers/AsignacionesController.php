@@ -1343,7 +1343,7 @@ class AsignacionesController extends Controller
                 'company',
                 'contract',
                 'contractDetails',
-            ]));
+            ]))->stream();
 
             $email = $contact->email;
             $cliente = $contact->nombre;
