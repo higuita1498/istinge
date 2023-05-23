@@ -32,7 +32,7 @@ class Contacto extends Model
         'empresa', 'nombre', 'apellido1', 'apellido2', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'estrato', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
         'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD', 'fecha_contrato', 'referencia_asignacion'
     ];
-    
+
     protected $appends = ['usado', 'contract', 'details'];
 
     public function getUsadoAttribute(){
@@ -325,10 +325,10 @@ class Contacto extends Model
 
     }
 
-    public function contrato($contrato = null){
-
-        if($contrato){
-          return  Contrato::where('client_id', $this->id)->where('id', $contrato)->first();
+    public function contrato($contractId = null)
+    {
+        if ($contractId) {
+            return  Contrato::where('client_id', $this->id)->where('id', $contractId)->first();
         }
 
         return Contrato::where('client_id', $this->id)->where('status', 1)->first();

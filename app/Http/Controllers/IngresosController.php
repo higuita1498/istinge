@@ -77,8 +77,8 @@ class IngresosController extends Controller
         ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "")
         as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',
         DB::raw('
-        (if(ingresos.tipo=1, 
-        (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)), 
+        (if(ingresos.tipo=1,
+        (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)),
         if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))
         ) as monto'))
         ->where('ingresos.empresa',Auth::user()->empresa)->groupBy( 'ingresos.id');
@@ -116,7 +116,7 @@ class IngresosController extends Controller
 
         return view('ingresos.indexnew', compact('bancos','clientes','metodos','tabla'));
     }
-    
+
     public function ingresos(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = auth()->user()->empresa;
@@ -164,7 +164,7 @@ class IngresosController extends Controller
                 });
             }
         }
-        
+
         $ingresos->where('ingresos.empresa', $empresa)->groupBy('ingresos.id');
 
         if(Auth::user()->empresa()->oficina){
@@ -246,9 +246,8 @@ class IngresosController extends Controller
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
-
-        return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura', 
-        'bancos', 'metodos_pago', 'impuestos', 
+        return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura',
+        'bancos', 'metodos_pago', 'impuestos',
         'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas','relaciones'));
     }
 
@@ -270,7 +269,7 @@ class IngresosController extends Controller
         $contrato = Contrato::where('client_id',$cliente)->first();
         //$total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
         $total = 1;
- 
+
         return view('ingresos.pendiente')->with(compact('facturas', 'id', 'total','contrato'));
     }
 
@@ -304,9 +303,9 @@ class IngresosController extends Controller
             foreach($factura->recibosAnticipo(1) as $recibo){
                 // dd($recibo->saldoFavorUsado());
             }
-            
+
         }
-        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items', 
+        return view('ingresos.ingpendiente')->with(compact('facturas', 'id', 'items',
         'ingreso', 'retencioness','contrato','formasPago','relaciones'
     ));
     }
@@ -334,13 +333,13 @@ class IngresosController extends Controller
                         $monto_pagar += $request->precio[$key];
                     }
                 }
-                
+
                 if($monto_pagar > auth()->user()->saldo){
                     $mensaje='NO POSEE SALDO DISPONIBLE PARA CANCELAR LA FACTURA, LO INVITAMOS A REALIZAR UNA RECARGA';
                     return back()->with('danger', $mensaje)->withInput();
                 }
             }
-            
+
             //Si es tipo 1, osea coversion de factura estandar a electrónica con emisión
             if ($request->tipo == 1) {
 
@@ -357,10 +356,10 @@ class IngresosController extends Controller
                         //primero recuperamos
                         $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
                         $inicio = $nro->inicio;
-                        
+
                         if($factura->tipo != 2 && $request->precio[$key] > 0)
                         {
-                            $factura->tipo = 2;     
+                            $factura->tipo = 2;
                             $factura->codigo = $nro->prefijo.$inicio;
                             $factura->numeracion = $nro->id;
                             $factura->fecha =  Carbon::now()->format('Y-m-d');
@@ -368,7 +367,7 @@ class IngresosController extends Controller
                                 $factura->vencimiento = Carbon::now()->format('Y-m-d');
                             }
                             $factura->save();
-    
+
                             $nro->inicio += 1;
                             $nro->save();
                         }
@@ -385,35 +384,35 @@ class IngresosController extends Controller
                     }
                 }
             }
-            
+
             if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
                 Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
                 $sw = 1;
-                
+
                 foreach (Session::get('posttimer') as $key) {
                     if ($sw == 1) {
                         $ultimoingreso = $key;
                         $sw = 0;
                     }
                 }
-                
+
                 if(isset($ultimoingreso)){
                     $diasDiferencia = Carbon::now()->diffInseconds($ultimoingreso);
-                    
+
                     if ($diasDiferencia <= 10) {
                         $mensaje='EL PAGO NO HA SIDO PROCESADO, INTÉNTELO NUEVAMENTE';
                         return back()->with('danger', $mensaje)->withInput();
                     }
                 }
             }
-            
+
             $request->validate([
                 'cuenta' => 'required|numeric'
             ]);
-            
+
             $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
             $caja = $nro->caja;
-            
+
             while (true) {
                 $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
                 if ($numero == 0) {
@@ -421,7 +420,7 @@ class IngresosController extends Controller
                 }
                 $caja++;
             }
-            
+
             $ingreso = new Ingreso;
             $ingreso->nro = $caja;
             $ingreso->empresa = Auth::user()->empresa;
@@ -433,11 +432,11 @@ class IngresosController extends Controller
             $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
             $ingreso->observaciones = mb_strtolower($request->observaciones);
             $ingreso->created_by = Auth::user()->id;
-            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : ''; // variables que me indican si se trata de un anticipo 
+            $ingreso->anticipo = $request->saldofavor > 0 ? '1' : ''; // variables que me indican si se trata de un anticipo
             $ingreso->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : ''; //variables que me indican si se trata de un anticipo
             $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
-            
+
             //Si el tipo de ingreso es de facturas
             if ($ingreso->tipo == 1) {
                 $saldoFavorUsado = 0;
@@ -447,8 +446,8 @@ class IngresosController extends Controller
                         $factura = Factura::find($request->factura_pendiente[$key]);
 
                         /*
-                        vamos a sumar el total del anticipo usado sobre una factura 
-                        (este se aplica cuando se crea la factura de venta en una forma de pago) 
+                        vamos a sumar el total del anticipo usado sobre una factura
+                        (este se aplica cuando se crea la factura de venta en una forma de pago)
                         */
                         $saldoFavorUsado+=$factura->saldoFavorUsado();
 
@@ -469,7 +468,7 @@ class IngresosController extends Controller
                                 }
                             }
                         }
-                        
+
                         $items = new IngresosFactura;
                         $items->ingreso = $ingreso->id;
                         $items->factura = $factura->id;
@@ -477,10 +476,10 @@ class IngresosController extends Controller
                         $items->puc_factura = $factura->cuenta_id;
                         $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
                         $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
-                        
+
                         /*
-                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos 
-                        sobre el total de la factura por que el resto es saldo a favor. 
+                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
+                        sobre el total de la factura por que el resto es saldo a favor.
                         */
                         if($factura->total()->total < $request->precio[$key]){
                             $items->pago = $factura->total()->total;
@@ -493,9 +492,9 @@ class IngresosController extends Controller
                         if ($this->precision($precio) == $this->precision($factura->porpagar())) {
                             $factura->estatus = 0;
                             $factura->save();
-    
+
                             CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
-    
+
                             $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
                             foreach ($crms as $crm) {
                                 $crm->delete();
@@ -512,7 +511,7 @@ class IngresosController extends Controller
                         if (!$impuesto) {
                             $impuesto = Impuesto::where('id', 0)->first();
                         }
-                        
+
                         $items = new IngresosCategoria;
                         $items->valor = $this->precision($request->precio_categoria[$key]);
                         $items->id_impuesto = $request->impuesto_categoria[$key];
@@ -549,16 +548,16 @@ class IngresosController extends Controller
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                PucMovimiento::ingreso($ingreso,1,1,$request);    
+                PucMovimiento::ingreso($ingreso,1,1,$request);
             }else{
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::ingreso($ingreso,1,2,$request);   
+                PucMovimiento::ingreso($ingreso,1,2,$request);
             }
 
             //sumo a las numeraciones el recibo
             $nro->caja = $caja + 1;
             $nro->save();
-            
+
             //Registro el Movimiento
             $ingreso = Ingreso::find($ingreso->id);
             //ingresos
@@ -567,7 +566,7 @@ class IngresosController extends Controller
             //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
             if($saldoFavorUsado > 0){
                 //la cuenta de anticipo es la 6
-                $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);      
+                $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
             }
 
             if ($ingreso->tipo == 1) {
@@ -654,7 +653,7 @@ class IngresosController extends Controller
                             if($servicio->api_key && $servicio->user && $servicio->pass){
                                 $post['toNumber'] = $numero;
                                 $post['sms'] = $mensaje;
-    
+
                                 $curl = curl_init();
                                 curl_setopt_array($curl, array(
                                     CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
@@ -704,7 +703,7 @@ class IngresosController extends Controller
                                 $post['from'] = "";
                                 $login = $servicio->user;
                                 $password = $servicio->pass;
-    
+
                                 $ch = curl_init();
                                 curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
                                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -723,18 +722,18 @@ class IngresosController extends Controller
                     /* * * ENVÍO SMS * * */
                 }
             }
-            
+
             if(auth()->user()->rol == 8){
                 $user = User::find(auth()->user()->id);
                 $user->ganancia += 900;
                 $user->saldo -= $monto_pagar;
                 $user->save();
             }
-            
+
             if($request->cant_facturas > 1){
                 $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
                 $caja = $nro->caja;
-                
+
                 while (true) {
                     $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
                     if ($numero == 0) {
@@ -742,7 +741,7 @@ class IngresosController extends Controller
                     }
                     $caja++;
                 }
-                
+
                 $ingreso = new Ingreso;
                 $ingreso->nro = $caja;
                 $ingreso->empresa = Auth::user()->empresa;
@@ -755,7 +754,7 @@ class IngresosController extends Controller
                 $ingreso->observaciones = 'Ingreso por concepto de reconexión';
                 $ingreso->created_by = Auth::user()->id;
                 $ingreso->save();
-                
+
                 $items = new IngresosCategoria;
                 $items->valor = $this->precision(10000);
                 $items->id_impuesto = 2;
@@ -765,16 +764,16 @@ class IngresosController extends Controller
                 $items->descripcion = 'Ingreso por concepto de reconexión';
                 $items->impuesto = 0;
                 $items->save();
-                
+
                 //sumo a las numeraciones el recibo
                 $nro->caja = $caja + 1;
                 $nro->save();
-                
+
                 //Registro el Movimiento
                 $ingreso = Ingreso::find($ingreso->id);
                 //ingresos
                 $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
-                
+
                 $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
                 if ($facturas) {
                     foreach ($facturas as $factura) {
@@ -802,13 +801,13 @@ class IngresosController extends Controller
                 if(in_array($file->getMimeType(), $ext_permitidas)){
                     switch($file->getMimeType()){
                         case 'image/jpeg':
-                        $imagen = imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
                         case 'image/png':
-                        $imagen = imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
                         case 'image/gif':
-                        $imagen = imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre);
+                        $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
                     }
                     $x = imagesx($imagen);
@@ -817,13 +816,13 @@ class IngresosController extends Controller
                     if($x <= $xmax && $y <= $ymax){
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg(imagecreatefromjpeg(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
                             case 'image/png':
-                            imagepng(imagecreatefrompng(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
                             case 'image/gif':
-                            imagegif(imagecreatefromgif(public_path('../../public_html/adjuntos/documentos').'/'.$nombre), public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 5);
+                            imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
                         }
                     }else{
@@ -838,13 +837,13 @@ class IngresosController extends Controller
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
                         switch($file->getMimeType()){
                             case 'image/jpeg':
-                            imagejpeg($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
                             break;
                             case 'image/png':
-                            imagepng($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
                             break;
                             case 'image/gif':
-                            imagegif($img2, public_path('../../public_html/adjuntos/documentos').'/'.$nombre, 100);
+                            imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
                             break;
                         }
                     }
@@ -852,7 +851,7 @@ class IngresosController extends Controller
 
                 $ingreso->save();
             }
-            
+
             $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
             return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
         }
@@ -862,7 +861,7 @@ class IngresosController extends Controller
 
         $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
             $caja = $nro->caja;
-            
+
         while (true) {
             $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
             if ($numero == 0) {
@@ -905,14 +904,14 @@ class IngresosController extends Controller
 
         $contacto = Contacto::find($request->cliente);
         $contacto->saldo_favor+=$request->valor_recibido;
-        $contacto->save(); 
+        $contacto->save();
 
         //ingresos
         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
 
         //mandamos por parametro el ingreso y el 1 (guardar)
-        PucMovimiento::ingreso($ingreso,1,0);        
-    } 
+        PucMovimiento::ingreso($ingreso,1,0);
+    }
 
     public function updateIngresoPucCategoria($request,$id){
 
@@ -934,7 +933,7 @@ class IngresosController extends Controller
 
         $impuesto = Impuesto::where('porcentaje',0)->first();
 
-        //Registramos el ingreso de anticipo en una sola cuenta del puc.        
+        //Registramos el ingreso de anticipo en una sola cuenta del puc.
         $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
         // dd($items);
         foreach($items as $item){
@@ -950,14 +949,14 @@ class IngresosController extends Controller
 
         $contacto = Contacto::find($request->cliente);
         $contacto->saldo_favor+=$request->valor_recibido;
-        $contacto->save(); 
+        $contacto->save();
 
         //ingresos
         $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
 
         //mandamos por parametro el ingreso y el 1 (guardar)
-        PucMovimiento::ingreso($ingreso,2,0);        
-    } 
+        PucMovimiento::ingreso($ingreso,2,0);
+    }
 
     public function showMovimiento($id){
         $this->getAllPermissions(Auth::user()->id);
@@ -1022,12 +1021,12 @@ class IngresosController extends Controller
             $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
             $items= $retencionesIngreso=array();
             $items = IngresosFactura::where('ingreso',$ingreso->id);
-            
+
             if($ingreso->tipo==2){
                 $items = IngresosCategoria::where('ingreso',$ingreso->id);
                 $retencionesIngreso = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
             }
-            
+
             $cuentaIngresoDinero = false;
             $cuentaAnticipo = false;
             $valorAnticipo = false;
@@ -1047,7 +1046,7 @@ class IngresosController extends Controller
             $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
 
-            return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso', 
+            return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso',
             'categorias', 'bancos', 'metodos_pago', 'impuestos','items', 'retenciones','formasPago','anticipos','formas'
             ,'cuentaIngresoDinero','cuentaAnticipo','valorAnticipo','relaciones'));
         }
@@ -1057,16 +1056,16 @@ class IngresosController extends Controller
     public function update(Request $request, $id){
         //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
         if($request->realizar == 2){
-            
+
             //Cuando se realiza el ingreso por categoría.
             $this->updateIngresoPucCategoria($request,$id);
             $mensaje='SE HA ACTUALIZADO SATISFACTORIAMENTE EL ANTICIPO';
             return redirect('empresa/ingresos')->with('success', $mensaje);
-            
+
         }
-        
+
         //pendiente metodo de actualizar un ingreso por categorias, (en elos movimeintos del puc)
-        
+
         $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->first();
 
         if ($ingreso) {
@@ -1228,15 +1227,15 @@ class IngresosController extends Controller
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                PucMovimiento::ingreso($ingreso,2,1,$request);    
+                PucMovimiento::ingreso($ingreso,2,1,$request);
             }else{
                 $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::ingreso($ingreso,2,2,$request);   
+                PucMovimiento::ingreso($ingreso,2,2,$request);
             }
 
             //ingresos
             $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
-            
+
             $mensaje='Se ha modificado satisfactoriamente el ingreso';
             return redirect('empresa/ingresos')->with('success', $mensaje)->with('ingreso_id', $ingreso->id);
         }
@@ -1406,10 +1405,10 @@ class IngresosController extends Controller
                     $mov1->delete();
                 }
             }
-            
+
             DB::table('ingresos_retenciones')->where('ingreso', $ingreso->id)->delete();
             $ingreso->delete();
-            
+
             $mensaje='Se ha eliminado satisfactoriamente el ingreso';
             //return redirect('empresa/ingresos')->with('success', $mensaje);
             return back()->with('success', $mensaje);
@@ -1654,7 +1653,7 @@ class IngresosController extends Controller
 
     //metodo que calcula que recibos de caja tiene un anticipo para poder cruzar en una forma de pago.
     public function recibosAnticipo(Request $request){
-        
+
         //obtenemos los ingresos que tiene un anticpo vigente.
         if(!isset($request->recibo) || $request->recibo == 0){
             $ingresos = Ingreso::where('cliente',$request->cliente)
@@ -1664,7 +1663,7 @@ class IngresosController extends Controller
         }else{
             $ingresos = [];
         }
-     
+
 
         return response()->json($ingresos);
     }

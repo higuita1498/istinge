@@ -890,7 +890,13 @@ class FacturasController extends Controller{
 
         //Actualiza el nro de inicio para la numeracion seleccionada
         $inicio = $nro->inicio;
-        $nro->inicio += 1;
+
+        // Validacion para que solo asigne numero consecutivo si no existe.
+        while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+            $nro->save();
+            $inicio=$nro->inicio;
+            $nro->inicio += 1;
+        }
 
         if($request->nro_remision){
             DB::table('remisiones')->where('nro', $request->nro_remision)->update(['estatus' => 3]);
@@ -1225,8 +1231,11 @@ class FacturasController extends Controller{
                     $items->id_impuesto=$request->impuesto[$i];
                     $items->impuesto=$impuesto->porcentaje;
                     $items->cant=$request->cant[$i];
-                    //$items->desc=$request->desc[$i];
-                    $desc=$request->desc[$i];
+                    $desc = 0;
+                    if(isset($request->desc[$i])){             
+                        $desc=$request->desc[$i];
+                        $items->desc=$desc;
+                    }
                     $items->save();
                     $inner[]=$items->id;
                 }

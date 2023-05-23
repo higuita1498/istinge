@@ -121,11 +121,11 @@
             margin-bottom: 2px;
             color:{{$empresa->color}};
         }
-        
+
         .divheader-pr a{
             color:{{$empresa->color}};
         }
-        
+
         .divheader-datoscli{
             width: 18%;
             border: 1px solid {{$empresa->color}};
@@ -138,18 +138,18 @@
             padding-right: 20px;
             color:#fff;
         }
-        
+
         .divheader-datoscli p{
             margin-top: 5px;
             margin-bottom: 5px;
         }
-        
+
         .titulo tr td{
             /*border:1px solid #ccc;*/
             border-top: 2px solid #ccc;
             border-bottom: 2px solid #ccc;
         }
-        
+
         .divheader-datosfact{
             width: 18%;
             border: 1px solid {{$empresa->color}};
@@ -162,12 +162,12 @@
             padding-right: 20px;
             color:#fff;
         }
-        
+
         .divheader-datosfact p, .divheader-nota p, .divheader-estadocuenta p{
             margin-top: 5px;
             margin-bottom: 5px;
         }
-        
+
         .divheader-nota{
             width: 9%;
             border: 1px solid {{$empresa->color}};
@@ -179,7 +179,7 @@
             padding-right: 0px;
             color:#fff;
         }
-        
+
         .nota-content, .div-content-border{
             border:1px solid {{$empresa->color}}; border-radius:5px;margin-top:5px;
         }
@@ -198,97 +198,97 @@
             padding-right: 0px;
             color:#fff;
         }
-        
+
         .tr-estadocuenta > td, .tr-estadocuenta-precio > td{
             width: 20%;
             list-style: none;
             border: 0px;
-            
+
         }
-        
+
         .tr-estadocuenta > td li{
            padding:15px;
            border-radius:5px;
            height:35px;
            text-align:center;
         }
-        
+
         .tr-estadocuenta-precio >  td li{
             text-align:center;
             border:1px solid #ccc;
         }
-        
+
         .tr-mainvalorreconexion > td{
             list-style: none;
             border: 0px;
             color:#fff;
         }
-        
+
         .tr-mainvalorreconexion > td li{
             background-color:{{$empresa->color}};
             border-radius:5px;
             padding: 10px;
             text-align: center;
         }
-        
+
         .table-noborder{
             border:none;
         }
-        
+
         .no-border{
             border:none;
         }
-        
+
         .border-tdblue{
             border: 1px solid {{$empresa->color}};
             border-radius:5px;
         }
-        
+
         .margin-docpdf{
             width:100%; position:relative; margin-bottom:7px;margin-top:7px;
         }
-        
+
         .qr-table td:first-child{
             border: 1px solid {{$empresa->color}};
             border-radius:5px;
         }
-        
+
         .qr-table td:nth-child(0n+2), .qr-table td:last-child{
             border: none;
         }
-        
+
         .td-qrback{
             background-color:{{$empresa->color}};
             text-align:center;
             border-radius:5px;
         }
-        
+
         .tableinterna td{
             border-radius: 5px;
         }
-        
+
         .tr-estadocuenta.mi-clausula > td li{
             height:70px;
             text-align:center;
         }
-        
+
         .miclausula-li > td li{
             border-radius: 5px;
             border: 1px solid {{$empresa->color}};
         }
-        
+
         .tr-meses{
             text-align:center;
             background-color:#ccc;
         }
-        
+
         .tr-precios{
             text-align:center;
         }
         .tr-estadocuenta > td li{
             color:#fff;
         }
-        
+
         .imgwifi{
             width:80px;
         }
@@ -297,7 +297,7 @@
         }
     </style>
 
-    
+
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
             <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.$empresa->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
@@ -322,11 +322,11 @@
             </table>
         </div>
     </div>
-    
+
     <div class="divheader-datoscli">
         <p>DATOS DEL CLIENTE</p>
     </div>
-    
+
     <div style="">
         <table border="0" class="titulo">
             <tr>
@@ -355,7 +355,7 @@
             </tr>
         </table>
     </div>
-    
+
     <div class="margin-docpdf">
          <table style="width:100%;margin:5px 0px;margin-left: -3px;">
             <tbody>
@@ -379,7 +379,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <div style="">
         <table border="0" class="titulo">
             <tr>
@@ -408,20 +408,20 @@
             </tr>
         </table>
     </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-nota">
             <p>NOTA</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
-            Estimado Cliente, paga oportunamente y evita la suspensión del servicio, cobro de reconexión e intereses demora. El incumplimiento en los pagos genera reportes a 
+            Estimado Cliente, paga oportunamente y evita la suspensión del servicio, cobro de reconexión e intereses demora. El incumplimiento en los pagos genera reportes a
             Centrales de Riesgo como moroso. Una vez realices tu pago, este se aplicará a más tardar el siguiente día hábil. Si ya realizaste el pago, haz caso omiso.
         </p>
     </div>
-    
+
     <div style="margin-top: 1%;">
     <h4 style="text-align: center">{{$factura->titulo}}
         <h4>
@@ -515,12 +515,12 @@
                 </tfoot>
             </table>
 </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta">
             <p>ESTADO DE CUENTA</p>
         </div>
-        
+
         <div class="div-content-border">
             <div>
                 <table style="width:100%;margin:5px;">
@@ -543,22 +543,22 @@
                 </table>
             </div>
         </div>
-            
+
     </div>
-    
+
     <div class="margin-docpdf">
          <div class="divheader-nota">
             <p>NOTA</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
             RECUERDA EN CASO DE NO PAGO OPORTUNO SE GENERA COBRO POR RECONEXION EN TU PROXIMA FACTURA
             SEGÚN LOS SERVICIOS QUE TENGAS CONTRATADOS.
         </p>
     </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta">
             <p>VALOR RECONEXION</p>
@@ -605,12 +605,12 @@
     </div>
 
     <br><br><br><br>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta">
             <p>RESUMEN DE CUENTA</p>
         </div>
-        
+
            <div class="div-content-border">
             <div>
                 <table style="width:100%;margin:5px;">
@@ -636,7 +636,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="margin-docpdf">
         <table class="qr-table" style="width:100%;margin:5px 0px 5px 0px;">
             <tbody>
@@ -676,7 +676,7 @@
                     <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;">{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
                     </tr>
                     </tbody>
-                    
+
                 </table>
             </td>
             </tr>
@@ -686,25 +686,25 @@
                 <div style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px; font-size:8px;">CUFE: {{$CUFEvr}}</div>
             @endif
       </div>
-      
+
     <div class="margin-docpdf">
         <div class="divheader-nota" style="width:20%;">
             <p>MEDIOS DE PAGO</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
-            <b>OFICINA:</b>  {{$empresa->direccion}}<br>
+            <b>Medios de pago:</b> Bancolombia, app.comunicarsas.online , opción asociar contrato - paga tu factura.
         </p>
     </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-nota" style="width:25%;">
             <p>TÉRMINOS Y CONDICIONES</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
             {{ $empresa->terminos_cond }}
@@ -712,12 +712,12 @@
     </div>
 
     @if($factura->contract()->contrato_permanencia && $factura->contract()->server_configuration_id)
-    
+
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%;">
             <p>MI CLAUSULA DE PERMANENCIA</p>
         </div>
-        
+
         <div class="div-content-border">
             <div>
                 <table style="width:100%;margin:5px;">
@@ -739,12 +739,12 @@
             </div>
         </div>
     </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-nota" style="width:70%">
             <p>VALOR A PAGAR SI TERMINA EL CONTRATO ANTICIPADAMENTE SEGÚN EL MES</p>
         </div>
-        
+
         <table style="width:100%;margin:5px 0px;">
             <tbody>
                 <tr class="tr-meses">
@@ -762,7 +762,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <div class="margin-docpdf d-none">
         <table style="width:100%;">
             <tbody>
@@ -781,26 +781,26 @@
     </div>
 
     @endif
-    
+
     <div class="margin-docpdf">
          <div class="divheader-nota" style="width:25%">
             <p>INFORMACION ADICIONAL</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
-            Estimado usuario usted tiene derecho a no pagar sumas que sean objeto de reclamación, 
-            si la PQR es presentada antes de la fecha de pago oportuno, en caso de haber pagado la suma total de su 
-            factura y usted aun así considera que tiene una suma que es objeto de reclamación cuenta con 6 meses para solicitar 
+            Estimado usuario usted tiene derecho a no pagar sumas que sean objeto de reclamación,
+            si la PQR es presentada antes de la fecha de pago oportuno, en caso de haber pagado la suma total de su
+            factura y usted aun así considera que tiene una suma que es objeto de reclamación cuenta con 6 meses para solicitar
             la información y corrección de la misma si la respuesta es favorable hacia usted.
         </p>
     </div>
-    
+
     <div class="nota-content">
         <p>
-            En caso que no esté de acuerdo con nuestra respuesta, recuerde que puede solicitar que su caso sea transferido a la Superintendencia de Industria y Comercio, 
-            <br>https://www.sic.gov.co/content/bolivar 
+            En caso que no esté de acuerdo con nuestra respuesta, recuerde que puede solicitar que su caso sea transferido a la Superintendencia de Industria y Comercio,
+            <br>https://www.sic.gov.co/content/bolivar
             <br><br>
             <strong>Superintendencia de Industria y Comercio</strong>
             <br>
@@ -819,13 +819,13 @@
             Correo Institucional: contactenos@sic.gov.co
         </p>
     </div>
-    
+
     @if($empresa->ventas || $empresa->soporte || $empresa->finanzas)
     <div class="margin-docpdf">
         <div class="divheader-estadocuenta" style="width:30%; margin-bottom:7px;">
             <p>LINEAS DE ATENCION</p>
         </div>
-        
+
            <div class="div-content-border">
             <div>
                 <table style="width:100%;margin:5px;">
@@ -846,7 +846,7 @@
         </div>
     </div>
     @endif
-    
+
     <div class="margin-docpdf">
         <table style="width:100%;margin:5px 0px;">
             <tbody>

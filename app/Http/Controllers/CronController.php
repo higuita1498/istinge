@@ -91,6 +91,7 @@ class CronController extends Controller
             $fecha = Carbon::now()->format('Y-m-d');
 
             foreach($grupos_corte as $grupo_corte){
+
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
                 join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
@@ -112,9 +113,10 @@ class CronController extends Controller
                 }
                 
                 foreach ($contratos as $contrato) {
-
+            
                     if(DB::table('factura')->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
-                        ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
+                    
+                    ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
                     $fac = Factura::where('cliente', $contrato->cliente)
                     // ->where('facturacion_automatica', 1)
                     ->where('contrato_id',$contrato->id)
@@ -124,7 +126,6 @@ class CronController extends Controller
                     
                     //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
                     if(isset($fac->estatus) || !$fac){
-                        
                         //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
                         if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac || isset($fac->estatus) && $fac->estatus == 2){
                             if(!$fac || isset($fac) && $fecha != $fac->fecha){
@@ -134,7 +135,6 @@ class CronController extends Controller
                             $nro = NumeracionFactura::tipoNumeracion($contrato);
     
                             if(is_null($nro)){
-    
                             }else{
                                 if($contrato->fecha_suspension){
                                     $fecha_suspension = $contrato->fecha_suspension;
@@ -148,16 +148,23 @@ class CronController extends Controller
                                 $tipo = 1; //1= normal, 2=Electrónica.
     
                                 $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
-    
+                                
                                 if($contrato->facturacion == 3 && !$electronica){
                                     $tipo = 1;
                                     // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
                                 }elseif($contrato->facturacion == 3 && $electronica){
                                     $tipo = 2;
                                 }
-    
+                                
                                 $inicio = $nro->inicio;
-                                $nro->inicio += 1;
+
+                                // Validacion para que solo asigne numero consecutivo si no existe.
+                                while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                                    $nro->save();
+                                    $inicio=$nro->inicio;
+                                    $nro->inicio += 1;
+                                }
+                                
                                 $factura = new Factura;
                                 $factura->nro           = $numero;
                                 $factura->codigo        = $nro->prefijo.$inicio;
@@ -561,7 +568,7 @@ class CronController extends Controller
             
             //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
-                join('contracts as cs','cs.client_id','=','contactos.id')->
+                join('contracts as cs','cs.id','=','f.contrato_id')->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
@@ -569,9 +576,10 @@ class CronController extends Controller
                 where('cs.state','enabled')->
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null)->
+                where('cs.server_configuration_id','!=',null)->
                 whereDate('f.vencimiento', '<=', now())->
                 orderBy('f.id', 'desc')->
-                take(25)->
+                take(20)->
                 get(); 
                 $swGrupo = 1; //masivo
                 
@@ -584,7 +592,7 @@ class CronController extends Controller
             where('contactos.status',1)->
             where('cs.state','enabled')->
             where('cs.fecha_suspension','!=', null)->
-            take(25)->
+            take(20)->
             get(); 
             $swGrupo = 0; // personalizado
         }
@@ -596,9 +604,10 @@ class CronController extends Controller
                 $factura = Factura::find($contacto->factura);
                 
                 $ultimaFacturaRegistrada = Factura::
-                                where('cliente',$factura->cliente)
-                                ->orderBy('created_at', 'desc')
-                                ->value('id');
+                where('cliente',$factura->cliente)
+                ->where('contrato_id',$factura->contrato_id)
+                ->orderBy('created_at', 'desc')
+                ->value('id');
                                 
                 if($factura->id == $ultimaFacturaRegistrada){
  
@@ -2157,8 +2166,13 @@ class CronController extends Controller
     public function deleteFactura(){ 
         
         //facturas creadas automaticamente cancelamos sus contratos o eliminamos
-        // $facturas = Factura::where('observaciones','LIKE','%Facturación Automática - Corte%')->where('created_at','>',"2023-01-12")->get();
-        
+        // $facturas = Factura::
+        // join('contracts as c','c.id','=','factura.contrato_id')
+        // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-05-02")
+        // ->where('c.grupo_corte',2)
+        // ->select('factura.*')
+        // ->get();  
+
         //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
         // $contratos = Contrato::where('grupo_corte',1)->where('state','disabled')->where('updated_at','>=','2022-10-06 00:00:00')->where('updated_at','<=','2022-10-06 06:00:00')->get();
         // $i = 0;
