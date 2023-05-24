@@ -169,6 +169,6 @@ class Radicado extends Model
      */
     public static function getNextConsecutiveCodeNumber()
     {
-        return Radicado::max('nro') + 1;
+        return Radicado::max('codigo') + 1;
     }
 }
