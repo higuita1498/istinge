@@ -156,17 +156,17 @@ class RadicadosController extends Controller{
                 });
             }
             if($request->direccion){
-    
+
                 $direccion = $request->c_direccion;
                 $direccion = explode(' ', $direccion);
-                $direccion = array_reverse($direccion);                
-                
+                $direccion = array_reverse($direccion);
+
                 foreach($direccion as $dir){
                     $dir = strtolower($dir);
                     $dir = str_replace("#","",$dir);
                     //$dir = str_replace("-","",$dir);
                     //$dir = str_replace("/","",$dir);
-                    
+
                     $radicados->where(function ($query) use ($dir) {
                         $query->orWhere('direccion', 'like', "%{$dir}%");
                         $query->orWhere('direccion', 'like', "%{$dir}%");
@@ -301,7 +301,7 @@ class RadicadosController extends Controller{
     }
 
     public function store(Request $request){
-       
+
         $request->validate([
             'cliente' => 'required',
             'fecha' => 'required',
@@ -314,16 +314,16 @@ class RadicadosController extends Controller{
         ]);
 
         $servicio = Servicio::find($request->servicio);
-        
+
         if($servicio){
 
             if(!$request->contrato && $request->servicio != 4){
 
                 $nombreServicio = trim(strtolower($servicio->nombre));
 
-                if($nombreServicio != 'notificacion de data creditos' && 
-                   $nombreServicio != 'notificacion de datacreditos' && 
-                   $nombreServicio != 'notificacion datacredito' && 
+                if($nombreServicio != 'notificacion de data creditos' &&
+                   $nombreServicio != 'notificacion de datacreditos' &&
+                   $nombreServicio != 'notificacion datacredito' &&
                    $nombreServicio != 'notificacion de datacredito'
                    ){
                         $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
@@ -336,16 +336,7 @@ class RadicadosController extends Controller{
             return back()->withInput()->with('danger', 'No se encontro el tipo de servicio');
         }
 
-
-        $codigoRand = '';
-        $repeticiones = 1;
-
-        while($repeticiones != 0){
-            $codigoRand = rand(0, 99999);
-            $repeticiones = Radicado::where('codigo', $codigoRand)->where('empresa', Auth::user()->empresa)->count();
-        }
-
-        $radicado = new Radicado;
+        $radicado = new Radicado();
         $radicado->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $radicado->identificacion = $request->ident;
         $radicado->cliente = $request->id_cliente;
@@ -358,7 +349,7 @@ class RadicadosController extends Controller{
         $radicado->servicio = $request->servicio;
         $radicado->tecnico = $request->tecnico;
         $radicado->estatus = $request->estatus;
-        $radicado->codigo = $codigoRand;
+        $radicado->codigo = Radicado::getNextConsecutiveCodeNumber();
         $radicado->prioridad = $request->prioridad;
         $radicado->mac_address = $request->mac_address;
         $radicado->ip = $request->ip;
@@ -443,26 +434,26 @@ class RadicadosController extends Controller{
                 'servicio' => 'required',
                 'estatus' => 'required'
             ]);
-            
+
             $servicio = Servicio::find($request->servicio);
 
             if($servicio){
 
                 if(!$request->contrato && $request->servicio != 4){
-    
+
                     $nombreServicio = trim(strtolower($servicio->nombre));
-    
-                    if($nombreServicio != 'notificacion de data creditos' && 
-                       $nombreServicio != 'notificacion de datacreditos' && 
-                       $nombreServicio != 'notificacion datacredito' && 
+
+                    if($nombreServicio != 'notificacion de data creditos' &&
+                       $nombreServicio != 'notificacion de datacreditos' &&
+                       $nombreServicio != 'notificacion datacredito' &&
                        $nombreServicio != 'notificacion de datacredito'
                        ){
                             $mensaje='El cliente no posee contrato asignado y no puede hacer uso de un servicio distinto a instalaciones o notificacion de datacredito';
                             return back()->withInput()->with('danger', $mensaje);
                         }
-    
+
                 }
-    
+
             }else{
                 return back()->withInput()->with('danger', 'No se encontro el tipo de servicio');
             }
@@ -635,10 +626,10 @@ class RadicadosController extends Controller{
         $radicado = Radicado::whereIn('estatus', [0,2])->where('tecnico', Auth::user()->id)->get();
         return json_encode($radicado);
     }
-  
+
     public function datatable_cliente($contacto, Request $request){
         $requestData =  $request;
-        
+
         $columns = array(
             0 => 'radicados.codigo',
             1 => 'radicados.fecha',
@@ -646,14 +637,14 @@ class RadicadosController extends Controller{
             3 => 'radicados.status',
             4 => 'radicados.adjunto',
         );
-        
+
         $requestData =  $request;
-        
-        $movimientos=Radicado::leftjoin('contactos as c', 'radicados.identificacion', '=', 'c.nit')    
+
+        $movimientos=Radicado::leftjoin('contactos as c', 'radicados.identificacion', '=', 'c.nit')
         ->select('radicados.*')
         ->where('radicados.empresa',Auth::user()->empresa);
-        
-        if ($contacto) { 
+
+        if ($contacto) {
             $movimientos=$movimientos->where('radicados.identificacion', $contacto);
          }
         if (isset($requestData->search['value'])) {
@@ -665,7 +656,7 @@ class RadicadosController extends Controller{
         }
 
         $totalFiltered=$totalData=$movimientos->count();
-        
+
         $movimientos=$movimientos->skip($requestData['start'])->take($requestData['length']);
         $movimientos=$movimientos->orderBy('fecha', 'desc');
         $movimientos=$movimientos->distinct()->get();
@@ -679,7 +670,7 @@ class RadicadosController extends Controller{
             $nestedData[] = '<a href="'.asset('../adjuntos/documentos/'.$movimiento->adjunto).'" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>';
             $data[] = $nestedData;
         }
-        
+
         $json_data = array(
             "draw" => intval($requestData->draw),
             "recordsTotal" => intval($totalData),
@@ -688,7 +679,7 @@ class RadicadosController extends Controller{
         );
         return json_encode($json_data);
     }
-    
+
     public function proceder($id){
         $this->getAllPermissions(Auth::user()->id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
@@ -706,7 +697,7 @@ class RadicadosController extends Controller{
                 $mensaje = 'Radicado Finalizado, con una duración de '.$duracion.'min';
                 $msj = 'Finalizado el tiempo para solventar el radicado.';
             }
-            
+
             $radicado->update();
 
             $log = new RadicadoLOG;
