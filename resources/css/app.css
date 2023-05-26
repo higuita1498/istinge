@@ -1,0 +1,8 @@
+/* Bootstrap */
+@import "/node_modules/bootstrap/dist/css/bootstrap.css";
+
+/* Fontawesome */
+@import "@fortawesome/fontawesome-free/css/all.css";
+
+/* === Custom CSS ===*/
+@import "./custom.css";

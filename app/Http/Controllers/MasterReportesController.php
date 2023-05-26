@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Empresa; use App\Banco; use Carbon\Carbon; 
-use Validator; use Illuminate\Validation\Rule;  use Auth; 
-use App\Factura;use App\Contacto;
-use DB;
+use Illuminate\Support\Facades\DB;
+
 class MasterReportesController extends Controller
 {
 

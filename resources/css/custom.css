@@ -1,0 +1,255 @@
+.paper {
+    margin: 0px 25px 30px 25px;
+    padding-top: 5%;
+}
+.paper:before {
+    top: 0px;
+    right: 0px;
+    border-color: #f9fafd #f9f9f9 #eaedf7 #eaedf7;
+}
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:after {
+    display: block !important;
+    color: #ffffff;
+}
+.card-counter.primary:hover,
+.card-counter.success:hover,
+.card-counter.danger:hover {
+    background-color: #4f4f4f;
+}
+.stretch-card {
+    border: 1px solid #a6b6bd52 !important;
+    border-radius: 3px;
+}
+.content-wrapper {
+    background: #fff;
+}
+.card {
+    background: #c2c2c21a !important;
+}
+.btn-system:hover,
+.btn-system:active {
+    color: #fff;
+    background-color: #333;
+    border-color: #333;
+}
+.min_max_70 {
+    min-height: 70px;
+    max-height: 145px;
+}
+#form-filter {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+.whatsapp {
+    position: fixed;
+    right: 25px; /*Margen derecho*/
+    bottom: 20px; /*Margen abajo*/
+    z-index: 999;
+}
+.whatsapp img {
+    width: 60px; /*Alto del icono*/
+    height: 60px; /*Ancho del icono*/
+}
+.whatsapp:hover {
+    opacity: 0.7 !important;
+    filter: alpha(opacity=70) !important;
+}
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #dee4e6;
+    border-radius: 2px;
+}
+.Cerrada-emitida span {
+    font-size: 0.8em;
+    padding: 1%;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    width: 79%;
+    display: block;
+    background: #79a70a;
+    background: linear-gradient(#00ce68 0%, #00ce68 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 19%;
+    left: -36px;
+}
+.Cerrada-emitida span::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid #00ce68;
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #00ce68;
+}
+.Cerrada-emitida span::after {
+    content: "";
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #00ce68;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #00ce68;
+}
+.Abierta-no span,
+.Abierta-emitida span {
+    font-size: 0.8em;
+    padding: 1%;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    width: 79%;
+    display: block;
+    background: #e65251;
+    background: linear-gradient(#e65251 0%, #e65251 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 19%;
+    left: -36px;
+}
+.Abierta-no span::before,
+.Abierta-emitida span::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid #e65251;
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #e65251;
+}
+.Abierta-no span::after,
+.Abierta-emitida span::after {
+    content: "";
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #e65251;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #e65251;
+}
+.form-group label {
+    font-weight: 500;
+}
+div.dataTables_wrapper div.dataTables_length select {
+    width: 60px;
+}
+.border,
+.loader-demo-box {
+    border: 1px solid #dee4e6 !important;
+}
+
+.gj-picker-bootstrap {
+    border: 0;
+    border-radius: 20px;
+}
+#tabla-facturas_wrapper .dt-buttons,
+#tabla-contratos_wrapper .dt-buttons,
+#tabla-planes_wrapper .dt-buttons,
+#tabla-mikrotiks_wrapper .dt-buttons,
+#tabla-nodos_wrapper .dt-buttons,
+#tabla-aps_wrapper .dt-buttons,
+#tabla-grupos_wrapper .dt-buttons,
+#tabla-bancos_wrapper .dt-buttons,
+#tabla-wifis_wrapper .dt-buttons,
+#table_sin_gestionar_wrapper .dt-buttons,
+#table_sin_gestionarG_wrapper .dt-buttons,
+#tabla-ventas-externas_wrapper .dt-buttons {
+    float: right !important;
+}
+#tabla-contratos_length,
+#tabla-planes_length,
+#tabla-mikrotiks_length,
+#tabla-nodos_length,
+#tabla-aps_length,
+#tabla-grupos_length,
+#tabla-bancos_length,
+#tabla-wifis_length,
+#table_sin_gestionar_length,
+#table_sin_gestionarG_length,
+#tabla-ventas-externas_length {
+    margin: 1% 0 !important;
+}
+#tabla-facturas_wrapper .dt-buttons button,
+#tabla-contratos_wrapper .dt-buttons button,
+#tabla-planes_wrapper .dt-buttons button,
+#tabla-mikrotiks_wrapper .dt-buttons button,
+#tabla-nodos_wrapper .dt-buttons button,
+#tabla-aps_wrapper .dt-buttons button,
+#tabla-grupos_wrapper .dt-buttons button,
+#tabla-bancos_wrapper .dt-buttons button,
+#tabla-wifis_wrapper .dt-buttons button,
+#table_sin_gestionar_wrapper .dt-buttons button,
+#table_sin_gestionarG_wrapper .dt-buttons button,
+#tabla-ventas-externas_wrapper .dt-buttons button {
+    color: #fff !important;
+    background-color: #00ce68 !important;
+    border-color: #00ce68 !important;
+}
+#tabla-facturas_wrapper .dt-buttons button:hover,
+#tabla-contratos_wrapper .dt-buttons button:hover,
+#tabla-planes_wrapper .dt-buttons button:hover,
+#tabla-mikrotiks_wrapper .dt-buttons button:hover,
+#tabla-nodos_wrapper .dt-buttons button:hover,
+#tabla-aps_wrapper .dt-buttons button:hover,
+#tabla-grupos_wrapper .dt-buttons button:hover,
+#tabla-bancos_wrapper .dt-buttons button:hover,
+#tabla-wifis_wrapper .dt-buttons button:hover,
+#table_sin_gestionar_wrapper .dt-buttons button:hover,
+#table_sin_gestionarG_wrapper .dt-buttons button:hover,
+#tabla-ventas-externas_wrapper .dt-buttons button:hover {
+    color: #fff !important;
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+#tabla-facturas_wrapper .dt-buttons button:nth-child(2),
+#tabla-contratos_wrapper .dt-buttons button:nth-child(2),
+#tabla-planes_wrapper .dt-buttons button:nth-child(2),
+#tabla-mikrotiks_wrapper .dt-buttons button:nth-child(2),
+#tabla-nodos_wrapper .dt-buttons button:nth-child(2),
+#tabla-aps_wrapper .dt-buttons button:nth-child(2),
+#tabla-grupos_wrapper .dt-buttons button:nth-child(2),
+#tabla-bancos_wrapper .dt-buttons button:nth-child(2),
+#tabla-wifis_wrapper .dt-buttons button:nth-child(2),
+#table_sin_gestionar_wrapper .dt-buttons button:nth-child(2),
+#table_sin_gestionarG_wrapper .dt-buttons button:nth-child(2),
+#tabla-ventas-externas_wrapper .dt-buttons button:nth-child(2) {
+    color: #fff !important;
+    background-color: #e65251 !important;
+    border-color: #e65251 !important;
+}
+#tabla-facturas_wrapper .dt-buttons button:nth-child(2),
+#tabla-contratos_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-planes_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-mikrotiks_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-nodos_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-aps_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-grupos_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-bancos_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-wifis_wrapper .dt-buttons button:nth-child(2):hover,
+#table_sin_gestionar_wrapper .dt-buttons button:nth-child(2):hover,
+#table_sin_gestionarG_wrapper .dt-buttons button:nth-child(2):hover,
+#tabla-ventas-externas_wrapper .dt-buttons button:nth-child(2):hover {
+    color: #fff !important;
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+div.dataTables_wrapper div.dataTables_paginate {
+    text-align: -webkit-center !important;
+}
