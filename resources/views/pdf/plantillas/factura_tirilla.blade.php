@@ -173,10 +173,10 @@
     <div  style="width: 100%; text-align: center; display: inline-block;  border-bottom: solid 1px #000; padding: 5px 0 5px 5px; margin-bottom: 5px;">
         <table style="width: 100%;">
             <tbody>
-                <tr>
-                    <td style="width: 70%;">Subtotal:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>
-                </tr>
+                <!--<tr>-->
+                <!--    <td style="width: 70%;">Subtotal:</td>-->
+                <!--    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>-->
+                <!--</tr>-->
                 @if($factura->total()->imp)
                     @foreach($factura->total()->imp as $imp)
                         @if(isset($imp->total))
@@ -189,16 +189,16 @@
                 @endif
                 <tr>
                     <td style="width: 70%;">Monto a Pagar:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago())}} </td>
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->pagado() + $ingreso->ingreso()->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() + $ingreso->ingreso()->valor_anticipo)}} </td>
                 </tr>
                 @if($factura->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total - $factura->pagado())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() - $factura->pagado())}} </td>
                 </tr>
                 @endif
                  @if($ingreso->ingreso()->valor_anticipo > 0)
