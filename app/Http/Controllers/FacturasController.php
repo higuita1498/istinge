@@ -1965,7 +1965,7 @@ class FacturasController extends Controller{
               }
               
 
-            if($factura->estatus==1 && $factura->promesa_pago==null){
+            if($factura->estatus==1 && ($factura->promesa_pago==null || $factura->promesa_pago < Carbon::now()->format('Y-m-d'))){
                 $boton .= '<a href="javascript:modificarPromesa('.$factura->id.')" class="btn btn-outline-danger btn-icons promesa ml-1" idfactura="'.$factura->id.'" title="Promesa de Pago"><i class="fas fa-calendar"></i></a>';
             }
 
