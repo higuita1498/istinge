@@ -2273,7 +2273,7 @@ class ReportesController extends Controller
             ->where('fecha', '>=', $dates['inicio'])
             ->where('fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa)
-            ->whereIn('movimientos.banco', [$puntos])
+            ->whereIn('movimientos.banco', $puntos)
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
         $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
@@ -2319,7 +2319,7 @@ class ReportesController extends Controller
             ->where('fecha', '>=', $dates['inicio'])
             ->where('fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa)
-            ->whereIn('movimientos.banco', [$puntos])
+            ->whereIn('movimientos.banco', $puntos)
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
         $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
