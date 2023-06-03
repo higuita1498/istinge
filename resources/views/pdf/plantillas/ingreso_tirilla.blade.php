@@ -218,7 +218,7 @@
         <table  style="width: 100%;">
             <tbody>
                 <tr>
-                    <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
+                    {{-- <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td> --}}
                 </tr>
                 <tr>
                     <td style="text-align: center;"><br>NETWORK SOFT</td>
