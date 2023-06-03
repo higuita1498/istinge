@@ -11,7 +11,7 @@
 	    @if($ingreso->tipo==1)
 	        {{-- @if($ingreso->ingresofactura()->factura()->estatus == 0) --}}
 	        @if($ingreso->ingresofactura())
-	            <a href="{{route('facturas.tirilla', ['id' => $ingreso->ingresofactura()->factura()->id, 'name' => "Factura No. ".$ingreso->ingresofactura()->factura()->id.".pdf"])}}" class="btn btn-outline-warning @if(Auth::user()->rol==47) btn-xl @else btn-xs @endif" title="Tirilla" target="_blank" id="btn_tirilla"><i class="fas fa-print"></i>Imprimir tirilla</a>
+	            <a href="{{route('ingresos.tirilla', ['id' => $ingreso->ingresofactura()->factura()->id, 'name' => "Factura No. ".$ingreso->ingresofactura()->factura()->id.".pdf"])}}" class="btn btn-outline-warning @if(Auth::user()->rol==47) btn-xl @else btn-xs @endif" title="Tirilla" target="_blank" id="btn_tirilla"><i class="fas fa-print"></i>Imprimir tirilla</a>
 	        @endif
 	        {{-- @endif --}}
 	    @endif
