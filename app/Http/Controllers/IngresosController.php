@@ -1280,7 +1280,8 @@ class IngresosController extends Controller
             $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
             $empresa = Empresa::find($ingreso->empresa);
             $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones', 'itemscount','empresa'));
-            return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
+            return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
+        }
     }
 
     public function enviar($id, $emails=null, $redireccionar=true){
