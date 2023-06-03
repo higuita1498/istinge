@@ -140,12 +140,12 @@
         Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->vencimiento))}}<br>
         Estado: @if($ingreso->estatus == 0) Cerrada @endif @if($ingreso->estatus == 1) Abierta @endif @if($ingreso->estatus == 2) Anulada @endif<br><br>
         
-        Recibo de Caja: No. {{ $ingreso->ingreso()->nro }}<br>
-        Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
-        Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
-        Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
+        Recibo de Caja: No. {{ $ingreso->nro }}<br>
+        Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->fecha)) }}<br>
+        Cuenta: {{ $ingreso->cuenta()->nombre }}<br>
+        Método de Pago: {{ $ingreso->metodo_pago() }}<br>
         Periodo: {{$ingreso->periodoCobrado('true')}}<br>
-        @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
+        @if($ingreso->notas) Notas: {{ $ingreso->notas }} @endif
     </div>
     
     <br>
@@ -190,22 +190,22 @@
                 @endif
                 <tr>
                     <td style="width: 70%;">Monto a Pagar:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago())}} </td>
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() + $ingreso->ingreso()->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago() + $ingreso->valor_anticipo)}} </td>
                 </tr>
                 @if($ingreso->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() - $ingreso->pagado())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago() - $ingreso->pagado())}} </td>
                 </tr>
                 @endif
-                 @if($ingreso->ingreso()->valor_anticipo > 0)
+                 @if($ingreso->valor_anticipo > 0)
                 <tr>
                     <td style="width: 70%;">Saldo a favor generado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->valor_anticipo)}} </td>
                 </tr>
                 @endif
             </tbody>
