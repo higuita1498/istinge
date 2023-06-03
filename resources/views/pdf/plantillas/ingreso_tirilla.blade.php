@@ -161,8 +161,8 @@
             <tbody>
                 @foreach($items as $item)
                 <tr>
-                    <td >{{$item->producto()}}</td>
-                    <td >{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
+                    <td colspan="2" class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->detalle('Pago a ')}}</td>
+                    <td class="right padding-right border_right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::Parsear($item->pago())}}</td>
                 </tr>
                 @endforeach    
             </tbody>
