@@ -1269,7 +1269,7 @@ class IngresosController extends Controller
         if ($ingreso) {
             if ($ingreso->tipo==1) {
                 $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
-                $items = IngresosFactura::where('ingreso',$ingreso->id)->get();
+                $items = IngresosFactura::join('items_factura as itf','itf.factura','ingresos_factura.factura')->select('itf.*')->where('ingreso',$ingreso->id)->get();
             }else if ($ingreso->tipo==2){
                 $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
                 $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();

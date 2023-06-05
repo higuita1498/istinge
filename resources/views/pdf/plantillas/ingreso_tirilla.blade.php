@@ -160,8 +160,8 @@
             <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td>{{$item->detalle('Pago a ')}}</td>
-                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->pago())}}</td>
+                    <td>{{$item->ref}}</td>
+                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 </tr>
             @endforeach
             </tbody>
