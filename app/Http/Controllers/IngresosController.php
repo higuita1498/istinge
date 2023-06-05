@@ -1279,6 +1279,8 @@ class IngresosController extends Controller
             }
             $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
             $empresa = Empresa::find($ingreso->empresa);
+            $paper_size = array(0,0,270,580);
+            $pdf->setPaper($paper_size, 'portrait');
             $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones', 'itemscount','empresa'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
         }
