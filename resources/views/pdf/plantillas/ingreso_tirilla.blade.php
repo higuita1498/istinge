@@ -149,26 +149,25 @@
     </div>
     
     <br>
-
     <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
-        <table border="0" class="desgloce">
+        <table style="width: 100%;text-align: center;">
             <thead>
                 <tr>
-                    <th width="70%" colspan="2" style="padding: 3px;" class="center smalltd">Item</th>
-                    <th style="padding: 3px;" width="15%" class="center smalltd">Valor</th>
+                    <th style="width: 70%;">Ítem</th>
+                    <th style="width: 30%;">Valor</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($items as $item)
+            @foreach($items as $item)
                 <tr>
-                    <td style="width: 70%;">{{$item->detalle('Pago a ')}}</td>
-                    <td style="width: 30%;text-align: center;">{{$empresa->moneda}}{{App\Funcion::Parsear($item->pago())}}</td>
+                    <td>{{$item->detalle('Pago a ')}}</td>
+                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->pago())}}</td>
                 </tr>
-                @endforeach    
+            @endforeach
             </tbody>
-    
         </table>
     </div>
+    <br>
     <br>
 
     <div  style="width: 100%; text-align: center; display: inline-block; padding: 5px 0 5px 5px; margin-bottom: 5px;">
@@ -219,13 +218,13 @@
             <tbody>
                 {{-- <tr>
                     <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;"><br>NETWORK SOFT</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">Network Ingeniería S.A.S</td>
                 </tr> --}}
+                <tr>
+                    <td style="text-align: center;"><br>INTEGRA</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">INTEGRA S.A.S</td>
+                </tr>
                 <tr>
                     <td style="text-align: center;"><b>TIRILLA IMPRESA EL {{ date('d/m/Y') }}</b></td>
                 </tr>
