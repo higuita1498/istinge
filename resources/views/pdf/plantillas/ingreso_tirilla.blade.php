@@ -171,7 +171,7 @@
     </div>
     <br>
 
-    <div  style="width: 100%; text-align: center; display: inline-block;  border-bottom: solid 1px #000; padding: 5px 0 5px 5px; margin-bottom: 5px;">
+    <div  style="width: 100%; text-align: center; display: inline-block; padding: 5px 0 5px 5px; margin-bottom: 5px;">
         <table style="width: 100%;">
             <tbody>
                 <!--<tr>-->
@@ -183,7 +183,7 @@
                         @if(isset($imp->total))
                             <tr>
                                 <td style="width: 70%;">{{$imp->nombre}} ({{$imp->porcentaje}}%)</td>
-                                <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
+                                <td style="width: 30%;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
                             </tr>
                         @endif
                     @endforeach
@@ -217,15 +217,15 @@
     <div style="width: 100%; text-align: center; display: inline-block;">
         <table  style="width: 100%;">
             <tbody>
-                <tr>
-                    {{-- <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td> --}}
+                {{-- <tr>
+                    <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;"><br>NETWORK SOFT</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">Network Ingeniería S.A.S</td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td style="text-align: center;"><b>TIRILLA IMPRESA EL {{ date('d/m/Y') }}</b></td>
                 </tr>
