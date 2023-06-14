@@ -36,6 +36,13 @@
     <link rel="stylesheet" href="{{ asset('css/documentacion.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
 
+    {{--
+        Esta sentencia es necesaria, ya que algunos componentes tienen estilos
+        definidos dentro de la plantilla de Blade. La idea es que se vayan retirando
+        poco a poco estos estilos de ahí.
+    --}}
+    @yield('style')
+
     @vite(['resources/css/app.css'])
 </head>
 
