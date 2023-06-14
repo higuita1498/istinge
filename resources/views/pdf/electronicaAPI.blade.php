@@ -384,7 +384,7 @@
             </tr>
             <tr>
                 <th class="right smalltd">PERIODO COBRADO</th>
-                <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobrado()}}</td>
+                <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobradoTexto()}} {{$factura->diasCobradosProrrateo()}}</td>
             </tr>
         </table>
     </div>
