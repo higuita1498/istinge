@@ -1293,9 +1293,9 @@ class AsignacionesController extends Controller
     public function enviar($id)
     {
         view()->share(['title' => 'Contrato de Internet']);
-        $contrato = Contacto::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        if($contrato) {
-            if (!$contrato->email) {
+        $contact = Contacto::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        if($contact) {
+            if (!$contact->email) {
                 return back()->with('danger', 'EL CLIENTE NO TIENE UN CORREO ELECTRÓNICO REGISTRADO');
             }
             $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
@@ -1318,14 +1318,40 @@ class AsignacionesController extends Controller
                 config(['mail'=>$new]);
             }
             $idContrato = request()->idContrato;
-            $pdf = PDF::loadView('pdf.contrato', compact('contrato', 'idContrato'))->stream();
-            $email = $contrato->email;
-            $cliente = $contrato->nombre;
-            self::sendMail('emails.contrato', compact('contrato'), compact('pdf', 'contrato', 'email', 'cliente'), function ($message) use ($pdf, $contrato) {
+
+            $company = ((object) FacadesAuth::user())->empresa();
+
+            try {
+                $contract = $contact->contrato();
+                // TODO: This should be within the contract method, but right now it
+                // will break other things, so it will stay here.
+                if (is_null($contract)) {
+                    throw new ModelNotFoundException();
+                }
+            } catch (ModelNotFoundException $e) {
+                return back()->with('danger', 'El contacto no tiene un contrato asociado.');
+            }
+
+            try {
+                $contractDetails = $contact->details($contract->id);
+            } catch (ModelNotFoundException $e) {
+                return back()->with('danger', 'Los detalles del contrato no fueron encontrados.');
+            }
+
+            $pdf = Pdf::loadView('pdf.contrato', compact([
+                'contact',
+                'company',
+                'contract',
+                'contractDetails',
+            ]))->stream();
+
+            $email = $contact->email;
+            $cliente = $contact->nombre;
+            self::sendMail('emails.contrato', compact('contact'), compact('pdf', 'contact', 'email', 'cliente'), function ($message) use ($pdf, $contact) {
                 $message->attachData($pdf, 'contrato_digital_servicios.pdf', ['mime' => 'application/pdf']);
-                $message->to($contrato->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);
+                $message->to($contact->email)->subject("Contrato Digital de Servicios - ".Auth::user()->empresa()->nombre);
             });
-            return back()->with('success', strtoupper('EL CONTRATO DIGITAL DE SERVICIOS HA SIDO ENVIADO CORRECTAMENTE A '.$contrato->nombre.' '.$contrato->apellidos()));
+            return back()->with('success', strtoupper('EL CONTRATO DIGITAL DE SERVICIOS HA SIDO ENVIADO CORRECTAMENTE A '.$contact->nombre.' '.$contact->apellidos()));
         }
         return back()->with('danger', 'CONTRATO DIGITAL NO ENVIADO');
     }

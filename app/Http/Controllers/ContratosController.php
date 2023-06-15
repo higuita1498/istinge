@@ -48,9 +48,9 @@ use App\Oficina;
 use App\CRM;
 
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
-use PHPExcel; 
-use PHPExcel_IOFactory; 
-use PHPExcel_Style_Alignment; 
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
 use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
@@ -66,7 +66,7 @@ class ContratosController extends Controller
         set_time_limit(300);
         view()->share(['seccion' => 'contratos', 'subseccion' => 'listado', 'title' => 'Contratos de Servicio', 'icon' =>'fas fa-file-contract']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
@@ -122,7 +122,7 @@ class ContratosController extends Controller
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
-        // return $contratos->get(); 
+        // return $contratos->get();
         if ($request->filtro == true) {
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {
@@ -175,17 +175,17 @@ class ContratosController extends Controller
                 });
             }
             if($request->c_direccion){
-    
+
                 $direccion = $request->c_direccion;
                 $direccion = explode(' ', $direccion);
-                $direccion = array_reverse($direccion);                
-                
+                $direccion = array_reverse($direccion);
+
                 foreach($direccion as $dir){
                     $dir = strtolower($dir);
                     $dir = str_replace("#","",$dir);
                     //$dir = str_replace("-","",$dir);
                     //$dir = str_replace("/","",$dir);
-                    
+
                     $contratos->where(function ($query) use ($dir) {
                         $query->orWhere('contactos.direccion', 'like', "%{$dir}%");
                         $query->orWhere('contracts.address_street', 'like', "%{$dir}%");
@@ -367,10 +367,20 @@ class ContratosController extends Controller
                 return ($contrato->interfaz) ? $contrato->interfaz : 'N/A';
             })
             ->editColumn('nodo', function (Contrato $contrato) {
-                return ($contrato->nodo)?$contrato->nodo()->nombre:$contrato->nodo();
+                // Puede ser un objeto o un String. ¿Por qué?
+                $nodo = $contrato->nodo();
+                if (is_object($nodo)) {
+                    return $nodo->nombre;
+                }
+                return "N/A";
             })
             ->editColumn('ap', function (Contrato $contrato) {
-                return ($contrato->ap)?$contrato->ap()->nombre:$contrato->ap();
+                // Puede ser un objeto o un String. ¿Por qué?
+                $ap = $contrato->ap();
+                if (is_object($ap)) {
+                    return $ap->nombre;
+                }
+                return "N/A";
             })
             ->editColumn('direccion', function (Contrato $contrato) {
                 return ($contrato->address_street) ? $contrato->address_street : $contrato->direccion;
@@ -415,7 +425,7 @@ class ContratosController extends Controller
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'observaciones', 'created_at'])
             ->toJson();
     }
-    
+
     public function create($cliente = false){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
@@ -423,7 +433,7 @@ class ContratosController extends Controller
         $cajas    = DB::table('bancos')->where('tipo_cta',3)->where('estatus',1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
-        
+
         $identificaciones=TipoIdentificacion::all();
         $paises  =DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
@@ -437,11 +447,11 @@ class ContratosController extends Controller
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
-        
+
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
         return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
     }
-    
+
     public function store(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
@@ -494,11 +504,11 @@ class ContratosController extends Controller
             $registro = false;
             $getall = '';
             //$API->debug = true;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $nro = Numeracion::where('empresa', 1)->first();
                 $nro_contrato = $nro->contrato;
-                
+
                 while (true) {
                     $numero = Contrato::where('nro', $nro_contrato)->count();
                     if ($numero == 0) {
@@ -534,7 +544,7 @@ class ContratosController extends Controller
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
-                    
+
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                         "target"          => $request->ip,
@@ -547,7 +557,7 @@ class ContratosController extends Controller
                         )
                     );
                 }
-                
+
                 /*DHCP*/
                 if($request->conexion == 2){
                     if($plan->dhcp_server){
@@ -700,7 +710,7 @@ class ContratosController extends Controller
                 }
 
                 $API->disconnect();
-                
+
                 $contrato = new Contrato();
                 $contrato->plan_id                 = $request->plan_id;
                 $contrato->nro                     = $nro_contrato;
@@ -751,7 +761,7 @@ class ContratosController extends Controller
                 if($request->factura_individual){
                     $contrato->factura_individual = $request->factura_individual;
                 }
-                
+
                 if($request->ap){
                     $ap = AP::find($request->ap);
                     $contrato->nodo    = $ap->nodo;
@@ -809,7 +819,7 @@ class ContratosController extends Controller
 
                 $contrato->creador = Auth::user()->nombres;
                 $contrato->save();
-                
+
                 $nro->contrato = $nro_contrato + 1;
                 $nro->save();
 
@@ -912,7 +922,7 @@ class ContratosController extends Controller
             return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
         }
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
@@ -921,13 +931,13 @@ class ContratosController extends Controller
         'contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router',
         'contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz',
         'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte',
-         'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password', 
-         'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 
-         'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 
-         'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 
+         'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password',
+         'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
+         'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d',
+         'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv',
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu',
-          'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 
-          'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion', 
+          'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
+          'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
           'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension')
           ->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
         $planes = ($contrato->server_configuration_id) ? PlanesVelocidad::where('status', 1)->where('mikrotik', $contrato->server_configuration_id)->get() : PlanesVelocidad::where('status', 1)->get();
@@ -950,8 +960,8 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
-    public function update(Request $request, $id){ 
+
+    public function update(Request $request, $id){
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'grupo_corte' => 'required',
@@ -1007,7 +1017,7 @@ class ContratosController extends Controller
             $mikrotik = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;
             $cliente = $contrato->cliente();
             $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
-            
+
             if ($mikrotik) {
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
@@ -1295,7 +1305,7 @@ class ContratosController extends Controller
                         }else{
                             $nodo_new = '';
                         }
-                        
+
                         if(isset($ap_new->nodo)){
                             $contrato->nodo = $ap_new->nodo;
                             $descripcion .= ($contrato->nodo == $ap_new->nodo) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio Nodo</b> de '.$nodo_old->nombre.' a '.$nodo_new.'<br>';
@@ -1495,7 +1505,7 @@ class ContratosController extends Controller
         $inventario = false;
 
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'contracts.status as cs_status', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1', 'c.direccion', 'c.barrio', 'c.email', 'c.id as id_cliente', 'contracts.marca_router', 'contracts.modelo_router', 'contracts.marca_antena', 'contracts.modelo_antena', 'contracts.ip', 'contracts.grupo_corte', 'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d', 'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv', 'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street', 'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.observaciones')->where('contracts.id', $id)->first();
-        
+
         if($contrato) {
             if($contrato->servicio_tv){
                 $inventario =Inventario::where('id', $contrato->servicio_tv)->where('empresa',Auth::user()->empresa)->first();
@@ -1505,7 +1515,7 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function destroy($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
@@ -1515,7 +1525,7 @@ class ContratosController extends Controller
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
                 //$API->debug = true;
-            
+
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     if($contrato->conexion == 1){
                         //OBTENEMOS AL CONTRATO MK
@@ -1680,13 +1690,13 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function state($id){
         $this->getAllPermissions(Auth::user()->id);
-        
+
         $contrato=Contrato::find($id);
         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-        
+
         //$API->debug = true;
         if($contrato){
                 if($contrato->plan_id){
@@ -1696,10 +1706,10 @@ class ContratosController extends Controller
 
                     if ($contrato) {
                         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                            
+
                             $API->write('/ip/firewall/address-list/print', TRUE);
                             $ARRAYS = $API->read();
-                            
+
                             if($contrato->state == 'enabled'){
                                 #AGREGAMOS A MOROSOS#
                                 $API->comm("/ip/firewall/address-list/add", array(
@@ -1748,7 +1758,7 @@ class ContratosController extends Controller
                                     )
                                 );
                                 #AGREGAMOS A IP_AUTORIZADAS#
-                                
+
                                 $contrato->state = 'enabled';
                                 $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
                             }
@@ -1775,7 +1785,7 @@ class ContratosController extends Controller
                                 $crm->factura = $lastFact->id;
                             }
                             $crm->save();
-                            
+
                             $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
                             $type = 'success';
                         } else {
@@ -1791,7 +1801,7 @@ class ContratosController extends Controller
                     }else{
                         $contrato->state = 'enabled';
                     }
-                    
+
                     //crm registro
                     $crm = new CRM();
                     $crm->cliente = $contrato->cliente()->id;
@@ -1810,7 +1820,7 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-  
+
     public function exportar(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
@@ -2032,7 +2042,7 @@ class ContratosController extends Controller
         }
 
         $contratos = $contratos->where('contracts.status', 1)->get();
-        
+
         foreach ($contratos as $contrato) {
 
             $objPHPExcel->setActiveSheetIndex(0)
@@ -2091,7 +2101,7 @@ class ContratosController extends Controller
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function grafica($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
@@ -2101,26 +2111,26 @@ class ContratosController extends Controller
         }
         return back()->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function graficajson($id){
         $this->getAllPermissions(Auth::user()->id);
-        
+
         $contrato=Contrato::find($id);
         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-        
+
         $API = new RouterosAPI();
         $API->port = $mikrotik->puerto_api;
         //$API->debug = true;
-        
+
         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
             $rows = array(); $rows2 = array(); $Type=1; $Interface='ether1';
             if ($Type==0) {  // Interfaces
                 $API->write("/interface/monitor-traffic",false);
-                $API->write("=interface=".$contrato->name_vlan,false);  
+                $API->write("=interface=".$contrato->name_vlan,false);
                 $API->write("=once=",true);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
-                if(count($ARRAY)>0){  
+                if(count($ARRAY)>0){
                     $rx = ($ARRAY[0]["rx-bits-per-second"]);
                     $tx = ($ARRAY[0]["tx-bits-per-second"]);
 					$rows['name'] = 'Tx';
@@ -2128,15 +2138,15 @@ class ContratosController extends Controller
 					$rows2['name'] = 'Rx';
 					$rows2['data'][] = $rx;
 				}else{
-					echo $ARRAY['!trap'][0]['message'];	 
-				} 
+					echo $ARRAY['!trap'][0]['message'];
+				}
 			}else if($Type==1){ //  Queues
 			    $API->write("/queue/simple/print",false);
 			    $API->write("=stats",false);
 			    $API->write("?target=".$contrato->ip.'/32',true);
 			    $READ = $API->read(false);
 			    $ARRAY = $API->parseResponse($READ);
-			    if(count($ARRAY)>0){  
+			    if(count($ARRAY)>0){
 					$rx = explode("/",$ARRAY[0]["rate"])[0];
 					$tx = explode("/",$ARRAY[0]["rate"])[1];
 					$rows['name'] = 'Tx';
@@ -2150,11 +2160,11 @@ class ContratosController extends Controller
                         'title'   => 'ERROR',
                         'text'    => 'NO SE HA PODIDO REALIZAR LA GRÁFICA'
                     ]);
-				} 
+				}
 			}
 
 			$ConnectedFlag = true;
-			
+
 			if ($ConnectedFlag) {
 			    $result = array();array_push($result,$rows);
 			    array_push($result,$rows2);
@@ -2163,7 +2173,7 @@ class ContratosController extends Controller
 			$API->disconnect();
         }
     }
-    
+
     public function conexion($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
@@ -2171,7 +2181,7 @@ class ContratosController extends Controller
             if(!$contrato->ip){
                 return back()->with('danger', 'EL CONTRATO NO POSEE DIRECCIÓN IP ASOCIADA');
             }
-            
+
             /*REGISTRO DEL LOG*/
             $movimiento = new MovimientoLOG;
             $movimiento->contrato    = $id;
@@ -2180,16 +2190,16 @@ class ContratosController extends Controller
             $movimiento->created_by  = Auth::user()->id;
             $movimiento->empresa     = Auth::user()->empresa;
             $movimiento->save();
-            
+
             view()->share(['icon'=>'fas fa-plug', 'title' => 'Ping de Conexión: '.$contrato->nro]);
             return view('contratos.ping')->with(compact('contrato'));
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function ping_nuevo($id){
         $contrato = Contrato::find($id);
-        
+
         if ($contrato) {
             if(!$contrato->ip){
                 return response()->json([
@@ -2199,13 +2209,13 @@ class ContratosController extends Controller
                     'text'    => 'EL CONTRATO NO POSEE DIRECCIÓN IP ASOCIADA'
                 ]);
             }
-            
+
             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-            
+
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             //$API->debug = true;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 // PING
                 $API->write("/ping",false);
@@ -2213,7 +2223,7 @@ class ContratosController extends Controller
                 $API->write("=count=1",true);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
-                
+
                 if(count($ARRAY)>0){
                     if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
                         $data = [
@@ -2273,7 +2283,7 @@ class ContratosController extends Controller
                 ]);
             }
         }
-        
+
         return response()->json([
             'success' => false,
             'icon'    => 'error',
@@ -2281,17 +2291,17 @@ class ContratosController extends Controller
             'text'    => 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO'
         ]);
     }
-    
+
     public function destroy_to_mk($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         if ($contrato) {
             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-            
+
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             //$API->debug = true;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 if($contrato->conexion == 1){
                     //OBTENEMOS AL CONTRATO MK
@@ -2304,7 +2314,7 @@ class ContratosController extends Controller
                         ".id" => $mk_user[0][".id"],
                         )
                     );
-                    
+
                     //OBTENEMOS EL ID DEL NOMBRE DEL CLIENTE
                     $id_simple = $API->comm("/queue/simple/getall", array(
                         "?comment" => $contrato->id,
@@ -2316,18 +2326,18 @@ class ContratosController extends Controller
                         )
                     );
                 }
-                
+
                 if($contrato->conexion == 2){
-                    
+
                 }
-                
+
                 if($contrato->conexion == 3){
                     //OBTENEMOS AL CONTRATO MK
                     $mk_user = $API->comm("/ip/arp/getall", array(
                         "?comment" => $contrato->servicio,
                         )
                     );
-                    
+
                     if($mk_user){
                         // REMOVEMOS EL IP ARP
                         $API->comm("/ip/arp/remove", array(
@@ -2345,11 +2355,11 @@ class ContratosController extends Controller
                             )
                         );
                     }
-                    
+
                 }
-                
+
                 $API->disconnect();
-                
+
                 $mensaje='SE HA ELIMINADO EL CONTRATO DEL MIKROTIK';
                 return redirect('empresa/contratos')->with('success', $mensaje);
             } else {
@@ -2359,7 +2369,7 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function log($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
@@ -2372,7 +2382,7 @@ class ContratosController extends Controller
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
-    
+
     public function logs(Request $request, $contrato){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = MovimientoLOG::query();
@@ -2391,17 +2401,17 @@ class ContratosController extends Controller
             ->rawColumns(['created_at', 'created_by', 'descripcion'])
             ->toJson();
     }
-    
+
     public function grafica_consumo($id){
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         if ($contrato) {
             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-            
+
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
             //$API->debug = true;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $API->write("/tool/graph/interface/print",true);
                 $ARRAYS = $API->read();
@@ -3565,21 +3575,21 @@ class ContratosController extends Controller
            foreach($mikrotiks as $mikrotik){
                     $API = new RouterosAPI();
                    $API->port = $mikrotik->puerto_api;
-                  
+
                    //$API->debug = true;
-           
+
                        if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                            $API->write('ip/firewall/address get [find list=morosos]', true);
                            $ARRAYS = $API->read();
-           
+
                            $allMorosos[] = $ARRAYS;
                        }
            }
-          
-   
+
+
            return $allMorosos;
        }
-    
+
 
 
        public function forzarCrm($idContrato){

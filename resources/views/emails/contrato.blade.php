@@ -29,7 +29,7 @@
                                             </h1>
                                             <hr>
                                             <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;text-align: justify;">
-                                                Hola <b>{{$contrato->nombre}} {{$contrato->apellidos()}}</b>,
+                                                Hola <b>{{$contact->nombre}} {{$contact->apellidos()}}</b>,
                                             </p>
                                             <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;text-align: justify;">
                                                 {{Auth::user()->empresa()->nombre}} le hace llegar su contrato digital de servicios, el cual se encuentra adjunto en este correo electrónico.
