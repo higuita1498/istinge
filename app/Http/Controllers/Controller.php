@@ -47,45 +47,45 @@ use Mail;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests; 
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public function precision($valor){
     	return round($valor, Auth::user()->empresa()->precision);
     }
 
     public function normaliza($cadena){
-            
+
             $cadena = trim($cadena);
- 
+
             $cadena = str_replace(
                 array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),
                 array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),
                 $cadena
             );
-         
+
             $cadena = str_replace(
                 array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'),
                 array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),
                 $cadena
             );
-         
+
             $cadena = str_replace(
                 array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'),
                 array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),
                 $cadena
             );
-         
+
             $cadena = str_replace(
                 array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'),
                 array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'),
                 $cadena
             );
-         
+
             $cadena = str_replace(
                 array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),
                 array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),
                 $cadena
             );
-         
+
             $cadena = str_replace(
                 array('ñ', 'Ñ', 'ç', 'Ç'),
                 array('n', 'N', 'c', 'C',),
@@ -102,11 +102,11 @@ class Controller extends BaseController
                 ' ',
                 $cadena
             );
-            
+
             return $cadena;
     }
 
-    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion){        
+    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion){
         $movimiento=new Movimiento;
         $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
         if ($regis) {
@@ -128,7 +128,7 @@ class Controller extends BaseController
         Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->delete();
     }
 
-    public function chage_status_transaccion($modulo, $id, $estatus){        
+    public function chage_status_transaccion($modulo, $id, $estatus){
         $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
         if ($regis) {
             $movimiento=$regis;
@@ -144,16 +144,16 @@ class Controller extends BaseController
        $movimiento->tipo = $tipo;
        $movimiento->save();
     }
-    
+
     public function tester54()
     {
         return 'ok';
     }
-    
+
     public function getAllData($empresa, $key)
     {
         $request = $key;
-        
+
         $data = array(
             'bank'          => $this->getAllBanks($empresa, $request),
             'contact'       => $this->getAllContacts($empresa ,$request),
@@ -387,7 +387,7 @@ class Controller extends BaseController
     {
         return preg_match('/[A-Za-z]/', $str) && preg_match('/[0-9]/', $str);
     }
-    
+
     public function getAllPermissions($id)
     {
         if(Auth::user()->rol>=2){
@@ -491,7 +491,7 @@ class Controller extends BaseController
         public function validateStatusDianNota($nitemisor, $idDocumento, $codigoTipo)
         {
             $curl = curl_init();
-    
+
             curl_setopt_array($curl, array(
                 CURLOPT_URL => "https://apivp.efacturacadena.com/v1/vp/consulta/documentos?nit_emisor=" . $nitemisor . "&id_documento=" . $idDocumento . "&codigo_tipo_documento=" . $codigoTipo . "",
                 CURLOPT_RETURNTRANSFER => true,
@@ -507,9 +507,9 @@ class Controller extends BaseController
                     "Partnership-Id: 1128464945"
                 ),
             ));
-    
+
             $response = curl_exec($curl);
-    
+
             curl_close($curl);
             return $response;
         }
@@ -541,7 +541,7 @@ class Controller extends BaseController
             return $response;
         }
     }
-    
+
     public function show_contract($id){
         $curl = curl_init();
         $empresa = Empresa::find(1);
@@ -569,14 +569,14 @@ class Controller extends BaseController
             return $response;
         }
     }
-    
+
     public function consultar($codigo,$identificacion){
         $radicado=Radicado::where('codigo',$codigo)->first();
 
         Radicado::join('contactos as c', 'c.id', '=', 'radicados.cliente')->select('radicados.*', 'c.nombre', 'c.nit', 'c.email')-> where('radicados.codigo',$codigo)->where('c.nit', $identificacion)->first();
         return json_encode($radicado);
     }
-    
+
     public function import_plans(){
         $empresa = Empresa::find(1);
         $curl = curl_init();
@@ -867,7 +867,7 @@ class Controller extends BaseController
             exit;
         }
     }
-    
+
     public function generarFacturas($limit){
         set_time_limit(0);
         $i=0;
@@ -983,7 +983,7 @@ class Controller extends BaseController
         }
         echo 'Se han generado '.$i.' facturas';
     }
-    
+
     public function consultar_invoice_old($identificacion){
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
         join('factura as f','f.cliente','c.id')->
@@ -1024,11 +1024,11 @@ class Controller extends BaseController
 
         return json_encode($contrato);
     }
-    
+
     public function pagopayu(){
         return "Pago hecho";
     }
-    
+
     public function respuestapayu(){
         if(isset($_REQUEST['referenceCode'])){
             $factura = Factura::where('codigo',$_REQUEST['referenceCode'])->where('estatus',1)->first();
@@ -1042,7 +1042,7 @@ class Controller extends BaseController
                     $estadoTx = "Transacción aprobada";
                     $nro = Numeracion::where('empresa', 1)->first();
                     $caja = $nro->caja;
-                    
+
                     while (true) {
                         $numero = Ingreso::where('empresa', 1)->where('nro', $caja)->count();
                         if ($numero == 0) {
@@ -1050,7 +1050,7 @@ class Controller extends BaseController
                         }
                         $caja++;
                     }
-                    
+
                     $ingreso = new Ingreso;
                     $ingreso->nro = $caja;
                     $ingreso->empresa = 1;
@@ -1059,7 +1059,7 @@ class Controller extends BaseController
                     $ingreso->tipo = 1;
                     $ingreso->fecha = date('Y-m-d');
                     $ingreso->observaciones = 'Pago por PayU: '.md5($firma_cadena);
-                    
+
                     if ($_REQUEST['lapPaymentMethod'] == "CREDIT_CARD") {
                         $ingreso->metodo_pago = 9;
                     }else if ($_REQUEST['lapPaymentMethod'] == "PSE" || $_REQUEST['lapPaymentMethod'] == "ACH" || $_REQUEST['lapPaymentMethod'] == "SPEI" || $_REQUEST['lapPaymentMethod'] == "BANK_REFERENCED"){
@@ -1069,14 +1069,14 @@ class Controller extends BaseController
                     }else if($_REQUEST['lapPaymentMethod'] == "CASH" || $_REQUEST['lapPaymentMethod'] == "REFERENCED"){
                         $ingreso->metodo_pago = 9;
                     }
-                    
+
                     $factura->estatus = 0;
                     $contrato->state = 'enabled';
-                    
+
                     $ingreso->save();
                     $factura->save();
                     $contrato->save();
-                    
+
                     $ingresoFac = new IngresosFactura;
                     $ingresoFac->ingreso = $ingreso->id;
                     $ingresoFac->factura = $factura->id;
@@ -1084,12 +1084,12 @@ class Controller extends BaseController
                     /*$ingresoFac->pago = $_REQUEST['TX_VALUE']-4000;*/
                     $ingresoFac->pago = $_REQUEST['TX_VALUE']-2800;
                     $ingresoFac->save();
-                    
+
                     $ingreso = Ingreso::find($ingreso->id);
                     $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
-                    
+
                     $path = $contrato->contrato_id.'?state='.$contrato->state;
-                    
+
                     $curl = curl_init();
                     $empresa = Empresa::find(1);
                     curl_setopt_array($curl, array(
@@ -1105,12 +1105,12 @@ class Controller extends BaseController
                             "Authorization: ".$empresa->wispro
                         ),
                     ));
-                    
+
                     $response = curl_exec($curl);
                     $err = curl_error($curl);
                     curl_close($curl);
                     $mensaje = "Pago realizado Correctamente";
-                    
+
                 }else if($_REQUEST['transactionState']==6){
                     //$factura->EstadoTransaccion = "DECLINED";
                     $estadoTx = "Transacción rechazada";
@@ -1138,14 +1138,14 @@ class Controller extends BaseController
         }else{
             $mensaje= "Error en la transacción, intentelo nuevamente";
         }
-        
+
         if(isset($_REQUEST['referenceCode']) && $factura){
             echo '<h2>Resumen Transacción</h2><table><tr><td>Estado de la transaccion</td><td>'.$mensaje.'</td></tr><tr><tr><td>ID de la transaccion</td><td>'.$_REQUEST['transactionId'].'</td></tr><tr><td>Referencia de la venta</td><td>'.$_REQUEST['reference_pol'].'</td></tr><tr><td>Referencia de la transaccion</td><td>'.$_REQUEST['referenceCode'].'</td></tr><tr><td>Valor total</td><td>Factura: '.number_format($_REQUEST['TX_VALUE']-2800, 2, '.', '').' + Uso de Plataforma '.number_format(2800, 2, '.', '').'</td></tr><tr><td>Moneda</td><td>'.$_REQUEST['currency'].'</td></tr><tr><td>Descripción</td><td>'.$_REQUEST['extra1'].'</td></tr><tr><td>Entidad:</td><td>'.$_REQUEST['lapPaymentMethod'].'</td></tr></table>';
         }else{
             echo '<h2>Resumen Transacción</h2><table><tr><td>'.$mensaje.'</td></tr></table>';
         }
     }
-    
+
     public function import_bmus(){
         $x=0;$j=0;$a=0;
 
@@ -1226,7 +1226,7 @@ class Controller extends BaseController
             exit;
         }
     }
-    
+
     public function import_mikrotiks(){
         $x=0;$j=0;$a=0;
 
@@ -1305,51 +1305,51 @@ class Controller extends BaseController
             exit;
         }
     }
-    
+
     public function getInterfaces($mikrotik){
         $mikrotik = Mikrotik::where('id', $mikrotik)->first();
         $ARRAY = '';
-        
+
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $API->write('/interface/getall');
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
-                
+
                 $API->disconnect();
             }
         }
         return json_encode($this->convert_from_latin1_to_utf8_recursively($ARRAY));
     }
-    
+
     public function getPlanes($mikrotik){
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
         $mikrotik = Mikrotik::find($mikrotik);
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik]);
     }
-    
+
     public function logsMK($mikrotik){
         $mikrotik = Mikrotik::find($mikrotik);
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $API->write("/log/getall");
                 $API->write('/cancel', false);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
-                
+
                 $arrayPost['data'] = $ARRAY;
                 return json_encode($arrayPost);
             }
         }
     }
-    
+
     public function getDetails($cliente, $contrato = null){
         $cliente  = Contacto::find($cliente);
 
@@ -1363,27 +1363,27 @@ class Controller extends BaseController
 
         return response()->json(['cliente' => $cliente, 'contrato' => $contrato, 'contratos' => $contratos]);
     }
-    
+
     public function getMigracion($mikrotik){
         $mikrotik = Mikrotik::find($mikrotik);
         if ($mikrotik) {
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $API->write("/ip/address/getall");
                 $API->write('/cancel', false);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
-                
+
                 $arrayPost['data'] = $ARRAY;
                 return response()->json($ARRAY);
                 return json_encode($arrayPost);
             }
         }
     }
-    
+
     public function getPing($rango){
         switch ($rango) {
             case '1':
@@ -1507,18 +1507,18 @@ class Controller extends BaseController
                 $to   = 1500;
             break;
         }
-        
+
         $contratos = Contrato::where('status', 1)->where('state', 'enabled')->whereBetween('id', [$from, $to])->get();
-        
+
         $y=0;$z=0;
         $inicio = date('h:m:s');
         $fallidos = [];
         foreach($contratos as $contrato){
             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-            
+
             $API = new RouterosAPI();
             $API->port = $mikrotik->puerto_api;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 // PING
                 $API->write("/ping",false);
@@ -1526,7 +1526,7 @@ class Controller extends BaseController
                 $API->write("=count=1",true);
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
-                
+
                 if(count($ARRAY)>0){
                     if(isset($ARRAY[0])){
                         if($ARRAY[0]["received"]!=$ARRAY[0]["sent"]){
@@ -1557,13 +1557,13 @@ class Controller extends BaseController
                 $API->disconnect();
             }
         }
-        
+
         echo 'Hora Inicio: '.$inicio.'<br>Hora Final: '.date('h:m:s').'<br>Ping Exitosos: '.$z.'<br>Ping Fallidos: '.$y.'<br><br>';
         foreach($fallidos as $fallido) {
             echo $fallido. "<br>";
         }
     }
-    
+
     public function getIps($mikrotik){
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
 
@@ -1577,12 +1577,18 @@ class Controller extends BaseController
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
+
+                foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
+
+                // Se estaba generando el problema de que la codificación del
+                // arreglo y de los valores no llegaba correctamente, por eso
+                // es necesario convertir nuevamente el arreglo a UTF-8.
+                $sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", "auto");
+                return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
             }
         }
-        foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
-        return response()->json(['software' => $ips, 'mikrotik' => $ARRAY]);
     }
-    
+
     public function getSegmentos($mikrotik){
         $segmentos = Segmento::where('mikrotik', $mikrotik)->get()->toArray();
         $i = 0;
@@ -1611,9 +1617,9 @@ class Controller extends BaseController
     }
 
     public function addMovimientoPuc($id){
-        
+
         $forma = FormaPago::find($id);
-        
+
         // $pucMovimiento = new PucMovimiento;
         // dd($forma);
 
@@ -1876,7 +1882,7 @@ class Controller extends BaseController
     }
 
     public static function sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos = []){
-      
+
         $empresa = auth()->user()->empresa();
         foreach($emails as $email){
             $fields = [
@@ -1897,9 +1903,9 @@ class Controller extends BaseController
             if(is_array($adjuntos) && count($adjuntos) > 0){
                 $fields['attachment'] = $adjuntos;
             }
-          
+
             $fields = json_encode($fields);
-         
+
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -1913,15 +1919,15 @@ class Controller extends BaseController
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
             $response = curl_exec($ch);
-            
+
             $response = json_decode($response, true);
         }
-        
+
     }
 
 
     public static function sendMail($vista, $data, $usedData, $fn){
-    
+
         $html = '';
         $adjuntos = [];
 
@@ -1937,7 +1943,7 @@ class Controller extends BaseController
 
 
         if(isset($usedData['tituloCorreo'])){
-            $titulo = $usedData['tituloCorreo']; 
+            $titulo = $usedData['tituloCorreo'];
         }else{
             $titulo = 'Comunicado ' . auth()->user()->empresa()->nombre;
         }
@@ -1960,7 +1966,7 @@ class Controller extends BaseController
         if(isset($usedData['pdf'])){
             /*
             if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
-                if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){ 
+                if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){
                     $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
                 }
             }
@@ -1974,13 +1980,13 @@ class Controller extends BaseController
             if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
                 if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
                     $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
-                } 
+                }
             }
             */
 
             if(file_exists($usedData['xmlPath'])){
                 $url = config('app.url') . '/' . $usedData['xmlPath'];
-                
+
                 $file = null;
 
                 try {
@@ -1998,21 +2004,21 @@ class Controller extends BaseController
         if(!is_array($emails)){
             $emails = [$emails];
         }
-        
-      
+
+
         try {
             self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
         } catch (\Throwable $t) {
-        // exception is raised and it'll be handled here 
-        // $e->getMessage() contains the error message 
+        // exception is raised and it'll be handled here
+        // $e->getMessage() contains the error message
         }
 
 
         try {
             Mail::send($vista, $data, $fn);
         } catch (\Throwable $t) {
-        // exception is raised and it'll be handled here 
-        // $e->getMessage() contains the error message 
+        // exception is raised and it'll be handled here
+        // $e->getMessage() contains the error message
         }
 
     }

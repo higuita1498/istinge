@@ -126,85 +126,85 @@
     </div>
     <div style="width: 100%;">
         <div style="width: 100%; text-align: center; display: inline-block;">
-            Señor(es): {{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}<br>
-            @if($factura->cliente()->direccion) Dirección: {{$factura->cliente()->direccion}}<br>@endif
-            @if($factura->cliente()->ciudad) Ciudad: {{$factura->cliente()->ciudad}}<br>@endif
-            @if($factura->cliente()->telefono1) Teléfono: {{$factura->cliente()->telefono1}}<br>@endif
-            @if($factura->cliente()->nit) {{ $factura->cliente()->tip_iden('mini')}}: {{$factura->cliente()->nit}}<br>@endif<br>
+            Señor(es): {{$ingreso->cliente()->nombre}} {{$ingreso->cliente()->apellidos()}}<br>
+            @if($ingreso->cliente()->direccion) Dirección: {{$ingreso->cliente()->direccion}}<br>@endif
+            @if($ingreso->cliente()->ciudad) Ciudad: {{$ingreso->cliente()->ciudad}}<br>@endif
+            @if($ingreso->cliente()->telefono1) Teléfono: {{$ingreso->cliente()->telefono1}}<br>@endif
+            @if($ingreso->cliente()->nit) {{ $ingreso->cliente()->tip_iden('mini')}}: {{$ingreso->cliente()->nit}}<br>@endif<br>
         </div>
     </div>
     
     <div style="width: 100%; text-align: center; display: inline-block;">
-        @if($factura->tipo == 1 || $factura->tipo == 2) Factura de Venta: @elseif($factura->tipo == 3) Cuenta de Cobro: @endif No. {{$factura->codigo}}<br>
-        Fecha Expedición: {{date('d/m/Y', strtotime($factura->fecha))}}<br>
-        Fecha Vencimiento: {{date('d/m/Y', strtotime($factura->vencimiento))}}<br>
-        Estado: @if($factura->estatus == 0) Cerrada @endif @if($factura->estatus == 1) Abierta @endif @if($factura->estatus == 2) Anulada @endif<br><br>
+        @if($ingreso->tipo == 1 || $ingreso->tipo == 2) Factura de Venta: @elseif($ingreso->tipo == 3) Cuenta de Cobro: @endif No. {{$ingreso->codigo}}<br>
+        Fecha Expedición: {{date('d/m/Y', strtotime($ingreso->fecha))}}<br>
+        Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->vencimiento))}}<br>
+        Estado: @if($ingreso->estatus == 0) Cerrada @endif @if($ingreso->estatus == 1) Abierta @endif @if($ingreso->estatus == 2) Anulada @endif<br><br>
         
-        Recibo de Caja: No. {{ $ingreso->ingreso()->nro }}<br>
-        Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
-        Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
-        Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
-        Periodo: {{$factura->periodoCobrado('true')}}<br>
-        @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
+        Recibo de Caja: No. {{ $ingreso->nro }}<br>
+        Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->fecha)) }}<br>
+        Cuenta: {{ $ingreso->cuenta()->nombre }}<br>
+        Método de Pago: {{ $ingreso->metodo_pago() }}<br>
+        {{-- Periodo: {{$ingreso->periodoCobrado('true')}}<br> --}}
+        @if($ingreso->notas) Notas: {{ $ingreso->notas }} @endif
     </div>
     
     <br>
-
     <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
         <table style="width: 100%;text-align: center;">
             <thead>
                 <tr>
                     <th style="width: 70%;">Ítem</th>
-                    <th style="width: 30%;">Total</th>
+                    <th style="width: 30%;">Valor</th>
                 </tr>
             </thead>
             <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td >{{$item->producto()}}</td>
-                    <td >{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
+                    <td>{{$item->ref}}</td>
+                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
     </div>
     <br>
+    <br>
 
-    <div  style="width: 100%; text-align: center; display: inline-block;  border-bottom: solid 1px #000; padding: 5px 0 5px 5px; margin-bottom: 5px;">
+    <div  style="width: 100%; text-align: center; display: inline-block; padding: 5px 0 5px 5px; margin-bottom: 5px;">
         <table style="width: 100%;">
             <tbody>
                 <!--<tr>-->
                 <!--    <td style="width: 70%;">Subtotal:</td>-->
-                <!--    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subtotal)}}</td>-->
+                <!--    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->total()->subtotal)}}</td>-->
                 <!--</tr>-->
-                @if($factura->total()->imp)
-                    @foreach($factura->total()->imp as $imp)
+                @if($ingreso->total()->imp)
+                    @foreach($ingreso->total()->imp as $imp)
                         @if(isset($imp->total))
                             <tr>
                                 <td style="width: 70%;">{{$imp->nombre}} ({{$imp->porcentaje}}%)</td>
-                                <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
+                                <td style="width: 30%;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
                             </tr>
                         @endif
                     @endforeach
                 @endif
                 <tr>
                     <td style="width: 70%;">Monto a Pagar:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago())}} </td>
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() + $ingreso->ingreso()->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago() + $ingreso->valor_anticipo)}} </td>
                 </tr>
-                @if($factura->total()->total - $ingreso->pago() > 0)
+                @if($ingreso->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() - $factura->pagado())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago() - $ingreso->pagado())}} </td>
                 </tr>
                 @endif
-                 @if($ingreso->ingreso()->valor_anticipo > 0)
+                 @if($ingreso->valor_anticipo > 0)
                 <tr>
                     <td style="width: 70%;">Saldo a favor generado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->valor_anticipo)}} </td>
                 </tr>
                 @endif
             </tbody>
@@ -216,14 +216,14 @@
     <div style="width: 100%; text-align: center; display: inline-block;">
         <table  style="width: 100%;">
             <tbody>
-                <tr>
+                {{-- <tr>
                     <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
+                </tr> --}}
+                <tr>
+                    <td style="text-align: center;"><br>INTEGRA</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;"><br>NETWORK SOFT</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">Network Ingeniería S.A.S</td>
+                    <td style="text-align: center;">INTEGRA S.A.S</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;"><b>TIRILLA IMPRESA EL {{ date('d/m/Y') }}</b></td>

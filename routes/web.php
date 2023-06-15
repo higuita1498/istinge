@@ -726,6 +726,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/pendiente/{cliente}/{id?}', 'IngresosController@pendiente')->name('ingresos.pendiente');
 		Route::get('/ingpendiente/{cliente}/{id?}', 'IngresosController@ingpendiente')->name('ingpendiente.pendiente');
 		Route::get('/{id}/imprimir', 'IngresosController@Imprimir')->name('ingresos.imprimir');
+		Route::get('tirilla/{id}/{name}', 'IngresosController@imprimirTirilla')->name('ingresos.tirilla');
 		Route::get('pdf/{id}/{name}', 'IngresosController@Imprimir')->name('ingresos.imprimir.nombre');
 		Route::get('/{id}/enviar', 'IngresosController@enviar')->name('ingresos.enviar');
 		Route::post('{id}/anular', 'IngresosController@anular')->name('ingresos.anular');
