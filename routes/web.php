@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use App\Http\Controllers\RadicadosController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Nomina\NominaController;
 use App\Http\Controllers\Nomina\NominaDianController;
@@ -49,7 +50,7 @@ Route::get('/generarfactura','CronController@CrearFactura')->name('CrearFactura'
 Route::get('/deleteAll','CronController@deleteFactura');
 Route::get('/aplicateProrrateo','CronController@aplicateProrrateo');
 Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFacturas');
-Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS'); 
+Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
 Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
 Route::get('PagoOportuno','CronController@PagoOportuno')->name('PagoOportuno');
@@ -182,7 +183,7 @@ Route::get('/ConsultaEstadoTransaccion','PlanesController@consultaestado');
 Route::get('/DatosFaltantesTransaccion','PlanesController@datosfaltantes');
 //fin rutas planes
 
-//Rutas Planes nomina. 
+//Rutas Planes nomina.
 Route::get('/respuestapagowompi', 'PlanesNominaController@respuestapagowompi')->name('planesnomina.respuestapagowompi');
 Route::post('/store_respuesta_wompi', 'PlanesNominaController@store_respuesta_wompi')->name('planesnomina.store_respuesta_wompi');
 
@@ -298,7 +299,7 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
 	Route::get('edit', 'UsuariosController@my_edit')->name('user.editar');
 	Route::post('edit', 'UsuariosController@my_update')->name('user.editar');
 	Route::resource('atencionsoporte', 'SoporteController');
-	
+
 	Route::group(['prefix' => 'usuarios'], function() {
         Route::get('ingresar/{email}','UsuariosController@ingresar')->name('usuario.ingresar');
 	});
@@ -423,7 +424,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('tirilla/{id}/{name}', 'FacturasController@imprimirTirilla')->name('facturas.tirilla');
 
 		Route::get('/{id}/xml','FacturasController@xml')->name('facturas.xml');
-		
+
 		//Route::get('pdfele/{id}/{name}', 'FacturasController@ImprimirElec')->name('facturas.imprimir');
 
 
@@ -447,7 +448,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('{id}/aceptarFe', 'FacturasController@aceptarFe')->name('factura.aceptarfe');
 
         Route::post('/validatetime/emicion','FacturasController@validateTimeEmicion')->middleware(['auth']);
-        
+
         Route::get('/{id}/promesa_pago', 'FacturasController@promesa_pago')->name('factura.promesa_pago');
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
@@ -465,7 +466,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	});
 	Route::resource('facturas', 'FacturasController');
 
-	
+
 	Route::group(['prefix' => 'recepcion'], function () {
         Route::get('/documentos', 'RecepcionComprobantesController@documents');
         Route::get('/listadocumentos', 'RecepcionComprobantesController@index')->name('recepcion.index');
@@ -514,14 +515,14 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
             'NominaController@exportarinformeNovedades'
         )->name('nomina.exportar');
 
-		
+
         Route::post(
 			'/preferencia/pago',
             'NominaController@GuardarPreferenciaPago'
 			)->name('nomina.preferecia-pago.store');
-			
+
 		Route::get('/preferencia/pago', 'NominaController@preferenciaPago')->name('nomina.preferecia-pago');
-		
+
         Route::get(
             '/prestaciones-sociales/prima',
             'NominaPrestacionSocialController@prima'
@@ -694,7 +695,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 
     Route::get('nomina/eliminar-liquidacion/{idContrato}', 'Nomina\PersonasController@destroyLiquidar')->name('nomina.liquidar.destroy');
-	
+
 	Route::group(['prefix' => 'comprobantes'], function(){
 		Route::get('/create', 'SaldosInicialesController@create')->name('saldoinicial.create');
 		Route::post('/store', 'SaldosInicialesController@store')->name('saldoinicial.store');
@@ -766,7 +767,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/validatetime/emicion', 'NotascreditoController@validateTimeEmicion')->middleware(['auth']);
 		Route::get('/movimiento/{id}', 'NotascreditoController@showMovimiento')->name('notascredito.showmovimiento');
 
-		
+
 		Route::get('/facturaasociada', 'NotascreditoController@facturaAsociada');
 
 	});
@@ -898,7 +899,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	});
 
-	
+
 	Route::group(['prefix' => 'puc'], function(){
 		Route::get('/create/{id}', 'PucController@create')->name('puc.create_id');
 		Route::post('/puc/store', 'PucController@store')->name('puc.store');
@@ -906,7 +907,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/create/{id}/act_desc', 'PucController@act_desc')->name('puc.act_desc');
 
 	});
-	
+
 	Route::resource('categorias', 'CategoriasController');
 
 	// FORMAS DE PAGOS
@@ -969,15 +970,15 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/autoretenciones/store', 'RetencionesController@autoStore')->name('autoretenciones.store');
 		Route::get('/autoretenciones/edit/{id}', 'RetencionesController@autoEdit')->name('autoretenciones.edit');
 		Route::post('/autoretenciones/update/{id}', 'RetencionesController@autoUpdate')->name('autoretenciones.update');
-		
+
 		Route::get('/recarga-saldo', 'UsuariosController@saldo')->name('recarga.index');
 		Route::post('/{id}/reiniciar-saldo','UsuariosController@reiniciarSaldo')->name('recarga.reiniciar');
 
         Route::post('/permisosUsuario','UsuariosController@verPermisos');
-        
+
         Route::post('/saldoUsuario','UsuariosController@verSaldo');
         Route::post('/guardarSaldo','UsuariosController@guardarSaldo')->name('recarga.usuario');
-        
+
         Route::post('/gananciaUsuario','UsuariosController@verGanancia');
         Route::post('/guardarGanancia','UsuariosController@guardarGanancia')->name('ganancia.usuario');
 
@@ -1000,7 +1001,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::post('/personalizar_inventario/organizar_store', 'CamposPersonalizadosInventarioController@organizar_store')->name('personalizar_inventario.organizar_store');
 		Route::post('/personalizar_inventario/{id}/act_desc', 'CamposPersonalizadosInventarioController@act_desc')->name('personalizar_inventario.act_desc');
 		Route::resource('personalizar_inventario', 'CamposPersonalizadosInventarioController');
-		
+
 		/* SERVICIOS */
 		Route::get('/servicios', 'ConfiguracionController@servicios')->name('configuracion.servicios');
 		Route::get('/servicio/create', 'ConfiguracionController@servicios_create')->name('servicio.create');
@@ -1008,7 +1009,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/servicio/{id}/edit', 'ConfiguracionController@servicios_edit')->name('servicio.edit');
 		Route::post('/servicio/{id}/edit', 'ConfiguracionController@servicios_update')->name('servicio.update');
 		Route::delete('/servicio/{id}', 'ConfiguracionController@servicios_destroy')->name('servicio.destroy');
-		
+
 		Route::get('usuarios/ingresar/{email}','UsuariosController@ingresar')->name('usuario.ingresarR');
 
 		/*ORGANIZAR CAMPO TABLAS*/
@@ -1092,7 +1093,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('/storePageLength', 'EmpresasController@storePageLength')->name('empresas.storePageLength');
         Route::post('/storePeriodoFacturacion', 'EmpresasController@storePeriodoFacturacion')->name('empresas.storePeriodoFacturacion');
         Route::get('/storeFormatoImpresion', 'EmpresasController@storeFormatoImpresion')->name('empresas.storeFormatoImpresion');
-		
+
 		//DOCUMENTO SOPORTE.
         Route::get(
             '/numeraciones-equivalente',
@@ -1241,6 +1242,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/{radicados}/{state}/state_lote', 'RadicadosController@state_lote')->name('radicados.state_lote');
             Route::get('/{radicados}/destroy_lote', 'RadicadosController@destroy_lote')->name('radicados.destroy_lote');
             Route::get('{id}/log', 'RadicadosController@log')->name('radicados.log');
+
+            // Ruta temporal
+            Route::get('find-clients', [RadicadosController::class, 'findClients']);
         });
 		Route::resource('radicados', 'RadicadosController');
 
@@ -1250,7 +1254,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    	Route::post('/solicitudes/status/{id}', 'SolicitudesController@status')->name('solicitudes.status');
     	});
     	Route::resource('solicitudes', 'SolicitudesController');
-    	
+
     //CONTRATOS
 
 	Route::group(['prefix' => 'contratos'], function() {
@@ -1290,7 +1294,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	});
 
 	Route::resource('contratos', 'ContratosController');
-	
+
 	//SERVIDORES
 
 	Route::group(['prefix' => 'servidores'], function() {
@@ -1298,7 +1302,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 		Route::get('{id}/grafica', 'ServidoresController@grafica')->name('servidores.grafica');
 	});
 	Route::resource('servidores', 'ServidoresController');
-	
+
 	//ASIGNACIONES
 
 	Route::group(['prefix' => 'asignaciones'], function() {
@@ -1309,21 +1313,21 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::get('{id}/generar_link', 'AsignacionesController@generar_link')->name('asignaciones.generar_link');
 	});
 	Route::resource('asignaciones', 'AsignacionesController');
-	
+
 	//MENSAJERÍA
     	Route::group(['prefix' => 'mensajeria'], function() {
 	    	Route::post('{id}/status', 'MensajeriaController@status')->name('mensajeria.status');
 	    	Route::get('enviar', 'MensajeriaController@enviar')->name('mensajeria.enviar');
     	});
     	Route::resource('mensajeria', 'MensajeriaController');
-    	
+
     //NOTIFICACIONES
     	Route::group(['prefix' => 'notificaciones'], function() {
 	    	Route::post('{id}/status', 'NotificacionesController@status')->name('notificaciones.status');
 	    	Route::get('enviar', 'NotificacionesController@enviar')->name('notificaciones.enviar');
     	});
     	Route::resource('notificaciones', 'NotificacionesController');
-    	
+
     //WIFI
         Route::group(['prefix' => 'wifi'], function() {
 		    Route::post('/{id}/status', 'WifiController@status')->name('wifi.status');
@@ -1334,10 +1338,10 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    Route::resource('wifi', 'WifiController');
 	//AUDITORIA
 	Route::resource('auditorias', 'AuditoriasController');
-	
+
 	//PQRS
 		Route::resource('pqrs', 'PqrsController');
-		
+
 	//PLANES DE VELOCIDAD
         Route::group(['prefix' => 'planes-velocidad'], function (){
 	        Route::get('/plan-velocidad/{id}/status', 'PlanesVelocidadController@status')->name('planes-velocidad.status');
@@ -1348,9 +1352,9 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/{planes}/{state}/state_lote', 'PlanesVelocidadController@state_lote')->name('planes-velocidad.state_lote');
             Route::get('/{planes}/destroy_lote', 'PlanesVelocidadController@destroy_lote')->name('planes-velocidad.destroy_lote');
 	    });
-	    
+
 	    Route::resource('planes-velocidad', 'PlanesVelocidadController');
-	    
+
 	// MIKROTIK
 	    Route::group(['prefix' => 'mikrotik'], function (){
 	        Route::get('/mikrotik/{id}/conectar', 'MikrotikController@conectar')->name('mikrotik.conectar');
@@ -1366,18 +1370,18 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/{mikrotik}/destroy_lote', 'MikrotikController@destroy_lote')->name('mikrotik.destroy_lote');
             Route::get('/{mikrotik}/arp', 'MikrotikController@arp')->name('mikrotik.arp');
 	    });
-	    
+
 	    Route::resource('mikrotik', 'MikrotikController');
-	    
+
 	// PLANTILLAS
 	    Route::group(['prefix' => 'plantillas'], function (){
 	        Route::post('/{id}/act_desc', 'PlantillasController@act_desc')->name('plantillas.act_desc');
 	        Route::get('/envio', 'PlantillasController@envio')->name('plantillas.envio');
 	        Route::post('/envio_aviso', 'PlantillasController@envio_aviso')->name('plantillas.envio_aviso');
 	    });
-	    
+
 	    Route::resource('plantillas', 'PlantillasController');
-	    
+
 	// AVISOS
 	    Route::group(['prefix' => 'avisos'], function (){
 	        Route::get('/envio/sms', 'AvisosController@sms')->name('avisos.envio.sms');
@@ -1387,43 +1391,43 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	        Route::get('/envio/{id}/sms', 'AvisosController@sms')->name('avisos.envio.sms.cliente');
             Route::post('/envio_personalizado', 'AvisosController@envio_personalizado')->name('avisos.envio_personalizado');
 	    });
-	    
+
 	    Route::resource('avisos', 'AvisosController');
 
 		// Editar Mensajes que se generan automaticamente en el sistema
 		Route::get('/avisos-automaticos', 'AvisosController@automaticos')->name('avisos.automaticos');
 		Route::post('/guardar-avisos-automaticos', 'AvisosController@storeAutomaticos')->name('store.avisos.automaticos');
-	    
+
 	// PROMESAS DE PAGO
 	    Route::group(['prefix' => 'promesas-pago'], function (){
 	        Route::get('{id}/json', 'PromesasPagoController@json')->name('promesas.json');
 	        Route::get('pdf/{id}/{name}', 'PromesasPagoController@Imprimir')->name('promesas.imprimir');
 	    });
-	    
+
 	    Route::resource('promesas-pago', 'PromesasPagoController');
-	    
+
 	// NODOS
 	    Route::group(['prefix' => 'nodos'], function (){
 	        Route::get('{id}/act_des', 'NodosController@act_des')->name('nodos.act_des');
             Route::get('/{nodos}/{state}/state_lote', 'NodosController@state_lote')->name('nodos.state_lote');
             Route::get('/{nodos}/destroy_lote', 'NodosController@destroy_lote')->name('nodos.destroy_lote');
 	    });
-	    
+
 	    Route::resource('nodos', 'NodosController');
-	
+
 	// ACCESS POINT (AP)
 	    Route::group(['prefix' => 'access-point'], function (){
 	        Route::get('{id}/act_des', 'APController@act_des')->name('access-point.act_des');
             Route::get('/{ap}/{state}/state_lote', 'APController@state_lote')->name('access-point.state_lote');
             Route::get('/{ap}/destroy_lote', 'APController@destroy_lote')->name('access-point.destroy_lote');
 	    });
-	    
+
 	    Route::resource('access-point', 'APController');
-	    
+
 	//PING
 	    Route::get('/notificacionPing', 'PingsController@notificacionPing')->name('pings.notificacion');
 	    Route::resource('pings', 'PingsController');
-	    
+
     // GRUPOS DE CORTE
 	    Route::group(['prefix' => 'grupos-corte'], function (){
 	        Route::get('{id}/act_des', 'GruposCorteController@act_des')->name('grupos-corte.act_des');
@@ -1433,7 +1437,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('/opcionmasiva', 'GruposCorteController@opcion_masiva')->name('grupos-corte.opcionmasiva');
 			Route::get('/estados-del-corte/{idGrupo?}/{fecha?}', 'GruposCorteController@estadosGruposCorte')->name('grupos-corte.estados');
 	    });
-	    
+
 	    Route::resource('grupos-corte', 'GruposCorteController');
 
 	// DESCUENTOS

@@ -1105,4 +1105,15 @@ class RadicadosController extends Controller{
             ->rawColumns(['created_at', 'id_usuario', 'accion'])
             ->toJson();
     }
+
+    /**
+     * Esta función debería moverse a la sección de API, para que se use en otros
+     * lugares, pero por el momento se quedará aquí.
+     **/
+    public function findClients() {
+        return Contacto::where("status", 1)
+            ->where("empresa", Auth::user()->empresa)
+            ->orderBy("nombre", "asc")
+            ->paginate();
+    }
 }
