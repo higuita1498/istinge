@@ -138,13 +138,13 @@
         @if($ingreso->tipo == 1 || $ingreso->tipo == 2) Ingreso: @elseif($ingreso->tipo == 3) Cuenta de Cobro: @endif No. {{$ingreso->nro}}<br>
         Fecha Expedición: {{date('d/m/Y', strtotime($ingreso->fecha))}}<br>
         Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->ingresofactura()->factura()->vencimiento))}}<br>
-        Estado: @if($ingreso->estatus == 0) Cerrada @endif @if($ingreso->estatus == 1) Abierta @endif @if($ingreso->estatus == 2) Anulada @endif<br><br>
+        Estado: @if($ingreso->ingresofactura()->factura()->estatus == 0) Cerrada @endif @if($ingreso->ingresofactura()->factura()->estatus == 1) Abierta @endif @if($ingreso->ingresofactura()->factura()->estatus == 2) Anulada @endif<br><br>
         
         Recibo de Caja: No. {{ $ingreso->nro }}<br>
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->fecha)) }}<br>
         Cuenta: {{ $ingreso->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->metodo_pago() }}<br>
-        {{-- Periodo: {{$ingreso->periodoCobrado('true')}}<br> --}}
+        Periodo: {{$ingreso->ingresofactura()->factura()->periodoCobrado('true')}}<br> 
         @if($ingreso->notas) Notas: {{ $ingreso->notas }} @endif
     </div>
     
