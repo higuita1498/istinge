@@ -135,9 +135,9 @@
     </div>
     
     <div style="width: 100%; text-align: center; display: inline-block;">
-        @if($ingreso->tipo == 1 || $ingreso->tipo == 2) Factura de Venta: @elseif($ingreso->tipo == 3) Cuenta de Cobro: @endif No. {{$ingreso->codigo}}<br>
+        @if($ingreso->tipo == 1 || $ingreso->tipo == 2) Ingreso: @elseif($ingreso->tipo == 3) Cuenta de Cobro: @endif No. {{$ingreso->nro}}<br>
         Fecha Expedición: {{date('d/m/Y', strtotime($ingreso->fecha))}}<br>
-        Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->vencimiento))}}<br>
+        Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->ingresofactura()->factura()->vencimiento))}}<br>
         Estado: @if($ingreso->estatus == 0) Cerrada @endif @if($ingreso->estatus == 1) Abierta @endif @if($ingreso->estatus == 2) Anulada @endif<br><br>
         
         Recibo de Caja: No. {{ $ingreso->nro }}<br>
