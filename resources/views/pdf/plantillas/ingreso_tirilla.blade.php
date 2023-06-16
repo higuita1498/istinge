@@ -164,6 +164,18 @@
                     <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 </tr>
             @endforeach
+            
+            <!-- calculando impuesto -->
+            @foreach($items as $item)
+                @if($item->impuesto != 0)
+                <tr>
+                    <td>IVA {{round($item->impuesto)}} %</td>
+                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear( ($item->impuesto * $item->precio) / 100 )}}</td>
+                </tr>
+                @endif
+            @endforeach
+            
+            
             </tbody>
         </table>
     </div>
@@ -216,11 +228,8 @@
     <div style="width: 100%; text-align: center; display: inline-block;">
         <table  style="width: 100%;">
             <tbody>
-                {{-- <tr>
-                    <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
-                </tr> --}}
                 <tr>
-                    <td style="text-align: center;"><br>INTEGRA</td>
+                    <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">INTEGRA S.A.S</td>
