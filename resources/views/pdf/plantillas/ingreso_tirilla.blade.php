@@ -228,9 +228,11 @@
     <div style="width: 100%; text-align: center; display: inline-block;">
         <table  style="width: 100%;">
             <tbody>
+                @if(isset($resolucion->resolucion))
                 <tr>
                     <td style="text-align: center;">RESOLUCIÓN DIAN #{{$resolucion->resolucion}}<br>RANGO DEL {{$resolucion->inicioverdadero}} HASTA {{$resolucion->final}}.</td>
                 </tr>
+                @endif
                 <tr>
                     <td style="text-align: center;">INTEGRA S.A.S</td>
                 </tr>

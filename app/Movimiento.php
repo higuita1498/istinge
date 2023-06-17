@@ -69,7 +69,9 @@ class Movimiento extends Model
             return Gastos::find($this->id_modulo)->detalle();
         }
         else if($this->modulo==6){
-            return "saldo a favor en " . Ingreso::find($this->id_modulo)->detalle();
+            if(Ingreso::find($this->id_modulo)){
+                return "saldo a favor en " . Ingreso::find($this->id_modulo)->detalle();
+            }
         }
         if (GastosRecurrentes::find($this->id_modulo)) {
                 return GastosRecurrentes::find($this->id_modulo)->detalle();    
