@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PHPExcel;
 
+use Exception;
+
 include_once app_path().'/../public/PHPExcel/Classes/PHPExcel.php';
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Alignment;
@@ -1032,7 +1034,6 @@ class ContactosController extends Controller
                 }
 
                 if ($request->fk_idmunicipio != '') {
-                    error_log($request->fk_idmunicipio);
                     $request->fk_idmunicipio = DB::table('municipios')->where('nombre', $request->fk_idmunicipio)->first()->id;
                 }
 
