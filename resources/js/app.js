@@ -1,6 +1,7 @@
 import { createApp } from "vue/dist/vue.esm-bundler";
 
 import RadicadosCreate from "@/Pages/Radicados/Create.vue";
+import Formulario13Form from "@/Pages/Reportes/Formulario13/Partials/Formulario13Form.vue";
 
 // Como no nos es posible por el momento usar un framework como Inertia.js, se
 // tiene que hacer más o menos de esta forma la adición de componentes de Vue
@@ -14,6 +15,9 @@ const root = document.getElementById(VUE_PAGES_ROOT_ID);
 
 if (root) {
     createApp({
-        components: { RadicadosCreate },
+        components: {
+            RadicadosCreate,
+            Formulario13Form,
+        },
     }).mount(root);
 }
