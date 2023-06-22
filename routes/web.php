@@ -1144,7 +1144,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function () {
         Route::get('/balances', 'ReportesController@balance')->name('reportes.balance');
 
         Route::get('/formulario-1-3', [ReportesController::class, 'formulario13'])->name('reportes.formulario13');
-        Route::post('/formulario-1-3', [ReportesController::class, 'generateFormulario13'])->name('reportes.generateFormulario13');
+        Route::get('/formulario-1-3/generate', [ReportesController::class, 'generateFormulario13'])->name('reportes.generateFormulario13');
     });
     //Exportar
     Route::group(['prefix' => 'exportar'], function () {

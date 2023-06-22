@@ -27,9 +27,7 @@ const { value: initialDate } = useField<string>("initialDate");
 const { value: finalDate } = useField<string>("finalDate");
 
 const onSubmit = form.handleSubmit(async (values) => {
-    const response = await axios.post("formulario-1-3", {
-        values,
-    });
+    window.open("formulario-1-3/generate");
 });
 </script>
 

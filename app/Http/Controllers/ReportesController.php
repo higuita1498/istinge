@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Log;
 use App\Mikrotik;
 use App\PucMovimiento;
 use App\Servidor;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CRC\Formularios\Formulario13Export;
 
 class ReportesController extends Controller
 {
@@ -2782,6 +2784,6 @@ class ReportesController extends Controller
     }
 
     public function generateFormulario13(Request $request) {
-        dd($request->request);
+        return Excel::download(new Formulario13Export, 'formulario1-3.xlsx');
     }
 }
