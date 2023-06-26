@@ -2784,6 +2784,14 @@ class ReportesController extends Controller
     }
 
     public function generateFormulario13(Request $request) {
-        return Excel::download(new Formulario13Export, 'formulario1-3.xlsx');
+        $validated = $request->validate([
+            'initialDate' => 'nullable|date',
+            'finalDate' => 'nullable|date',
+        ]);
+
+        return Excel::download(
+            new Formulario13Export($validated['initialDate'], $validated['finalDate']),
+            'formulario1-3.xlsx'
+        );
     }
 }
