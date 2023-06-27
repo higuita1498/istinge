@@ -676,7 +676,11 @@
     		cargando(true);
     		if (window.location.pathname.split("/")[1] === "software") {
     			var url = `/software/empresa/configuracion/storePeriodoFacturacion`;
-    		}else{
+    		}
+			else if(window.location.pathname.split("/")[1] === "portal"){
+				var url = `/portal/empresa/configuracion/storePeriodoFacturacion`;
+			}
+			else{
     			var url = `/empresa/configuracion/storePeriodoFacturacion`;
     		}
     		$.ajax({
