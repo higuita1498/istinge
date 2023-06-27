@@ -228,6 +228,7 @@
     'translation.loader' => 'Illuminate\\Translation\\TranslationServiceProvider',
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
+    'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Arcanedev\\LogViewer\\Contracts\\LogViewer' => 'Arcanedev\\LogViewer\\Providers\\DeferredServicesProvider',
     'Arcanedev\\LogViewer\\Contracts\\Utilities\\LogLevels' => 'Arcanedev\\LogViewer\\Providers\\DeferredServicesProvider',
     'Arcanedev\\LogViewer\\Contracts\\Utilities\\LogStyler' => 'Arcanedev\\LogViewer\\Providers\\DeferredServicesProvider',
