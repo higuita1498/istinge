@@ -343,7 +343,7 @@
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
-                <td colspan="">{{$factura->cliente()->direccion}}</td>
+                <td colspan="">{{isset($factura->contract()->address_street) ? $factura->contract()->address_street : $factura->cliente()->direccion}}</td>
             </tr>
             <tr>
                 <th class="right smalltd">CIUDAD/DEP</th>
