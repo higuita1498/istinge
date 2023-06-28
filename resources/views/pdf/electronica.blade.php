@@ -534,7 +534,8 @@
                 </tr>
                 <tr class="tr-estadocuenta-precio">
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
+                {{-- <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td> --}}
+                <td></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
