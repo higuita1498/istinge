@@ -343,7 +343,7 @@
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
-                <td colspan="">{{$factura->cliente()->direccion}}</td>
+                <td colspan="">{{isset($factura->contract()->address_street) ? $factura->contract()->address_street : $factura->cliente()->direccion}}</td>
             </tr>
             <tr>
                 <th class="right smalltd">CIUDAD/DEP</th>
@@ -534,7 +534,8 @@
                 </tr>
                 <tr class="tr-estadocuenta-precio">
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
+                {{-- <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td> --}}
+                <td><li>$0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
@@ -625,7 +626,8 @@
                 </tr>
                 <tr class="tr-estadocuenta-precio">
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
+                {{-- <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td> --}}
+                <td><li>$0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
@@ -695,7 +697,8 @@
 
     <div class="nota-content">
         <p>
-            <b>Medios de pago:</b> Bancolombia, app.comunicarsas.online , opción asociar contrato - paga tu factura.
+            <b>Medios de pago:</b>
+             {{-- Bancolombia, app.comunicarsas.online , opción asociar contrato - paga tu factura. --}}
         </p>
     </div>
 

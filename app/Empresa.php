@@ -5,6 +5,7 @@ namespace App;
 use App\Model\Gastos\NotaDedito;
 use App\Model\Ingresos\Factura;
 use App\Model\Ingresos\NotaCredito;
+use App\Model\Nomina\NominaConfiguracionCalculos;
 use Illuminate\Database\Eloquent\Model;
 use App\User; use App\TipoIdentificacion;
 use Auth; use DB; use StdClass;
