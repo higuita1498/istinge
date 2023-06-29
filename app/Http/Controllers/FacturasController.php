@@ -1198,6 +1198,7 @@ class FacturasController extends Controller{
                 $factura->ordencompra    = $request->ordencompra;
                 $factura->cuenta_id    = $request->relacion;
                 $factura->periodo_facturacion = $request->periodo_facturacion;
+                $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
                 $factura->save();
 
                 $inner=array();
