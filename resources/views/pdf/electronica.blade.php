@@ -698,7 +698,7 @@
     <div class="nota-content">
         <p>
             <b>Medios de pago:</b>
-             {{-- Bancolombia, app.comunicarsas.online , opción asociar contrato - paga tu factura. --}}
+             {{$empresa->medios_pago}}
         </p>
     </div>
 

@@ -340,6 +340,7 @@ class ConfiguracionController extends Controller
     $empresa->notas_fact=$request->notas_fact;
     $empresa->edo_cuenta_fact=$request->edo_cuenta_fact;
     $empresa->tirilla = !$request->tirilla ? 0 : 1;
+    $empresa->medios_pago = $request->medios_pago;
     $empresa->save();
     $mensaje='Se ha modificado satisfactoriamente la configuración de facturas de venta';
     return redirect('empresa/configuracion/datos')->with('success', $mensaje);

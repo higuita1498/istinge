@@ -36,6 +36,17 @@
     </div>
 
   </div>
+
+  <div class="row">
+    <div class="col-md-12 form-group">
+      <label class="control-label">Medios de pago <a><i data-tippy-content="Define los medios de pago que apareceran en el pdf de las facturas." class="icono far fa-question-circle"></i></a></label>
+            <textarea  class="form-control form-control-sm min_max_100" name="medios_pago" >{{$empresa->medios_pago}}</textarea>
+      <span class="help-block error">
+        <strong>{{ $errors->first('medios_pago') }}</strong>
+      </span>
+    </div>
+  </div>
+
     <div class="row">
     <div class="col-sm-12">
       <div class="form-check form-check-flat mt-0">
