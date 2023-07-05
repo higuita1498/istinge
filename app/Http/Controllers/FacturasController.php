@@ -1233,9 +1233,10 @@ class FacturasController extends Controller{
                     $items->impuesto=$impuesto->porcentaje;
                     $items->cant=$request->cant[$i];
                     $desc = 0;
+                    //El descuneto no se debe aplicar sin ser aprobado.
                     if(isset($request->desc[$i])){             
                         $desc=$request->desc[$i];
-                        $items->desc=$desc;
+                        // $items->desc=$desc;
                     }
                     $items->save();
                     $inner[]=$items->id;
