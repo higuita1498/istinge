@@ -3510,8 +3510,17 @@ class FacturasController extends Controller{
         exit;
     }
 
-    public function whatsapp($id){
+    public function whatsapp($id,Request $request ){
         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'WHATSAPP')->where('status', 1)->first();
+        $instancia = DB::table("instancia")
+                                        ->first();
+        if(is_null($instancia) || empty($instancia)){
+            return back()->with('danger', 'AUN NO HA CREADO UNA INSTANCIA CON WHATSAPP, POR FAVOR CREE UNA Y CONECTESE PARA HABILITAR ESTA OPCIÓN');
+        }else{
+            if($instancia->status == "0"){
+                return back()->with('danger', 'LA INSTANCIA DE WHATSAPP ESTA DESCONECTADA, CONECTESE A WHATSAPP Y VUELVA A INTENTARLO');
+            }
+        }
         if($servicio){
             if($servicio->api_key && $servicio->numero){
                 $factura = Factura::find($id);
@@ -3530,23 +3539,19 @@ class FacturasController extends Controller{
                 $numero = str_replace(' ','',$numero);
                 $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
 
-                $url='https://api.callmebot.com/whatsapp.php?source=php&phone=+'.$numero.'&text='.urlencode($mensaje).'&apikey='.$servicio->api_key;
-
-                if($ch = curl_init($url)){
-                    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                    $html = curl_exec($ch);
-                    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                    curl_close($ch);
-
-                    if($status == 200){
-                        return back()->with('success', 'EL MENSAJE VÍA WHATSAPP HA SIDO ENVIADO DE MANERA EXITOSA');
-                    }else{
-                        return back()->with('danger', 'EL MENSAJE VÍA WHATSAPP NO HA PODIDO SER ENVIADO');
-                    }
-                }else{
-                    return back()->with('danger', 'EL MENSAJE VÍA WHATSAPP NO HA PODIDO SER ENVIADO');
-                }
+                $request = new Request();
+                $fields = [
+                    "action"=>"sendMessage",
+                    "id"=>$numero."@c.us",//@g.us
+                    "message"=>$mensaje,
+                    "cron"=>"true"
+                ];
+                $request->merge($fields); 
+                $controller = new CRMController();
+                $respuesta = $controller->whatsappActions($request);
+                return back()->with('success', "EL MENSAJE HA SIDO ENVIADO DE MANERA EXITOSA");
+                
+                
             }else{
                 return back()->with('danger', 'DISCULPE, EL SERVICIO CALLMEBOT NO ESTÁ CONFIGURADO. POR FAVOR CONFIGURE PARA DISFRUTAR DEL SERVICIO');
             }

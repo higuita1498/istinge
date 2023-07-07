@@ -36,6 +36,11 @@ Route::get('getSubnetting/{ip_address}/{prefijo}', 'Controller@getSubnetting');
 Route::get('habilitarContratos/{fecha}', 'CronController@habilitarContratos');
 Route::get('getMAC/{mk}/{ip}', 'Controller@getMAC');
 
+/* api whatsive */
+
+Route::post('whatsapp/{action}', 'WhatsappController@whatsappApi');
+Route::post('uploadfile', 'WhatsappController@whatsappUpload')->name("uploadFile");
+
 /** EVENTOS WOMPI **/
 Route::post('pagos/wompi', 'CronController@eventosWompi');
 

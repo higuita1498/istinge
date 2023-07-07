@@ -349,6 +349,138 @@
         <script src="{{asset('js/dian.js')}}"></script>
         <script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
         <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
+
+        <script src="https://cdn.socket.io/4.3.1/socket.io.min.js"></script>
+        <script src="{{asset('gritter/js/jquery.gritter.min.js')}}"></script>
+        <div class="d-none" id="audioContainer"></div>
+        <script type="text/javascript">
+            const audioElement = new Audio('{{asset("images/alerta.mp3")}}');
+            const audioElementA = new Audio('{{asset("images/asig.mp3")}}');
+            var _token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            @php
+                use Illuminate\Support\Facades\DB;
+                $instancia = DB::table("instancia")
+                                ->first();
+                
+            @endphp
+            
+            @if(!is_null($instancia??null) && !empty($instancia??""))
+                
+                const socketSerVER = io.connect('http://api.whatsive.com:{{$instancia->port}}', {
+                    'reconnection': true,
+                    'reconnectionDelay': 2000,
+                    'reconnectionDelayMax': 2000,
+                    'reconnectionAttempts': 5
+                });
+                socketSerVER.on('changeoperador', function(data) {
+                    if (data.tecnico == "{{$user = Auth::user()->id}}") {
+                        audioElementA.play();
+                        $.gritter.add({
+                            title: 'CHAT ASIGNADO',
+                            text: 'El chat  <b>' + data.cliente + '</b> te fué asignado.',
+                            sticky: true,
+                            time: '',
+                            class_name: 'alerta-whatsapp'
+                        });
+                    }
+                })
+
+                socketSerVER.on('newmessagewat', function(datos) {
+
+                    if(datos?.author!=null){
+
+                    }else{
+                        
+                        audioElement.play();
+                        
+                        let typechats = {
+                            "video": "  <span class = 'fas fa-video fa-lg' ></span> Video",
+                            "ptt": "  <span class = 'fas fa-microphone fa-lg' ></span> Audio",
+                            "audio": "  <span class = 'fas fa-microphone fa-lg' ></span> Audio",
+                            "image": "  <span class = 'fas fa-image fa-lg' ></span> Imagen",
+                            "sticker": "  <span class = 'fas fa-file fa-lg' ></span> Sticker",
+                            "document": "  <span class = 'fas fa-file-archive fa-lg' ></span> Archivo",
+                            "location": "  <span class = 'fas fa-map fa-lg' ></span> Ubicacion",
+                            "call_log": "  <span style = 'color:red' class = 'fa fa-phone fa-lg' ></span> Llamada perdida ",
+                            "e2e_notification" :"Respuesta automatica",
+                            "ciphertext" : "  <span class = 'fas fa-microphone fa-lg' ></span> Audio",
+                            "revoked" : "<span class = 'fa fa-ban fa-lg' ></span> Elimino el mensaje",
+                            "vcard" : "<span class = 'fa fa-user fa-lg' ></span> Contacto",
+                            "notification_template" : "<span class = 'fa fa-clock-o fa-lg' ></span> Aviso whatsapp",
+                            "gp2" : "<span class = 'fa fa-clock-o fa-lg' ></span> Aviso whatsapp",
+                        };
+                        if(!datos.isStatus && (datos.type!="e2e_notification" && datos.type!="notification_template" && datos.type!="g2p")){
+                            if(datos.type != "chat"){
+                                datos._data.body = typechats[datos.type];
+                            }
+                            if(!datos?.picurl){
+                                datos.picurl = "https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png";
+                            }
+                            nombre = datos.to.replace("@c.us","");
+                            if(datos?.contact){
+                                datos._data.notifyName = datos.contact.name;
+                            }
+                            alertawhat(
+                                {
+                                    nombre:datos._data.notifyName,
+                                    mensaje:datos._data.body,
+                                    avatar:datos.picurl
+                                }
+                            );
+                        }
+                    }
+                })
+                socketSerVER.on('closesion', function(data) {
+                    swal({
+                        title: "Se cerro la sesion de Whatsapp ",
+                        text: "Vuelva a conectar el dispositivo para poder seguir usando Whatsapp",
+                        type: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#00ce68',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: confirmar,
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        location.reload();
+                    });
+                });
+                socketSerVER.on('disconnected', function(data) {
+                    swal({
+                        title: "Se cerro la sesion de Whatsapp ",
+                        text: "Vuelva a conectar el dispositivo para poder seguir usando Whatsapp",
+                        type: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#00ce68',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: "confirmar",
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        location.reload();
+                    });
+                });
+            
+            @endif
+            function alertawhat(data) {
+                $.gritter.add({
+                    title: data.nombre,
+                    text: data.mensaje,
+                    image: '<img src="' + data.avatar + '" >',
+                    sticky: false,
+                    time: 7000,
+                    class_name: 'alerta-whatsapp'
+                });
+            }
+            $( document ).ready(function() {
+                
+                $("#{{$seccion}}").addClass("active");
+                if ($("#{{$seccion}}").find('.sub-menu').length) {
+                    $("#{{$seccion}}").find('.collapse').addClass('show');
+                }
+                @if(isset($subseccion))
+                    $("#{{$subseccion}}").addClass("active");
+                @endif
+            });
+        </script>
         
         <script type="text/javascript">
             $( document ).ready(function() {

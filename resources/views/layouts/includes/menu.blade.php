@@ -296,6 +296,11 @@
                             <a class="nav-link" href="{{route('crm.etiquetas')}}">Etiquetas</a>
                         </li>
                     @endif
+                    @if(isset($_SESSION['permisos']['744']))
+                        <li class="nav-item" id="crm_whatsapp">
+                            <a class="nav-link" href="{{route('crm.whatsapp')}}">Clientes Whatsapp</a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </li>

@@ -522,6 +522,56 @@ class CronController extends Controller
 
             ## ENVIO CORREO ##
 
+            // envio de mensajes por whatsapp // 
+                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+
+                if($plantilla){
+                    $mensaje = str_replace('{{ $company }}', Auth::user()->empresa()->nombre, $plantilla->contenido);
+                    $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
+                    $mensaje = str_replace('{{ $factura->codigo }}', $factura->codigo, $mensaje);
+                    $mensaje = str_replace('{{ $factura->parsear($factura->total()->total) }}', $factura->parsear($factura->total()->total), $mensaje);
+                }else{
+                    $mensaje = Auth::user()->empresa()->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+                }
+
+                $numero = str_replace('+','',$factura->cliente()->celular);
+                $numero = str_replace(' ','',$numero);
+                $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
+
+
+                $fields = [
+                    "action"=>"sendFile",
+                    "id"=>$numero."@c.us",
+                    "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                    "mime"=>"application/pdf",
+                    "namefile"=>$factura->codigo,
+                    "message"=>$mensaje,
+                    "cron"=>"true"
+                ];
+
+                $request = new Request();
+                $request->merge($fields); 
+                $controller = new CRMController();
+
+                $instancia = DB::table("instancia")
+                                        ->first();
+                if(!is_null($instancia) && !empty($instancia)){
+                    if($instancia->status == "1"){
+                        $respuesta = $controller->whatsappActions($request); //ENVIA EL MENSAJE
+                    }else{
+                        //no se envia
+                    }
+                }else{
+                        //no se envia
+                }
+
+
+           
+
+           
+
+        // fin de envio de mensajes por whatsapp
+
             if (file_exists("CrearFactura.txt")){
                 $file = fopen("CrearFactura.txt", "a");
                 fputs($file, "-----------------".PHP_EOL);
