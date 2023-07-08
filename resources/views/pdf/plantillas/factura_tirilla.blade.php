@@ -141,7 +141,7 @@
         Estado: @if($factura->estatus == 0) Cerrada @endif @if($factura->estatus == 1) Abierta @endif @if($factura->estatus == 2) Anulada @endif<br><br>
         
         @if($ingreso != null)
-            Recibo de Caja: No. {{ $ingreso}}<br>
+            Recibo de Caja: No. {{ $ingreso->nro }}<br>
             Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
             Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
             Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
