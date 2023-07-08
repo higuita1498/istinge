@@ -140,12 +140,15 @@
         Fecha Vencimiento: {{date('d/m/Y', strtotime($factura->vencimiento))}}<br>
         Estado: @if($factura->estatus == 0) Cerrada @endif @if($factura->estatus == 1) Abierta @endif @if($factura->estatus == 2) Anulada @endif<br><br>
         
-        Recibo de Caja: No. {{ $ingreso->ingreso()->nro }}<br>
-        Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
-        Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
-        Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
-        Periodo: {{$factura->periodoCobrado('true')}}<br>
-        @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
+        @if($ingreso != null)
+            Recibo de Caja: No. {{ dd($ingreso)}}<br>
+            Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
+            Cuenta: {{ $ingreso->ingreso()->cuenta()->nombre }}<br>
+            Método de Pago: {{ $ingreso->ingreso()->metodo_pago() }}<br>
+            Periodo: {{$factura->periodoCobrado('true')}}<br>
+            @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
+        @endif
+       
     </div>
     
     <br>
@@ -187,6 +190,7 @@
                         @endif
                     @endforeach
                 @endif
+                @if($ingreso != null)
                 <tr>
                     <td style="width: 70%;">Monto a Pagar:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago())}} </td>
@@ -195,6 +199,12 @@
                     <td style="width: 70%;">Monto Pagado:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->pago() + $ingreso->ingreso()->valor_anticipo)}} </td>
                 </tr>
+                @else
+                  <tr>
+                    <td style="width: 100%; text-align:right;">Pagado con saldo a favor</td>
+                </tr>
+                @endif
+                @if($ingreso != null)
                 @if($factura->total()->total - $ingreso->pago() > 0)
                 <tr>
                     <td style="width: 70%;">Monto Pendiente:</td>
@@ -206,6 +216,7 @@
                     <td style="width: 70%;">Saldo a favor generado:</td>
                     <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->ingreso()->valor_anticipo)}} </td>
                 </tr>
+                @endif
                 @endif
             </tbody>
         </table>
