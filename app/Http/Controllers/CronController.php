@@ -36,6 +36,7 @@ use App\ServidorCorreo;
 use App\Integracion;
 use App\PlanesVelocidad;
 use App\Model\Ingresos\FacturaRetencion;
+use App\Plantilla;
 use App\Producto;
 use Auth;
 
