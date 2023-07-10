@@ -3915,7 +3915,7 @@ class ExportarReportesController extends Controller
             ->where('fecha', '>=', $dates['inicio'])
             ->where('fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa)
-            ->whereIn('movimientos.banco', [$puntos])
+            // ->whereIn('movimientos.banco', [$puntos])
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
 
@@ -4027,7 +4027,7 @@ class ExportarReportesController extends Controller
             ->where('fecha', '>=', $dates['inicio'])
             ->where('fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa)
-            ->whereIn('movimientos.banco', [$puntos])
+            // ->whereIn('movimientos.banco', [$puntos])
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
 

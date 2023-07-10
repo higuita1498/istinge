@@ -238,6 +238,7 @@ class CRMController extends Controller
         return [$chats,$users];
     }
     public function whatsapp(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
         $instancia = DB::table("instancia")
                             ->first();
        
