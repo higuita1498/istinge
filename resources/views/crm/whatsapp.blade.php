@@ -2373,7 +2373,8 @@
                     }
                 });
                 socketSerVER.on('newmessagewat', function(datos) {
-                    if(datos.to.includes("@g.us")){
+    
+                    if(datos.from.includes("@g.us")){
                         return;
                     }
                     
@@ -2384,9 +2385,11 @@
                         if(!datos?.picurl){
                             datos.picurl = "https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png";
                         }
-                        nombre = datos.to.replace("@c.us","");
+                        nombre = datos.from.replace("@c.us","");
                         if(datos?.contact){
-                            nombre = datos.contact.name;
+                            if(datos.contact?.name){
+                                nombre = datos.contact.name;
+                            }
                         }
                         let newcontacto = `
                             <li class="person" data-id="`+datos.from+`" data-tecnico="0" data-estado="0" data-time="`+datos.timestamp+`" > `+` 
