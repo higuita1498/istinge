@@ -1,2 +1,0 @@
-<a href="javascript:editEtiqueta({{ $etiqueta->id}}, '{{ $etiqueta->nombre }}', '{{ $etiqueta->color}}')" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
-<button type="button"  title="Eliminar Etiqueta" class="btn btn-outline-danger btn-icons" onclick="destroyEtiqueta({{ $etiqueta->id}}, {{$etiqueta->radicados->count()}}, false)"><i class="fas fa-times"></i></button>

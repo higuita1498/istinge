@@ -1,2 +1,0 @@
-<a href="{{ route('contratos.grafica', $contrato )}}" target="_blank" class="btn btn-outline-dark btn-icons" title="Ver Gráfica de Conexión"><i class="fas fa-chart-area"></i></a>
-<a href="{{ route('contratos.conexion', $contrato )}}" target="_blank" class="btn btn-outline-success btn-icons" title="Ping de Conexión"><i class="fas fa-plug"></i></a>

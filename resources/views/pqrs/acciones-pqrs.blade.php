@@ -1,1 +1,0 @@
-<a href="{{route('pqrs.show',$id)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
