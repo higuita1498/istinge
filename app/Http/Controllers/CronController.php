@@ -401,7 +401,7 @@ class CronController extends Controller
 
             ## ENVIO CORREO ##
 
-            $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', date('Y-m-d'))->where('correo_sendinblue', 0)->get();
+            
             // foreach ($facturas as $factura) {
             //     $empresa = Empresa::find($factura->empresa);
             //     $emails  = $factura->cliente()->email;
@@ -524,8 +524,9 @@ class CronController extends Controller
             ## ENVIO CORREO ##
 
             // envio de mensajes por whatsapp // 
-                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
 
+                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+                $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', date('Y-m-d'))->where('correo_sendinblue', 0)->get();
                 if($plantilla){
                     $mensaje = str_replace('{{ $company }}', Auth::user()->empresa()->nombre, $plantilla->contenido);
                     $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
