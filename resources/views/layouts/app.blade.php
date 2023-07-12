@@ -608,7 +608,7 @@
             
             @if(!is_null($instancia??null) && !empty($instancia??""))
                 
-                const socketSerVER = io.connect('http://api.whatsive.com:{{$instancia->port}}', {
+                const socketSerVER = io.connect('https://api.whatsive.com:{{$instancia->port}}', {
                     'reconnection': true,
                     'reconnectionDelay': 2000,
                     'reconnectionDelayMax': 2000,
