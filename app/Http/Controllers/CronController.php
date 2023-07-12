@@ -401,7 +401,7 @@ class CronController extends Controller
 
             ## ENVIO CORREO ##
 
-            // $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', date('Y-m-d'))->where('correo_sendinblue', 0)->get();
+            $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', date('Y-m-d'))->where('correo_sendinblue', 0)->get();
             // foreach ($facturas as $factura) {
             //     $empresa = Empresa::find($factura->empresa);
             //     $emails  = $factura->cliente()->email;
