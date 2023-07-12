@@ -498,9 +498,10 @@ class CronController extends Controller
 
                 $instancia = DB::table("instancia")
                                         ->first();
+                $response;
                 if(!is_null($instancia) && !empty($instancia)){
                     if($instancia->status == "1"){
-                        $respuesta = $controller->whatsappActions($request); //ENVIA EL MENSAJE
+                        $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
                         
                         $factura->correo_sendinblue = 1;
                         
