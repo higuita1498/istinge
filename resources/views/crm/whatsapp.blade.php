@@ -2165,7 +2165,9 @@
                         }
                         nombre = datos.to.replace("@c.us","");
                         if(datos?.contact){
-                            nombre = datos.contact.name;
+                            if(datos.contact?.name){
+                                nombre = datos.contact.name;
+                            }
                         }
                         let newcontacto = `
                             <li class="person" data-id="`+datos.to+`" data-tecnico="0" data-estado="0" data-time="`+datos.timestamp+`" > `+` 
