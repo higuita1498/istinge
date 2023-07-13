@@ -2028,6 +2028,7 @@
                             "tecnico": "{{$user = Auth::user()->id}}",
                             "name": "{{$user = Auth::user()->nombres}}"
                         }).done(function(data) {
+                            console.log(data);
                             if(typeof data == "string"){
                                 data = JSON.parse(data);
                             }
