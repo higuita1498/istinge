@@ -45,7 +45,15 @@ class WhatsappController extends Controller
                     if(is_null($chat) || empty($chat)){
                         $nameuser;
                         $picurl;
-                        isset($data->contact->name)? $nameuser = $data->contact->name: $nameuser = $data->_data->notifyName;
+                        if(isset($data->contact->name)){
+                            $nameuser = $data->contact->name;
+                        }else{
+                            if(isset($data->_data->notifyName)){
+                                $nameuser = $data->_data->notifyName;
+                            }else{
+                                $nameuser = $from;
+                            }
+                        } 
                         (!isset($data->picurl) || is_null($data->picurl) )? $picurl = "https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png": $picurl = $data->picurl;
                         DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`,`type`,`notRead`,`fromMe`,`photo`) values('".$from."','".$nameuser."','".$hora."','0','".str_replace("'","\"",$body)."', '".$data->type."','0','1','".$picurl."')");
                     }else{
@@ -102,7 +110,15 @@ class WhatsappController extends Controller
                     if(is_null($chat) || empty($chat)){
                         $nameuser;
                         $picurl;
-                        isset($data->contact->name) ? $nameuser = $data->contact->name : $nameuser = $data->_data->notifyName;
+                        if(isset($data->contact->name)){
+                            $nameuser = $data->contact->name;
+                        }else{
+                            if(isset($data->_data->notifyName)){
+                                $nameuser = $data->_data->notifyName;
+                            }else{
+                                $nameuser = $from;
+                            }
+                        } 
                         (!isset($data->picurl) || is_null($data->picurl) )? $picurl = "https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png": $picurl = $data->picurl;
                         DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`,`type`,`notRead`,`photo`) values('".$from."','".$nameuser."','".$hora."','0','".str_replace("'","\"",$body)."', '".$data->type."','1','".$picurl."')");
                     }else{

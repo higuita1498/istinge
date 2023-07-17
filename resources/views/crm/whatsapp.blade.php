@@ -2028,6 +2028,7 @@
                             "tecnico": "{{$user = Auth::user()->id}}",
                             "name": "{{$user = Auth::user()->nombres}}"
                         }).done(function(data) {
+                            console.log(data);
                             if(typeof data == "string"){
                                 data = JSON.parse(data);
                             }
@@ -2165,7 +2166,9 @@
                         }
                         nombre = datos.to.replace("@c.us","");
                         if(datos?.contact){
-                            nombre = datos.contact.name;
+                            if(datos.contact?.name){
+                                nombre = datos.contact.name;
+                            }
                         }
                         let newcontacto = `
                             <li class="person" data-id="`+datos.to+`" data-tecnico="0" data-estado="0" data-time="`+datos.timestamp+`" > `+` 

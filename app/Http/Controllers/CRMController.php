@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Mail; 
 use Validator;
@@ -398,9 +399,9 @@ class CRMController extends Controller
                 $secret = "sk_wh47s1v3"; //no borrar, id para seguridad
                 $message;
                 if($request->input("cron") == "true"){ 
-                    $message = $request->input("message");
+                    $message = $request->input("mensaje");
                 }else{
-                    $message = "*".trim($usuario->nombres)."*\n".$request->input("message");
+                    $message = "*".trim($usuario->nombres)."*\n".$request->input("mensaje");
                 }
                 if($request->input("cron") == "true"){ 
                     $content = base64_encode(file_get_contents($request->input("file")));
@@ -607,7 +608,8 @@ class CRMController extends Controller
                 
                 $response = curl_exec($ch);
                 $response = json_decode($response);
-                if($response->salida != "success"){
+                
+                if(isset($response->salida) && $response->salida != "success"){
                     return json_encode(["salida"=>"error","message"=>$response->message]);
                 }
                 if (curl_errno($ch)) {
