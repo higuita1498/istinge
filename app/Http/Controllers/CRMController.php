@@ -541,17 +541,20 @@ class CRMController extends Controller
                     if(!isset($chat["timestamp"])){
                         $chat["timestamp"] = strtotime(date("Y-m-d H:i:s")." -30 days");
                     }
-
-                    $hora = date("Y-m-d H:i:s",$chat["timestamp"]);
-                    
-                    if(isset($chat['lastMessage'])){
-                        if($chat['lastMessage']["type"] != "chat"){
-                            $chat['lastMessage']["body"] = $typechats[$chat['lastMessage']["type"]];
+                    try {
+                        $hora = date("Y-m-d H:i:s",$chat["timestamp"]);
+                        if(isset($chat['lastMessage'])){
+                            if($chat['lastMessage']["type"] != "chat"){
+                                $chat['lastMessage']["body"] = $typechats[$chat['lastMessage']["type"]];
+                            }
+                            DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`,`type`,`notRead`,`photo`) values('".$chat['id']['user']."','".(isset($chat["contact"]['name'])?$chat["contact"]['name']:$chat['id']['user'])."','".$hora."','0','".str_replace("'","\"",$chat['lastMessage']["body"])."', '".$chat['lastMessage']["type"]."','".$chat["unreadCount"]."','".(!isset($chat["picUrl"]) || is_null($chat["picUrl"])?"https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png":$chat["picUrl"])."')");
+                        }else{
+                            DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`, `notRead`,`photo`) values('".$chat['id']['user']."','".(isset($chat["contact"]['name'])?$chat["contact"]['name']:$chat['id']['user'])."','".$hora."','0','','".$chat["unreadCount"]."','".(!isset($chat["picUrl"]) || is_null($chat["picUrl"])?"https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png":$chat["picUrl"])."') ");
                         }
-                        DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`,`type`,`notRead`,`photo`) values('".$chat['id']['user']."','".(isset($chat["contact"]['name'])?$chat["contact"]['name']:$chat['id']['user'])."','".$hora."','0','".str_replace("'","\"",$chat['lastMessage']["body"])."', '".$chat['lastMessage']["type"]."','".$chat["unreadCount"]."','".(!isset($chat["picUrl"]) || is_null($chat["picUrl"])?"https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png":$chat["picUrl"])."')");
-                    }else{
-                        DB::statement("INSERT INTO `chats_whatsapp` (`number`,`name`,`last_update`,`asigned_to`,`last_message`, `notRead`,`photo`) values('".$chat['id']['user']."','".(isset($chat["contact"]['name'])?$chat["contact"]['name']:$chat['id']['user'])."','".$hora."','0','','".$chat["unreadCount"]."',".(!isset($chat["picUrl"]) || is_null($chat["picUrl"])?"https://ramenparados.com/wp-content/uploads/2019/03/no-avatar-png-8.png":$chat["picUrl"]).") ");
+                    } catch (\Throwable $th) {
+                        //throw $th;
                     }
+                    
                    
 
                 }
