@@ -373,16 +373,7 @@
                     'reconnectionAttempts': 5
                 });
                 socketSerVER.on('changeoperador', function(data) {
-                    if (data.tecnico == "{{$user = Auth::user()->id}}") {
-                        audioElementA.play();
-                        $.gritter.add({
-                            title: 'CHAT ASIGNADO',
-                            text: 'El chat  <b>' + data.cliente + '</b> te fué asignado.',
-                            sticky: true,
-                            time: '',
-                            class_name: 'alerta-whatsapp'
-                        });
-                    }
+                   
                 })
 
                 socketSerVER.on('newmessagewat', function(datos) {
