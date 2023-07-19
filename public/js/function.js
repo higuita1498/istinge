@@ -4182,7 +4182,11 @@ function getPlanes(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getPlanes/' + mikrotik;
-    } else {
+    } 
+    else if(window.location.pathname.split("/")[1] === "portal"){
+        var url = '/portal/api/getPlanes/' + mikrotik;
+    }
+    else {
         var url = '/api/getPlanes/' + mikrotik;
     }
 
