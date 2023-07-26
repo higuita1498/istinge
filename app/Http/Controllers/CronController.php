@@ -501,17 +501,16 @@ class CronController extends Controller
                 $response;
                 if(!is_null($instancia) && !empty($instancia)){
                     if($instancia->status == "1"){
+                        
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
+                        if($response->salida != 'error'){ 
+                            $factura->whatsapp = 1;
+                            $factura->correo_sendinblue = 1;
+                            $factura->save();
+                        }
                         
-                        $factura->correo_sendinblue = 1;
-                        
-        
-                        $factura->response_sendinblue = $response;
-                        $factura->save();
                     }else{
                         $factura->correo_sendinblue = 0;
-                        
-        
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }
@@ -2261,7 +2260,7 @@ class CronController extends Controller
 
             //     $fields = [
             //         "action"=>"sendFile",
-            //         "id"=>"+573002457118"."@c.us",
+            //         "id"=> $numero."@c.us",
             //         "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
             //         "mime"=>"application/pdf",
             //         "namefile"=>$factura->codigo ,
