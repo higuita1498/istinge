@@ -4182,7 +4182,11 @@ function getPlanes(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getPlanes/' + mikrotik;
-    } else {
+    } 
+    else if(window.location.pathname.split("/")[1] === "portal"){
+        var url = '/portal/api/getPlanes/' + mikrotik;
+    }
+    else {
         var url = '/api/getPlanes/' + mikrotik;
     }
 
@@ -4335,7 +4339,11 @@ function modificarPromesa(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/${id}/promesa_pago`;
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = `/portal/empresa/facturas/${id}/promesa_pago`;
+    } 
+    else {
         var url = `/empresa/facturas/${id}/promesa_pago`;
     }
 
@@ -4414,7 +4422,11 @@ function storePromesa(id) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/store_promesa`;
-    } else {
+    } 
+    else if(window.location.pathname.split("/")[1] === "portal"){
+        var url = `/portal/empresa/facturas/store_promesa`;
+    }
+    else {
         var url = `/empresa/facturas/store_promesa`;
     }
     $.ajax({
@@ -4493,7 +4505,11 @@ function getSegmentos(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSegmentos/' + mikrotik;
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = '/portal/api/getSegmentos/' + mikrotik;
+    } 
+    else {
         var url = '/api/getSegmentos/' + mikrotik;
     }
 
@@ -4528,7 +4544,11 @@ function getInterfaz(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = '/portal/api/getInterfaces/' + mikrotik;
+    } 
+    else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
 
@@ -4563,7 +4583,11 @@ function getContracts(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getContracts/' + id;
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = '/portal/api/getContracts/' + id;
+    } 
+    else {
         var url = '/api/getContracts/' + id;
     }
 
@@ -4601,7 +4625,11 @@ $('#searchIP').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } else {
+    } 
+    else if(window.location.pathname.split("/")[1] === "portal"){
+        var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+    }
+    else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
 
@@ -4631,7 +4659,11 @@ $('#searchIP').click(function() {
 
             if (window.location.pathname.split("/")[1] === "software") {
                 var url = `/software/api/getIps/${mk}`;
-            } else {
+            } 
+            else if(window.location.pathname.split("/")[1] === "portal"){
+                var url = `/portal/api/getIps/${mk}`;
+            }
+            else {
                 var url = `/api/getIps/${mk}`;
             }
 
@@ -4715,7 +4747,11 @@ $('#searchIP2').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+    } 
+    else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
 
@@ -4853,7 +4889,12 @@ function notificacionTecnico() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/radicados/notificacionTecnico';
             var route = '/software/empresa/radicados';
-        } else {
+        }
+        else if (window.location.pathname.split("/")[1] === "portal") {
+            var url = '/portal/empresa/radicados/notificacionTecnico';
+            var route = '/portal/empresa/radicados';
+        }
+        else {
             var url = '/empresa/radicados/notificacionTecnico';
             var route = '/empresa/radicados';
         }
