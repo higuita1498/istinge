@@ -28,3 +28,9 @@ Facturas Generadas: 0
 SMS Enviados: 0
 SMS NO Enviados: 0
 -----------------
+-----------------
+Fecha de Generación: 2023-07-25
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
