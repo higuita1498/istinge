@@ -479,10 +479,6 @@ class CRMController extends Controller
                     DB::statement("UPDATE `chats_whatsapp` SET `last_message`= '', `last_update`='".$hora."', `notRead`='0', `fromMe`='1' WHERE `number`= '".explode("@",$request->input("id"))[0]."' ");
                     return json_encode(["salida"=>"success","message"=>"mensaje enviado correctamente","from"=>$request->input("id"),"body"=>"","type"=>"chat","timestamp"=>strtotime($hora)]); 
                 }
-
-
-                
-                
                 
                 break;
             case 'getChats':
