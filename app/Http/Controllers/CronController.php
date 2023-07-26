@@ -488,7 +488,7 @@ class CronController extends Controller
                     "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
                     "mime"=>"application/pdf",
                     "namefile"=>$factura->codigo,
-                    "message"=>$mensaje,
+                    "mensaje"=>$mensaje,
                     "cron"=>"true"
                 ];
 
