@@ -34,8 +34,11 @@ class Movimiento extends Model
     }
 
     public function show_url(){
+
         if ($this->modulo==1) {
-            return route($this->modulo()->modulo.'.show', Ingreso::find($this->id_modulo)->id);
+            if(Ingreso::find($this->id_modulo)){
+                return route($this->modulo()->modulo.'.show', Ingreso::find($this->id_modulo)->id);
+            }
         }
         else if ($this->modulo==2) {
             return route($this->modulo()->modulo.'.show', IngresoR::find($this->id_modulo)->id);
@@ -60,7 +63,9 @@ class Movimiento extends Model
 
     public function categoria(){
         if ($this->modulo==1) {
-            return Ingreso::find($this->id_modulo)->detalle();
+            if(Ingreso::find($this->id_modulo)){
+                return Ingreso::find($this->id_modulo)->detalle();
+            }
         }
         else if ($this->modulo==2) {
             return IngresoR::find($this->id_modulo)->detalle();

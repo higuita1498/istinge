@@ -4149,7 +4149,11 @@ function getInterfaces(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } else {
+    } 
+    else if (window.location.pathname.split("/")[1] === "portal") {
+        var url = '/portal/api/getInterfaces/' + mikrotik;
+    } 
+    else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
     $.ajax({
