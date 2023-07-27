@@ -1206,9 +1206,9 @@
                             </a>
                         </div>
                         <div class="widget-input-divider d-none"></div>
-                        <div class="widget-input-icon">
-                            <a href="javascript:;" class="text-grey record-wa" style="display: none;"><i class="fa f-s-25 fa-microphone"></i></a>
-                            <a href="javascript:;" class="text-red stop-wa parpadea" style="display: none;"><i class="fas f-s-25 fa-stop"></i></a>
+                        <div class="widget-input-icon mt-2">
+                            <a href="javascript:;" class="text-grey record-wa" style="display: none;"><i class="fa f-s-25 fa-microphone fa-2x"></i></a>
+                            <a href="javascript:;" class="text-red stop-wa parpadea" style="display: none;"><i class="fas f-s-25 fa-stop fa-2x"></i></a>
                         </div>
                     </div>
                 </div>
@@ -1268,6 +1268,10 @@
     @endif
 @endsection
 @section("scripts")
+<script src="https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js"></script>
+<!-- load encoderWorker.umd.js. This should be after OpusMediaRecorder. -->
+<!-- This script tag will create OpusMediaRecorder.encoderWorker. -->
+<script src="https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js"></script>
 <script>
     @if(!is_null($instancia) && !empty($instancia))
         @if($instancia->status == 0)
@@ -1432,7 +1436,7 @@
                     });
                 }
             }
-            let ishttps=false;
+            let ishttps;
             
             var myDropzone;
             var timertyping;
@@ -1564,39 +1568,41 @@
                 Dropzone.autoDiscover = false;
                 const record = document.querySelector('.record-wa');
                 const stop = document.querySelector('.stop-wa');
+                window.location.protocol==='https:'?(ishttps = true):(ishttps = false);
                 if (ishttps) {
+                    $('.record-wa').show();
+                    const workerOptions = {
+                        OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
+                        WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
+                    };
+
                     if (navigator.mediaDevices.getUserMedia) {
                         const constraints = {
                             audio: true
                         };
                         let chunks = [];
                         let onSuccess = function(stream) {
-                            const mediaRecorder = new MediaRecorder(stream);
+                            window.MediaRecorder = OpusMediaRecorder;
+                            const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/ogg' }, workerOptions);
+                            //const mediaRecorder = new MediaRecorder(stream);
                             record.onclick = function() {
-                            mediaRecorder.start();
-                            $('.record-wa').hide();
-                            $('.stop-wa').show();
-                            socketSerVER.emit("typing", {
-                                "type": "record",
-                                "id": $('.person.active-user').data('id'),
-                                "tecnico": "{{$user = Auth::user()->id}}",
-                                "name": "{{$user = Auth::user()->nombres}}"
-                            });
+                                mediaRecorder.start();
+                                $('.record-wa').hide();
+                                $('.stop-wa').show();
+                                socketSerVER.emit("typing", {
+                                    "id": $('.person.active-user').data('id'),
+                                    "tecnico": "{{$user = Auth::user()->id}}",
+                                    "name": "{{$user = Auth::user()->nombres}}"
+                                });
                             }
                             stop.onclick = function() {
-                            mediaRecorder.stop();
-                            $('.record-wa').show();
-                            $('.stop-wa').hide();
-                            socketSerVER.emit("typing", {
-                                "type": "stop",
-                                "id": $('.person.active-user').data('id'),
-                                "tecnico": "{{$user = Auth::user()->id}}",
-                                "name": "{{$user = Auth::user()->nombres}}"
-                            });
+                                mediaRecorder.stop();
+                                $('.record-wa').show();
+                                $('.stop-wa').hide();
                             }
                             mediaRecorder.ondataavailable = function(e) {
-                            e.data.name = 'record.webm';
-                            myDropzone.addFile(e.data);
+                                e.data.name = 'record.ogg';
+                                myDropzone.addFile(e.data);
                             }
                         }
                         let onError = function(err) {
@@ -1628,7 +1634,7 @@
                 });
                 myDropzone = new Dropzone("div.waadjunto", {
                     maxFiles: 1,
-                    acceptedFiles: "image/*,application/*,text/plain,",
+                    acceptedFiles: "image/*,application/*,text/plain,audio/*,video/*",
                     url: "{{route('uploadFile')}}",
                     sending: function(data, xhr, formData) {
                         $(".iconadjuntowa").html('<i class="fa fa-spinner fa-spin"></i>');
@@ -1742,6 +1748,20 @@
                         message: $('#msjnewchat').val(),
                         tipo: 'texto'
                         }).done(function(data) {
+                            if(typeof data == "string"){
+                                data = JSON.parse(data);
+                            }
+                            if(data.salida == "error"){
+                                swal({
+                                    title: data.message,
+                                    type: data.salida,
+                                    showCancelButton: false,
+                                    showConfirmButton: true,
+                                    cancelButtonColor: '#00ce68',
+                                    cancelButtonText: 'Aceptar',
+                                }).then((result) => {
+                                });
+                            }
                             $('#numbersender').val('');
                             $('#msjnewchat').val('');
                             contermischats();
@@ -2016,44 +2036,63 @@
                 });
 
                 $('#sendNewMessage').on('keypress', function(e) {
+                    if (e.keyCode === 13 && e.shiftKey) {
+                        return;
+                    }
                     if (e.which == 13 && $('#urlfile').val().length > 0) {
+                        e.preventDefault();
                         $('.loader-full').show();
+                        let mensaje = $('#sendNewMessage').val();
+                        let file = $('#urlfile').val();
+                        let mimetype = $('#mimefile').val();
+                        $('.loader-full').hide();
+                        myDropzone.removeAllFiles(true);
+                        $('#urlfile').val('');
+                        $('#mimefile').val('');
+                        $("#uploads_files").addClass("d-none");
+                        $('#sendNewMessage').val('');
                         $.post("{{route('crm.whatsapp')}}", {
                             action:"sendFile",
                             _token,
                             "id": $('.person.active-user').data('id'),
-                            "file": $('#urlfile').val(),
-                            "mime": $('#mimefile').val(),
-                            "mensaje": $('#sendNewMessage').val(),
+                            "file": file,
+                            "mime": mimetype,
+                            "mensaje": mensaje,
                             "tecnico": "{{$user = Auth::user()->id}}",
                             "name": "{{$user = Auth::user()->nombres}}"
                         }).done(function(data) {
-                            console.log(data);
                             if(typeof data == "string"){
                                 data = JSON.parse(data);
                             }
+                            if(data.salida == "error"){
+                                swal({
+                                    title: data.message,
+                                    type: data.salida,
+                                    showCancelButton: false,
+                                    showConfirmButton: true,
+                                    cancelButtonColor: '#00ce68',
+                                    cancelButtonText: 'Aceptar',
+                                })
+                            }
+
                             $('.users li[data-id="' + data.from + '"]').attr('data-time', data.timestamp).attr('data-estado', "0").prependTo(".users");
                             $('.users li[data-id="' + data.from + '"] .lastmessage').html("<b>Tú: </b>"+data.body);
-                            $('.loader-full').hide();
-                            myDropzone.removeAllFiles(true);
-                            $('#urlfile').val('');
-                            $('#mimefile').val('');
-                            $("#uploads_files").addClass("d-none");
-                            $('#sendNewMessage').val('');
                             contermischats();
                             actulizartime();
                         });
                         return;
                     }
                     if (e.which == 13 && $(this).val().length > 0) {
+                        e.preventDefault();
                         $('#urlfile').val('');
                         $('#mimefile').val('');
-                        e.preventDefault();
+                        let mensaje =  $(this).val();
+                        $(this).val('');
                         $.post("{{route('crm.whatsapp')}}", {
                             _token,
                             action:"sendMessage",
                             id: $('.person.active-user').data('id'),
-                            message: $(this).val(),
+                            message:mensaje,
                             tipo: 'texto'
                         }).done(function(data) {
                             if(typeof data == "string"){
@@ -2078,7 +2117,7 @@
                             contermischats();
                             actulizartime();
                         });
-                        $(this).val('');
+                       
                         return;
                     }
                 
