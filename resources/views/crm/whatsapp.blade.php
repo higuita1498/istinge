@@ -2885,10 +2885,12 @@
                     if(typeof data == "string"){
                         data = JSON.parse(data);
                     }
+                    let file_data = data.src.split(";")[0];
+                    let file_extension = file_data.split("/")[1];
                     if(data.salida == "success"){
                         const link = document.createElement('a');
                         link.href = data.src;
-                        link.download = 'archivo.pdf';
+                        link.download = 'archivo.'+file_extension;
                         link.target = '_blank';
                         link.click();
                         return;
