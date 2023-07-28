@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Mail; 
 use Validator;
-use Illuminate\Validation\Rule;  
+use Illuminate\Validation\Rule;   
 use Auth; 
 use DB;
 use Session;
