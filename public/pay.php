@@ -249,6 +249,8 @@
                         <div class="contact-form">
                             <button class="btn btn-main" style="color: var(--secondary);" type="submit" onclick="confirmar('form-wompi');">Pagar con Wompi</button>
                             <button class="btn btn-main" style="color: var(--secondary);" type="submit" onclick="confirmarAlert('form-payu');">Pagar con PayU</button>
+                            <button class="btn btn-main" style="color: var(--secondary);" type="submit" onclick="confirmarAlert('form-toppay');">Pagar con TopPay</button>
+
                         </div>
                     </div>
                 </div>
@@ -419,6 +421,44 @@
           })
         }
       }
+
+    //   Confirmar pago con toppay
+
+
+    function confirmarAlert(form, mensaje="Será redireccionado a la pasarela de pago TopPay", submensaje='¿Desea continuar?', confirmar='Si'){
+        /*if($("#buyerFullName").val() != '' && $("#buyerEmail").val() != ''){*/
+        if($("#amount").val() != '' && $("#referenceCode").val() != '' ){
+          signature();
+
+          swal({
+            title: mensaje,
+            text: submensaje,
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00ce68',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmar,
+            cancelButtonText: 'No',
+          }).then((result) => {
+            if (result.value) {
+              $("#preloader").removeClass('d-none');
+              document.getElementById(form).submit();
+              cargando(true);
+            }
+          });
+        }else{
+          swal({
+            title: 'Debe llenar la información solicitada',
+            type: 'warning',
+            showCancelButton: true,
+            showConfirmButton: false,
+            cancelButtonColor: '#00ce68',
+            cancelButtonText: 'Aceptar',
+          })
+        }
+      }
+    // fin de toopay
+
 
     </script>
 </body>

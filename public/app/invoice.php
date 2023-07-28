@@ -307,6 +307,20 @@ if (isset($_SESSION['logueado']) && $_SESSION['logueado']) {
                                         <button class="btn btn-success" type="submit">Pagar con Wompi 1</button>
                                     </form>
                                 </div>
+
+                                <div align="center">
+                                    <form action="https://checkout.wompi.co/p/" method="GET">
+                                        <!-- OBLIGATORIOS -->
+                                        <input type="hidden" name="public-key" value="" />
+                                        <input type="hidden" name="currency" value="COP" />
+                                        <input type="hidden" name="amount-in-cents" id="amount-in-cents" value="MONTO_EN_CENTAVOS" />
+                                        <input type="hidden" name="reference" id="reference" value="REFERENCIA_DE_PAGO" />
+                                        <!-- OPCIONALES -->
+                                        <input type="hidden" name="redirect-url" value="https://istingenieria.online/app/wompi.php" />
+                                        <button class="btn btn-success" type="submit">Pagar con Toppay 1</button>
+                                    </form>
+                                </div>
+
                 			</div>
                 		</div>
                 	</div>
