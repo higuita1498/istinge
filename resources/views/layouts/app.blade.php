@@ -628,7 +628,6 @@
                 })
 
                 socketSerVER.on('newmessagewat', function(datos) {
-                    console.log(datos);
                     if(datos?.author!=null){
 
                     }else{

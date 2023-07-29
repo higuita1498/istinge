@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Mail; 
 use Validator;
-use Illuminate\Validation\Rule;  
+use Illuminate\Validation\Rule;   
 use Auth; 
 use DB;
 use Session;
@@ -440,11 +440,7 @@ class CRMController extends Controller
                 $response = json_decode($response);
                 
                 if($response->salida != "success"){
-                    if(isset($response->data)){
-                        return json_encode(["salida"=>"error","message"=>$response->data]);
-                        }
-                        
-                        return json_encode(["salida"=>"error","message"=>$response->message]);
+                    return json_encode(["salida"=>"error","message"=>"Error al enviar el mensaje"]);
                 }
                 if (curl_errno($ch)) {
                     return json_encode(["salida"=>"error","message"=>"No se pudo enviar el mensaje"]);
