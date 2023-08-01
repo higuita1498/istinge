@@ -35,9 +35,9 @@
         <a href="{{route('radicados.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Radicado</a>
         @endif
 
-       
+
         <a href="javascript:exportarContratos('{{route('contratos.exportar')}}');" class="btn btn-success btn-sm" ><i class="fas fa-file-excel"></i> Exportar a Excel</a>
-        
+
         @if(isset($_SESSION['permisos']['411']))
         <a href="{{route('contratos.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
         @endif
@@ -57,7 +57,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
             {{Session::get('danger')}}
@@ -384,7 +384,7 @@
             }]
             @endif
 		});
-		
+
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nro = $('#nro').val();
 			data.cliente_id = $('#client_id').val();
@@ -413,12 +413,12 @@
             data.fecha_corte = $("#fecha-corte").val();
             data.filtro = true;
         });
-        
+
         $('#filtrar').on('click', function(e) {
 			getDataTable();
 			return false;
 		});
-		
+
         $('#form-filter').on('keypress',function(e) {
             if(e.which == 13) {
                 getDataTable();
@@ -465,7 +465,7 @@
             planes_lote_store();
         });
     });
-    
+
     function getDataTable() {
         $('#tabla-contratos').DataTable().ajax.reload();
 	}
@@ -479,7 +479,7 @@
 			cerrarFiltrador();
 		}
 	}
-	
+
 	function cerrarFiltrador() {
 		$('#nro').val('');
         $('#client_id').val('').selectpicker('refresh');
@@ -510,7 +510,7 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
-	
+
 	function exportar() {
 	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val();
 	}

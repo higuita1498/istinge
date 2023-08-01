@@ -1644,7 +1644,7 @@ function total_linea_formapago(nro) {
     let total = 0;
 
     $('#table-formaspago tbody tr').each(function() {
-        
+
         var id = $(this).attr('fila');
         id = $("#precioformapago" + id);
         var totalLinea = id.val();
@@ -4149,10 +4149,10 @@ function getInterfaces(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
@@ -4186,7 +4186,7 @@ function getPlanes(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getPlanes/' + mikrotik;
-    } 
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = '/portal/api/getPlanes/' + mikrotik;
     }
@@ -4343,10 +4343,10 @@ function modificarPromesa(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/${id}/promesa_pago`;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = `/portal/empresa/facturas/${id}/promesa_pago`;
-    } 
+    }
     else {
         var url = `/empresa/facturas/${id}/promesa_pago`;
     }
@@ -4426,7 +4426,7 @@ function storePromesa(id) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/store_promesa`;
-    } 
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = `/portal/empresa/facturas/store_promesa`;
     }
@@ -4509,10 +4509,10 @@ function getSegmentos(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSegmentos/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getSegmentos/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getSegmentos/' + mikrotik;
     }
@@ -4548,10 +4548,10 @@ function getInterfaz(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
@@ -4587,10 +4587,10 @@ function getContracts(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getContracts/' + id;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getContracts/' + id;
-    } 
+    }
     else {
         var url = '/api/getContracts/' + id;
     }
@@ -4629,14 +4629,14 @@ $('#searchIP').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
     else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
-
+    console.log(url);
     $.ajax({
         url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -4663,7 +4663,7 @@ $('#searchIP').click(function() {
 
             if (window.location.pathname.split("/")[1] === "software") {
                 var url = `/software/api/getIps/${mk}`;
-            } 
+            }
             else if(window.location.pathname.split("/")[1] === "portal"){
                 var url = `/portal/api/getIps/${mk}`;
             }
@@ -4737,7 +4737,9 @@ $('#searchIP').click(function() {
                 timer: 5000
             })
         }
+
     })
+    cargando(false);
 });
 
 function selectIP(ip) {
@@ -4751,10 +4753,10 @@ $('#searchIP2').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+    }
     else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
