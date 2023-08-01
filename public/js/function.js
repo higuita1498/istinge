@@ -4623,25 +4623,31 @@ function getContracts(id) {
 }
 
 $('#searchIP').click(function() {
+
     cargando(true);
+
     let prefijo = $("#local_address").val().split('/');
     let mk = $("#server_configuration_id").val();
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+
     }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+
     }
     else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+
     }
-    console.log(url);
+
     $.ajax({
         url: url,
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
+            console-log("ingreso en el primer ajax");
             $('#row_ip').html('');
             let ip_ini = data.inicial.split('.');
             let ip_fin = data.final.split('.');
@@ -4660,17 +4666,20 @@ $('#searchIP').click(function() {
                 }
                 x++;
             }
-
+            cargando(false);
             if (window.location.pathname.split("/")[1] === "software") {
                 var url = `/software/api/getIps/${mk}`;
+                cargando(false);
             }
             else if(window.location.pathname.split("/")[1] === "portal"){
                 var url = `/portal/api/getIps/${mk}`;
+                cargando(false);
             }
             else {
                 var url = `/api/getIps/${mk}`;
+                cargando(false);
             }
-
+            cargando(false);
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -4678,6 +4687,8 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
+                    console-log("ingreso en el segundo ajax");
+
                     /*console.log(data.software);
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++){
@@ -4711,6 +4722,7 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
+                        cargando(false);
                     }
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++) {
@@ -4721,6 +4733,7 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
+                        cargando(false);
                     }
                     cargando(false);
                 }
@@ -4736,10 +4749,12 @@ $('#searchIP').click(function() {
                 showConfirmButton: false,
                 timer: 5000
             })
+
+            cargando(false);
         }
 
     })
-    cargando(false);
+
 });
 
 function selectIP(ip) {
