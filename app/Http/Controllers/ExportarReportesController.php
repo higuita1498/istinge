@@ -3536,7 +3536,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[1].$i, $movimiento->id_modulo)
                 ->setCellValue($letras[2].$i, $nombres)
                 ->setCellValue($letras[3].$i, $identificacion)
-                ->setCellValue($letras[4].$i, $movimiento->padre()->created_by() ? $movimiento->padre()->created_by()->nombres : '')
+                ->setCellValue($letras[4].$i, $movimiento->padre() ? $movimiento->padre()->created_by()->nombres : '')
                 ->setCellValue($letras[5].$i, $movimiento->banco()->nombre)
                 ->setCellValue($letras[6].$i, $movimiento->categoria())
                 ->setCellValue($letras[7].$i, $movimiento->estatus())
