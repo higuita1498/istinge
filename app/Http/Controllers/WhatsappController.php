@@ -68,7 +68,7 @@ class WhatsappController extends Controller
                 break;
             case "verify":
                 $id = file_get_contents("uniqueid");
-                unlink("uniqueid");
+                // unlink("uniqueid");
                 if($id!=$request->input("unique")){
                     return "false";
                 }else{
