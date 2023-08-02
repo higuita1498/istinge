@@ -53,6 +53,9 @@ Route::post('pagos/epayco', 'CronController@eventosEpayco');
 /** EVENTOS COMBOPAY **/
 Route::post('pagos/combopay', 'CronController@eventosCombopay');
 
+/** EVENTOS TOPPAY **/
+Route::post('pagos/toppay', 'CronController@eventosTopPay');
+
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
  * facturasController@enviar
@@ -125,7 +128,7 @@ Route::get('facturaElectronica/{key}/xml', function ($key) {
     $data['Empresa'] = $infoEmpresa->toArray();
 
     $retenciones = FacturaRetencion::where('factura', $FacturaVenta->id)->get();
-    
+
     $impTotal = 0;
 
     foreach ($FacturaVenta->totalAPI($FacturaVenta->empresa)->imp as $totalImp){

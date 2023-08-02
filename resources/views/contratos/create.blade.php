@@ -74,7 +74,7 @@
 			}, 100000);
 		</script>
 	@endif
-	
+
 	<form method="POST" action="{{ route('contratos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contrato" enctype="multipart/form-data">
 	    @csrf
 
@@ -517,7 +517,7 @@
                                 </div>
                             </div>
 
-                            
+
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Linea</label>
                                   <div class="input-group">
@@ -707,7 +707,7 @@
                                   <strong></strong>
                               </span>
                           </div>
-                          
+
                             <div class="col-md-4 form-group">
                                 <div class="cls-nosuspension d-none">
                                 <label class="control-label">Fecha desde no suspensión</label>
@@ -734,10 +734,10 @@
                 </div>
             </div>
         </div>
-        
+
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
         <hr>
-        
+
         <div class="row">
             <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
                 <a href="{{route('contratos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
@@ -775,7 +775,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="modal fade" id="modal-ips" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -787,7 +787,7 @@
                         </div>
                     </div>
                     <div class="row" style="text-align: center;" id="row_ip">
-                        
+
                     </div>
                 </div>
             </div>

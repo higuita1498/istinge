@@ -1644,7 +1644,7 @@ function total_linea_formapago(nro) {
     let total = 0;
 
     $('#table-formaspago tbody tr').each(function() {
-        
+
         var id = $(this).attr('fila');
         id = $("#precioformapago" + id);
         var totalLinea = id.val();
@@ -4159,10 +4159,10 @@ function getInterfaces(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
@@ -4196,7 +4196,7 @@ function getPlanes(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getPlanes/' + mikrotik;
-    } 
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = '/portal/api/getPlanes/' + mikrotik;
     }
@@ -4353,10 +4353,10 @@ function modificarPromesa(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/${id}/promesa_pago`;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = `/portal/empresa/facturas/${id}/promesa_pago`;
-    } 
+    }
     else {
         var url = `/empresa/facturas/${id}/promesa_pago`;
     }
@@ -4436,7 +4436,7 @@ function storePromesa(id) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/store_promesa`;
-    } 
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = `/portal/empresa/facturas/store_promesa`;
     }
@@ -4519,10 +4519,10 @@ function getSegmentos(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSegmentos/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getSegmentos/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getSegmentos/' + mikrotik;
     }
@@ -4558,10 +4558,10 @@ function getInterfaz(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getInterfaces/' + mikrotik;
-    } 
+    }
     else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
@@ -4597,10 +4597,10 @@ function getContracts(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getContracts/' + id;
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getContracts/' + id;
-    } 
+    }
     else {
         var url = '/api/getContracts/' + id;
     }
@@ -4633,18 +4633,23 @@ function getContracts(id) {
 }
 
 $('#searchIP').click(function() {
+
     cargando(true);
+
     let prefijo = $("#local_address").val().split('/');
     let mk = $("#server_configuration_id").val();
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+
+    }
     else if(window.location.pathname.split("/")[1] === "portal"){
         var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+
     }
     else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
+
     }
 
     $.ajax({
@@ -4652,6 +4657,7 @@ $('#searchIP').click(function() {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
+            console-log("ingreso en el primer ajax");
             $('#row_ip').html('');
             let ip_ini = data.inicial.split('.');
             let ip_fin = data.final.split('.');
@@ -4670,17 +4676,20 @@ $('#searchIP').click(function() {
                 }
                 x++;
             }
-
+            cargando(false);
             if (window.location.pathname.split("/")[1] === "software") {
                 var url = `/software/api/getIps/${mk}`;
-            } 
+                cargando(false);
+            }
             else if(window.location.pathname.split("/")[1] === "portal"){
                 var url = `/portal/api/getIps/${mk}`;
+                cargando(false);
             }
             else {
                 var url = `/api/getIps/${mk}`;
+                cargando(false);
             }
-
+            cargando(false);
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -4688,6 +4697,8 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
+                    console-log("ingreso en el segundo ajax");
+
                     /*console.log(data.software);
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++){
@@ -4721,6 +4732,7 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
+                        cargando(false);
                     }
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++) {
@@ -4731,6 +4743,7 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
+                        cargando(false);
                     }
                     cargando(false);
                 }
@@ -4746,8 +4759,12 @@ $('#searchIP').click(function() {
                 showConfirmButton: false,
                 timer: 5000
             })
+
+            cargando(false);
         }
+
     })
+
 });
 
 function selectIP(ip) {
@@ -4761,10 +4778,10 @@ $('#searchIP2').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+    }
     else if (window.location.pathname.split("/")[1] === "portal") {
         var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    } 
+    }
     else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
