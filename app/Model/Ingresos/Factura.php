@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Model\Ingresos;
 
 use StdClass;
 use Illuminate\Http\Request;
