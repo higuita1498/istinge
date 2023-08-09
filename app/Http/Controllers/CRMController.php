@@ -373,7 +373,7 @@ class CRMController extends Controller
                 $response = curl_exec($ch);
                 $response = json_decode($response);
                 if($response->salida != "success"){
-                    return json_encode(["salida"=>"error","message"=>$response->message]);
+                    return json_encode(["salida"=>"error","message"=>"No se pudo enviar el mensaje"]);
                 }
                 if (curl_errno($ch)) {
                     return json_encode(["salida"=>"error","message"=>"No se pudo enviar el mensaje"]);
