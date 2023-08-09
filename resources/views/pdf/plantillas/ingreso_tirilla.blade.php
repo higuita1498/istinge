@@ -158,7 +158,9 @@
                 </tr>
             </thead>
             <tbody>
+            @php $totalApagar = 0; @endphp
             @foreach($items as $item)
+             @php $totalApagar=$totalApagar+$item->precio; @endphp
                 <tr>
                     <td>{{$item->ref}}</td>
                     <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
@@ -168,9 +170,12 @@
             <!-- calculando impuesto -->
             @foreach($items as $item)
                 @if($item->impuesto != 0)
+                @php
+                $totalApagar=$totalApagar + ($item->impuesto * $item->precio) / 100 ;
+                @endphp
                 <tr>
                     <td>IVA {{round($item->impuesto)}} %</td>
-                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear( ($item->impuesto * $item->precio) / 100 )}}</td>
+                    <td>{{$empresa->moneda}}{{App\Funcion::Parsear(($item->impuesto * $item->precio) / 100 )}}</td>
                 </tr>
                 @endif
             @endforeach
@@ -201,11 +206,11 @@
                 @endif
                 <tr>
                     <td style="width: 70%;">Monto a Pagar:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago())}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($totalApagar)}} </td>
                 </tr>
                 <tr>
                     <td style="width: 70%;">Monto Pagado:</td>
-                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago() + $ingreso->valor_anticipo)}} </td>
+                    <td style="width: 30%;text-align: center;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($ingreso->pago())}} </td>
                 </tr>
                 @if($ingreso->total()->total - $ingreso->pago() > 0)
                 <tr>

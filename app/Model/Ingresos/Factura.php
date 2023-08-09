@@ -68,6 +68,11 @@ class Factura extends Model
         return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
     }
 
+    public function parsearApi($valor,$empresa){
+        return number_format($valor, $empresa->precision, $empresa->sep_dec, ($empresa->sep_dec == '.' ? ',' : '.'));
+    }
+
+
     public function cliente(){
          return Contacto::where('id',$this->cliente)->first();
     }

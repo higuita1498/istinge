@@ -220,7 +220,9 @@
 						@if($contrato->nodo)
 						<tr>
 							<th>Nodo Asociado</th>
+							@if($contrato->nodo())
 							<td><a href="{{ route('nodos.show',$contrato->nodo()->id )}}" target="_blank"><strong>{{ $contrato->nodo()->nombre }}</strong></a></td>
+							@endif
 						</tr>
 						@endif
 						@if($contrato->ap)
@@ -295,7 +297,7 @@
 							<td><a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank"><strong>Ver {{ $contrato->referencia_d }}</strong></a></td>
 						</tr>
 						@endif
-						@if($contrato->oficina)
+						@if($contrato->oficina())
 						<tr>
 							<th>Oficina Asociada</th>
 							<td>{{ $contrato->oficina()->nombre }}</td>
