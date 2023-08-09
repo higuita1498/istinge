@@ -4687,7 +4687,7 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-                    console-log("ingreso en el segundo ajax");
+
 
                     /*console.log(data.software);
                     if (data.software) {
