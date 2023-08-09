@@ -4017,11 +4017,11 @@ function notificacionRadicado() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/radicados/notificacionRadicado';
             var route = '/software/empresa/radicados';
-        } 
+        }
         else if (window.location.pathname.split("/")[1] === "portal") {
             var url = '/portal/empresa/radicados/notificacionRadicado';
             var route = '/portal/empresa/radicados';
-        } 
+        }
         else {
             var url = '/empresa/radicados/notificacionRadicado';
             var route = '/empresa/radicados';
@@ -4110,11 +4110,11 @@ function notificacionWifi() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/notificacionWifi';
             var route = '/software/empresa/wifi';
-        } 
+        }
         else if (window.location.pathname.split("/")[1] === "portal") {
             var url = '/portal/empresa/notificacionWifi';
             var route = '/portal/empresa/wifi';
-        } 
+        }
         else {
             var url = '/empresa/notificacionWifi';
             var route = '/empresa/wifi';
@@ -4657,7 +4657,7 @@ $('#searchIP').click(function() {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
-            console-log("ingreso en el primer ajax");
+
             $('#row_ip').html('');
             let ip_ini = data.inicial.split('.');
             let ip_fin = data.final.split('.');
