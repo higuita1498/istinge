@@ -2440,9 +2440,9 @@ class CronController extends Controller
                     $mensaje = str_replace('{{ $company }}', $empresa->nombre, $plantilla->contenido);
                     $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
                     $mensaje = str_replace('{{ $factura->codigo }}', $factura->codigo, $mensaje);
-                    $mensaje = str_replace('{{ $factura->parsear($factura->total()->total) }}', $factura->parsear($factura->total()->total), $mensaje);
+                    $mensaje = str_replace('{{ $factura->parsearApi($factura->totalAPI($empresa->id)->total, $empresa) }}', $factura->parsearApi($factura->totalAPI($empresa->id)->total,$empresa), $mensaje);
                 }else{
-                    $mensaje = $empresa->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+                    $mensaje = $empresa->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsearApi($factura->totalAPI($empresa->id)->total,$empresa);
                 }
 
                 $numero = str_replace('+','',$factura->cliente()->celular);
