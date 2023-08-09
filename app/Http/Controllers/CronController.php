@@ -2363,7 +2363,6 @@ class CronController extends Controller
     
     public function envioFacturaWpp(){
         
-        
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',date('d'))->get();
     
         if($grupos_corte->count() > 0){
@@ -2435,15 +2434,15 @@ class CronController extends Controller
                     }
                 
                 // envio de mensajes por whatsapp // 
-                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+                $plantilla = Plantilla::where('empresa', $empresa->id)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
 
                 if($plantilla){
-                    $mensaje = str_replace('{{ $company }}', Auth::user()->empresa()->nombre, $plantilla->contenido);
+                    $mensaje = str_replace('{{ $company }}', $empresa->nombre, $plantilla->contenido);
                     $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
                     $mensaje = str_replace('{{ $factura->codigo }}', $factura->codigo, $mensaje);
                     $mensaje = str_replace('{{ $factura->parsear($factura->total()->total) }}', $factura->parsear($factura->total()->total), $mensaje);
                 }else{
-                    $mensaje = Auth::user()->empresa()->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+                    $mensaje = $empresa->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
                 }
 
                 $numero = str_replace('+','',$factura->cliente()->celular);
