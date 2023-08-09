@@ -72,8 +72,9 @@ class WhatsappController extends Controller
                 if(is_null($instancia) || empty($instancia)){
                     return "true";
                 }
-                $id = $instancia->id;
-                if($id!=$request->input("unique")){
+                $id = $instancia->unique;
+                $idO = $request->input("unique");
+                if($id!=$idO){
                     return "false";
                 }else{
                     return "true";
