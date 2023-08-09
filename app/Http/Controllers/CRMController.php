@@ -255,8 +255,9 @@ class CRMController extends Controller
     }
     public function whatsappActions(Request $request){
         $unique = uniqid();
-        file_put_contents("uniqueid",$unique);
-
+        DB::table("instancia")
+                        ->update(["unique"=>$unique]);
+                        
         switch ($request->input("action")) {
             case 'getChat':
                 $instancia = DB::table("instancia")

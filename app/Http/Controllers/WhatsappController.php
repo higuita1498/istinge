@@ -67,8 +67,12 @@ class WhatsappController extends Controller
                 return "true";
                 break;
             case "verify":
-                $id = file_get_contents("uniqueid");
-                unlink("uniqueid");
+                $instancia = DB::table("instancia")
+                        ->first();
+                if(is_null($instancia) || empty($instancia)){
+                    return "true";
+                }
+                $id = $instancia->id;
                 if($id!=$request->input("unique")){
                     return "false";
                 }else{
