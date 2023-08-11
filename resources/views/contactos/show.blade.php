@@ -396,7 +396,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th width="20%">Saldo a favor Pagos / Egresos221</th>
+							<th width="20%">Saldo a favor Pagos / Egresos </th>
 							<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor2)}}</td>
 						</tr>
 					</tbody>
