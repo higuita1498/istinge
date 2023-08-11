@@ -149,7 +149,7 @@ class FacturaspController extends Controller
             })
             ->addColumn('acciones', $modoLectura ?  "" : "facturasp.acciones")
             ->rawColumns(['nro', 'codigo', 'proveedor', 'creacion', 'vencimiento', 'estado', 'acciones'])
-            ->toJson();    
+            ->toJson();
         }
 
     public function indexOLD(Request $request){
@@ -161,7 +161,7 @@ class FacturaspController extends Controller
         }
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
-        
+
         $facturas=FacturaProveedores::leftjoin('contactos as c', 'factura_proveedores.proveedor', '=', 'c.id')
         ->join('items_factura_proveedor as if', 'factura_proveedores.id', '=', 'if.factura')
         ->select('factura_proveedores.id', 'factura_proveedores.tipo',  'factura_proveedores.codigo', 'factura_proveedores.nro',
@@ -169,7 +169,7 @@ class FacturaspController extends Controller
         'factura_proveedores.vencimiento_factura', 'factura_proveedores.estatus',
         DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
         DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id)) as pagado'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select if(SUM(pago), SUM(pago), 0) from ingresos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura_proveedores.id))  as porpagar'))->where('factura_proveedores.empresa',Auth::user()->empresa)->where('factura_proveedores.tipo',1);
-        
+
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $facturas=$facturas->where('factura_proveedores.codigo', 'like', '%' .$request->name_1.'%');
@@ -177,7 +177,7 @@ class FacturaspController extends Controller
         if ($request->name_2) {
             $busqueda=true; $appends['name_2']=$request->name_2;
             $contactos = Contacto::select('id')->whereIn('tipo_contacto', [1,2])->where('nombre', 'like', $request->name_2.'%')->get();
-            $arrayId = array();    
+            $arrayId = array();
             foreach ($contactos as $contacto){
                 $arrayId[] = $contacto->id;
             }
@@ -202,9 +202,9 @@ class FacturaspController extends Controller
         if ($request->name_6) {
             $busqueda=true;$appends['name_6_simb']=$request->name_6_simb;  $appends['name_6']=$request->name_6; $facturas=$facturas->whereRaw('(Select SUM(pago) from gastos_factura where factura=factura_proveedores.id) + (Select if(SUM(valor), SUM(valor), 0) from gastos_retenciones where factura=factura_proveedores.id) '.$request->name_6_simb.' ? ', [$request->name_6]);
         }
-        
+
         $facturas = $facturas->groupBy('if.factura');
-        
+
         if ($request->name_5) {
             $busqueda=true; $appends['name_5']=$request->name_5; $appends['name_5_simb']=$request->name_5_simb; $facturas=$facturas->havingRaw('SUM(
                 (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) '.$request->name_5_simb.' ?', [$request->name_5]);
@@ -212,7 +212,7 @@ class FacturaspController extends Controller
         $facturas=$facturas->OrderBy($orderby, $order)->paginate(10)->appends($appends);
         return view('facturasp.index')->with(compact('facturas', 'request', 'busqueda'));
     }
-    
+
     public function create($proveedor=false, $producto=false){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['icon' =>'', 'title' => 'Nueva Facturas de Proveedores', 'subseccion' => 'facturas_proveedores']);
@@ -228,7 +228,7 @@ class FacturaspController extends Controller
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',2)->orWhere('relacion',3)->get();
-            
+
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
@@ -264,7 +264,7 @@ class FacturaspController extends Controller
         $tipos_empresa2 = $dataPro->tipos_empresa;
         $prefijos2 = $dataPro->prefijos;
         $vendedores2 = $dataPro->vendedores;
-        
+
         view()->share(['icon' =>'', 'title' => 'Nueva Factura de Compra', 'subseccion' => 'facturas_proveedores', 'seccion' => 'gastos']);
         return view('facturasp.create')
         ->with(compact('relaciones','inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retenciones',
@@ -272,7 +272,7 @@ class FacturaspController extends Controller
             'categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2',
             'tipos_empresa2', 'prefijos2', 'vendedores2', 'codigoFactura','terminos', 'extras'));
     }
-    
+
     public function create_item($item){
         $inventario =Inventario::where('id',$item)->where('empresa',Auth::user()->empresa)->first();
         if ($inventario) {
@@ -280,7 +280,7 @@ class FacturaspController extends Controller
         }
         abort(404);
     }
-    
+
     public function store(Request $request){
 
         $empresa =  auth()->user()->empresa;
@@ -323,7 +323,7 @@ class FacturaspController extends Controller
         }else{
             $nro = $last->nro+1;
         }
-        
+
         $factura = new FacturaProveedores;
         $factura->proveedor =$request->proveedor;
         $factura->tipo =1;
@@ -383,7 +383,7 @@ class FacturaspController extends Controller
                     $productoBodega->inicial=$request->cant[$i];
                     $productoBodega->save();
                 }
-                
+
                 $items->producto=$producto->id;
                 $items->tipo_item=1;
                 //Si el producto es inventariable y existe esa bodega, agregara el valor registrado
@@ -410,13 +410,13 @@ class FacturaspController extends Controller
             $items->desc=$request->desc[$i];
             $items->save();
         }
-        
+
         if ($request->retencion) {
             foreach ($request->retencion as $key => $value) {
                 if ($request->precio_reten[$key]) {
                     $retencion = Retencion::where('id', $request->retencion[$key])->first();
                     $items = new FacturaProveedoresRetenciones;
-                    
+
                     if($retencion->tipo == 6){
                         $this->precision($request->precio_reten[$key]);
                     }
@@ -430,7 +430,7 @@ class FacturaspController extends Controller
         }
 
         PucMovimiento::facturaCompra($factura,1,$request);
-        
+
         //Creo la variable para el mensaje final, y la variable print (imprimir)
         $mensaje='Se ha creado satisfactoriamente la factura';
         $print=false;
@@ -457,7 +457,7 @@ class FacturaspController extends Controller
 
         return redirect('empresa/facturasp')->with('success', $mensaje)->with('codigo', $factura->id);
     }
-    
+
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
@@ -474,7 +474,7 @@ class FacturaspController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         return $this->show($id);
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('id', $id)->where('tipo',1)->first();
@@ -490,7 +490,7 @@ class FacturaspController extends Controller
 
             //obtiene las formas de pago relacionadas con este modulo (Facturas)
             $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
-            
+
             $inventario = Inventario::select('inventario.*', DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
                 ->where('empresa',Auth::user()->empresa)
                 ->where('status', 1)
@@ -512,7 +512,7 @@ class FacturaspController extends Controller
             $tipos_empresa=TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
             $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
             $terminos=TerminosPago::where('empresa',Auth::user()->empresa)->get();
-            
+
             $dataPro = (new InventarioController)->create();
             $categorias2 = $dataPro->categorias;
             $unidades2 = $dataPro->unidades;
@@ -529,13 +529,13 @@ class FacturaspController extends Controller
 
             view()->share(['title' => 'Modificar Factura de Proveedor: '.$factura->codigo, 'icon' =>'','subseccion' => 'facturas_proveedores', 'seccion' => 'gastos']);
             return view('facturasp.edit')->with(compact('relaciones','factura', 'items', 'inventario', 'bodegas',
-             'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2', 
-             'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2', 
+             'clientes', 'impuestos', 'categorias', 'retencionesFacturas', 'retenciones','listas','categorias2',
+             'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2', 'tipos_empresa2',
              'prefijos2', 'vendedores2','identificaciones', 'prefijos','tipos_empresa','terminos','vendedores', 'extras', 'formasPago'));
         }
         return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function update(Request $request, $id){
         $factura =FacturaProveedores::find($id);
         if ($factura) {
@@ -552,7 +552,7 @@ class FacturaspController extends Controller
                 $factura->codigo=$request->codigo;
                 $factura->cuenta_id    = $request->relacion;
                 $factura->save();
-                
+
                 $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('id', $factura->bodega)->first();
                 $items = ItemsFacturaProv::join('inventario as inv', 'inv.id', '=', 'items_factura_proveedor.producto')->select('items_factura_proveedor.*')->where('items_factura_proveedor.factura',$factura->id)->where('items_factura_proveedor.tipo_item', 1)->where('inv.tipo_producto', 1)->get();
                 foreach ($items as $item) {
@@ -576,7 +576,7 @@ class FacturaspController extends Controller
                         $items = new ItemsFacturaProv;
                     }
                     $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
-                    
+
                     if (is_numeric($request->item[$i])) {
                         $producto = Inventario::where('empresa',Auth::user()->empresa)->where('id', $request->item[$i])->first();
                         if($producto->tipo_producto == 2){
@@ -602,7 +602,7 @@ class FacturaspController extends Controller
                         $items->producto=$categorias->id;
                         $items->tipo_item=2;
                     }
-                    
+
                     $items->factura=$factura->id;
                     $items->precio=$this->precision($request->precio[$i]);
                     $items->descripcion=$request->descripcion[$i];
@@ -613,11 +613,11 @@ class FacturaspController extends Controller
                     $items->save();
                     $inner[]=$items->id;
                 }
-                
+
                 if (count($inner)>0) {
                     DB::table('items_factura_proveedor')->where('factura', $factura->id)->whereNotIn('id', $inner)->delete();
                 }
-                
+
                 //Agregar las retenciones
                 if ($request->retencion) {
                     foreach ($request->retencion as $key => $value) {
@@ -645,7 +645,7 @@ class FacturaspController extends Controller
                 }
 
                 PucMovimiento::facturaCompra($factura,2, $request);
-                
+
                 $mensaje='Se ha modificado satisfactoriamente la factura de proveedor';
                 return redirect('empresa/facturasp')->with('success', $mensaje)->with('codigo', $factura->id);
             }
@@ -653,7 +653,7 @@ class FacturaspController extends Controller
         }
         return redirect('empresa/facturasp')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function destroy($id, Request $request){
         $factura =FacturaProveedores::find($id);
         if ($factura) {
@@ -675,7 +675,7 @@ class FacturaspController extends Controller
         }
         return redirect('empresa/facturasp')->with('success', 'Se ha eliminado la factura de proveedor exitosamente');
     }
-    
+
     public function datatable_producto(Request $request, $producto){
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
@@ -699,23 +699,23 @@ class FacturaspController extends Controller
             ->where('factura_proveedores.empresa',Auth::user()->empresa)
             ->where('factura_proveedores.tipo',1)
             ->groupBy('if.factura');
-            
+
         if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $facturas=$facturas->where(function ($query) use ($requestData) {
                 $query->where('factura_proveedores.codigo', 'like', '%'.$requestData->search['value'].'%')->orwhere('c.nombre', 'like', '%'.$requestData->search['value'].'%');
             });
         }
-        
+
         $totalFiltered=$totalData=$facturas->count();
-        
+
         $facturas=$facturas->get();
         foreach ($facturas as $factura) {
             $factura->total = $factura->total()->total;
             $factura->pagado = $factura->pagado();
             $factura->porpagar = $factura->porpagar();
         }
-        
+
         if($requestData['order'][0]['column'] == 4 || $requestData['order'][0]['column'] == 5 || $requestData['order'][0]['column'] == 6 ){
             switch ($requestData['order'][0]['column']){
                 case 4:
@@ -738,7 +738,7 @@ class FacturaspController extends Controller
                 break;
             }
         }
-        
+
         $data = array();
         foreach ($facturas as $factura) {
             $nestedData = array();
@@ -751,7 +751,7 @@ class FacturaspController extends Controller
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->porpagar());
             $boton = '<a   href="'.route('facturasp.showid',$factura->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></i></a>';
             if($factura->tipo ==1 && $factura->estatus==1){
-                $boton.='<a  href="'.route('pagos.create_id', ['cliente'=>$factura->proveedor, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a> 
+                $boton.='<a  href="'.route('pagos.create_id', ['cliente'=>$factura->proveedor, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
                 <a href="'.route('facturasp.edit', $factura->id).'"  class="btn btn-outline-primary btn-icons" title="Edidtar"><i class="fas fa-edit"></i></a>
                 <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="'."confirmar('eliminar-factura".$factura->id."', '¿Estas seguro que deseas eliminar la factura de compra?', 'Se borrara de forma permanente');".'"><i class="fas fa-times"></i></button><form action="'. route('facturasp.destroy',$factura->id) .'" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-factura'.$factura->id.'">'. csrf_field() .'<input name="_method" type="hidden" value="DELETE"></form>';
             }
@@ -766,8 +766,9 @@ class FacturaspController extends Controller
         );
         return json_encode($json_data);
     }
-    
+
     public function datatable_cliente(Request $request, $contacto){
+        dd("ingreso a este metodo");
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
         $columns = array(
@@ -791,23 +792,23 @@ class FacturaspController extends Controller
             ->where('factura_proveedores.tipo',1)
             ->groupBy('if.factura')
             ->where('factura_proveedores.proveedor', $contacto);
-            
+
         if (isset($requestData->search['value'])) {
             // if there is a search parameter, $requestData['search']['value'] contains search parameter
             $facturas=$facturas->where(function ($query) use ($requestData) {
                 $query->where('factura_proveedores.codigo', 'like', '%'.$requestData->search['value'].'%')->orwhere('c.nombre', 'like', '%'.$requestData->search['value'].'%');
             });
         }
-        
+
         $totalFiltered=$totalData=$facturas->count();
         $facturas=$facturas->get();
-        
+
         foreach ($facturas as $factura) {
             $factura->total = $factura->total()->total;
             $factura->pagado = $factura->pagado();
             $factura->porpagar = $factura->porpagar();
         }
-        
+
         if($requestData['order'][0]['column'] == 4 || $requestData['order'][0]['column'] == 5 || $requestData['order'][0]['column'] == 6 ){
             switch ($requestData['order'][0]['column']){
                 case 4:
@@ -833,7 +834,7 @@ class FacturaspController extends Controller
                 break;
             }
         }
-        
+
         $data = array();
         foreach ($facturas as $factura) {
             $nestedData = array();
@@ -846,7 +847,7 @@ class FacturaspController extends Controller
             $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->porpagar);
             $boton = '<a   href="'.route('facturasp.showid',$factura->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></i></a>';
             if($factura->tipo ==1 && $factura->estatus==1){
-                $boton.='<a  href="'.route('pagos.create_id', ['cliente'=>$factura->proveedor, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a> 
+                $boton.='<a  href="'.route('pagos.create_id', ['cliente'=>$factura->proveedor, 'factura'=>$factura->nro]).'" class="btn btn-outline-primary btn-icons" title="Agregar pago"><i class="fas fa-money-bill"></i></a>
                 <a href="'.route('facturasp.edit', $factura->id).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
                 <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="'."confirmar('eliminar-factura".$factura->id."', '¿Estas seguro que deseas eliminar la factura de compra?', 'Se borrara de forma permanente');".'"><i class="fas fa-times"></i></button><form action="'. route('facturasp.destroy',$factura->id) .'" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-factura'.$factura->id.'">'. csrf_field() .'<input name="_method" type="hidden" value="DELETE"></form>';
             }
@@ -861,13 +862,13 @@ class FacturaspController extends Controller
         );
         return json_encode($json_data);
     }
-    
+
     public function proveedor_factura_json($proveedor, $cerradas=false){
         $facturas=FacturaProveedores::where('empresa',Auth::user()->empresa)->where('tipo',1);
         $facturas = $facturas->where('proveedor', $proveedor)->OrderBy('id', 'desc')->select('codigo', 'id')->get();
         return json_encode($facturas);
     }
-    
+
     public function facturap_json($id){
         $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('id', $id)->first();
         $array=array();
@@ -881,7 +882,7 @@ class FacturaspController extends Controller
         }
         return json_encode($array);
     }
-    
+
     public function copia($id){
         return $this->pdf($id, 'copia');
     }
@@ -913,7 +914,7 @@ class FacturaspController extends Controller
         }
 
     }
-    
+
     public function Imprimircopia($id){
         return $this->Imprimir($id, 'copia');
     }
@@ -950,20 +951,20 @@ class FacturaspController extends Controller
     public function showMovimiento($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = FacturaProveedores::find($id);
-    
+
         /*
             obtenemos los movimiento sque ha tenido este documento
             sabemos que se trata de un tipo de movimiento 03
         */
-    
+
         $movimientos = PucMovimiento::where('documento_id',$id)->where('tipo_comprobante',4)->get();
-    
+
         if ($factura) {
             view()->share(['title' => 'Detalle Movimiento ' .$factura->codigo]);
             $items = ItemsFacturaProv::where('factura',$factura->id)->get();
             return view('facturasp.show-movimiento')->with(compact('factura','movimientos'));
         }
-    
+
         return redirect('empresa/facturas')->with('success', 'No existe un registro con ese id');
       }
 
@@ -1589,7 +1590,7 @@ class FacturaspController extends Controller
                 $emitida = true;
             } else { //cambió el prefijo de una numeracion existente ademas hay mas facturas con esa numeración sin emitir
                 /*
-            Actualizacion: Como no es igual al inicioverdadero es muy probable que no 
+            Actualizacion: Como no es igual al inicioverdadero es muy probable que no
             se este emitiendo desde el numero de inicio verdadero si no que arranco un poco mas
             adelante.
             */
