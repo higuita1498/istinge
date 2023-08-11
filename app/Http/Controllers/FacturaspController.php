@@ -768,7 +768,7 @@ class FacturaspController extends Controller
     }
 
     public function datatable_cliente(Request $request, $contacto){
-        dd("ingreso a este metodo");
+        dd("ingreso al metodo de factura");
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
         $columns = array(
