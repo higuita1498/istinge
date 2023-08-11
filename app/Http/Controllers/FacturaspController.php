@@ -677,6 +677,7 @@ class FacturaspController extends Controller
     }
 
     public function datatable_producto(Request $request, $producto){
+        dd("1");
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
         $columns = array(
@@ -768,6 +769,8 @@ class FacturaspController extends Controller
     }
 
     public function datatable_cliente(Request $request, $contacto){
+        dd("2");
+
         dd("ingreso al metodo de factura");
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
