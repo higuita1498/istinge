@@ -44,7 +44,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}

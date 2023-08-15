@@ -97,7 +97,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}
@@ -109,7 +109,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     <div class="row card-description">
     	<div class="col-md-12">
     		<ul class="nav nav-pills" id="myTab" role="tablist">
@@ -133,7 +133,7 @@
     			        <a href="javascript:getDataTable()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
     			        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     			    </div>
-    			    
+
     			    <div class="container-fluid d-none" id="form-filter">
                     	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
                     		<div class="card-body py-0">
@@ -195,7 +195,7 @@
                     		</div>
                     	</div>
                     </div>
-                    
+
     				<div class="table-responsive mt-3">
     				    <table class="table table-striped table-hover w-100" id="table_sin_gestionar">
     				        <thead class="thead-dark">
@@ -219,7 +219,7 @@
     			        <a href="javascript:getDataTableG()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
     			        <a href="javascript:abrirFiltradorG()" class="btn btn-info btn-sm my-1" id="boton-filtrarG"><i class="fas fa-search"></i>Filtrar</a>
     			    </div>
-    			    
+
     			    <div class="container-fluid d-none" id="form-filterG">
                     	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
                     		<div class="card-body py-0">
@@ -305,7 +305,7 @@
     			        <a href="javascript:getDataTableR()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
     			        <a href="javascript:abrirFiltradorR()" class="btn btn-info btn-sm my-1" id="boton-filtrarR"><i class="fas fa-search"></i>Filtrar</a>
     			    </div>
-    			    
+
     			    <div class="container-fluid d-none" id="form-filterR">
                     	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
                     		<div class="card-body py-0">
@@ -384,7 +384,7 @@
     			        <a href="javascript:getDataTableT()" class="btn btn-success btn-sm my-1"><i class="fas fa-sync"></i>Actualizar</a>
     			        <a href="javascript:abrirFiltradorT()" class="btn btn-info btn-sm my-1" id="boton-filtrarR"><i class="fas fa-search"></i>Filtrar</a>
     			    </div>
-    			    
+
     			    <div class="container-fluid d-none" id="form-filterT">
                     	<div class="card shadow-sm border-0 mb-3" style="background: #ffffff00 !important;">
                     		<div class="card-body py-0">
@@ -461,7 +461,7 @@
 			</div>
     	</div>
     </div>
-    
+
     <div class="modal fade" id="modal_gestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -477,8 +477,8 @@
                             <div class="form-group col-md-8 offset-md-2">
                                 <div class="stopwatch" data-autostart="false" style="border-radius: 20px;background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};text-align: center;padding: 5%;color: #fff;">
                                     <div class="time">
-                                        <span class="hours"></span> : 
-                                        <span class="minutes"></span> : 
+                                        <span class="hours"></span> :
+                                        <span class="minutes"></span> :
                                         <span class="seconds"></span>
                                     </div>
                                     <div class="controls d-none">
@@ -487,7 +487,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="form-group col-md-12 mt-3">
                                 <label class="control-label"><strong>Nombre:</strong> <span id="modal_nombre"></span></label>
                                 <br>
@@ -495,7 +495,7 @@
                                 <br>
                                 <label class="control-label"><strong>Celular:</strong> <span id="modal_celular"></span></label>
                             </div>
-                            
+
                             <div class="form-group col-md-6">
                                 <label for="informacion"><strong>¿Contestó la llamada?</strong> <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" onchange="validarLlamada(this.value)" id="llamada" name="llamada">
@@ -503,7 +503,7 @@
                                     <option value="0">No</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6 d-none" id="div_equivocado">
                                 <label for=""><strong>¿Número Equivocado?</strong> <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" onchange="validarEquivocado(this.value)" id="equivocado" name="equivocado">
@@ -511,12 +511,12 @@
                                     <option value="0" selected>No</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6 d-none" id="div_nuevo">
                                 <label for=""><strong>Número Nuevo</strong> <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="numero_nuevo" min="0" name="numero_nuevo" autocomplete="off">
                             </div>
-                            
+
                             <div class="form-group col-md-6 d-none" id="div_retirado">
                                 <label for=""><strong>¿Cliente Retirado?</strong> <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" id="retirado" name="retirado" onchange="validarRetirado(this.value)">
@@ -525,7 +525,7 @@
                                     <option value="2">Si - Retirado Total</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6 d-none" id="div_promesa">
                                 <label for="informacion"><strong>Promesa de Pago</strong> <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" onchange="validarPromesa(this.value)" id="promesa_pago" name="promesa_pago">
@@ -533,7 +533,7 @@
                                     <option value="0">No</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6 d-none" id="div_fecha">
                                 <label class="control-label">Día máximo de Pago <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control datepickeronly" id="fecha" min="{{date('d-m-Y')}}" name="fecha" autocomplete="off">
@@ -547,12 +547,12 @@
                                     <option value="18:00">6:00 PM</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-12 d-none" id="div_informacion">
                                 <label for="informacion"><strong>Información</strong> <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="informacion" name="informacion" rows="3"></textarea>
                             </div>
-                            
+
                             <input type="hidden" class="form-control" id="idcliente" name="idcliente">
                             <input type="hidden" class="form-control" id="tiempo" name="tiempo">
 
@@ -608,7 +608,7 @@
     $("#formulario").submit(function() {
         return false;
     });
-    
+
     var tabla = null;
     window.addEventListener('load',
     function() {
@@ -641,9 +641,9 @@
 				{data: 'acciones'},
 			]
 		});
-		
+
         tabla = $('#table_sin_gestionar');
-        
+
         tabla.on('preXhr.dt', function(e, settings, data) {
             console.log(data);
             data.cliente = $('#cliente').val();
@@ -656,19 +656,19 @@
 			data.updated_at =  $('#updated_at').val();
             data.filtro = true;
         });
-        
+
         $('#filtrar').on('click', function(e) {
             getDataTable();
             return false;
         });
-        
+
         $('#form-filter').on('keypress',function(e) {
             if(e.which == 13) {
                 getDataTable();
                 return false;
             }
         });
-        
+
 		$('#table_gestionados').DataTable({
 			responsive: true,
 			serverSide: true,
@@ -697,9 +697,9 @@
 				{data: 'acciones'},
 			]
 		});
-		
+
         table = $('#table_gestionados');
-        
+
         table.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteG').val();
 			data.etiqueta_id = $('#etiquetaG').val();
@@ -711,19 +711,19 @@
 			data.updated_at =  $('#updated_atG').val();
             data.filtro = true;
         });
-        
+
         $('#filtrarG').on('click', function(e) {
             getDataTableG();
             return false;
         });
-        
+
         $('#form-filterG').on('keypress',function(e) {
             if(e.which == 13) {
                 getDataTableG();
                 return false;
             }
         });
-        
+
         $('#table_retirados').DataTable({
 			responsive: true,
 			serverSide: true,
@@ -752,9 +752,9 @@
 				{data: 'acciones'},
 			]
 		});
-        
+
         tableR = $('#table_retirados');
-        
+
         tableR.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteR').val();
 			data.etiqueta_id = $('#etiquetaR').val();
@@ -766,19 +766,19 @@
 			data.updated_at =  $('#updated_atR').val();
             data.filtro = true;
         });
-        
+
         $('#filtrarR').on('click', function(e) {
             getDataTableR();
             return false;
         });
-        
+
         $('#form-filterR').on('keypress',function(e) {
             if(e.which == 13) {
                 getDataTableR();
                 return false;
             }
         });
-        
+
         $('#table_retiradosT').DataTable({
 			responsive: true,
 			serverSide: true,
@@ -807,9 +807,9 @@
 				{data: 'acciones'},
 			]
 		});
-        
+
         tableT = $('#table_retiradosT');
-        
+
         tableT.on('preXhr.dt', function(e, settings, data) {
             data.cliente = $('#clienteT').val();
 			data.etiqueta_id = $('#etiquetaT').val();
@@ -821,12 +821,12 @@
 			data.updated_at =  $('#updated_atT').val();
             data.filtro = true;
         });
-        
+
         $('#filtrarT').on('click', function(e) {
             getDataTableT();
             return false;
         });
-        
+
         $('#form-filterT').on('keypress',function(e) {
             if(e.which == 13) {
                 getDataTableT();
@@ -838,15 +838,15 @@
 	function getDataTable() {
 		tabla.DataTable().ajax.reload();
 	}
-	
+
 	function getDataTableG() {
 		table.DataTable().ajax.reload();
 	}
-	
+
 	function getDataTableR() {
 		tableR.DataTable().ajax.reload();
 	}
-	
+
 	function getDataTableT() {
 		tableT.DataTable().ajax.reload();
 	}
@@ -874,7 +874,7 @@
 		$('#updated_at').val('');
 		getDataTable();
 	}
-	
+
 	function abrirFiltradorG() {
 		if ($('#form-filterG').hasClass('d-none')) {
 			$('#boton-filtrarG').html('<i class="fas fa-times"></i> Cerrar');
@@ -899,7 +899,7 @@
 		$('#updated_atG').val('');
 		getDataTableG();
 	}
-	
+
 	function abrirFiltradorR() {
 		if ($('#form-filterR').hasClass('d-none')) {
 			$('#boton-filtrarR').html('<i class="fas fa-times"></i> Cerrar');
@@ -923,7 +923,7 @@
 		$('#updated_atR').val('');
 		getDataTableR();
 	}
-	
+
 	function abrirFiltradorT() {
 		if ($('#form-filterT').hasClass('d-none')) {
 			$('#boton-filtrarT').html('<i class="fas fa-times"></i> Cerrar');
@@ -947,7 +947,7 @@
 		$('#updated_atT').val('');
 		getDataTableT();
 	}
-	
+
 	function gestionar(idCliente, idCRM) {
 	    cargando(true);
 	    if (window.location.pathname.split("/")[1] === "software") {
@@ -955,7 +955,7 @@
 	    }else{
 	        var url = '/empresa/crm/'+idCliente+'/'+idCRM+'/contacto';
 	    }
-	    
+
 	    $.ajax({
 	        url: url,
 	        success: function(data){
@@ -964,7 +964,7 @@
 	            $('#promesa_pago, #llamada, #retirado, #numero_nuevo, #equivocado').val('').selectpicker('refresh');
 	            $("#div_fecha, #div_promesa, #div_informacion, #div_retirado, #div_equivocado, #div_nuevo, #div_hora").addClass('d-none');
                 var apellidos = '';
-	            
+
 	            data=JSON.parse(data);
 
                 if(data[0].apellido1){
@@ -973,7 +973,7 @@
                 if(data[0].apellido2){
                     apellidos += ' '+data[0].apellido2;
                 }
-	            
+
                 $("#modal_nit").empty().text(data[0].nit);
                 $("#modal_nombre").empty().text(data[0].nombre+' '+apellidos);
                 $("#modal_celular").empty().text(data[0].celular);
@@ -984,14 +984,14 @@
 
 
 				/* aqui etiqueta */
-	            
+
 	            $('#modal_gestion').modal({
 	                keyboard: false,
 	                backdrop: 'static'
 	            });
-	            
+
 	            cargando(false);
-	            
+
 	            $("#btn_start").click();
 	        },
 	        error: function(data){
@@ -999,16 +999,16 @@
 	        }
 	    });
 	}
-	
+
 	function store(){
 	    cargando(true);
 	    let hou = $(".hours").text();
 	    let min = $(".minutes").text();
 	    let seg = $(".seconds").text();
-	    
+
 	    $("#tiempo").val(hou+':'+min+':'+seg);
 	    $("#btn_start").click();
-	    
+
 	    if($('#llamada').val().length == 0){
             cargando(false);
             swal('INFORMACIÓN INCOMPLETA', 'COMPLETE LA INFORMACIÓN SOLICITADA PARA GESTIONAR EL CLIENTE', 'warning');
@@ -1020,7 +1020,7 @@
             swal('INFORMACIÓN INCOMPLETA', 'COMPLETE LA INFORMACIÓN SOLICITADA PARA GESTIONAR EL CLIENTE', 'warning');
             return false;
         }
-	    
+
         $.post($("#formulario").attr('action'), $("#formulario").serialize(), function(data) {
             $('#btn_cancel').click();
             $('#formulario').trigger("reset");
@@ -1032,7 +1032,7 @@
             getDataTableT();
         }, 'json');
 	}
-	
+
 	function validarPromesa(value){
 	    $("#fecha").val('');
         $('#hora_pago').val('').selectpicker('refresh');
@@ -1042,7 +1042,7 @@
 	        $("#div_fecha, #div_hora").addClass('d-none');
 	    }
 	}
-	
+
 	function validarLlamada(value){
 	    $('#equivocado').val('').selectpicker('refresh');
 	    if(value === '1'){
@@ -1077,7 +1077,7 @@
             $('#promesa_pago, #hora_pago').val('').selectpicker('refresh').removeAttr("required");
         }
     }
-	
+
 	$(function() {
         $('.datepickeronly').datepicker({
             locale: 'es-es',
@@ -1098,32 +1098,32 @@
 	        var pauseText = toggleElement.data('pausetext');
 	        var resumeText = toggleElement.data('resumetext');
 	        var startText = toggleElement.text();
-	        
+
 	        var hours, minutes, seconds, milliseconds, timer;
-	        
+
 	        function prependZero(time, length) {
 	            time = '' + (time | 0);
 	            while (time.length < length) time = '0' + time;
 	            return time;
 	        }
-	        
+
 	        function setStopwatch(hours, minutes, seconds, milliseconds) {
 	            hoursElement.text(prependZero(hours, 2));
 	            minutesElement.text(prependZero(minutes, 2));
 	            secondsElement.text(prependZero(seconds, 2));
 	            millisecondsElement.text(prependZero(milliseconds, 3));
 	        }
-	        
+
 	        function runTimer() {
 	            var startTime = Date.now();
 	            var prevHours = hours;
 	            var prevMinutes = minutes;
 	            var prevSeconds = seconds;
 	            var prevMilliseconds = milliseconds;
-	            
+
 	            timer = setInterval(function() {
 	                var timeElapsed = Date.now() - startTime;
-	                
+
 	            hours = (timeElapsed / 3600000) + prevHours;
 	            minutes = ((timeElapsed / 60000) + prevMinutes) % 60;
 	            seconds = ((timeElapsed / 1000) + prevSeconds) % 60;
@@ -1131,19 +1131,19 @@
 	            setStopwatch(hours, minutes, seconds, milliseconds);
 	        }, 25);
 	    }
-	        
+
 	        function run() {
 	            running = true;
 	            runTimer();
 	            toggleElement.text(pauseText);
 	        }
-	        
+
 	        function pause() {
 	            running = false;
 	            clearTimeout(timer);
 	            toggleElement.text(resumeText);
 	        }
-	        
+
 	        function reset() {
 	            running = false;
 	            pause();
@@ -1151,11 +1151,11 @@
 	            setStopwatch(hours, minutes, seconds, milliseconds);
 	            toggleElement.text(startText);
 	        }
-	        
+
 	        toggleElement.on('click', function() {
 	            (running) ? pause(): run();
 	        });
-	        
+
 	        resetElement.on('click', function() {
 	            reset();
 	        });
@@ -1163,7 +1163,7 @@
 	        if (running) run();
 	    });
 	});
-	
+
     function cambiarRetiroTotal(id) {
         swal({
 	        title: '¿Está seguro que deseas cambiar al cliente a retiro total?',

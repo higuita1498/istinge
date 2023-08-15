@@ -55,7 +55,7 @@ class ConfiguracionController extends Controller
       if($personalPlan > 0){
           $personalPlan = true;
       }else{
-        $personalPlan = false;    
+        $personalPlan = false;
       }
       $empresa = auth()->user()->empresaObj;
  	  return view('configuracion.index')->with(compact('personalPlan','empresa'));
@@ -179,7 +179,7 @@ class ConfiguracionController extends Controller
       $empresa->ventas=$request->ventas?$request->pref_v." ".$request->ventas:$request->ventas;
       $empresa->finanzas=$request->finanzas?$request->pref_f." ".$request->finanzas:$request->finanzas;
       $empresa->updated_at  = Carbon::now();
-      
+
       $empresa->dv = $request->dvoriginal;
       $empresa->fe_resolucion = $request->test_resolucion;
 
@@ -209,7 +209,7 @@ class ConfiguracionController extends Controller
         Log::debug('RESPON');
         Log::debug($request->tip_responsabilidad);
           foreach($request->tip_responsabilidad as $key => $valor){
-              
+
                 Log::debug($valor);
                DB::table('empresa_responsabilidad')->insert(
                    [
@@ -383,7 +383,7 @@ class ConfiguracionController extends Controller
       //Tipo de numeracion_factura, 1=estandar, 2=DIAN
       $tipo = 1;
       if($request->tipo == 2){$tipo=2;}
-      
+
       if ($request->preferida==1) {
         DB::table('numeraciones_facturas')
         ->where('empresa', Auth::user()->empresa)
@@ -496,7 +496,7 @@ class ConfiguracionController extends Controller
       //Tipo de numeracion_factura, 1=estandar, 2=DIAN
       $tipo = 1;
       if($request->tipo == 2){$tipo=2;}
-      
+
     if ($request->preferida==1) {
       DB::table('numeraciones_facturas')
       ->where('empresa', Auth::user()->empresa)
@@ -1064,19 +1064,19 @@ class ConfiguracionController extends Controller
                       "statusDescription" => $res['statusDescription'],
                       "warnings" => $res['warnings']
                   ]);
-                  
+
                   //desarrollo nuevo ya que se esta dejando habilitar con un solo documento emitido.
                   $empresa->estado_dian = 1;
                   $empresa->save();
-                  
+
                   $emails = $empresa->email;
                   $tituloCorreo = "Set de Pruebas Habilitado";
                   // Mail::send('emails.dian.settestid', compact('empresa'), function ($message) use ($emails, $tituloCorreo) {
                   //     $message->from('info@gestordepartes.net', 'Facturación Electrónica - Gestor de Partes');
                   //     $message->to($emails)->subject($tituloCorreo);
                   // });
-                  
-                  
+
+
               } else {
                   $fallidos[] = ([
 
@@ -1758,7 +1758,7 @@ class ConfiguracionController extends Controller
 
         return "Enviado";
     }
-    
+
     /**
      * * VISTA DE SERVICIOS
      * * @return view
@@ -1915,7 +1915,7 @@ class ConfiguracionController extends Controller
 
     if($empresa){
         if($request->prorrateo == 0){
-          $empresa->prorrateo = 1;  
+          $empresa->prorrateo = 1;
         }else{
           $empresa->prorrateo = 0;
         }
@@ -1959,7 +1959,7 @@ class ConfiguracionController extends Controller
       $user_master = User::where('empresa', $empresa->id)->first()->id;
       $text = '';
 
-      
+
 
       if ($empresa->nomina == 1) {
         DB::table('empresas')->where('id',$empresa->id)->update(['nomina' => 0]);
@@ -2022,7 +2022,7 @@ class ConfiguracionController extends Controller
         if (NumeracionFactura::where('nombre', $request->nombre)
             ->where('nomina', 1)
             ->where('empresa', $empresa->id)
-            ->first() 
+            ->first()
         ) {
             return back()
             ->withInput()
@@ -2095,7 +2095,7 @@ class ConfiguracionController extends Controller
             $numeracion->preferida = 1;
         }
 
-        
+
         $numeracion->nombre = $request->nombre;
         $numeracion->prefijo = $request->prefijo;
         $numeracion->inicio = $request->inicio;
