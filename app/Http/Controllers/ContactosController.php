@@ -1470,7 +1470,6 @@ class ContactosController extends Controller
 
     //metodo para añadir mas campos al formulario de contacto
     public function index_campos_contacto(){
-        dd("hola");
 
         $modoLectura = auth()->user()->modo_lectura();
         $this->getAllPermissions(Auth::user()->id);
@@ -1481,6 +1480,6 @@ class ContactosController extends Controller
 
         view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
 
-        return view('contactos.create')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
+        return view('contactos.newcamposcreate')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
        }
 }
