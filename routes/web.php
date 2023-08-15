@@ -82,7 +82,7 @@ Route::get('facturas-electronicas','FacturasController@facturas_electronica');
 Route::get('ingresos', 'IngresosController@ingresos');
 //Route::get('contactos', 'ContactosController@contactos');
 Route::get('contactos/{tipo_usuario?}', 'ContactosController@contactos');
-Route::get('contactos/camponew','ContactosController@index_campos_contacto')->name('contactos.campornew');
+Route::get('contactos/newcampo','ContactosController@index_campos_contacto')->name('contactos.newcampo');
 Route::get('saldos', 'SaldosInicialesController@saldos')->name('saldoinicial.saldos');
 Route::get('solicitudes', 'WifiController@solicitudes');
 Route::get('pqrs', 'PqrsController@pqrs');
