@@ -91,7 +91,7 @@
         <div class="col-sm-3">
 			<h4 class="card-title">campos adicionales a Contactos</h4>
 			<p>Añade aqui campos adicionales para el registro de tus contactos.</p>
-			<a href="{{route('contactos.campornew')}}">Añadir campos</a> <br>
+			<a href="{{route('contactos.newcampo')}}">Añadir campos</a> <br>
 		</div>
         {{-- fin del codigo --}}
 

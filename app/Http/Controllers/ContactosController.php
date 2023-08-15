@@ -1469,7 +1469,7 @@ class ContactosController extends Controller
     }
 
     //metodo para añadir mas campos al formulario de contacto
-    public function index_campos_contacto(){
+    public function indexcampos(){
         dd("estoy en la vista");
         return "hola estoy en el metodo";
         // $modoLectura = auth()->user()->modo_lectura();
