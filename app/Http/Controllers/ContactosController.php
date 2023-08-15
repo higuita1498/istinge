@@ -1471,6 +1471,7 @@ class ContactosController extends Controller
     //metodo para añadir mas campos al formulario de contacto
     public function index_campos_contacto(){
         dd("hola");
+
         $modoLectura = auth()->user()->modo_lectura();
         $this->getAllPermissions(Auth::user()->id);
         $identificaciones = TipoIdentificacion::all();
