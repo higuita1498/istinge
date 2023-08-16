@@ -77,7 +77,7 @@
 									@if(isset($_SESSION['permisos']['6']))
 									    <a href="{{route('contactos.edit',$contacto->id)}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
 									@endif
-									
+
 									@if(isset($_SESSION['permisos']['7']))
 									    <button class="btn btn-outline-danger btn-icons mr-1" type="submit" title="Eliminar" onclick="confirmar('eliminar-contacto{{$contacto->id}}', '¿Está seguro que deseas eliminar el cliente?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
 									@endif

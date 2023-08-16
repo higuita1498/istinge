@@ -150,8 +150,6 @@ class ReportesController extends Controller
 
 
             $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
-
-
             return view('reportes.ventas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas', 'gruposCorte'));
 
         }
@@ -1933,7 +1931,7 @@ class ReportesController extends Controller
         }
 
     }
-    
+
     public function cajas(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Cajas', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
@@ -1961,7 +1959,7 @@ class ReportesController extends Controller
                 ->where('fecha', '>=', $dates['inicio'])
                 ->where('fecha', '<=', $dates['fin'])
                 ->where('movimientos.empresa',$empresa);
-            
+
         }
         elseif($request->servidor){
 
@@ -2024,7 +2022,7 @@ class ReportesController extends Controller
             ->with('servidores', $servidores)
             ->with('cajas', $cajas);
     }
-    
+
     public function instalacion(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Contratos con Instalación', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
@@ -2078,7 +2076,7 @@ class ReportesController extends Controller
             ->with('totales', $totales)
             ->with('cajas', $cajas);
     }
-    
+
     public function facturasImpagas(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         DB::enableQueryLog();
@@ -2169,7 +2167,7 @@ class ReportesController extends Controller
 
 
     }
-    
+
     public function radicados(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Radicados', 'icon' =>'far fa-life-ring']);
         $this->getAllPermissions(Auth::user()->id);
@@ -2213,7 +2211,7 @@ class ReportesController extends Controller
             ->with('servicios', $servicios)
             ->with('movimientosTodos', $movimientosTodos);
     }
-    
+
     public function recargas(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Recargas', 'icon' =>'fas fa-dollar-sign']);
         $this->getAllPermissions(Auth::user()->id);
@@ -2238,7 +2236,7 @@ class ReportesController extends Controller
 
         $movimientos=  $movimientos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
         $movimientosTodos = $movimientosTodos->get();
-        
+
         foreach ($movimientosTodos as $movimiento){
             $totales  += $movimiento->recarga;
         }
@@ -2253,21 +2251,21 @@ class ReportesController extends Controller
             ->with('movimientosTodos', $movimientosTodos)
             ->with('totales', $totales);
     }
-    
+
     public function puntoVenta(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Punto de Ventas (Ganancias)', 'icon' =>'fas fa-store-alt']);
         $this->getAllPermissions(Auth::user()->id);
         $dates = $this->setDateRequest($request);
 
         //Código base tomado de datatable_movimientos
-        
+
         $cajas = Banco::where('estatus',1)->where('tipo_cta',4)->get();
         $puntos = [];
 
         foreach($cajas as $caja){
             array_push($puntos, $caja->id);
         }
-        
+
         $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
             ->where('fecha', '>=', $dates['inicio'])
@@ -2277,7 +2275,7 @@ class ReportesController extends Controller
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
         $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
-            
+
         if($request->fecha){
             $appends['fecha']=$request->fecha;
         }
@@ -2299,14 +2297,14 @@ class ReportesController extends Controller
             ->with('example', $example)
             ->with('cajas', $cajas);
     }
-    
+
     public function puntoVentaRecaudo(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Punto de Ventas (Recaudos)', 'icon' =>'fas fa-store-alt']);
         $this->getAllPermissions(Auth::user()->id);
         $dates = $this->setDateRequest($request);
 
         //Código base tomado de datatable_movimientos
-        
+
         $cajas = Banco::where('estatus',1)->where('tipo_cta',4)->get();
         $puntos = [];
 
@@ -2323,7 +2321,7 @@ class ReportesController extends Controller
             ->groupBy('movimientos.fecha')
             ->groupBy('movimientos.banco');
         $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
-            
+
         if($request->fecha){
             $appends['fecha']=$request->fecha;
         }
@@ -2493,7 +2491,7 @@ class ReportesController extends Controller
             ->where('factura.empresa',Auth::user()->empresa)
             ->where('emitida',$request->tipo)
             ->groupBy('factura.id');
-            
+
         $example = $facturas->get()->last();
 
         $dates = $this->setDateRequest($request);
@@ -2560,7 +2558,7 @@ class ReportesController extends Controller
             ->where('factura.tipo',1)
             ->where('factura.empresa',Auth::user()->empresa)
             ->groupBy('factura.id');
-            
+
         $example = $facturas->get()->last();
 
         $dates = $this->setDateRequest($request);
@@ -2742,9 +2740,9 @@ class ReportesController extends Controller
             $hasta = now()->format('Y-m-d');
         }
 
-        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')           
+        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')
             ->select('puc_movimiento.*','p.nombre as cuentacontable',
-            DB::raw("SUM((`debito`)) as totaldebito"), 
+            DB::raw("SUM((`debito`)) as totaldebito"),
             DB::raw("SUM((`credito`)) as totalcredito"),
             DB::raw("ABS(SUM((`credito`)) -  SUM((`debito`))) as totalfinal"))
             ->orderBy($orderby, $order)

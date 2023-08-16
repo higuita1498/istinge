@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Empresa; use App\TipoEmpresa; use Carbon\Carbon; 
-use Validator; use Illuminate\Validation\Rule;  use Auth; 
+use App\Empresa; use App\TipoEmpresa; use Carbon\Carbon;
+use Validator; use Illuminate\Validation\Rule;  use Auth;
 use Session;
 
 class TiposEmpresaController extends Controller
@@ -21,10 +21,11 @@ class TiposEmpresaController extends Controller
   }
 
   public function index(){
+
       $this->getAllPermissions(Auth::user()->id);
  		$tipos = TipoEmpresa::where('empresa',Auth::user()->empresa)->get();
 
- 		return view('configuracion.tiposempresa.index')->with(compact('tipos'));   		
+ 		return view('configuracion.tiposempresa.index')->with(compact('tipos'));
  	}
 
   /**
@@ -34,7 +35,7 @@ class TiposEmpresaController extends Controller
   public function create(){
       $this->getAllPermissions(Auth::user()->id);
     view()->share(['title' => 'Nuevo Tipo de Empresa']);
-    return view('configuracion.tiposempresa.create'); 
+    return view('configuracion.tiposempresa.create');
   }
 
   /**
@@ -43,7 +44,7 @@ class TiposEmpresaController extends Controller
   * @return redirect
   */
   public function store(Request $request){
-      
+
        if( TipoEmpresa::where('empresa',auth()->user()->empresa)->count() > 0){
             //Tomamos el tiempo en el que se crea el registro
     Session::put('posttimer', TipoEmpresa::where('empresa',auth()->user()->empresa)->get()->last()->created_at);
@@ -66,10 +67,10 @@ class TiposEmpresaController extends Controller
      return redirect('empresa/configuracion/tiposempresa')->with('success', $mensaje);
     }
        }
-      
+
     $request->validate([
       'nombre' => 'required|max:200'
-    ]); 
+    ]);
     $tipo = new TipoEmpresa;
     $tipo->empresa=Auth::user()->empresa;
     $tipo->nombre=$request->nombre;
@@ -106,7 +107,7 @@ class TiposEmpresaController extends Controller
   public function edit($id){
       $this->getAllPermissions(Auth::user()->id);
     $tipo = TipoEmpresa::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
-    if ($tipo) {        
+    if ($tipo) {
       view()->share(['title' => 'Modificar Tipo de Empresa']);
       return view('configuracion.tiposempresa.edit')->with(compact('tipo'));
     }
@@ -139,11 +140,11 @@ class TiposEmpresaController extends Controller
   * @param int $id
   * @return redirect
   */
-  public function destroy($id){      
-    $tipo=TipoEmpresa::where('empresa',Auth::user()->empresa)->where('id', $id)->first(); 
+  public function destroy($id){
+    $tipo=TipoEmpresa::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
     if ($tipo->usado()==0) {
       $tipo->delete();
-    }  
+    }
     return redirect('empresa/configuracion/tiposempresa')->with('success', 'Se ha eliminado el Tipo de Empresa');
   }
 

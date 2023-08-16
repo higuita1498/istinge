@@ -144,7 +144,7 @@
 			}, 5000);
 		</script>
 	@endif
-	
+
 	<div class="row card-description">
 		<div class="col-md-12">
 			<div class="table-responsive">
@@ -373,7 +373,7 @@
 					</div>
 				@endforeach
 		    </div>
-			
+
 			<div class="table-responsive mt-4">
 				<table class="table table-striped table-bordered table-sm info">
 					<tbody>
@@ -396,7 +396,7 @@
 							</td>
 						</tr>
 						<tr>
-							<th width="20%">Saldo a favor Pagos / Egresos</th>
+							<th width="20%">Saldo a favor Pagos / Egresos </th>
 							<td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor2)}}</td>
 						</tr>
 					</tbody>
@@ -499,7 +499,7 @@
 									<th>Por pagar</th>
 									<th>Acciones</th>
 								</tr>
-	
+
 							</thead>
 						</table>
 					</div>
@@ -950,7 +950,7 @@
             }else{
             var url = '/empresa';
             }
-  
+
 		  $.ajax({
 			  url: url+`/contactos/editsaldo/${contactoId}`,
 			  method: 'GET',
@@ -960,7 +960,7 @@
 			  success: function(response) {
 				  if (response) {
 					  contacto = response;
-		
+
 					  $('#modalSaldo').html('');
 					  $('#modalSaldo').append(`<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 							  <div class="modal-content">
@@ -976,7 +976,7 @@
 										<label for="ancho">saldo</label>
 					  					<input type="text" name="saldo_favor" id="saldo_favor" class="form-control" value="${contacto.saldo_favor}">
 									  </div>
-									
+
 									  <div id="custom-target"></div>
 								  </div>
 								  <div class="modal-footer">
@@ -1000,7 +1000,7 @@
             }else{
             var url = '/empresa';
             }
-		  
+
 		  $.ajax({
 			url: url+`/contactos/storesaldo`,
 			headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -1055,7 +1055,7 @@
 							Fecha: ${response[i].fecha} el usuario ${response[i].nombre} ${response[i].accion}
 							</li>`;
 					  }
-		
+
 					  $('#modalHistorial').html('');
 					  $('#modalHistorial').append(`<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 							  <div class="modal-content">
@@ -1070,7 +1070,7 @@
 											${html}
 										</ul>
 									</div>
-									
+
 									  <div id="custom-target"></div>
 									  <div class="modal-footer">
 										  <a  class="btn btn-secondary" data-dismiss="modal">Cerrar</a>

@@ -237,7 +237,7 @@ function agregarbodega_inventario() {
         }
     }
     var URLactual = window.location.pathname;
-    console.log(URLactual);
+    // console.log(URLactual);
     /*if(URLactual == '/empresa/facturasp/create' || URLactual == '/empresa/remisiones/create'){
      var tr =`<tr id="tr_bodega_${nro}">
      <td width="15%"><label class="control-label">Bodega <span class="text-danger">*</span></label></td>
@@ -385,7 +385,7 @@ function createRowTransferencia() {
         `</tr>`
     );
     data = $('#json_inventario').val();
-    console.log(data);
+    // console.log(data);
     data = JSON.parse(data);
     var $select = $('#item' + nro);
     $.each(data, function(key, value) {
@@ -734,7 +734,7 @@ function contacto(selected, modificar = false, type = 1) {
                 $("#saldofavorcliente").val(data.saldo_favor);
             }
 
-            console.log(data);
+            // console.log(data);
 
 
             //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
@@ -1387,7 +1387,7 @@ function rellenarinceru(id, selected, producto = false) {
                     $('#pcant' + id).html('Disp ' + data.nro);
                 }
             }
-            console.log(data.inventariable);
+            // console.log(data.inventariable);
             if (data.inventario <= 0 && data.inventariable) {
                 jQuery('#noMore').append(`<div class="alert alert-warning alert-dismissible fade show" id="alertInventario" role="alert">
             <strong>¡Atención!</strong> Usted esta intentando facturar un producto que no tiene unidades en inventario.
@@ -2452,7 +2452,7 @@ function CrearFilaFormaPago(categoria = false) {
 function inputAnticipo(nro){
 
     let valorAnticipo = $("selectanticipo"+nro+'>option:selected').attr('precio');
-    console.log(valorAnticipo);
+    // console.log(valorAnticipo);
 
 }
 
@@ -4017,11 +4017,11 @@ function notificacionRadicado() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/radicados/notificacionRadicado';
             var route = '/software/empresa/radicados';
-        } 
+        }
         else if (window.location.pathname.split("/")[1] === "portal") {
             var url = '/portal/empresa/radicados/notificacionRadicado';
             var route = '/portal/empresa/radicados';
-        } 
+        }
         else {
             var url = '/empresa/radicados/notificacionRadicado';
             var route = '/empresa/radicados';
@@ -4098,7 +4098,7 @@ function notificacionPing() {
                 //setTimeout(function(){ notificacion(); }, 3000);
             },
             error: function(data) {
-                console.log(data);
+                // console.log(data);
                 cargando(false);
             }
         });
@@ -4110,11 +4110,11 @@ function notificacionWifi() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/notificacionWifi';
             var route = '/software/empresa/wifi';
-        } 
+        }
         else if (window.location.pathname.split("/")[1] === "portal") {
             var url = '/portal/empresa/notificacionWifi';
             var route = '/portal/empresa/wifi';
-        } 
+        }
         else {
             var url = '/empresa/notificacionWifi';
             var route = '/empresa/wifi';
@@ -4458,7 +4458,7 @@ function storePromesa(id) {
             cargando(false);
             var URLactual = window.location.pathname;
             if (response.success == true) {
-                console.log(URLactual);
+                // console.log(URLactual);
                 if (URLactual == '/software/empresa/facturas') {
                     getDataTable();
                 } else {
@@ -4657,7 +4657,7 @@ $('#searchIP').click(function() {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
-            console-log("ingreso en el primer ajax");
+
             $('#row_ip').html('');
             let ip_ini = data.inicial.split('.');
             let ip_fin = data.final.split('.');
@@ -4697,7 +4697,7 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-                    console-log("ingreso en el segundo ajax");
+
 
                     /*console.log(data.software);
                     if (data.software) {
@@ -4732,6 +4732,7 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
+
                         cargando(false);
                     }
                     if (data.software) {

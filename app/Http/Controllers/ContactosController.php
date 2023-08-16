@@ -308,6 +308,7 @@ class ContactosController extends Controller
 
     public function show($id)
     {
+
         $this->getAllPermissions(Auth::user()->id);
 
         $contacto = Contacto::join('tipos_identificacion AS I', 'I.id', '=', 'contactos.tip_iden')->where('contactos.id', $id)->where('contactos.empresa', Auth::user()->empresa)->select('contactos.*', 'I.identificacion')->first();
@@ -1466,4 +1467,19 @@ class ContactosController extends Controller
         }
 
     }
+
+    //metodo para añadir mas campos al formulario de contacto
+    public function indexcampos(){
+
+         $modoLectura = auth()->user()->modo_lectura();
+         $this->getAllPermissions(Auth::user()->id);
+         $identificaciones = TipoIdentificacion::all();
+         $paises = DB::table('pais')->where('codigo', 'CO')->get();
+         $departamentos = DB::table('departamentos')->get();
+         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+
+         view()->share(['icon' => '', 'title' => 'Añadir campos a Contacto', 'subseccion' => 'clientes', 'middel' => true]);
+
+         return view('contactos.newcamposcreatep')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
+       }
 }

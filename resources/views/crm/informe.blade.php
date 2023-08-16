@@ -99,7 +99,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}
@@ -111,7 +111,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     <div class="container-fluid d-none" id="form-filter">
     	<fieldset>
             <legend>Filtro de Búsqueda</legend>
@@ -183,9 +183,9 @@
 	    	</div>
 	    </fieldset>
     </div>
-    
+
     <div class="row card-description">
-    	<div class="col-md-12">        
+    	<div class="col-md-12">
 			<div class="table-responsive mt-3">
 			    <table class="table table-striped table-hover w-100" id="table_gestionado">
 			        <thead class="thead-dark">
@@ -292,7 +292,7 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
-	
+
 	function exportar() {
 	    //window.location.href = 'https://intercarnet.com/software/empresa/crm/exportar?desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&cliente='+$('#cliente').val()+'&created_by='+$('#created_by').val()+'&estatus='+$('#estatus').val()+'&servidor='+$('#servidor').val()+'&grupo_corte='+$('#grupo_corte').val()+'&estado='+$('#estado').val();
 	    window.location.href = '{{config('app.url')}}/empresa/crm/exportar?desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&cliente='+$('#cliente').val()+'&created_by='+$('#created_by').val()+'&servidor='+$('#servidor').val()+'&grupo_corte='+$('#grupo_corte_q').val()+'&estado='+$('#estado').val();

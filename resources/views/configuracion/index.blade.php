@@ -87,6 +87,14 @@
 			<a href="{{route('tiposempresa.index')}}">Tipos de Contactos</a> <br>
 		</div>
 
+        {{-- Agregando campos adicionales a contactos --}}
+        <div class="col-sm-3">
+			<h4 class="card-title">campos adicionales a Contactos</h4>
+			<p>Añade aqui campos adicionales para el registro de tus contactos.</p>
+			<a href="{{route('contact.new')}}">Añadir campos</a> <br>
+		</div>
+        {{-- fin del codigo --}}
+
 		@if(isset($_SESSION['permisos']['845']))
 		<div class="col-sm-3">
 			<h4 class="card-title">Contratos</h4>
