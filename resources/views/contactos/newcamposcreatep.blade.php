@@ -139,7 +139,7 @@
 			</span>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">Teléfono <span class="text-danger">*</span></label>
@@ -170,14 +170,14 @@
 			</span>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">Tipos de Contactos <span class="text-danger">*</span><a><i data-tippy-content="Tipo empresa a la que pertenece el contacto" class="icono far fa-question-circle"></i></a></label>
 			<select class="form-control selectpicker" name="tipo_empresa" id="tipo_empresa" required="" title="Seleccione" data-live-search="true" data-size="5">
-				@foreach($tipos_empresa as $tipo_empresa)
+				{{-- @foreach($tipos_empresa as $tipo_empresa)
 				<option {{old('tipo_empresa')==$tipo_empresa->id?'selected':''}} {{$tipo_empresa->nombre=='VARIOS'?'selected':''}} {{$tipo_empresa->nombre=='Varios'?'selected':''}} value="{{$tipo_empresa->id}}">{{$tipo_empresa->nombre}}</option>
-				@endforeach
+				@endforeach --}}
 			</select>
 			<span class="help-block error">
 				<strong>{{ $errors->first('tipo_empresa') }}</strong>
@@ -210,7 +210,7 @@
   		</div>
   		@endif
 	</div>
-	
+
 	<div class="row">
 	    <div class="form-group col-md-3 d-none">
 			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
@@ -239,7 +239,7 @@
 
 	<small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
 	<hr>
-	
+
 	<div class="row" style="text-align: right;">
 		<div class="col-md-12">
 			<a href="{{route('contactos.proveedores')}}" class="btn btn-outline-light">Cancelar</a>
