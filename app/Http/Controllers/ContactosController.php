@@ -1470,17 +1470,16 @@ class ContactosController extends Controller
 
     //metodo para añadir mas campos al formulario de contacto
     public function indexcampos(){
-        dd("estoy en la vista");
-        return "hola estoy en el metodo";
-        // $modoLectura = auth()->user()->modo_lectura();
-        // $this->getAllPermissions(Auth::user()->id);
-        // $identificaciones = TipoIdentificacion::all();
-        // $paises = DB::table('pais')->where('codigo', 'CO')->get();
-        // $departamentos = DB::table('departamentos')->get();
-        // $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
-        // view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
+         $modoLectura = auth()->user()->modo_lectura();
+         $this->getAllPermissions(Auth::user()->id);
+         $identificaciones = TipoIdentificacion::all();
+         $paises = DB::table('pais')->where('codigo', 'CO')->get();
+         $departamentos = DB::table('departamentos')->get();
+         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
-        // return view('contactos.newcamposcreate')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
+         view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
+
+         return view('contactos.newcamposcreate')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
        }
 }
