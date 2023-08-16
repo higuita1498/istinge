@@ -186,17 +186,17 @@
 		<div class="form-group col-md-3">
 			<label class="control-label">Lista de Precios <a><i data-tippy-content="Lista de precios que desee asociar a este contacto" class="icono far fa-question-circle"></i></a></label>
 			<select class="form-control selectpicker" name="lista_precio" id="lista_precio" title="Seleccione" data-size="5">
-				@foreach($listas as $lista)
+				{{-- @foreach($listas as $lista)
 				<option {{old('lista_precio')==$lista->id?'selected':''}} {{$lista->nro == 1 ? 'selected':''}} value="{{$lista->id}}">{{$lista->nombre()}}</option>
-				@endforeach
+				@endforeach --}}
 			</select>
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Vendedor <a><i data-tippy-content="Vendedor que desee asociar a este contacto" class="icono far fa-question-circle"></i></a></label>
 			<select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5">
-				@foreach($vendedores as $vendedor)
+				{{-- @foreach($vendedores as $vendedor)
 				<option {{old('vendedor')==$vendedor->id?'selected':''}} {{$vendedor->nombre=='Principal'?'selected':''}} value="{{$vendedor->id}}">{{$vendedor->nombre}}</option>
-				@endforeach
+				@endforeach --}}
 			</select>
 		</div>
 		@if(Auth::user()->empresa()->oficina)
