@@ -114,7 +114,7 @@
                         </td>
                         <td>
 
-                            {{ $movimiento->padre()->created_by() ? $movimiento->padre()->created_by()->nombres : ''}}
+                            {{ isset($movimiento->padre() && $movimiento->padre()->created_by())  ? $movimiento->padre()->created_by()->nombres : ''}}
                         </td>
                         
                         <td>
