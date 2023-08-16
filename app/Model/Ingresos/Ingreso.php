@@ -231,7 +231,11 @@ class Ingreso extends Model
     }
 
     public function created_by(){
-        return User::find($this->created_by);
+        
+        if(User::find($this->created_by)){
+            return User::find($this->created_by);
+        }
+        return false;
     }
 
     public function updated_by(){
