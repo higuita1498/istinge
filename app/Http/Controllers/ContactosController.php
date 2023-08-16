@@ -1478,7 +1478,7 @@ class ContactosController extends Controller
          $departamentos = DB::table('departamentos')->get();
          $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
-         view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
+         view()->share(['icon' => '', 'title' => 'Añadir campos a Contacto', 'subseccion' => 'clientes', 'middel' => true]);
 
          return view('contactos.newcamposcreatep')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
        }
