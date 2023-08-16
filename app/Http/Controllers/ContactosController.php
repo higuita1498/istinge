@@ -1480,6 +1480,6 @@ class ContactosController extends Controller
 
          view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
 
-         return view('contactos.newcamposcreate')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
+         return view('contactos.newcamposcreatep')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
        }
 }
