@@ -33,7 +33,7 @@
 
             <div style="display: flex;align-items: center;margin-top:20px;">
                 <input type="checkbox" id="archivo1" name="archivo1" value="">
-                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 1</label><br>
+                <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 1</label><br>
             </div>
 
             <span class="help-block error">
@@ -45,7 +45,7 @@
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
 			<div style="display: flex;align-items: center;margin-top:20px;">
                 <input type="checkbox" id="archivo2" name="archivo2" value="">
-                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 2</label><br>
+                <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 2</label><br>
             </div>
 
             <span class="help-block error">
@@ -58,7 +58,7 @@
 
             <div style="display: flex;align-items: center;margin-top:20px;">
                 <input type="checkbox" id="archivo3" name="archivo3" value="">
-                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 3</label><br>
+                <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 3</label><br>
             </div>
 
             <span class="help-block error">
@@ -71,7 +71,7 @@
 
             <div style="display: flex;align-items: center;margin-top:20px;">
                 <input type="checkbox" id="archivo4" name="archivo4" value="">
-                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 4</label><br>
+                <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 4</label><br>
             </div>
 
             <span class="help-block error">
@@ -83,7 +83,7 @@
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
 			<div style="display: flex;align-items: center;margin-top:20px;">
                 <input type="checkbox" id="archivo5" name="archivo5" value="">
-                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 5</label><br>
+                <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 5</label><br>
             </div>
             <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
