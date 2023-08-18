@@ -39,8 +39,11 @@
         <div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 2<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 2 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<label for="vehicle1" style="margint-top:20px;"> Es archivo el campo 2</label><br>
-            <input type="checkbox" id="archivo1" name="archivo1" value="">
+			<div style="display: flex;align-items: center;">
+                <input type="checkbox" id="archivo1" name="archivo1" value="">
+                <label for="vehicle1" style="margin-left: 10px;"> Es archivo el campo 2</label><br>
+            </div>
+
             <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
