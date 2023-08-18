@@ -29,7 +29,7 @@
 		</div> --}}
 		<div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 1<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 1 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
-			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 
             <div style="display: flex;align-items: center;margin-top:5px;">
                 <input type="checkbox" id="archivo1" name="archivo1" value="">
@@ -42,7 +42,7 @@
 		</div>
         <div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 2<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 2 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
-			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 			<div style="display: flex;align-items: center;margin-top:5px;">
                 <input type="checkbox" id="archivo2" name="archivo2" value="">
                 <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 2</label><br>
@@ -54,7 +54,7 @@
 		</div>
         <div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 3<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 3 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
-			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 
             <div style="display: flex;align-items: center;margin-top:5px;">
                 <input type="checkbox" id="archivo3" name="archivo3" value="">
@@ -67,7 +67,7 @@
 		</div>
         <div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 4<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 4 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
-			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 
             <div style="display: flex;align-items: center;margin-top:5px;">
                 <input type="checkbox" id="archivo4" name="archivo4" value="">
@@ -80,7 +80,7 @@
 		</div>
         <div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 5<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 5 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
-			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 			<div style="display: flex;align-items: center;margin-top:5px;">
                 <input type="checkbox" id="archivo5" name="archivo5" value="">
                 <label for="vehicle1" style="margin-left: 10px;padding-top:10px;"> Es archivo el campo 5</label><br>
