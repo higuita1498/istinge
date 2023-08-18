@@ -19,9 +19,9 @@ use Log;
 
 use App\Model\Ingresos\Factura;
 use App\NumeracionFactura;
-use App\Model\Inventario\Bodega; 
+use App\Model\Inventario\Bodega;
 use App\Model\Ingresos\ItemsFactura;
-use App\Model\Inventario\ProductosBodega; 
+use App\Model\Inventario\ProductosBodega;
 use App\Model\Inventario\Inventario;
 use App\Contrato;
 use App\Contacto;
@@ -98,7 +98,7 @@ class CronController extends Controller
                 where('contracts.status',1)->
                 // whereIn('contracts.id',[992,1612])->
                 where('contracts.state','enabled')->get();
-                
+
                 // return $contratos;
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
                 if($num){
@@ -112,29 +112,29 @@ class CronController extends Controller
                 }else{
                     $date = Carbon::create(Carbon::now()->addDays(15)->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
                 }
-                
+
                 foreach ($contratos as $contrato) {
-            
+
                     if(DB::table('factura')->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
-                    
+
                     ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
                     $fac = Factura::where('cliente', $contrato->cliente)
                     // ->where('facturacion_automatica', 1)
                     ->where('contrato_id',$contrato->id)
                     ->get()->last();
-                    
+
                     // return $fac;
-                    
+
                     //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
                     if(isset($fac->estatus) || !$fac){
                         //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
                         if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac || isset($fac->estatus) && $fac->estatus == 2){
                             if(!$fac || isset($fac) && $fecha != $fac->fecha){
                             $numero=round($numero)+1;
-                        
+
                             //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
                             $nro = NumeracionFactura::tipoNumeracion($contrato);
-    
+
                             if(is_null($nro)){
                             }else{
                                 if($contrato->fecha_suspension){
@@ -142,21 +142,21 @@ class CronController extends Controller
                                 }else{
                                     $fecha_suspension = $grupo_corte->fecha_suspension;
                                 }
-    
+
                                 //$plazo=TerminosPago::where('dias', (((Carbon::now()->endOfMonth()->format('d')*1) - $grupo_corte->fecha_factura) + $grupo_corte->fecha_suspension))->first();
                                 $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
-    
+
                                 $tipo = 1; //1= normal, 2=Electrónica.
-    
+
                                 $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
-                                
+
                                 if($contrato->facturacion == 3 && !$electronica){
                                     $tipo = 1;
                                     // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
                                 }elseif($contrato->facturacion == 3 && $electronica){
                                     $tipo = 2;
                                 }
-                                
+
                                 $inicio = $nro->inicio;
 
                                 // Validacion para que solo asigne numero consecutivo si no existe.
@@ -165,7 +165,7 @@ class CronController extends Controller
                                     $inicio=$nro->inicio;
                                     $nro->inicio += 1;
                                 }
-                                
+
                                 $factura = new Factura;
                                 $factura->nro           = $numero;
                                 $factura->codigo        = $nro->prefijo.$inicio;
@@ -185,19 +185,19 @@ class CronController extends Controller
                                 $factura->vendedor      = 1;
                                 $factura->prorrateo_aplicado = 0;
                                 $factura->facturacion_automatica = 1;
-    
+
                                 if($contrato){
                                     $factura->contrato_id = $contrato->id;
                                 }
-    
+
                                 $factura->save();
-    
+
                                 ## Se carga el item a la factura (Plan de Internet) ##
-    
+
                                 if($contrato->plan_id){
                                     $plan = PlanesVelocidad::find($contrato->plan_id);
                                     $item = Inventario::find($plan->item);
-    
+
                                     $item_reg = new ItemsFactura;
                                     $item_reg->factura     = $factura->id;
                                     $item_reg->producto    = $item->id;
@@ -210,9 +210,9 @@ class CronController extends Controller
                                     $item_reg->desc        = $contrato->descuento;
                                     $item_reg->save();
                                 }
-    
+
                                 ## Se carga el item a la factura (Plan de Televisión) ##
-    
+
                                 if($contrato->servicio_tv){
                                     $item = Inventario::find($contrato->servicio_tv);
                                     $item_reg = new ItemsFactura;
@@ -227,11 +227,11 @@ class CronController extends Controller
                                     $item_reg->desc        = $contrato->descuento;
                                     $item_reg->save();
                                 }
-    
+
                                 ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
-    
+
                                 $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-    
+
                                 if($asignacion){
                                     $item = Inventario::find($asignacion->producto);
                                     $item_reg = new ItemsFactura;
@@ -246,32 +246,32 @@ class CronController extends Controller
                                     $item_reg->desc        = $contrato->descuento;
                                     $item_reg->save();
                                 }
-    
+
                                 $nro->save();
                                 $i++;
-    
+
                                 $numero = str_replace('+','',$factura->cliente()->celular);
                                 $numero = str_replace(' ','',$numero);
-    
+
                                 array_push($numeros, '57'.$numero);
-    
+
                                 if($empresa->sms_factura_generada){
-    
+
                                     $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
                                     $nombreEmpresa = $empresa->nombre;
                                     $codigoFactura = $factura->codigo ?? $factura->nro;
                                     $valorFactura =  $factura->totalAPI($empresa->id)->total;
                                     $fechaVencimiento = $date->format('d-m-Y');
-    
+
                                     $bulksms = $empresa->sms_factura_generada;
                                     $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
                                     $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
                                     $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
                                     $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
                                     $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
-                                    
+
                                     $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
-    
+
                                 }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
                                     $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
                                     $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
@@ -280,18 +280,18 @@ class CronController extends Controller
                                     $bulksms = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
                                     $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                                 }
-    
+
                                 //>>>>Posible aplicación de Prorrateo al total<<<<//
                                 if($empresa->prorrateo == 1){
                                     $dias = $factura->diasCobradosProrrateo();
                                     //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
                                     if($dias != 30){
-    
+
                                             DB::table('factura')->where('id',$factura->id)->update([
                                              'prorrateo_aplicado' => 1
                                             ]);
                                             //si no se nombra la variable en la primer guardada se genera una copia
-    
+
                                         foreach($factura->itemsFactura as $item){
                                             //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
                                             $precioItemProrrateo = round($item->precio * $dias / 30, $empresa->precision);
@@ -307,7 +307,7 @@ class CronController extends Controller
                         }
                     } //Comentando factura abierta del mes pasado
                     }
-                    
+
                 }
             }
 
@@ -488,7 +488,7 @@ class CronController extends Controller
                 fclose($file);
             }
 
-           
+
         }
     }
 
@@ -503,15 +503,15 @@ class CronController extends Controller
         $swGrupo = 1; //masivo
         // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
         $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->where('fecha_suspension','!=',0)->get();
-    
+
         if($grupos_corte->count() > 0){
 
             $grupos_corte_array = array();
-            
+
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
             }
-            
+
             //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.id','=','f.contrato_id')->
@@ -526,9 +526,9 @@ class CronController extends Controller
                 whereDate('f.vencimiento', '<=', now())->
                 orderBy('f.id', 'desc')->
                 take(20)->
-                get(); 
+                get();
                 $swGrupo = 1; //masivo
-                
+
         }else{
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
@@ -539,33 +539,33 @@ class CronController extends Controller
             where('cs.state','enabled')->
             where('cs.fecha_suspension','!=', null)->
             take(20)->
-            get(); 
+            get();
             $swGrupo = 0; // personalizado
         }
 
             if($contactos){
             $empresa = Empresa::find(1);
             foreach ($contactos as $contacto) {
-                
+
                 $factura = Factura::find($contacto->factura);
-                
+
                 $ultimaFacturaRegistrada = Factura::
                 where('cliente',$factura->cliente)
                 ->where('contrato_id',$factura->contrato_id)
                 ->orderBy('created_at', 'desc')
                 ->value('id');
-                                
+
                 if($factura->id == $ultimaFacturaRegistrada){
- 
+
                     if($factura->contrato_id != null){
                         $contrato = Contrato::find($factura->contrato_id);
                     }else{
                         $contrato = Contrato::find($contacto->contrato_id);
                     }
-                    
+
                     $promesaExtendida = DB::table('promesa_pago')->where('factura', $contacto->factura)->where('vencimiento', '>=', $fecha)->count();
-    
-    
+
+
                     $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
                     $crm = new CRM();
                     $crm->cliente = $contacto->id;
@@ -574,37 +574,37 @@ class CronController extends Controller
                     $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
                     $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
                     $crm->save();
-    
-    
+
+
                     if($promesaExtendida > 0){
-    
+
                                 if($contrato->state != 'enabled'){
-    
+
                                             if(isset($contrato->server_configuration_id)){
-    
+
                                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                                                 $API = new RouterosAPI();
                                                 $API->port = $mikrotik->puerto_api;
-    
+
                                                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                                                     $API->write('/ip/firewall/address-list/print', TRUE);
                                                     $ARRAYS = $API->read();
-                                                
-    
+
+
                                                 #ELIMINAMOS DE MOROSOS#
                                                 $API->write('/ip/firewall/address-list/print', false);
                                                 $API->write('?address='.$contrato->ip, false);
                                                 $API->write("?list=morosos",false);
                                                 $API->write('=.proplist=.id');
                                                 $ARRAYS = $API->read();
-                
+
                                                 if(count($ARRAYS)>0){
                                                     $API->write('/ip/firewall/address-list/remove', false);
                                                     $API->write('=.id='.$ARRAYS[0]['.id']);
                                                     $READ = $API->read();
                                                 }
                                                 #ELIMINAMOS DE MOROSOS#
-                
+
                                                 #AGREGAMOS A IP_AUTORIZADAS#
                                                 $API->comm("/ip/firewall/address-list/add", array(
                                                     "address" => $contrato->ip,
@@ -612,36 +612,36 @@ class CronController extends Controller
                                                     )
                                                 );
                                                 #AGREGAMOS A IP_AUTORIZADAS#
-                                                
+
                                                 $contrato->state = 'enabled';
-    
+
                                                 $contrato->update();
                                                 $API->disconnect();
                                                 }
                                     }
                                 }
-    
+
                         continue;
                     }
-    
-                
-    
+
+
+
                     //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
                     if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
-    
+
                         //segundo filtro de validacion, validando por rango de fechas
                         $diasHabilesNocobro = 0;
                         if($contrato->tipo_nosuspension == 1 &&  $contrato->fecha_desde_nosuspension <= $fecha && $contrato->fecha_hasta_nosuspension >= $fecha){
                             $diasHabilesNocobro = 1;
                         }
-                        
+
                         if($diasHabilesNocobro == 0){
                         if(isset($contrato->server_configuration_id)){
-    
+
                             $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                             $API = new RouterosAPI();
                             $API->port = $mikrotik->puerto_api;
-    
+
                             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                                 $API->write('/ip/firewall/address-list/print', TRUE);
                                 $ARRAYS = $API->read();
@@ -653,7 +653,7 @@ class CronController extends Controller
                                             "list" => 'morosos'
                                             )
                                         );
-    
+
                                         #ELIMINAMOS DE IP_AUTORIZADAS#
                                         $API->write('/ip/firewall/address-list/print', false);
                                         $API->write('?address='.$contrato->ip, false);
@@ -935,7 +935,7 @@ class CronController extends Controller
                         $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
                         $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
                         $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
-                        
+
                         $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                 }
 
@@ -1081,7 +1081,7 @@ class CronController extends Controller
                     $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
                     $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
                     $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
-                    
+
                     $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                 }
             }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
@@ -1657,7 +1657,7 @@ class CronController extends Controller
     }
 
     public function eventosEpayco(Request $request){
-        dd($request);
+
         /*En esta página se reciben las variables enviadas desde ePayco hacia el servidor.
         Antes de realizar cualquier movimiento en base de datos se deben comprobar algunos valores
         Es muy importante comprobar la firma enviada desde ePayco
@@ -1947,6 +1947,237 @@ class CronController extends Controller
         return response('Factura ya pagada', 200);
     }
 
+    //metodo para recibir la respuesta de la api de toppay
+    public function eventosTopPay(Request $request){
+        $empresa = Empresa::find(1);
+        if($request->transaction_state == 'payment_approved'){
+            $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
+
+            if($factura->estatus == 1){
+                $empresa = Empresa::find($factura->empresa);
+                $nro = Numeracion::where('empresa', $empresa->id)->first();
+                $caja = $nro->caja;
+
+                while (true) {
+                    $numero = Ingreso::where('empresa', $empresa->id)->where('nro', $caja)->count();
+                    if ($numero == 0) {
+                        break;
+                    }
+                    $caja++;
+                }
+
+                $banco = Banco::where('nombre', 'COMBOPAY')->where('estatus', 1)->where('lectura', 1)->first();
+
+                # REGISTRAMOS EL INGRESO
+                $ingreso                = new Ingreso;
+                $ingreso->nro           = $caja;
+                $ingreso->empresa       = $empresa->id;
+                $ingreso->cliente       = $factura->cliente;
+                $ingreso->cuenta        = $banco->id;
+                $ingreso->metodo_pago   = 9;
+                $ingreso->tipo          = 1;
+                $ingreso->fecha         = date('Y-m-d');
+                $ingreso->observaciones = 'Pago ComboPay ID: '.$request->ticket_id;
+                $ingreso->save();
+
+                # REGISTRAMOS EL INGRESO_FACTURA
+                $precio = ($this->precisionAPI($request->transaction_value, $empresa->id) > $factura->porpagarAPI($empresa->id)) ? $factura->porpagarAPI($empresa->id) : $this->precisionAPI($request->transaction_value, $empresa->id);
+                //$precio         = $this->precisionAPI($request->transaction_value, $empresa->id);
+                //$precio         = $this->precisionAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
+
+                $items          = new IngresosFactura;
+                $items->ingreso = $ingreso->id;
+                $items->factura = $factura->id;
+                $items->pagado  = $factura->pagado();
+                $items->pago    = $precio;
+
+                if ($precio >= $this->precisionAPI($factura->porpagarAPI($empresa->id), $empresa->id)) {
+                    $factura->estatus = 0;
+                    $factura->save();
+
+                    CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                    $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                    foreach ($crms as $crm) {
+                        $crm->delete();
+                    }
+                }
+
+                $items->save();
+
+                # AUMENTAMOS LA NUMERACIÓN DE PAGOS
+                $nro->caja = $caja + 1;
+                $nro->save();
+
+                # REGISTRAMOS EL MOVIMIENTO
+                $ingreso = Ingreso::find($ingreso->id);
+
+                $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+
+                if($factura->estatus == 0){
+                    # EJECUTAMOS COMANDOS EN MIKROTIK
+                    $cliente = Contacto::where('id', $factura->cliente)->first();
+                    $contrato = Contrato::where('client_id', $cliente->id)->first();
+                    $res = DB::table('contracts')->where('client_id', $cliente->id)->update(["state" => 'enabled']);
+
+                    $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                    if ($asignacion) {
+                        $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                        $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                        if ($cuotas_pendientes == 0) {
+                            $asignacion->status = 1;
+                        }
+                        $asignacion->save();
+                    }
+
+                    # API MK
+                    if($contrato){
+                        if($contrato->server_configuration_id){
+                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                            $API = new RouterosAPI();
+                            $API->port = $mikrotik->puerto_api;
+
+                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                $API->write('/ip/firewall/address-list/print', TRUE);
+                                $ARRAYS = $API->read();
+
+                                #ELIMINAMOS DE MOROSOS#
+                                $API->write('/ip/firewall/address-list/print', false);
+                                $API->write('?address='.$contrato->ip, false);
+                                $API->write("?list=morosos",false);
+                                $API->write('=.proplist=.id');
+                                $ARRAYS = $API->read();
+
+                                if(count($ARRAYS)>0){
+                                    $API->write('/ip/firewall/address-list/remove', false);
+                                    $API->write('=.id='.$ARRAYS[0]['.id']);
+                                    $READ = $API->read();
+                                }
+                                #ELIMINAMOS DE MOROSOS#
+
+                                #AGREGAMOS A IP_AUTORIZADAS#
+                                $API->comm("/ip/firewall/address-list/add", array(
+                                    "address" => $contrato->ip,
+                                    "list" => 'ips_autorizadas'
+                                    )
+                                );
+                                #AGREGAMOS A IP_AUTORIZADAS#
+
+                                $API->disconnect();
+
+                                $contrato->state = 'enabled';
+                                $contrato->save();
+                            }
+                        }
+                    }
+
+                    # ENVÍO SMS
+                    $servicio = Integracion::where('empresa', $empresa->id)->where('tipo', 'SMS')->where('status', 1)->first();
+                    if($servicio){
+                        $numero = str_replace('+','',$cliente->celular);
+                        $numero = str_replace(' ','',$numero);
+
+                        if($empresa->sms_pago && isset($factura)){
+                            $nombreCliente = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
+                            $nombreEmpresa = $empresa->nombre;
+                            $codigoFactura = $factura->codigo ?? $factura->nro;
+                            $valorFactura =  $factura->totalAPI($empresa->id)->total;
+                            $fechaVencimiento = date('d-m-Y', strtotime($factura->vencimiento));
+                            $pagoRecibido = Funcion::ParsearAPI($precio, $empresa->id);
+
+                            $bulksms = $empresa->sms_pago;
+                            $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
+                            $bulksms = str_replace("{empresa}", $nombreEmpresa, $bulksms);
+                            $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
+                            $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
+                            $bulksms = str_replace("{pagado}", $pagoRecibido, $bulksms);
+                            $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
+
+                            $mensaje =  $bulksms;
+                        }else{
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".Funcion::ParsearAPI($precio, $empresa->id)." gracias por preferirnos. ".$empresa->slogan;
+                        }
+
+                        if($servicio->nombre == 'Hablame SMS'){
+                            if($servicio->api_key && $servicio->user && $servicio->pass){
+                                $post['numero'] = $numero;
+                                $post['sms'] = $mensaje;
+
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing/bulk',
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                    CURLOPT_HTTPHEADER => array(
+                                        'account: '.$servicio->user,
+                                        'apiKey: '.$servicio->api_key,
+                                        'token: '.$servicio->pass,
+                                        'Content-Type: application/json'
+                                    ),
+                                ));
+                                $result = curl_exec ($curl);
+                                $err  = curl_error($curl);
+                                curl_close($curl);
+                            }
+                        }elseif($servicio->nombre == 'SmsEasySms'){
+                            if($servicio->user && $servicio->pass){
+                                $post['to'] = array('57'.$numero);
+                                $post['text'] = $mensaje;
+                                $post['from'] = "SMS";
+                                $login = $servicio->user;
+                                $password = $servicio->pass;
+
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                    array(
+                                        "Accept: application/json",
+                                        "Authorization: Basic ".base64_encode($login.":".$password)));
+                                $result = curl_exec ($ch);
+                                $err  = curl_error($ch);
+                                curl_close($ch);
+                            }
+                        }else{
+                            if($servicio->user && $servicio->pass){
+                                $post['to'] = array('57'.$numero);
+                                $post['text'] = $mensaje;
+                                $post['from'] = "";
+                                $login = $servicio->user;
+                                $password = $servicio->pass;
+
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                curl_setopt($ch, CURLOPT_POST, 1);
+                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                    array(
+                                        "Accept: application/json",
+                                        "Authorization: Basic ".base64_encode($login.":".$password)));
+                                $result = curl_exec ($ch);
+                                $err  = curl_error($ch);
+                                curl_close($ch);
+                            }
+                        }
+                    }
+                }
+                return response('success', 200);
+            }
+            return response('Factura ya pagada', 200);
+        }
+        return response('Factura ya pagada', 200);
+    }
+
     public static function SMSFacturas($fecha){
         $numeros = [];
         $bulk = '';
@@ -1973,7 +2204,7 @@ class CronController extends Controller
                     $bulksms = str_replace("{factura}", $codigoFactura, $bulksms);
                     $bulksms = str_replace("{valor}", $valorFactura, $bulksms);
                     $bulksms = str_replace("{vencimiento}", $fechaVencimiento, $bulksms);
-                    
+
                     $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
 
                 }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
@@ -2109,10 +2340,10 @@ class CronController extends Controller
         }
     }
 
-    public function deleteFactura(){ 
-        
+    public function deleteFactura(){
+
         //--------- enviar facturas por wpp segun una fecha ------- ///
-        
+
             return $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
             ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-07-29")
@@ -2120,18 +2351,18 @@ class CronController extends Controller
             ->where('factura.whatsapp',0)
             ->select('factura.*')
             ->get();
-            
+
             foreach($facturas as $factura){
-                
+
                 view()->share(['title' => 'Imprimir Factura']);
                 $empresa = Empresa::find($factura->empresa);
                 $items = ItemsFactura::where('factura',$factura->id)->get();
                 $itemscount=ItemsFactura::where('factura',$factura->id)->count();
                 $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
                 $resolucion = NumeracionFactura::where('empresa',$factura->empresa)->latest()->first();
-                
+
                 $tipo = $factura->tipo;
-                    
+
                 if($factura->emitida == 1){
                         $impTotal = 0;
                         foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
@@ -2172,8 +2403,8 @@ class CronController extends Controller
                     }else{
                         $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                     }
-                
-                // envio de mensajes por whatsapp // 
+
+                // envio de mensajes por whatsapp //
                 $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
 
                 if($plantilla){
@@ -2188,7 +2419,7 @@ class CronController extends Controller
                 $numero = str_replace('+','',$factura->cliente()->celular);
                 $numero = str_replace(' ','',$numero);
                 $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
-                
+
 
                 $fields = [
                     "action"=>"sendFile",
@@ -2201,7 +2432,7 @@ class CronController extends Controller
                 ];
 
                 $request = new Request();
-                $request->merge($fields); 
+                $request->merge($fields);
                 $controller = new CRMController();
 
                 $instancia = DB::table("instancia")
@@ -2211,45 +2442,45 @@ class CronController extends Controller
                     if($instancia->status == "1"){
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
                         $response = json_decode($response,true);
-                        
-                        if($response['salida'] == 'success'){ 
+
+                        if($response['salida'] == 'success'){
                             $factura->whatsapp = 1;
                             $factura->correo_sendinblue = 1;
                             $factura->save();
                         }
-                        
-        
+
+
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }else{
                         $factura->correo_sendinblue = 0;
-                        
-        
+
+
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }
                 }else{
                     $factura->correo_sendinblue = 0;
-                        
-        
+
+
                     $factura->response_sendinblue = $response;
                     $factura->save();
                 }
 
                 unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
             }
-        
+
         // --------- fin enviar fcturas por wpp segun fecha ---------- //
-        
-        
-        
+
+
+
         //facturas creadas automaticamente cancelamos sus contratos o eliminamos
         // $facturas = Factura::
         // join('contracts as c','c.id','=','factura.contrato_id')
         // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-05-02")
         // ->where('c.grupo_corte',2)
         // ->select('factura.*')
-        // ->get();  
+        // ->get();
 
         //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
         // $contratos = Contrato::where('grupo_corte',1)->where('state','disabled')->where('updated_at','>=','2022-10-06 00:00:00')->where('updated_at','<=','2022-10-06 06:00:00')->get();
@@ -2262,7 +2493,7 @@ class CronController extends Controller
         // }
         // return "Se habilitaron " . $i . " contratos";
         //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
-        
+
         // //habilitar contratos por factura
         // foreach($facturas as $factura){
         //     $contrato = Contrato::where('id',$factura->contrato_id)->first();
@@ -2271,37 +2502,37 @@ class CronController extends Controller
         //         $contrato->status = 1;
         //         $contrato->save();
         //     }
-          
+
         // }
-        
+
         // return "ok contratos habilitados";
-        
+
         // $eliminadas = 0;
         // foreach($facturas as $f){
-            
+
         //     if($f->pagado() == 0){
         //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
         //     $eliminadas++;
         //     $f->delete();
         //     }
-        // }   
-        
-        
+        // }
+
+
         // return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
-        
+
         //comprobar en bd
         //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"
-        
+
         // SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
         // $facturas = Factura::join('contracts as c','c.id','=','factura.contrato_id')
         // ->select('factura.*','c.grupo_corte','c.plan_id','c.servicio_tv','c.descuento')
         // ->where('factura.fecha','2022-12-20')
         // ->get();
-        
+
         // $cont = 0;
         // foreach($facturas as $factura){
-            
-            
+
+
             //#SOPORTE FECHA DE VENCIMIENTO MAL INGRESADA CAMBIO MASIVO //
             // if(Carbon::parse($factura->vencimiento)->format('Y') == "2022"){
             // $cont=$cont+1;
@@ -2314,7 +2545,7 @@ class CronController extends Controller
             //  $factura->save();
             // }
             //#SOPORTE FECHA DE VENCIMIENTO MAL INGRESADA CAMBIO MASIVO //
-            
+
             // if($factura->total()->total == 0){
             //     $cont=$cont+1;
             //     if(!DB::table('items_factura')->where('factura',$factura->id)->first()){
@@ -2360,19 +2591,19 @@ class CronController extends Controller
         //END SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
 
     }
-    
+
     public function envioFacturaWpp(){
-        
+
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',date('d'))->get();
-    
+
         if($grupos_corte->count() > 0){
 
             $grupos_corte_array = array();
-            
+
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
             }
-        
+
          $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
             ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
@@ -2380,18 +2611,18 @@ class CronController extends Controller
             ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
             ->limit(45)->get();
-            
+
             foreach($facturas as $factura){
-                
+
                 view()->share(['title' => 'Imprimir Factura']);
                 $empresa = Empresa::find($factura->empresa);
                 $items = ItemsFactura::where('factura',$factura->id)->get();
                 $itemscount=ItemsFactura::where('factura',$factura->id)->count();
                 $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
                 $resolucion = NumeracionFactura::where('empresa',$factura->empresa)->latest()->first();
-                
+
                 $tipo = $factura->tipo;
-                    
+
                 if($factura->emitida == 1){
                         $impTotal = 0;
                         foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
@@ -2432,8 +2663,8 @@ class CronController extends Controller
                     }else{
                         $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
                     }
-                
-                // envio de mensajes por whatsapp // 
+
+                // envio de mensajes por whatsapp //
                 $plantilla = Plantilla::where('empresa', $empresa->id)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
 
                 if($plantilla){
@@ -2448,7 +2679,7 @@ class CronController extends Controller
                 $numero = str_replace('+','',$factura->cliente()->celular);
                 $numero = str_replace(' ','',$numero);
                 $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
-                
+
 
                 $fields = [
                     "action"=>"sendFile",
@@ -2461,7 +2692,7 @@ class CronController extends Controller
                 ];
 
                 $request = new Request();
-                $request->merge($fields); 
+                $request->merge($fields);
                 $controller = new CRMController();
 
                 $instancia = DB::table("instancia")
@@ -2471,27 +2702,27 @@ class CronController extends Controller
                     if($instancia->status == "1"){
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
                         $response = json_decode($response,true);
-                        
-                        if($response['salida'] == 'success'){ 
+
+                        if($response['salida'] == 'success'){
                             $factura->whatsapp = 1;
                             $factura->correo_sendinblue = 1;
                             $factura->save();
                         }
-                        
-        
+
+
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }else{
                         $factura->correo_sendinblue = 0;
-                        
-        
+
+
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }
                 }else{
                     $factura->correo_sendinblue = 0;
-                        
-        
+
+
                     $factura->response_sendinblue = $response;
                     $factura->save();
                 }
@@ -2518,11 +2749,11 @@ class CronController extends Controller
                         $factura->prorrateo_aplicado = 1;
                         $factura->save();
                     }
-        
+
                     foreach($factura->itemsFactura as $item){
-                          
+
                         //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
-                        $precioItemProrrateo = $this->precision($item->precio * $dias / 30); 
+                        $precioItemProrrateo = $this->precision($item->precio * $dias / 30);
                         $item->precio = $precioItemProrrateo;
                         $item->save();
 
@@ -2659,7 +2890,7 @@ class CronController extends Controller
                 ],
                 'subject' => $tituloCorreo,
                 'htmlContent' => '<html>'.$html.'</html>',
-                
+
             ];
 
             $fields = json_encode($fields);
@@ -2683,7 +2914,7 @@ class CronController extends Controller
             if(isset($response['messageId'])){
                 $factura->correo_sendinblue = 1;
             }
-            
+
             $factura->response_sendinblue = $response;
             $factura->save();
             //unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");

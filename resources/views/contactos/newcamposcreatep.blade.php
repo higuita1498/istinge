@@ -16,7 +16,7 @@
 <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
 	@csrf
 	<div class="row">
-		<div class="form-group col-md-3">
+		{{-- <div class="form-group col-md-3">
 			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
 			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
 				@foreach($identificaciones as $identificacion)
@@ -26,47 +26,75 @@
 			<span class="help-block error">
 				<strong>{{ $errors->first('tip_iden') }}</strong>
 			</span>
-		</div>
+		</div> --}}
 		<div class="form-group col-md-3">
-			<label class="control-label">Identificación <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<span class="help-block error">
+				<strong>{{ $errors->first('nit') }}</strong>
+			</span>
+		</div>
+        <div class="form-group col-md-3">
+			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<span class="help-block error">
+				<strong>{{ $errors->first('nit') }}</strong>
+			</span>
+		</div>
+        <div class="form-group col-md-3">
+			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<span class="help-block error">
+				<strong>{{ $errors->first('nit') }}</strong>
+			</span>
+		</div>
+        <div class="form-group col-md-3">
+			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+			<span class="help-block error">
+				<strong>{{ $errors->first('nit') }}</strong>
+			</span>
+		</div>
+        <div class="form-group col-md-3">
+			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
 			<span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
 
-		<div class="form-group col-md-1" style="display: none;" id="dvnit">
+		{{-- <div class="form-group col-md-1" style="display: none;" id="dvnit">
 			<label class="control-label">DV <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" name="dv" id="dv" disabled required="" maxlength="20" value="">
 			<input type="hidden" name="dvoriginal" id="dvoriginal" value="">
 			<span class="help-block error">
 				<strong>{{ $errors->first('dv') }}</strong>
 			</span>
-		</div>
+		</div> --}}
 
-		<div class="form-group col-md-3">
+		{{-- <div class="form-group col-md-3">
 			<label class="control-label">Nombres <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" name="nombre" id="nombre" required="" maxlength="200" value="{{old('nombre')}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('nombre') }}</strong>
 			</span>
-		</div>
-        <div class="form-group col-md-3">
+		</div> --}}
+        {{-- <div class="form-group col-md-3">
             <label class="control-label">Apellido 1</label>
             <input type="text" class="form-control" name="apellido1" id="apellido1" maxlength="200" value="{{old('apellido1')}}">
             <span class="help-block error">
                 <strong>{{ $errors->first('apellido1') }}</strong>
             </span>
-        </div>
-        <div class="form-group col-md-3">
+        </div> --}}
+        {{-- <div class="form-group col-md-3">
             <label class="control-label">Apellido 2</label>
             <input type="text" class="form-control" name="apellido2" id="apellido2" maxlength="200" value="{{old('apellido2')}}">
             <span class="help-block error">
                 <strong>{{ $errors->first('apellido2') }}</strong>
             </span>
-        </div>
+        </div> --}}
 	</div>
-	<div class="row" id="tipop" style="display: none;">
+	{{-- <div class="row" id="tipop" style="display: none;">
 		<div class="form-group col-md-3">
 			<label class="control-label">Tipo Persona<span class="text-danger">*</span></label>
 			<select class="form-control selectpicker" name="tipo_persona" id="tipo_persona" required="" title="Seleccione" onchange="tipopersona(this.value)">
@@ -89,8 +117,8 @@
 				<strong>{{ $errors->first('tipo_persona') }}</strong>
 			</span>
 		</div>
-	</div>
-	<div class="row">
+	</div> --}}
+	{{-- <div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">País</label>
 			<select class="form-control selectpicker" name="pais" id="pais" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validateCountry(this.value)">
@@ -138,9 +166,9 @@
 				<strong>{{ $errors->first('email') }}</strong>
 			</span>
 		</div>
-	</div>
+	</div> --}}
 
-	<div class="row">
+	{{-- <div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">Teléfono <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" id="telefono1" name="telefono1" required="" maxlength="15" value="{{old('telefono1')}}">
@@ -169,35 +197,35 @@
 				<strong>{{ $errors->first('celular') }}</strong>
 			</span>
 		</div>
-	</div>
+	</div> --}}
 
-	<div class="row">
+	{{-- <div class="row">
 		<div class="form-group col-md-3">
 			<label class="control-label">Tipos de Contactos <span class="text-danger">*</span><a><i data-tippy-content="Tipo empresa a la que pertenece el contacto" class="icono far fa-question-circle"></i></a></label>
 			<select class="form-control selectpicker" name="tipo_empresa" id="tipo_empresa" required="" title="Seleccione" data-live-search="true" data-size="5">
 				{{-- @foreach($tipos_empresa as $tipo_empresa)
 				<option {{old('tipo_empresa')==$tipo_empresa->id?'selected':''}} {{$tipo_empresa->nombre=='VARIOS'?'selected':''}} {{$tipo_empresa->nombre=='Varios'?'selected':''}} value="{{$tipo_empresa->id}}">{{$tipo_empresa->nombre}}</option>
 				@endforeach --}}
-			</select>
+			{{-- </select>
 			<span class="help-block error">
 				<strong>{{ $errors->first('tipo_empresa') }}</strong>
-			</span>
-		</div>
-		<div class="form-group col-md-3">
+			</span> --}}
+		{{-- </div> --}}
+		{{-- <div class="form-group col-md-3">
 			<label class="control-label">Lista de Precios <a><i data-tippy-content="Lista de precios que desee asociar a este contacto" class="icono far fa-question-circle"></i></a></label>
-			<select class="form-control selectpicker" name="lista_precio" id="lista_precio" title="Seleccione" data-size="5">
+			<select class="form-control selectpicker" name="lista_precio" id="lista_precio" title="Seleccione" data-size="5"> --}}
 				{{-- @foreach($listas as $lista)
 				<option {{old('lista_precio')==$lista->id?'selected':''}} {{$lista->nro == 1 ? 'selected':''}} value="{{$lista->id}}">{{$lista->nombre()}}</option>
 				@endforeach --}}
-			</select>
+			{{-- </select>
 		</div>
 		<div class="form-group col-md-3">
 			<label class="control-label">Vendedor <a><i data-tippy-content="Vendedor que desee asociar a este contacto" class="icono far fa-question-circle"></i></a></label>
-			<select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5">
+			<select class="form-control selectpicker" name="vendedor" id="vendedor" title="Seleccione" data-live-search="true" data-size="5"> --}}
 				{{-- @foreach($vendedores as $vendedor)
 				<option {{old('vendedor')==$vendedor->id?'selected':''}} {{$vendedor->nombre=='Principal'?'selected':''}} value="{{$vendedor->id}}">{{$vendedor->nombre}}</option>
 				@endforeach --}}
-			</select>
+			{{-- </select>
 		</div>
 		@if(Auth::user()->empresa()->oficina)
 		<div class="form-group col-md-3">
@@ -209,9 +237,9 @@
   			</select>
   		</div>
   		@endif
-	</div>
+	</div>  --}}
 
-	<div class="row">
+	{{-- <div class="row">
 	    <div class="form-group col-md-3 d-none">
 			<label class="control-label">Tipo de Contacto <span class="text-danger">*</span></label>
 			<div class="form-check form-check-flat">
@@ -235,9 +263,9 @@
 				<strong>{{ $errors->first('observaciones') }}</strong>
 			</span>
 		</div>
-	</div>
+	</div> --}}
 
-	<small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
+	{{-- <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small> --}}
 	<hr>
 
 	<div class="row" style="text-align: right;">
