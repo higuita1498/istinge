@@ -28,37 +28,47 @@
 			</span>
 		</div> --}}
 		<div class="form-group col-md-3">
-			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo 1<span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<span class="help-block error">
+			<label for="vehicle1"> Es archivo</label><br>
+            <input type="checkbox" id="archivo1" name="archivo1" value="">
+            <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
         <div class="form-group col-md-3">
-			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo 2<span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<span class="help-block error">
+			<label for="vehicle1"> Es archivo</label><br>
+            <input type="checkbox" id="archivo1" name="archivo1" value="">
+            <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
         <div class="form-group col-md-3">
-			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo 3<span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<span class="help-block error">
+			<label for="vehicle1"> Es archivo</label><br>
+            <input type="checkbox" id="archivo1" name="archivo1" value="">
+            <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
         <div class="form-group col-md-3">
-			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo 4<span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<span class="help-block error">
+			<label for="vehicle1"> Es archivo</label><br>
+            <input type="checkbox" id="archivo1" name="archivo1" value="">
+            <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
         <div class="form-group col-md-3">
-			<label class="control-label">Coloque el titulo del campo <span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
+			<label class="control-label">Coloque el titulo del campo 5<span class="text-danger">*</span><a><i data-tippy-content="Identificación de la persona" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" required="" maxlength="10" value="{{old('nit')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
-			<span class="help-block error">
+			<label for="vehicle1"> Es archivo</label><br>
+            <input type="checkbox" id="archivo1" name="archivo1" value="">
+            <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
 		</div>
