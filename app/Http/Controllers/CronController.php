@@ -1718,6 +1718,7 @@ class CronController extends Controller
     }
 
     public function eventosCombopay(Request $request){
+        return "hola datos enviados";
         $empresa = Empresa::find(1);
         if($request->transaction_state == 'payment_approved'){
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
@@ -1949,9 +1950,11 @@ class CronController extends Controller
 
     //metodo para recibir la respuesta de la api de toppay
     public function eventosTopPay(Request $request){
+
         $empresa = Empresa::find(1);
-        if($request->transaction_state == 'payment_approved'){
-            $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
+        if($request->status == 'success'){
+
+            $factura = Factura::where('codigo','LIKE', '%' . $request->reference . '%')->first();
 
             if($factura->estatus == 1){
                 $empresa = Empresa::find($factura->empresa);
@@ -1966,7 +1969,7 @@ class CronController extends Controller
                     $caja++;
                 }
 
-                $banco = Banco::where('nombre', 'COMBOPAY')->where('estatus', 1)->where('lectura', 1)->first();
+                $banco = Banco::where('nombre', 'TOPPAY')->where('estatus', 1)->where('lectura', 1)->first();
 
                 # REGISTRAMOS EL INGRESO
                 $ingreso                = new Ingreso;
@@ -1977,7 +1980,7 @@ class CronController extends Controller
                 $ingreso->metodo_pago   = 9;
                 $ingreso->tipo          = 1;
                 $ingreso->fecha         = date('Y-m-d');
-                $ingreso->observaciones = 'Pago ComboPay ID: '.$request->ticket_id;
+                $ingreso->observaciones = 'Pago topPay ID: '.$request->reference;
                 $ingreso->save();
 
                 # REGISTRAMOS EL INGRESO_FACTURA
@@ -2174,8 +2177,10 @@ class CronController extends Controller
                 return response('success', 200);
             }
             return response('Factura ya pagada', 200);
+        }else{
+            return response('Error al pagar la Factura', 500);
         }
-        return response('Factura ya pagada', 200);
+
     }
 
     public static function SMSFacturas($fecha){
