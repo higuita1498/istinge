@@ -1718,7 +1718,7 @@ class CronController extends Controller
     }
 
     public function eventosCombopay(Request $request){
-        return "hola datos enviados";
+
         $empresa = Empresa::find(1);
         if($request->transaction_state == 'payment_approved'){
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
@@ -1950,7 +1950,7 @@ class CronController extends Controller
 
     //metodo para recibir la respuesta de la api de toppay
     public function eventosTopPay(Request $request){
-
+        return "hola datos enviados";
         $empresa = Empresa::find(1);
         if($request->status == 'success'){
 
