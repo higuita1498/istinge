@@ -237,7 +237,7 @@ function agregarbodega_inventario() {
         }
     }
     var URLactual = window.location.pathname;
-    // console.log(URLactual);
+    console.log(URLactual);
     /*if(URLactual == '/empresa/facturasp/create' || URLactual == '/empresa/remisiones/create'){
      var tr =`<tr id="tr_bodega_${nro}">
      <td width="15%"><label class="control-label">Bodega <span class="text-danger">*</span></label></td>
@@ -385,7 +385,7 @@ function createRowTransferencia() {
         `</tr>`
     );
     data = $('#json_inventario').val();
-    // console.log(data);
+    console.log(data);
     data = JSON.parse(data);
     var $select = $('#item' + nro);
     $.each(data, function(key, value) {
@@ -684,7 +684,7 @@ function notif(id) {
 
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar = false, type = 1) {
-    // alert("pablo iganciooo");
+
     var it = 1;
     if ($("#facelectornica").val() != null) {
         if ($("#facelectornica").val() == 2) {
@@ -727,24 +727,37 @@ function contacto(selected, modificar = false, type = 1) {
                 }
             }
 
-            //seteamos un posoble saldo a favor que tenga el cliente
+                //seteamos un posoble saldo a favor que tenga el cliente
             if (window.location.pathname.split("/")[3] == "facturasp" || window.location.pathname.split("/")[2] == "facturasp") {
-                $("#saldofavorcliente").val(data.saldo_favor2);
-            } else {
-                $("#saldofavorcliente").val(data.saldo_favor);
-            }
-
-            // console.log(data);
+                    $("#saldofavorcliente").val(data.saldo_favor2);
+                } else {
+                    $("#saldofavorcliente").val(data.saldo_favor);
+                }
 
 
-            //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
-            if (data.plan == null && type == 1 && data.servicio_tv == null && modulo == 0) {
-                if ($("#dian").val() == null) {
+                //Validación de cuando es una factura estandar normal pero no tiene ningun contrato sale alerta.
+                if(window.location.pathname.split("/")[3] != "ordenes"){
+                     if (data.plan == null && type == 1 && data.servicio_tv == null && modulo == 0) {
+                    if ($("#dian").val() == null) {
+                        Swal.fire({
+                            position: 'top-center',
+                            type: 'error',
+                            title: 'Cliente sin contrato.',
+                            text: 'El cliente seleccionado no cuenta con nigun contrato asignado',
+                            showConfirmButton: true,
+                        });
+                        $("#cliente").val("");
+                        $('#cliente').selectpicker('refresh');
+                        cargando(false);
+                        return;
+                    }
+                    //referencia a que el cliente tiene un contrato por facturacion electrónica y no por estandar
+                } else if (type == 1 && data.facturacion == 3 && modulo == 0) {
                     Swal.fire({
                         position: 'top-center',
                         type: 'error',
-                        title: 'Cliente sin contrato.',
-                        text: 'El cliente seleccionado no cuenta con nigun contrato asignado',
+                        title: 'Contrato con facturacion electrónica.',
+                        text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se puede realizar una factura estandar',
                         showConfirmButton: true,
                     });
                     $("#cliente").val("");
@@ -752,20 +765,8 @@ function contacto(selected, modificar = false, type = 1) {
                     cargando(false);
                     return;
                 }
-                //referencia a que el cliente tiene un contrato por facturacion electrónica y no por estandar
-            } else if (type == 1 && data.facturacion == 3 && modulo == 0) {
-                Swal.fire({
-                    position: 'top-center',
-                    type: 'error',
-                    title: 'Contrato con facturacion electrónica.',
-                    text: 'El cliente seleccionado tiene un contrato de facturación electrónica, no se puede realizar una factura estandar',
-                    showConfirmButton: true,
-                });
-                $("#cliente").val("");
-                $('#cliente').selectpicker('refresh');
-                cargando(false);
-                return;
             }
+           
 
             if ($('#ident').length > 0) {
                 $('#ident').val(data.nit);
@@ -1387,7 +1388,7 @@ function rellenarinceru(id, selected, producto = false) {
                     $('#pcant' + id).html('Disp ' + data.nro);
                 }
             }
-            // console.log(data.inventariable);
+            console.log(data.inventariable);
             if (data.inventario <= 0 && data.inventariable) {
                 jQuery('#noMore').append(`<div class="alert alert-warning alert-dismissible fade show" id="alertInventario" role="alert">
             <strong>¡Atención!</strong> Usted esta intentando facturar un producto que no tiene unidades en inventario.
@@ -1644,7 +1645,7 @@ function total_linea_formapago(nro) {
     let total = 0;
 
     $('#table-formaspago tbody tr').each(function() {
-
+        
         var id = $(this).attr('fila');
         id = $("#precioformapago" + id);
         var totalLinea = id.val();
@@ -2421,7 +2422,6 @@ function CrearFilaFormaPago(categoria = false) {
 
     //Añadimos una nueva opcion al select si el cliente tiene un saldo a favor disponible para usar en facturas.
     var saldoFavorCliente = $("#saldofavorcliente").val();
-    alert(saldoFavorCliente);
     if (saldoFavorCliente > 0 && $("#notacredito").length == 0) {
         $('#formapago' + nro).append($('<option>', {
             value: 0,
@@ -2452,7 +2452,7 @@ function CrearFilaFormaPago(categoria = false) {
 function inputAnticipo(nro){
 
     let valorAnticipo = $("selectanticipo"+nro+'>option:selected').attr('precio');
-    // console.log(valorAnticipo);
+    console.log(valorAnticipo);
 
 }
 
@@ -4017,12 +4017,7 @@ function notificacionRadicado() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/radicados/notificacionRadicado';
             var route = '/software/empresa/radicados';
-        }
-        else if (window.location.pathname.split("/")[1] === "portal") {
-            var url = '/portal/empresa/radicados/notificacionRadicado';
-            var route = '/portal/empresa/radicados';
-        }
-        else {
+        } else {
             var url = '/empresa/radicados/notificacionRadicado';
             var route = '/empresa/radicados';
         }
@@ -4098,7 +4093,7 @@ function notificacionPing() {
                 //setTimeout(function(){ notificacion(); }, 3000);
             },
             error: function(data) {
-                // console.log(data);
+                console.log(data);
                 cargando(false);
             }
         });
@@ -4110,12 +4105,7 @@ function notificacionWifi() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/notificacionWifi';
             var route = '/software/empresa/wifi';
-        }
-        else if (window.location.pathname.split("/")[1] === "portal") {
-            var url = '/portal/empresa/notificacionWifi';
-            var route = '/portal/empresa/wifi';
-        }
-        else {
+        } else {
             var url = '/empresa/notificacionWifi';
             var route = '/empresa/wifi';
         }
@@ -4159,11 +4149,7 @@ function getInterfaces(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = '/portal/api/getInterfaces/' + mikrotik;
-    }
-    else {
+    } else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
     $.ajax({
@@ -4196,11 +4182,7 @@ function getPlanes(mikrotik) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getPlanes/' + mikrotik;
-    }
-    else if(window.location.pathname.split("/")[1] === "portal"){
-        var url = '/portal/api/getPlanes/' + mikrotik;
-    }
-    else {
+    } else {
         var url = '/api/getPlanes/' + mikrotik;
     }
 
@@ -4353,11 +4335,7 @@ function modificarPromesa(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/${id}/promesa_pago`;
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = `/portal/empresa/facturas/${id}/promesa_pago`;
-    }
-    else {
+    } else {
         var url = `/empresa/facturas/${id}/promesa_pago`;
     }
 
@@ -4436,11 +4414,7 @@ function storePromesa(id) {
     cargando(true);
     if (window.location.pathname.split("/")[1] === "software") {
         var url = `/software/empresa/facturas/store_promesa`;
-    }
-    else if(window.location.pathname.split("/")[1] === "portal"){
-        var url = `/portal/empresa/facturas/store_promesa`;
-    }
-    else {
+    } else {
         var url = `/empresa/facturas/store_promesa`;
     }
     $.ajax({
@@ -4458,7 +4432,7 @@ function storePromesa(id) {
             cargando(false);
             var URLactual = window.location.pathname;
             if (response.success == true) {
-                // console.log(URLactual);
+                console.log(URLactual);
                 if (URLactual == '/software/empresa/facturas') {
                     getDataTable();
                 } else {
@@ -4519,11 +4493,7 @@ function getSegmentos(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSegmentos/' + mikrotik;
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = '/portal/api/getSegmentos/' + mikrotik;
-    }
-    else {
+    } else {
         var url = '/api/getSegmentos/' + mikrotik;
     }
 
@@ -4558,11 +4528,7 @@ function getInterfaz(mikrotik) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getInterfaces/' + mikrotik;
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = '/portal/api/getInterfaces/' + mikrotik;
-    }
-    else {
+    } else {
         var url = '/api/getInterfaces/' + mikrotik;
     }
 
@@ -4597,11 +4563,7 @@ function getContracts(id) {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getContracts/' + id;
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = '/portal/api/getContracts/' + id;
-    }
-    else {
+    } else {
         var url = '/api/getContracts/' + id;
     }
 
@@ -4633,23 +4595,14 @@ function getContracts(id) {
 }
 
 $('#searchIP').click(function() {
-
     cargando(true);
-
     let prefijo = $("#local_address").val().split('/');
     let mk = $("#server_configuration_id").val();
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-
-    }
-    else if(window.location.pathname.split("/")[1] === "portal"){
-        var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-
-    }
-    else {
+    } else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-
     }
 
     $.ajax({
@@ -4657,7 +4610,6 @@ $('#searchIP').click(function() {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
-
             $('#row_ip').html('');
             let ip_ini = data.inicial.split('.');
             let ip_fin = data.final.split('.');
@@ -4676,20 +4628,13 @@ $('#searchIP').click(function() {
                 }
                 x++;
             }
-            cargando(false);
+
             if (window.location.pathname.split("/")[1] === "software") {
                 var url = `/software/api/getIps/${mk}`;
-                cargando(false);
-            }
-            else if(window.location.pathname.split("/")[1] === "portal"){
-                var url = `/portal/api/getIps/${mk}`;
-                cargando(false);
-            }
-            else {
+            } else {
                 var url = `/api/getIps/${mk}`;
-                cargando(false);
             }
-            cargando(false);
+
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -4697,8 +4642,6 @@ $('#searchIP').click(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-
-
                     /*console.log(data.software);
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++){
@@ -4732,8 +4675,6 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
-
-                        cargando(false);
                     }
                     if (data.software) {
                         for (i = 0; i < data.software.length; i++) {
@@ -4744,7 +4685,6 @@ $('#searchIP').click(function() {
                                 }
                             }
                         }
-                        cargando(false);
                     }
                     cargando(false);
                 }
@@ -4760,12 +4700,8 @@ $('#searchIP').click(function() {
                 showConfirmButton: false,
                 timer: 5000
             })
-
-            cargando(false);
         }
-
     })
-
 });
 
 function selectIP(ip) {
@@ -4779,11 +4715,7 @@ $('#searchIP2').click(function() {
 
     if (window.location.pathname.split("/")[1] === "software") {
         var url = '/software/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    }
-    else if (window.location.pathname.split("/")[1] === "portal") {
-        var url = '/portal/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
-    }
-    else {
+    } else {
         var url = '/api/getSubnetting/' + prefijo['0'] + '/' + prefijo['1'];
     }
 
@@ -4921,12 +4853,7 @@ function notificacionTecnico() {
         if (window.location.pathname.split("/")[1] === "software") {
             var url = '/software/empresa/radicados/notificacionTecnico';
             var route = '/software/empresa/radicados';
-        }
-        else if (window.location.pathname.split("/")[1] === "portal") {
-            var url = '/portal/empresa/radicados/notificacionTecnico';
-            var route = '/portal/empresa/radicados';
-        }
-        else {
+        } else {
             var url = '/empresa/radicados/notificacionTecnico';
             var route = '/empresa/radicados';
         }
