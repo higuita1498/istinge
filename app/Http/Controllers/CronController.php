@@ -1950,7 +1950,6 @@ class CronController extends Controller
 
     //metodo para recibir la respuesta de la api de toppay
     public function eventosTopPay(Request $request){
-        return "hola datos enviados";
         $empresa = Empresa::find(1);
         if($request->status == 'success'){
 
@@ -1984,7 +1983,7 @@ class CronController extends Controller
                 $ingreso->save();
 
                 # REGISTRAMOS EL INGRESO_FACTURA
-                $precio = ($this->precisionAPI($request->transaction_value, $empresa->id) > $factura->porpagarAPI($empresa->id)) ? $factura->porpagarAPI($empresa->id) : $this->precisionAPI($request->transaction_value, $empresa->id);
+                $precio = ($this->precisionAPI($request->amount, $empresa->id) > $factura->porpagarAPI($empresa->id)) ? $factura->porpagarAPI($empresa->id) : $this->precisionAPI($request->amount, $empresa->id);
                 //$precio         = $this->precisionAPI($request->transaction_value, $empresa->id);
                 //$precio         = $this->precisionAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
 

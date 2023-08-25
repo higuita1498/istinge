@@ -274,7 +274,7 @@
                             </div>
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Tipo Conexión <span class="text-danger">*</span></label>
+                                <label class="control-label">Tipo Conexión12 <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" id="conexion" name="conexion"  required="" title="Seleccione" data-live-search="true" data-size="4" onchange="interfazChange();">
                                     <option value="1" {{old('conexion')==1?'selected':''}}>PPPOE</option>
                                     <option value="2" {{old('conexion')==2?'selected':''}}>DHCP</option>
