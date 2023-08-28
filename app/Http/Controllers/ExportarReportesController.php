@@ -583,6 +583,11 @@ class ExportarReportesController extends Controller
             if($request->grupo){
                 $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
             }
+
+            if($request->formapago){
+                $facturas=$facturas->where('ig.puc_banco', $request->formapago);
+            }
+            
             $ides=array();
             $factures=$facturas->get();
             $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
