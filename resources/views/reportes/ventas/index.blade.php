@@ -42,7 +42,7 @@
 				@foreach($formasPago as $fp)
 					<option value="{{$fp->id}}" {{$fp->id == $request->formapago ? 'selected' : ''}}> {{$fp->nombre}} </option>
 				@endforeach
-				<option {{ !$request->grupo ? 'selected' : ''}} value="">TODOS</option>
+				<option {{ !$request->formapago ? 'selected' : ''}} value="">TODOS</option>
 			</select>
 		</div>
 
