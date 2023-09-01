@@ -286,11 +286,13 @@
 
 @section('scripts')
 <script>
+
     $("#formulario").submit(function () {
         return false;
     });
 
     $(document).ready(function() {
+        $.fn.dataTable.ext.errMode = 'throw';
         $('#desde').datepicker({
             uiLibrary: 'bootstrap4',
             iconsLibrary: 'fontawesome',

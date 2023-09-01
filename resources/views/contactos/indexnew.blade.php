@@ -163,7 +163,7 @@
     var tabla = null;
     window.addEventListener('load',
     function() {
-
+ 	$.fn.dataTable.ext.errMode = 'throw';
 		$('#tabla-contactos').DataTable({
 			responsive: true,
 			serverSide: true,
