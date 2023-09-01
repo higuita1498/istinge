@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mikrotik;
 use App\PucMovimiento;
 use App\Servidor;
+use App\FormaPago;
 
 class ReportesController extends Controller
 {
@@ -59,6 +60,7 @@ class ReportesController extends Controller
     }
 
     public function ventas(Request $request){
+
         $this->getAllPermissions(Auth::user()->id);
         DB::enableQueryLog();
         if ($request->nro == 'remisiones'){
@@ -87,7 +89,8 @@ class ReportesController extends Controller
                 ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
                 ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
                 ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'i.fecha as pagada','i.cuenta')
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 
+                    'i.fecha as pagada','i.cuenta','ig.puc_banco')
                 ->whereIn('factura.tipo', [1,2])
                 ->where('factura.empresa',Auth::user()->empresa)
                 ->where('factura.estatus',0)
@@ -109,6 +112,11 @@ class ReportesController extends Controller
             if($request->grupo){
                 $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
             }
+            
+            if($request->formapago){
+                $facturas=$facturas->where('ig.puc_banco', $request->formapago);
+            }
+
             $ides=array();
             $facturas=$facturas->OrderBy($orderby, $order)->get();
 
@@ -150,7 +158,11 @@ class ReportesController extends Controller
 
 
             $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
-            return view('reportes.ventas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas', 'gruposCorte'));
+
+            //tomamos las formas de pago cuando no es un recibo de caja por anticipo
+            $formasPago = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+
+            return view('reportes.ventas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example','cajas', 'gruposCorte','formasPago'));
 
         }
 

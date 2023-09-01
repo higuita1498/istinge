@@ -326,7 +326,7 @@
         <table border="0" class="titulo">
             <tr>
                 <th width="23.5%" class="right smalltd">NOMBRE</th>
-                <td colspan="1" style="">{{$factura->cliente()->nombre}}</td>
+                <td colspan="1" style="">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</td>
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
@@ -578,13 +578,14 @@
             <p>MEDIOS DE PAGO</p>
         </div>
     </div>
-    
+
     <div class="nota-content">
         <p>
-            <b>OFICINA:</b>  {{$empresa->direccion}}<br>
+            <b>Medios de pago:</b>
+             {{$empresa->medios_pago}}
         </p>
     </div>
-    
+
     <div class="margin-docpdf">
         <div class="divheader-nota" style="width:25%;">
             <p>TÉRMINOS Y CONDICIONES</p>

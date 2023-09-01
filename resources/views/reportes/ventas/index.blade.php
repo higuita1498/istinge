@@ -35,6 +35,17 @@
 			</select>
 		</div>
 		@endif
+
+		<div class="form-group col-md-2">
+			<label>Formas de pago</label>
+			<select class="form-control selectpicker" name="formapago" id="formapago">
+				@foreach($formasPago as $fp)
+					<option value="{{$fp->id}}" {{$fp->id == $request->formapago ? 'selected' : ''}}> {{$fp->nombre}} </option>
+				@endforeach
+				<option {{ !$request->formapago ? 'selected' : ''}} value="">TODOS</option>
+			</select>
+		</div>
+
 		<div class="form-group col-md-2">
 		    <label></label>
 		    <select class="form-control selectpicker" name="fechas" id="fechas">
