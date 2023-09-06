@@ -234,8 +234,8 @@
                         <tr>
                             <td>{{$factura->cliente()->tip_iden('true')}}</td>
                             <th>{{$factura->cliente()->nit}}</th>
-                            <td>Pago Oportuno</td>
-                            <th>{{date('d-m-Y', strtotime($factura->pago_oportuno))}}</th>
+                            {{-- <td>Pago Oportuno</td>
+                            <th>{{date('d-m-Y', strtotime($factura->pago_oportuno))}}</th> --}}
                         </tr>
                         <tr>
                             <td>Teléfono</td>
