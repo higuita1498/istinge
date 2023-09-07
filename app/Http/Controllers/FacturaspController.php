@@ -382,7 +382,7 @@ class FacturaspController extends Controller
                         $producto->update();
                         }
                     }
-
+                        $primerVez = 0;
                      if(isset($producto->tipo_producto)){
                         if ($producto->tipo_producto == 2) {
                         DB::table('inventario')->where('id', $producto->id)->update(['tipo_producto' => 1]);
@@ -393,6 +393,7 @@ class FacturaspController extends Controller
                         $productoBodega->inicial = $request->cant[$i];
                         //$productoBodega->nro = $productoBodega->inicial;
                         $productoBodega->save();
+                        $primerVez = 1;
                     }
                     }
 
@@ -401,8 +402,9 @@ class FacturaspController extends Controller
                     $items->ref = $producto->ref;
                     $items->tipo_item = 1;
                     //Si el producto es inventariable y existe esa bodega, agregara el valor registrado
+                    //esto solo debe pasar cuando el item no esta ingresnado pro primera vez.
                     $ajuste = ProductosBodega::where('empresa', $empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
-                    if ($ajuste) {
+                    if ($ajuste  && $primerVez == 0) {
                         $ajuste->nro += $request->cant[$i];
                         $ajuste->save();
                     }
