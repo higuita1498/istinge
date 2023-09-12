@@ -3517,9 +3517,59 @@ class FacturasController extends Controller{
     }
 
     public function whatsapp($id,Request $request ){
+        
+        $factura = Factura::find($id);
         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'WHATSAPP')->where('status', 1)->first();
-        $instancia = DB::table("instancia")
-                                        ->first();
+        $instancia = DB::table("instancia")->first();
+        
+        $empresa = Empresa::find($factura->empresa);
+        $items = ItemsFactura::where('factura',$factura->id)->get();
+        $itemscount=ItemsFactura::where('factura',$factura->id)->count();
+        $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
+        $resolucion = NumeracionFactura::where('id',$factura->numeracion)->first();
+        $tipo = $factura->tipo;
+        
+        if($factura->emitida == 1){
+            $impTotal = 0;
+            foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
+                if(isset($totalImp->total)){
+                    $impTotal = $totalImp->total;
+                }
+            }
+
+            $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
+            $infoEmpresa = Empresa::find($empresa->id);
+            $data['Empresa'] = $infoEmpresa->toArray();
+            $infoCliente = Contacto::find($factura->cliente);
+            $data['Cliente'] = $infoCliente->toArray();
+            /*..............................
+            Construcción del código qr a la factura
+            ................................*/
+            $impuesto = 0;
+            foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
+                if(isset($imp->total)){
+                    $impuesto = $imp->total;
+                }
+            }
+
+            $codqr = "NumFac:" . $factura->codigo . "\n" .
+            "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+            "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+            "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+            "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+            "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
+            "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+            "ValorOtrosImpuestos:" .  0.00 . "\n" .
+            "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
+            "CUFE:" . $CUFEvr;
+            /*..............................
+            Construcción del código qr a la factura
+            ................................*/
+            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+        }else{
+            $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
+        }
+        
         if(is_null($instancia) || empty($instancia)){
             return back()->with('danger', 'AUN NO HA CREADO UNA INSTANCIA CON WHATSAPP, POR FAVOR CREE UNA Y CONECTESE PARA HABILITAR ESTA OPCIÓN');
         }else{
@@ -3527,8 +3577,10 @@ class FacturasController extends Controller{
                 return back()->with('danger', 'LA INSTANCIA DE WHATSAPP ESTA DESCONECTADA, CONECTESE A WHATSAPP Y VUELVA A INTENTARLO');
             }
         }
+        
         if($servicio){
             if($servicio->api_key && $servicio->numero){
+        
                 $factura = Factura::find($id);
                 $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
 
@@ -3540,18 +3592,24 @@ class FacturasController extends Controller{
                 }else{
                     $mensaje = Auth::user()->empresa()->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
                 }
+                
 
                 $numero = str_replace('+','',$factura->cliente()->celular);
                 $numero = str_replace(' ','',$numero);
                 $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
-
-                $request = new Request();
+                
                 $fields = [
-                    "action"=>"sendMessage",
-                    "id"=>$numero."@c.us",//@g.us
-                    "message"=>$mensaje,
+                    "action"=>"sendFile",
+                    "id"=>$numero."@c.us",
+                    "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                    "mime"=>"application/pdf",
+                    "namefile"=>$factura->codigo,
+                    "mensaje"=>$mensaje,
                     "cron"=>"true"
                 ];
+
+                $request = new Request();
+          
                 $request->merge($fields); 
                 $controller = new CRMController();
                 $respuesta = $controller->whatsappActions($request);
