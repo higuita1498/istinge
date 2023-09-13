@@ -486,6 +486,7 @@ class ContratosController extends Controller
                 'server_configuration_id' => 'required',
                 'ip' => 'required',
                 'conexion' => 'required',
+                'local_adress' => 'required',
             ]);
         }else if($request->servicio_tv){
             $request->validate([
@@ -538,7 +539,7 @@ class ContratosController extends Controller
                         "name"           => $request->usuario,
                         "password"       => $request->password,
                         "profile"        => 'default',
-                        "local-address"  => $request->ip,
+                        "local-address"  => $request->local_adress,
                         "remote-address" => $request->ip,
                         "service"        => 'pppoe',
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
