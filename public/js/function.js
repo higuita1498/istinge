@@ -766,7 +766,7 @@ function contacto(selected, modificar = false, type = 1) {
                     return;
                 }
             }
-           
+
 
             if ($('#ident').length > 0) {
                 $('#ident').val(data.nit);
@@ -1645,7 +1645,7 @@ function total_linea_formapago(nro) {
     let total = 0;
 
     $('#table-formaspago tbody tr').each(function() {
-        
+
         var id = $(this).attr('fila');
         id = $("#precioformapago" + id);
         var totalLinea = id.val();
@@ -4274,6 +4274,7 @@ function interfazChange() {
 
         document.getElementById("div_dhcp").classList.remove('d-none');
         document.getElementById("simple_queue").setAttribute('required', true);
+
     } else if (document.getElementById("conexion").value == 1) {
         document.getElementById("usuario").value = '';
         document.getElementById("password").value = '';
@@ -4286,6 +4287,10 @@ function interfazChange() {
         document.getElementById("mac_address").removeAttribute('required');
         document.getElementById("div_dhcp").classList.add('d-none');
         document.getElementById("simple_queue").removeAttribute('required');
+        // Campo que se activa nada mas cuando es pppoe
+        document.getElementById("local_adress").classList.remove('d-none');
+        document.getElementById("local_adress").setAttribute('required', true);
+
     } else {
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');

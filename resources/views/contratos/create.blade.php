@@ -357,6 +357,11 @@
                                 <input type="text" class="form-control" name="local_address_new" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
+                            <div class="col-md-4 form-group d-none" id="local_adress">
+                                <label class="control-label">Dirección IP (Local Address)</label>
+                                <input type="text" class="form-control" name="local_address_new" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
+                            </div>
+
                             <div class="col-md-4 form-group d-none" id="new_ip">
                                 <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
