@@ -374,23 +374,40 @@ class FacturaspController extends Controller
             $items->factura=$factura->id;
             if (is_numeric($request->item[$i])) {
                 $producto = Inventario::where('id', $request->item[$i])->first();
-                if($producto->tipo_producto == 2){
-                    DB::table('inventario')->where('id', $producto->id)->update(['tipo_producto' => 1]);
-                    $productoBodega = new ProductosBodega();
-                    $productoBodega->empresa=Auth::user()->empresa;;
-                    $productoBodega->bodega=$bodega->id;
-                    $productoBodega->producto=$producto->id;
-                    $productoBodega->inicial=$request->cant[$i];
-                    $productoBodega->save();
-                }
 
-                $items->producto=$producto->id;
-                $items->tipo_item=1;
-                //Si el producto es inventariable y existe esa bodega, agregara el valor registrado
-                $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
-                if ($ajuste) {
-                    $ajuste->nro+=$request->cant[$i];
-                    $ajuste->save();
+                if($producto){
+                    if(isset($producto->costo_unidad)){
+                        if ($producto->costo_unidad === 0 || $producto->costo_unidad == null) {
+                        $producto->costo_unidad = $this->precision($request->precio[$i]);
+                        $producto->update();
+                        }
+                    }
+                        $primerVez = 0;
+                     if(isset($producto->tipo_producto)){
+                        if ($producto->tipo_producto == 2) {
+                        DB::table('inventario')->where('id', $producto->id)->update(['tipo_producto' => 1]);
+                        $productoBodega = new ProductosBodega();
+                        $productoBodega->empresa = $empresa;
+                        $productoBodega->bodega = $bodega->id;
+                        $productoBodega->producto = $producto->id;
+                        $productoBodega->inicial = $request->cant[$i];
+                        //$productoBodega->nro = $productoBodega->inicial;
+                        $productoBodega->save();
+                        $primerVez = 1;
+                    }
+                    }
+
+
+                    $items->producto = $producto->id;
+                    $items->ref = $producto->ref;
+                    $items->tipo_item = 1;
+                    //Si el producto es inventariable y existe esa bodega, agregara el valor registrado
+                    //esto solo debe pasar cuando el item no esta ingresnado pro primera vez.
+                    $ajuste = ProductosBodega::where('empresa', $empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
+                    if ($ajuste  && $primerVez == 0) {
+                        $ajuste->nro += $request->cant[$i];
+                        $ajuste->save();
+                    }
                 }
             }else{
                 $item=explode('_', $request->item[$i])[1];
