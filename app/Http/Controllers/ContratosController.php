@@ -453,6 +453,7 @@ class ContratosController extends Controller
     }
 
     public function store(Request $request){
+        dd($request);
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'client_id' => 'required',
@@ -535,7 +536,7 @@ class ContratosController extends Controller
 
                 /*PPPOE*/
                 if($request->conexion == 1){
-                    dd($request);
+
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
