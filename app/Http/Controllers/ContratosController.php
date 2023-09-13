@@ -453,7 +453,7 @@ class ContratosController extends Controller
     }
 
     public function store(Request $request){
-        dd($request);
+
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'client_id' => 'required',
@@ -487,7 +487,6 @@ class ContratosController extends Controller
                 'server_configuration_id' => 'required',
                 'ip' => 'required',
                 'conexion' => 'required',
-                'local_adress' => 'required',
             ]);
         }else if($request->servicio_tv){
             $request->validate([
