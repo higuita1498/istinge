@@ -496,7 +496,6 @@ class ContratosController extends Controller
 
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
-        dd($plan);
         $cliente = Contacto::find($request->client_id);
         $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
 
@@ -639,7 +638,8 @@ class ContratosController extends Controller
                         "burst-threshold" => $burst_threshold,
                         "burst-time"      => $burst_time,
                         "priority"        => $priority,
-                        "limit-at"        => $limit_at
+                        "limit-at"        => $limit_at,
+                        "queue"           => $plan->queue_type_subida.'/'.$plan->queue_type_bajada
                         )
                     );
 
