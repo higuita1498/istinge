@@ -607,7 +607,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 								    	<h3 class="card-title">{{ $contrato->referencia_a }}</h3>
-								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_a)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="{{asset('/adjuntos/documentos/'.$contrato->adjunto_a)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 								    	<a href="javascript:eliminar('contratos','adjunto_a','{{$contrato->referencia_a}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 								    </div>
 								</div>
@@ -629,7 +629,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 								    	<h3 class="card-title">{{ $contrato->referencia_c }}</h3>
-								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_c)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="{{asset('/adjuntos/documentos/'.$contrato->adjunto_c)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 								    	<a href="javascript:eliminar('contratos','adjunto_c','{{$contrato->referencia_c}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 								    </div>
 								</div>
@@ -640,7 +640,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 								    	<h3 class="card-title">{{ $contrato->referencia_d }}</h3>
-								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="{{asset('/adjuntos/documentos/'.$contrato->adjunto_d)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 								    	<a href="javascript:eliminar('contratos','adjunto_d','{{$contrato->referencia_d}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 								    </div>
 								</div>
@@ -652,7 +652,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">Documento Asignación</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->documento)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->documento)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    </div>
 							</div>
 						</div>
@@ -662,7 +662,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_a }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgA)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgA)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgA','{{auth()->user()->empresa()->campo_a}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -673,7 +673,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_b }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgB)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgB)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgB','{{auth()->user()->empresa()->campo_b}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -684,7 +684,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_c }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgC)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgC)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgC','{{auth()->user()->empresa()->campo_c}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -695,7 +695,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_d }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgD)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgD)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgD','{{auth()->user()->empresa()->campo_d}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -706,7 +706,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_e }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgE)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgE)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgE','{{auth()->user()->empresa()->campo_e}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -717,7 +717,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_f }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgF)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgF)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgF','{{auth()->user()->empresa()->campo_f}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -728,7 +728,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_g }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgG)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgG)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgG','{{auth()->user()->empresa()->campo_g}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
@@ -739,7 +739,7 @@
 							<div class="card card-adj">
 							    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 							    	<h3 class="card-title">{{ auth()->user()->empresa()->campo_h }}</h3>
-							    	<a href="{{asset('../adjuntos/documentos/'.$contacto->imgH)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+							    	<a href="{{asset('/adjuntos/documentos/'.$contacto->imgH)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 							    	<a href="javascript:eliminar('contactos','imgH','{{auth()->user()->empresa()->campo_h}}','{{$id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 							    </div>
 							</div>
