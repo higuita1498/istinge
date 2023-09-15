@@ -618,7 +618,7 @@
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 								    	<h3 class="card-title">{{ $contrato->referencia_b }}</h3>
-								    	<a href="{{asset('../adjuntos/documentos/'.$contrato->adjunto_b)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	<a href="{{asset('/adjuntos/documentos/'.$contrato->adjunto_b)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
 								    	<a href="javascript:eliminar('contratos','adjunto_b','{{$contrato->referencia_b}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a>
 								    </div>
 								</div>
