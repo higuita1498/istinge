@@ -2374,6 +2374,7 @@ class ContratosController extends Controller
     }
 
     public function log($id){
+        dd($id);
         $this->getAllPermissions(Auth::user()->id);
         $contrato = Contrato::find($id);
         if ($contrato) {
