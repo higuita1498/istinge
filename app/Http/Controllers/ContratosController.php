@@ -2376,11 +2376,11 @@ class ContratosController extends Controller
     public function log($id){
 
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = DB::table('log_movimientos')->where('contrato', $id)->get();
-        // $contrato = Contrato::find($id);
+        $contrato_log = DB::table('log_movimientos')->where('contrato', $id)->get();
+        $contrato = Contrato::find($id);
         if ($contrato) {
             view()->share(['icon'=>'fas fa-chart-area', 'title' => 'Log | Contrato: '.$contrato->nro]);
-            return view('contratos.log')->with(compact('contrato'));
+            return view('contratos.log')->with(compact('contrato','contrato_log'));
         } else {
             $mensaje='NO SE HA PODIDO OBTENER EL LOG DEL CONTRATO DE SERVICIOS';
             return redirect('empresa/contratos/'.$contrato->id)->with('danger', $mensaje);
