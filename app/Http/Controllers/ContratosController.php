@@ -2376,7 +2376,7 @@ class ContratosController extends Controller
     public function log($id){
 
         $this->getAllPermissions(Auth::user()->id);
-        $contrato = DB::table('log_movimientos')->where('contrato  ', $id)->get();
+        $contrato = DB::table('log_movimientos')->where('contrato', $id)->get();
         // $contrato = Contrato::find($id);
         if ($contrato) {
             view()->share(['icon'=>'fas fa-chart-area', 'title' => 'Log | Contrato: '.$contrato->nro]);
