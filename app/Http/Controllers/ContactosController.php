@@ -225,7 +225,7 @@ class ContactosController extends Controller
         }
         $tipo = '/0';
         $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
-        $contactos = $this->busqueda($request, [0, 2]);
+        // $contactos = $this->busqueda($request, [0, 2]);
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         // $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
         $tipo_usuario = 0;
