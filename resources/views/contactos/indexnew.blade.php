@@ -206,7 +206,7 @@
             data.barrio = $('#barrio').val();
             data.vereda = $('#vereda').val();
             data.email = $('#email').val();
-            data.t_contrato = $('#t_contrato').val();
+            // data.t_contrato = $('#t_contrato').val();
             data.serial_onu = $('#serial_onu').val();
             data.estrato = $('#estrato').val();
             data.filtro = true;
