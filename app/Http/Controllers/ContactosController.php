@@ -216,7 +216,7 @@ class ContactosController extends Controller
 
     public function clientes(Request $request)
     {
-        dd($request);
+        dd($request->name_1);
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda = false;
