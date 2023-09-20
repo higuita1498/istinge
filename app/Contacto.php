@@ -13,7 +13,8 @@ use App\Model\Gastos\NotaDedito;
 use App\Model\Gastos\FacturaProveedores;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosFactura;
-use DB; use Auth; use StdClass;
+use DB;
+use Auth; use StdClass;
 use App\Contrato;
 use App\Model\Ingresos\Ingreso;
 use App\Radicado;
@@ -49,6 +50,11 @@ class Contacto extends Model
 
     public function apellidos(){
         return $this->apellido1.' '.$this->apellido2;
+    }
+
+    public function municipio(){
+        $municipio = $usuarios = DB::table('municipios',$this->fk_idmunicipio)->first();
+        return $municipio->nombre;
     }
 
     public function lista_precios(){
