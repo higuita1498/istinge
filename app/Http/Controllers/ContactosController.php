@@ -165,6 +165,7 @@ class ContactosController extends Controller
 
         return datatables()->eloquent($contactos)
              ->editColumn('serial_onu', function (Contacto $contacto) {
+
                  return $contacto->serial_onu;
              })
             ->editColumn('nombre', function (Contacto $contacto) {
@@ -177,7 +178,7 @@ class ContactosController extends Controller
                 return $contacto->celular ? $contacto->celular : $contacto->telefono1;
             })
             ->editColumn('email', function (Contacto $contacto) {
-                return $contacto->municipio_static($contacto->fk_idmunicipio);
+                return $contacto->email;
             })
             ->editColumn('direccion', function (Contacto $contacto) {
                 return $contacto->direccion;
@@ -186,7 +187,6 @@ class ContactosController extends Controller
                 return $contacto->barrio;
             })
             ->editColumn('vereda', function (Contacto $contacto) {
-                // $municipio = DB::table('usuarios',$contacto->vereda)->first();
                 return $contacto->vereda;
             })
             ->editColumn('contrato', function (Contacto $contacto) {
@@ -210,7 +210,7 @@ class ContactosController extends Controller
             })
 
             ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
-            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
+            ->rawColumns(['acciones', 'nombre'])
             ->toJson();
     }
 
