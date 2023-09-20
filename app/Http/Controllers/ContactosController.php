@@ -160,7 +160,7 @@ class ContactosController extends Controller
                 $contactos->where('contactos.oficina', auth()->user()->oficina);
             }
         }
-
+        dd("llego aqui");
         return datatables()->eloquent($contactos)
             ->editColumn('serial_onu', function (Contacto $contacto) {
                 return $contacto->serial_onu;
