@@ -227,7 +227,7 @@ class ContactosController extends Controller
         $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
         // $contactos = $this->busqueda($request, [0, 2]);
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
-        // $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
+        $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
         $tipo_usuario = 0;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         // dd($contactos);
