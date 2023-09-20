@@ -60,6 +60,7 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
+        dd("estoy aqui");
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
 
