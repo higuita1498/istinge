@@ -231,7 +231,7 @@ class ContactosController extends Controller
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         view()->share(['invert' => true]);
 
-        return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla'));
+        // return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla'));
     }
 
     public function proveedores(Request $request)
