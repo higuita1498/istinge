@@ -311,7 +311,7 @@ class ContactosController extends Controller
         }
         $contactos = $contactos->OrderBy($orderby, $order)->paginate(25)->appends($appends);
 
-        return $contactos;
+        // return $contactos;
     }
 
     public function show($id)
