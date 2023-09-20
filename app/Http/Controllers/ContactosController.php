@@ -216,7 +216,7 @@ class ContactosController extends Controller
 
     public function clientes(Request $request)
     {
-        dd($request->name_1);
+
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda = false;
@@ -256,6 +256,7 @@ class ContactosController extends Controller
 
     public function busqueda($request, $tipo = false)
     {
+        dd($request->name_1);
         $this->getAllPermissions(Auth::user()->id);
         $campos = [
             'id',
@@ -263,6 +264,7 @@ class ContactosController extends Controller
             'contactos.nit',
             'contactos.telefono1',
             'contactos.tipo_contacto',
+            'contactos.fk_idmunicipio',
             'te.nombre',
         ];
         if (! $request->orderby) {
