@@ -177,7 +177,7 @@ class ContactosController extends Controller
                 return $contacto->celular ? $contacto->celular : $contacto->telefono1;
             })
             ->editColumn('email', function (Contacto $contacto) {
-                return $contacto->municipio();
+                return $contacto->municipio_static($contacto->fk_idmunicipio);
             })
             ->editColumn('direccion', function (Contacto $contacto) {
                 return $contacto->direccion;
