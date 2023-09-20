@@ -60,7 +60,7 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
-        dd($request,$tipo_usuario);
+
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
 
@@ -152,7 +152,7 @@ class ContactosController extends Controller
         }
 
         $contactos->where('contactos.empresa', auth()->user()->empresa);
-        $contactos->whereIn('tipo_contacto', [$tipo_usuario, 2]);
+        $contactos->whereIn('tipo_contacto', [$tipo_usuario, 0]);
         $contactos->where('contactos.status', 1);
 
         if (Auth::user()->empresa()->oficina) {
