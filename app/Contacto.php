@@ -52,12 +52,7 @@ class Contacto extends Model
         return $this->apellido1.' '.$this->apellido2;
     }
 
-    public function municipio(){
-        $municipio = $usuarios = DB::table('municipios',$this->fk_idmunicipio)->first();
-        return $municipio->nombre;
-    }
-
-    public function lista_precios(){
+       public function lista_precios(){
         if (ListaPrecios::where('id',$this->lista_precio)->count() == 0) {
             return '';
         }
