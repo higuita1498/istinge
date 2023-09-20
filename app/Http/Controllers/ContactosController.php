@@ -155,7 +155,7 @@ class ContactosController extends Controller
         $contactos->whereIn('tipo_contacto', [$tipo_usuario, 0]);
         $contactos->where('contactos.status', 1);
 
-        dd($contactos);
+
 
         // if (Auth::user()->empresa()->oficina) {
         //     if (auth()->user()->oficina) {
