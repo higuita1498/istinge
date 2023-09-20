@@ -60,7 +60,7 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
-
+        dd($request,$tipo_usuario);
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
 
@@ -213,7 +213,6 @@ class ContactosController extends Controller
 
     public function clientes(Request $request)
     {
-        dd($request);
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda = false;
