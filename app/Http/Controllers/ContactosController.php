@@ -165,7 +165,6 @@ class ContactosController extends Controller
 
         return datatables()->eloquent($contactos)
              ->editColumn('serial_onu', function (Contacto $contacto) {
-
                  return $contacto->serial_onu;
              })
             ->editColumn('nombre', function (Contacto $contacto) {
@@ -187,7 +186,8 @@ class ContactosController extends Controller
                 return $contacto->barrio;
             })
             ->editColumn('vereda', function (Contacto $contacto) {
-                return $contacto->vereda;
+                $municipio = DB::table('id',$contacto->fk_idmunicipio)->first();
+                return $municipio->nombre;
             })
             ->editColumn('contrato', function (Contacto $contacto) {
                 return $contacto->contract();
