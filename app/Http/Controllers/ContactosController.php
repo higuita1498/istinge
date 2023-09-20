@@ -162,9 +162,9 @@ class ContactosController extends Controller
         }
         dd("llego aqui");
         return datatables()->eloquent($contactos)
-            ->editColumn('serial_onu', function (Contacto $contacto) {
-                return $contacto->serial_onu;
-            })
+            // ->editColumn('serial_onu', function (Contacto $contacto) {
+            //     return $contacto->serial_onu;
+            // })
             ->editColumn('nombre', function (Contacto $contacto) {
                 return '<a href='.route('contactos.show', $contacto->id).">{$contacto->nombre} {$contacto->apellidos()}</div></a>";
             })
