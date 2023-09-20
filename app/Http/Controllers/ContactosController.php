@@ -62,7 +62,7 @@ class ContactosController extends Controller
     {
 
         $modoLectura = auth()->user()->modo_lectura();
-        $contactos = Contacto::all();
+        $contactos = Contacto::query();
 
 
         if ($request->filtro == true) {
