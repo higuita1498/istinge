@@ -150,7 +150,7 @@ class ContactosController extends Controller
                 });
             }
         }
-        dd(auth()->user()->empresa);
+
         $contactos->where('contactos.empresa', auth()->user()->empresa);
         $contactos->whereIn('tipo_contacto', [$tipo_usuario, 0]);
         $contactos->where('contactos.status', 1);
