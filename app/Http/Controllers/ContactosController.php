@@ -155,6 +155,8 @@ class ContactosController extends Controller
         $contactos->whereIn('tipo_contacto', [$tipo_usuario, 0]);
         $contactos->where('contactos.status', 1);
 
+        dd($contactos);
+
         // if (Auth::user()->empresa()->oficina) {
         //     if (auth()->user()->oficina) {
         //         $contactos->where('contactos.oficina', auth()->user()->oficina);
@@ -163,7 +165,7 @@ class ContactosController extends Controller
 
         return datatables()->eloquent($contactos)
              ->editColumn('serial_onu', function (Contacto $contacto) {
-                dd($contacto->serial_onu);
+
                  return $contacto->serial_onu;
              })
             ->editColumn('nombre', function (Contacto $contacto) {
