@@ -49,7 +49,7 @@ class ContactosController extends Controller
 
     public function index(Request $request)
     {
-        return 'ok';
+        // return 'ok';
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
