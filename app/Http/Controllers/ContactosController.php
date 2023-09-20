@@ -256,7 +256,7 @@ class ContactosController extends Controller
 
     public function busqueda($request, $tipo = false)
     {
-
+        dd($request->name_1);
         $this->getAllPermissions(Auth::user()->id);
         $campos = [
             'id',
