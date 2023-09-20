@@ -186,8 +186,8 @@ class ContactosController extends Controller
                 return $contacto->barrio;
             })
             ->editColumn('vereda', function (Contacto $contacto) {
-                $municipio = DB::table('id',$contacto->fk_idmunicipio)->first();
-                return $municipio->nombre;
+                // $municipio = DB::table('usuarios',$contacto->vereda)->first();
+                return $contacto->vereda;
             })
             ->editColumn('contrato', function (Contacto $contacto) {
                 return $contacto->contract();
