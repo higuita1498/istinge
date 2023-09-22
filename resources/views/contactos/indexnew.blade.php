@@ -146,7 +146,7 @@
 						            <th>{{$campo->nombre}}</th>
 						        @endif
 						    @else
-						        <th>{{$campo}}</th>
+						        <th>{{$campo->nombre}}</th>
 						    @endif
 	                    @endforeach
 						<th>Acciones</th>
@@ -188,6 +188,7 @@
 			            @endif
                     @else
                         {data: '{{$campo->campo}}'},
+                        {data: 'municipio'}
                     @endif
                 @endforeach
                 {data: 'municipio'}
