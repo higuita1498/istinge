@@ -228,7 +228,6 @@ class ContactosController extends Controller
         // $contactos = $this->busqueda($request, [0, 2]);
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
-        dd($contactos);
         $tipo_usuario = 0;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
@@ -258,7 +257,7 @@ class ContactosController extends Controller
 
     public function busqueda($request, $tipo = false)
     {
-
+        dd("busqueda");
         $this->getAllPermissions(Auth::user()->id);
         $campos = [
             'id',
