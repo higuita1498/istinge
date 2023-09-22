@@ -188,10 +188,11 @@
 			            @endif
                     @else
                         // {data: '{{$campo->campo}}'},
+                        {data: '{{$campo->municipio'}
 
                     @endif
                 @endforeach
-                {data: 'municipio'},
+
 				{data: 'acciones'},
 			]
 		});
