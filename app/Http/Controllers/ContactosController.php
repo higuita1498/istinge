@@ -225,12 +225,13 @@ class ContactosController extends Controller
         }
         $tipo = '/0';
         $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
-        $contactos = $this->busqueda($request, [0, 2]);
+        // $contactos = $this->busqueda($request, [0, 2]);
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         // $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
         $contactos = DB::table('contactos')->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')->select('contactos.*', 'municipios.nombre as nombre_municipio')->get();
         $tipo_usuario = 0;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+       dd(Auth::user()->id);
         view()->share(['invert' => true]);
 
         return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla'));
@@ -265,7 +266,7 @@ class ContactosController extends Controller
             'contactos.nit',
             'contactos.telefono1',
             'contactos.tipo_contacto',
-            'contactos.municipio',
+            'contactos.fk_idmunicipio',
             'te.nombre',
         ];
         if (! $request->orderby) {
