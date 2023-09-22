@@ -146,7 +146,7 @@
 						            <th>{{$campo->nombre}}</th>
 						        @endif
 						    @else
-						        <th>{{$campo->nombre}}</th>
+						        <th>{{$campo}}</th>
 						    @endif
 	                    @endforeach
 						<th>Acciones</th>
