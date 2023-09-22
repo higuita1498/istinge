@@ -216,7 +216,7 @@ class ContactosController extends Controller
 
     public function clientes(Request $request)
     {
-
+        dd("clientes");
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Clientes', 'subseccion' => 'clientes']);
         $busqueda = false;
@@ -311,7 +311,7 @@ class ContactosController extends Controller
             $contactos = $contactos->where('v.nombre', 'like', '%'.$request->name_6.'%');
         }
         $contactos = $contactos->OrderBy($orderby, $order)->paginate(25)->appends($appends);
-        dd($appends);
+
          return $contactos;
     }
 
