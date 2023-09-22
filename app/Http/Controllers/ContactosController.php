@@ -252,6 +252,7 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         $tipo_usuario = 1;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+       dd($tabla);
         view()->share(['invert' => true]);
 
         return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa', 'totalContactos', 'tipo_usuario', 'tabla'));
