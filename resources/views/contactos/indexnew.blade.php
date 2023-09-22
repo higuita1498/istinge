@@ -182,7 +182,7 @@
 			},
 			columns: [
 			    @foreach($tabla as $campo)
-                {{$campo}}
+                {{'$campo->campo'}}
 			        @if($tipo_usuario == 1)
 			            @if($campo->campo != 'contrato')
 			                {data: '{{$campo->campo}}'},
