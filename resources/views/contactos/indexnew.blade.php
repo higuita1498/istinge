@@ -191,7 +191,7 @@
 
                     @endif
                 @endforeach
-                {data: 'municipio'}
+
 				{data: 'acciones'},
 			]
 		});
