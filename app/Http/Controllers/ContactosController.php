@@ -60,7 +60,7 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
-        dd("hola contactos");
+
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
 
@@ -225,7 +225,7 @@ class ContactosController extends Controller
         }
         $tipo = '/0';
         $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
-        // $contactos = $this->busqueda($request, [0, 2]);
+        $contactos = $this->busqueda($request, [0, 2]);
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         // $contactos = Contacto::where('empresa', Auth::user()->empresa)->get();
         $contactos = DB::table('contactos')->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')->select('contactos.*', 'municipios.nombre as nombre_municipio')->get();
@@ -265,7 +265,7 @@ class ContactosController extends Controller
             'contactos.nit',
             'contactos.telefono1',
             'contactos.tipo_contacto',
-            'contactos.fk_idmunicipio',
+            'contactos.municipio',
             'te.nombre',
         ];
         if (! $request->orderby) {
