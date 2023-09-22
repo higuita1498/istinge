@@ -182,6 +182,7 @@
 			},
 			columns: [
 			    @foreach($tabla as $campo)
+                console.log($campo);
 			        @if($tipo_usuario == 1)
 			            @if($campo->campo != 'contrato')
 			                {data: '{{$campo->campo}}'},
