@@ -190,6 +190,7 @@
                         {data: '{{$campo->campo}}'},
                     @endif
                 @endforeach
+                {data: 'municipio'}
 				{data: 'acciones'},
 			]
 		});
