@@ -206,6 +206,7 @@
             data.barrio = $('#barrio').val();
             data.vereda = $('#vereda').val();
             data.email = $('#email').val();
+            data.municipio = $('#municipio').val();
             data.t_contrato = $('#t_contrato').val();
             data.serial_onu = $('#serial_onu').val();
             data.estrato = $('#estrato').val();
@@ -224,7 +225,7 @@
             }
         });
 
-        $('#nombre, #apellido, #identificacion, #telefono, #email, #direccion, #vereda, #barrio').on('keyup',function(e) {
+        $('#nombre, #apellido, #identificacion, #telefono, #email, #direccion, #vereda, #barrio,#municipio').on('keyup',function(e) {
         	if(e.which > 32 || e.which == 8) {
         		getDataTable();
         		return false;
