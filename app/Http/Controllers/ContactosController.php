@@ -195,6 +195,9 @@ class ContactosController extends Controller
             ->editColumn('fecha_contrato', function (Contacto $contacto) {
                 return ($contacto->fecha_contrato) ? date('d-m-Y g:i:s A', strtotime($contacto->fecha_contrato)) : '- - - -';
             })
+            ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
+                return $contacto->municipio()->nombre;
+            })
             ->editColumn('radicado', function (Contacto $contacto) {
                 return $contacto->radicados();
             })
