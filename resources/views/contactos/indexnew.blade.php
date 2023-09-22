@@ -187,7 +187,7 @@
 			                {data: '{{$campo->campo}}'},
 			            @endif
                     @else
-                        {data: '{{$campo->campo}}'},
+                        // {data: '{{$campo->campo}}'},
 
                     @endif
                 @endforeach
