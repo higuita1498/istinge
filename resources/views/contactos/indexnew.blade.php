@@ -188,7 +188,7 @@
 			            @endif
                     @else
                         @if($campo->campo == 'municipio')
-                            // {data: '{{$campo}}'}
+                             {data: '{{$campo->campo}}'}
                         @else
                             {data: '{{$campo->campo}}'},
                         @endif

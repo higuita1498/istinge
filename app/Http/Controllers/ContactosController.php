@@ -266,7 +266,7 @@ class ContactosController extends Controller
             'contactos.nit',
             'contactos.telefono1',
             'contactos.tipo_contacto',
-            'contactos.fk_idmunicipio',
+            'contactos.municipio',
             'te.nombre',
         ];
         if (! $request->orderby) {
