@@ -187,7 +187,12 @@
 			                {data: '{{$campo->campo}}'},
 			            @endif
                     @else
-                        {data: '{{$campo->campo}}'},
+                        @if($campo->campo == 'municipio')
+                            {data: '{{$campo}}'}
+                        @else
+                            {data: '{{$campo->campo}}'},
+                        @endif
+
 
                     @endif
                 @endforeach
