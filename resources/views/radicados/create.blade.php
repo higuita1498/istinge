@@ -198,6 +198,7 @@
         @if($cliente)
             busqueda_detalles({{$cliente}});
         @endif
+        document.addEventListener('DOMContentLoaded', obtenerValorSeleccionado);
         function obtenerValorSeleccionado() {
             var select = document.getElementById('servicio');
             var valorSeleccionado = select.value;
