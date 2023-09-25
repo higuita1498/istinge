@@ -138,7 +138,7 @@
                 <label class="control-label">Plan <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" name="plan" id="plan" required title="Seleccione">
                     @foreach($planes as $plan)
-                    <option {{old('plan')==$plan->id?'selected':''}} value="{{$plan->id}}">{{$plan->nombre}}</option>
+                    <option {{old('plan')==$plan->id?'selected':''}} value="{{$plan->id}}">{{$plan}}</option>
                     @endforeach
                 </select>
                 <span class="help-block error">
