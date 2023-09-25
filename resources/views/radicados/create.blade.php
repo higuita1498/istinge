@@ -200,6 +200,7 @@
         @endif
         document.addEventListener('DOMContentLoaded', obtenerValorSeleccionado);
         function obtenerValorSeleccionado() {
+            console.log("ingreso");
             var select = document.getElementById('servicio');
             var valorSeleccionado = select.value;
 
@@ -233,7 +234,6 @@
                     var url = '/api/getDetails/'+cliente+'/'+contrato;;
                 }
             }
-
 
             $.ajax({
                 url: url,
