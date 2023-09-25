@@ -60,7 +60,8 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
-
+        $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
+        dd($municipio);
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
 
@@ -77,7 +78,7 @@ class ContactosController extends Controller
                 });
             }
             if ($request->municipio) {
-                $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
+
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('fk_idmunicipio', 'like', "%{$municipio->id}%");
                 });
