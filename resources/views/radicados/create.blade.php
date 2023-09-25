@@ -203,7 +203,7 @@
         select.addEventListener('change', function() {
             // Obtén el valor seleccionado
             var valorSeleccionado = select.value;
-
+            alert('Seleccionaste: ' + valorSeleccionado);
             // Compara el valor seleccionado con un valor específico
             if (valorSeleccionado === 'Instalaciones') {
                 var elemento = document.getElementById('div_valor');
