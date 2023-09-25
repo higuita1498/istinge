@@ -132,7 +132,11 @@
             </div>
             <div class="col-md-3 form-group" id="div_valor" style="display:none;">
                 <label class="control-label">Valor de la Instalación <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" name="valor" id="valor">
+                <input type="number" class="form-control" name="valor" id=" ">
+            </div>
+            <div class="col-md-3 form-group" id="div_plan" style="display:none;">
+                <label class="control-label">Elija Plan <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="plan" id=" ">
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label">¿Escalar Caso? <span class="text-danger">*</span></label>
@@ -196,7 +200,11 @@
         @endif
         // funcion para verficar si es instalacion
         function pruebaInstalacion(){
-            console.log("es instalacion");
+            var elemento = document.getElementById('div_valor');
+            elemento.style.display = 'block';
+
+            var elemento = document.getElementById('div_plan');
+            elemento.style.display = 'block';
         }
 
         function busqueda_detalles(cliente, contrato = null){
