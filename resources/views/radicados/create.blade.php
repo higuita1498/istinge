@@ -205,13 +205,13 @@
                 var elemento = document.getElementById('div_valor');
                 elemento.style.display = 'block';
 
-                var elemento = document.getElementById('div_plan');
+                var elemento = document.getElementById('plan');
                 elemento.style.display = 'block';
                 // Puedes realizar otras acciones aquí
             }
 
             // Mostrar el valor en una alerta
-            alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
+            // alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
         }
 </script>
     <script type="text/javascript">
