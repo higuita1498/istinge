@@ -78,7 +78,7 @@ class ContactosController extends Controller
             }
             if ($request->municipio) {
                 $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('municipio', 'like', "%{$request->municipio}%");
+                    $query->orWhere('fk_idmunicipio', 'like', "%{$request->municipio}%");
                 });
             }
             if ($request->apellido) {
