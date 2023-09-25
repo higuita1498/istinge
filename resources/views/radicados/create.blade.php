@@ -199,13 +199,21 @@
             busqueda_detalles({{$cliente}});
         @endif
         // funcion para verficar si es instalacion
-        function pruebaInstalacion(){
-            var elemento = document.getElementById('div_valor');
-            elemento.style.display = 'block';
+        var select = document.getElementById('servicio');
+        select.addEventListener('change', function() {
+            // Obtén el valor seleccionado
+            var valorSeleccionado = select.value;
 
-            var elemento = document.getElementById('div_plan');
-            elemento.style.display = 'block';
-        }
+            // Compara el valor seleccionado con un valor específico
+            if (valorSeleccionado === 'Instalaciones') {
+                var elemento = document.getElementById('div_valor');
+                elemento.style.display = 'block';
+
+                var elemento = document.getElementById('div_plan');
+                elemento.style.display = 'block';
+                // Puedes realizar otras acciones aquí
+            }
+        });
 
         function busqueda_detalles(cliente, contrato = null){
 
