@@ -198,13 +198,10 @@
         @if($cliente)
             busqueda_detalles({{$cliente}});
         @endif
-        // funcion para verficar si es instalacion
-        var select = document.getElementById('servicio');
-        select.addEventListener('change', function() {
-            // Obtén el valor seleccionado
+        function obtenerValorSeleccionado() {
+            var select = document.getElementById('servicio');
             var valorSeleccionado = select.value;
 
-            // Compara el valor seleccionado con un valor específico
             if (valorSeleccionado === 4) {
                 var elemento = document.getElementById('div_valor');
                 elemento.style.display = 'block';
@@ -213,7 +210,12 @@
                 elemento.style.display = 'block';
                 // Puedes realizar otras acciones aquí
             }
-        });
+
+            // Mostrar el valor en una alerta
+            alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
+        }
+
+            // Compara el valor seleccionado con un valor específico
 
         function busqueda_detalles(cliente, contrato = null){
 
