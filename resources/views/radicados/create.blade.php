@@ -201,7 +201,7 @@
             var select = document.getElementById('servicio');
             var valorSeleccionado = select.value;
 
-            if (valorSeleccionado === 4) {
+            if (valorSeleccionado == 4) {
                 var elemento = document.getElementById('div_valor');
                 elemento.style.display = 'block';
 
