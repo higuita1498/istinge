@@ -203,9 +203,9 @@
         select.addEventListener('change', function() {
             // Obtén el valor seleccionado
             var valorSeleccionado = select.value;
-            alert('Seleccionaste: ' + valorSeleccionado);
+
             // Compara el valor seleccionado con un valor específico
-            if (valorSeleccionado === 'Instalaciones') {
+            if (valorSeleccionado === 4) {
                 var elemento = document.getElementById('div_valor');
                 elemento.style.display = 'block';
 
