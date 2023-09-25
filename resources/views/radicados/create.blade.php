@@ -211,7 +211,7 @@
             }
 
             // Mostrar el valor en una alerta
-            // alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
+            alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
         }
 </script>
     <script type="text/javascript">
