@@ -195,9 +195,7 @@
 
 @section('scripts')
     <script type="text/javascript">
-        @if($cliente)
-            busqueda_detalles({{$cliente}});
-        @endif
+
         document.addEventListener('DOMContentLoaded', obtenerValorSeleccionado);
         function obtenerValorSeleccionado() {
             console.log("ingreso");
@@ -218,7 +216,9 @@
         }
 
             // Compara el valor seleccionado con un valor específico
-
+            @if($cliente)
+                busqueda_detalles({{$cliente}});
+            @endif
         function busqueda_detalles(cliente, contrato = null){
 
             if(contrato==null){
