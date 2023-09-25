@@ -3,7 +3,7 @@
 	<style>
     .readonly{ border: 0 !important; }
   </style>
-  
+
     @if(Session::has('danger'))
 		<div class="alert alert-danger" >
 			{{Session::get('danger')}}
@@ -37,13 +37,13 @@
             <div class="col-md-4">
 
                 <ul id="list-contratos" class="list-group list-group-horizontal mt-4 mb-4" style="cursor:pointer">
-                    
+
                 </ul>
 
             </div>
 
         </div>
-        
+
         <div class="row" id="content" style="display: none;">
             <input type="hidden" class="form-control" id="id_cliente" name="id_cliente" readonly="" maxlength="20">
             <input type="hidden" class="form-control" id="nombre" name="nombre" readonly="">
@@ -68,7 +68,7 @@
                     <strong>{{ $errors->first('correo') }}</strong>
                 </span>
             </div>
-            
+
             <div class="col-md-4 form-group contract">
                 <label class="control-label">N° Contrato</label>
                 <input type="text" class="form-control"  id="contrato" name="contrato" readonly="" value="{{old('contrato')}}" maxlength="200">
@@ -97,7 +97,7 @@
                     <strong>{{ $errors->first('mac_address') }}</strong>
                 </span>
             </div>
-            
+
             <div class="col-md-9 form-group">
                 <label class="control-label">Dirección <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="direccion" name="direccion" value="{{old('direccion')}}" maxlength="200" required>
@@ -121,7 +121,7 @@
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label">Tipo de Servicio <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" name="servicio" id="servicio" required="" title="Seleccione">
+                <select class="form-control selectpicker" name="servicio" id="servicio" required="" title="Seleccione" onchange="pruebaInstalacion()">
                     @foreach($servicios as $servicio)
                     <option {{old('servicio')==$servicio->id?'selected':''}} value="{{$servicio->id}}">{{$servicio->nombre}}</option>
                     @endforeach
@@ -194,6 +194,10 @@
         @if($cliente)
             busqueda_detalles({{$cliente}});
         @endif
+        // funcion para verficar si es instalacion
+        function pruebaInstalacion(){
+            console.log("es instalacion");
+        }
 
         function busqueda_detalles(cliente, contrato = null){
 
@@ -210,7 +214,7 @@
                     var url = '/api/getDetails/'+cliente+'/'+contrato;;
                 }
             }
-         
+
 
             $.ajax({
                 url: url,
@@ -251,7 +255,7 @@
                         $("#contrato").val('');
                         $("#ip").val('');
                         $("#mac_address").val('');
-                        
+
                         $('#servicio').find('[value=2]').prop('disabled', true);
                         $('#servicio').find('[value=5]').prop('disabled', true);
                         $('#servicio').find('[value=6]').prop('disabled', true);
@@ -263,8 +267,8 @@
 
                     if(data.contratos.length > 0){
                         data.contratos.forEach(c => {
-                            $('#list-contratos').append(`                 
-                                <li class="list-group-item" style="padding: 7px; ${(data.contrato.id == c.id) ? 'color:green;' : ''}" onclick="busqueda_detalles(${c.client_id}, ${c.id})">(contrato: ${c.nro}) IP: ${c.ip} ${c.address_street ?? ''}</li>      
+                            $('#list-contratos').append(`
+                                <li class="list-group-item" style="padding: 7px; ${(data.contrato.id == c.id) ? 'color:green;' : ''}" onclick="busqueda_detalles(${c.client_id}, ${c.id})">(contrato: ${c.nro}) IP: ${c.ip} ${c.address_street ?? ''}</li>
                             `);
 
                             if((data.contrato.id == c.id)){
@@ -293,7 +297,7 @@
             });
             cargando(false);
         }
-        
+
         function searchDV(id){
             option = id;
             if (option == 2) {
@@ -303,7 +307,7 @@
                 $("#tecnico").val('').selectpicker('refresh');
             }
         }
-        
+
         function serviceDV(id){
             if (id == 4) {
                 document.getElementById("div_valor").style.display = "block";
