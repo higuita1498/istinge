@@ -203,7 +203,7 @@
             var select = document.getElementById('servicio');
             var valorSeleccionado = select.value;
 
-            if (valorSeleccionado === 2) {
+            if (valorSeleccionado === 4) {
                 var elemento = document.getElementById('div_valor');
                 elemento.style.display = 'block';
 
@@ -213,7 +213,7 @@
             }
 
             // Mostrar el valor en una alerta
-            // alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
+            alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
         }
 
             // Compara el valor seleccionado con un valor específico
