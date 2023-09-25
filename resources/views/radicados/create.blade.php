@@ -121,7 +121,7 @@
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label">Tipo de Servicio <span class="text-danger">*</span></label>
-                <select class="form-control selectpicker" name="servicio" id="servicio" required="" title="Seleccione">
+                <select class="form-control selectpicker" name="servicio" id="servicio" required title="Seleccione">
                     @foreach($servicios as $servicio)
                     <option {{old('servicio')==$servicio->id?'selected':''}} value="{{$servicio->id}}">{{$servicio->nombre}}</option>
                     @endforeach
@@ -194,9 +194,8 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
-
-        document.addEventListener('DOMContentLoaded', obtenerValorSeleccionado);
+<script>
+     document.addEventListener('DOMContentLoaded', obtenerValorSeleccionado);
         function obtenerValorSeleccionado() {
             console.log("ingreso");
             var select = document.getElementById('servicio');
@@ -214,6 +213,10 @@
             // Mostrar el valor en una alerta
             alert('Valor seleccionado al cargar la página: ' + valorSeleccionado);
         }
+</script>
+    <script type="text/javascript">
+
+
 
             // Compara el valor seleccionado con un valor específico
             @if($cliente)
