@@ -134,9 +134,16 @@
                 <label class="control-label">Valor de la Instalación <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" name="valor" id=" ">
             </div>
-            <div class="col-md-3 form-group" id="div_plan" style="display:none;">
-                <label class="control-label">Elija Plan <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="plan" id=" ">
+            <div class="col-md-3 form-group">
+                <label class="control-label">Plan <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker" name="plan" id="plan" required title="Seleccione">
+                    @foreach($planes as $plan)
+                    <option {{old('plan')==$plan->id?'selected':''}} value="{{$plan->id}}">{{$plan->nombre}}</option>
+                    @endforeach
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('plan') }}</strong>
+                </span>
             </div>
             <div class="col-md-3 form-group">
                 <label class="control-label">¿Escalar Caso? <span class="text-danger">*</span></label>
