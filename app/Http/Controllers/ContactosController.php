@@ -77,11 +77,9 @@ class ContactosController extends Controller
                 });
             }
             if ($request->municipio) {
-                dd("ingreso aqui");
                 $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
-                dd($municipio);
                 $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('fk_idmunicipio', 'like', "%{$request->municipio}%");
+                    $query->orWhere('fk_idmunicipio', 'like', "%{$municipio->id}%");
                 });
             }
             if ($request->apellido) {
