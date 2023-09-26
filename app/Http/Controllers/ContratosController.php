@@ -3214,7 +3214,7 @@ class ContratosController extends Controller
             if (!$request->facturacion) {
                 $error->facturacion = "El campo facturacion es obligatorio";
             }
-            dd($request->tecnologia);
+
             if (!$request->tecnologia) {
                 $error->tecnologia = "El campo tecnologia es obligatorio";
             }
