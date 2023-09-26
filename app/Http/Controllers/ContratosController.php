@@ -3179,7 +3179,7 @@ class ContratosController extends Controller
             }
             if($request->plan != ""){
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
-                dd($miko);
+                dd($request->mikrotik);
                 if ($miko) {
                     // El objeto $miko es válido, puedes acceder a su propiedad 'id'
                     $mikoId = $miko->id;
