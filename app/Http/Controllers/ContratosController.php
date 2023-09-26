@@ -3215,9 +3215,9 @@ class ContratosController extends Controller
                 $error->facturacion = "El campo facturacion es obligatorio";
             }
 
-            // if (!$request->tecnologia) {
-            //     $error->tecnologia = "El campo tecnologia es obligatorio";
-            // }
+            if (!$request->tecnologia) {
+                $error->tecnologia = "El campo tecnologia es obligatorio";
+            }
             if (!$request->mk) {
                 $error->mk = "Debe indicar Si o No en el campo Cliente en Mikrotik";
             }
