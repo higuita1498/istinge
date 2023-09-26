@@ -266,7 +266,7 @@ class IngresosController extends Controller
     public function pendiente($cliente, $id=false){
         $this->getAllPermissions(Auth::user()->id);
         $facturas = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('estatus', 1);
-        $facturas = $facturas->orderBy('created_at', 'desc')->take(3)->get();
+        $facturas = $facturas->orderBy('created_at', 'desc')->take(30)->get();
         $contrato = Contrato::where('client_id',$cliente)->first();
         //$total = Factura::where('cliente', $cliente)->where('empresa',Auth::user()->empresa)->where('tipo','!=',2)->where('estatus', 1)->count();
         $total = 1;
