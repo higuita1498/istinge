@@ -3179,13 +3179,14 @@ class ContratosController extends Controller
             }
             if($request->plan != ""){
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
+                dd($miko);
                 if ($miko) {
                     // El objeto $miko es válido, puedes acceder a su propiedad 'id'
                     $mikoId = $miko->id;
                 } else {
                     // Manejar el caso en el que $miko no sea un objeto válido
                 }
-    dd($request->plan);
+
                 if(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->count() === 0){
                     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
                 }
