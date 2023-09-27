@@ -130,11 +130,11 @@
                     <strong>{{ $errors->first('servicio') }}</strong>
                 </span>
             </div>
-            <div class="col-md-3 form-group" id="div_valor" style="display:none;">
+            {{-- <div class="col-md-3 form-group" id="div_valor" style="display:none;">
                 <label class="control-label">Valor de la Instalación <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" name="valor" id=" ">
-            </div>
-            <div class="col-md-3 form-group">
+            </div> --}}
+            {{-- <div class="col-md-3 form-group">
                 <label class="control-label">Plan <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" name="plan" id="plan" required title="Seleccione">
                     @foreach($planes as $plan)
@@ -144,7 +144,7 @@
                 <span class="help-block error">
                     <strong>{{ $errors->first('plan') }}</strong>
                 </span>
-            </div>
+            </div> --}}
             <div class="col-md-3 form-group">
                 <label class="control-label">¿Escalar Caso? <span class="text-danger">*</span></label>
                 <select class="form-control selectpicker" name="estatus" id="estatus" required="" title="Seleccione" onchange="searchDV(this.value)">
