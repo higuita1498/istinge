@@ -616,6 +616,7 @@ class ContratosController extends Controller
 
                 /*IP ESTÁTICA*/
                 if($request->conexion == 3){
+                    dd("revisando el error al momento de crear microtik");
                     if($mikrotik->amarre_mac == 1){
                         $request->validate([
                             'mac_address' => 'required'
