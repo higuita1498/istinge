@@ -542,7 +542,7 @@ class ContratosController extends Controller
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
-                        "profile"        => 'default',
+                        "profile"        => $request->pprofile,
                         "local-address"  => $request->local_address,
                         "remote-address" => $request->ip,
                         "service"        => 'pppoe',
