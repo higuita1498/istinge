@@ -1338,7 +1338,7 @@ class Controller extends BaseController
              $API->disconnect();
          }
 
-        return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik, 'hola' => $ARRAY]);
+        return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik]);
     }
 
     public function logsMK($mikrotik){
