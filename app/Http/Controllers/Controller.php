@@ -1330,15 +1330,15 @@ class Controller extends BaseController
         $mikrotik = Mikrotik::find($mikrotik);
         $API = new RouterosAPI();
          if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-            $hola = 'hola';
-            // $API->write('/ppp/profile/getall');
-            // $READ = $API->read(false);
-            // $ARRAY = $API->parseResponse($READ);
+
+             $API->write('/ppp/profile/getall');
+             $READ = $API->read(false);
+             $ARRAY = $API->parseResponse($READ);
 
              $API->disconnect();
          }
 
-        return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik, 'hola' => $hola]);
+        return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik, 'hola' => $ARRAY]);
     }
 
     public function logsMK($mikrotik){
