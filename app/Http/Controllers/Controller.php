@@ -1328,8 +1328,9 @@ class Controller extends BaseController
     public function getPlanes($mikrotik){
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
         $mikrotik = Mikrotik::find($mikrotik);
-        return "hola no";
         $API = new RouterosAPI();
+        return "hola no";
+
           if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
             return "hola";
         //      $API->write('/ppp/profile/getall');
