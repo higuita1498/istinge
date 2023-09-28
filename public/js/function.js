@@ -4291,7 +4291,6 @@ function interfazChange() {
         document.getElementById("local_adress").classList.remove('d-none');
         document.getElementById("local_adress").setAttribute('required', true);
         document.getElementById("profile").classList.remove('d-none');
-        document.getElementById("profile").setAttribute('required', true);
 
     } else {
         document.getElementById("div_interfaz").classList.add('d-none');
