@@ -427,8 +427,8 @@ class ContratosController extends Controller
     }
 
     public function create($cliente = false){
-        $profile =  $API->write("/ppp/profile/getall",false);
-        dd($profile);
+        // $profile = $API->comm("/ppp/profile/getall");
+        // dd($profile);
 
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
