@@ -427,11 +427,6 @@ class ContratosController extends Controller
     }
 
     public function create($cliente = false){
-        $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
-        if($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-            dd("si conecto al microtik");
-        }
-
         // $profile = $API->comm("/ppp/profile/getall");
         // dd($profile);
 
