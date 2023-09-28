@@ -1335,7 +1335,7 @@ class Controller extends BaseController
             // $READ = $API->read(false);
             // $ARRAY = $API->parseResponse($READ);
 
-            // $API->disconnect();
+             $API->disconnect();
          }
 
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik, $hola => 'hola']);
