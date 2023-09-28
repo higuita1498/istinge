@@ -1328,34 +1328,6 @@ class Controller extends BaseController
     public function getPlanes($mikrotik){
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
         $mikrotik = Mikrotik::find($mikrotik);
-        // Configura las credenciales de MikroTik
-        $username = $mikrotik->usuario;
-        $password = $mikrotik->clave;
-        $api_url = 'http://'.$mikrotik->ip.'/api';
-
-        // Define el comando que deseas ejecutar
-        $command = '/ppp/profile/getall';
-
-        // Configura los parámetros para la solicitud
-        $params = array(
-            'username' => $username,
-            'password' => $password,
-            'path' => $command,
-        );
-
-        // Construye la URL completa
-        $url = $api_url . '?' . http_build_query($params);
-
-        // Realiza la solicitud a la API utilizando file_get_contents
-        $response = file_get_contents($url);
-
-        // Verifica la respuesta
-        if ($response !== false) {
-
-            return $response;
-        } else {
-            return 'Error al conectarse a la API.';
-        }
         // $API = new RouterosAPI();
 
         //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
