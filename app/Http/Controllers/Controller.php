@@ -1337,7 +1337,7 @@ class Controller extends BaseController
 
         //      $API->disconnect();
           }
-
+          return "hola no";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik]);
     }
 
