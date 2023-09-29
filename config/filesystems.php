@@ -63,7 +63,7 @@ return [
 
         'emails' => [
             'driver' => 'local',
-            'root'   => public_path('../resources/views/emails'),
+            'root'   => public_path('../resources/views/emails/plantillas'),
             'visibility' => 'public',
          ],
 
