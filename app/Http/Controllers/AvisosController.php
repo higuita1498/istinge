@@ -131,7 +131,7 @@ class AvisosController extends Controller
     }
 
     public function envio_aviso(Request $request){
-        dd("enviar plantilla");
+
         Ini_set ('max_execution_time', 500);
         $empresa = Empresa::find(1);
         $type = ''; $mensaje = '';
@@ -165,6 +165,7 @@ class AvisosController extends Controller
                     }
 
                 }elseif($request->type == 'EMAIL'){
+                    dd("ingreso email");
                     $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
                     if($host){
                         $existing = config('mail');
