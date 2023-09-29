@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('boton')
-    
+
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
 		</div>
 
 		<script type="text/javascript">
-			setTimeout(function(){ 
+			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
 			}, 5000);
@@ -23,19 +23,19 @@
 		</div>
 
 		<script type="text/javascript">
-			setTimeout(function(){ 
+			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
 			}, 10000);
 		</script>
 	@endif
-	
+
 	<style>
 	    .card-notificacion .card-title:hover {
 	        color: #fff;
 	    }
 	</style>
-	
+
 	@if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
 	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
@@ -58,7 +58,7 @@
 		    <a href="{{route('avisos.envio.email')}}">
 		        <div class="card text-center card-notificacion">
 		            <div class="card-body">
-		                <h5 class="card-title">NOTIFICACIONES POR EMAIL<br><i class="fas fa-at fa-5x mt-4"></i></h5>
+		                <h5 class="card-title">NOTIFICACIONES POR EMAIL12<br><i class="fas fa-at fa-5x mt-4"></i></h5>
 		            </div>
 		        </div>
 		    </a>
