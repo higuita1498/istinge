@@ -200,14 +200,14 @@ class AvisosController extends Controller
 
                         if(str_contains($mailC, '@')){
 
-                            try {
+                            // try {
                                 $cor++;
                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
                                 // Mail::to($mailC)->send($correo);
 
-                            } catch (\Throwable $th) {
+                            // } catch (\Throwable $th) {
 
-                            }
+                            // }
 
                         }
 
