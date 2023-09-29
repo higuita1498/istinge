@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
-use Auth; 
+use Auth;
 use DB;
 use App\Empresa;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 use App\Plantilla;
 use App\Contrato;
 use App\Mikrotik;
@@ -29,14 +29,14 @@ class PlantillasController extends Controller
         view()->share(['inicio' => 'master', 'seccion' => 'avisos', 'subseccion' => 'plantillas', 'title' => 'Gestión de Plantillas', 'icon' =>'fas fa-file-code']);
     }
 
-    
+
     public function index()
     {
         $this->getAllPermissions(Auth::user()->id);
         $plantillas = Plantilla::all();
         return view('plantillas.index')->with(compact('plantillas'));
     }
-    
+
     public function create()
     {
         $this->getAllPermissions(Auth::user()->id);
@@ -63,7 +63,7 @@ class PlantillasController extends Controller
         }else{
             $nro = 0;
         }
-        
+
         $plantilla = new Plantilla();
         $plantilla->nro = $nro + 1;
         $plantilla->tipo = $request->tipo;
@@ -83,6 +83,7 @@ class PlantillasController extends Controller
         $plantilla->save();
 
         if($plantilla->tipo==1){
+            dd("entro");
             $plantilla->archivo = 'plantilla'.$plantilla->id;
             $plantilla->save();
             Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
@@ -102,7 +103,7 @@ class PlantillasController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $plantilla = Plantilla::find($id);
-        
+
         if($plantilla){
             view()->share(['title' => $plantilla->title]);
             return view('plantillas.show')->with(compact('plantilla'));
@@ -120,7 +121,7 @@ class PlantillasController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $plantilla = Plantilla::find($id);
-        
+
         if($plantilla){
             view()->share(['title' => 'Editar Plantilla: '.$plantilla->nro]);
             $name = '{{ $name }}'; $company = '{{ $company }}'; $nit = '{{ $nit }}'; $date = '{{ $date }}';
@@ -143,9 +144,9 @@ class PlantillasController extends Controller
             'tipo' => 'required',
             'clasificacion' => 'required'
         ]);
-        
+
         $plantilla = Plantilla::find($id);
-        
+
         if($plantilla){
             if($plantilla->tipo==1){
                 Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
@@ -169,7 +170,7 @@ class PlantillasController extends Controller
             if($plantilla->tipo==1){
                 Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
             }
-            
+
             $mensaje = 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
         }
@@ -186,7 +187,7 @@ class PlantillasController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $plantilla = Plantilla::find($id);
-        
+
         if($plantilla){
             if($plantilla->tipo==1){
                 Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
@@ -197,12 +198,12 @@ class PlantillasController extends Controller
         }
         return redirect('empresa/plantillas')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function act_desc($id)
     {
         $this->getAllPermissions(Auth::user()->id);
         $plantilla = Plantilla::find($id);
-        
+
         if($plantilla){
             if($plantilla->status == 0){
                 $plantilla->status = 1;
@@ -228,7 +229,7 @@ class PlantillasController extends Controller
         }
         return redirect('empresa/plantillas')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function envio()
     {
         $this->getAllPermissions(Auth::user()->id);
@@ -237,22 +238,22 @@ class PlantillasController extends Controller
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
 			->where('contracts.status', 1)->get();
-			
+
         return view('plantillas.envio')->with(compact('plantillas','contratos'));
     }
-    
+
     public function envio_aviso(Request $request)
     {
         $posi = 0;$nega = 0;
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
-            
+
             if ($contrato) {
                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-                
+
                 $API = new RouterosAPI();
                 $API->port = $mikrotik->puerto_api;
-                
+
                 if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                     $API->comm("/ip/proxy/access/add", array(
                         "src-address" => $contrato->ip,
@@ -261,7 +262,7 @@ class PlantillasController extends Controller
                         "comment"     => $contrato->cliente()->nombre.' - Aviso'
                         )
                     );
-                     
+
                     $API->disconnect();
                     $posi++;
                 }else{
@@ -269,9 +270,9 @@ class PlantillasController extends Controller
                 }
             }
         }
-        
+
         return redirect('empresa/plantillas')->with('success', 'AVISOS ENVIADOS '.$posi.' | NO ENVIADOS '.$nega);
     }
-    
-    
+
+
 }
