@@ -199,7 +199,7 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
 
                         if(str_contains($mailC, '@')){
-                        dd($mailC);
+                        dd($correo->build()->render());
                             // try {
                                 $cor++;
                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
