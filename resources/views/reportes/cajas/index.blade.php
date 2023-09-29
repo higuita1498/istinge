@@ -113,8 +113,9 @@
                             {{isset($movimiento->cliente()->nit) ? $movimiento->cliente()->nit : ''}}
                         </td>
                         <td>
-
+                            @if($movimiento->padre() && $movimiento->padre()->created_by())
                             {{ $movimiento->padre() ? $movimiento->padre()->created_by()->nombres : ''}}
+                            @endif
                         </td>
                         
                         <td>
