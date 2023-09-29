@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use stdClass;
-use Auth; 
+use Auth;
 use DB;
 use App\Empresa;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 use App\Aviso;
 use App\Plantilla;
 use App\Contrato;
@@ -34,49 +34,49 @@ class AvisosController extends Controller
         view()->share(['inicio' => 'master', 'seccion' => 'avisos', 'subseccion' => 'envios', 'title' => 'Envío de Notificaciones', 'icon' =>'fas fa-paper-plane']);
     }
 
-    
+
     public function index()
     {
         $this->getAllPermissions(Auth::user()->id);
         $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         return view('avisos.index', compact('clientes'));
     }
-    
+
     public function create()
     {
         //respuest
     }
-    
+
     public function store(Request $request)
     {
         //
     }
-    
+
     public function show($id)
     {
         //
     }
-    
+
     public function edit($id)
     {
         //
     }
-    
+
     public function update(Request $request, $id)
     {
         //
     }
-    
+
     public function destroy($id)
     {
         //
     }
-    
+
     public function sms($id = false)
     {
         $this->getAllPermissions(Auth::user()->id);
         $opcion = 'SMS';
-        
+
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 0)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
@@ -100,15 +100,15 @@ class AvisosController extends Controller
 
         $servidores = Mikrotik::where('empresa', auth()->user()->empresa)->get();
         $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
-			
+
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id', 'servidores', 'gruposCorte'));
     }
-    
+
     public function email($id = false)
     {
         $this->getAllPermissions(Auth::user()->id);
         $opcion = 'EMAIL';
-        
+
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 1)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
@@ -126,13 +126,12 @@ class AvisosController extends Controller
                       ->groupBy('contracts.id');
         }
 
-
         $contratos = $contratos->get();
-
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id'));
     }
-    
+
     public function envio_aviso(Request $request){
+        dd("enviar plantilla");
         Ini_set ('max_execution_time', 500);
         $empresa = Empresa::find(1);
         $type = ''; $mensaje = '';
@@ -144,19 +143,19 @@ class AvisosController extends Controller
 
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
- 
+
             if($request->isAbierta){
                 $factura =  Factura::where('contrato_id')->latest()
                                              ->first();
 
                 if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
                     continue;
-                }              
+                }
             }
 
             if ($contrato) {
                 $plantilla = Plantilla::find($request->plantilla);
-                
+
                 if($request->type == 'SMS'){
                     $numero = str_replace('+','',$contrato->cliente()->celular);
                     $numero = str_replace(' ','',$numero);
@@ -198,16 +197,16 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
 
                         if(str_contains($mailC, '@')){
-                        
+
                             try {
                                 $cor++;
                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
                                 // Mail::to($mailC)->send($correo);
-                               
+
                             } catch (\Throwable $th) {
-                                
-                            } 
-                             
+
+                            }
+
                         }
 
                     }

@@ -58,7 +58,7 @@
 		    <a href="{{route('avisos.envio.email')}}">
 		        <div class="card text-center card-notificacion">
 		            <div class="card-body">
-		                <h5 class="card-title">NOTIFICACIONES POR EMAIL12<br><i class="fas fa-at fa-5x mt-4"></i></h5>
+		                <h5 class="card-title">NOTIFICACIONES POR EMAIL<br><i class="fas fa-at fa-5x mt-4"></i></h5>
 		            </div>
 		        </div>
 		    </a>
