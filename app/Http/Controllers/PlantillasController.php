@@ -83,7 +83,7 @@ class PlantillasController extends Controller
         $plantilla->save();
 
         if($plantilla->tipo==1){
-            dd("entro");
+
             $plantilla->archivo = 'plantilla'.$plantilla->id;
             $plantilla->save();
             Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
