@@ -167,7 +167,7 @@ class AvisosController extends Controller
                 }elseif($request->type == 'EMAIL'){
 
                     $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
-                    dd($host);
+
                     if($host){
                         $existing = config('mail');
                         $new =array_merge(
