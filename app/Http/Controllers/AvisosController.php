@@ -195,6 +195,7 @@ class AvisosController extends Controller
                         'date' => date('d-m-Y'),
                     );
                     $correo = new NotificacionMailable($datos);
+                    dd($correo);
 
                     if($mailC = $contrato->cliente()->email){
 
