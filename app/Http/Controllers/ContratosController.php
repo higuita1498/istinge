@@ -1294,7 +1294,7 @@ class ContratosController extends Controller
 
                     $descripcion .= ($contrato->interfaz == $request->interfaz) ? '' : '<i class="fas fa-check text-success"></i> <b>Cambio de Interfaz</b> de '.$contrato->interfaz.' a '.$request->interfaz.'<br>';
                     $contrato->interfaz = $request->interfaz;
-
+                    dd($request->ap);
                     if($request->ap){
                         $ap_new = AP::find($request->ap);
                         $ap_old = AP::find($contrato->ap);
