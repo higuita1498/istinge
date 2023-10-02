@@ -198,7 +198,7 @@ class AvisosController extends Controller
 
 
                     if($mailC = $contrato->cliente()->email){
-                        dd($mailC);
+
                         if(str_contains($mailC, '@')){
 
                             // try {
