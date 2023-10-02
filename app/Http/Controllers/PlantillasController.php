@@ -86,7 +86,7 @@ class PlantillasController extends Controller
 
             $plantilla->archivo = 'plantilla'.$plantilla->id;
             $plantilla->save();
-            $rutaArchivo = resource_path('views/' . $plantilla->archivo);
+            $rutaArchivo = resource_path('views/emails' . $plantilla->archivo.'.blade.php');
             // Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
             file_put_contents($rutaArchivo, $plantilla->contenido);
         }
