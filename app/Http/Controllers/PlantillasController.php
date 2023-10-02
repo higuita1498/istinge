@@ -88,7 +88,7 @@ class PlantillasController extends Controller
             $plantilla->save();
             $rutaArchivo = resource_path('views/' . $plantilla->archivo);
             // Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
-            file_put_contents($rutaArchivo, $contenido);
+            file_put_contents($rutaArchivo, $plantilla->contenido);
         }
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
