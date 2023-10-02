@@ -42,7 +42,7 @@ class NotificacionMailable extends Mailable
         $date = $this->date;
 
         // return $this->view('emails.plantillas.'.$this->archivo, compact('name', 'company', 'nit', 'date'));
-        return $this->view($this->archivo, compact('name', 'company', 'nit', 'date'));
+        return $this->view('emails'.$this->archivo, compact('name', 'company', 'nit', 'date'));
 
     }
 }
