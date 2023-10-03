@@ -280,7 +280,7 @@
                     if(data.contrato){
                         $(".contract").removeClass('d-none');
                         $("#contrato").val('').val(data.contrato.nro);
-                        $("#cordenadas").val('').val(data.contrato);
+                        $("#cordenadas").val('').val(data.contrato.latitude);
                         $("#ip").val('').val(data.contrato.ip);
                         $("#mac_address").val('').val(data.contrato.mac_address);
                         $('#servicio').find('[value=2]').prop('disabled', false);
