@@ -243,7 +243,7 @@ class IngresosController extends Controller
 
         //tomamos las formas de pago cuando no es un recibo de caja por anticipo
         $formas = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
-
+        dd($clientes);
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
