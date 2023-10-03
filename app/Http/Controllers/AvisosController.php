@@ -196,24 +196,24 @@ class AvisosController extends Controller
                     );
                     $correo = new NotificacionMailable($datos);
 
-
                     if($mailC = $contrato->cliente()->email){
 
                         if(str_contains($mailC, '@')){
-
                             // try {
                                 $cor++;
                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
-                                Mail::to($mailC)->send($correo);
+                                self::sendMail(function($message) use ($mailC, $tituloCorreo){
+                                    $message->to($mailC)
+                                            ->subject($tituloCorreo)
+                                            ->setBody($correo);
+                                });
+                                // Mail::to($mailC)->send($correo);
 
                             // } catch (\Throwable $th) {
 
                             // }
-
                         }
-
                     }
-
                 }
             }
         }
