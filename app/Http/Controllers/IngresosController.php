@@ -208,7 +208,7 @@ class IngresosController extends Controller
 
         $pers = $cliente;
         $bank = $banco;
-        dd($pers);
+
         view()->share(['icon' =>'', 'title' => 'Nuevo Ingreso', 'subseccion' => 'ingresos']);
 
         if ($cliente && !$factura) {
