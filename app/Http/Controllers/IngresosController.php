@@ -205,6 +205,7 @@ class IngresosController extends Controller
 
     public function create($cliente=false, $factura=false, $banco=false){
         $this->getAllPermissions(Auth::user()->id);
+        dd("ingrfeso para el pago de la fctura");
         $pers = $cliente;
         $bank = $banco;
 
