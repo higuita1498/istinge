@@ -458,9 +458,6 @@ class RadicadosController extends Controller{
                 return back()->withInput()->with('danger', 'No se encontro el tipo de servicio');
             }
 
-
-
-
             $radicado->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
             $radicado->telefono = $request->telefono;
             $radicado->correo = $request->correo;

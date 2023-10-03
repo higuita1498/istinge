@@ -76,6 +76,14 @@
                     <strong>{{ $errors->first('contrato') }}</strong>
                 </span>
             </div>
+            <div class="col-md-4 form-group contract">
+                <label class="control-label">Cordenadas</label>
+                <input type="text" class="form-control"  id="cordenadas" name="cordenadas" readonly="" value="{{old('cordenadas')}}" maxlength="200">
+                <span class="help-block error">
+                    <strong>{{ $errors->first('cordenadas') }}</strong>
+                </span>
+            </div>
+
             <div class="col-md-4 form-group d-none">
                 <label class="control-label">Plan Contratado</label>
                 <input type="text" class="form-control" id="plan" name="plan" readonly="" value="{{old('identificacion')}}" maxlength="20">
@@ -272,6 +280,7 @@
                     if(data.contrato){
                         $(".contract").removeClass('d-none');
                         $("#contrato").val('').val(data.contrato.nro);
+                        $("#cordenadas").val('').val(data.contrato);
                         $("#ip").val('').val(data.contrato.ip);
                         $("#mac_address").val('').val(data.contrato.mac_address);
                         $('#servicio').find('[value=2]').prop('disabled', false);
