@@ -227,7 +227,8 @@ class IngresosController extends Controller
 
         //$bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
         (Auth::user()->cuenta > 0) ? $bancos = Banco::where('empresa',Auth::user()->empresa)->whereIn('id',[Auth::user()->cuenta,Auth::user()->cuenta_1,Auth::user()->cuenta_2,Auth::user()->cuenta_3,Auth::user()->cuenta_4])->where('estatus',1)->get() : $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus',1)->get();
-        $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        // $clientes = (Auth::user()->empresa()->oficina) ? Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre','asc')->get() : Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
+        $clientes = Contacto::where('status', 1)->whereIn('tipo_contacto',[0,2])->where('empresa', Auth::user()->empresa)->orderBy('nombre','asc')->get();
         //$clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[0,2])->where('status', 1)->get();
         $metodos_pago =DB::table('metodos_pago')->whereIn('id',[1,2,3,4,5,6,9])->orderby('orden','asc')->get();
         $inventario = Inventario::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
