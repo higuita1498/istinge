@@ -163,7 +163,7 @@ Route::get('/{id}/xml', 'FacturasController@xml')->name('facturas.xml');
 
 Route::get('', 'Auth\LoginController@showLoginForm')->name('login');
 Route::get('/home', 'HomeController@home')->name('home');
-Route::get('/archivo', 'HomeController@subirArchivo')->name('subir-archivo');
+Route::post('/archivo', 'HomeController@subirArchivo')->name('subir-archivo');
 Route::get('/carrito/{empresa}', 'HomeController@carrito')->name('carrito');
 Route::get('/terminosycondiciones', 'HomeController@terminoscondiciones')->name('terminoscondiciones');
 
