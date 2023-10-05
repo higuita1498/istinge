@@ -48,6 +48,13 @@
 	                <strong>{{ $errors->first('status') }}</strong>
 	            </span>
 	        </div>
+            <div class="col-md-4 form-group">
+	            <label class="control-label">Ip <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control"  id="password" name="password"  required="" value="{{old('password')}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('password') }}</strong>
+	            </span>
+	        </div>
 	        <div class="col-md-12 form-group">
 	            <label class="control-label">Descripción</label>
 	            <textarea  class="form-control form-control-sm" name="descripcion" rows="3">{{old('descripcion')}}</textarea>
