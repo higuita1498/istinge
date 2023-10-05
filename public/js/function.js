@@ -4584,6 +4584,8 @@ function getContracts(id) {
                 $('#factura_individual').val('').selectpicker('refresh');
                 document.getElementById("factura_individual").setAttribute('required', true);
                 $('#input_direccion').val(data[0].direccion);
+                $('#input_oficina').val(data[0].oficina);
+
             } else {
                 $("#div_facturacion").addClass('d-none');
                 $('#factura_individual').val('').selectpicker('refresh');

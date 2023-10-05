@@ -240,12 +240,12 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="us2-lat" name="oficina" value="{{ old('oficina') }}">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
+                                    <input type="text" class="form-control" id="input_oficina" name="oficina" value="{{ old('oficina') }}">
+                                    {{-- <div class="input-group-prepend"> --}}
+                                        {{-- <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
                                             <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
-                                        </button>
-                                    </div>
+                                        </button> --}}
+                                    {{-- </div> --}}
                                 </div>
                             </div>
                         </div>
