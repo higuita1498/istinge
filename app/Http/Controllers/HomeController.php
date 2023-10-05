@@ -516,7 +516,7 @@ class HomeController extends Controller
         // Subir el archivo a una ubicación específica, por ejemplo, en storage.
         $archivo = $request->file('archivo');
         $rutaArchivo = $archivo->store('archivos');
-        dd("llego hasta aqui1");
+
         // Envía el archivo por correo electrónico
         Mail::to('juanjtuiran@gmail.com')->send(new ArchivoEnviado($rutaArchivo));
 

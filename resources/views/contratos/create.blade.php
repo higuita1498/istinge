@@ -219,23 +219,35 @@
                                 <label class="control-label">Dirección de Instalación <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="hidden" class="form-control" id="input_direccion">
-                                    <input type="text" class="form-control" name="address_street" id="address_street" value="{{ old('address_street') }}" required="">
+                                    <input type="text" class="form-control" name="address_street" id="oficina" value="{{ old('oficina') }}" required="">
                                     <span class="help-block error">
-                                        <strong>{{ $errors->first('address_street') }}</strong>
+                                        <strong>{{ $errors->first('oficina') }}</strong>
                                     </span>
                                 </div>
                             </div>
 
-                            @if(Auth::user()->empresa()->oficina)
-                            <div class="form-group col-md-4">
+                            {{-- @if(Auth::user()->empresa()->oficina) --}}
+
+                            {{-- <div class="form-group col-md-4">
                                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" name="oficina" id="oficina" required="" title="Seleccione" data-live-search="true" data-size="5">
                                     @foreach($oficinas as $oficina)
                                     <option value="{{$oficina->id}}" {{ $oficina->id == auth()->user()->oficina ? 'selected' : '' }}>{{$oficina->nombre}}</option>
                                     @endforeach
                                 </select>
+                            </div> --}}
+                            {{-- @endif --}}
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="us2-lat" name="oficina" value="{{ old('oficina') }}">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
+                                            <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            @endif
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">
