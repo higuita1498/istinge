@@ -219,7 +219,7 @@
                                 <label class="control-label">Dirección de Instalación <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="hidden" class="form-control" id="input_direccion">
-                                    <input type="text" class="form-control" name="address_street" id="oficina" value="{{ old('oficina') }}" required="">
+                                    <input type="text" class="form-control" name="address_street" id="oficina" disabled value="{{ old('oficina') }}" required="">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('oficina') }}</strong>
                                     </span>
