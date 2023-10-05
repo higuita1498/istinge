@@ -1,4 +1,4 @@
-@extends('layouts.auth')  
+@extends('layouts.auth')
 
 @section('content')
 <style>.header-overlay {
@@ -23,19 +23,19 @@
     <button type="button" class="close" data-dismiss="alert">X</button>
     <strong>{{Session::get('success')}}</strong>
   </div>
- @endif 
+ @endif
   @if(Session::has('success_pass'))
   <div class="alert alert-success" style="text-align: center;">
     <button type="button" class="close" data-dismiss="alert">X</button>
     <strong>{{Session::get('success_pass')}}</strong>
   </div>
- @endif 
+ @endif
           @if ($errors->has('error_message'))
             <span class="help-block">
               <p>{{ $errors->first('error_message') }}</p>
             </span>
           @endif
-          
+
           <div class="wrap-input100 validate-input m-b-10" data-validate = "El Nombre de Usuario es  requerido">
             <input class="input100" type="text" name="username" name="username" placeholder="Nombre de Usuario">
             <span class="focus-input100"></span>
@@ -64,19 +64,21 @@
            <label class="form-check-label">
               <input type="checkbox" class="form-check-input" name="remember" {{ old('remember') ? 'checked' : '' }}> Recordarme
             </label>
+
         </div>
           {{--<div class="container-login100-form-btn p-t-10">
             <button class="login100-form-btn">
               Iniciar
             </button>
           </div>--}}
-          
+
           <div class="col-md-12">
   <div class="btn-crearcuenta btn-iniciarsesion">
     <button  class="btn btn-primary">
       INICIAR
     </button>
   </div>
+  <p>Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
 </div>
 
           {{--<div class="text-center w-full p-t-25 p-b-230">
