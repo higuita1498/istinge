@@ -219,7 +219,7 @@
                                 <label class="control-label">Dirección de Instalación <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="hidden" class="form-control" id="input_direccion">
-                                    <input type="text" class="form-control" name="address_street" id="oficina" value="{{ old('oficina') }}" disabled>
+                                    <input type="text" class="form-control" name="address_street" id="oficina" value="{{ old('oficina') }}" required="">
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('oficina') }}</strong>
                                     </span>
@@ -240,7 +240,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="input_oficina" name="oficina" value="{{ old('oficina') }}">
+                                    <input type="text" class="form-control" id="input_oficina" name="oficina" value="{{ old('oficina') }}" disabled>
                                     {{-- <div class="input-group-prepend"> --}}
                                         {{-- <button class="btn btn-outline-success btn-sm" type="button" data-toggle="modal" data-target="#modal-gps" style="border-radius: 0 5px 5px 0;">
                                             <i class="fas fa-map-marked-alt" style="margin: 2px;"></i>
