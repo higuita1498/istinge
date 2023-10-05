@@ -49,10 +49,10 @@
 	            </span>
 	        </div>
             <div class="col-md-4 form-group">
-	            <label class="control-label">Ip <span class="text-danger">*</span></label>
-	            <input type="text" class="form-control"  id="password" name="password"  required="" value="{{old('password')}}" maxlength="200">
+	            <label class="control-label">Ip </label>
+	            <input type="text" class="form-control"  id="ip" name="ip" value="{{old('ip')}}" maxlength="200">
 	            <span class="help-block error">
-	                <strong>{{ $errors->first('password') }}</strong>
+	                <strong>{{ $errors->first('ip') }}</strong>
 	            </span>
 	        </div>
 	        <div class="col-md-12 form-group">

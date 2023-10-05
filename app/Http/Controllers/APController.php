@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Carbon\Carbon;  
-use Mail; 
+use Carbon\Carbon;
+use Mail;
 use Validator;
-use Illuminate\Validation\Rule;  
-use Auth; 
+use Illuminate\Validation\Rule;
+use Auth;
 use DB;
 use Session;
 
@@ -26,7 +26,7 @@ class APController extends Controller
         set_time_limit(300);
         view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'gestion_ap', 'title' => 'Access Point', 'icon' => 'fas fa-project-diagram']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
@@ -79,8 +79,9 @@ class APController extends Controller
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         return view('access-point.create')->with(compact('nodos'));
     }
-    
+
     public function store(Request $request){
+        dd("hola controlador ap");
         $ap = new AP;
         $ap->nombre      = $request->nombre;
         $ap->password    = $request->password;
@@ -108,11 +109,11 @@ class APController extends Controller
         }
         return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($ap) {
             view()->share(['title' => 'Editar AP: '.$ap->nombre]);
             $nodos = Nodo::where('status', 1)->get();
@@ -123,7 +124,7 @@ class APController extends Controller
 
     public function update(Request $request, $id){
         $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($ap) {
             $ap->nombre      = $request->nombre;
             $ap->password    = $request->password;
@@ -134,16 +135,16 @@ class APController extends Controller
             $ap->updated_by  = Auth::user()->id;
             $ap->empresa     = Auth::user()->empresa;
             $ap->save();
-            
+
             $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL ACCESS POINT';
             return redirect('empresa/access-point')->with('success', $mensaje);
         }
         return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function destroy($id){
         $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if($ap){
             $ap->delete();
             $mensaje = 'SE HA ELIMINADO EL ACCESS POINT CORRECTAMENTE';
@@ -152,10 +153,10 @@ class APController extends Controller
             return redirect('empresa/access-point')->with('danger', 'ACCESS POINT NO ENCONTRADO, INTENTE NUEVAMENTE');
         }
     }
-    
+
     public function act_des($id){
         $ap = AP::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if($ap){
             if($ap->status == 0){
                 $ap->status = 1;
