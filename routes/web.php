@@ -160,8 +160,10 @@ Route::post('/validatetechnicalkeydian', 'FacturasController@validate_technicalk
 Route::get('/{id}/xml', 'FacturasController@xml')->name('facturas.xml');
 
 //Route::get('', 'HomeController@inicio')->name('Inicio');
+
 Route::get('', 'Auth\LoginController@showLoginForm')->name('login');
 Route::get('/home', 'HomeController@home')->name('home');
+Route::get('/archivo', 'HomeController@subirArchivo')->name('subir-archivo');
 Route::get('/carrito/{empresa}', 'HomeController@carrito')->name('carrito');
 Route::get('/terminosycondiciones', 'HomeController@terminoscondiciones')->name('terminoscondiciones');
 

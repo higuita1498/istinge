@@ -67,7 +67,7 @@ class HomeController extends Controller
     public function index()
     {
         $this->getAllPermissions(Auth::user()->id);
-        
+
         $radicados = Radicado::all()->where('empresa', Auth::user()->empresa)->count();
         $radicados_pendiente = Radicado::whereIn('estatus',[0,2])->where('empresa', Auth::user()->empresa)->count();
         $radicados_solventado = Radicado::whereIn('estatus',[1,3])->where('empresa', Auth::user()->empresa)->count();
@@ -75,14 +75,14 @@ class HomeController extends Controller
         $contra_ena = Contrato::where('state','enabled')->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
         $contra_disa = Contrato::where('state','disabled')->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
         $contra_factura = Contrato::whereIn('fecha_corte',[15,30])->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
-        
+
         $factura = Factura::whereIn('estatus',[1,0])->where('lectura',1)->where('empresa', Auth::user()->empresa)->count();
         $factura_cerrada = Factura::where('estatus',0)->where('lectura',1)->where('empresa', Auth::user()->empresa)->count();
         $factura_abierta = Factura::where('estatus',1)->where('lectura',1)->where('empresa', Auth::user()->empresa)->count();
-        
+
         view()->share(['inicio' => 'empresa', 'seccion' => 'inicio', 'title' => Auth::user()->empresa()->nombre , 'icon' =>'fa fa-building']);
         return view('welcome')->with(compact('radicados','contra_ena','contra_disa','contra_factura','factura','factura_cerrada','factura_abierta','radicados_pendiente','radicados_solventado'));
-        
+
         if (!Auth::check())
         {
             // Si tenemos sesión activa mostrará la página de inicio
@@ -506,5 +506,20 @@ class HomeController extends Controller
       return "importacion de cateogiras completado";
   }
 
+  public function subirArchivo(Request $request)
+    {
+        // Validar el archivo, por ejemplo, asegurándote de que sea una imagen válida.
+        $request->validate([
+            'archivo' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
+        // Subir el archivo a una ubicación específica, por ejemplo, en storage.
+        $archivo = $request->file('archivo');
+        $rutaArchivo = $archivo->store('archivos');
+
+        // Envía el archivo por correo electrónico
+        Mail::to('juanjtuiran@gmail.com')->send(new ArchivoEnviado($rutaArchivo));
+
+        return redirect()->back()->with('success', 'El archivo se ha enviado por correo correctamente.');
+    }
 }
