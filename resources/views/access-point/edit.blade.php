@@ -49,6 +49,13 @@
 	                <strong>{{ $errors->first('status') }}</strong>
 	            </span>
 	        </div>
+            <div class="col-md-4 form-group">
+	            <label class="control-label">Ip <span class="text-danger">*</span></label>
+	            <input type="text" class="form-control"  id="ip" name="ip"  required="" value="{{$ap->ip}}" maxlength="200">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('ip') }}</strong>
+	            </span>
+	        </div>
 	        <div class="col-md-12 form-group">
 	            <label class="control-label">Descripción</label>
 	            <textarea  class="form-control form-control-sm" name="descripcion" rows="3">{{$ap->descripcion}}</textarea>
