@@ -81,7 +81,7 @@ class APController extends Controller
     }
 
     public function store(Request $request){
-        dd("hola controlador ap");
+
         $ap = new AP;
         $ap->nombre      = $request->nombre;
         $ap->password    = $request->password;
