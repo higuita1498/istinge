@@ -63,11 +63,11 @@
         .card-counter.success{
             background-color: #66bb6a;
             color: #FFF;
-        }  
+        }
         .card-counter.info{
             background-color: #26c6da;
             color: #FFF;
-        }  
+        }
         .card-counter i{
             font-size: 5em;
             opacity: 0.2;
@@ -111,6 +111,8 @@
         <div class="row card-description">
             @if(auth()->user()->modo_lectura())
             @else
+            <p style="color:black;padding-top:25px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
+
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
@@ -225,7 +227,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
@@ -268,7 +270,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
@@ -313,7 +315,7 @@
             </div>
     	</div>
     @endif
-    
+
     @if(Auth::user()->rol == 8)
         <div class="row card-description">
     	    <form action="https://checkout.wompi.co/p/" method="GET" id="form-wompi" class="d-none">
@@ -324,7 +326,7 @@
     	        <input type="hidden" name="redirect-url" value="https://istingenieria.online/RecargaWompi" />
     	        <button class="btn btn-success" type="submit" disabled>Pagar con Wompi</button>
     	    </form>
-    	    
+
     	    <div class="col-md-4 offset-md-4" style="text-align:center;">
     	        <div class="contact-form">
     	            <h4>RECARGA SALDO CON WOMPI</h4>
@@ -333,7 +335,7 @@
     	        </div>
     	    </div>
     	</div>
-    	
+
     	<script>
     	    function confirmarp(form, mensaje="Lo vamos a redirigir a la pasarela de pago WOMPI para realizar la recarga", submensaje='¿Desea continuar?', confirmar='Si'){
                 if($("#buyerFullName").val() != ''){
@@ -349,7 +351,7 @@
                     }).then((result) => {
                         if (result.value) {
                             /*cargando(true);
-                            
+
                             $.ajax({
                                 url: 'bk_equipos.php',
                                 type: 'POST',
@@ -358,7 +360,7 @@
                                 processData: false,
                                 success: function(data) {
                                     data = JSON.parse(data);
-                                    
+
                                     if (data['success'] == true) {
                                         var monto_pago = $("#recarga").val();
                                         $("#amount-in-cents").val(monto_pago+'00');
