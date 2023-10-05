@@ -112,16 +112,16 @@
             @if(auth()->user()->modo_lectura())
             @else
             <div>
-                <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+                {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data">
+                    @csrf --}}
                     <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;background:#57c7d4;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
-
+{{--
                     <div class="form-group">
                         <label for="archivo">Seleccionar archivo:</label>
                         <input type="file" name="archivo" id="archivo" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-primary">Enviar Archivo</button>
-                </form>
+                </form> --}}
             </div>
 
             <div class="col-md-12">
