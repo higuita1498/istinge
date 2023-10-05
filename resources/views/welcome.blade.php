@@ -112,7 +112,7 @@
             @if(auth()->user()->modo_lectura())
             @else
             <div>
-                <p style="color:black;padding-top:25px;text-align:center;padding-left:50px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023<br> por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
+                <p style="color:black;padding-top:25px;text-align:center;padding-left:50px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
             </div>
 
             <div class="col-md-12">
