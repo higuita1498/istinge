@@ -89,6 +89,7 @@ class APController extends Controller
         $ap->descripcion = $request->descripcion;
         $ap->nodo        = $request->nodo;
         $ap->status      = $request->status;
+        $ap->ip      = $request->ip;
         $ap->created_by  = Auth::user()->id;
         $ap->empresa     = Auth::user()->empresa;
         $ap->save();

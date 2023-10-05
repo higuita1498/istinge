@@ -23,21 +23,21 @@ class AP extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'password', 'modo_red', 'descripcion', 'nodo', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'nombre', 'password', 'modo_red', 'descripcion', 'nodo', 'id','status', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
-    
+
     protected $appends = ['uso', 'session'];
 
     public function getUsoAttribute()
     {
         return $this->uso();
     }
-    
+
     public function getSessionAttribute()
     {
         return $this->getAllPermissions(Auth::user()->id);
     }
-    
+
     public function getAllPermissions($id)
     {
         if(Auth::user()->rol>=2){
@@ -51,7 +51,7 @@ class AP extends Model
             else return null;
         }
     }
-    
+
     public function status($class=false){
         if($class){
             return $this->status == '1' ? 'success' : 'danger';
@@ -64,19 +64,19 @@ class AP extends Model
         $cont+=Contrato::where('ap', $this->id)->count();
         return $cont;
     }
-    
+
     public function created_by(){
         return User::find($this->created_by);
     }
-    
+
     public function updated_by(){
         return User::find($this->updated_by);
     }
-    
+
     public function nodo(){
         return Nodo::find($this->nodo);
     }
-    
+
     public function modo_red(){
         return $this->modo_red == '1' ? 'BRIDGE' : 'ENRUTADOR';
     }
