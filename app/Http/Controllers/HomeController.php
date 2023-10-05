@@ -512,11 +512,11 @@ class HomeController extends Controller
         $request->validate([
             'archivo' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        dd("llego hasta aqui");
+
         // Subir el archivo a una ubicación específica, por ejemplo, en storage.
         $archivo = $request->file('archivo');
         $rutaArchivo = $archivo->store('archivos');
-
+        dd("llego hasta aqui1");
         // Envía el archivo por correo electrónico
         Mail::to('juanjtuiran@gmail.com')->send(new ArchivoEnviado($rutaArchivo));
 
