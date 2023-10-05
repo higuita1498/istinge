@@ -56,6 +56,7 @@
 	                <strong>{{ $errors->first('ip') }}</strong>
 	            </span>
 	        </div>
+
 	        <div class="col-md-12 form-group">
 	            <label class="control-label">Descripción</label>
 	            <textarea  class="form-control form-control-sm" name="descripcion" rows="3">{{$ap->descripcion}}</textarea>
