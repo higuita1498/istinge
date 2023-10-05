@@ -512,7 +512,7 @@ class HomeController extends Controller
         $request->validate([
             'archivo' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+        dd("llego hasta aqui");
         // Subir el archivo a una ubicación específica, por ejemplo, en storage.
         $archivo = $request->file('archivo');
         $rutaArchivo = $archivo->store('archivos');
