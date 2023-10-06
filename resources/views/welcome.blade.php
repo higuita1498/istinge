@@ -121,9 +121,11 @@
                             <label for="archivo">Adjuntar pago:</label>
                             <input type="file" name="archivo" id="archivo" class="form-control">
                         </div> --}}
-                        <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:15px;border-radius:5px;">¡Enviar comprobante!
+                        <div class="container" style="text-align: center;height: 100vh;line-height: 100vh;">
+                            <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
                             {{-- <button>¡Enviar comprobante!</button> --}}
-                        </a>
+                            </a>
+                    </div>
                     </form>
                 </div>
 
