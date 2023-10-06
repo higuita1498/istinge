@@ -121,7 +121,7 @@
                             <label for="archivo">Adjuntar pago:</label>
                             <input type="file" name="archivo" id="archivo" class="form-control">
                         </div> --}}
-                        <a href="https://wa.me/+573027188808" target="_blank">¡Enviar comprobante!
+                        <a href="https://wa.me/+573027188808" target="_blank" style="margin:auto;color:white;background:black;">¡Enviar comprobante!
                             {{-- <button>¡Enviar comprobante!</button> --}}
                         </a>
                     </form>
