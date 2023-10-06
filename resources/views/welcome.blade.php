@@ -111,20 +111,22 @@
         <div class="row card-description">
             @if(auth()->user()->modo_lectura())
             @else
-            @if(Auth::user()->empresa() == 1)
+
                 <div style="background:#57c7d4;">
                     <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="archivo">Adjuntar pago:</label>
                             <input type="file" name="archivo" id="archivo" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="background:black;">Enviar Archivo</button>
+                        </div> --}}
+                        <a href="https://wa.me/NUMERODETELEFONO" target="_blank">
+                            <button>¡Enviar comprobante!</button>
+                        </a>
                     </form>
                 </div>
-            @endif
+
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">
