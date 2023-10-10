@@ -2783,6 +2783,7 @@ class ContratosController extends Controller
     }
 
     public function enviar_mk_lote($contratos){
+        dd("hola como esta");
         $this->getAllPermissions(Auth::user()->id);
 
         $succ = 0; $fail = 0; $registro = false; $contracts_fallidos = ''; $contracts_correctos = '';
