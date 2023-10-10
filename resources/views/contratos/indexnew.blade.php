@@ -518,7 +518,7 @@
 	}
 
     function states(state){
-        console.log("estamos en la parte de contrato para mirar la mk"):
+        console.log("estamos en la parte de contrato para mirar la mk");
         var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
