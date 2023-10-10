@@ -60,7 +60,9 @@ class ItemsFacturaProv extends Model
             if($largo){
                 return Categoria::where('id',$this->producto)->first();
             }
-            return Categoria::where('id',$this->producto)->first()->nombre;
+            if(Categoria::where('id',$this->producto)->first()){
+                return Categoria::where('id',$this->producto)->first()->nombre;
+            }
         }
          
         
