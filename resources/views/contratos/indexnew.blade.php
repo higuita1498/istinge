@@ -241,7 +241,7 @@
                         @if(auth()->user()->rol == 3)
                         <a class="dropdown-item d-none" href="{{ route('contratos.importarMK') }}" id="btn_mk_all"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK (En desarrollo)</a>
                         @endif
-                        <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK12</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_planes"><i class="fas fa-exchange-alt" style="margin-left:4px; "></i> Cambiar Plan de Internet</a>
@@ -518,6 +518,7 @@
 	}
 
     function states(state){
+        console.log("estamos en la parte de contrato para mirar la mk"):
         var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
