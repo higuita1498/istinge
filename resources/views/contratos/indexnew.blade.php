@@ -567,7 +567,7 @@
                     method: 'GET',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function(data) {
-                        console.log(data);
+
                         cargando(false);
                         swal({
                             title: 'PROCESO REALIZADO',
@@ -585,6 +585,7 @@
     }
 
     function mk_lote(){
+        console.log("hola es una prueba");
         var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
