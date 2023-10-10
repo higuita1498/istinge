@@ -112,7 +112,7 @@
             @if(auth()->user()->modo_lectura())
             @else
 
-                <div style="background:#57c7d4;">
+                {{-- <div style="background:#57c7d4;">
                     <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.<br>Si ya realizo el pago o no es su caso por favor realizar caso omiso.</p>
@@ -121,13 +121,13 @@
                             <label for="archivo">Adjuntar pago:</label>
                             <input type="file" name="archivo" id="archivo" class="form-control">
                         </div> --}}
-                        <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
-                            <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
+                        {{-- <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
+                            <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante! --}}
                             {{-- <button>¡Enviar comprobante!</button> --}}
-                            </a>
+                            {{-- </a>
                     </div>
-                    </form>
-                </div>
+                    </form> --}}
+                {{-- </div>  --}}
 
             <div class="col-md-12">
                 <div class="card-body">
