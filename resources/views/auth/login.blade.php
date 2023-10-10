@@ -78,7 +78,7 @@
       INICIAR
     </button>
   </div>
-  <p style="color:white;padding-top:25px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p>
+  {{-- <p style="color:white;padding-top:25px;">Señor usuario recuerde que su factura vence el día 10 de octubre de 2023 por favor adjunte su pago aquí para evitar ser suspendido el día 11 de octubre.</p> --}}
 </div>
 
           {{--<div class="text-center w-full p-t-25 p-b-230">
