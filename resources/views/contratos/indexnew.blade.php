@@ -518,7 +518,7 @@
 	}
 
     function states(state){
-        console.log("estamos en la parte de contrato para mirar la mk");
+
         var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
@@ -567,6 +567,7 @@
                     method: 'GET',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function(data) {
+                        console.log(data);
                         cargando(false);
                         swal({
                             title: 'PROCESO REALIZADO',
