@@ -4,8 +4,10 @@ namespace App\Model\Gastos;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Model\Inventario\Inventario; use App\Impuesto;  
-use DB; use Auth; use App\Categoria;  
+use DB;
+use Auth; 
 use App\ProductoCuenta;
+use App\Puc;
 class ItemsFacturaProv extends Model
 {
     protected $table = "items_factura_proveedor";
@@ -58,12 +60,10 @@ class ItemsFacturaProv extends Model
         else{
             
             if($largo){
-                return Categoria::where('id',$this->producto)->first();
+                return Puc::where('id',$this->producto)->first();
             }
-            if(Categoria::where('id',$this->producto)->first()){
-                return Categoria::where('id',$this->producto)->first()->nombre;
-            }else{
-                return Inventario::where('id',$this->producto)->first()->producto;
+            if(Puc::where('id',$this->producto)->first()){
+                return Puc::where('id',$this->producto)->first()->nombre;
             }
         }
          
