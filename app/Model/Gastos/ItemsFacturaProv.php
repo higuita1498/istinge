@@ -4,7 +4,8 @@ namespace App\Model\Gastos;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Model\Inventario\Inventario; use App\Impuesto;  
-use DB; use Auth; use App\Puc;  
+use DB;
+use Auth; 
 use App\ProductoCuenta;
 use App\Puc;
 class ItemsFacturaProv extends Model
