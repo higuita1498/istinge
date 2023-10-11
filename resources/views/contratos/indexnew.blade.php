@@ -610,7 +610,7 @@
     }
 
     function mk_lote(){
-        var selectElement = document.getElementById('server_configuration_id_s');
+        var selectElement =  document.querySelector('select[name="server_configuration_id_s"]');
         var selectedValue = selectElement.value;
 
         console.log(selectedValue);
