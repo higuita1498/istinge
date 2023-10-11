@@ -638,7 +638,8 @@
         for (i = 0; i < nro; i++) {
             contratos.push(table.rows('.selected').data()[i]['id']);
         }
-
+        contratos.push('m'+selectedValue);
+        console.log();
         swal({
             title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
             text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
@@ -653,7 +654,7 @@
                 cargando(true);
 
                 if (window.location.pathname.split("/")[1] === "software") {
-                    var url = `/software/empresa/contratos/`+contratos+`+`selectedValue+`/enviar_mk_lote`;
+                    var url = `/software/empresa/contratos/`+contratos+`/enviar_mk_lote`;
                 }else{
                     var url = `/empresa/contratos/`+contratos+`/enviar_mk_lote`;
                 }
