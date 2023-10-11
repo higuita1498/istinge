@@ -293,7 +293,7 @@
             </div>
             <div class="modal-body">
                 <label for="">Elija la microtik que estara asociada a los contratos</label>
-                <select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s" name="server_configuration_id_s">
+                <select title="Servidor" class="form-control selectpicker" id="server_configuration" name="server_configuration">
                     @foreach ($servidores as $servidor)
                     <option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
                     @endforeach
@@ -610,10 +610,10 @@
     }
 
     function mk_lote(){
-        var selectElement =  document.querySelector('select[name="server_configuration_id_s"]');
+        var selectElement = document.getElementById('server_configuration');
         var selectedValue = selectElement.value;
 
-        console.log(selectedValue);
+        console.log(selectElement);
 
        var contratos = [];
 
