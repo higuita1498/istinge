@@ -96,8 +96,8 @@
                         <li class="nav-item" id="planes_tv">
                             <a class="nav-link" href="{{route('inventario.television')}}">Planes de Televisión</a>
                         </li>
-                        <li class="nav-item d-none" id="items_venta">
-                            <a class="nav-link" href="{{route('inventario.television')}}">Asignación material para tecnico</a>
+                        <li class="nav-item" id="planes_tv">
+                            <a class="nav-link" href="{{route('inventario.television')}}">Asiganción herramientas para tecnicos</a>
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['412'])){ ?>
@@ -109,16 +109,10 @@
                     <li class="nav-item" id="valor_inventario">
                         <a class="nav-link" href="{{route('valorinventario')}}" >Valor Inventario</a>
                     </li>
-                    <li class="nav-item d-none" id="items_venta">
-                        <a class="nav-link" href="{{route('inventario.television')}}">Asignación material para tecnico</a>
-                    </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['16'])){ ?>
                     <li class="nav-item" id="ajustes_inventario">
                         <a class="nav-link" href="{{route('ajustes.index')}}" >Ajustes del Inventario</a>
-                    </li>
-                    <li class="nav-item d-none" id="items_venta">
-                        <a class="nav-link" href="{{route('inventario.television')}}">Asignación material para tecnico</a>
                     </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['21'])){ ?>
@@ -134,9 +128,6 @@
                     <?php if(isset($_SESSION['permisos']['34'])){ ?>
                     <li class="nav-item" id="bodegas">
                         <a class="nav-link" href="{{route('bodegas.index')}}" >Bodegas</a>
-                    </li>
-                    <li class="nav-item d-none" id="items_venta">
-                        <a class="nav-link" href="{{route('inventario.television')}}">Asignación material para tecnico</a>
                     </li>
                     <?php } ?>
                 </ul>
