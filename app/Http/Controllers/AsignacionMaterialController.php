@@ -706,7 +706,7 @@ class AsignacionMaterialController extends Controller{
         $seccion = "facturas";
         $subseccion = "venta";
 
-        return view('facturas.create')->with(compact('clientes', 'tipo_documento',
+        return view('asignacionMaterial.create')->with(compact('clientes', 'tipo_documento',
             'inventario', 'numeraciones', 'nro','vendedores', 'terminos', 'impuestos',
             'cliente', 'bodegas', 'listas', 'producto', 'fecha', 'retenciones',
             'categorias', 'identificaciones', 'tipos_empresa', 'prefijos', 'medidas2',
