@@ -270,7 +270,7 @@ class AsignacionMaterialController extends Controller{
 
         $clientes = Contacto::join('factura as f', 'contactos.id', '=', 'f.cliente')->where('contactos.status', 1)->groupBy('f.cliente')->select('contactos.*')->orderBy('contactos.nombre','asc')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta', 'precice' => true]);
+        view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
