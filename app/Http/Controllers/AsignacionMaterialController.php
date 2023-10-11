@@ -304,7 +304,7 @@ class AsignacionMaterialController extends Controller{
     * Tabla principal de facturación electrónica.
     */
     public function index_electronica(){
-        dd("hola ");
+
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
@@ -312,7 +312,7 @@ class AsignacionMaterialController extends Controller{
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
-
+        dd("hola 12");
         view()->share(['title' => 'Asignacion de Material', 'subseccion' => 'venta-electronica']);
         return view('asignacionMaterial.index', compact('clientes', 'municipios', 'tabla','servidores'));
     }
