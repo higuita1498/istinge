@@ -145,24 +145,24 @@
 		<div class="col-md-12">
     		<div class="container-filtercolumn form-inline">
     			@if(Auth::user()->empresa()->efecty == 1)
-    			<a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a>
+    			{{-- <a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a> --}}
     			@endif
 				{{-- @if(isset($_SESSION['permisos']['830']))
     			<a class="btn btn-outline-success btn-sm disabled mr-1 d-none" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-sitemap"></i> Convertir a facturas electrónicas en Lote</a>
     			@endif --}}
     			@if(isset($_SESSION['permisos']['750']))
-    			<a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-table"></i> Organizar Tabla</a>
+    			{{-- <a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-table"></i> Organizar Tabla</a> --}}
     			@endif
                 @if(isset($_SESSION['permisos']['774']))
-                <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm mr-1"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a>
+                {{-- <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm mr-1"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a> --}}
                 @endif
                 <div class="dropdown mr-1">
-                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{-- <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
-                    </div>
+                    </div> --}}
                 </div>
 			</div>
 		</div>
@@ -184,10 +184,10 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">GENERAR PROMESA DE PAGO</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    {{-- <h5 class="modal-title" id="exampleModalLabel">GENERAR PROMESA DE PAGO</h5> --}}
+                    {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
-                    </button>
+                    </button> --}}
                 </div>
                 <div id="div_promesa"></div>
             </div>
