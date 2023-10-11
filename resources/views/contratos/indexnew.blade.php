@@ -241,13 +241,8 @@
                         @if(auth()->user()->rol == 3)
                         <a class="dropdown-item d-none" href="{{ route('contratos.importarMK') }}" id="btn_mk_all"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK (En desarrollo)</a>
                         @endif
-                        <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i><div class="col-md-3 pl-1 pt-1">
-        					<select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s" name="server_configuration_id_s">
-        						@foreach ($servidores as $servidor)
-        						<option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
-        						@endforeach
-        					</select>
-        				</div> Enviar Contratos a MK</a>
+                        {{-- <a class="dropdown-item" href="javascript:void(0)" id="btn_mk"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a> --}}
+                        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#miModal"><i class="fas fa-server" style="margin-left:4px; "></i> Enviar Contratos a MK</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_enabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Habilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_disabled"><i class="fas fa-file-signature" style="margin-left:4px; "></i> Deshabilitar Contratos</a>
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_planes"><i class="fas fa-exchange-alt" style="margin-left:4px; "></i> Cambiar Plan de Internet</a>
@@ -287,6 +282,25 @@
             </div>
         </div>
     </div>
+
+    {{-- creando un modal --}}
+    <div id="miModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Mi Modal</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <p>Contenido de tu modal.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{-- fin del modal --}}
     @endif
 @endsection
 
