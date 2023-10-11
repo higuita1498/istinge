@@ -590,7 +590,7 @@
 
         var table = $('#tabla-contratos').DataTable();
         var nro = table.rows('.selected').data().length;
-
+        alert("elije microtik");
         if(nro<=0){
             swal({
                 title: 'ERROR',
