@@ -2794,8 +2794,8 @@ class ContratosController extends Controller
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
             if($i==0){
-                $microtik = explode("m", $contratos);
-                dd($microtik);
+                // $microtik = explode("m", $contratos);
+                dd($contratos);
             }else{
                 if ($contrato) {
                     if($contrato->mk==0){
