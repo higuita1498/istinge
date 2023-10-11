@@ -2790,7 +2790,8 @@ class ContratosController extends Controller
         $succ = 0; $fail = 0; $registro = false; $contracts_fallidos = ''; $contracts_correctos = '';
 
         $contratos = explode(",", $contratos);
-        dd($contratos);
+        $objetoJavaScript = json_decode($contratos);
+        dd($objetoJavaScript);
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
             if ($contrato) {
