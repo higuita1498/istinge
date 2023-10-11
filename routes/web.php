@@ -16,6 +16,7 @@ use App\Http\Controllers\Nomina\NominaDianController;
 use App\Http\Controllers\ContactosController;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaPeriodos;
+use App\Http\Controllers\AsignacionMaterialController;
 
 
 
