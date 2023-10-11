@@ -292,6 +292,7 @@
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
+                <label for="">Elija la microtik que estara asociada a los contratos</label>
                 <select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s" name="server_configuration_id_s">
                     @foreach ($servidores as $servidor)
                     <option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
