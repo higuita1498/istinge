@@ -2790,9 +2790,10 @@ class ContratosController extends Controller
         $succ = 0; $fail = 0; $registro = false; $contracts_fallidos = ''; $contracts_correctos = '';
 
         $contratos = explode(",", $contratos);
-        dd($contratos);
+
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
+            dd($contrato);
             if ($contrato) {
                 if($contrato->mk==0){
                     $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
