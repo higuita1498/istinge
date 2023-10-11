@@ -586,16 +586,16 @@
 
     function mk_lote($servidores){
         aleert("estas adentro");
-        var select = document.getElementById('server_configuration_id_s');
+        // var select = document.getElementById('server_configuration_id_s');
 
-        // Obtén los datos de $servidores del atributo data
-        var servidoresData = select.getAttribute('data-servidores');
+        // // Obtén los datos de $servidores del atributo data
+        // var servidoresData = select.getAttribute('data-servidores');
 
-        // Convierte los datos en un objeto JavaScript
-        var servidores = JSON.parse(servidoresData);
+        // // Convierte los datos en un objeto JavaScript
+        // var servidores = JSON.parse(servidoresData);
 
-        // Ahora puedes acceder a la variable $servidores en JavaScript
-        console.log(servidores);
+        // // Ahora puedes acceder a la variable $servidores en JavaScript
+        // console.log(servidores);
         var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
