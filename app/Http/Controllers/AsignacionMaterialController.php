@@ -58,7 +58,7 @@ class AsignacionMaterialController extends Controller{
 
     public function __construct(ElectronicBillingService $electronicBillingService){
         $this->middleware('auth');
-        view()->share(['seccion' => 'Asignación Material', 'title' => 'Asignación Material', 'icon' =>'fas fa-plus', 'subseccion' => 'inventario']);
+        view()->share(['seccion' => 'Asignación de Material', 'title' => 'Asignación de Material', 'icon' =>'fas fa-plus', 'subseccion' => 'inventario']);
         $this->electronicBillingService = $electronicBillingService;
     }
 
@@ -313,7 +313,7 @@ class AsignacionMaterialController extends Controller{
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
-        return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla','servidores'));
+        return view('asignacionMaterial.index', compact('clientes', 'municipios', 'tabla','servidores'));
     }
 
     /*
