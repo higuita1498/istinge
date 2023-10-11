@@ -610,19 +610,12 @@
     }
 
     function mk_lote(){
-        var servidores = @json($servidores); //trasnformando la variable de php a javascript
-        // var servidoresData = document.getElementById('server_configuration_id_s').getAttribute('data-servidores');
-        // var servidores = JSON.parse(servidoresData);
-        servidores.forEach(function (servidor) {
-            var option = document.createElement('option');
-            option.value = servidor.id;
-            option.text = servidor.nombre;
-            select.appendChild(option);
-        });
+        var selectElement = document.getElementById('server_configuration_id_s');
+        var selectedValue = selectElement.value;
 
-        console.log(servidores);
+        console.log(selectedValue);
 
-        var contratos = [];
+       var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
         var nro = table.rows('.selected').data().length;
