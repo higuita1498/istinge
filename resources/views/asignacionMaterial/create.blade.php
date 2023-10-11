@@ -139,6 +139,7 @@
                   </select>
               </div>
           </div> --}}
+
         <div class="form-group row">
           <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
         </div>
