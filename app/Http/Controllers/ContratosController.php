@@ -2802,12 +2802,13 @@ class ContratosController extends Controller
                     if($contrato->mk==1){
                         $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
                         $mikrotik = Mikrotik::where('id', $microtik)->first();
-                        dd($mikrotik);
+
 
                         $cliente = $contrato->cliente();
                         $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
 
                         if ($mikrotik) {
+                            dd("entro en la microtik");
                             $API = new RouterosAPI();
                             $API->port = $mikrotik->puerto_api;
                             //$API->debug = true;
