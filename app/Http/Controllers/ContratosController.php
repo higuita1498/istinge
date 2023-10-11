@@ -2796,7 +2796,7 @@ class ContratosController extends Controller
             if($i==0){
                 $microtik = str_replace('m', '', $contratos[$i]);
             }else{
-                dd("ingreso en el sino");
+
                 $contrato = Contrato::find($contratos[$i]);
                 if ($contrato) {
                     if($contrato->mk==0){
