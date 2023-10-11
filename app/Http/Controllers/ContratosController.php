@@ -2808,7 +2808,7 @@ class ContratosController extends Controller
                         $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
 
                         if ($mikrotik) {
-                            dd("entro en la microtik");
+
                             $API = new RouterosAPI();
                             $API->port = $mikrotik->puerto_api;
                             //$API->debug = true;
