@@ -2801,7 +2801,7 @@ class ContratosController extends Controller
                     if($contrato->mk==0){
                         $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
                         $mikrotik = Mikrotik::where('id', $microtik)->first();
-                        dd($mikrotik);
+
                         $cliente = $contrato->cliente();
                         $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
 
