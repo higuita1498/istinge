@@ -304,6 +304,7 @@ class AsignacionMaterialController extends Controller{
     * Tabla principal de facturación electrónica.
     */
     public function index_electronica(){
+        dd("hola ");
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
