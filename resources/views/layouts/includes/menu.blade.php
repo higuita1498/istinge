@@ -76,7 +76,7 @@
         </a>
     </li>
 @endif
-    
+
     @if(isset($_SESSION['permisos']['8']) || isset($_SESSION['permisos']['15']) || isset($_SESSION['permisos']['16'])|| isset($_SESSION['permisos']['21']) || isset($_SESSION['permisos']['29']) || isset($_SESSION['permisos']['34']) || isset($_SESSION['permisos']['412']))
         <li class="nav-item" id="inventario">
             <a class="nav-link" data-toggle="collapse" href="#ui-inventario" aria-expanded="false" aria-controls="ui-inventario">
@@ -95,6 +95,9 @@
                         </li>
                         <li class="nav-item" id="planes_tv">
                             <a class="nav-link" href="{{route('inventario.television')}}">Planes de Televisión</a>
+                        </li>
+                        <li class="nav-item d-none" id="items_venta">
+                            <a class="nav-link" href="{{route('inventario.materia.tecnico')}}">Asignación material para tecnico</a>
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['412'])){ ?>
@@ -155,7 +158,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['40']) || isset($_SESSION['permisos']['45']) || isset($_SESSION['permisos']['50'])|| isset($_SESSION['permisos']['55']) || isset($_SESSION['permisos']['60']) || isset($_SESSION['permisos']['65']))
         <li class="nav-item" id="facturas">
             <a class="nav-link" data-toggle="collapse" href="#ui-factura" aria-expanded="false" aria-controls="ui-factura">
@@ -214,7 +217,7 @@
             </div>
         </li>
     @endif
-    
+
     {{--@if(isset($_SESSION['permisos']['420']))
         <li class="nav-item" id="facturaelectronica">
             <a  class="nav-link" href="https://gestoru.com/login" target="_blank">
@@ -223,7 +226,7 @@
             </a>
         </li>
     @endif--}}
-    
+
     @if(isset($_SESSION['permisos']['251']) || isset($_SESSION['permisos']['256']) || isset($_SESSION['permisos']['80'])|| isset($_SESSION['permisos']['85']) || isset($_SESSION['permisos']['90']))
         <li class="nav-item" id="gastos">
             <a class="nav-link" data-toggle="collapse" href="#ui-gastos" aria-expanded="false" aria-controls="ui-gastos">
@@ -305,7 +308,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['427']) || isset($_SESSION['permisos']['200']) || isset($_SESSION['permisos']['300']) || isset($_SESSION['permisos']['425']))
         <li class="nav-item" id="atencion_cliente">
             <a class="nav-link" data-toggle="collapse" href="#ui-atencion_cliente" aria-expanded="false" aria-controls="ui-atencion_cliente">
@@ -339,7 +342,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['429']) || isset($_SESSION['permisos']['438']))
         <li class="nav-item" id="mikrotik">
             <a class="nav-link" data-toggle="collapse" href="#ui-mikrotik" aria-expanded="false" aria-controls="ui-mikrotik">
@@ -368,7 +371,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['711']) || isset($_SESSION['permisos']['717']) || isset($_SESSION['permisos']['723']))
         <li class="nav-item" id="zonas">
             <a class="nav-link" data-toggle="collapse" href="#ui-zonas" aria-expanded="false" aria-controls="ui-zonas">
@@ -407,7 +410,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['700']) || isset($_SESSION['permisos']['710']))
         <li class="nav-item" id="avisos">
             <a class="nav-link" data-toggle="collapse" href="#ui-avisos" aria-expanded="false" aria-controls="ui-avisos">
@@ -483,7 +486,7 @@
             </a>
         </li>
     @endif
-  
+
     @if(isset($_SESSION['permisos']['426']))
         <li class="nav-item" id="saldo">
             <a  class="nav-link" href="{{route('recarga.index')}}">
@@ -492,7 +495,7 @@
             </a>
         </li>
     @endif
-  
+
     @if(isset($_SESSION['permisos']['415']))
         <li class="nav-item" id="mensajeria">
             <a  class="nav-link" href="{{route('mensajeria.index')}}">
@@ -501,7 +504,7 @@
             </a>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['422']))
         <li class="nav-item" id="notificaciones">
             <a  class="nav-link" href="{{route('notificaciones.index')}}">
@@ -510,7 +513,7 @@
             </a>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['291']))
         <li class="nav-item" id="reportes">
             <a  class="nav-link" href="{{route('reportes.index')}}">
@@ -567,7 +570,7 @@
             </div>
         </li>
     @endif
-    
+
     @if(isset($_SESSION['permisos']['111']))
         <li class="nav-item" id="configuracion">
             <a  class="nav-link" href="{{route('configuracion.index')}}">
@@ -585,7 +588,7 @@
         </a>
     </li>
     @endif
-    
+
     <li class="nav-item" id="logout-lateral">
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
         <a  class="nav-link"  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -593,7 +596,7 @@
             <span class="menu-title">Salir</span>
         </a>
     </li>
-    
+
     <li class="nav-item" id="logout-lateral">
         <a  class="nav-link" href="#">
             <span class="menu-title"></span>
