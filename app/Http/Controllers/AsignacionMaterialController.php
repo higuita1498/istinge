@@ -314,7 +314,6 @@ class AsignacionMaterialController extends Controller{
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
         view()->share(['title' => 'Asignacion de Material', 'subseccion' => 'venta-electronica']);
-        dd("hola 15");
         return view('asignacionMaterial.index', compact('clientes', 'municipios', 'tabla','servidores'));
     }
 
