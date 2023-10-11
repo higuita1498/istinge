@@ -288,11 +288,15 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Mi Modal</h4>
+              <h4 class="modal-title">Enviar Contratos a MK</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-              <p>Contenido de tu modal.</p>
+                <select title="Servidor" class="form-control selectpicker" id="server_configuration_id_s" name="server_configuration_id_s">
+                    @foreach ($servidores as $servidor)
+                    <option value="{{ $servidor->id }}">{{ $servidor->nombre }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
