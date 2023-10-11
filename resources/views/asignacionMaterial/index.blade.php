@@ -103,7 +103,7 @@
 						    </select>
 						</th>
                         <th width="33%">
-                        	<select name="name_10" class="form-control selectpicker" title="Fecha Corte">
+                        	{{-- <select name="name_10" class="form-control selectpicker" title="Fecha Corte">
 							@if($request->name_10)
 								<option value="15" @if($request->name_10 == 15) selected="" @endif >Día 15</option>
 								<option value="30" @if($request->name_10 == 30) selected="" @endif >Día 30</option>
@@ -111,15 +111,15 @@
 								<option value="15" >Día 15</option>
 								<option value="30" >Día 30</option>
 							@endif
-			  				</select>
+			  				</select> --}}
 			  			</th>
 					</tr>
 					<tr class="form-group">
 						<th width="33%">
-							<input type="text" class="form-control datepicker" name="name_3" placeholder="F. Creación" value="{{$request->name_3}}" autocomplete="off">
+							{{-- <input type="text" class="form-control datepicker" name="name_3" placeholder="F. Creación" value="{{$request->name_3}}" autocomplete="off"> --}}
 						</th>
 						<th width="33%">
-							<input type="text" class="form-control datepickerinput" name="name_4" placeholder="F. Vencimiento" value="{{$request->name_4}}" autocomplete="off">
+							{{-- <input type="text" class="form-control datepickerinput" name="name_4" placeholder="F. Vencimiento" value="{{$request->name_4}}" autocomplete="off"> --}}
 						</th>
 						<th width="33%">
 							<select name="name_8[]" class="form-control selectpicker" title="Estado Factura" multiple>
