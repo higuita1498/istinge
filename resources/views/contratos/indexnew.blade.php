@@ -613,7 +613,7 @@
         var selectElement = document.getElementById('server_configuration');
         var selectedValue = selectElement.value;
 
-        console.log(selectElement);
+        console.log(selectedValue);
 
        var contratos = [];
 
