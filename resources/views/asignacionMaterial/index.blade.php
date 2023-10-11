@@ -9,7 +9,7 @@
 	    </div>
 	@else
 	    @if(isset($_SESSION['permisos']['42']))
-		    <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
+		    <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nueva Asignacion de Material</a>
 		@endif
 	@endif
 @endsection
