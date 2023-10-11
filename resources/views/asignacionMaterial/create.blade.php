@@ -110,7 +110,7 @@
 	  				<input type="text" class="form-control" readonly="" id="telefono" value="">
 	  			</div>
   			</div>
-            <div class="form-group row">
+            {{-- <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Vendedor <a><i data-tippy-content="Vendedor asociado a la factura de venta, puedes agregar nuevos vendedores haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
                 <div class="col-sm-8">
                     <select name="vendedor" id="vendedor" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
@@ -119,8 +119,8 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
-            <div class="form-group row">
+            </div> --}}
+            {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
               <div class="col-sm-8">
                   <select name="periodo_cobrado" id="periodo_cobrado" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
@@ -128,7 +128,7 @@
                       <option value="2" {{$empresa->periodo_cobrado==2 ? 'selected' : ''}}>Mes vencido</option>
                   </select>
               </div>
-          </div>
+          </div> --}}
             {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Forma de Pago <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
@@ -151,23 +151,23 @@
 	  				<input type="text" class="form-control"  id="fecha" value="{{$fecha}}" name="fecha" disabled=""  >
 	  			</div>
   			</div>
-  			<div class="form-group row">
-  				<label class="col-sm-4 col-form-label">Plazo <a><i data-tippy-content="Tiempo maximo para realizar el pago, puedes agregar nuevos plazos haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
-	  			<div class="col-sm-8">
-	  				<select name="plazo" id="plazo" class="form-control " title="Seleccione">
-              @foreach($terminos as $termino)
-                <option value="{{$termino->id}}" dias="{{$termino->dias}}">{{$termino->nombre}}</option>
-              @endforeach
-	  				</select>
-	  			</div>
-  			</div>
-  			<div class="form-group row">
+                {{-- <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Plazo <a><i data-tippy-content="Tiempo maximo para realizar el pago, puedes agregar nuevos plazos haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
+                    <div class="col-sm-8">
+                        <select name="plazo" id="plazo" class="form-control " title="Seleccione">
+                @foreach($terminos as $termino)
+                    <option value="{{$termino->id}}" dias="{{$termino->dias}}">{{$termino->nombre}}</option>
+                @endforeach
+                        </select>
+                    </div>
+                </div> --}}
+  			{{-- <div class="form-group row">
   				<label class="col-sm-4 col-form-label">Vencimiento <span class="text-danger">*</span><a><i data-tippy-content="Fecha de vencimiento de la factura, se calcula automaticamente si se define el plazo" class="icono far fa-question-circle"></i></a></label>
 	  			<div class="col-sm-8">
 	  				<input type="text" class="form-control datepicker" id="vencimiento" value="{{$fecha}}" name="vencimiento" disabled="">
 	  			</div>
-  			</div>
-        <div class="form-group row">
+  			</div> --}}
+        {{-- <div class="form-group row">
           <label class="col-sm-4 col-form-label">Bodega <span class="text-danger">*</span></label>
           <div class="col-sm-8">
             <select name="bodega" id="bodega" class="form-control"  required="">
@@ -176,8 +176,8 @@
               @endforeach
             </select>
           </div>
-        </div>
-        <div class="form-group row">
+        </div> --}}
+        {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Tipo de operación <span class="text-danger">*</span></label>
               <div class="col-sm-8">
                   <select name="tipo_operacion" id="tipo_operacion" class="form-control selectpicker " data-live-search="true" data-size="5" required="" onchange="operacion(this.value)">
@@ -194,7 +194,7 @@
                       <option value="3" @if(isset($tipo_documento->tipo)){{$tipo_documento->tipo==4?'selected':''}}@endif>Cuenta de Cobro</option>
                   </select>
               </div>
-          </div>
+          </div> --}}
 
         @if(auth()->user()->empresa()->estado_dian == 1)
             <div class="form-group row">
@@ -366,7 +366,7 @@
                   </div>
                   <div class="col-md-6 d-flex justify-content-between pt-3">
                     <h5>Total:</h5>
-                    <span>$</span><span id="anticipototal">0</span>  
+                    <span>$</span><span id="anticipototal">0</span>
                   </div>
                   <div class="col-md-12">
                     <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
@@ -462,7 +462,7 @@
       </div>
       </div>
 
-    
+
       <div class="row ">
         <div class="col-sm-12 text-right" style="padding-top: 1%;">
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
