@@ -2783,14 +2783,14 @@ class ContratosController extends Controller
         ]);
     }
 
-    public function enviar_mk_lote($contratos,$plan){
-        dd($contratos);
+    public function enviar_mk_lote($contratos){
+
         $this->getAllPermissions(Auth::user()->id);
 
         $succ = 0; $fail = 0; $registro = false; $contracts_fallidos = ''; $contracts_correctos = '';
 
         $contratos = explode(",", $contratos);
-
+        dd($contratos);
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
             if ($contrato) {
