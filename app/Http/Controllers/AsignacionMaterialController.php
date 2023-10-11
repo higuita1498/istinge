@@ -260,7 +260,7 @@ class AsignacionMaterialController extends Controller{
 
         $clientes = Contacto::join('factura AS F','F.cliente','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit')->groupBy('F.cliente')->orderBy('contactos.nombre','ASC')->get();
 
-        view()->share(['title' => 'Facturas de Venta', 'subseccion' => 'venta']);
+        view()->share(['title' => 'Asignacion de Material', 'subseccion' => 'inventario']);
         return view('asignacionMaterial.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
     }
 
