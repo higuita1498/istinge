@@ -312,7 +312,7 @@ class AsignacionMaterialController extends Controller{
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
-        view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
+        view()->share(['title' => 'Asignacion de Material', 'subseccion' => 'venta-electronica']);
         return view('asignacionMaterial.index', compact('clientes', 'municipios', 'tabla','servidores'));
     }
 
