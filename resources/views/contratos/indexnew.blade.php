@@ -617,7 +617,7 @@
         var table = $('#tabla-contratos').DataTable();
         var nro = table.rows('.selected').data().length;
         contratos.push('m'+selectedValue);
-        console.log(contratos);
+
         if(nro<=0){
             swal({
                 title: 'ERROR',
@@ -639,7 +639,7 @@
         for (i = 0; i < nro; i++) {
             contratos.push(table.rows('.selected').data()[i]['id']);
         }
-
+        console.log(contratos);
         swal({
             title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
             text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
