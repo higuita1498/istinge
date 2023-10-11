@@ -2792,11 +2792,12 @@ class ContratosController extends Controller
         $contratos = explode(",", $contratos);
 
         for ($i=0; $i < count($contratos) ; $i++) {
-            $contrato = Contrato::find($contratos[$i]);
+
             if($i==0){
-                // $microtik = explode("m", $contratos);
+                $microtik = explode("m", $contratos[$i]);
                 dd($contratos);
             }else{
+                $contrato = Contrato::find($contratos[$i]);
                 if ($contrato) {
                     if($contrato->mk==0){
                         $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
