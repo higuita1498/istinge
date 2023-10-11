@@ -457,6 +457,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('/store_promesa', 'FacturasController@store_promesa')->name('factura.store_promesa');
 
 		Route::get('facturas_electronica', 'FacturasController@index_electronica')->name('facturas.index-electronica');
+		Route::get('asignacion_material', 'AsignacionMaterialController@index_electronica')->name('asignacionmaterial.index-electronica');
+
 		Route::get('facturas_electronica/create', 'FacturasController@create_electronica')->name('facturas.create-electronica');
 		Route::get('/{tipo}/listado', 'FacturasController@indexNew')->name('facturas.tipo');
 
