@@ -2793,7 +2793,7 @@ class ContratosController extends Controller
 
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
-            if($i==count($contratos)){
+            if($i==(count($contratos)-1)){
                 dd($contratos[$i]);
             }
             if ($contrato) {
