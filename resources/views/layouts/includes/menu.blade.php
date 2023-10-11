@@ -96,7 +96,7 @@
                         <li class="nav-item" id="planes_tv">
                             <a class="nav-link" href="{{route('inventario.television')}}">Planes de Televisión</a>
                         </li>
-                        <li class="nav-item" id="planes_tv">
+                        <li class="nav-item" id="asignacion_material">
                             <a class="nav-link" href="{{route('asignacionmaterial.index-electronica')}}">Asiganción herramientas<br> para tecnicos</a>
                         </li>
                     <?php } ?>
