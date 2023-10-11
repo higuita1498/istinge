@@ -282,7 +282,7 @@ class AsignacionMaterialController extends Controller{
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
+        return view('asignacionMaterial.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -297,7 +297,7 @@ class AsignacionMaterialController extends Controller{
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores'));
+        return view('asignacionMaterial.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores'));
     }
 
     /*
