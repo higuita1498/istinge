@@ -102,12 +102,12 @@
 								@endforeach
 							</select>
 						</div>
-						<div class="col-md-2 pl-1 pt-1">
+						{{-- <div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
-						</div>
-						<div class="col-md-2 pl-1 pt-1">
+						</div> --}}
+						{{-- <div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
-						</div>
+						</div> --}}
 						<div class="col-md-2 pl-1 pt-1">
 							<select title="Servidor" class="form-control rounded selectpicker" id="servidor">
 								@foreach ($servidores as $servidor)
@@ -115,19 +115,19 @@
 								@endforeach
 							</select>
 						</div>
-						<div class="col-md-2 pl-1 pt-1">
+						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Estado" class="form-control rounded selectpicker" id="estado">
 								<option value="1" selected="">Abiertas</option>
 								<option value="A">Cerradas</option>
 								<option value="2">Anuladas</option>
 							</select>
-						</div>
-						<div class="col-md-2 pl-1 pt-1 d-none">
+						</div> --}}
+						{{-- <div class="col-md-2 pl-1 pt-1 d-none">
 							<select title="Enviada a Correo" class="form-control rounded selectpicker" id="correo">
 								<option value="1">Si</option>
 								<option value="A">No</option>
 							</select>
-						</div>
+						</div> --}}
 					</div>
 					<div class="row">
 						<div class="col-md-12 pl-1 pt-1 text-center">
