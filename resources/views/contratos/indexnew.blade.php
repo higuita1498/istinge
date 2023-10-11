@@ -286,7 +286,7 @@
 
 @section('scripts')
 <script>
-
+    var servidores = @json($servidores); //trasnformando la variable de php a javascript
     $("#formulario").submit(function () {
         return false;
     });
@@ -585,6 +585,11 @@
     }
 
     function mk_lote(){
+
+        var servidoresData = document.getElementById('server_configuration_id_s').getAttribute('data-servidores');
+        var servidores = JSON.parse(servidoresData);
+
+        console.log(servidores);
 
         var contratos = [];
 
