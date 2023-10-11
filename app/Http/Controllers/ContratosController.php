@@ -2793,7 +2793,9 @@ class ContratosController extends Controller
 
         for ($i=0; $i < count($contratos) ; $i++) {
             $contrato = Contrato::find($contratos[$i]);
-
+            if($i==count($contratos)){
+                dd($contratos[$i]);
+            }
             if ($contrato) {
                 if($contrato->mk==0){
                     $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
