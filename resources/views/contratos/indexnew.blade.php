@@ -612,10 +612,7 @@
     function mk_lote(){
         var selectElement = document.getElementById('server_configuration');
         var selectedValue = selectElement.value;
-
-        console.log(selectedValue);
-
-       var contratos = [];
+        var contratos = [];
 
         var table = $('#tabla-contratos').DataTable();
         var nro = table.rows('.selected').data().length;
@@ -641,7 +638,7 @@
         for (i = 0; i < nro; i++) {
             contratos.push(table.rows('.selected').data()[i]['id']);
         }
-
+        dd(contratos);
         swal({
             title: '¿Desea enviar a la mikrotik '+nro+' contratos en lote?',
             text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
