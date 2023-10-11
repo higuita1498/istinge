@@ -406,7 +406,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::resource('logistica', 'LogisticaController');
 
     // Rutas asignacion de material
-    Route::get('asignacion_material', 'AsignacionMaterialController@index_electronica')->name('asignacionmaterial.index-electronica');
+    Route::get('asignacion_material', 'AsignacionMaterialController@index')->name('asignacionmaterial.index-electronica');
 	//Facturas de Venta
 
 	Route::group(['prefix' => 'facturas'], function() {
