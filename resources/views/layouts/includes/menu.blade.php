@@ -97,7 +97,7 @@
                             <a class="nav-link" href="{{route('inventario.television')}}">Planes de Televisión</a>
                         </li>
                         <li class="nav-item d-none" id="items_venta">
-                            <a class="nav-link" href="{{route('inventario.materia.tecnico')}}">Asignación material para tecnico</a>
+                            <a class="nav-link" href="{{route('inventario.television')}}">Asignación material para tecnico</a>
                         </li>
                     <?php } ?>
                     <?php if(isset($_SESSION['permisos']['412'])){ ?>
