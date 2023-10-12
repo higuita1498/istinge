@@ -51,6 +51,7 @@ use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
 use App\Services\ElectronicBillingService;
 use App\CRM;
+use App\User;
 
 class AsignacionMaterialController extends Controller{
 
@@ -676,7 +677,9 @@ class AsignacionMaterialController extends Controller{
         $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
         //$clientes = Contacto::where('empresa',$empresa->id)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
-        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->orderBy('nombre', 'ASC')->get();
+        // $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->orderBy('nombre', 'ASC')->get();
+        $clientes = User::all();
+
         $numeraciones=NumeracionFactura::where('empresa',$empresa->id)->get();
         $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado',1)->get();
         $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
