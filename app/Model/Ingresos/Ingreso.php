@@ -16,6 +16,7 @@ use DB; use Auth;
 use App\User;
 use App\Puc;
 use App\PucMovimiento;
+use App\FormaPago;
 
 class Ingreso extends Model
 {
