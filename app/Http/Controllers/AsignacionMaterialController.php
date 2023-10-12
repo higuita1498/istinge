@@ -678,7 +678,7 @@ class AsignacionMaterialController extends Controller{
         $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
         //$clientes = Contacto::where('empresa',$empresa->id)->whereIn('tipo_contacto',[0,2])->where('status',1)->orderBy('nombre','asc')->get();
         // $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $empresa->id)->orderBy('nombre', 'ASC')->get();
-        $clientes = User::all();
+        $clientes = User::where('rol',4)->get();
 
         $numeraciones=NumeracionFactura::where('empresa',$empresa->id)->get();
         $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado',1)->get();
