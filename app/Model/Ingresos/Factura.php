@@ -792,6 +792,22 @@ public function forma_pago()
         return $this->hasMany(ItemsFactura::class,'factura','id');
     }
 
+    public function listItems(){
+        $items = $this->itemsFactura;
+        $list = "";
+        $cont = $items->count();
+        $i = 1;
+        foreach($items as $item){
+            if($i != $cont){
+                $list.=$item->ref . ",";
+            }else{
+                $list.=$item->ref;
+            }
+            $i++;
+        }
+        return $list;
+    }
+
     public function getTypeNameAttribute()
     {
         switch ($this->tipo){
@@ -1506,6 +1522,48 @@ public function forma_pago()
             return Puc::find($forma->cuenta_id); 
         }    
     }
+
+    //Nos trae la lista de formas de pago de la factura nada mas.
+    public function formaPagoList(){
+        $pucMovimientos = PucMovimiento::where('documento_id',$this->id)->where('tipo_comprobante',3)->where('enlace_a',4)->get();
+        $list = "";
+        $cont = $pucMovimientos->count();
+        $i = 1;
+        foreach($pucMovimientos as $puc){
+            $forma = FormaPago::find($puc->formapago_id);
+            if($forma){
+                if($i != $cont){
+                    $list.=$forma->nombre . ",";
+                }else{
+                    $list.=$forma->nombre;
+                }
+            }
+            $i++;
+        }
+        return $list;
+    }
+
+        //Nos trae la lista de formas de pago de la factura nada mas.
+        public function formaPagoListIngreso(){
+
+            $ingresosFactura = IngresosFactura::select('puc_banco')->where('factura',$this->id)->get();
+            $list = "";
+            $cont = $ingresosFactura->count();
+            $i = 1;
+
+            foreach($ingresosFactura as $ingreso){
+                $forma = FormaPago::find($ingreso->puc_banco);
+                if($forma){
+                    if($i != $cont){
+                        $list.=$forma->nombre . ",";
+                    }else{
+                        $list.=$forma->nombre;
+                    }
+                }
+                $i++;
+            }
+            return $list;
+        }
 
     public function contract(){
         
