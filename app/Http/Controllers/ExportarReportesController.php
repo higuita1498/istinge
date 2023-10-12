@@ -404,7 +404,6 @@ class ExportarReportesController extends Controller
             'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'factura.emitida')
         ->where('factura.tipo',1)
         ->where('factura.empresa',Auth::user()->empresa)
-        ->where('emitida',$request->tipo)
         ->groupBy('factura.id');
         $dates = $this->setDateRequest($request);
 
