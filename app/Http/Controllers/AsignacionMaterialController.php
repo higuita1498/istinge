@@ -506,8 +506,7 @@ class AsignacionMaterialController extends Controller{
         $facturas = AsignarMaterial::query()
             ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
-            ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje', 'asignacion_materials.codigo',
-             'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),'asignacion_materials.cliente', 'asignacion_materials.fecha')
+            ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),'asignacion_materials.cliente', 'asignacion_materials.fecha')
             ->groupBy('asignacion_materials.id');
 
         // if ($request->filtro == true) {
@@ -587,7 +586,6 @@ class AsignacionMaterialController extends Controller{
         //     return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->cliente()->tip_iden('mini')} {$factura->nitcliente}</a>" : "";
         // })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
-        ->rawColumns(['cliente'])
         ->toJson();
     }
 
