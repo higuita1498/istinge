@@ -947,14 +947,14 @@ class AsignacionMaterialController extends Controller{
         // if($request->documento != 3){
         //     $request->documento = $tipo;
         // }
-        dd("va a guardar la factura");
+
         $factura = new AsignarMaterial;
         $factura->notas=$request->notas;
         $factura->empresa=Auth::user()->empresa;
         $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $factura->save();
-
+        dd("despues de la factura");
         // $factura->observaciones=mb_strtolower($request->observaciones);
         // $factura->vendedor=$request->vendedor;
         // $factura->lista_precios=$request->lista_precios;
