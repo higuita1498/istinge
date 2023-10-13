@@ -293,7 +293,7 @@
                 </td>
                 <td>
                     <div class="resp-refer">
-                  {{-- <input type="text" class="form-control form-control-sm" id="ref1" name="ref[]" placeholder="Referencia" required=""> --}}
+                  <input type="text" class="form-control form-control-sm" id="ref1" name="ref[]" placeholder="Referencia" required="">
                   </div>
                 </td>
                 <td class="monetario">
@@ -305,11 +305,11 @@
                   {{-- <input type="text" class="form-control form-control-sm" id="desc1" name="desc[]" placeholder="%" onkeyup="total(1)" > --}}
                 </td>
                 <td>
-                {{-- <select class="form-control form-control-sm selectpicker" name="impuesto[]" id="impuesto1" title="Impuesto" onchange="totalall();" required="">
-                  @foreach($impuestos as $impuesto)
+                <select class="form-control form-control-sm selectpicker" name="impuesto[]" id="impuesto1" title="Impuesto" onchange="totalall();" required="">
+                  {{-- @foreach($impuestos as $impuesto)
                     <option value="{{$impuesto->id}}" porc="{{$impuesto->porcentaje}}">{{$impuesto->nombre}} - {{$impuesto->porcentaje}}%</option>
-                  @endforeach
-                </select> --}}
+                  @endforeach --}}
+                </select>
               </td>
               <td  style="padding-top: 1% !important;">
                   <div class="resp-descripcion">
@@ -317,8 +317,8 @@
                 </div>
               </td>
               <td>
-                {{-- <input type="number" class="form-control form-control-sm" id="cant1" name="cant[]" placeholder="Cantidad" onchange="total(1);" min="1" required=""> --}}
-                {{-- <p class="text-danger nomargin" id="pcant1"></p> --}}
+                <input type="number" class="form-control form-control-sm" id="cant1" name="cant[]" placeholder="Cantidad" onchange="total(1);" min="1" required="">
+                <p class="text-danger nomargin" id="pcant1"></p>
               </td>
               <td>
                   <div class="resp-total">
