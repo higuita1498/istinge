@@ -75,9 +75,9 @@
   				<label class="col-sm-4 col-form-label">Tecnico <span class="text-danger">*</span></label>
 	  			<div class="col-sm-8">
             <div class="input-group">
-              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" >
+              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="toggleDiv(this.value);">
                 @foreach($clientes as $client)
-                  <option {{old('cliente')==$client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">- {{$client->nombres}} {{$client->apellido1}} {{$client->apellido2}}  {{$client->nit}}</option>
+                  <option {{old('cliente')==$client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombres}}</option>
                 @endforeach
               </select>
               <div class="input-group-append" >
@@ -97,12 +97,11 @@
           </span>
   		  </div>
 
-	  		<div class="form-group row">
-  				<label class="col-sm-4 col-form-label">Identificación</label>
+	  		<div class="form-group row" id="miDiv" style="display: none">
+  				<label class="col-sm-4 col-form-label">Correo electronico</label>
 	  			<div class="col-sm-8">
 	  				<input type="text" class="form-control" readonly="" id="ident" value="">
 	  			</div>
-
             </div>
   			<div class="form-group row">
   				<label class="col-sm-4 col-form-label">Teléfono</label>
@@ -552,6 +551,18 @@
 @section('scripts')
 
     <script>
+         function toggleDiv(id) {
+            console.log(id);
+            var div = document.getElementById('miDiv');
+                if (div.style.display === 'none' || div.style.display === '') {
+                    div.style.display = 'block'; // Mostrar el div
+                } else {
+                    div.style.display = 'none'; // Ocultar el div
+                    var inputElement = document.getElementById('iden');
+                    // Asigna un valor al input
+                    inputElement.value = id;
+                }
+        }
         $(document).ready(function() {
 
 

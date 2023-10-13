@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 	<form method="POST" action="{{ route('usuarios.store') }}" style="padding: 2% 3%;    " autocomplete="off" role="form" class="forms-sample" novalidate id="form-usuarios" >
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
   <div class="row">
     <div class="col-md-4 form-group">
       <label class="control-label">Nombre y Apellido <span class="text-danger">*</span></label>
@@ -16,7 +16,7 @@
       <input type="email" class="form-control" name="email" id="email" required=""  autocomplete="nope" value="{{old('email')}}" maxlength="200" >
       <span class="help-block error">
         <strong>{{ $errors->first('email') }}</strong>
-      </span> 
+      </span>
     </div>
 
 
@@ -31,7 +31,7 @@
         <strong>{{ $errors->first('rol') }}</strong>
       </span>
     </div>
-    
+
     <div class="col-md-3 form-group">
       <label class="control-label">Cuenta Asociada</label>
       <select class="form-control selectpicker"  id="cuenta" name="cuenta[]"  title="Seleccione" multiple data-max-options="5">
@@ -79,7 +79,7 @@
         <div class="help-block error with-errors"></div>
       </div>
       </div>
- 
+
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
 	<div class="row" >
