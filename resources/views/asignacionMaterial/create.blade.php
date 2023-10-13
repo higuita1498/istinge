@@ -58,7 +58,7 @@
       <p>{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv == 0) - {{Auth::user()->empresa()->dv}} @endif<br> {{Auth::user()->empresa()->email}}</p>
     </div>
     <div class="col-md-4 text-center align-self-center" >
-      <h4><b class="text-primary">No. </b> {{$nro->prefijo}}{{$nro->inicio}}</h4>
+      {{-- <h4><b class="text-primary">No. </b> {{$nro->prefijo}}{{$nro->inicio}}</h4> --}}
     </div>
 	</div>
 	<hr>
@@ -420,7 +420,7 @@
         <label class="form-label">Términos y Condiciones <a><i data-tippy-content="Agrega los términos y condiciones para tus clientes sobre las ventas generadas" class="icono far fa-question-circle"></i></a></label>
         <textarea  class="form-control min_max_100" name="term_cond">{{Auth::user()->empresa()->terminos_cond}}</textarea>
       </div> --}}
-      <div class="col-md-4 form-group">
+      <div class="col-md-12 form-group">
         <label class="form-label">Notas <a><i data-tippy-content="Agrega la información importante que verán tus cintes en la factura de venta" class="icono far fa-question-circle"></i></a>
         </label>
         <textarea  class="form-control form-control-sm min_max_100" name="notas">{{Auth::user()->empresa()->notas_fact}}</textarea>
