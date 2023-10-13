@@ -75,7 +75,7 @@
   				<label class="col-sm-4 col-form-label">Tecnico <span class="text-danger">*</span></label>
 	  			<div class="col-sm-8">
             <div class="input-group">
-              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="toggleDiv(this.value)">
+              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="identificacion(this.value)">
                 @foreach($clientes as $client)
                   <option {{old('cliente')==$client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombres}}</option>
                 @endforeach
@@ -549,8 +549,9 @@
 @endsection
 
 @section('scripts')
-<script>
-     function toggleDiv(id) {
+
+        <script>
+        function identificacion(id) {
             console.log(id);
             var div = document.getElementById('miDiv');
                 if (div.style.display === 'none' || div.style.display === '') {
@@ -562,12 +563,8 @@
                     inputElement.value = id;
                 }
         }
-</script>
-    <script>
 
         $(document).ready(function() {
-
-
        /*
             $.ajax({
                 url: '{{url('empresa/facturas/productos')}}',
@@ -581,7 +578,6 @@
                 }
 
         });*/
-
         });
     </script>
 @endsection
