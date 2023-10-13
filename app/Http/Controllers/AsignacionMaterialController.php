@@ -92,7 +92,7 @@ class AsignacionMaterialController extends Controller{
         where('tipo','!=',5)->
         //where('factura.fecha','>=', '2021-03-01')->
         where('lectura',1);
-
+        dd($facturas);
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
 
         /*
