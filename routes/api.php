@@ -201,6 +201,7 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
 // });
 
 Route::post('contrato-digital/{key}', function (Request $request, $key) {
+    dd($key);
     $contacto = Contacto::where('referencia_asignacion', $key)->first();
     if($contacto){
         $contacto->firma_isp = $request->firma_isp;
