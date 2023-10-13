@@ -511,7 +511,7 @@ class AsignacionMaterialController extends Controller{
              'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',)
             ->groupBy('asignacion_materials.id');
-
+        dd($facturas);
         if ($request->filtro == true) {
 
             if($request->cliente){
