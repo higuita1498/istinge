@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('contrato-digital/{key}', function (Request $request, $key) {
-    dd($key);
+
     $contacto = Contacto::where('referencia_asignacion', $key)->first();
     if($contacto){
         $contacto->firma_isp = $request->firma_isp;
@@ -38,6 +38,7 @@ Route::post('contrato-digital/{key}', function (Request $request, $key) {
     }
     abort(403, 'ACCIÓN NO AUTORIZADA');
 })->name('asignaciones.store_firma');
+
 Route::get('getInterfaces/{mikrotik}', 'Controller@getInterfaces');
 Route::get('getDetails/{cliente}/{contrato?}', 'Controller@getDetails');
 Route::get('getPlanes/{mikrotik}', 'Controller@getPlanes');
@@ -204,17 +205,17 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
 /**
  * FIRMA DIGITAL
  */
-// Route::get('contrato-digital/{key}', function ($key) {
-//     $contacto = Contacto::where('referencia_asignacion', $key)->first();
+ Route::get('contrato-digital/{key}', function ($key) {
+     $contacto = Contacto::where('referencia_asignacion', $key)->first();
 
-//     if($contacto){
-//         $empresa = Empresa::find($contacto->empresa);
-//         $title = $empresa->nombre;
-//         view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
-//         $formulario = true;
-//         return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
-//     }
-//     abort(403, 'ACCIÓN NO AUTORIZADA');
-// });
+     if($contacto){
+         $empresa = Empresa::find($contacto->empresa);
+         $title = $empresa->nombre;
+         view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
+         $formulario = true;
+         return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
+     }
+     abort(403, 'ACCIÓN NO AUTORIZADA');
+ });
 
 
