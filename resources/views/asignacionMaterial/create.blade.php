@@ -103,12 +103,18 @@
 	  				<input type="text" class="form-control" readonly="" id="ident" value="">
 	  			</div>
             </div>
-  			<div class="form-group row">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Fecha <span class="text-danger">*</span> <a><i data-tippy-content="Fecha en la que se realiza la factura de venta" class="icono far fa-question-circle"></i></a></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  id="fecha" value="{{$fecha}}" name="fecha" disabled=""  >
+                </div>
+            </div>
+  			{{-- <div class="form-group row">
   				<label class="col-sm-4 col-form-label">Teléfono</label>
 	  			<div class="col-sm-8">
 	  				<input type="text" class="form-control" readonly="" id="telefono" value="">
 	  			</div>
-  			</div>
+  			</div> --}}
             {{-- <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Vendedor <a><i data-tippy-content="Vendedor asociado a la factura de venta, puedes agregar nuevos vendedores haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
                 <div class="col-sm-8">
@@ -140,17 +146,12 @@
           </div> --}}
 
         <div class="form-group row">
-          <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
+          {{-- <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p> --}}
         </div>
 		  </div>
 
 		  <div class="col-md-5 offset-md-2">
-  			<div class="form-group row">
-  				<label class="col-sm-4 col-form-label">Fecha <span class="text-danger">*</span> <a><i data-tippy-content="Fecha en la que se realiza la factura de venta" class="icono far fa-question-circle"></i></a></label>
-	  			<div class="col-sm-8">
-	  				<input type="text" class="form-control"  id="fecha" value="{{$fecha}}" name="fecha" disabled=""  >
-	  			</div>
-  			</div>
+
                 {{-- <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Plazo <a><i data-tippy-content="Tiempo maximo para realizar el pago, puedes agregar nuevos plazos haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
                     <div class="col-sm-8">
