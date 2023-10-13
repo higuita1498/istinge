@@ -1102,7 +1102,7 @@ class AsignacionMaterialController extends Controller{
         // }else if($tipo == 2){
         //     return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
         // }
-        return redirect('empresa/facturas')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
+        return redirect('empresa/asignacion_material')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
     }
 
   /**
