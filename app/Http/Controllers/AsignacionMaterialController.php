@@ -76,7 +76,7 @@ class AsignacionMaterialController extends Controller{
         }
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
-        $facturas=Factura::join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
+        $facturas=AsignarMaterial::join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
         ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
         ->select('asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.codigo', 'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'), DB::raw('c.email as emailcliente'), 'asignacion_materials.id_tecnico', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
           DB::raw('SUM(
