@@ -467,7 +467,7 @@
       <div class="row ">
         <div class="col-sm-12 text-right" style="padding-top: 1%;">
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
-          <a href="{{route('facturas.index')}}" class="btn btn-outline-secondary">Cancelar</a>
+          <a href="{{route('asignacionmaterial.index-electronica')}}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
 
       </div>
