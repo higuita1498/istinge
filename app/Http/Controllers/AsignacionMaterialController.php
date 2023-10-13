@@ -950,8 +950,8 @@ class AsignacionMaterialController extends Controller{
 
         $factura = new AsignarMaterial;
         $factura->notas=$request->notas;
-        dd($request->notas);
         $factura->empresa=Auth::user()->empresa;
+        dd($factura->empresa);
         $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $factura->save();
