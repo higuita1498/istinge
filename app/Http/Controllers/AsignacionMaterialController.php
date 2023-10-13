@@ -916,9 +916,9 @@ class AsignacionMaterialController extends Controller{
         // }
 
         //Generacion de llave unica para acceso por correo
-        $key = Hash::make(date("H:i:s"));
-        $toReplace = array('/', '$','.');
-        $key = str_replace($toReplace, "", $key);
+        // $key = Hash::make(date("H:i:s"));
+        // $toReplace = array('/', '$','.');
+        // $key = str_replace($toReplace, "", $key);
         //
 
         // if($num){
@@ -949,7 +949,6 @@ class AsignacionMaterialController extends Controller{
         // }
 
         $factura = new AsignarMaterial;
-        $factura->id = 1;
         $factura->notas=$request->notas;
         $factura->empresa=Auth::user()->empresa;
         $factura->id_tecnico=$request->cliente;
