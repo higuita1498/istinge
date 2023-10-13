@@ -189,6 +189,7 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
  */
 Route::get('contrato-digital/{key}', function ($key) {
     $contacto = Contacto::where('referencia_asignacion', $key)->first();
+    dd("hola para ver el liunea");
     if($contacto){
         $empresa = Empresa::find($contacto->empresa);
         $title = $empresa->nombre;

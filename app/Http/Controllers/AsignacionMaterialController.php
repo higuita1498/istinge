@@ -509,123 +509,87 @@ class AsignacionMaterialController extends Controller{
             ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje', 'asignacion_materials.codigo',
              'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),
              'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
-             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',
-             DB::raw('v.nombre as nombrevendedor'),
-             DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-             DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
-            ->groupBy('factura.id');
+             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',)
+            ->groupBy('asignacion_materials.id');
 
         if ($request->filtro == true) {
 
-            if($request->codigo){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.codigo', 'like', "%{$request->codigo}%");
-                });
-            }
             if($request->cliente){
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.cliente', $request->cliente);
+                    $query->orWhere('asignacion_materials.cliente', $request->cliente);
                 });
             }
-            if($request->corte){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('cs.fecha_corte', $request->corte);
-                });
-            }
+
             if($request->creacion){
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.fecha', $request->creacion);
+                    $query->orWhere('asignacion_materials.fecha', $request->creacion);
                 });
             }
-            if($request->vencimiento){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.vencimiento', $request->vencimiento);
-                });
-            }
-            if($request->estado){
-                $status = ($request->estado == 'A') ? 0 : $request->estado;
-                $facturas->where(function ($query) use ($request, $status) {
-                    $query->orWhere('factura.estatus', $status);
-                });
-            }else{
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('factura.estatus', 1);
-                });
-            }
+
             if($request->correo){
                 $correo = ($request->correo == 'A') ? 0 : $request->correo;
                 $facturas->where(function ($query) use ($request, $correo) {
-                    $query->orWhere('factura.correo', $correo);
+                    $query->orWhere('asignacion_materials.correo', $correo);
                 });
             }
-            if($request->servidor){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('cs.server_configuration_id', $request->servidor);
-            });
-            }
-            if($request->municipio){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('c.fk_idmunicipio', $request->municipio);
-                });
-            }
+
         }
 
         if(auth()->user()->rol == 8){
-            $facturas=$facturas->where('factura.estatus', 1);
+            $facturas=$facturas->where('asignacion_materials.estatus', 1);
         }
 
-        $facturas->where('factura.empresa', $identificadorEmpresa);
-        $facturas->where('factura.tipo', '!=', 2)->where('factura.tipo', '!=', 5)->where('factura.tipo', '!=', 6)
-                 ->where('factura.lectura',1);
+        $facturas->where('asignacion_materials.empresa', $identificadorEmpresa);
+        $facturas->where('asignacion_materials.tipo', '!=', 2)->where('asignacion_materials.tipo', '!=', 5)->where('asignacion_materials.tipo', '!=', 6)
+                 ->where('asignacion_materials.lectura',1);
 
-        if(Auth::user()->empresa()->oficina){
-            if(auth()->user()->oficina){
-                $facturas->where('cs.oficina', auth()->user()->oficina);
-            }
-        }
+        // if(Auth::user()->empresa()->oficina){
+        //     if(auth()->user()->oficina){
+        //         $facturas->where('cs.oficina', auth()->user()->oficina);
+        //     }
+        // }
 
         if ($orderByDefault) {
             $facturas->orderby($orderByDefault, $orderDefault);
         }
 
         return datatables()->eloquent($facturas)
-        ->editColumn('codigo', function (Factura $factura) {
-            if($factura->porpagar() == 0 && $factura->estatus == 1){
-                $factura->estatus = 0;
-                $factura->save();
-            }
-            return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
-        })
+        // ->editColumn('codigo', function (Factura $factura) {
+        //     if($factura->porpagar() == 0 && $factura->estatus == 1){
+        //         $factura->estatus = 0;
+        //         $factura->save();
+        //     }
+        //     return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
+        // })
         ->editColumn('cliente', function (Factura $factura) {
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
         })
-        ->editColumn('fecha', function (Factura $factura) {
-            return date('d-m-Y', strtotime($factura->fecha));
-        })
-        ->editColumn('vencimiento', function (Factura $factura) {
-            return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
-        })
-        ->addColumn('total', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->total()->total)}";
-        })
-        ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
-        })
-        ->addColumn('pagado', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->pagado)}";
-        })
-        ->addColumn('pendiente', function (Factura $factura) use ($moneda) {
-            return "{$moneda} {$factura->parsear($factura->porpagar())}";
-        })
-        ->addColumn('estado', function (Factura $factura) {
-            return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
-        })
-        ->editColumn('nitcliente', function (Factura $factura) {
-            return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->cliente()->tip_iden('mini')} {$factura->nitcliente}</a>" : "";
-        })
+        // ->editColumn('fecha', function (Factura $factura) {
+        //     return date('d-m-Y', strtotime($factura->fecha));
+        // })
+        // ->editColumn('vencimiento', function (Factura $factura) {
+        //     return (date('Y-m-d') > $factura->vencimiento && $factura->estatus == 1) ? '<span class="text-danger">' . date('d-m-Y', strtotime($factura->vencimiento)) . '</span>' : date('d-m-Y', strtotime($factura->vencimiento));
+        // })
+        // ->addColumn('total', function (Factura $factura) use ($moneda) {
+        //     return "{$moneda} {$factura->parsear($factura->total()->total)}";
+        // })
+        // ->addColumn('impuesto', function (Factura $factura) use ($moneda) {
+        //     return "{$moneda} {$factura->parsear($factura->impuestos_totales())}";
+        // })
+        // ->addColumn('pagado', function (Factura $factura) use ($moneda) {
+        //     return "{$moneda} {$factura->parsear($factura->pagado)}";
+        // })
+        // ->addColumn('pendiente', function (Factura $factura) use ($moneda) {
+        //     return "{$moneda} {$factura->parsear($factura->porpagar())}";
+        // })
+        // ->addColumn('estado', function (Factura $factura) {
+        //     return   '<span class="text-' . $factura->estatus(true) . '">' . $factura->estatus() . '</span>';
+        // })
+        // ->editColumn('nitcliente', function (Factura $factura) {
+        //     return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->cliente()->tip_iden('mini')} {$factura->nitcliente}</a>" : "";
+        // })
         ->addColumn('acciones', $modoLectura ?  "" : "facturas.acciones-facturas")
-        ->rawColumns(['codigo', 'cliente', 'nitcliente', 'estado', 'acciones', 'vencimiento'])
+        ->rawColumns(['cliente'])
         ->toJson();
     }
 
