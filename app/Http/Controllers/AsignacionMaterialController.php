@@ -949,11 +949,11 @@ class AsignacionMaterialController extends Controller{
         // }
 
         $factura = new AsignarMaterial;
+        $factura->id = 1;
         $factura->notas=$request->notas;
         $factura->empresa=Auth::user()->empresa;
         $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-        dd($factura->fecha);
         $factura->save();
         dd("despues de la factura");
         // $factura->observaciones=mb_strtolower($request->observaciones);

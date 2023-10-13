@@ -14,6 +14,6 @@ class AsignarMaterial extends Model
      * @var array
      */
     protected $fillable = [
-        'id_tecnico', 'fecha', 'notas','empresa'];
+        'empresa','id_tecnico', 'fecha', 'notas'];
 
 }
