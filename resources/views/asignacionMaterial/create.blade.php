@@ -295,22 +295,22 @@
                     <div class="resp-refer">
                   <input type="text" class="form-control form-control-sm" id="ref1" name="ref[]" placeholder="Referencia" required="">
                   </div>
-                </td>
-                <td class="monetario">
+                {{-- </td> --}}
+                {{-- <td class="monetario">
                     <div class="resp-precio">
-                  {{-- <input type="number" class="form-control form-control-sm" id="precio1" name="precio[]" placeholder="Precio Unitario" onkeyup="total(1)" required="" maxlength="24" min="0"> --}}
+                  <input type="number" class="form-control form-control-sm" id="precio1" name="precio[]" placeholder="Precio Unitario" onkeyup="total(1)" required="" maxlength="24" min="0">
                     </div>
                 </td>
-                <td>
-                  {{-- <input type="text" class="form-control form-control-sm" id="desc1" name="desc[]" placeholder="%" onkeyup="total(1)" > --}}
-                </td>
-                <td>
-                <select class="form-control form-control-sm selectpicker" name="impuesto[]" id="impuesto1" title="Impuesto" onchange="totalall();" required="">
-                  {{-- @foreach($impuestos as $impuesto)
+                <td> --}}
+                  {{-- <input type="text" class="form-control form-control-sm" id="desc1" name="desc[]" placeholder="%" onkeyup="total(1)" >
+                </td> --}}
+                {{-- <td> --}}
+                {{-- <select class="form-control form-control-sm selectpicker" name="impuesto[]" id="impuesto1" title="Impuesto" onchange="totalall();" required="">
+                  @foreach($impuestos as $impuesto)
                     <option value="{{$impuesto->id}}" porc="{{$impuesto->porcentaje}}">{{$impuesto->nombre}} - {{$impuesto->porcentaje}}%</option>
-                  @endforeach --}}
+                  @endforeach
                 </select>
-              </td>
+              </td> --}}
               <td  style="padding-top: 1% !important;">
                   <div class="resp-descripcion">
                 <textarea  class="form-control form-control-sm" id="descripcion1" name="descripcion[]" placeholder="Descripción" ></textarea>
@@ -320,11 +320,11 @@
                 <input type="number" class="form-control form-control-sm" id="cant1" name="cant[]" placeholder="Cantidad" onchange="total(1);" min="1" required="">
                 <p class="text-danger nomargin" id="pcant1"></p>
               </td>
-              <td>
+              {{-- <td>
                   <div class="resp-total">
-                {{-- <input type="text" class="form-control form-control-sm text-right" id="total1" value="0" disabled=""> --}}
+                <input type="text" class="form-control form-control-sm text-right" id="total1" value="0" disabled="">
                 </div>
-              </td>
+              </td> --}}
               <td>
                 <button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar(1);">X</button>
               </td>
