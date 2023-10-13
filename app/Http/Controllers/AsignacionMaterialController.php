@@ -666,7 +666,7 @@ class AsignacionMaterialController extends Controller{
         //se obtiene la fecha de hoy
         $fecha = date('d-m-Y');
         $bodega = Bodega::where('empresa',$empresa->id)->where('status', 1)->first();
-        $inventario = Inventario::select('inventario.id','inventario.tipo_producto','inventario.producto','inventario.ref',
+        $inventario = Inventario::select('inventario.id','inventario.tipo_producto','inventario.type','inventario.producto','inventario.ref',
         DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
         ->where('empresa',$empresa->id)
         ->where('status', 1)
