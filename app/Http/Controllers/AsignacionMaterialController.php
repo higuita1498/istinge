@@ -954,7 +954,7 @@ class AsignacionMaterialController extends Controller{
         $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
         $factura->save();
-        dd("despues de la factura");
+
         // $factura->observaciones=mb_strtolower($request->observaciones);
         // $factura->vendedor=$request->vendedor;
         // $factura->lista_precios=$request->lista_precios;
