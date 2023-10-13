@@ -502,17 +502,12 @@ class AsignacionMaterialController extends Controller{
             }
         }
 
-        $facturas = Factura::query()
-            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
-            ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
-            ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo',
-             'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'),
-             DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'),
-             DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'),
-             'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida',
+        $facturas = AsignarMaterial::query()
+            ->join('usuarios as c', 'asignacion_materials.cliente', '=', 'c.id')
+            ->join('items_asignar_materials as if', 'factura.id', '=', 'if.factura')
+            ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje', 'asignacion_materials.codigo',
+             'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),
+             'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',
              DB::raw('v.nombre as nombrevendedor'),
              DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
