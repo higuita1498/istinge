@@ -324,7 +324,7 @@ class AsignacionMaterialController extends Controller{
     * Método que obtiene una colección de facturas por medio de oracle Datatable.
     */
     public function facturas_electronica(Request $request){
-
+        dd("muestrame");
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
