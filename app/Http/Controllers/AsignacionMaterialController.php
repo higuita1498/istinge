@@ -76,11 +76,9 @@ class AsignacionMaterialController extends Controller{
         }
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
-        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
-        ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-        ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
-        ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-        ->select('factura.id', 'factura.correo', 'factura.codigo', 'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.email as emailcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),
+        $facturas=Factura::join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
+        ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
+        ->select('asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.codigo', 'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'), DB::raw('c.email as emailcliente'), 'asignacion_materials.id_tecnico', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
           DB::raw('SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
           DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
