@@ -271,7 +271,7 @@ class AsignacionMaterialController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
-        $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.cliente')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
+        $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
 
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
