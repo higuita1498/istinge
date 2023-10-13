@@ -197,14 +197,14 @@
               </div>
           </div> --}}
 
-        @if(auth()->user()->empresa()->estado_dian == 1)
+        {{-- @if(auth()->user()->empresa()->estado_dian == 1)
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Orden de compra<a><i data-tippy-content="Número de orden de compra o servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
                 {{-- <input type="text" class="form-control" name="ordencompra" id="ordencompra" value=""> --}}
-              </div>
-            </div>
-        @endif
+              {{-- </div>
+            </div> --}}
+        {{-- @endif  --}}
   		</div>
     </div>
     <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
@@ -376,9 +376,9 @@
               </div> --}}
     {{-- </div> --}}
     <!-- Totales -->
-        <div class="row" style="margin-top: 10%;">
+        {{-- <div class="row" style="margin-top: 10%;">
             <div class="col-md-4 offset-md-8">
-                <table class="text-right widthtotal" >
+                <table class="text-right widthtotal" > --}}
                     {{-- <tr>
                         <td width="40%">Subtotal</td>
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal">0</span></td>
@@ -398,20 +398,20 @@
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal2">0</span></td>
 
                     </tr> --}}
-                </table>
+                {{-- </table> --}}
 
-                <table  class="text-right widthtotal"  id="totalesreten" style="width: 100%">
+                {{-- <table  class="text-right widthtotal"  id="totalesreten" style="width: 100%">
                     <tbody></tbody>
-                </table>
+                </table> --}}
 
 
-                <hr>
+                {{-- <hr>
                 <table class="text-right widthtotal" style="font-size: 24px !important;">
-                    <tr>
+                    <tr> --}}
                         {{-- <td width="40%">TOTAL A PAGAR</td>
                         <td>{{Auth::user()->empresa()->moneda}} <span id="total">0</span></td> --}}
-                    </tr>
-                </table>
+                    {{-- </tr>
+                </table> --}}
             </div>
             </div>
         </div>
