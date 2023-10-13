@@ -643,26 +643,26 @@ class AsignacionMaterialController extends Controller{
         $tipo_documento = Factura::where('empresa',$empresa->id)->latest('tipo')->first();
 
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
-        // $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
+        $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
-        // if (!$nro) {
-        //     $mensaje='Debes crear una numeración para facturas de venta preferida';
-        //     return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
-        // }
-        // if ($nro->inicio==$nro->final) {
-        //     $nro->estado=0;
-        //     $nro->save();
-        //     $mensaje='Debes crear una numeración para facturas de venta preferida';
-        //     return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
-        // }
-        // if ($nro->hasta) {
-        //     if ($nro->hasta<date('Y-m-d')) {
-        //         $nro->estado=0;
-        //         $nro->save();
-        //         $mensaje='Debes crear una numeración para facturas de venta preferida';
-        //         return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
-        //     }
-        // }
+        if (!$nro) {
+            $mensaje='Debes crear una numeración para facturas de venta preferida';
+            return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        }
+        if ($nro->inicio==$nro->final) {
+            $nro->estado=0;
+            $nro->save();
+            $mensaje='Debes crear una numeración para facturas de venta preferida';
+            return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        }
+        if ($nro->hasta) {
+            if ($nro->hasta<date('Y-m-d')) {
+                $nro->estado=0;
+                $nro->save();
+                $mensaje='Debes crear una numeración para facturas de venta preferida';
+                return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+            }
+        }
         //se obtiene la fecha de hoy
         $fecha = date('d-m-Y');
 
