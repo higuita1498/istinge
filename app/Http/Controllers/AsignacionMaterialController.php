@@ -511,37 +511,37 @@ class AsignacionMaterialController extends Controller{
              'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',)
             ->groupBy('asignacion_materials.id');
-        var_dump($facturas);
-        if ($request->filtro == true) {
 
-            if($request->cliente){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('asignacion_materials.cliente', $request->cliente);
-                });
-            }
+        // if ($request->filtro == true) {
 
-            if($request->creacion){
-                $facturas->where(function ($query) use ($request) {
-                    $query->orWhere('asignacion_materials.fecha', $request->creacion);
-                });
-            }
+        //     if($request->cliente){
+        //         $facturas->where(function ($query) use ($request) {
+        //             $query->orWhere('asignacion_materials.cliente', $request->cliente);
+        //         });
+        //     }
 
-            if($request->correo){
-                $correo = ($request->correo == 'A') ? 0 : $request->correo;
-                $facturas->where(function ($query) use ($request, $correo) {
-                    $query->orWhere('asignacion_materials.correo', $correo);
-                });
-            }
+        //     if($request->creacion){
+        //         $facturas->where(function ($query) use ($request) {
+        //             $query->orWhere('asignacion_materials.fecha', $request->creacion);
+        //         });
+        //     }
 
-        }
+        //     if($request->correo){
+        //         $correo = ($request->correo == 'A') ? 0 : $request->correo;
+        //         $facturas->where(function ($query) use ($request, $correo) {
+        //             $query->orWhere('asignacion_materials.correo', $correo);
+        //         });
+        //     }
+
+        // }
 
         // if(auth()->user()->rol == 8){
         //     $facturas=$facturas->where('asignacion_materials.estatus', 1);
         // }
 
-        $facturas->where('asignacion_materials.empresa', $identificadorEmpresa);
-        $facturas->where('asignacion_materials.tipo', '!=', 2)->where('asignacion_materials.tipo', '!=', 5)->where('asignacion_materials.tipo', '!=', 6)
-                 ->where('asignacion_materials.lectura',1);
+        // $facturas->where('asignacion_materials.empresa', $identificadorEmpresa);
+        // $facturas->where('asignacion_materials.tipo', '!=', 2)->where('asignacion_materials.tipo', '!=', 5)->where('asignacion_materials.tipo', '!=', 6)
+        //          ->where('asignacion_materials.lectura',1);
 
         // if(Auth::user()->empresa()->oficina){
         //     if(auth()->user()->oficina){
@@ -549,9 +549,9 @@ class AsignacionMaterialController extends Controller{
         //     }
         // }
 
-        if ($orderByDefault) {
-            $facturas->orderby($orderByDefault, $orderDefault);
-        }
+        // if ($orderByDefault) {
+        //     $facturas->orderby($orderByDefault, $orderDefault);
+        // }
 
         return datatables()->eloquent($facturas)
         // ->editColumn('codigo', function (Factura $factura) {
