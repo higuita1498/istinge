@@ -18,7 +18,7 @@ class ItemsAsignarMaterial extends Model
      * @var array
      */
     protected $fillable = [
-        'factura', 'producto', 'ref', 'precio', 'descripcion', 'impuesto', 'id_impuesto', 'cant', 'desc', 'created_at', 'updated_at', 'tipo_inventario'
+        'id_factura_materials', 'producto', 'ref', 'precio', 'descripcion','cant', 'created_at', 'updated_at', 'tipo_inventario'
     ];
 
     // public function total(){
