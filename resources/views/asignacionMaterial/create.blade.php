@@ -549,9 +549,8 @@
 @endsection
 
 @section('scripts')
-
-    <script>
-         function toggleDiv(id) {
+<script>
+     function toggleDiv(id) {
             console.log(id);
             var div = document.getElementById('miDiv');
                 if (div.style.display === 'none' || div.style.display === '') {
@@ -563,6 +562,9 @@
                     inputElement.value = id;
                 }
         }
+</script>
+    <script>
+
         $(document).ready(function() {
 
 
