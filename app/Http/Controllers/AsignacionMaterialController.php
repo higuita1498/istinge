@@ -1002,7 +1002,7 @@ class AsignacionMaterialController extends Controller{
                     $ajuste->save();
                 }
             }
-            $items = new ItemsFactura;
+            $items = new ItemsAsignarMaterial;
             $items->factura=$factura->id;
             $items->producto=$request->item[$i];
             $items->ref=$request->ref[$i];
