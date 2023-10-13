@@ -250,17 +250,17 @@
 		});
 
 		tabla.on('preXhr.dt', function(e, settings, data) {
-			data.codigo = $('#codigo').val();
-			data.corte = $('#corte').val();
+			// data.codigo = $('#codigo').val();
+			// data.corte = $('#corte').val();
 			data.cliente = $('#cliente').val();
-			data.municipio = $('#municipio').val();
-			data.vendedor = $('#vendedor').val();
-			data.creacion = $('#creacion').val();
-			data.vencimiento = $('#vencimiento').val();
-			data.comparador = $('#comparador').val();
-			data.total = $('#total').val();
-			data.servidor = $('#servidor').val();
-			data.estado = $('#estado').val();
+			// data.municipio = $('#municipio').val();
+			// data.vendedor = $('#vendedor').val();
+			// data.creacion = $('#creacion').val();
+			// data.vencimiento = $('#vencimiento').val();
+			// data.comparador = $('#comparador').val();
+			// data.total = $('#total').val();
+			// data.servidor = $('#servidor').val();
+			// data.estado = $('#estado').val();
 			data.filtro = true;
 		});
 
