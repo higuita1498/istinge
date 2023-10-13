@@ -341,20 +341,16 @@ class AsignacionMaterialController extends Controller{
             }
         }
 
-        $facturas = Factura::query()
-            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
-            ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
-            ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro','factura.dian_response',
-            'mk.nombre as servidor','cs.server_configuration_id',
-            DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),
-            DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'),
-            DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-            DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-            DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
-            ->groupBy('factura.id');
+        $facturas = AsignarMaterial::query()
+        ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
+        ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.factura')
+        ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje',
+        DB::raw('c.nombres as nombrecliente'),
+        DB::raw('c.email as emailcliente'),
+        DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
+        DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
+        DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+        ->groupBy('factura.id');
 
         if ($request->filtro == true) {
 
