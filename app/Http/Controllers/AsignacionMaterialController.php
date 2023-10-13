@@ -981,7 +981,7 @@ class AsignacionMaterialController extends Controller{
 
 
         // $nro->save();
-       dd($request->ref);
+
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
             $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
@@ -1003,6 +1003,7 @@ class AsignacionMaterialController extends Controller{
                     $ajuste->save();
                 }
             }
+            dd("llego hasta aqui");
             $items = new ItemsAsignarMaterial;
             $items->factura=$factura->id;
             $items->producto=$request->item[$i];

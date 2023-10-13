@@ -82,7 +82,7 @@
               </select>
               <div class="input-group-append" >
                 <span class="input-group-text nopadding">
-                  <a class="btn btn-outline-secondary btn-icons" title="Actualizar" onclick="contactos('{{route('contactos.clientes.json')}}', 'cliente');" style="margin-left: 8%;"><i class="fas fa-sync"></i></a>
+                  {{-- <a class="btn btn-outline-secondary btn-icons" title="Actualizar" onclick="contactos('{{route('contactos.clientes.json')}}', 'cliente');" style="margin-left: 8%;"><i class="fas fa-sync"></i></a> --}}
                 </span>
               </div>
             </div>
