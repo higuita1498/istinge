@@ -325,7 +325,7 @@ class AsignacionMaterialController extends Controller{
     * Método que obtiene una colección de facturas por medio de oracle Datatable.
     */
     public function facturas_electronica(Request $request){
-        dd("muestrame");
+
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
@@ -344,7 +344,7 @@ class AsignacionMaterialController extends Controller{
 
         $facturas = AsignarMaterial::query()
         ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
-        ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.factura')
+        ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
         ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje',
         DB::raw('c.nombres as nombrecliente'),
         DB::raw('c.email as emailcliente'),
