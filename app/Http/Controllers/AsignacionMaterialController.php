@@ -511,7 +511,7 @@ class AsignacionMaterialController extends Controller{
              'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',)
             ->groupBy('asignacion_materials.id');
-        dd($facturas);
+        var_dump($facturas);
         if ($request->filtro == true) {
 
             if($request->cliente){
@@ -535,9 +535,9 @@ class AsignacionMaterialController extends Controller{
 
         }
 
-        if(auth()->user()->rol == 8){
-            $facturas=$facturas->where('asignacion_materials.estatus', 1);
-        }
+        // if(auth()->user()->rol == 8){
+        //     $facturas=$facturas->where('asignacion_materials.estatus', 1);
+        // }
 
         $facturas->where('asignacion_materials.empresa', $identificadorEmpresa);
         $facturas->where('asignacion_materials.tipo', '!=', 2)->where('asignacion_materials.tipo', '!=', 5)->where('asignacion_materials.tipo', '!=', 6)
