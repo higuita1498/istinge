@@ -869,7 +869,7 @@ class AsignacionMaterialController extends Controller{
   * @return redirect
   */
     public function store(Request $request){
-        dd($request);
+
         // $request->validate([
         //     'vendedor' => 'required',
         // ]);
@@ -948,47 +948,38 @@ class AsignacionMaterialController extends Controller{
         //     $request->documento = $tipo;
         // }
 
-        $factura = new Factura;
-        $factura->nonkey = $key;
-        $factura->nro = $numero;
-        $factura->codigo=$nro->prefijo.$inicio;
-        $factura->numeracion=$nro->id;
-        $factura->plazo=$request->plazo;
-        $factura->term_cond=$request->term_cond;
-        $factura->facnotas=$request->notas;
+        $factura = new AsignarMaterial;
+        $factura->notas=$request->notas;
         $factura->empresa=Auth::user()->empresa;
-        $factura->cliente=$request->cliente;
-        $factura->tipo=$tipo;
+        $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-        $factura->vencimiento=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
-        $factura->suspension=date('Y-m-d', strtotime("+".$request->plazo." days", strtotime($request->fecha)));
-        $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
-        $factura->observaciones=mb_strtolower($request->observaciones);
-        $factura->vendedor=$request->vendedor;
-        $factura->lista_precios=$request->lista_precios;
-        $factura->bodega=$request->bodega;
-        $factura->nro_remision = $request->nro_remision;
-        $factura->tipo_operacion = $request->tipo_operacion;
-        $factura->ordencompra    = $request->ordencompra;
-        $factura->cuenta_id    = $request->relacion;
-        $factura->periodo_facturacion = $request->periodo_facturacion;
-        $factura->created_by = Auth::user()->id;
 
-        if($contrato){
-            $factura->contrato_id = $contrato->id;
-        }else{
-            /*
-            Validamos aca de nuevo si tiene contrato o no, para que las facturas electronicas que tienen contrato
-             tengan la posibilidad de que se les guarde el id del contrato en la factura.
-             */
-            $contrato = Contrato::where('client_id',$request->cliente)->first();
-            if($contrato){
-                $factura->contrato_id = $contrato->id;
-            }
-        }
+        // $factura->observaciones=mb_strtolower($request->observaciones);
+        // $factura->vendedor=$request->vendedor;
+        // $factura->lista_precios=$request->lista_precios;
+        // $factura->bodega=$request->bodega;
+        // $factura->nro_remision = $request->nro_remision;
+        // $factura->tipo_operacion = $request->tipo_operacion;
+        // $factura->ordencompra    = $request->ordencompra;
+        // $factura->cuenta_id    = $request->relacion;
+        // $factura->periodo_facturacion = $request->periodo_facturacion;
+        // $factura->created_by = Auth::user()->id;
+
+        // if($contrato){
+        //     $factura->contrato_id = $contrato->id;
+        // }else{
+        //     /*
+        //     Validamos aca de nuevo si tiene contrato o no, para que las facturas electronicas que tienen contrato
+        //      tengan la posibilidad de que se les guarde el id del contrato en la factura.
+        //      */
+        //     $contrato = Contrato::where('client_id',$request->cliente)->first();
+        //     if($contrato){
+        //         $factura->contrato_id = $contrato->id;
+        //     }
+        // }
 
         $factura->save();
-        $nro->save();
+        // $nro->save();
 
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -1017,11 +1008,11 @@ class AsignacionMaterialController extends Controller{
             $items->ref=$request->ref[$i];
             $items->precio=$this->precision($request->precio[$i]);
             $items->descripcion=$request->descripcion[$i];
-            $items->id_impuesto=$request->impuesto[$i];
-            $items->impuesto=$impuesto->porcentaje;
+            // $items->id_impuesto=$request->impuesto[$i];
+            // $items->impuesto=$impuesto->porcentaje;
             $items->cant=$request->cant[$i];
             //$items->desc=$request->desc[$i];
-            $desc=$request->desc[$i];
+            // $desc=$request->desc[$i];
             $items->save();
         }
 
