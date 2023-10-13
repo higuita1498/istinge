@@ -486,7 +486,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function facturas(Request $request){
-        dd("hola factuyra2");
+
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
