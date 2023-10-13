@@ -334,7 +334,7 @@
       </div>
 		</div>
     <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 2%">Agregar línea</button>
-    <div class="row"  style="margin-top: 5%; margin-left:0px;">
+    {{-- <div class="row"  style="margin-top: 5%; margin-left:0px;">
           <div class="col-md-5 no-padding">
         <h5>RETENCIONES</h5>
             <table class="table table-striped table-sm" id="table-retencion">
@@ -348,8 +348,8 @@
             </table>
             <button class="btn btn-outline-primary" onclick="CrearFilaRetencion();" type="button" style="margin-top: 2%;">Agregar Retención</button><a><i data-tippy-content="Agrega nuevas retenciones haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a>
           </div>
-          <div class="col-md-7">
-            <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
+          <div class="col-md-7"> --}}
+            {{-- <h5>FORMAS DE PAGO <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></h5>
                 <table class="table table-striped table-sm" id="table-formaspago">
                   <thead class="thead-dark">
                     <th width="50%">Cuenta</th>
@@ -372,8 +372,8 @@
                     <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
                   </div>
                 </div>
-              </div>
-    </div>
+              </div> --}}
+    {{-- </div> --}}
     <!-- Totales -->
         <div class="row" style="margin-top: 10%;">
             <div class="col-md-4 offset-md-8">
@@ -416,10 +416,10 @@
         </div>
     <!-- Terminos y Condiciones -->
     <div class="row" style="margin-top: 5%; padding: 3%; min-height: 180px;">
-      <div class="col-md-8 form-group">
+      {{-- <div class="col-md-8 form-group">
         <label class="form-label">Términos y Condiciones <a><i data-tippy-content="Agrega los términos y condiciones para tus clientes sobre las ventas generadas" class="icono far fa-question-circle"></i></a></label>
         <textarea  class="form-control min_max_100" name="term_cond">{{Auth::user()->empresa()->terminos_cond}}</textarea>
-      </div>
+      </div> --}}
       <div class="col-md-4 form-group">
         <label class="form-label">Notas <a><i data-tippy-content="Agrega la información importante que verán tus cintes en la factura de venta" class="icono far fa-question-circle"></i></a>
         </label>
@@ -429,7 +429,7 @@
       <div class="col-md-12"><small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small></div>
   	<hr>
     <!--Botones Finales -->
-    <div class="row">
+    {{-- <div class="row">
     </div>
 		<div class="row d-none" >
 			<div class="col-md-2">
@@ -460,7 +460,7 @@
           <i class="input-helper"></i></label>
         </div>
       </div>
-      </div>
+      </div> --}}
 
 
       <div class="row ">
