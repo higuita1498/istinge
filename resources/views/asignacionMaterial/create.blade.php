@@ -201,7 +201,7 @@
             <div class="form-group row">
               <label class="col-sm-4 col-form-label">Orden de compra<a><i data-tippy-content="Número de orden de compra o servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" name="ordencompra" id="ordencompra" value="">
+                {{-- <input type="text" class="form-control" name="ordencompra" id="ordencompra" value=""> --}}
               </div>
             </div>
         @endif
@@ -214,9 +214,9 @@
 		<div class="row text-right" style="display: none;" id="masopciones">
 			<div class="col-md-5">
 				<div class="form-group row">
-				  <label class="col-sm-4  col-form-label">Observaciones <br> <small>No visible en la factura de venta</small></label>
+				  {{-- <label class="col-sm-4  col-form-label">Observaciones <br> <small>No visible en la factura de venta</small></label> --}}
     			<div class="col-sm-8">
-    				<textarea  class="form-control form-control-sm min_max_100" name="observaciones"></textarea>
+    				{{-- <textarea  class="form-control form-control-sm min_max_100" name="observaciones"></textarea> --}}
     			</div>
 		    </div>
 			</div>
@@ -379,7 +379,7 @@
         <div class="row" style="margin-top: 10%;">
             <div class="col-md-4 offset-md-8">
                 <table class="text-right widthtotal" >
-                    <tr>
+                    {{-- <tr>
                         <td width="40%">Subtotal</td>
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal">0</span></td>
                         <input type="hidden" id="subtotal_categoria_js" value="0">
@@ -397,7 +397,7 @@
                         <td width="40%">Subtotal</td>
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal2">0</span></td>
 
-                    </tr>
+                    </tr> --}}
                 </table>
 
                 <table  class="text-right widthtotal"  id="totalesreten" style="width: 100%">
@@ -408,8 +408,8 @@
                 <hr>
                 <table class="text-right widthtotal" style="font-size: 24px !important;">
                     <tr>
-                        <td width="40%">TOTAL A PAGAR</td>
-                        <td>{{Auth::user()->empresa()->moneda}} <span id="total">0</span></td>
+                        {{-- <td width="40%">TOTAL A PAGAR</td>
+                        <td>{{Auth::user()->empresa()->moneda}} <span id="total">0</span></td> --}}
                     </tr>
                 </table>
             </div>
