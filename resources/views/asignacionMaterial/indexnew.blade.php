@@ -85,36 +85,36 @@
 			<div class="card shadow-sm border-0">
         		<div class="card-body pt-1 pb-3" style="background: #f9f9f9;">
 					<div class="row">
-						<div class="col-md-1 pl-1 pt-1">
+						{{-- <div class="col-md-1 pl-1 pt-1">
 							<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
-						</div>
+						</div> --}}
 						<div class="col-md-2 pl-1 pt-1">
-							<select title="Cliente" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+							<select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
 								@foreach ($clientes as $cliente)
-									<option value="{{ $cliente->id}}">{{ $cliente->nombres}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{ $cliente->nit}}</option>
+									<option value="{{ $cliente->id}}">{{ $cliente->nombres}}</option>
 								@endforeach
 							</select>
 						</div>
-						<div class="col-md-2 pl-1 pt-1">
+						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Municipio" class="form-control rounded selectpicker" id="municipio" data-size="5" data-live-search="true">
 								@foreach ($municipios as $municipio)
 									<option value="{{ $municipio->id}}">{{ $municipio->nombre}}</option>
 								@endforeach
 							</select>
-						</div>
+						</div> --}}
 						{{-- <div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
 						</div> --}}
 						{{-- <div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
 						</div> --}}
-						<div class="col-md-2 pl-1 pt-1">
+						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Servidor" class="form-control rounded selectpicker" id="servidor">
 								@foreach ($servidores as $servidor)
 								<option value="{{ $servidor->id}}">{{ $servidor->nombre}}</option>
 								@endforeach
 							</select>
-						</div>
+						</div> --}}
 						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Estado" class="form-control rounded selectpicker" id="estado">
 								<option value="1" selected="">Abiertas</option>
