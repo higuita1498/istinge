@@ -867,7 +867,7 @@ class AsignacionMaterialController extends Controller{
   * @return redirect
   */
     public function store(Request $request){
-        dd("estoy para guardar la asignacion");
+        dd($request);
         // $request->validate([
         //     'vendedor' => 'required',
         // ]);
@@ -1023,31 +1023,31 @@ class AsignacionMaterialController extends Controller{
             $items->save();
         }
 
-        if($desc > 0){
-            $descuento             = new Descuento;
-            $descuento->factura    = $items->factura;
-            $descuento->descuento  = $desc;
-            $descuento->created_by = Auth::user()->id;
-            if($request->comentario_2){
-                $descuento->comentario_2 = $request->comentario_2;
-            }
-            $descuento->save();
-        }
+        // if($desc > 0){
+        //     $descuento             = new Descuento;
+        //     $descuento->factura    = $items->factura;
+        //     $descuento->descuento  = $desc;
+        //     $descuento->created_by = Auth::user()->id;
+        //     if($request->comentario_2){
+        //         $descuento->comentario_2 = $request->comentario_2;
+        //     }
+        //     $descuento->save();
+        // }
 
         //Registrar retennciones
-        if ($request->retencion) {
-            foreach ($request->retencion as $key => $value) {
-                if ($request->precio_reten[$key]) {
-                    $retencion = Retencion::where('id', $request->retencion[$key])->first();
-                    $reten = new FacturaRetencion;
-                    $reten->factura=$factura->id;
-                    $reten->valor=$this->precision($request->precio_reten[$key]);
-                    $reten->retencion=$retencion->porcentaje;
-                    $reten->id_retencion=$retencion->id;
-                    $reten->save();
-                }
-            }
-        }
+        // if ($request->retencion) {
+        //     foreach ($request->retencion as $key => $value) {
+        //         if ($request->precio_reten[$key]) {
+        //             $retencion = Retencion::where('id', $request->retencion[$key])->first();
+        //             $reten = new FacturaRetencion;
+        //             $reten->factura=$factura->id;
+        //             $reten->valor=$this->precision($request->precio_reten[$key]);
+        //             $reten->retencion=$retencion->porcentaje;
+        //             $reten->id_retencion=$retencion->id;
+        //             $reten->save();
+        //         }
+        //     }
+        // }
 
         //>>>>Posible aplicación de Prorrateo al total<<<<//
         // if(Auth::user()->empresaObj->prorrateo == 1){
@@ -1070,42 +1070,42 @@ class AsignacionMaterialController extends Controller{
         //>>>>Fin posible aplicación prorrateo al total<<<<//
 
         //Actualiza el nro de inicio para la numeracion seleccionada
-        $cant=Factura::where('empresa',Auth::user()->empresa)->where('codigo','=',($nro->prefijo.$inicio))->count();
-        if($cant==0){
-            $nro->inicio-=1;
-            $nro->save();
-        }
+        // $cant=Factura::where('empresa',Auth::user()->empresa)->where('codigo','=',($nro->prefijo.$inicio))->count();
+        // if($cant==0){
+        //     $nro->inicio-=1;
+        //     $nro->save();
+        // }
 
-        PucMovimiento::facturaVenta($factura,1, $request);
+        // PucMovimiento::facturaVenta($factura,1, $request);
 
         //Creo la variable para el mensaje final, y la variable print (imprimir)
-        $mensaje='Se ha creado satisfactoriamente la factura';
+        $mensaje='Se ha asignado correctmente el material';
         $print=false;
 
-        if($tipo == 2){
-            $mensaje = 'Se ha creado correctamente la factura electrónica';
-        }
+        // if($tipo == 2){
+        //     $mensaje = 'Se ha creado correctamente la factura electrónica';
+        // }
 
         //Si se selecciono imprimir, para enviarla y que se abra la ventana emergente con el pdf
-        if ($request->print) {
-            $print=$factura->nro;
-        }
+        // if ($request->print) {
+        //     $print=$factura->nro;
+        // }
 
         //Llamada a la funcion enviar en caso de que se haya seleccionado la opcion "Enviar por correo"
-        if ($request->send) {
-            $this->enviar($factura->nro, null, false);
-        }
+        // if ($request->send) {
+        //     $this->enviar($factura->nro, null, false);
+        // }
 
         //Se redirecciona a la vista Nuevo ingreso, si se selecciono la opcion "Agregar Pago"
-        if ($request->pago) {
-            return redirect('empresa/ingresos/create/'.$request->cliente.'/'.$factura->id)->with('print', $print)->with('success', $mensaje);
-        }
+        // if ($request->pago) {
+        //     return redirect('empresa/ingresos/create/'.$request->cliente.'/'.$factura->id)->with('print', $print)->with('success', $mensaje);
+        // }
         //Se redirecciona a la vista Nuevo Factura, si se selecciono la opcion "Crear una nueva"
-        else if ($request->new) {
-            return redirect('empresa/facturas/create')->with('success', $mensaje)->with('print', $print);
-        }else if($tipo == 2){
-            return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
-        }
+        // else if ($request->new) {
+        //     return redirect('empresa/facturas/create')->with('success', $mensaje)->with('print', $print);
+        // }else if($tipo == 2){
+        //     return redirect('empresa/facturas/facturas_electronica')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
+        // }
         return redirect('empresa/facturas')->with('success', $mensaje)->with('print', $print)->with('codigo', $factura->id);
     }
 
