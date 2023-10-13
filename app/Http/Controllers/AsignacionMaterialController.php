@@ -953,7 +953,7 @@ class AsignacionMaterialController extends Controller{
         $factura->empresa=Auth::user()->empresa;
         $factura->id_tecnico=$request->cliente;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
-        $factura->save();
+        // $factura->save();
 
         // $factura->observaciones=mb_strtolower($request->observaciones);
         // $factura->vendedor=$request->vendedor;
@@ -981,19 +981,19 @@ class AsignacionMaterialController extends Controller{
 
 
         // $nro->save();
-
+       dd($request->ref);
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
             $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
         }
         //Ciclo para registrar los itemas de la factura
         for ($i=0; $i < count($request->ref) ; $i++) {
-            $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
-            if($impuesto){
-                $impuesto->porcentaje = $impuesto->porcentaje;
-            }else{
-                $impuesto->porcentaje = '';
-            }
+            // $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
+            // if($impuesto){
+            //     $impuesto->porcentaje = $impuesto->porcentaje;
+            // }else{
+            //     $impuesto->porcentaje = '';
+            // }
             $producto = Inventario::where('id', $request->item[$i])->first();
             //Si el producto es inventariable y existe esa bodega, restará el valor registrado
             if ($producto->tipo_producto==1) {
