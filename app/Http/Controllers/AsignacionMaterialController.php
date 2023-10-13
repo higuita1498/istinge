@@ -1006,7 +1006,6 @@ class AsignacionMaterialController extends Controller{
 
             $items = new ItemsAsignarMaterial;
             $items->id_factura_materials=$factura->id;
-            dd($factura->id);
             $items->producto=$request->item[$i];
             $items->ref=$request->ref[$i];
             // $items->precio=$request->precio[$i];
