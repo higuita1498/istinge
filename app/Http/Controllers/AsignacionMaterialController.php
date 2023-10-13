@@ -277,15 +277,15 @@ class AsignacionMaterialController extends Controller{
 
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
-        $servidores = Mikrotik::where('empresa', $empresaActual)->get();
+        // $servidores = Mikrotik::where('empresa', $empresaActual)->get();
 
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')
-        ->where('campos_usuarios.id_modulo', 5)
+        ->where('campos_usuarios.id_modulo',10000)
         ->where('campos_usuarios.id_usuario', Auth::user()->id)
         ->where('campos_usuarios.estado', 1)
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
 
-        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
+        // $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
         return view('asignacionMaterial.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
     }
