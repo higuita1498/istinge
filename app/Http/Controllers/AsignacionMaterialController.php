@@ -66,6 +66,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function indexold(Request $request){
+        dd("hola");
         $this->getAllPermissions(Auth::user()->id);
 
         $busqueda=false;
