@@ -562,7 +562,7 @@ class AsignacionMaterialController extends Controller{
         //     return $factura->id ? "<a href=" . route('facturas.show', $factura->id) . ">$factura->codigo</a>" : "";
         // })
         ->editColumn('cliente', function (Factura $factura) {
-            return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
+            return  $factura->cliente ? $factura->nombrecliente : "";
         })
         // ->editColumn('fecha', function (Factura $factura) {
         //     return date('d-m-Y', strtotime($factura->fecha));
