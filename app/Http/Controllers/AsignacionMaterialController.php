@@ -671,7 +671,7 @@ class AsignacionMaterialController extends Controller{
         DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
         ->where('empresa',$empresa->id)
         ->where('status', 1)
-        ->havingRaw('if(inventario.type=MATERIAL, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
+        ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
         ->orderBy('producto','ASC')
         ->get();
         $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
