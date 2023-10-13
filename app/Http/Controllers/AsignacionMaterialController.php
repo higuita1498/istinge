@@ -867,9 +867,10 @@ class AsignacionMaterialController extends Controller{
   * @return redirect
   */
     public function store(Request $request){
-        $request->validate([
-            'vendedor' => 'required',
-        ]);
+        dd("estoy para guardar la asignacion");
+        // $request->validate([
+        //     'vendedor' => 'required',
+        // ]);
 
         $nro = false;
         $contrato = false;

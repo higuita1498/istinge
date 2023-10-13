@@ -63,7 +63,7 @@
 	</div>
 	<hr>
   <!--Formulario Facturas-->
-	<form method="POST" action="{{ route('facturas.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
+	<form method="POST" action="{{ route('asignacionmaterial.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-factura" >
 		{{ csrf_field() }}
 
     @include('facturas.includes.comment-descuento', ['comentario2' => null ])

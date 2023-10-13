@@ -408,6 +408,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
     // Rutas asignacion de material
     Route::get('asignacion_material', 'AsignacionMaterialController@index')->name('asignacionmaterial.index-electronica');
     Route::get('asignacion_material/create', 'AsignacionMaterialController@create')->name('asignacionmaterial.create');
+    Route::get('asignacion_material/store', 'AsignacionMaterialController@store')->name('asignacionmaterial.store');
+
 
 
 	//Facturas de Venta
