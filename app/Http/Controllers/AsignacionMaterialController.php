@@ -9,7 +9,9 @@ use App\Empresa; use App\Contacto; use App\TipoIdentificacion;
 use App\Impuesto; use App\NumeracionFactura;
 use App\TerminosPago; use App\Funcion; use App\Vendedor;
 use App\Model\Ingresos\Factura;
+use App\AsignarMaterial;
 use App\Model\Ingresos\ItemsFactura;
+use App\Model\Ingresos\ItemsAsignarMaterial;
 use App\Model\Ingresos\FacturaRetencion;
 use App\Model\Inventario\Inventario;
 use App\Model\Inventario\Bodega;
@@ -872,46 +874,46 @@ class AsignacionMaterialController extends Controller{
         //     'vendedor' => 'required',
         // ]);
 
-        $nro = false;
-        $contrato = false;
-        $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+        // $nro = false;
+        // $contrato = false;
+        // $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
 
-        if(!isset($request->electronica)){
-            $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
-            $contrato =    Contrato::where('client_id',$request->cliente)->first();
+        // if(!isset($request->electronica)){
+        //     $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        //     $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
-            //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
-            $nro = $nro->tipoNumeracion($contrato);
-        }
+        //     //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
+        //     $nro = $nro->tipoNumeracion($contrato);
+        // }
 
         //Por acá entra cuando quiero crear una factura electrónica sin que esté asociadaa un contrato
-        if (!$nro) {
-            if(isset($request->electronica)){
-                //No se llama el metodo de tipoNumeracion por que las facturas electrónicas no necesitan de un contrato para ser generadas.
-                $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
-                if(!$nro){
-                    $mensaje='Debes crear una numeración para facturas de venta preferida';
-                    return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
-                }
-            }else{
-                $mensaje='Debes crear una numeración para facturas de venta preferida';
-                return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
-            }
-        }
+        // if (!$nro) {
+        //     if(isset($request->electronica)){
+        //         //No se llama el metodo de tipoNumeracion por que las facturas electrónicas no necesitan de un contrato para ser generadas.
+        //         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+        //         if(!$nro){
+        //             $mensaje='Debes crear una numeración para facturas de venta preferida';
+        //             return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        //         }
+        //     }else{
+        //         $mensaje='Debes crear una numeración para facturas de venta preferida';
+        //         return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
+        //     }
+        // }
 
         //Actualiza el nro de inicio para la numeracion seleccionada
-        $inicio = $nro->inicio;
+        // $inicio = $nro->inicio;
 
         // Validacion para que solo asigne numero consecutivo si no existe.
-        while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
-            $nro->save();
-            $inicio=$nro->inicio;
-            $nro->inicio += 1;
-        }
+        // while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+        //     $nro->save();
+        //     $inicio=$nro->inicio;
+        //     $nro->inicio += 1;
+        // }
 
-        if($request->nro_remision){
-            DB::table('remisiones')->where('nro', $request->nro_remision)->update(['estatus' => 3]);
-        }
+        // if($request->nro_remision){
+        //     DB::table('remisiones')->where('nro', $request->nro_remision)->update(['estatus' => 3]);
+        // }
 
         //Generacion de llave unica para acceso por correo
         $key = Hash::make(date("H:i:s"));
@@ -919,32 +921,32 @@ class AsignacionMaterialController extends Controller{
         $key = str_replace($toReplace, "", $key);
         //
 
-        if($num){
-            $numero = $num->nro + 1;
-        }else{
-            $numero = 1;
-        }
+        // if($num){
+        //     $numero = $num->nro + 1;
+        // }else{
+        //     $numero = 1;
+        // }
 
-        $tipo = 1; //1= normal, 2=Electrónica.
+        // $tipo = 1; //1= normal, 2=Electrónica.
 
         // Retorna si un cliente puede crear factura electrónica o no.
-        $electronica = Factura::booleanFacturaElectronica($request->cliente);
+        // $electronica = Factura::booleanFacturaElectronica($request->cliente);
 
-        if($contrato){
-            if($contrato->facturacion == 3 && !$electronica){
-                return redirect('empresa/facturas/facturas_electronica')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-            }elseif($contrato->facturacion == 3 && $electronica){
-                $tipo = 2;
-                $request->documento = $tipo;
-            }
-        }
+        // if($contrato){
+        //     if($contrato->facturacion == 3 && !$electronica){
+        //         return redirect('empresa/facturas/facturas_electronica')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+        //     }elseif($contrato->facturacion == 3 && $electronica){
+        //         $tipo = 2;
+        //         $request->documento = $tipo;
+        //     }
+        // }
 
-        if(isset($request->electronica)){$tipo = 2;}
+        // if(isset($request->electronica)){$tipo = 2;}
 
         //Si el tipo de documento es cuenta de cobro sigue su proceso normal.
-        if($request->documento != 3){
-            $request->documento = $tipo;
-        }
+        // if($request->documento != 3){
+        //     $request->documento = $tipo;
+        // }
 
         $factura = new Factura;
         $factura->nonkey = $key;
