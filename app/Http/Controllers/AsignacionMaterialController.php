@@ -508,8 +508,7 @@ class AsignacionMaterialController extends Controller{
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
             ->select('asignacion_materials.tipo','asignacion_materials.promesa_pago','asignacion_materials.id', 'asignacion_materials.correo', 'asignacion_materials.mensaje', 'asignacion_materials.codigo',
              'asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),
-             'asignacion_materials.cliente', 'asignacion_materials.fecha', 'asignacion_materials.vencimiento', 'asignacion_materials.estatus', 'asignacion_materials.vendedor','asignacion_materials.emitida',
-             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',)
+             'asignacion_materials.cliente', 'asignacion_materials.fecha')
             ->groupBy('asignacion_materials.id');
 
         // if ($request->filtro == true) {
