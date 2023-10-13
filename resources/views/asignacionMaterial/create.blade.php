@@ -376,9 +376,9 @@
               </div> --}}
     {{-- </div> --}}
     <!-- Totales -->
-        {{-- <div class="row" style="margin-top: 10%;">
+        <div class="row" style="margin-top: 10%;">
             <div class="col-md-4 offset-md-8">
-                <table class="text-right widthtotal" > --}}
+                {{-- <table class="text-right widthtotal" > --}}
                     {{-- <tr>
                         <td width="40%">Subtotal</td>
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal">0</span></td>
@@ -398,14 +398,14 @@
                         <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal2">0</span></td>
 
                     </tr> --}}
-                {{-- </table> --}}
+                {{-- </table>
 
-                {{-- <table  class="text-right widthtotal"  id="totalesreten" style="width: 100%">
+                <table  class="text-right widthtotal"  id="totalesreten" style="width: 100%">
                     <tbody></tbody>
-                </table> --}}
+                </table>
 
 
-                {{-- <hr>
+                <hr>
                 <table class="text-right widthtotal" style="font-size: 24px !important;">
                     <tr> --}}
                         {{-- <td width="40%">TOTAL A PAGAR</td>
