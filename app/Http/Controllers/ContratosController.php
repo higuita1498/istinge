@@ -2797,13 +2797,14 @@ class ContratosController extends Controller
                 $microtik = str_replace('m', '', $contratos[$i]);
             }else{
                 $contrato = Contrato::find($contratos[$i]);
-                dd($contrato);
+
                 if ($contrato) {
 
                     if($contrato->mk==1){
                         $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
                         $mikrotik = Mikrotik::where('id', $microtik)->first();
                         $mikrotik_plan = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;
+                        dd($mikrotik_plan);
 
                         $cliente = $contrato->cliente();
                         $servicio = $cliente->nombre.' '. $cliente->apellido1.' '. $cliente->apellido2;
