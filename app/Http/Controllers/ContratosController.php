@@ -3033,7 +3033,7 @@ class ContratosController extends Controller
                                 $contrato->mk = 1;
                                 $contrato->state = 'enabled';
                                 $contrato->servicio = $this->normaliza($servicio).'-'.$contrato->nro;
-                                $contrato->plan_id = $plan->id;
+                                $contrato->server_configuration_id = $mikrotik->id;
                                 $contrato->save();
                                 $succ++;
                                 $contracts_fallidos .= 'Nro '.$contrato->nro.'<br>';
