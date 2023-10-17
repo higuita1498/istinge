@@ -66,7 +66,8 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function indexold(Request $request){
-        dd("subiendo mejoras");
+        dd("hola 2");
+
         $this->getAllPermissions(Auth::user()->id);
 
         $busqueda=false;
@@ -92,7 +93,7 @@ class AsignacionMaterialController extends Controller{
         where('tipo','!=',5)->
         //where('factura.fecha','>=', '2021-03-01')->
         where('lectura',1);
-        dd($facturas);
+
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
 
         /*
@@ -268,7 +269,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function index(Request $request){
-
+        dd("hola 1");
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
@@ -290,6 +291,8 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function indexNew(Request $request, $tipo){
+        dd("hola 3");
+
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
