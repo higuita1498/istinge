@@ -2815,6 +2815,7 @@ class ContratosController extends Controller
 
                             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                                  ## ELIMINAMOS DE MK ##
+                                 dd($contrato->conexion);
                     if($contrato->conexion == 1){
                         //OBTENEMOS AL CONTRATO MK
                         $mk_user = $API->comm("/ppp/secret/getall", array(
