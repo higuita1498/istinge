@@ -489,7 +489,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function materialindex(Request $request){
-
+        return"hola";
         // $modoLectura = auth()->user()->modo_lectura();
         // $identificadorEmpresa = auth()->user()->empresa;
         // $moneda = auth()->user()->empresa()->moneda;
