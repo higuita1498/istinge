@@ -505,7 +505,7 @@ class AsignacionMaterialController extends Controller{
                 }
             }
         }
-        dd("hola");
+
         $facturas = AsignarMaterial::query()
             ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
@@ -553,7 +553,7 @@ class AsignacionMaterialController extends Controller{
         // if ($orderByDefault) {
         //     $facturas->orderby($orderByDefault, $orderDefault);
         // }
-        // return DataTables::of($facturas)->make(true);
+        return DataTables::of($facturas)->make(true);
         return datatables()->eloquent($facturas)
         // ->editColumn('codigo', function (Factura $factura) {
         //     if($factura->porpagar() == 0 && $factura->estatus == 1){
