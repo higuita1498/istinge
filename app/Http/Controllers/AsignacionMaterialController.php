@@ -66,7 +66,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function indexold(Request $request){
-        dd("hola 2");
+
 
         $this->getAllPermissions(Auth::user()->id);
 
@@ -264,17 +264,17 @@ class AsignacionMaterialController extends Controller{
         $clientes = Contacto::join('factura AS F','F.cliente','=','contactos.id')->select('contactos.id', 'contactos.nombre', 'contactos.nit')->groupBy('F.cliente')->orderBy('contactos.nombre','ASC')->get();
 
         view()->share(['title' => 'Asignacion de Material', 'subseccion' => 'inventario']);
-        return "dd";
+
         return view('asignacionMaterial.index')->with(compact('facturas', 'request', 'busqueda','clientes'));
     }
 
     public function index(Request $request){
-        dd("hola 1");
+
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
-
+        dd($clientes);
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
