@@ -284,14 +284,14 @@ class AsignacionMaterialController extends Controller{
         ->where('campos_usuarios.id_usuario', Auth::user()->id)
         ->where('campos_usuarios.estado', 1)
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
-        dd($tabla);
+
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
         return view('asignacionMaterial.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
     }
 
     public function indexNew(Request $request, $tipo){
-        dd("hola 3");
+
 
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
