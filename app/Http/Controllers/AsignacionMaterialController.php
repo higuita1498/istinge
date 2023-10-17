@@ -489,7 +489,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function facturas(Request $request){
-        dd("hola como estya");
+
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
@@ -552,7 +552,7 @@ class AsignacionMaterialController extends Controller{
         // if ($orderByDefault) {
         //     $facturas->orderby($orderByDefault, $orderDefault);
         // }
-
+        return DataTables::of($facturas)->make(true);
         return datatables()->eloquent($facturas)
         // ->editColumn('codigo', function (Factura $factura) {
         //     if($factura->porpagar() == 0 && $factura->estatus == 1){
