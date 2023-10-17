@@ -490,12 +490,12 @@ class AsignacionMaterialController extends Controller{
 
     public function materialindex(Request $request){
 
-        $modoLectura = auth()->user()->modo_lectura();
-        $identificadorEmpresa = auth()->user()->empresa;
-        $moneda = auth()->user()->empresa()->moneda;
+        // $modoLectura = auth()->user()->modo_lectura();
+        // $identificadorEmpresa = auth()->user()->empresa;
+        // $moneda = auth()->user()->empresa()->moneda;
 
-        $orderByDefault = null;
-        $orderDefault = null;
+        // $orderByDefault = null;
+        // $orderDefault = null;
 
         if ($request->order && is_array($request->order)) {
             foreach ($request->order as $or) {
