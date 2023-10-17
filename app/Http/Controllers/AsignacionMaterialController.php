@@ -489,6 +489,12 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function materialindex(Request $request){
+        $response = [
+            'mensaje' => '¡Mensaje de prueba enviado con éxito!'
+        ];
+
+        // Retorna el arreglo como respuesta JSON
+        return response()->json($response);
 
         // $modoLectura = auth()->user()->modo_lectura();
         // $identificadorEmpresa = auth()->user()->empresa;
