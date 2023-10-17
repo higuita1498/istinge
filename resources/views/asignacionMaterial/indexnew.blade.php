@@ -343,9 +343,9 @@
 				cargando(true);
 
 				if (window.location.pathname.split("/")[1] === "software") {
-					var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
+					// var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
 				}else{
-					var url = `/empresa/facturas/conversionmasiva/`+facturas;
+					// var url = `/empresa/facturas/conversionmasiva/`+facturas;
 				}
 
 				$.ajax({
