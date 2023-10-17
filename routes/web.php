@@ -409,7 +409,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
     Route::get('asignacion_material', 'AsignacionMaterialController@index')->name('asignacionmaterial.index-electronica');
     Route::get('asignacion_material/create', 'AsignacionMaterialController@create')->name('asignacionmaterial.create');
     Route::post('asignacion_material/store', 'AsignacionMaterialController@store')->name('asignacionmaterial.store');
-    Route::get('materialindex', 'AsignacionMaterialController@materialindex')->name('materialindex');
+    Route::post('materialindex', 'AsignacionMaterialController@materialindex')->name('materialindex');
 
 
 
