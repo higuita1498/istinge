@@ -214,7 +214,7 @@
 				[2, "DESC"],[0, "DESC"]
 			],
 			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{url("/materialindex")}}',
+			ajax: '{{url("materialindex")}}',
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
