@@ -511,7 +511,7 @@ class AsignacionMaterialController extends Controller{
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
             ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),'asignacion_materials.cliente', 'asignacion_materials.fecha')
             ->groupBy('asignacion_materials.id');
-
+        dd("hola estoy aqui :)");
 
         // if ($request->filtro == true) {
 
@@ -553,7 +553,7 @@ class AsignacionMaterialController extends Controller{
         // if ($orderByDefault) {
         //     $facturas->orderby($orderByDefault, $orderDefault);
         // }
-        return DataTables::of($facturas)->make(true);
+        // return DataTables::of($facturas)->make(true);
         return datatables()->eloquent($facturas)
         // ->editColumn('codigo', function (Factura $factura) {
         //     if($factura->porpagar() == 0 && $factura->estatus == 1){
