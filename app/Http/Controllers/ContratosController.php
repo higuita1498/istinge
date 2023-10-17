@@ -2815,7 +2815,7 @@ class ContratosController extends Controller
 
                             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                                  ## ELIMINAMOS DE MK ##
-                                 dd($contrato->conexion);
+
                     if($contrato->conexion == 1){
                         //OBTENEMOS AL CONTRATO MK
                         $mk_user = $API->comm("/ppp/secret/getall", array(
@@ -3031,6 +3031,7 @@ class ContratosController extends Controller
                                 $contrato->mk = 1;
                                 $contrato->state = 'enabled';
                                 $contrato->servicio = $this->normaliza($servicio).'-'.$contrato->nro;
+                                $contrato->plan_id = $plan->id;
                                 $contrato->save();
                                 $succ++;
                                 $contracts_fallidos .= 'Nro '.$contrato->nro.'<br>';
