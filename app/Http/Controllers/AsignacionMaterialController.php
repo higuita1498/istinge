@@ -488,7 +488,7 @@ class AsignacionMaterialController extends Controller{
         ->toJson();
     }
 
-    public function facturas(Request $request){
+    public function materialindex(Request $request){
 
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
