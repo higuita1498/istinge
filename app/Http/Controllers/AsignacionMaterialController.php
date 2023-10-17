@@ -66,7 +66,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function indexold(Request $request){
-
+        dd("subiendo mejoras");
         $this->getAllPermissions(Auth::user()->id);
 
         $busqueda=false;
