@@ -1565,6 +1565,31 @@ public function forma_pago()
             return $list;
         }
 
+    //Nos trae la lista de formas de pago de la factura nada mas.
+    public function cuentaPagoListIngreso(){
+
+        $ingresosFactura = IngresosFactura::select('ingreso')->where('factura',$this->id)->get();
+        $ingresos = Ingreso::select('cuenta')->whereIn('id',$ingresosFactura)->get();
+        $cuentas = Banco::whereIn('id',$ingresos)->get();
+
+        $list = "";
+        $cont = $ingresosFactura->count();
+        $i = 1;
+
+        foreach($cuentas as $cuenta){
+
+            if($cuenta){
+                if($i != $cont){
+                    $list.=$cuenta->nombre . ",";
+                }else{
+                    $list.=$cuenta->nombre;
+                }
+            }
+            $i++;
+        }
+        return $list;
+    }
+
     public function contract(){
         
         $contrato = Contrato::find($this->contrato_id);

@@ -290,7 +290,7 @@ class ExportarReportesController extends Controller
                 $factura->save();
             }
 
-            $formaPago = $factura->formaPagoList();
+            $formaPago = $factura->cuentaPagoListIngreso();
 
             array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Items','Iva','Antes de Impuesto','Despues de Impuesto');
             $objPHPExcel->setActiveSheetIndex(0)
@@ -440,7 +440,7 @@ class ExportarReportesController extends Controller
                 $factura->save();
             }
 
-            $formaPago = $factura->formaPagoList();
+            $formaPago = $factura->cuentaPagoListIngreso();
 
             array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Items','Iva','Antes de Impuesto','Despues de Impuesto');
             $objPHPExcel->setActiveSheetIndex(0)
