@@ -2802,6 +2802,7 @@ class ContratosController extends Controller
                     if($contrato->mk==1){
                         $plan = PlanesVelocidad::where('id', $contrato->plan_id)->first();
                         $mikrotik = Mikrotik::where('id', $microtik)->first();
+                        $mikrotik_plan = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;
 
 
                         $cliente = $contrato->cliente();
@@ -2814,6 +2815,83 @@ class ContratosController extends Controller
                             //$API->debug = true;
 
                             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                 ## ELIMINAMOS DE MK ##
+                    if($contrato->conexion == 1){
+                        //OBTENEMOS AL CONTRATO MK
+                        $mk_user = $API->comm("/ppp/secret/getall", array(
+                            "?remote-address" => $contrato->ip,
+                            )
+                        );
+                        if($mk_user){
+                            // REMOVEMOS EL SECRET
+                            $API->comm("/ppp/secret/remove", array(
+                                ".id" => $mk_user[0][".id"],
+                                )
+                            );
+                        }
+                    }
+
+                    if($contrato->conexion == 2){
+                        $name = $API->comm("/ip/dhcp-server/lease/getall", array(
+                            "?address" => $contrato->ip
+                            )
+                        );
+                        if($name){
+                            // REMOVEMOS EL IP DHCP
+                            $API->comm("/ip/dhcp-server/lease/remove", array(
+                                ".id" => $name[0][".id"],
+                                )
+                            );
+                        }
+                    }
+
+                    if($contrato->conexion == 3){
+                        //OBTENEMOS AL CONTRATO MK
+                        $mk_user = $API->comm("/ip/arp/getall", array(
+                            "?address" => $contrato->ip // IP DEL CLIENTE
+                            )
+                        );
+                        if($mk_user){
+                            // REMOVEMOS EL IP ARP
+                            $API->comm("/ip/arp/remove", array(
+                                ".id" => $mk_user[0][".id"],
+                                )
+                            );
+                        }
+                    }
+
+                    #ELMINAMOS DEL QUEUE#
+                    $queue = $API->comm("/queue/simple/getall", array(
+                        "?target" => $contrato->ip.'/32'
+                        )
+                    );
+
+                    if($queue){
+                        $API->comm("/queue/simple/remove", array(
+                            ".id" => $queue[0][".id"],
+                            )
+                        );
+                    }
+                    #ELMINAMOS DEL QUEUE#
+
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
+                    $API->write('/ip/firewall/address-list/print', TRUE);
+                    $ARRAYS = $API->read();
+
+                    $API->write('/ip/firewall/address-list/print', false);
+                    $API->write('?address='.$contrato->ip, false);
+                    $API->write("?list=ips_autorizadas",false);
+                    $API->write('=.proplist=.id');
+                    $ARRAYS = $API->read();
+
+                    if(count($ARRAYS)>0){
+                        $API->write('/ip/firewall/address-list/remove', false);
+                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                        $READ = $API->read();
+                    }
+                    #ELIMINAMOS DE IP_AUTORIZADAS#
+                    ## ELIMINAMOS DE MK ##
+
                                 $rate_limit      = '';
                                 $priority        = $plan->prioridad;
                                 $burst_limit     = (strlen($plan->burst_limit_subida)>1) ? $plan->burst_limit_subida.'/'.$plan->burst_limit_bajada : '';
