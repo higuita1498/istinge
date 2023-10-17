@@ -505,14 +505,14 @@ class AsignacionMaterialController extends Controller{
                 }
             }
         }
-
+        dd("hola");
         $facturas = AsignarMaterial::query()
             ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
             ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),'asignacion_materials.cliente', 'asignacion_materials.fecha')
             ->groupBy('asignacion_materials.id');
 
-        return "hola";
+
         // if ($request->filtro == true) {
 
         //     if($request->cliente){
