@@ -510,7 +510,7 @@ class AsignacionMaterialController extends Controller{
             ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
             ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
             ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', DB::raw('c.nombres as nombrecliente'),DB::raw('c.email as emailcliente'),'asignacion_materials.cliente', 'asignacion_materials.fecha')
-            ->groupBy('asignacion_materials.id');
+            ->groupBy('asignacion_materials.id')->get();
 
         // if ($request->filtro == true) {
 
