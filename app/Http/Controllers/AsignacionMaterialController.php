@@ -270,11 +270,11 @@ class AsignacionMaterialController extends Controller{
 
     public function index(Request $request){
 
-        $this->getAllPermissions(Auth::user()->id);
-        $empresaActual = auth()->user()->empresa;
-        $tecnicos = AsignarMaterial::select('asignacion_materials.id', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.fecha')
-        ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
-        ->groupBy('asignacion_materials.id');
+        // $this->getAllPermissions(Auth::user()->id);
+        // $empresaActual = auth()->user()->empresa;
+        // $tecnicos = AsignarMaterial::select('asignacion_materials.id', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.fecha')
+        // ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
+        // ->groupBy('asignacion_materials.id');
 
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
 
@@ -291,7 +291,7 @@ class AsignacionMaterialController extends Controller{
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('asignacionMaterial.indexnew');
+        return view('asignacionMaterial.indexnew',compact('clientes','tipo','tabla','municipios', 'servidores'));
     }
 
     public function indexNew(Request $request, $tipo){
