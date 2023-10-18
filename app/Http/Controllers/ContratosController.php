@@ -416,6 +416,9 @@ class ContratosController extends Controller
             ->editColumn('created_at', function (Contrato $contrato) {
                 return ($contrato->created_at) ? date('d-m-Y', strtotime($contrato->created_at)) : 'N/A';
             })
+            ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
+                return $contrato->fk_idmunicipio;
+            })
             ->editColumn('estrato', function (Contrato $contrato) {
                 return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
             })
@@ -423,7 +426,7 @@ class ContratosController extends Controller
                 return ($contrato->observaciones) ? $contrato->observaciones : 'N/A';
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
-            ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'observaciones', 'created_at'])
+            ->rawColumns(['nro', 'client_id', 'nit','fk_idmunicipio', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'observaciones', 'created_at'])
             ->toJson();
     }
 
