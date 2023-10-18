@@ -179,10 +179,8 @@
                 <tbody>
                            @foreach ($tecnicos as $tecnico)
                                 <td>{{$tecnico->nombrecliente}}</td>
-                                <td>{{$tecnico->nombrecliente}}</td>
-                                <td>{{$tecnico->nombrecliente}}</td>
-                                <td>{{$tecnico->nombrecliente}}</td>
-
+                                <td>{{$tecnico->emailcliente}}</td>
+                                <td>{{$tecnico->fecha}}</td>
                            @endforeach
                 </tbody>
 			</table>
