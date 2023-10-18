@@ -276,7 +276,7 @@ class AsignacionMaterialController extends Controller{
          ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
          ->groupBy('asignacion_materials.id')->first();
 
-
+        dd($tecnicos);
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
 
 
