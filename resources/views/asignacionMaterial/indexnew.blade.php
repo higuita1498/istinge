@@ -181,7 +181,7 @@
                                 <td>{{$tecnico}}</td>
                            @endforeach --}}
 
-                    @endforeach
+                    {{-- @endforeach --}}
                 </tbody>
 			</table>
 
