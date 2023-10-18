@@ -278,12 +278,12 @@ class AsignacionMaterialController extends Controller{
         ->groupBy('asignacion_materials.id');
 
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
-        dd("paso de clientes");
+
 
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
-
+        dd("paso de servidores");
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')
         ->where('campos_usuarios.id_modulo',21)
         ->where('campos_usuarios.id_usuario', Auth::user()->id)
