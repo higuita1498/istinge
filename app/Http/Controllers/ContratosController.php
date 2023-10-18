@@ -119,7 +119,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
         $modoLectura = auth()->user()->modo_lectura();
         $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato', DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular','contactos.fk_idmunicipio', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato', DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
@@ -415,6 +415,9 @@ class ContratosController extends Controller
             })
             ->editColumn('created_at', function (Contrato $contrato) {
                 return ($contrato->created_at) ? date('d-m-Y', strtotime($contrato->created_at)) : 'N/A';
+            })
+            ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
+                return $contacto->municipio()->nombre;
             })
             ->editColumn('estrato', function (Contrato $contrato) {
                 return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
