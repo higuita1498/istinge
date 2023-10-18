@@ -176,13 +176,13 @@
 						<th>Acciones</th>
 					</tr>
 				</thead>
-                <tbody>
+                {{-- <tbody> --}}
                            {{-- @foreach ($clientes as $tecnico)
                                 <td>{{$tecnico}}</td>
                            @endforeach --}}
 
                     {{-- @endforeach --}}
-                </tbody>
+                {{-- </tbody> --}}
 			</table>
 
 		</div>
