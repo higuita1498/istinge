@@ -187,6 +187,7 @@
                                 <!-- Agrega aquí las acciones si es necesario -->
                             </td>
                     </tr>
+                    @endforeach
                 </tbody>
 			</table>
 
