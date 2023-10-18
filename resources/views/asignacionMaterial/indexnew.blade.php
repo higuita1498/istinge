@@ -184,7 +184,7 @@
                             <td>{{$tecnico->emailcliente}}</td>
                             <td>{{$tecnico->fecha}}</td>
                             <td>
-                                <!-- Agrega aquí las acciones si es necesario -->
+                                <a href="{{route('facturas.edit',$$tecnico->id)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
                             </td>
                     </tr>
                     @endforeach
