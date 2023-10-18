@@ -799,9 +799,9 @@ public function forma_pago()
         $i = 1;
         foreach($items as $item){
             if($i != $cont){
-                $list.=$item->ref . ",";
+                $list.=$item->producto . ",";
             }else{
-                $list.=$item->ref;
+                $list.=$item->producto;
             }
             $i++;
         }
