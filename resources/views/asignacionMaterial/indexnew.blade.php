@@ -14,7 +14,7 @@
     @endif
 @endsection
 
-@section('content')
+{{-- @section('content')
     @if(Session::has('success'))
         <div class="alert alert-success">
         	{{Session::get('success')}}
@@ -25,9 +25,9 @@
         		$('.active_table').attr('class', ' ');
         	}, 5000);
         </script>
-    @endif
+    @endif --}}
 
-	@if(Session::has('error'))
+	{{-- @if(Session::has('error'))
 		<div class="alert alert-danger" >
 			{{Session::get('error')}}
 		</div>
@@ -38,9 +38,9 @@
 			    $('.active_table').attr('class', ' ');
 			}, 8000);
 		</script>
-	@endif
+	@endif --}}
 
-    @if(Session::has('danger'))
+    {{-- @if(Session::has('danger'))
         <div class="alert alert-danger">
         	{{Session::get('danger')}}
         </div>
@@ -50,9 +50,9 @@
         		$('.active_table').attr('class', ' ');
         	}, 5000);
         </script>
-    @endif
+    @endif --}}
 
-    @if(Session::has('message_denied'))
+    {{-- @if(Session::has('message_denied'))
 	    <div class="alert alert-danger" role="alert">
 	    	{{Session::get('message_denied')}}
 	    	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
@@ -77,7 +77,7 @@
 	    		<span aria-hidden="true">&times;</span>
 	    	</button>
 	    </div>
-	@endif
+	@endif --}}
 
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
@@ -90,9 +90,9 @@
 						</div> --}}
 						<div class="col-md-2 pl-1 pt-1">
 							<select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
-								@foreach ($clientes as $cliente)
+								{{-- @foreach ($clientes as $cliente)
 									<option value="{{ $cliente->id}}">{{ $cliente->nombres}}</option>
-								@endforeach
+								@endforeach --}}
 							</select>
 						</div>
 						{{-- <div class="col-md-2 pl-1 pt-1">
