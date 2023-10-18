@@ -170,9 +170,7 @@
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						@foreach($tabla as $campo)
-    					    <th>{{$campo->nombre}}</th>
-    					@endforeach
+
                         <th>Nombre de Tecnico</th>
                         <th>Email de Tecnico</th>
                         <th>Fecha</th>
