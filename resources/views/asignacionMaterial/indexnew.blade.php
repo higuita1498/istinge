@@ -178,7 +178,7 @@
 				</thead>
                 <tbody>
                            @foreach ($tecnicos  as $tecnico)
-                                <td>{{$tecnico->name}}</td>
+                                <td>{{$tecnico}}</td>
                            @endforeach
 
                     @endforeach

@@ -277,8 +277,6 @@ class AsignacionMaterialController extends Controller{
         ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.cliente', 'asignacion_materials.fecha')
         ->groupBy('asignacion_materials.id');
 
-        dd($tecnicos);
-
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
 
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
@@ -293,7 +291,7 @@ class AsignacionMaterialController extends Controller{
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('asignacionMaterial.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
+        return view('asignacionMaterial.indexnew', compact('tecnicos','clientes','tipo','tabla','municipios','servidores'));
     }
 
     public function indexNew(Request $request, $tipo){
