@@ -180,8 +180,6 @@
                            @foreach ($clientes as $tecnico)
                                 <td>{{$tecnico}}</td>
                            @endforeach
-
-                    @endforeach
                 </tbody>
 			</table>
 
