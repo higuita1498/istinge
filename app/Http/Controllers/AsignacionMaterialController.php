@@ -291,7 +291,7 @@ class AsignacionMaterialController extends Controller{
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
-        return view('asignacionMaterial.indexnew', compact('tecnicos','clientes','tipo','tabla','municipios','servidores'));
+        return view('asignacionMaterial.indexnew');
     }
 
     public function indexNew(Request $request, $tipo){
