@@ -289,9 +289,9 @@ class AsignacionMaterialController extends Controller{
         ->where('campos_usuarios.id_usuario', Auth::user()->id)
         ->where('campos_usuarios.estado', 1)
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
-        dd("paso de tabkla");
-        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
 
+        $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
+        dd("paso de municipio");
         return view('asignacionMaterial.indexnew', compact('tecnicos','clientes','tipo','tabla','municipios','servidores'));
     }
 
