@@ -173,6 +173,9 @@
 						@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
     					@endforeach
+                        <th>Nombre de Tecnico</th>
+                        <th>Email de Tecnico</th>
+                        <th>Fecha</th>
 						<th>Acciones</th>
 					</tr>
 				</thead>
