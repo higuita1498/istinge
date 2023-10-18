@@ -178,11 +178,15 @@
 					</tr>
 				</thead>
                 <tbody>
-                           @foreach ($tecnicos as $tecnico)
-                                <td>{{$tecnico->nombrecliente}}</td>
-                                <td>{{$tecnico->emailcliente}}</td>
-                                <td>{{$tecnico->fecha}}</td>
-                           @endforeach
+                    @foreach ($tecnicos as $tecnico)
+                    <tr>
+                            <td>{{$tecnico->nombrecliente}}</td>
+                            <td>{{$tecnico->emailcliente}}</td>
+                            <td>{{$tecnico->fecha}}</td>
+                            <td>
+                                <!-- Agrega aquí las acciones si es necesario -->
+                            </td>
+                    </tr>
                 </tbody>
 			</table>
 
