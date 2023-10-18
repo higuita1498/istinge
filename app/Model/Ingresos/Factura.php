@@ -798,10 +798,11 @@ public function forma_pago()
         $cont = $items->count();
         $i = 1;
         foreach($items as $item){
+            $producto = Inventario::find($this->producto);
             if($i != $cont){
-                $list.=$item->producto . ",";
+                $list.=$producto->producto . ",";
             }else{
-                $list.=$item->producto;
+                $list.=$producto->producto;
             }
             $i++;
         }
