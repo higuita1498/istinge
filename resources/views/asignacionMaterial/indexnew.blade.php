@@ -177,7 +177,7 @@
 					</tr>
 				</thead>
                 <tbody>
-                           @foreach ($clientes as $tecnico)
+                           @foreach ($tecnicos as $tecnico)
                                 <td>{{$tecnico->nombrecliente}}</td>
                                 <td>{{$tecnico->nombrecliente}}</td>
                                 <td>{{$tecnico->nombrecliente}}</td>
