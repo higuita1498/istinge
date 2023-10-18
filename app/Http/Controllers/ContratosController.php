@@ -176,6 +176,7 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.ap', $request->ap);
                 });
             }
+
             if($request->c_direccion){
 
                 $direccion = $request->c_direccion;
