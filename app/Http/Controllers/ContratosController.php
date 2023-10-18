@@ -330,6 +330,9 @@ class ContratosController extends Controller
             ->editColumn('barrio', function (Contrato $contrato) {
                 return $contrato->c_barrio;
             })
+            ->editColumn('fk_idmunicipio', function (Contrato $contrato) {
+                return $contrato->municipio;
+            })
             ->editColumn('plan', function (Contrato $contrato) {
                 if($contrato->plan_id){
                     return "<div class='elipsis-short-325'><a href=".route('planes-velocidad.show',$contrato->plan()->id)." target='_blank'>{$contrato->plan()->name}</a></div>";
