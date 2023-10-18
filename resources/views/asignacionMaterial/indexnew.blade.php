@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 
-@section('boton')
+{{-- @section('boton')
     @if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
 	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
@@ -12,7 +12,7 @@
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
         <a href="{{route('asignacionmaterial.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Asignacion de Material</a>
     @endif
-@endsection
+@endsection --}}
 
 {{-- @section('content')
     @if(Session::has('success'))
@@ -89,11 +89,11 @@
 							<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
 						</div> --}}
 						<div class="col-md-2 pl-1 pt-1">
-							<select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+							{{-- <select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true"> --}}
 								{{-- @foreach ($clientes as $cliente)
 									<option value="{{ $cliente->id}}">{{ $cliente->nombres}}</option>
 								@endforeach --}}
-							</select>
+							{{-- </select> --}}
 						</div>
 						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Municipio" class="form-control rounded selectpicker" id="municipio" data-size="5" data-live-search="true">
