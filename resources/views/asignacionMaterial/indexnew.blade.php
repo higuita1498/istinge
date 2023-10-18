@@ -177,9 +177,9 @@
 					</tr>
 				</thead>
                 <tbody>
-                           {{-- @foreach ($clientes as $tecnico)
+                           @foreach ($clientes as $tecnico)
                                 <td>{{$tecnico}}</td>
-                           @endforeach --}}
+                           @endforeach
 
                     @endforeach
                 </tbody>
