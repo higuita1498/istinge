@@ -178,7 +178,7 @@
 				</thead>
                 <tbody>
                            @foreach ($clientes as $tecnico)
-                                <td>{{$tecnico}}</td>
+                                {{-- <td>{{$tecnico}}</td> --}}
                            @endforeach
                 </tbody>
 			</table>
