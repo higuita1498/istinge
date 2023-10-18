@@ -176,7 +176,15 @@
 						<th>Acciones</th>
 					</tr>
 				</thead>
+                <tbody>
+                           @foreach ($tecnicos  as $tecnico)
+                                <td>{{$tecnico->name}}</td>
+                           @endforeach
+
+                    @endforeach
+                </tbody>
 			</table>
+
 		</div>
 	</div>
 
@@ -197,62 +205,62 @@
 
 @section('scripts')
 <script>
-	var tabla = $('#tabla-facturas');
-	window.addEventListener('load', function() {
-		var tabla= $('#tabla-facturas').DataTable({
-			responsive: true,
-			serverSide: true,
-			processing: true,
-			searching: false,
-			@if(isset($_SESSION['permisos']['830']))
-			select: true,
-			@endif
-			language: {
-				'url': '/vendors/DataTables/es.json'
-			},
-			order: [
-				[2, "DESC"],[0, "DESC"]
-			],
-			"pageLength": {{ Auth::user()->empresa()->pageLength }},
-			ajax: '{{ route('materialindex') }}',
-			headers: {
-				'X-CSRF-TOKEN': '{{csrf_token()}}'
-			},
-			@if(isset($_SESSION['permisos']['830']))
-            select: true,
-            select: {
-                style: 'multi',
-            },
-            dom: 'Blfrtip',
-            buttons: [{
-                text: '<i class="fas fa-check"></i> Seleccionar todos',
-                action: function() {
-                    tabla.rows({
-                        page: 'current'
-                    }).select();
-                }
-            },
-            {
-                text: '<i class="fas fa-times"></i> Deseleccionar todos',
-                action: function() {
-                    tabla.rows({
-                        page: 'current'
-                    }).deselect();
-                }
-            }],
-            @endif
-			columns: [
-			    @foreach($tabla as $campo)
-                {data: '{{$campo->campo}}'},
-                @endforeach
-				{data: 'acciones'},
-			]
-		});
+	// var tabla = $('#tabla-facturas');
+	// window.addEventListener('load', function() {
+	// 	var tabla= $('#tabla-facturas').DataTable({
+	// 		responsive: true,
+	// 		serverSide: true,
+	// 		processing: true,
+	// 		searching: false,
+	// 		@if(isset($_SESSION['permisos']['830']))
+	// 		select: true,
+	// 		@endif
+	// 		language: {
+	// 			'url': '/vendors/DataTables/es.json'
+	// 		},
+	// 		order: [
+	// 			[2, "DESC"],[0, "DESC"]
+	// 		],
+	// 		"pageLength": {{ Auth::user()->empresa()->pageLength }},
+	// 		ajax: '{{ route('materialindex') }}',
+	// 		headers: {
+	// 			'X-CSRF-TOKEN': '{{csrf_token()}}'
+	// 		},
+	// 		@if(isset($_SESSION['permisos']['830']))
+    //         select: true,
+    //         select: {
+    //             style: 'multi',
+    //         },
+    //         dom: 'Blfrtip',
+    //         buttons: [{
+    //             text: '<i class="fas fa-check"></i> Seleccionar todos',
+    //             action: function() {
+    //                 tabla.rows({
+    //                     page: 'current'
+    //                 }).select();
+    //             }
+    //         },
+    //         {
+    //             text: '<i class="fas fa-times"></i> Deseleccionar todos',
+    //             action: function() {
+    //                 tabla.rows({
+    //                     page: 'current'
+    //                 }).deselect();
+    //             }
+    //         }],
+    //         @endif
+	// 		columns: [
+	// 		    @foreach($tabla as $campo)
+    //             {data: '{{$campo->campo}}'},
+    //             @endforeach
+	// 			{data: 'acciones'},
+	// 		]
+	// 	});
 
-		tabla.on('preXhr.dt', function(e, settings, data) {
+	// 	tabla.on('preXhr.dt', function(e, settings, data) {
 			// data.codigo = $('#codigo').val();
 			// data.corte = $('#corte').val();
-			data.cliente = $('#cliente').val();
+			// data.cliente = $('#cliente').val();
 			// data.municipio = $('#municipio').val();
 			// data.vendedor = $('#vendedor').val();
 			// data.creacion = $('#creacion').val();
@@ -261,155 +269,155 @@
 			// data.total = $('#total').val();
 			// data.servidor = $('#servidor').val();
 			// data.estado = $('#estado').val();
-			data.filtro = true;
-		});
+		// 	data.filtro = true;
+		// });
 
-		$('#filtrar').on('click', function(e) {
-			getDataTable();
-			return false;
-		});
+		// $('#filtrar').on('click', function(e) {
+		// 	getDataTable();
+		// 	return false;
+		// });
 
-		$('#form-filter').on('keypress', function(e) {
-			if (e.which == 13) {
-				getDataTable();
-				return false;
-			}
-		});
+		// $('#form-filter').on('keypress', function(e) {
+		// 	if (e.which == 13) {
+		// 		getDataTable();
+		// 		return false;
+		// 	}
+		// });
 
-		$('#codigo').on('keyup',function(e) {
-            if(e.which > 32 || e.which == 8) {
-                getDataTable();
-                return false;
-            }
-        });
+		// $('#codigo').on('keyup',function(e) {
+        //     if(e.which > 32 || e.which == 8) {
+        //         getDataTable();
+        //         return false;
+        //     }
+        // });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento').on('change',function() {
-            getDataTable();
-            return false;
-        });
+        // $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento').on('change',function() {
+        //     getDataTable();
+        //     return false;
+        // });
 
-		$('.vencimiento').datepicker({
-			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
-		});
+		// $('.vencimiento').datepicker({
+		// 	locale: 'es-es',
+      	// 	uiLibrary: 'bootstrap4',
+		// 	format: 'yyyy-mm-dd' ,
+		// });
 
-		$('.creacion').datepicker({
-			locale: 'es-es',
-      		uiLibrary: 'bootstrap4',
-			format: 'yyyy-mm-dd' ,
-		});
+		// $('.creacion').datepicker({
+		// 	locale: 'es-es',
+      	// 	uiLibrary: 'bootstrap4',
+		// 	format: 'yyyy-mm-dd' ,
+		// });
 
-		$('#tabla-facturas tbody').on('click', 'tr', function () {
-			var table = $('#tabla-facturas').DataTable();
-			var nro = table.rows('.selected').data().length;
+		// $('#tabla-facturas tbody').on('click', 'tr', function () {
+		// 	var table = $('#tabla-facturas').DataTable();
+		// 	var nro = table.rows('.selected').data().length;
 
-			if(table.rows('.selected').data().length >= 0){
-				$("#btn_emitir").removeClass('disabled d-none');
-			}else{
-				$("#btn_emitir").addClass('disabled d-none');
-			}
-        });
+		// 	if(table.rows('.selected').data().length >= 0){
+		// 		$("#btn_emitir").removeClass('disabled d-none');
+		// 	}else{
+		// 		$("#btn_emitir").addClass('disabled d-none');
+		// 	}
+        // });
 
-		$('#btn_emitir').on('click', function(e) {
-		var table = $('#tabla-facturas').DataTable();
-		var nro = table.rows('.selected').data().length;
+		// $('#btn_emitir').on('click', function(e) {
+		// var table = $('#tabla-facturas').DataTable();
+		// var nro = table.rows('.selected').data().length;
 
-		if(nro <= 0){
-			swal({
-				title: 'ERROR',
-				html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
-				type: 'error',
-			});
-			return false;
-		}
+		// if(nro <= 0){
+		// 	swal({
+		// 		title: 'ERROR',
+		// 		html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
+		// 		type: 'error',
+		// 	});
+		// 	return false;
+		// }
 
-		var facturas = [];
-		for (i = 0; i < nro; i++) {
-			facturas.push(table.rows('.selected').data()[i]['id']);
-		}
+		// var facturas = [];
+		// for (i = 0; i < nro; i++) {
+		// 	facturas.push(table.rows('.selected').data()[i]['id']);
+		// }
 
-		swal({
-			title: '¿Desea convertir '+nro+' facturas estandar a facturas electrónicas?',
-			text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
-			type: 'question',
-			showCancelButton: true,
-			confirmButtonColor: '#00ce68',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Aceptar',
-			cancelButtonText: 'Cancelar',
-		}).then((result) => {
-			if (result.value) {
-				cargando(true);
+		// swal({
+		// 	title: '¿Desea convertir '+nro+' facturas estandar a facturas electrónicas?',
+		// 	text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+		// 	type: 'question',
+		// 	showCancelButton: true,
+		// 	confirmButtonColor: '#00ce68',
+		// 	cancelButtonColor: '#d33',
+		// 	confirmButtonText: 'Aceptar',
+		// 	cancelButtonText: 'Cancelar',
+		// }).then((result) => {
+		// 	if (result.value) {
+		// 		cargando(true);
 
-				if (window.location.pathname.split("/")[1] === "software") {
+		// 		if (window.location.pathname.split("/")[1] === "software") {
 					// var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
-				}else{
-					// var url = `/empresa/facturas/conversionmasiva/`+facturas;
-				}
+				// }else{
+	// 				// var url = `/empresa/facturas/conversionmasiva/`+facturas;
+	// 			}
 
-				$.ajax({
-					url: url,
-					method: 'GET',
-					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-					success: function(data) {
-						cargando(false);
-						swal({
-							title: 'PROCESO REALIZADO',
-							html: data.text,
-							type: 'success',
-							showConfirmButton: true,
-							confirmButtonColor: '#1A59A1',
-							confirmButtonText: 'ACEPTAR',
-						});
-						getDataTable();
-					}
-				})
-			}
-		})
-	});
-	});
+	// 			$.ajax({
+	// 				url: url,
+	// 				method: 'GET',
+	// 				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+	// 				success: function(data) {
+	// 					cargando(false);
+	// 					swal({
+	// 						title: 'PROCESO REALIZADO',
+	// 						html: data.text,
+	// 						type: 'success',
+	// 						showConfirmButton: true,
+	// 						confirmButtonColor: '#1A59A1',
+	// 						confirmButtonText: 'ACEPTAR',
+	// 					});
+	// 					getDataTable();
+	// 				}
+	// 			})
+	// 		}
+	// 	})
+	// });
+	// });
 
-	function getDataTable() {
-		tabla.DataTable().ajax.reload();
-	}
+	// function getDataTable() {
+	// 	tabla.DataTable().ajax.reload();
+	// }
 
-	function abrirFiltrador() {
-		if ($('#form-filter').hasClass('d-none')) {
-			$('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
-			$('#form-filter').removeClass('d-none');
-		} else {
-			$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
-			cerrarFiltrador();
-		}
-	}
+	// function abrirFiltrador() {
+	// 	if ($('#form-filter').hasClass('d-none')) {
+	// 		$('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
+	// 		$('#form-filter').removeClass('d-none');
+	// 	} else {
+	// 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+	// 		cerrarFiltrador();
+	// 	}
+	// }
 
-	function cerrarFiltrador() {
-		$('#codigo').val('');
-		$('#corte').val('').selectpicker('refresh');
-		$('#cliente').val('').selectpicker('refresh');
-		$('#municipio').val('').selectpicker('refresh');
-		$('#vendedor').val('').selectpicker('refresh');
-		$('#creacion').val('');
-		$('#vencimiento').val('');
-		$('#comparador').val('').selectpicker('refresh');
-		$('#total').val('');
-		$('#estado').val('').selectpicker('refresh');
-		$('#servidor').val('').selectpicker('refresh');
-		$('#form-filter').addClass('d-none');
-		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
-		getDataTable();
-	}
+	// function cerrarFiltrador() {
+	// 	$('#codigo').val('');
+	// 	$('#corte').val('').selectpicker('refresh');
+	// 	$('#cliente').val('').selectpicker('refresh');
+	// 	$('#municipio').val('').selectpicker('refresh');
+	// 	$('#vendedor').val('').selectpicker('refresh');
+	// 	$('#creacion').val('');
+	// 	$('#vencimiento').val('');
+	// 	$('#comparador').val('').selectpicker('refresh');
+	// 	$('#total').val('');
+	// 	$('#estado').val('').selectpicker('refresh');
+	// 	$('#servidor').val('').selectpicker('refresh');
+	// 	$('#form-filter').addClass('d-none');
+	// 	$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+	// 	getDataTable();
+	// }
 
-	function exportar() {
-		$("#estado").selectpicker('refresh');
-        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
-	}
+	// function exportar() {
+	// 	$("#estado").selectpicker('refresh');
+    //     window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
+	// }
 
-	@if($tipo)
-	    $('#estado').val('{{ $tipo }}').selectpicker('refresh');
-	    abrirFiltrador();
-	    getDataTable();
-	@endif
+	// @if($tipo)
+	//     $('#estado').val('{{ $tipo }}').selectpicker('refresh');
+	//     abrirFiltrador();
+	//     getDataTable();
+	// @endif
 </script>
 @endsection

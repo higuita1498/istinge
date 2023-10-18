@@ -269,7 +269,7 @@ class AsignacionMaterialController extends Controller{
     }
 
     public function index(Request $request){
-
+        dd("hola");
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
