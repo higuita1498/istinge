@@ -18,6 +18,7 @@ use App\Model\Ingresos\NotaCreditoFactura;
 use App\Model\Ingresos\IngresosRetenciones;
 use App\Model\Inventario\ListaPrecios;
 use App\Model\Inventario\Bodega;
+use App\Model\Inventario\Inventario;
 use Carbon\Carbon;
 use DB;
 use App\GrupoCorte;
