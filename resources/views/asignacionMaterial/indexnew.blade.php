@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 
-{{-- @section('boton')
+@section('boton')
     @if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
 	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
@@ -12,9 +12,9 @@
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
         <a href="{{route('asignacionmaterial.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Asignacion de Material</a>
     @endif
-@endsection --}}
+@endsection
 
-{{-- @section('content')
+@section('content')
     @if(Session::has('success'))
         <div class="alert alert-success">
         	{{Session::get('success')}}
@@ -25,9 +25,9 @@
         		$('.active_table').attr('class', ' ');
         	}, 5000);
         </script>
-    @endif --}}
+    @endif
 
-	{{-- @if(Session::has('error'))
+	@if(Session::has('error'))
 		<div class="alert alert-danger" >
 			{{Session::get('error')}}
 		</div>
@@ -38,9 +38,9 @@
 			    $('.active_table').attr('class', ' ');
 			}, 8000);
 		</script>
-	@endif --}}
+	@endif
 
-    {{-- @if(Session::has('danger'))
+    @if(Session::has('danger'))
         <div class="alert alert-danger">
         	{{Session::get('danger')}}
         </div>
@@ -50,9 +50,9 @@
         		$('.active_table').attr('class', ' ');
         	}, 5000);
         </script>
-    @endif --}}
+    @endif
 
-    {{-- @if(Session::has('message_denied'))
+    @if(Session::has('message_denied'))
 	    <div class="alert alert-danger" role="alert">
 	    	{{Session::get('message_denied')}}
 	    	@if(Session::get('errorReason'))<br> <strong>Razon(es): <br></strong>
@@ -77,7 +77,7 @@
 	    		<span aria-hidden="true">&times;</span>
 	    	</button>
 	    </div>
-	@endif --}}
+	@endif
 
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
@@ -89,11 +89,11 @@
 							<input type="text" placeholder="Nro" id="codigo" class="form-control rounded">
 						</div> --}}
 						<div class="col-md-2 pl-1 pt-1">
-							{{-- <select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true"> --}}
-								{{-- @foreach ($clientes as $cliente)
+							<select title="Tecnico" class="form-control rounded selectpicker" id="cliente" data-size="5" data-live-search="true">
+								@foreach ($clientes as $cliente)
 									<option value="{{ $cliente->id}}">{{ $cliente->nombres}}</option>
-								@endforeach --}}
-							{{-- </select> --}}
+								@endforeach
+							</select>
 						</div>
 						{{-- <div class="col-md-2 pl-1 pt-1">
 							<select title="Municipio" class="form-control rounded selectpicker" id="municipio" data-size="5" data-live-search="true">
@@ -143,52 +143,52 @@
 
 	<div class="row card-description">
 		<div class="col-md-12">
-    		{{-- <div class="container-filtercolumn form-inline">
-    			@if(Auth::user()->empresa()->efecty == 1) --}}
+    		<div class="container-filtercolumn form-inline">
+    			@if(Auth::user()->empresa()->efecty == 1)
     			{{-- <a href="{{route('facturas.downloadefecty')}}" class="btn btn-warning btn-sm" style="background: #938B16; border: solid #938B16 1px;"><i class="fas fa-cloud-download-alt"></i> Descargar Archivo Efecty</a> --}}
-    			{{-- @endif --}}
+    			@endif
 				{{-- @if(isset($_SESSION['permisos']['830']))
     			<a class="btn btn-outline-success btn-sm disabled mr-1 d-none" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-sitemap"></i> Convertir a facturas electrónicas en Lote</a>
     			@endif --}}
-    			{{-- @if(isset($_SESSION['permisos']['750'])) --}}
+    			@if(isset($_SESSION['permisos']['750']))
     			{{-- <a href="{{route('campos.organizar', 4)}}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-table"></i> Organizar Tabla</a> --}}
-    			{{-- @endif
-                @if(isset($_SESSION['permisos']['774'])) --}}
+    			@endif
+                @if(isset($_SESSION['permisos']['774']))
                 {{-- <a href="{{route('promesas-pago.index')}}" class="btn btn-outline-danger btn-sm mr-1"><i class="fas fa-calendar"></i> Ver Promesas de Pago</a> --}}
-                {{-- @endif
-                <div class="dropdown mr-1"> --}}
+                @endif
+                <div class="dropdown mr-1">
                     {{-- <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
                     </div> --}}
-                {{-- </div> --}}
+                </div>
 			</div>
 		</div>
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						{{-- @foreach($tabla as $campo)
+						@foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
-    					@endforeach --}}
+    					@endforeach
 						<th>Acciones</th>
 					</tr>
 				</thead>
-                {{-- <tbody> --}}
-                           {{-- @foreach ($clientes as $tecnico)
+                <tbody>
+                           @foreach ($clientes as $tecnico)
                                 <td>{{$tecnico}}</td>
-                           @endforeach --}}
+                           @endforeach
 
-                    {{-- @endforeach --}}
-                {{-- </tbody> --}}
+                    @endforeach
+                </tbody>
 			</table>
 
 		</div>
 	</div>
 
-	{{-- <div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -196,11 +196,11 @@
                     {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button> --}}
-                {{-- </div>
+                </div>
                 <div id="div_promesa"></div>
             </div>
         </div>
-    </div>  --}}
+    </div>
 @endsection
 
 @section('scripts')
