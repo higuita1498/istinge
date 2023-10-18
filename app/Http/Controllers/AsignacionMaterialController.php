@@ -290,7 +290,7 @@ class AsignacionMaterialController extends Controller{
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
-        dd("paso de municipio");
+
         return view('asignacionMaterial.indexnew', compact('tecnicos','clientes','tipo','tabla','municipios','servidores'));
     }
 
