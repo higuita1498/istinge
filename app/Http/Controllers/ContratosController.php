@@ -123,7 +123,8 @@ class ContratosController extends Controller
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular','contactos.fk_idmunicipio', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato', DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             // ->orderByDesc('ipformat')
-            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
         // return $contratos->get();
         if ($request->filtro == true) {
             if($request->cliente_id){
@@ -315,7 +316,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->municipio}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
