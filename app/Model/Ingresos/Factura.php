@@ -799,7 +799,7 @@ public function forma_pago()
         $cont = $items->count();
         $i = 1;
         foreach($items as $item){
-            $producto = Inventario::find($this->producto);
+            $producto = Inventario::find($item->producto);
             if($i != $cont){
                 $list.=$producto->producto . ",";
             }else{
