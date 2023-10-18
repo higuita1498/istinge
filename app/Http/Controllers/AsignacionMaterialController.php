@@ -272,9 +272,8 @@ class AsignacionMaterialController extends Controller{
 
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
-        $tecnicos = AsignarMaterial::join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
-        ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
-        ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.cliente', 'asignacion_materials.fecha')
+        $tecnicos = AsignarMaterial::select('asignacion_materials.id', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.fecha')
+        ->join('usuarios as c', 'asignacion_materials.id_tecnico', '=', 'c.id')
         ->groupBy('asignacion_materials.id');
 
         $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
