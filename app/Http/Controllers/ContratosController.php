@@ -331,7 +331,7 @@ class ContratosController extends Controller
                 return $contrato->c_barrio;
             })
             ->editColumn('fk_idmunicipio', function (Contrato $contrato) {
-                return $contrato->municipio;
+                return $contrato;
             })
             ->editColumn('plan', function (Contrato $contrato) {
                 if($contrato->plan_id){
