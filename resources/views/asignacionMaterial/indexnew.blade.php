@@ -170,14 +170,14 @@
 			<table class="table table-striped table-hover w-100" id="tabla-facturas">
 				<thead class="thead-dark">
 					<tr>
-						@foreach($tabla as $campo)
+						{{-- @foreach($tabla as $campo)
     					    <th>{{$campo->nombre}}</th>
-    					@endforeach
+    					@endforeach --}}
 						<th>Acciones</th>
 					</tr>
 				</thead>
                 <tbody>
-                           @foreach ($tecnicos  as $tecnico)
+                           @foreach ($clientes as $tecnico)
                                 <td>{{$tecnico}}</td>
                            @endforeach
 
