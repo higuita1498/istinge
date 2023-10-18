@@ -276,9 +276,9 @@ class AsignacionMaterialController extends Controller{
         ->join('items_asignar_materials as if', 'asignacion_materials.id', '=', 'if.id_factura_materials')
         ->select('asignacion_materials.id', 'asignacion_materials.correo','asignacion_materials.nro', 'c.nombres as nombrecliente','c.email as emailcliente','asignacion_materials.cliente', 'asignacion_materials.fecha')
         ->groupBy('asignacion_materials.id');
-        dd("paso de tecnicos");
-        $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
 
+        $clientes = User::join('asignacion_materials as f', 'usuarios.id', '=', 'f.id_tecnico')->where('usuarios.user_status', 1)->groupBy('f.id_tecnico')->select('usuarios.*')->orderBy('usuarios.nombres','asc')->get();
+        dd("paso de clientes");
         view()->share(['title' => 'Asignación de Material', 'subseccion' => 'inventario', 'precice' => true]);
         $tipo = false;
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
