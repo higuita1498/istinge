@@ -417,7 +417,7 @@ class ContratosController extends Controller
                 return ($contrato->created_at) ? date('d-m-Y', strtotime($contrato->created_at)) : 'N/A';
             })
             ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
-                return $contrato->municipio()->nombre;
+                return $contrato->fk_idmunicipio;
             })
             ->editColumn('estrato', function (Contrato $contrato) {
                 return ($contrato->c_estrato) ? $contrato->c_estrato : 'N/A';
