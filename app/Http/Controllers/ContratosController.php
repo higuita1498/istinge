@@ -315,7 +315,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->fk_idmunicipio}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
@@ -423,6 +423,9 @@ class ContratosController extends Controller
             })
             ->editColumn('observaciones', function (Contrato $contrato) {
                 return ($contrato->observaciones) ? $contrato->observaciones : 'N/A';
+            })
+            ->editColumn('fk_idmunicipio', function (Contrato $contrato) {
+                return $contrato->fk_idmunicipio;
             })
             ->editColumn('acciones', $modoLectura ?  "" : "contratos.acciones")
             ->rawColumns(['nro', 'client_id', 'nit', 'telefono', 'email', 'barrio', 'plan', 'mac', 'ipformat', 'grupo_corte', 'state', 'pago', 'servicio', 'factura', 'servicio_tv', 'acciones', 'vendedor', 'canal', 'tecnologia', 'observaciones', 'created_at'])
