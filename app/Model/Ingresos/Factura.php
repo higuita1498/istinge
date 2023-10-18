@@ -18,6 +18,7 @@ use App\Model\Ingresos\NotaCreditoFactura;
 use App\Model\Ingresos\IngresosRetenciones;
 use App\Model\Inventario\ListaPrecios;
 use App\Model\Inventario\Bodega;
+use App\Model\Inventario\Inventario;
 use Carbon\Carbon;
 use DB;
 use App\GrupoCorte;
@@ -798,10 +799,11 @@ public function forma_pago()
         $cont = $items->count();
         $i = 1;
         foreach($items as $item){
+            $producto = Inventario::find($this->producto);
             if($i != $cont){
-                $list.=$item->producto . ",";
+                $list.=$producto->producto . ",";
             }else{
-                $list.=$item->producto;
+                $list.=$producto->producto;
             }
             $i++;
         }
