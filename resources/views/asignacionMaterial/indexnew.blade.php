@@ -184,7 +184,9 @@
                             <td>{{$tecnico->emailcliente}}</td>
                             <td>{{$tecnico->fecha}}</td>
                             <td>
-                                <a href="{{route('facturas.edit',$tecnico->id)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+                                {{-- <a href="{{route('facturas.edit',$tecnico->id)}}"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a> --}}
+                                <a href="#"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
+
                             </td>
                     </tr>
                     @endforeach
