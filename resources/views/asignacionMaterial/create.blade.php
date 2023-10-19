@@ -424,7 +424,7 @@
       <div class="col-md-12 form-group">
         <label class="form-label">Notas <a><i data-tippy-content="" class="icono far fa-question-circle"></i></a>
         </label>
-        <textarea  class="form-control form-control-sm min_max_100" name="notas">{{}}</textarea>
+        <textarea  class="form-control form-control-sm min_max_100" name="notas"></textarea>
       </div>
     </div>
       <div class="col-md-12"><small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small></div>
