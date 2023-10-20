@@ -91,7 +91,7 @@ class AsignacionesController extends Controller
 
             if (Storage::disk('documentos')->exists($nombre)) {
                 // El archivo se ha guardado con éxito en el disco 'documentos'.
-                $contrato->documento = $nombre;
+                dd("se guardo");
                 // Otras operaciones que desees realizar después de guardar el archivo.
             } else {
                 dd("no se guardo");
