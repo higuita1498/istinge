@@ -91,8 +91,6 @@ class AsignacionesController extends Controller
 
             $xmax = 1080;
             $ymax = 720;
-            if ($file && $file->isValid()) {
-                // Procesar el archivo aquí.
 
             if(in_array($file->getMimeType(), $ext_permitidas)) {
                 switch($file->getMimeType()) {
@@ -614,7 +612,7 @@ class AsignacionesController extends Controller
                     }
                 }
             }
-        }
+
             $contrato->save();
             return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
         }
