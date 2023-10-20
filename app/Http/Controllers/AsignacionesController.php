@@ -89,17 +89,6 @@ class AsignacionesController extends Controller
             Storage::disk('documentos')->put($nombre, \File::get($file));
             $contrato->documento = $nombre;
 
-            if (Storage::disk('documentos')->exists($nombre)) {
-                // El archivo se ha guardado con éxito en el disco 'documentos'.
-                dd("se guardo");
-                // Otras operaciones que desees realizar después de guardar el archivo.
-            } else {
-                dd("no se guardo");
-                // Hubo un problema al guardar el archivo en el disco 'documentos'.
-                // Puedes manejar el error aquí según tus necesidades.
-            }
-
-
             $xmax = 1080;
             $ymax = 720;
             if ($file && $file->isValid()) {
