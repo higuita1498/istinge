@@ -83,11 +83,21 @@ class AsignacionesController extends Controller
                 $contrato->firma_isp = $request->firma_isp;
             }
 
-            $contrato->fecha_isp = date('Y-m-d');
-            $file = $request->file('documento');
-            $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-            Storage::disk('documentos')->put($nombre, \File::get($file));
-            $contrato->documento = $nombre;
+            // $contrato->fecha_isp = date('Y-m-d');
+            // $file = $request->file('documento');
+            // $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+            // Storage::disk('documentos')->put($nombre, \File::get($file));
+            // $contrato->documento = $nombre;
+            try {
+                $contrato->fecha_isp = date('Y-m-d');
+                $file = $request->file('documento');
+                $nombre =  $idContrato . 'doc_' . $contrato->nit . '.' . $file->getClientOriginalExtension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $contrato->documento = $nombre;
+            } catch (\Exception $e) {
+                // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
+                \Log::error($e->getMessage());
+            }
 
             $xmax = 1080;
             $ymax = 720;
