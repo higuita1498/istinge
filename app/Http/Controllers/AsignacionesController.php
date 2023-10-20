@@ -91,7 +91,7 @@ class AsignacionesController extends Controller
 
             $xmax = 1080;
             $ymax = 720;
-
+            dd($nombre);
             if(in_array($file->getMimeType(), $ext_permitidas)) {
                 switch($file->getMimeType()) {
                     case 'image/jpeg':
