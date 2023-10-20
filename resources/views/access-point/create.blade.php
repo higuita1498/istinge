@@ -11,8 +11,8 @@
 	            </span>
 	        </div>
 	        <div class="col-md-4 form-group">
-	            <label class="control-label">Contraseña del AP <span class="text-danger">*</span></label>
-	            <input type="text" class="form-control"  id="password" name="password"  required="" value="{{old('password')}}" maxlength="200">
+	            <label class="control-label">Contraseña del AP </span></label>
+	            <input type="text" class="form-control"  id="password" name="password" value="{{old('password')}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('password') }}</strong>
 	            </span>
