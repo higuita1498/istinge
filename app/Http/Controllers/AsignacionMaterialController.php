@@ -599,8 +599,8 @@ class AsignacionMaterialController extends Controller{
     public function create($producto=false, $cliente=false){
         $this->getAllPermissions(Auth::user()->id);
         //echo $cliente;die;
-        $empresa =Auth::user()->empresaObj;
-        $nro=NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+        $empresa = Auth::user()->empresaObj;
+        $nro = NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
 
         $tipo_documento = Factura::where('empresa',$empresa->id)->latest('tipo')->first();
 
@@ -633,6 +633,7 @@ class AsignacionMaterialController extends Controller{
         DB::raw('(Select nro from productos_bodegas where bodega='.$bodega->id.' and producto=inventario.id) as nro'))
         ->where('empresa',$empresa->id)
         ->where('status', 1)
+        ->where('type', 'MATERIAL')
         ->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')
         ->orderBy('producto','ASC')
         ->get();
@@ -682,7 +683,7 @@ class AsignacionMaterialController extends Controller{
     public function create_electronica($producto=false, $cliente=false){
         $this->getAllPermissions(Auth::user()->id);
         //echo $cliente;die;
-        $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+        $nro = NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
         $tipo_documento = Factura::where('empresa',Auth::user()->empresa)->latest('tipo')->first();
         $empresa =Auth::user()->empresaObj;
 
