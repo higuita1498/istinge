@@ -88,11 +88,14 @@ class AsignacionesController extends Controller
             $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
             Storage::disk('documentos')->put($nombre, \File::get($file), 'public');
             $contrato->documento = $nombre;
+            $directorioCompleto = Storage::disk('documentos') . '/' . $nombre;
+
             if (Storage::exists($directorioCompleto)) {
                 echo 'La imagen se ha guardado en el almacenamiento con éxito.';
             } else {
                 echo 'Hubo un problema al guardar la imagen.';
             }
+
             $xmax = 1080;
             $ymax = 720;
 
