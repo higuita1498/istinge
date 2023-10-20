@@ -86,15 +86,19 @@ class AsignacionesController extends Controller
             $contrato->fecha_isp = date('Y-m-d');
             $file = $request->file('documento');
             $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-            Storage::disk('documentos')->put($nombre, \File::get($file), 'public');
+            Storage::disk('documentos')->put($nombre, \File::get($file));
             $contrato->documento = $nombre;
-            $directorioCompleto = Storage::disk('documentos') . '/' . $nombre;
 
-            if (Storage::exists($directorioCompleto)) {
-                echo 'La imagen se ha guardado en el almacenamiento con éxito.';
+            if (Storage::disk('documentos')->exists($nombre)) {
+                // El archivo se ha guardado con éxito en el disco 'documentos'.
+                $contrato->documento = $nombre;
+                // Otras operaciones que desees realizar después de guardar el archivo.
             } else {
-                echo 'Hubo un problema al guardar la imagen.';
+                dd("no se guardo");
+                // Hubo un problema al guardar el archivo en el disco 'documentos'.
+                // Puedes manejar el error aquí según tus necesidades.
             }
+
 
             $xmax = 1080;
             $ymax = 720;
