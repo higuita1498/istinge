@@ -86,7 +86,7 @@ class AsignacionesController extends Controller
             $contrato->fecha_isp = date('Y-m-d');
             $file = $request->file('documento');
             $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-            Storage::disk('documentos')->put($nombre, \File::get($file));
+            Storage::disk('/adjuntos/documentos')->put($nombre, \File::get($file));
             $contrato->documento = $nombre;
 
             $xmax = 1080;
