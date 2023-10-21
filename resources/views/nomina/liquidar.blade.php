@@ -482,12 +482,12 @@
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
                                                 @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}">
                                                     <i class="far fa-eye color"></i>
                                                 </a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 @if($nomina->prestacionesSociales->count() == 0)
                                                 <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank"><i class="far fa-file color"></i></a>
                                                 @else
@@ -553,7 +553,7 @@
                                                 </div>
 
                                                 @endif
-                                                @endif
+                                                {{-- @endif --}}
                                                 {{-- <i class="far fa-paper-plane color"></i>--}}
                                             </td>
                                             @include('nomina.modals.extras-y-recargos')
