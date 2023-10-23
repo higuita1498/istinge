@@ -219,7 +219,7 @@ class ExportarReportesController extends Controller
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Facturas Electrónicas desde ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Items','Iva','Antes de Impuesto','Despues de Impuesto');
+        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Periodo Cobrado','Items','Iva','Antes de Impuesto','Despues de Impuesto');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -371,7 +371,7 @@ class ExportarReportesController extends Controller
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Facturas Estándar desde ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Items','Iva','Antes de Impuesto','Despues de Impuesto');
+        $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Periodo Cobrado','Items','Iva','Antes de Impuesto','Despues de Impuesto');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
