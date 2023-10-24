@@ -130,9 +130,7 @@ class ContratosController extends Controller
             if($request->cliente_id){
 
                 $contratos->where(function ($query) use ($request) {
-                    dd($query->orWhere('contracts.client_id', $request->cliente_id));
                     $query->orWhere('contracts.client_id', $request->cliente_id);
-                    dd($query->orWhere('contracts.client_id', $request->cliente_id));
                 });
             }
             if($request->plan){
@@ -319,7 +317,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->municipio}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
