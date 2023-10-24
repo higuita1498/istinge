@@ -128,9 +128,8 @@ class ContratosController extends Controller
         // return $contratos->get();
         if ($request->filtro == true) {
             if($request->cliente_id){
-
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.client_id', $request->cliente_id);
+                    $query->orWhere('contracts.client_id','like', "%{$request->cliente_id}%");
                 });
             }
             if($request->plan){
@@ -317,8 +316,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return $contrato->c_id;
-                // return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->municipio}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
