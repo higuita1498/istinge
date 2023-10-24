@@ -77,6 +77,13 @@
         	<div class="card shadow-sm border-0">
         		<div class="card-body py-3" style="background: #f9f9f9;">
         			<div class="row">
+                        <div class="col-md-4 pl-1 pt-1">
+                            <select title="Clientes" class="form-control selectpicker" id="client_id" name="client_id" data-size="5" data-live-search="true">
+                                @foreach ($clientes as $cliente)
+                                <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-2 pl-1 pt-1">
                             <input type="text" class="form-control" id="nro" name="nro" placeholder="Nro">
                         </div>
@@ -101,13 +108,7 @@
                         <div class="col-md-2 pl-1 pt-1">
                             <input type="text" class="form-control" id="mac" name="mac"  placeholder="MAC">
                         </div>
-                        <div class="col-md-4 pl-1 pt-1">
-                            <select title="Clientes" class="form-control selectpicker" id="client_id" name="client_id" data-size="5" data-live-search="true">
-                                @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nombre }} {{ $cliente->apellido1 }} {{ $cliente->apellido2 }} - {{ $cliente->nit }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+
         				<div class="col-md-3 pl-1 pt-1">
         					<select title="Planes" class="form-control selectpicker" id="plan" name="plan" data-size="5" data-live-search="true">
         						@foreach ($planes as $plan)
