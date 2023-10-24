@@ -129,7 +129,7 @@ class ContratosController extends Controller
         if ($request->filtro == true) {
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contactos.id',$request->cliente_id);
+                    $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
             if($request->plan){
