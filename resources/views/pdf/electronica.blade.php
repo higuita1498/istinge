@@ -399,8 +399,8 @@
                 <td style="border-bottom: 2px solid #ccc;">{{Carbon\Carbon::parse($factura->vencimiento)->format('d-m-Y')}}</td>
             </tr>
             <tr>
-                <th class="right smalltd">PERIODO COBRADO</th>
-                <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobradoTexto()}} {{$factura->diasCobradosProrrateo()}} días</td>
+                {{-- <th class="right smalltd">PERIODO COBRADO</th>
+                <td style="border-bottom: 2px solid #ccc;">{{$factura->periodoCobradoTexto()}} {{$factura->diasCobradosProrrateo()}} días</td> --}}
             </tr>
             <tr>
                 <th class="right smalltd">ESTADO FACTURA</th>
