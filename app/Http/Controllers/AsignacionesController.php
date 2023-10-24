@@ -68,7 +68,7 @@ class AsignacionesController extends Controller
             $idContrato = $request->contrato;
         }
 
-        $ext_permitidas = array('image/jpeg','image/png','image/gif');
+        $ext_permitidas = array('jpeg','png','gif');
         if (!$request->id) {
             $mensaje='Debe seleccionar un cliente para la asignación del contrato digital';
             return back()->with('danger', $mensaje);
@@ -86,13 +86,15 @@ class AsignacionesController extends Controller
             // $contrato->fecha_isp = date('Y-m-d');
             // $file = $request->file('documento');
             // $nombre =  $idContrato.'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-            // Storage::disk('documentos')->put($nombre, \File::get($file));
+            //   $ruta = public_path('/adjuntos/documentos/');
+                // $file->move($ruta, $nombre);
             // $contrato->documento = $nombre;
             try {
                 $contrato->fecha_isp = date('Y-m-d');
                 $file = $request->file('documento');
                 $nombre =  $idContrato . 'doc_' . $contrato->nit . '.' . $file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->documento = $nombre;
             } catch (\Exception $e) {
                 // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
@@ -102,15 +104,15 @@ class AsignacionesController extends Controller
             $xmax = 1080;
             $ymax = 720;
 
-            if(in_array($file->getMimeType(), $ext_permitidas)) {
-                switch($file->getMimeType()) {
-                    case 'image/jpeg':
+            if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                switch($file->getClientOriginalExtension()) {
+                    case 'jpeg':
                         $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
-                    case 'image/png':
+                    case 'png':
                         $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
-                    case 'image/gif':
+                    case 'gif':
                         $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                         break;
                 }
@@ -119,14 +121,14 @@ class AsignacionesController extends Controller
                 $y = imagesy($imagen);
 
                 if($x <= $xmax && $y <= $ymax) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
-                        case 'image/png':
+                        case 'png':
                             imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                             break;
                     }
@@ -140,14 +142,14 @@ class AsignacionesController extends Controller
                     }
                     $img2 = imagecreatetruecolor($nuevax, $nuevay);
                     imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                             break;
-                        case 'image/png':
+                        case 'png':
                             imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                             break;
                     }
@@ -157,18 +159,19 @@ class AsignacionesController extends Controller
             if($request->file('imgA')) {
                 $file = $request->file('imgA');
                 $nombre =  $idContrato.'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgA = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -177,14 +180,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -198,14 +201,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -216,18 +219,19 @@ class AsignacionesController extends Controller
             if($request->file('imgB')) {
                 $file = $request->file('imgB');
                 $nombre =  $idContrato.'imgB_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgB = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -236,14 +240,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -257,14 +261,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -275,18 +279,19 @@ class AsignacionesController extends Controller
             if($request->file('imgC')) {
                 $file = $request->file('imgC');
                 $nombre =  $idContrato.'imgC_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgC = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -295,14 +300,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -316,14 +321,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -334,17 +339,18 @@ class AsignacionesController extends Controller
             if($request->file('imgD')) {
                 $file = $request->file('imgD');
                 $nombre =  $idContrato.'imgD_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgD = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -353,14 +359,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -374,14 +380,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -392,18 +398,19 @@ class AsignacionesController extends Controller
             if($request->file('imgE')) {
                 $file = $request->file('imgE');
                 $nombre =  $idContrato.'imgE_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgE = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -412,14 +419,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -433,14 +440,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -451,17 +458,18 @@ class AsignacionesController extends Controller
             if($request->file('imgF')) {
                 $file = $request->file('imgF');
                 $nombre =  $idContrato.'imgF_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgF = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -470,14 +478,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -491,14 +499,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -509,17 +517,18 @@ class AsignacionesController extends Controller
             if($request->file('imgG')) {
                 $file = $request->file('imgG');
                 $nombre =  $idContrato.'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgG = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -528,14 +537,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -549,14 +558,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -567,18 +576,19 @@ class AsignacionesController extends Controller
             if($request->file('imgH')) {
                 $file = $request->file('imgH');
                 $nombre =  $idContrato.'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgH = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -587,14 +597,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -608,14 +618,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -640,7 +650,7 @@ class AsignacionesController extends Controller
 
     public function update(Request $request, $id)
     {
-        $ext_permitidas = array('image/jpeg','image/png','image/gif');
+        $ext_permitidas = array('jpeg','png','gif');
         $xmax = 1080;
         $ymax = 720;
         $contrato = Contacto::find($id);
@@ -653,18 +663,19 @@ class AsignacionesController extends Controller
             if($request->file('documento')) {
                 $file = $request->file('documento');
                 $nombre =  'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->documento = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -673,14 +684,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -694,14 +705,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -712,18 +723,19 @@ class AsignacionesController extends Controller
             if($request->file('imgA')) {
                 $file = $request->file('imgA');
                 $nombre =  'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgA = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -732,14 +744,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -753,14 +765,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -771,18 +783,19 @@ class AsignacionesController extends Controller
             if($request->file('imgB')) {
                 $file = $request->file('imgB');
                 $nombre =  'imgB_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgB = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -791,14 +804,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -812,14 +825,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -830,18 +843,19 @@ class AsignacionesController extends Controller
             if($request->file('imgC')) {
                 $file = $request->file('imgC');
                 $nombre =  'imgC_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgC = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -850,14 +864,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -871,14 +885,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -889,17 +903,18 @@ class AsignacionesController extends Controller
             if($request->file('imgD')) {
                 $file = $request->file('imgD');
                 $nombre =  'imgD_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgD = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -908,14 +923,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -929,14 +944,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -947,18 +962,19 @@ class AsignacionesController extends Controller
             if($request->file('imgE')) {
                 $file = $request->file('imgE');
                 $nombre =  'imgE_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgE = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -967,14 +983,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -988,14 +1004,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -1006,17 +1022,18 @@ class AsignacionesController extends Controller
             if($request->file('imgF')) {
                 $file = $request->file('imgF');
                 $nombre =  'imgF_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgF = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -1025,14 +1042,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -1046,14 +1063,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -1064,17 +1081,18 @@ class AsignacionesController extends Controller
             if($request->file('imgG')) {
                 $file = $request->file('imgG');
                 $nombre =  'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgG = $nombre;
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -1083,14 +1101,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -1104,14 +1122,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
@@ -1122,18 +1140,19 @@ class AsignacionesController extends Controller
             if($request->file('imgH')) {
                 $file = $request->file('imgH');
                 $nombre =  'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                  $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
                 $contrato->imgH = $nombre;
 
-                if(in_array($file->getMimeType(), $ext_permitidas)) {
-                    switch($file->getMimeType()) {
-                        case 'image/jpeg':
+                if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
+                    switch($file->getClientOriginalExtension()) {
+                        case 'jpeg':
                             $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/png':
+                        case 'png':
                             $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
-                        case 'image/gif':
+                        case 'gif':
                             $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
                             break;
                     }
@@ -1142,14 +1161,14 @@ class AsignacionesController extends Controller
                     $y = imagesy($imagen);
 
                     if($x <= $xmax && $y <= $ymax) {
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
                                 break;
                         }
@@ -1163,14 +1182,14 @@ class AsignacionesController extends Controller
                         }
                         $img2 = imagecreatetruecolor($nuevax, $nuevay);
                         imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()) {
-                            case 'image/jpeg':
+                        switch($file->getClientOriginalExtension()) {
+                            case 'jpeg':
                                 imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
-                            case 'image/png':
+                            case 'png':
                                 imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 9);
                                 break;
-                            case 'image/gif':
+                            case 'gif':
                                 imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 90);
                                 break;
                         }
