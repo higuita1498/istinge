@@ -1185,7 +1185,7 @@ class ContratosController extends Controller
                     }
 
                     /*IP ESTÁTICA*/
-                    dd($request->ip);
+
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
