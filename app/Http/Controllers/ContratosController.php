@@ -1196,6 +1196,19 @@ class ContratosController extends Controller
                                 )
                             );
 
+                            $API->comm("/queue/simple/add", array(
+                                "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
+                                "target"          => $request->ip,
+                                "max-limit"       => $plan->upload.'/'.$plan->download,
+                                "burst-limit"     => $burst_limit,
+                                "burst-threshold" => $burst_threshold,
+                                "burst-time"      => $burst_time,
+                                "priority"        => $priority,
+                                "limit-at"        => $limit_at,
+                                // "queue"           => $plan->queue_type_subida.'/'.$plan->queue_type_bajada
+                                )
+                            );
+
                             $getall = $API->comm("/ip/arp/getall", array(
                                 "?address" => $request->ip
                                 )
