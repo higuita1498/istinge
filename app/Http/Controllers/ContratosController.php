@@ -628,7 +628,7 @@ class ContratosController extends Controller
 
                 /*IP ESTÁTICA*/
                 if($request->conexion == 3){
-
+                    try {
                     if($mikrotik->amarre_mac == 1){
                         $request->validate([
                             'mac_address' => 'required'
@@ -689,7 +689,9 @@ class ContratosController extends Controller
                         );
                     }
                 }
-
+            } catch (error) {
+                console.error("Se ha producido un error: " + error.message);
+            }
                 /*VLAN*/
                 if($request->conexion == 4){
                     $API->comm("/interface/vlan/add", array(
