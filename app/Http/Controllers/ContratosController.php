@@ -1185,7 +1185,6 @@ class ContratosController extends Controller
                     }
 
                     /*IP ESTÁTICA*/
-
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
                             $API->comm("/ip/arp/add", array(
@@ -1193,19 +1192,6 @@ class ContratosController extends Controller
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
                                 "mac-address" => $request->mac_address
-                                )
-                            );
-
-                            $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
-                                "target"          => $request->ip,
-                                "max-limit"       => $plan->upload.'/'.$plan->download,
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold,
-                                "burst-time"      => $burst_time,
-                                "priority"        => $priority,
-                                "limit-at"        => $limit_at,
-                                // "queue"           => $plan->queue_type_subida.'/'.$plan->queue_type_bajada
                                 )
                             );
 
