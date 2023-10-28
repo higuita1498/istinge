@@ -544,7 +544,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel = new PHPExcel();
             $tituloReporte = "Reporte de Facturas Pagadas desde ".$request->fecha." hasta ".$request->hasta;
 
-            $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Celular','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Items','pagada','Iva','Antes de Impuesto','Despues de Impuesto');
+            $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Celular','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Periodo','Items','pagada','Iva','Antes de Impuesto','Despues de Impuesto');
             $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
             $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
             ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -634,8 +634,8 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[2].$i, $factura->cliente()->nit)
                 ->setCellValue($letras[3].$i, $factura->cliente()->estrato)
                 ->setCellValue($letras[4].$i, $factura->cliente()->municipio()->nombre)
-                ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                 ->setCellValue($letras[6].$i, $factura->cliente()->direccion)
+                ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                 ->setCellValue($letras[7].$i, date('d-m-Y', strtotime($factura->fecha)))
                 ->setCellValue($letras[8].$i, date('d-m-Y', strtotime($factura->vencimiento)))
                 ->setCellValue($letras[9].$i, $factura->emitida == 1 ? 'Emitida' : 'No Emitida')
