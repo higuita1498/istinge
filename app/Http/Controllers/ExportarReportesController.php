@@ -368,7 +368,6 @@ class ExportarReportesController extends Controller
             return $this->bigVentas($request);
         }
 
-
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Facturas Estándar desde ".$request->fecha." hasta ".$request->hasta;
 
@@ -625,6 +624,8 @@ class ExportarReportesController extends Controller
 
             // Aquí se escribe en el archivo
             $i=4;
+
+            $formaPago = $factura->cuentaPagoListIngreso();
 
             foreach ($facturas as $factura) {
                 $objPHPExcel->setActiveSheetIndex(0)
