@@ -284,7 +284,6 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label" id="div_local_address">Segmento de IP</label>
                                   <div class="input-group">
-                                    <p>Valor de local_address: {{ $contrato->local_address }}</p>
                                     <input type="hidden" id="segmento_bd" value="{{ $contrato->local_address }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
 
