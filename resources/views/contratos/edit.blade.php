@@ -282,7 +282,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label class="control-label" id="div_local_address">Segmento de IP</label>
+                                <label class="control-label" id="div_local_address">Segmento de IP 12</label>
                                   <div class="input-group">
                                     <input type="hidden" id="segmento_bd" value="{{ $contrato->local_address }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -306,7 +306,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 form-group  {{$contrato->local_address_new?'':'d-none'}}" id="new_segmento">
-                                <label class="control-label">Segmento de IP 12</label>
+                                <label class="control-label">Segmento de IP</label>
                                 <input type="text" class="form-control" name="local_address_new" value="{{$contrato->local_address_new}}" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
                             <div class="col-md-4 form-group  {{$contrato->ip_new?'':'d-none'}}" id="new_ip">
