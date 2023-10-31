@@ -79,9 +79,9 @@
         <input name="_method" type="hidden" value="PATCH">
         <input name="opciones_dian" id="opciones_dian" type="hidden" value="{{$contrato->opciones_dian}}">
         <input name="contrato_id" id="contrato_id" type="hidden" value="{{$contrato->id}}">
-        
+
         <div class="row card-description p-0">
-            <div class="col-md-4 form-group"> 
+            <div class="col-md-4 form-group">
                 <label class="control-label font-weight-bold">Nombre del Cliente</label>
                 <input type="text" class="form-control readonly"  id="nombre" name="nombre"  required="" value="{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}}" maxlength="200" readonly="">
                 <span class="help-block error">
@@ -214,7 +214,7 @@
                                 </select>
                             </div>
                             @endif
-                            
+
                             <div class="col-md-4 form-group d-none" id="div_opciones">
                                 <label class="control-label">{{$contrato->opciones_dian == 0 ? 'Habilitar' : 'Deshabilitar'}} opciones de facturacion electórnica?</label>
                                 <div class="input-group">
@@ -306,7 +306,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 form-group  {{$contrato->local_address_new?'':'d-none'}}" id="new_segmento">
-                                <label class="control-label">Segmento de IP</label>
+                                <label class="control-label">Segmento de IP 12</label>
                                 <input type="text" class="form-control" name="local_address_new" value="{{$contrato->local_address_new}}" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
                             <div class="col-md-4 form-group  {{$contrato->ip_new?'':'d-none'}}" id="new_ip">
@@ -627,7 +627,7 @@
                                   <strong></strong>
                               </span>
                           </div>
-                          
+
                             <div class="col-md-4 form-group">
                                 <div @if($contrato->tipo_nosuspension == 0) class="cls-nosuspension d-none" @endif>
                                 <label class="control-label">Fecha desde no suspensión</label>
@@ -657,7 +657,7 @@
 
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
         <hr>
-        
+
         <div class="row" >
             <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
                 <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">Cancelar</a>
@@ -665,7 +665,7 @@
             </div>
         </div>
     </form>
-    
+
     <div class="modal fade" id="modal-ips" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -677,7 +677,7 @@
                         </div>
                     </div>
                     <div class="row" style="text-align: center;" id="row_ip">
-                        
+
                     </div>
                 </div>
             </div>
@@ -835,7 +835,7 @@
                         },
 						method: 'post',
 						success: function (response) {
-				
+
 							if (response) {
 								Swal.fire({
 									position: 'top-center',
@@ -845,7 +845,7 @@
 									showConfirmButton: false,
 									timer: 5000
 								})
-                                location.reload();						
+                                location.reload();
 							}
 						}
 					});
@@ -869,6 +869,6 @@
             $('.cls-nosuspension').removeClass('d-none');
         }
     });
-        
+
     </script>
 @endsection
