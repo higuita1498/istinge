@@ -59,10 +59,17 @@
 								<option value="2">Enrutador</option>
 		                    </select>
 						</div>
-						<div class="col-md-3 pl-1 pt-1">
+                        <div class="col-md-3 pl-1 pt-1">
 						    <select id="nodo" class="form-control rounded selectpicker" title="Nodo" data-live-search="true" data-size="5">
 		                        @foreach($nodos as $nodo)
 		                            <option value="{{$nodo->id}}">{{$nodo->nombre}}</option>
+		                        @endforeach
+		                    </select>
+						</div>
+						<div class="col-md-3 pl-1 pt-1">
+						    <select id="nodo" class="form-control rounded selectpicker" title="Nodo" data-live-search="true" data-size="5">
+		                        @foreach($aps as $ap)
+		                            <option value="{{$ap->id}}">{{$ap->ip}}</option>
 		                        @endforeach
 		                    </select>
 						</div>

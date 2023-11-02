@@ -30,7 +30,8 @@ class APController extends Controller
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
-        return view('access-point.index')->with(compact('nodos'));
+        $aps = AP::query()->where('empresa', Auth::user()->empresa);
+        return view('access-point.index')->with(compact('nodos','aps'));
     }
 
     public function ap(Request $request){
@@ -41,6 +42,11 @@ class APController extends Controller
             if($request->nombre){
                 $aps->where(function ($query) use ($request) {
                     $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if($request->ip){
+                $aps->where(function ($query) use ($request) {
+                    $query->orWhere('ip', 'like', "%{$request->ip}%");
                 });
             }
             if($request->modo_red){
