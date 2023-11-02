@@ -69,7 +69,7 @@
 						<div class="col-md-3 pl-1 pt-1">
 						    <select id="nodo" class="form-control rounded selectpicker" title="IP" data-live-search="true" data-size="5">
 		                        @foreach($aps as $ap)
-		                            <option value="{{$ap->id}}">{{$ap->ip}}</option>
+		                            <option value="{{$ap->ip}}">{{$ap->ip}}</option>
 		                        @endforeach
 		                    </select>
 						</div>
