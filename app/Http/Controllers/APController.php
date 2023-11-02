@@ -48,6 +48,7 @@ class APController extends Controller
                 });
             }
             if($request->ip){
+                dd($request->ip);
                 $aps->where(function ($query) use ($request) {
                     $query->orWhere('ip', 'like', "%{$request->ip}%");
                 });
