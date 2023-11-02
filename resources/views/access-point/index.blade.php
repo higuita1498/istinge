@@ -67,7 +67,7 @@
 		                    </select>
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
-						    <select id="nodo" class="form-control rounded selectpicker" title="IP" data-live-search="true" data-size="5">
+						    <select id="ip" class="form-control rounded selectpicker" title="IP" data-live-search="true" data-size="5">
 		                        @foreach($aps as $ap)
 		                            <option value="{{$ap->ip}}">{{$ap->ip}}</option>
 		                        @endforeach
@@ -242,6 +242,7 @@
 	function cerrarFiltrador() {
 		$('#nombre').val('');
 		$('#modo_red').val('').selectpicker('refresh');
+        $('#ip').val('').selectpicker('refresh');
 		$('#nodo').val('').selectpicker('refresh');
 		$('#status').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
