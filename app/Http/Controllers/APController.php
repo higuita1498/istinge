@@ -41,7 +41,7 @@ class APController extends Controller
         $aps = AP::query()->where('empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
-            dd("ingresio a los filñtros");
+
             if($request->nombre){
                 $aps->where(function ($query) use ($request) {
                     $query->orWhere('nombre', 'like', "%{$request->nombre}%");
