@@ -36,6 +36,7 @@ class APController extends Controller
     }
 
     public function ap(Request $request){
+        dd($request->ip);
         $modoLectura = auth()->user()->modo_lectura();
         $aps = AP::query()->where('empresa', Auth::user()->empresa);
 
