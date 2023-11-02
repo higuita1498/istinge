@@ -142,6 +142,7 @@
 			},
 			columns: [
 			    {data: 'nombre'},
+                {data: 'ip'},
 			    {data: 'modo_red'},
 			    {data: 'nodo'},
 				{data: 'status'},
