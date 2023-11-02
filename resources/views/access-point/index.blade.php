@@ -183,6 +183,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nombre = $('#nombre').val();
             data.modo_red = $('#modo_red').val();
+            data.ip = $('#ip').val();
             data.nodo = $('#nodo').val();
             data.status = $('#status').val();
             data.filtro = true;
@@ -207,7 +208,7 @@
         	}
         });
 
-        $('#status, #modo_red').on('change',function() {
+        $('#status, #modo_red','#ip').on('change',function() {
         	getDataTable();
         	return false;
         });
