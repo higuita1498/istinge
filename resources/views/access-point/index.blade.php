@@ -31,7 +31,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}
@@ -107,6 +107,7 @@
 				<thead class="thead-dark">
 					<tr>
 					    <th>Nombre</th>
+                        <th>IP</th>
 					    <th>Modo de Red</th>
 					    <th>Nodo</th>
 						<th>Estado</th>
