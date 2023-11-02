@@ -31,6 +31,7 @@ class APController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $aps = AP::query()->where('empresa', Auth::user()->empresa);
+        dd($aps);
         return view('access-point.index')->with(compact('nodos','aps'));
     }
 
