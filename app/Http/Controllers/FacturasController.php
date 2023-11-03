@@ -304,6 +304,7 @@ class FacturasController extends Controller{
     * Tabla principal de facturación electrónica.
     */
     public function index_electronica(){
+        dd("estoy aqui");
         $this->getAllPermissions(Auth::user()->id);
         $empresaActual = auth()->user()->empresa;
 
