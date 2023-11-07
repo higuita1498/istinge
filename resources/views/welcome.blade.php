@@ -112,24 +112,24 @@
             @if(auth()->user()->modo_lectura())
             @else
 
-                 <div style="background:#57c7d4;">
+                 {{-- <div style="background:#57c7d4;">
                     <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario recuerde que su factura de servicio está próxima a vencer, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.<br>Si ya realizo el pago o no es su caso por favor realizar caso omiso.</p>
+                        <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario recuerde que su factura de servicio está próxima a vencer, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.<br>Si ya realizo el pago o no es su caso por favor realizar caso omiso.</p> --}}
 
                         {{-- <div class="form-group">
                             <label for="archivo">Adjuntar pago:</label>
                             <input type="file" name="archivo" id="archivo" class="form-control">
                         </div> --}}
-                        <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
+                        {{-- <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
 
-                            <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
+                            <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante! --}}
                                 {{-- <button>¡Enviar comprobante!</button> --}}
                             </a>
 
-                    </div>
+                    {{-- </div>
                     </form>
-                </div>
+                </div> --}}
 
             <div class="col-md-12">
                 <div class="card-body">
