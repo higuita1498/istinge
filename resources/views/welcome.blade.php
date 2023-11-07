@@ -125,6 +125,7 @@
                             <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
                                 {{-- <button>¡Enviar comprobante!</button> --}}
                             </a>
+
                     </div>
                     </form>
                 </div>
