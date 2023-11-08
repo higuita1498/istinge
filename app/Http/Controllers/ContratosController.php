@@ -1718,9 +1718,7 @@ class ContratosController extends Controller
 
         //$API->debug = true;
         if($contrato){
-            dd("consiguio el contrato");
                 if($contrato->plan_id){
-
                     $API = new RouterosAPI();
                     $API->port = $mikrotik->puerto_api;
 
@@ -1728,6 +1726,7 @@ class ContratosController extends Controller
                         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
 
                             $API->write('/ip/firewall/address-list/print', TRUE);
+                            dd("consultando la apin despues");
                             $ARRAYS = $API->read();
 
                             if($contrato->state == 'enabled'){
