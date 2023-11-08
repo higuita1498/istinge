@@ -1726,9 +1726,9 @@ class ContratosController extends Controller
                         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
 
                             $API->write('/ip/firewall/address-list/print', TRUE);
-                            dd("consultando la apin despues");
-                            $ARRAYS = $API->read();
 
+                            $ARRAYS = $API->read();
+                            dd("consultando la apin despues1");
                             if($contrato->state == 'enabled'){
                                 #AGREGAMOS A MOROSOS#
                                 $API->comm("/ip/firewall/address-list/add", array(
