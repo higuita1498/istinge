@@ -1730,7 +1730,7 @@ class ContratosController extends Controller
                             $ARRAYS = $API->read();
 
                             if($contrato->state == 'enabled'){
-                                dd("consultando la apin despues1");
+
                                 #AGREGAMOS A MOROSOS#
                                 $API->comm("/ip/firewall/address-list/add", array(
                                     "address" => $contrato->ip,
