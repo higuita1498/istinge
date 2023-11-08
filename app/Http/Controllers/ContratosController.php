@@ -1710,7 +1710,7 @@ class ContratosController extends Controller
     }
 
     public function state($id){
-        dd("cambio de estado");
+
         $this->getAllPermissions(Auth::user()->id);
 
         $contrato=Contrato::find($id);
