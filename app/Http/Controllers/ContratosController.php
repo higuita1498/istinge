@@ -1712,8 +1712,7 @@ class ContratosController extends Controller
     public function state($id){
 
         $this->getAllPermissions(Auth::user()->id);
-
-        $contrato=Contrato::find($id);
+        $contrato = Contrato::find($id);
         $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
 
         //$API->debug = true;
@@ -1721,16 +1720,11 @@ class ContratosController extends Controller
                 if($contrato->plan_id){
                     $API = new RouterosAPI();
                     $API->port = $mikrotik->puerto_api;
-
                     if ($contrato) {
                         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-
                             $API->write('/ip/firewall/address-list/print', TRUE);
-
                             $ARRAYS = $API->read();
-
                             if($contrato->state == 'enabled'){
-
                                 #AGREGAMOS A MOROSOS#
                                 $API->comm("/ip/firewall/address-list/add", array(
                                     "address" => $contrato->ip,
@@ -1738,22 +1732,20 @@ class ContratosController extends Controller
                                     "list" => 'morosos'
                                     )
                                 );
-                                #AGREGAMOS A MOROSOS#
 
+                                #AGREGAMOS A MOROSOS#
                                 #ELIMINAMOS DE IP_AUTORIZADAS#
                                 $API->write('/ip/firewall/address-list/print', false);
                                 $API->write('?address='.$contrato->ip, false);
                                 $API->write("?list=ips_autorizadas",false);
                                 $API->write('=.proplist=.id');
                                 $ARRAYS = $API->read();
-
                                 if(count($ARRAYS)>0){
                                     $API->write('/ip/firewall/address-list/remove', false);
                                     $API->write('=.id='.$ARRAYS[0]['.id']);
                                     $READ = $API->read();
                                 }
                                 #ELIMINAMOS DE IP_AUTORIZADAS#
-
                                 $contrato->state = 'disabled';
                                 $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Habilitado a Deshabilitado<br>';
                             }else{
@@ -1763,14 +1755,12 @@ class ContratosController extends Controller
                                 $API->write("?list=morosos",false);
                                 $API->write('=.proplist=.id');
                                 $ARRAYS = $API->read();
-
                                 if(count($ARRAYS)>0){
                                     $API->write('/ip/firewall/address-list/remove', false);
                                     $API->write('=.id='.$ARRAYS[0]['.id']);
                                     $READ = $API->read();
                                 }
                                 #ELIMINAMOS DE MOROSOS#
-
                                 #AGREGAMOS A IP_AUTORIZADAS#
                                 $API->comm("/ip/firewall/address-list/add", array(
                                     "address" => $contrato->ip,
@@ -1778,13 +1768,11 @@ class ContratosController extends Controller
                                     )
                                 );
                                 #AGREGAMOS A IP_AUTORIZADAS#
-
                                 $contrato->state = 'enabled';
                                 $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de Deshabilitado a Habilitado<br>';
                             }
                             $API->disconnect();
                             $contrato->save();
-
                             /*REGISTRO DEL LOG*/
                             $movimiento = new MovimientoLOG;
                             $movimiento->contrato    = $id;
@@ -1793,8 +1781,6 @@ class ContratosController extends Controller
                             $movimiento->created_by  = Auth::user()->id;
                             $movimiento->empresa     = Auth::user()->empresa;
                             $movimiento->save();
-
-
                             //crm registro
                             $crm = new CRM();
                             $crm->cliente = $contrato->cliente()->id;
@@ -1805,7 +1791,6 @@ class ContratosController extends Controller
                                 $crm->factura = $lastFact->id;
                             }
                             $crm->save();
-
                             $mensaje='EL CONTRATO NRO. '.$contrato->nro.' HA SIDO '.$contrato->status();
                             $type = 'success';
                         } else {
