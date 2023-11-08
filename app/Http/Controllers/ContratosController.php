@@ -1728,8 +1728,9 @@ class ContratosController extends Controller
                             $API->write('/ip/firewall/address-list/print', TRUE);
 
                             $ARRAYS = $API->read();
-                            dd("consultando la apin despues1");
+
                             if($contrato->state == 'enabled'){
+                                dd("consultando la apin despues1");
                                 #AGREGAMOS A MOROSOS#
                                 $API->comm("/ip/firewall/address-list/add", array(
                                     "address" => $contrato->ip,
