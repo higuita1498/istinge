@@ -33,10 +33,11 @@ function saldoContacto(id){
         method: 'get',
         success: function(data) {
             data = JSON.parse(data);
-            $('#total_saldo').val(data.saldo_favor);
-            $("#saldofavorcliente").val(data.saldo_favor);
-            let opcion = data.contrato;
-            let opcionEmision = data.boton_emision;
+            
+            $('#total_saldo').val(data[0]['saldo_favor']);
+            $("#saldofavorcliente").val(data[0]['saldo_favor']);
+            let opcion = data[0]['contrato'];
+            let opcionEmision = data[0]['boton_emision'];
             if(opcion == 0 || opcionEmision == 0){
               $("#form-ingresos-electronica").addClass('d-none');
             }else{
