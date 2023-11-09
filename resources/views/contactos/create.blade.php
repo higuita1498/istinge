@@ -188,6 +188,16 @@
 				<strong>{{ $errors->first('tipo_contacto') }}</strong>
 			</span>
 		</div>
+		<div class="form-group col-md-3">
+			<label class="control-label">¿Botones de emision disponibles en pagos?</label>
+			<select class="form-control selectpicker" id="boton_emision" name="boton_emision" title="Seleccione">
+				<option value="1" selected>Si</option>
+				<option value="0">No</option>
+			</select>
+			<span class="help-block error">
+				<strong>{{ $errors->first('boton_emision') }}</strong>
+			</span>
+		</div>
 		@if(Auth::user()->empresa()->oficina)
 		{{-- <div class="form-group col-md-3">
   			<label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>

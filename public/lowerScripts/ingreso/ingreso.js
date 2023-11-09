@@ -36,7 +36,8 @@ function saldoContacto(id){
             $('#total_saldo').val(data.saldo_favor);
             $("#saldofavorcliente").val(data.saldo_favor);
             let opcion = data.contrato;
-            if(opcion == 0){
+            let opcionEmision = data.boton_emision;
+            if(opcion == 0 || opcionEmision == 0){
               $("#form-ingresos-electronica").addClass('d-none');
             }else{
                 $("#form-ingresos-electronica").removeClass('d-none');
