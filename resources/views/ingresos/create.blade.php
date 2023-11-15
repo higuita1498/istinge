@@ -465,6 +465,8 @@
       
 
       <input type="hidden" @if($contrato) value="{{$contrato->opciones_dian}}" @else value="0" @endif id="input-ingresos-electronica"> 
+      @if($contrato)
+        @if($contrato->cliente()->boton_emision == 1)
       <div class="row form-inline fact-table" id="form-ingresos-electronica">
         <div class="col-md-6">
           <div class="alert alert-warning" role="alert">
@@ -490,6 +492,8 @@
           </div>
         </div>
       </div>
+        @endif
+      @endif
 
   		<div class="row mt-2">
         <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">

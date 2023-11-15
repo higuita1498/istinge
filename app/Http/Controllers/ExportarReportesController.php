@@ -625,9 +625,9 @@ class ExportarReportesController extends Controller
             // Aquí se escribe en el archivo
             $i=4;
 
-            $formaPago = $factura->cuentaPagoListIngreso();
-
+            
             foreach ($facturas as $factura) {
+                $formaPago = $factura->cuentaPagoListIngreso();
                 $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $factura->codigo)
                 ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
@@ -3567,12 +3567,19 @@ class ExportarReportesController extends Controller
                 $nombres.=$movimiento->cliente()->nombre . " " . $movimiento->cliente()->apellidos() ;
             }
 
+            $movNombre = "";
+            if($movimiento->padre()){
+                if($movimiento->padre()->created_by()){
+                    $movNombre = $movimiento->padre()->created_by()->nombres;
+                }
+            }
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, date('d-m-Y', strtotime($movimiento->fecha)))
                 ->setCellValue($letras[1].$i, $movimiento->id_modulo)
                 ->setCellValue($letras[2].$i, $nombres)
                 ->setCellValue($letras[3].$i, $identificacion)
-                ->setCellValue($letras[4].$i, $movimiento->padre() ? $movimiento->padre()->created_by()->nombres : '')
+                ->setCellValue($letras[4].$i, $movNombre)
                 ->setCellValue($letras[5].$i, $movimiento->banco()->nombre)
                 ->setCellValue($letras[6].$i, $movimiento->categoria())
                 ->setCellValue($letras[7].$i, $movimiento->estatus())
