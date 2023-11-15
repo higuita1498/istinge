@@ -286,7 +286,7 @@ class ContratosController extends Controller
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
-        dd($contratos);
+
         // $contratos->where('contracts.status', 1);
 
         $nodo = explode("-", $nodo);
@@ -304,11 +304,11 @@ class ContratosController extends Controller
             $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
-        if(Auth::user()->empresa()->oficina){
-            if(auth()->user()->oficina){
-                $contratos->where('contracts.oficina', auth()->user()->oficina);
-            }
-        }
+        // if(Auth::user()->empresa()->oficina){
+        //     if(auth()->user()->oficina){
+        //         $contratos->where('contracts.oficina', auth()->user()->oficina);
+        //     }
+        // }
 
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
