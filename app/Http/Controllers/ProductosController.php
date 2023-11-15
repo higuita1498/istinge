@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Carbon\Carbon;  
-use Mail; 
+use Carbon\Carbon;
+use Mail;
 use Validator;
-use Illuminate\Validation\Rule;  
-use Auth; 
+use Illuminate\Validation\Rule;
+use Auth;
 use DB;
 use Session;
 
@@ -28,7 +28,7 @@ class ProductosController extends Controller
         set_time_limit(300);
         view()->share(['inicio' => 'master', 'seccion' => 'productos', 'title' => 'Productos', 'icon' => 'far fa-hdd']);
     }
-    
+
     public function index_asignacion(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 21)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
@@ -132,11 +132,12 @@ class ProductosController extends Controller
         view()->share(['title' => 'Nueva Asignación', 'subseccion' => 'asignaciones_pro']);
 
         $contratos = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->where('contracts.oficina', Auth::user()->oficina)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get() : Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get();
-        $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->where('pp.nro', '>', 0)->where('inventario.type', 'MODEMS')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
+        // $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->where('pp.nro', '>', 0)->where('inventario.type', 'MODEMS')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
+        $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         return view('productos.create_asignacion')->with(compact('contratos', 'productos', 'oficinas'));
     }
-    
+
     public function store_asignacion(Request $request){
         $empresa = Auth::user()->empresa;
         $numero = Producto::where('empresa', $empresa)->where('tipo', 1)->get()->last();
