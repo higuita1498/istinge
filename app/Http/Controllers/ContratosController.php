@@ -304,11 +304,11 @@ class ContratosController extends Controller
             $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
-        // if(Auth::user()->empresa()->oficina){
-        //     if(auth()->user()->oficina){
-        //         $contratos->where('contracts.oficina', auth()->user()->oficina);
-        //     }
-        // }
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contratos->where('contracts.oficina', auth()->user()->oficina);
+            }
+        }
 
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
@@ -319,7 +319,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->municipio}</a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
