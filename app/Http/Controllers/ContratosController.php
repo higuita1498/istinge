@@ -290,7 +290,7 @@ class ContratosController extends Controller
         // $contratos->where('contracts.status', 1);
 
         $nodo = explode("-", $nodo);
-        dd($nodo);
+
         if ($nodo[0] == 'n') {
             $contratos->where('contracts.nodo', $nodo[1]);
         }elseif ($nodo[0] == 'a') {
