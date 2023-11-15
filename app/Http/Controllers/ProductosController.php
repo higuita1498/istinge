@@ -133,7 +133,7 @@ class ProductosController extends Controller
 
         $contratos = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->where('contracts.oficina', Auth::user()->oficina)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get() : Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')->where('contracts.status', 1)->select('contracts.id', 'contracts.nro', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')->orderBy('contactos.nombre', 'ASC')->get();
         // $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->where('pp.nro', '>', 0)->where('inventario.type', 'MODEMS')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
-        $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->where('inventario.type', 'MODEMS')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
+        $productos = Inventario::join('productos_bodegas as pp', 'pp.producto', '=', 'inventario.id')->select('inventario.id', 'inventario.ref', 'inventario.producto')->get();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         return view('productos.create_asignacion')->with(compact('contratos', 'productos', 'oficinas'));
     }
