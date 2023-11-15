@@ -131,7 +131,6 @@ class ContratosController extends Controller
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
-                dd($contratos);
             }
             if($request->plan){
                 $contratos->where(function ($query) use ($request) {
@@ -286,8 +285,9 @@ class ContratosController extends Controller
             }
         }
 
-        // $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
-        $contratos->where('contracts.status', 1);
+        $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
+        dd($contratos);
+        // $contratos->where('contracts.status', 1);
 
         $nodo = explode("-", $nodo);
 
