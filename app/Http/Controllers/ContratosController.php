@@ -70,7 +70,7 @@ class ContratosController extends Controller
     public function index(Request $request){
 
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::join('contracts', 'contracts.client_id', '=', 'contactos.id')->where('contracts.state','enabled')->whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
@@ -286,9 +286,6 @@ class ContratosController extends Controller
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
-
-        // $contratos->where('contracts.status', 1);
-
         $nodo = explode("-", $nodo);
 
         if ($nodo[0] == 'n') {
@@ -304,11 +301,11 @@ class ContratosController extends Controller
             $contratos->where('contracts.plan_id', $nodo[1]);
         }
 
-         if(Auth::user()->empresa()->oficina){
-             if(auth()->user()->oficina){
-                 $contratos->where('contracts.oficina', auth()->user()->oficina);
-             }
-         }
+        if(Auth::user()->empresa()->oficina){
+            if(auth()->user()->oficina){
+                $contratos->where('contracts.oficina', auth()->user()->oficina);
+            }
+        }
 
         return datatables()->eloquent($contratos)
             ->editColumn('nro', function (Contrato $contrato) {
@@ -319,7 +316,7 @@ class ContratosController extends Controller
                 }
             })
             ->editColumn('client_id', function (Contrato $contrato) {
-                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} </a>";
+                return  "<a href=" . route('contactos.show', $contrato->c_id) . ">{$contrato->c_nombre} {$contrato->c_apellido1} {$contrato->c_apellido2} {$contrato->municipio}</a>";
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
