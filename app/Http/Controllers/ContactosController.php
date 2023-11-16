@@ -1509,7 +1509,7 @@ class ContactosController extends Controller
        }
 
     //    metodo para ya crear los campos en base de datos
-    public function newcampos(){
-        dd("quieres ctear mas campos");
+    public function newcampos(Request $request){
+        dd($request);
     }
 }
