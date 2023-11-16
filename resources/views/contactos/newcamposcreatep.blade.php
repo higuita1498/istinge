@@ -12,20 +12,10 @@
         }, 5000);
     </script>
 @endif
-<form action="{{ url('/contact') }}" method="post">
-    @csrf
 
-    <div id="form-fields">
-        <!-- Aquí se agregarán dinámicamente los campos de entrada -->
-    </div>
-
-    <button type="button" onclick="addInput()">Agregar Campo</button>
-    <button type="submit">Enviar</button>
-</form>
-
-{{-- <form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+<form method="POST" action="{{ route('contactos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
 	@csrf
-	<div class="row"> --}}
+	<div class="row">
 		{{-- <div class="form-group col-md-3">
 			<label class="control-label">Tipo de Identificación <span class="text-danger">*</span></label>
 			<select class="form-control selectpicker" name="tip_iden" id="tip_iden" required="" onchange="searchDV(this.value)" title="Seleccione">
@@ -37,7 +27,7 @@
 				<strong>{{ $errors->first('tip_iden') }}</strong>
 			</span>
 		</div> --}}
-		{{-- <div class="form-group col-md-3">
+		<div class="form-group col-md-3">
 			<label class="control-label">Coloque el titulo del campo 1<span class="text-danger">*</span><a><i data-tippy-content="Este seria el cuarto campo 1 que podrias agregar al formulario de contacto" class="icono far fa-question-circle"></i></a></label>
 			<input type="text" class="form-control" name="nit" id="nit" value="{{old('nit')}}" >
 
@@ -98,7 +88,7 @@
             <span class="help-block error">
 				<strong>{{ $errors->first('nit') }}</strong>
 			</span>
-		</div> --}}
+		</div>
 
 		{{-- <div class="form-group col-md-1" style="display: none;" id="dvnit">
 			<label class="control-label">DV <span class="text-danger">*</span></label>
@@ -130,7 +120,7 @@
                 <strong>{{ $errors->first('apellido2') }}</strong>
             </span>
         </div> --}}
-	{{-- </div> --}}
+	</div>
 	{{-- <div class="row" id="tipop" style="display: none;">
 		<div class="form-group col-md-3">
 			<label class="control-label">Tipo Persona<span class="text-danger">*</span></label>
@@ -303,7 +293,7 @@
 	</div> --}}
 
 	{{-- <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small> --}}
-	{{-- <hr>
+	<hr>
 
 	<div class="row" style="text-align: right;">
 		<div class="col-md-12">
@@ -311,41 +301,9 @@
 			<button type="submit" id="button-save" class="btn btn-success">Guardar</button>
 		</div>
 	</div>
-</form> --}}
+</form>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script>
-    let fieldCounter = 1;
-    const maxFields = 5;
-
-    function addInput() {
-        if (fieldCounter <= maxFields) {
-            const formFields = document.getElementById('form-fields');
-            const inputContainer = document.createElement('div');
-
-            // Crear un nuevo campo de entrada
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.name = 'field_' + fieldCounter;
-            input.placeholder = 'Campo ' + fieldCounter;
-
-            // Crear un nuevo título para el campo de entrada
-            const label = document.createElement('label');
-            label.innerHTML = 'Campo ' + fieldCounter;
-
-            // Agregar el título y el campo de entrada al contenedor
-            inputContainer.appendChild(label);
-            inputContainer.appendChild(input);
-
-            // Agregar el contenedor al formulario
-            formFields.appendChild(inputContainer);
-
-            fieldCounter++;
-        } else {
-            alert('¡Ya has alcanzado el límite de campos (5)!');
-        }
-    }
-</script>
 <script>
 	$(document).ready(function() {
 		let lastRegis = new URLSearchParams(window.location.search);
