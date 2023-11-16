@@ -13,7 +13,7 @@
     </script>
 @endif
 
-<form method="POST" action="{{ route('contact.new') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
+<form method="POST" action="{{ route('contact.new.campos') }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-contacto">
 	@csrf
 	<div class="row">
 		{{-- <div class="form-group col-md-3">

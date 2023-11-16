@@ -35,6 +35,7 @@ Route::get('clear', function () {
 });
 
 Route::get('contact/newcam','ContactosController@indexcampos')->name('contact.new');
+Route::get('contact/campos','ContactosController@newcampos')->name('contact.new.campos');
 
 
 /* IMPORTAR API*/
