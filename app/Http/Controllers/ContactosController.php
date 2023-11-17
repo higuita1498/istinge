@@ -632,6 +632,13 @@ class ContactosController extends Controller
             $contacto->oficina = $request->oficina;
             $contacto->router = $request->router;
             $contacto->boton_emision = $request->boton_emision;
+            //nuevos cmapos agregados
+            $contacto->monitoreo = $request->monitoreo;
+            $contacto->refiere = $request->refiere;
+            $contacto->combo_int_tv = $request->combo_int_tv;
+            $contacto->referencia_1 = $request->referencia_1;
+            $contacto->referencia_2 = $request->referencia_2;
+            $contacto->cierra_venta = $request->cierra_venta;
 
             $contacto->save();
 
