@@ -157,44 +157,44 @@
   		</div>
           <div class="form-group col-md-3">
             <label class="control-label">Monitoreo</label>
-            <input type="text" class="form-control" id="fax" name="fax" maxlength="15" value="{{old('fax')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="monitoreo" name="monitoreo" maxlength="15" value="{{old('monitoreo')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('fax') }}</strong>
+                <strong>{{ $errors->first('monitoreo') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Refiere</label>
-            <input type="text" class="form-control" id="fax" name="fax" maxlength="15" value="{{old('fax')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="refiere" name="refiere" maxlength="15" value="{{old('refiere')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('fax') }}</strong>
+                <strong>{{ $errors->first('refiere') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Combo INT y TV</label>
-            <input type="text" class="form-control" id="fax" name="fax" maxlength="15" value="{{old('fax')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="combo_int_tv" name="combo_int_tv" maxlength="15" value="{{old('combo_int_tv')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('fax') }}</strong>
+                <strong>{{ $errors->first('combo_int_tv') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Referencia I</label>
-            <input type="text" class="form-control" id="referencia1" name="referencia1" maxlength="15" value="{{old('referencia1')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="referencia_1" name="referencia_1" maxlength="15" value="{{old('referencia_1')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('referencia1') }}</strong>
+                <strong>{{ $errors->first('referencia_1') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Referencia II</label>
-            <input type="text" class="form-control" id="referencia2" name="referencia2" maxlength="15" value="{{old('referencia2')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="referencia_2" name="referencia_2" maxlength="15" value="{{old('referencia_2')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('referencia2') }}</strong>
+                <strong>{{ $errors->first('referencia_2') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Cierra Venta</label>
-            <input type="text" class="form-control" id="cierraventa" name="cierraventa" maxlength="15" value="{{old('cierraventa')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="cierra_venta" name="cierra_venta" maxlength="15" value="{{old('cierra_venta')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
             <span class="help-block error">
-                <strong>{{ $errors->first('cierraventa') }}</strong>
+                <strong>{{ $errors->first('cierra_venta') }}</strong>
             </span>
         </div>
   	</div>

@@ -451,6 +451,13 @@ class ContactosController extends Controller
         $contacto->fk_idmunicipio = $request->municipio;
         $contacto->cod_postal = $request->cod_postal;
         $contacto->boton_emision = $request->boton_emision;
+        //nuevos cmapos agregados
+        $contacto->monitoreo = $request->monitoreo;
+        $contacto->refiere = $request->refiere;
+        $contacto->combo_int_tv = $request->combo_int_tv;
+        $contacto->referencia_1 = $request->referencia_1;
+        $contacto->referencia_2 = $request->referencia_2;
+        $contacto->cierra_venta = $request->cierra_venta;
 
         if ($request->tipo_persona == null) {
             $contacto->tipo_persona = 1;
