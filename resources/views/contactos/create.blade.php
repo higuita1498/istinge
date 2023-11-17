@@ -157,42 +157,42 @@
   		</div>
           <div class="form-group col-md-3">
             <label class="control-label">Monitoreo</label>
-            <input type="text" class="form-control" id="monitoreo" name="monitoreo" maxlength="15" value="{{old('monitoreo')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="monitoreo" name="monitoreo" maxlength="15" value="{{old('monitoreo')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('monitoreo') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Refiere</label>
-            <input type="text" class="form-control" id="refiere" name="refiere" maxlength="15" value="{{old('refiere')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="refiere" name="refiere" maxlength="15" value="{{old('refiere')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('refiere') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Combo INT y TV</label>
-            <input type="text" class="form-control" id="combo_int_tv" name="combo_int_tv" maxlength="15" value="{{old('combo_int_tv')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="combo_int_tv" name="combo_int_tv" maxlength="15" value="{{old('combo_int_tv')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('combo_int_tv') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Referencia I</label>
-            <input type="text" class="form-control" id="referencia_1" name="referencia_1" maxlength="15" value="{{old('referencia_1')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="referencia_1" name="referencia_1" maxlength="15" value="{{old('referencia_1')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('referencia_1') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Referencia II</label>
-            <input type="text" class="form-control" id="referencia_2" name="referencia_2" maxlength="15" value="{{old('referencia_2')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="referencia_2" name="referencia_2" maxlength="15" value="{{old('referencia_2')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('referencia_2') }}</strong>
             </span>
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Cierra Venta</label>
-            <input type="text" class="form-control" id="cierra_venta" name="cierra_venta" maxlength="15" value="{{old('cierra_venta')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+            <input type="text" class="form-control" id="cierra_venta" name="cierra_venta" maxlength="15" value="{{old('cierra_venta')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('cierra_venta') }}</strong>
             </span>
