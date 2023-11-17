@@ -291,7 +291,7 @@
     					    <tr id="tr_adjunto">
     							<th>Archivo Adjunto</th>
     							<td>
-    								<a href="{{ public_path('adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>
+    								<a href="{{  url('adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>
     								<a href="javascript:eliminar('{{$radicado->id}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto"><i class="fas fa-times"></i></a>
     	                        </td>
     						</tr>
