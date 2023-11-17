@@ -151,7 +151,7 @@
 				<table class="table table-striped table-bordered table-sm info">
 					<tbody>
 						<tr>
-							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES2 {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
 						</tr>
 						@if($contacto->serial_onu)
 						<tr>
