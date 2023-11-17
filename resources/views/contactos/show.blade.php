@@ -151,7 +151,7 @@
 				<table class="table table-striped table-bordered table-sm info">
 					<tbody>
 						<tr>
-							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES2 {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
+							<th class="bg-th text-center" colspan="2" style="font-size: 1em;"><strong>DATOS GENERALES {{$contacto->tipo_contacto==0?'DEL CLIENTE':'DEL PROVEEDOR'}}</strong></th>
 						</tr>
 						@if($contacto->serial_onu)
 						<tr>
@@ -243,6 +243,49 @@
 							<td>{{$contacto->email}}</td>
 						</tr>
 						@endif
+                        {{-- nuevos campos agregados  --}}
+                        @if($contacto->email)
+						<tr>
+							<th width="20%">Monitoreo</th>
+							<td>{{$contacto->monitoreo}}</td>
+						</tr>
+						@endif
+
+                        @if($contacto->refiere)
+						<tr>
+							<th width="20%">Refiere</th>
+							<td>{{$contacto->refiere}}</td>
+						</tr>
+						@endif
+
+                        @if($contacto->combo_int_tv)
+						<tr>
+							<th width="20%">Combo INT y TV</th>
+							<td>{{$contacto->combo_int_tv}}</td>
+						</tr>
+						@endif
+
+                        @if($contacto->referencia_1)
+						<tr>
+							<th width="20%">Referencia 1</th>
+							<td>{{$contacto->referencia_1}}</td>
+						</tr>
+						@endif
+
+                        @if($contacto->referencia_2)
+						<tr>
+							<th width="20%">Referencia 2</th>
+							<td>{{$contacto->referencia_2}}</td>
+						</tr>
+						@endif
+
+                        @if($contacto->cierra_venta)
+						<tr>
+							<th width="20%">Cierra Venta</th>
+							<td>{{$contacto->cierra_venta}}</td>
+						</tr>
+						@endif
+                        {{-- fin de campos agregados --}}
 						@if($contacto->oficina)
 						<tr>
 							<th width="20%">Oficina Asociada</th>
