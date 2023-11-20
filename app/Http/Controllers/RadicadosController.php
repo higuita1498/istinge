@@ -825,8 +825,8 @@ class RadicadosController extends Controller{
     public function eliminarAdjunto($id){
 
         $valores = explode(',', $id);
-        dd($valores);
-        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id[0])->first();
+        dd($radicado);
         if($radicado){
             Storage::disk('documentos')->delete($radicado->adjunto);
             $radicado->adjunto = NULL;
