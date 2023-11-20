@@ -143,7 +143,7 @@
                             @endif
 
                             @if (!$radicado->adjunto_audio)
-                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjuntoaudio" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar audio</a>
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalaudio" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar audio</a>
                             {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
@@ -540,7 +540,7 @@
     </div>
 
     {{-- modal audio --}}
-    <div class="modal fade" id="modalAdjunto4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalaudio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     	<div class="modal-dialog modal-dialog-centered">
     		<div class="modal-content">
     			<div class="modal-header">
