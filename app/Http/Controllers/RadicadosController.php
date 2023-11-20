@@ -394,6 +394,7 @@ class RadicadosController extends Controller{
     }
 
     public function update(Request $request, $id){
+        dd("ingreso para actualizar archivos");
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if($request->adjunto){
