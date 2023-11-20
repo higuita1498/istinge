@@ -321,6 +321,14 @@
     	                        </td>
     						</tr>
     					@endif
+                        @if ($radicado->adjunto_audio)
+    						<tr>
+    							<th>evidencia en audio</th>
+    							<td>
+    								<a href="{{asset('adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Escuchar audio"><i class="fas fa-eye"></i>
+    	                        </td>
+    						</tr>
+    					@endif
     					@if(($radicado->adjunto) || ($radicado->adjunto_1) || ($radicado->adjunto_2) || ($radicado->adjunto_3) || ($radicado->adjunto_4))
     					    <tr id="tr_adjunto">
     							<th>Archivos Adjunto</th>
