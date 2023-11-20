@@ -822,8 +822,8 @@ class RadicadosController extends Controller{
         return back('empresa/radicados')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function eliminarAdjunto($id){
-        dd($id);
+    public function eliminarAdjunto($id,$num){
+        dd($num);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if($radicado){
             Storage::disk('documentos')->delete($radicado->adjunto);
