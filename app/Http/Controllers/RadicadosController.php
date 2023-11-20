@@ -459,8 +459,7 @@ class RadicadosController extends Controller{
 
                 $radicado->adjunto_3 = $request->adjunto3;
                 $file = $request->file('adjunto3');
-                dd($file->getClientOriginalName());
-                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                $nombre = $radicado->codigo.'-'.'3'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto_3 = $nombre;
                 $radicado->update();
