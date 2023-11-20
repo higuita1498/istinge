@@ -492,6 +492,25 @@ class RadicadosController extends Controller{
                 return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
             }
 
+            if($request->archivo_de_audio){
+                $radicado->adjunto_audio = $request->archivo_de_audio;
+                $file = $request->file('archivo_de_audio');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto_audio = $nombre;
+                $radicado->update();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
+
             if ($request->reporte) {
                 $radicado->reporte = $request->reporte;
                 $radicado->update();
@@ -579,7 +598,6 @@ class RadicadosController extends Controller{
     }
 
     public function destroy($id){
-        dd("hola eliminar");
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if($radicado->adjunto){
@@ -587,25 +605,18 @@ class RadicadosController extends Controller{
             }
 
             if($radicado->adjunto_1){
-                dd("ingreso a eliminar 1");
                 Storage::disk('documentos')->delete($radicado->adjunto_);
             }
 
             if($radicado->adjunto_2){
-                dd("ingreso a eliminar 2");
-
                 Storage::disk('documentos')->delete($radicado->adjunto_2);
             }
 
             if($radicado->adjunto_3){
-                dd("ingreso a eliminar 3");
-
                 Storage::disk('documentos')->delete($radicado->adjunto_3);
             }
 
             if($radicado->adjunto_4){
-                dd("ingreso a eliminar 4");
-
                 Storage::disk('documentos')->delete($radicado->adjunto_4);
             }
 
@@ -811,8 +822,7 @@ class RadicadosController extends Controller{
         return back('empresa/radicados')->with('danger', 'No existe un registro con ese id');
     }
 
-    public function eliminarAdjunto($id){
-        dd("hola eliminas");
+    public function eliminarAdjunto($id,$id_adjunto){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if($radicado){
             Storage::disk('documentos')->delete($radicado->adjunto);

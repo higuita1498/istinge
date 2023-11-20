@@ -539,6 +539,38 @@
     	</div>
     </div>
 
+    {{-- modal audio --}}
+    <div class="modal fade" id="modalAdjunto4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR AUDIO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+                            <input type="file" name="archivo_de_audio" accept="audio/*" required id="adjunto">
+    						{{-- <input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required> --}}
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjunto</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+
 @endsection
 
 @section('scripts')
@@ -558,7 +590,7 @@
             $('#boton-acciones').html('Acciones del Radicado&nbsp;&nbsp;<i class="fas fa-caret-down"></i>');
         }
 
-        function eliminar(id){
+        function eliminar(id,$num){
         	swal({
         		title: '¿Está seguro de eliminar el archivo adjunto del sistema?',
         		text: 'Se borrara de forma permanente',
