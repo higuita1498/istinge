@@ -579,6 +579,7 @@ class RadicadosController extends Controller{
     }
 
     public function destroy($id){
+        dd($id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if($radicado->adjunto){
