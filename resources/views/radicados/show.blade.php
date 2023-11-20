@@ -112,7 +112,7 @@
                                 @endif
                             @endif
 
-                            @if ($radicado->adjunto)
+                            @if (!$radicado->adjunto)
                                 <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a>
                                 {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
