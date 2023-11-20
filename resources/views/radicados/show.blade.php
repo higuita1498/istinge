@@ -430,7 +430,7 @@
     			</div>
     			<div class="modal-footer">
     				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    				<button type="submit" class="btn btn-success">Subir Adjunto</button>
     			</div>
     			</form>
     		</div>
@@ -461,7 +461,7 @@
     			</div>
     			<div class="modal-footer">
     				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    				<button type="submit" class="btn btn-success">Subir Adjunto</button>
     			</div>
     			</form>
     		</div>
@@ -492,7 +492,7 @@
     			</div>
     			<div class="modal-footer">
     				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    				<button type="submit" class="btn btn-success">Subir Adjunto</button>
     			</div>
     			</form>
     		</div>
@@ -523,7 +523,7 @@
     			</div>
     			<div class="modal-footer">
     				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    				<button type="submit" class="btn btn-success">Subir Adjunto</button>
     			</div>
     			</form>
     		</div>
