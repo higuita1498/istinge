@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Network Soft - Software Administrativo de ISP</title>
+  <title>Integra Colombia - Software Administrativo de ISP</title>
   <!-- plugins:css -->
    <link href="{{asset('vendors/iconfonts/mdi/css/materialdesignicons.min.css')}}" rel="stylesheet" type="text/css"/>
    <link href="{{asset('vendors/css/vendor.bundle.base.css')}}" rel="stylesheet" type="text/css"/>

@@ -29,7 +29,7 @@
     				<p class="text-justify"><b>Nota: Si no recibe la ApiKey en 2 minutos, intente nuevamente después de 24 horas.</b></p>
     				<p class="text-justify">- El mensaje de WhatsApp del bot contendrá la API Key necesaria para enviar mensajes usando la API. Puede enviar mensajes de texto utilizando la API después de recibir la confirmación.<br><br><b>Ejemplo:</b></p>
     				<center><img src="{{ asset('images/callmebot.jpg') }}" class="img-fluid mb-3 border-dark border"></center>
-    				<p class="text-justify">- Una vez que se obtiene el API Key, se procede a configurarlo acá en Network Soft para disfrutar de la funcionalidad.</p>
+    				<p class="text-justify">- Una vez que se obtiene el API Key, se procede a configurarlo acá en Integra Colombia para disfrutar de la funcionalidad.</p>
     			</div>
     			<div class="modal-footer">
     				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>

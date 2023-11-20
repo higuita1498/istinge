@@ -1683,7 +1683,7 @@ class ConfiguracionController extends Controller
           $emails = $empresa->email;
           $tituloCorreo = "Set de Pruebas Habilitado";
           self::sendMail('emails.dian.settestid', compact('empresa'), compact('emails', 'tituloCorreo'), function ($message) use ($emails, $tituloCorreo) {
-              $message->from('info@gestordepartes.net', 'Facturación Electrónica - Network Soft');
+              $message->from('info@gestordepartes.net', 'Facturación Electrónica - Integra Colombia');
               $message->to($emails)->subject($tituloCorreo);
           });
       } else {

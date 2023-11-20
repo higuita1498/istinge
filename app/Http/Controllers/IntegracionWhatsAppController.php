@@ -94,7 +94,7 @@ class IntegracionWhatsAppController extends Controller
 
         if($servicio){
             if($servicio->api_key && $servicio->numero){
-                $mensaje = 'SMS Prueba (CallMEBot) | Network Soft - Software Administrativo de ISP';
+                $mensaje = 'SMS Prueba (CallMEBot) | Integra Colombia - Software Administrativo de ISP';
                 $url='https://api.callmebot.com/whatsapp.php?source=php&phone=+'.$servicio->numero.'&text='.urlencode($mensaje).'&apikey='.$servicio->api_key;
 
                 if($ch = curl_init($url)){

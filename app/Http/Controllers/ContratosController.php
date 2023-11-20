@@ -3147,20 +3147,20 @@ class ContratosController extends Controller
             $j++;
         }*/
 
-        $objPHPExcel->getActiveSheet()->getComment('A3')->setAuthor('Network Soft')->getText()->createTextRun('Identificacion del Cliente ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del plan ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('E3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la mikrotik ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('F3')->setAuthor('Network Soft')->getText()->createTextRun('Habilitado o Deshabilitado');
-        $objPHPExcel->getActiveSheet()->getComment('I3')->setAuthor('Network Soft')->getText()->createTextRun('PPPOE, DHCP, IP Estatica o VLAN');
-        $objPHPExcel->getActiveSheet()->getComment('L3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del nodo ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('M3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del access point ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('N3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del grupo de corte ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('O3')->setAuthor('Network Soft')->getText()->createTextRun('Estandar o Electronica');
-        $objPHPExcel->getActiveSheet()->getComment('Q3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre del canal ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('R3')->setAuthor('Network Soft')->getText()->createTextRun('Nombre de la oficina ya registrado en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Fibra o Inalambrica');
-        $objPHPExcel->getActiveSheet()->getComment('T3')->setAuthor('Network Soft')->getText()->createTextRun('Fecha en formato yyyy-mm-dd hh:mm:ss');
-        $objPHPExcel->getActiveSheet()->getComment('U3')->setAuthor('Network Soft')->getText()->createTextRun('Indique son Si o No');
+        $objPHPExcel->getActiveSheet()->getComment('A3')->setAuthor('Integra Colombia')->getText()->createTextRun('Identificacion del Cliente ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre del plan ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('E3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre de la mikrotik ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('F3')->setAuthor('Integra Colombia')->getText()->createTextRun('Habilitado o Deshabilitado');
+        $objPHPExcel->getActiveSheet()->getComment('I3')->setAuthor('Integra Colombia')->getText()->createTextRun('PPPOE, DHCP, IP Estatica o VLAN');
+        $objPHPExcel->getActiveSheet()->getComment('L3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre del nodo ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('M3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre del access point ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('N3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre del grupo de corte ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('O3')->setAuthor('Integra Colombia')->getText()->createTextRun('Estandar o Electronica');
+        $objPHPExcel->getActiveSheet()->getComment('Q3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre del canal ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('R3')->setAuthor('Integra Colombia')->getText()->createTextRun('Nombre de la oficina ya registrado en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Integra Colombia')->getText()->createTextRun('Fibra o Inalambrica');
+        $objPHPExcel->getActiveSheet()->getComment('T3')->setAuthor('Integra Colombia')->getText()->createTextRun('Fecha en formato yyyy-mm-dd hh:mm:ss');
+        $objPHPExcel->getActiveSheet()->getComment('U3')->setAuthor('Integra Colombia')->getText()->createTextRun('Indique son Si o No');
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(

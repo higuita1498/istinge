@@ -77,7 +77,7 @@
                                     <tr>
                                         <td style="padding:0 0 20px 0;color:#153643;">
                                             <p style="margin:12px 0 0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;text-align: justify;">
-                                                Lo invitamos a ingresar a "Network Soft - Software Administrativo de ISP" y revisar los reportes para tomar las medidas necesarias.
+                                                Lo invitamos a ingresar a "Integra Colombia - Software Administrativo de ISP" y revisar los reportes para tomar las medidas necesarias.
                                             </p>
                                         </td>
                                     </tr>
@@ -93,7 +93,7 @@
                                     <tr>
                                         <td style="padding:0;width:100%;" align="center">
                                             <p style="margin:0;font-size:14px;line-height:16px;font-family:Arial,sans-serif;color:#ffffff;">
-                                                Copyright © {{ $datos[0]['empresa'] }} 2022<br>Todos los derechos reservados<br><b>Network Soft - Software Administrativo de ISP</b>
+                                                Copyright © {{ $datos[0]['empresa'] }} 2022<br>Todos los derechos reservados<br><b>Integra Colombia - Software Administrativo de ISP</b>
                                             </p>
                                         </td>
                                     </tr>

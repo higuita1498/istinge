@@ -1228,8 +1228,8 @@ class ContactosController extends Controller
             $j++;
         }*/
 
-        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Network Soft')->getText()->createTextRun('Utilizar los tipos de identificación como se indican en el sistema');
-        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Network Soft')->getText()->createTextRun('Escribir Cliente, Proveedor o Cliente/Proveedor.');
+        $objPHPExcel->getActiveSheet()->getComment('D3')->setAuthor('Integra Colombia')->getText()->createTextRun('Utilizar los tipos de identificación como se indican en el sistema');
+        $objPHPExcel->getActiveSheet()->getComment('S3')->setAuthor('Integra Colombia')->getText()->createTextRun('Escribir Cliente, Proveedor o Cliente/Proveedor.');
 
         $estilo = ['font' => ['size' => 12, 'name' => 'Times New Roman'],
             'borders' => [

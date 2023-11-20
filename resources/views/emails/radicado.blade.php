@@ -114,7 +114,7 @@
                                     <tr>
                                         <td style="padding:0;width:100%;" align="center">
                                             <p style="margin:0;font-size:14px;line-height:16px;font-family:Arial,sans-serif;color:#ffffff;">
-                                                Copyright © {{ Auth::user()->empresa()->nombre }} 2022<br>Todos los derechos reservados<br><b>Network Soft - Software Administrativo de ISP</b>
+                                                Copyright © {{ Auth::user()->empresa()->nombre }} 2022<br>Todos los derechos reservados<br><b>Integra Colombia - Software Administrativo de ISP</b>
                                             </p>
                                         </td>
                                     </tr>

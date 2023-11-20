@@ -2346,6 +2346,11 @@ class CronController extends Controller
 
     public function deleteFactura(){
 
+         //Envio de facturas solo por correo por fecha unica.
+        //  $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2)."15", - 2);
+        //  $this->sendInvoices($fechaInvoice);
+        //  return "ok";
+
         //--------- enviar facturas por wpp segun una fecha ------- ///
 
             return $facturas = Factura::
@@ -2516,6 +2521,7 @@ class CronController extends Controller
 
         //     if($f->pagado() == 0){
         //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+        // DB::table('crm')->where('factura',$f->id)->delete();
         //     $eliminadas++;
         //     $f->delete();
         //     }
