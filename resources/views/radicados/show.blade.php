@@ -325,7 +325,7 @@
     						<tr>
     							<th>evidencia en audio</th>
     							<td>
-    								<a href="{{asset('adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Escuchar audio"><i class="fas fa-eye"></i>
+    								<a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_audio)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Escuchar audio"><i class="fas fa-eye"></i>
     	                        </td>
     						</tr>
     					@endif
