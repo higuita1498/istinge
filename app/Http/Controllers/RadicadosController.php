@@ -394,7 +394,7 @@ class RadicadosController extends Controller{
     }
 
     public function update(Request $request, $id){
-        dd("ingreso para actualizar archivos");
+
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($radicado) {
             if($request->adjunto){
@@ -403,6 +403,78 @@ class RadicadosController extends Controller{
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto = $nombre;
+                $radicado->update();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
+            if($request->adjunto1){
+                $radicado->adjunto_1 = $request->adjunto1;
+                $file = $request->file('adjunto');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto_1 = $nombre;
+                $radicado->update();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
+            if($request->adjunto2){
+                $radicado->adjunto_2 = $request->adjunto2;
+                $file = $request->file('adjunto');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto_2 = $nombre;
+                $radicado->update();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
+            if($request->adjunto3){
+                $radicado->adjunto_3 = $request->adjunto3;
+                $file = $request->file('adjunto');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto_3 = $nombre;
+                $radicado->update();
+                $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
+
+                $log = new RadicadoLOG;
+                $log->id_radicado = $radicado->id;
+                $log->id_usuario = Auth::user()->id;
+                $log->accion = 'Carga de archivo adjunto.';
+                $log->save();
+
+                return redirect('empresa/radicados/'.$id)->with('success', $mensaje);
+            }
+
+            if($request->adjunto4){
+                $radicado->adjunto_4 = $request->adjunto4;
+                $file = $request->file('adjunto');
+                $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
+                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $radicado->adjunto_4 = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
 

@@ -119,25 +119,25 @@
                             @endif
 
                             @if (!$radicado->adjunto_1)
-                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 2</a>
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto1" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 2</a>
                             {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
 
                             @if (!$radicado->adjunto_2)
-                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 3</a>
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto2" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 3</a>
                             {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
 
                             @if (!$radicado->adjunto_3)
-                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 4</a>
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto3" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 4</a>
                             {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
 
                             @if (!$radicado->adjunto_4)
-                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 5</a>
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto4" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 5</a>
                             {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
@@ -406,6 +406,130 @@
     		</div>
     	</div>
     </div>
+    {{-- modal archivo 1 --}}
+    <div class="modal fade" id="modalAdjunto1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+    						<input type="file" class="form-control"  id="adjunto" name="adjunto1" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+
+    {{-- moda archivo 2 --}}
+    <div class="modal fade" id="modalAdjunto2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+    						<input type="file" class="form-control"  id="adjunto" name="adjunto2" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+
+    {{-- modal archivo 3 --}}
+    <div class="modal fade" id="modalAdjunto3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+    						<input type="file" class="form-control"  id="adjunto" name="adjunto3" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+
+    {{-- modal archivo 4 --}}
+    <div class="modal fade" id="modalAdjunto4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-dialog-centered">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h4 class="modal-title">ADJUNTAR ARCHIVO AL RADICADO</h4>
+    				<button type="button" class="close" data-dismiss="modal">&times;</button>
+    			</div>
+    			<form method="post" action="{{ route('radicados.update', $radicado->id ) }}" style="padding: 0;" role="form" class="forms-sample"  id="form_radicado" enctype="multipart/form-data">@csrf
+    			<div class="modal-body">
+    				<input name="_method" type="hidden" value="PATCH">
+    				<input name="id" type="hidden" value="{{ $radicado->id }}">
+    				<div class="row">
+    					<div class="col-md-12 form-group">
+    						<label class="control-label"></label>
+    						<input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required>
+    						<span style="color: red;">
+    							<strong>{{ $errors->first('adjunto') }}</strong>
+    						</span>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+    				<button type="submit" class="btn btn-success">Subir Adjuntos</button>
+    			</div>
+    			</form>
+    		</div>
+    	</div>
+    </div>
+
 @endsection
 
 @section('scripts')
