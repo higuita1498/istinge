@@ -417,7 +417,7 @@ class RadicadosController extends Controller{
 
             if($request->adjunto1){
                 $radicado->adjunto_1 = $request->adjunto1;
-                $file = $request->file('adjunto');
+                $file = $request->file('adjunto1');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto_1 = $nombre;
@@ -435,7 +435,7 @@ class RadicadosController extends Controller{
 
             if($request->adjunto2){
                 $radicado->adjunto_2 = $request->adjunto2;
-                $file = $request->file('adjunto');
+                $file = $request->file('adjunto2');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto_2 = $nombre;
@@ -453,7 +453,7 @@ class RadicadosController extends Controller{
 
             if($request->adjunto3){
                 $radicado->adjunto_3 = $request->adjunto3;
-                $file = $request->file('adjunto');
+                $file = $request->file('adjunto3');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto_3 = $nombre;
@@ -471,7 +471,7 @@ class RadicadosController extends Controller{
 
             if($request->adjunto4){
                 $radicado->adjunto_4 = $request->adjunto4;
-                $file = $request->file('adjunto');
+                $file = $request->file('adjunto4');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
                 Storage::disk('documentos')->put($nombre, \File::get($file));
                 $radicado->adjunto_4 = $nombre;
