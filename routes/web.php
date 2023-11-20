@@ -327,7 +327,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('contactosModal', 'ContactosController@contactoModal')->name('contactos.contactoModal');
         Route::post('{id}/desasociar', 'ContactosController@desasociar')->name('contactos.desasociar');
         Route::get('createp', 'ContactosController@createp')->name('contactos.createp');
-        Route::get('{id}/{archivo}/eliminar', 'ContactosController@eliminarAdjunto')->name('contactos.eliminarAdjunto');
+        Route::get('{id}/{num}/{archivo}/eliminar', 'ContactosController@eliminarAdjunto')->name('contactos.eliminarAdjunto');
 		Route::post('cambiar-fecha-isp/{id}', 'ContactosController@updateFechaIsp')->name('contactos.cambiar.fechaIsp');
 
 		Route::get('/editsaldo/{contactoid}', 'ContactosController@editSaldo');
