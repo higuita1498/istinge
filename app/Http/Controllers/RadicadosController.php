@@ -826,9 +826,89 @@ class RadicadosController extends Controller{
 
         $valores = explode(',', $id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id[0])->first();
-        dd($radicado);
-        if($radicado){
+        if(($radicado) && ($valores[1] == 1)){
+            dd("valor 1");
             Storage::disk('documentos')->delete($radicado->adjunto);
+            $radicado->adjunto = NULL;
+            $radicado->update();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Eliminando adjunto asociado al radicado';
+            $log->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+
+        if(($radicado) && ($valores[1] == 2)){
+            dd("valor 2");
+            Storage::disk('documentos')->delete($radicado->adjunto_1);
+            $radicado->adjunto = NULL;
+            $radicado->update();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Eliminando adjunto asociado al radicado';
+            $log->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+
+        if(($radicado) && ($valores[1] == 3)){
+            dd("valor 3");
+            Storage::disk('documentos')->delete($radicado->adjunto_2);
+            $radicado->adjunto = NULL;
+            $radicado->update();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Eliminando adjunto asociado al radicado';
+            $log->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+
+        if(($radicado) && ($valores[1] == 4)){
+            dd("valor 4");
+            Storage::disk('documentos')->delete($radicado->adjunto_3);
+            $radicado->adjunto = NULL;
+            $radicado->update();
+
+            $log = new RadicadoLOG;
+            $log->id_radicado = $radicado->id;
+            $log->id_usuario = Auth::user()->id;
+            $log->accion = 'Eliminando adjunto asociado al radicado';
+            $log->save();
+
+            return response()->json([
+                'success' => true,
+                'type'    => 'success',
+                'title'   => 'Archivo Adjunto Eliminado',
+                'text'    => ''
+            ]);
+        }
+
+        if(($radicado) && ($valores[1] == 4)){
+            dd("valor 4");
+            Storage::disk('documentos')->delete($radicado->adjunto_4);
             $radicado->adjunto = NULL;
             $radicado->update();
 
