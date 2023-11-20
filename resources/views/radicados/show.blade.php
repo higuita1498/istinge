@@ -113,8 +113,32 @@
                             @endif
 
                             @if (!$radicado->adjunto)
-                                <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a>
+                                <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 1</a>
                                 {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
+
+                            @endif
+
+                            @if (!$radicado->adjunto_1)
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 2</a>
+                            {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
+
+                            @endif
+
+                            @if (!$radicado->adjunto_2)
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 3</a>
+                            {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
+
+                            @endif
+
+                            @if (!$radicado->adjunto_3)
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 4</a>
+                            {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
+
+                            @endif
+
+                            @if (!$radicado->adjunto_4)
+                            <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo 5</a>
+                            {{-- <a href="javascript:void" data-toggle="modal" data-target="#modalAdjunto" class="btn btn-outline-info btn-sm {{ $radicado->adjunto ? 'd-none' : '' }}" id="btn_adjunto"><i class="fas fa-file-upload"></i> Adjuntar Archivo</a> --}}
 
                             @endif
 
