@@ -18,7 +18,7 @@
 			<span class="text-primary">Dirección:</span>  {{Auth::user()->empresa()->direccion}}<br>
 			<span class="text-primary">Correo Electrónico:</span>  {{Auth::user()->empresa()->email}}<br>
 			@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
-			<span class="text-primary">Suscripción NetworkSoft:</span> {{date('d-m-Y', strtotime(Auth::user()->empresa()->suscripcion()->fec_corte))}}</p>
+			<span class="text-primary">Suscripción Integra Colombia:</span> {{date('d-m-Y', strtotime(Auth::user()->empresa()->suscripcion()->fec_corte))}}</p>
 			@endif
 		</div>
 		<div class="col-sm-8 offset-md-2 {{$empresa->nomina ? 'd-none' : ''}}" id="alerta_nomina">
@@ -31,7 +31,7 @@
 
 	@if(auth()->user()->modo_lectura())
 	    <div class="alert alert-warning text-left" role="alert">
-	        <h4 class="alert-heading text-uppercase">NetworkSoft: Suscripción Vencida</h4>
+	        <h4 class="alert-heading text-uppercase">Integra Colombia: Suscripción Vencida</h4>
 	       <p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
 <p>Medios de pago Nequi: 3026003360 Cuenta de ahorros Bancolombia 42081411021 CC 1001912928 Ximena Herrera representante legal. Adjunte su pago para reactivar su membresía</p>
 	    </div>
