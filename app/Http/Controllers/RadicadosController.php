@@ -474,7 +474,6 @@ class RadicadosController extends Controller{
             }
 
             if($request->adjunto4){
-                dd("ingreson 4");
 
                 $radicado->adjunto_4 = $request->adjunto4;
                 $file = $request->file('adjunto4');
