@@ -586,18 +586,25 @@ class RadicadosController extends Controller{
             }
 
             if($radicado->adjunto_1){
+                dd("ingreso a eliminar 1");
                 Storage::disk('documentos')->delete($radicado->adjunto_);
             }
 
             if($radicado->adjunto_2){
+                dd("ingreso a eliminar 2");
+
                 Storage::disk('documentos')->delete($radicado->adjunto_2);
             }
 
             if($radicado->adjunto_3){
+                dd("ingreso a eliminar 3");
+
                 Storage::disk('documentos')->delete($radicado->adjunto_3);
             }
 
             if($radicado->adjunto_4){
+                dd("ingreso a eliminar 4");
+
                 Storage::disk('documentos')->delete($radicado->adjunto_4);
             }
 
