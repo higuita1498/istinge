@@ -611,9 +611,9 @@
         	}).then((result) => {
         		if (result.value) {
         			if (window.location.pathname.split("/")[1] === "software") {
-        				var url = '/software/empresa/radicados/'+id+num'/eliminarAdjunto';
+        				var url = '/software/empresa/radicados/'+id+'/eliminarAdjunto';
         			}else{
-        				var url = '/empresa/radicados/'+id+'/eliminarAdjunto';
+        				var url = '/empresa/radicados/'+id+'/'+num+'/eliminarAdjunto';
         			}
 
         			$.ajax({
