@@ -826,7 +826,7 @@ class RadicadosController extends Controller{
 
         $valores = explode(',', $id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id[0])->first();
-        dd($radicado);
+        dd( $valores);
 
         if(($radicado) && ($valores[1] == 1)){
 
