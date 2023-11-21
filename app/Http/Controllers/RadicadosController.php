@@ -907,7 +907,7 @@ class RadicadosController extends Controller{
             ]);
         }
 
-        if(($radicado) && ($valores[1] == 4)){
+        if(($radicado) && ($valores[1] == 5)){
 
             Storage::disk('documentos')->delete($radicado->adjunto_4);
             $radicado->adjunto_4 = NULL;
