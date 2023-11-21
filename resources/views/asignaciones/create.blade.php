@@ -271,6 +271,7 @@
                     case 'JPEG':
                     case 'PNG':
                     case 'PDF':
+                    case: 'mp3'
                         break;
                     default:
                         this.value = '';
