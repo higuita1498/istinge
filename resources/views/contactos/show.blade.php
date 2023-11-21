@@ -789,7 +789,7 @@
 						</div>
 						@endif
                         @if($contrato->adjunto_audio)
-							<div class="col-md-2 mb-2 text-center" id="div_adjunto_c">
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto">
 								<div class="card card-adj">
 								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
 								    	<h3 class="card-title">Audio</h3>
