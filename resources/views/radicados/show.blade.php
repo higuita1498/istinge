@@ -358,10 +358,10 @@
                                         <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_4)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 4"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{5}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 4"><i class="fas fa-times"></i></a>
                                     @endif
-                                    @if ($radicado->adjunto_audio)
+                                    {{-- @if ($radicado->adjunto_audio)
                                         <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_audio)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 4"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{6}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 4"><i class="fas fa-times"></i></a>
-                                    @endif
+                                    @endif --}}
 
 
                                 </td>
