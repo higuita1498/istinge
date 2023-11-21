@@ -517,7 +517,7 @@ class AsignacionesController extends Controller
             if($request->file('imgG')) {
                 $file = $request->file('imgG');
                 $nombre =  $idContrato.'imgG_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                  $ruta = public_path('/adjuntos/documentos/');
+                $ruta = public_path('/adjuntos/documentos/');
                 $file->move($ruta, $nombre);
                 $contrato->imgG = $nombre;
                 if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
@@ -571,6 +571,15 @@ class AsignacionesController extends Controller
                         }
                     }
                 }
+            }
+
+            if($request->file('adjunto_audio')){
+                $file = $request->file('adjunto_audio');
+                $nombre =  $idContrato.'adjunto_audio'.$contrato->nit.'.'.$file->getClientOriginalExtension();
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+                $contrato->adjunto_audio = $nombre;
+
             }
 
             if($request->file('imgH')) {
