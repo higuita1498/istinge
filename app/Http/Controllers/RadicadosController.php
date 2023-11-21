@@ -850,7 +850,7 @@ class RadicadosController extends Controller{
         if(($radicado) && ($valores[1] == 2)){
 
             Storage::disk('documentos')->delete($radicado->adjunto_1);
-            $radicado->adjunto = NULL;
+            $radicado->adjunto_1 = NULL;
             $radicado->update();
 
             $log = new RadicadoLOG;
@@ -870,7 +870,7 @@ class RadicadosController extends Controller{
         if(($radicado) && ($valores[1] == 3)){
 
             Storage::disk('documentos')->delete($radicado->adjunto_2);
-            $radicado->adjunto = NULL;
+            $radicado->adjunto_2 = NULL;
             $radicado->update();
 
             $log = new RadicadoLOG;
@@ -890,7 +890,7 @@ class RadicadosController extends Controller{
         if(($radicado) && ($valores[1] == 4)){
 
             Storage::disk('documentos')->delete($radicado->adjunto_3);
-            $radicado->adjunto = NULL;
+            $radicado->adjunto_3 = NULL;
             $radicado->update();
 
             $log = new RadicadoLOG;
@@ -910,7 +910,7 @@ class RadicadosController extends Controller{
         if(($radicado) && ($valores[1] == 4)){
 
             Storage::disk('documentos')->delete($radicado->adjunto_4);
-            $radicado->adjunto = NULL;
+            $radicado->adjunto_4 = NULL;
             $radicado->update();
 
             $log = new RadicadoLOG;
