@@ -788,6 +788,17 @@
 							</div>
 						</div>
 						@endif
+                        @if($contrato->adjunto_audio)
+							<div class="col-md-2 mb-2 text-center" id="div_adjunto_c">
+								<div class="card card-adj">
+								    <div class="card-body" style="border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 0.25rem;">
+								    	<h3 class="card-title">Audio</h3>
+								    	<a href="{{asset('/adjuntos/documentos/'.$contrato->adjunto_audio)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons"><i class="fas fa-eye"></i></a>
+								    	{{-- <a href="javascript:eliminar('contratos','adjunto_c','{{$contrato->referencia_c}}','{{$contrato->id}}')" class="btn btn-outline-danger btn-sm btn-icons"><i class="fas fa-times"></i></a> --}}
+								    </div>
+								</div>
+							</div>
+							@endif
 					</div>
 				</div>
 			</div>
