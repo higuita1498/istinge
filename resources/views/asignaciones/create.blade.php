@@ -132,7 +132,7 @@
 
                 <div class="col-md-3 form-group">
                     <label class="control-label" id="">Adjuntar audio</label>
-                    <input type="file" class="form-control" name="archivo_de_audio" accept="audio/*" required id="adjunto_audio" name="adjunto_audio"  >
+                    <input type="file" class="form-control" name="archivo_audio" accept="audio/*" id="adjunto_audio" >
                     {{-- <input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required> --}}
                     <span style="color: red;">
                         <strong>{{ $errors->first('adjunto_audio') }}</strong>
