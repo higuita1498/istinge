@@ -129,16 +129,16 @@
                     <strong>{{ $errors->first('imgH') }}</strong>
                 </span>
             </div>
-            <div class="row">
-                <div class="col-md-12 form-group">
-                    <label class="control-label"></label>
-                    <input type="file" name="archivo_de_audio" accept="audio/*" required id="adjunto">
+
+                <div class="col-md-3 form-group">
+                    <label class="control-label" id="div_campo_h">Adjuntar audio</label>
+                    <input type="file" name="archivo_de_audio" accept="audio/*" required id="adjunto_audio" name="adjunto_audio"  value="{{old('adjunto_audio')}}">
                     {{-- <input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required> --}}
                     <span style="color: red;">
-                        <strong>{{ $errors->first('adjunto') }}</strong>
+                        <strong>{{ $errors->first('adjunto_audio') }}</strong>
                     </span>
                 </div>
-            </div>
+
         </div>
 
         <center>
