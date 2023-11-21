@@ -826,6 +826,7 @@ class RadicadosController extends Controller{
 
         $valores = explode(',', $id);
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id', $id[0])->first();
+        dd($radicado);
         if(($radicado) && ($valores[1] == 1)){
             dd("valor 1");
             Storage::disk('documentos')->delete($radicado->adjunto);
