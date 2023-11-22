@@ -36,6 +36,7 @@ use App\Anticipo;
 use App\FormaPago;
 use App\NumeracionFactura;
 use App\Funcion;
+use App\Plantilla;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -809,6 +810,16 @@ class IngresosController extends Controller
                     }else{
                         $itemscount=1;
                         $items = Ingreso::where('empresa',$empresa->id)->where('nro', $id)->get();
+                    }
+
+                    $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+
+                    if($plantilla){
+                        $mensaje = str_replace('{{ $company }}', $empresa->nombre, $plantilla->contenido);
+                        $mensaje = str_replace('{{ $name }}', ucfirst($cliente->nombre), $mensaje);
+                        $mensaje = str_replace('{{ $factura->codigo }}', $ingreso->nro, $mensaje);
+                    }else{
+                        $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generad bajo el Nro. ".$ingreso->nro;
                     }
 
                     $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
