@@ -465,7 +465,7 @@ class ContratosController extends Controller
     }
 
     public function store(Request $request){
-
+        dd("quieres guardar el contrato");
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'client_id' => 'required',
