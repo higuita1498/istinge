@@ -313,7 +313,6 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        // return $request;
         //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
         if($request->realizar == 2){
             //Cuando se realiza el ingreso por categoría.
@@ -788,6 +787,53 @@ class IngresosController extends Controller
             $tirilla = false;
             if ($request->tirilla) {
                 $tirilla = true;
+            }
+
+            //Desarrollo para enviar tirilla por wpp.
+            if($request->tirilla_wpp){
+                $cliente = $ingreso->cliente();
+
+                if($cliente->celular){
+                    $numero = str_replace('+','',$cliente->celular);
+                    $numero = str_replace(' ','',$numero);
+                    $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
+                    $empresa = Empresa::find($ingreso->empresa);
+
+                    //Datos para tirilla.
+                    if ($ingreso->tipo==1) {
+                        $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
+                        $items = IngresosFactura::join('items_factura as itf','itf.factura','ingresos_factura.factura')->select('itf.*')->where('ingreso',$ingreso->id)->get();
+                    }else if ($ingreso->tipo==2){
+                        $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
+                        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+                    }else{
+                        $itemscount=1;
+                        $items = Ingreso::where('empresa',$empresa->id)->where('nro', $id)->get();
+                    }
+
+                    $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+                    $resolucion = NumeracionFactura::where('empresa', $empresa->id)
+                    ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
+                    $paper_size = array(0,0,270,580);
+                    $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
+                     'itemscount','empresa', 'resolucion'))
+                    ->save(public_path() . "/convertidor/" . $ingreso->nro . ".pdf")->stream();
+                    $pdf->setPaper($paper_size, 'portrait');
+                    $fields = [
+                        "action"=>"sendFile",
+                        "id"=>$numero."@c.us",
+                        "file"=>public_path() . "/convertidor/" . $ingreso->nro . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                        "mime"=>"application/pdf",
+                        "namefile"=>"Recibo ".$ingreso->nro,
+                        "mensaje"=>$mensaje,
+                        "cron"=>"true"
+                    ];
+
+                    $request = new Request();
+                    $request->merge($fields);
+                    $controller = new CRMController();
+                    $respuesta = $controller->whatsappActions($request);
+                }
             }
 
             ### ADJUNTO DE PAGO ###
