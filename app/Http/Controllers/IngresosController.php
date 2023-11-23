@@ -827,9 +827,9 @@ class IngresosController extends Controller
                     ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
                     $paper_size = array(0,0,270,580);
                     $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
-                     'itemscount','empresa', 'resolucion'))
-                    ->save(public_path() . "/convertidor/" . $ingreso->nro . ".pdf")->stream();
+                     'itemscount','empresa', 'resolucion'));
                     $pdf->setPaper($paper_size, 'portrait');
+                    $pdf->save(public_path() . "/convertidor/" . $ingreso->nro . ".pdf")->stream();
                     $fields = [
                         "action"=>"sendFile",
                         "id"=>$numero."@c.us",
