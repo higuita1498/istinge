@@ -335,7 +335,7 @@
                                 </div>
                             </div>
 
-                             <div class="col-md-4 form-group d-none" id="profile" {{$contrato->profile?'':'d-none'}}>
+                             <div class="col-md-4 form-group" id="profile" {{$contrato->profile?'':'d-none'}}>
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" value="{{ $contrato->profile}}">
                             </div>
