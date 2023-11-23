@@ -321,6 +321,10 @@
                                     </span>
                                 </div>
                             </div>
+                             <div class="col-md-4 form-group d-none" id="profile">
+                                <label class="control-label">Profile</label>
+                                <input type="text" class="form-control" name="profile" id="profile">
+                            </div>
                             <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_usuario">
                                 <label class="control-label">Usuario <span class="text-danger">*</span></label>
                                   <div class="input-group">
