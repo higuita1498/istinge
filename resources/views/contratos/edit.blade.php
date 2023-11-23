@@ -322,7 +322,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group d-none" id="new_ip">
+                            <div class="col-md-4 form-group d-none" id="new_ip" {{$contrato->ip_new?'':'d-none'}}>
                                 <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" value="{{ old('ip_new') }}">
@@ -335,7 +335,7 @@
                                 </div>
                             </div>
 
-                             <div class="col-md-4 form-group d-none" id="profile">
+                             <div class="col-md-4 form-group d-none" id="profile" {{$contrato->profile?'':'d-none'}}>
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" value="{{ $contrato->profile}}">
                             </div>

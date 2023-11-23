@@ -368,7 +368,7 @@
                             </div>
 
                             <div class="col-md-4 form-group d-none" id="new_ip">
-                                <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
+                                <label class="control-label" id="ip_new">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" value="{{ old('ip_new') }}">
                                     <div class="input-group-append">
