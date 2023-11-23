@@ -742,6 +742,7 @@ class ContratosController extends Controller
                 $contrato->interfaz                = $request->interfaz;
                 $contrato->local_address           = $request->local_address;
                 $contrato->local_address_new       = $request->local_address_new;
+                $contrato->profile                 = $request->profile;
                 $contrato->mac_address             = $request->mac_address;
                 $contrato->id_vlan                 = $request->id_vlan;
                 $contrato->name_vlan               = $request->name_vlan;
@@ -949,7 +950,7 @@ class ContratosController extends Controller
         'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte',
          'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario', 'contracts.password',
          'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
-         'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d', 'contracts.referencia_d',
+         'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
          'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv',
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu',
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
