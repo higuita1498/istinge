@@ -505,7 +505,7 @@ class ContratosController extends Controller
                 'servicio_tv' => 'required'
             ]);
         }
-
+        $ppoe_local_adress = "";
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
         $cliente = Contacto::find($request->client_id);
