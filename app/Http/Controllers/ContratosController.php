@@ -547,7 +547,7 @@ class ContratosController extends Controller
 
                 /*PPPOE*/
                 if($request->conexion == 1){
-
+                    $ppoe_local_adress = $request->local_address;
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
@@ -743,6 +743,7 @@ class ContratosController extends Controller
                 $contrato->local_address           = $request->local_address;
                 $contrato->local_address_new       = $request->local_address_new;
                 $contrato->profile                 = $request->profile;
+                $contrato->local_adress_pppoe      = $ppoe_local_adress;
                 $contrato->mac_address             = $request->mac_address;
                 $contrato->id_vlan                 = $request->id_vlan;
                 $contrato->name_vlan               = $request->name_vlan;

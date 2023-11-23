@@ -322,23 +322,16 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group d-none" id="new_ip" {{$contrato->ip_new?'':'d-none'}}>
-                                <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" value="{{ old('ip_new') }}">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-success btn-sm" type="button" id="searchIP2"><i class="fa fa-search" style="margin: 2px;"></i></button>
-                                    </div>
-                                    <span class="help-block error">
-                                        <strong>{{ $errors->first('ip_new') }}</strong>
-                                    </span>
-                                </div>
+                            <div class="col-md-4 form-group" id="local_adress" {{$contrato->local_adress_pppoe ? '': 'd-none'}}>
+                                <label class="control-label">Dirección IP (Local Address)</label>
+                                <input type="text" class="form-control" name="local_address" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
-                             <div class="col-md-4 form-group" id="profile" {{$contrato->profile?'':'d-none'}}>
+                            <div class="col-md-4 form-group" id="profile" {{$contrato->profile?'':'d-none'}}>
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" value="{{ $contrato->profile}}">
                             </div>
+
 
                             <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_usuario">
                                 <label class="control-label">Usuario <span class="text-danger">*</span></label>
