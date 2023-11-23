@@ -1204,20 +1204,6 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                    }
-
-                    /*VLAN*/
-                    if($request->conexion == 4){
-
-                    }
-
-                    //if($getall){
-                        $registro = true;
-                        $queue = $API->comm("/queue/simple/getall", array(
-                            "?target" => $contrato->ip.'/32'
-                            )
-                        );
-
                         if($queue){
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
@@ -1243,6 +1229,44 @@ class ContratosController extends Controller
                                 )
                             );
                         }
+                    }
+
+                    /*VLAN*/
+                    if($request->conexion == 4){
+
+                    }
+                    //if($getall){
+                        $registro = true;
+                        $queue = $API->comm("/queue/simple/getall", array(
+                            "?target" => $contrato->ip.'/32'
+                            )
+                        );
+
+                        // if($queue){
+                        //     $API->comm("/queue/simple/set", array(
+                        //         ".id"             => $queue[0][".id"],
+                        //         "target"          => $request->ip,
+                        //         "max-limit"       => $plan->upload.'/'.$plan->download,
+                        //         "burst-limit"     => $burst_limit,
+                        //         "burst-threshold" => $burst_threshold,
+                        //         "burst-time"      => $burst_time,
+                        //         "priority"        => $priority,
+                        //         "limit-at"        => $limit_at
+                        //         )
+                        //     );
+                        // }else{
+                        //     $API->comm("/queue/simple/add", array(
+                        //         "name"            => $this->normaliza($servicio).'-'.$request->nro,
+                        //         "target"          => $request->ip,
+                        //         "max-limit"       => $plan->upload.'/'.$plan->download,
+                        //         "burst-limit"     => $burst_limit,
+                        //         "burst-threshold" => $burst_threshold,
+                        //         "burst-time"      => $burst_time,
+                        //         "priority"        => $priority,
+                        //         "limit-at"        => $limit_at
+                        //         )
+                        //     );
+                        // }
                     //}
                     #AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
