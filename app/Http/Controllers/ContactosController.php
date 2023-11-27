@@ -1530,6 +1530,6 @@ class ContactosController extends Controller
     public function clientes_contratos(Request $request){
 
         $contratos = Contrato::where('client_id',$request->id)->get();
-        return $contratos;
+        return response()->json($contratos);
     }
 }
