@@ -57,7 +57,7 @@
             <div class="col-md-3 form-group">
                 <label class="control-label">Cliente <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5" onclick="cargarContratos()">
                         @foreach($clientes as $cliente)
                         <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}>{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
                         @endforeach
@@ -310,20 +310,19 @@
         });
     </script>
     <script>
-        document.getElementById('idCliente').addEventListener('change', function() {}
-        console.log("ingreso a la funcion");
-            // Obtén el valor seleccionado del cliente
-            var selectedClientId = this.value;
-            // Realiza la llamada al contrato utilizando AJAX, por ejemplo
-            // Reemplaza 'URL_DEL_CONTRATO' con la URL real de tu contrato
-            // Puedes ajustar este código según tus necesidades y la estructura de tu contrato
-            // Aquí se usa un ejemplo con jQuery para simplicidad, asegúrate de incluir jQuery si decides usarlo
+         function cargarContratos() {
+            console.log("Ingreso a la función cargarContratos");
+
+        // Obtén el valor seleccionado del cliente
+            var selectedClientId = document.getElementById('idCliente').value;
+
+            // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
-                url: '/clientes/contratos/'+selectedClientId,
+                url: '/clientes/contratos/' + selectedClientId,
                 type: 'POST',
                 data: { clientId: selectedClientId },
                 success: function(response) {
-                    // Maneja la respuesta del contrato según tus necesidades
+                    // Maneja la respuesta del contrato y actualiza el segundo select
                     updateContratosSelect(response);
                     console.log('Contrato llamado con éxito:', response);
                 },
@@ -331,7 +330,7 @@
                     console.error('Error al llamar al contrato:', error);
                 }
             });
-        });
+        }
 
         // Función para actualizar dinámicamente el segundo select con el resultado del contrato
         function updateContratosSelect(contratos) {
