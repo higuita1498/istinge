@@ -54,7 +54,7 @@
             <input type="hidden" value="{{ $contrato->id }}" name="contrato">
         @endif
         <div class="row">
-            <div class="col-md-6 form-group">
+            <div class="col-md-5 form-group">
                 <label class="control-label">Cliente <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -64,7 +64,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-6 form-group">
+            <div class="col-md-5 form-group">
                 <label class="control-label">Contrato <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
