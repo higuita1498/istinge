@@ -310,7 +310,8 @@
         });
     </script>
     <script>
-        document.getElementById('idCliente').addEventListener('change', function() {
+        document.getElementById('idCliente').addEventListener('change', function() {}
+        console.log("ingreso a la funcion");
             // Obtén el valor seleccionado del cliente
             var selectedClientId = this.value;
             // Realiza la llamada al contrato utilizando AJAX, por ejemplo
