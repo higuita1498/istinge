@@ -1,5 +1,5 @@
 
-  
+
   <!-- Modal -->
   <div class="modal fade" id="modal-etiqueta" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -16,7 +16,7 @@
             <input type="text" name="nombre" id="nombre" placeholder="Nombre" class="form-control">
             <br>
             <label for="color" class="form-label">Seleccione un color</label>
-            <input type="text" name="color" id="color" placeholder="Color" class="" autocomplete="off">
+            <input type="color" name="color" id="color" placeholder="Color" class="" autocomplete="off">
           ...
         </div>
         <div class="modal-footer">
@@ -30,7 +30,7 @@
 
   <script>
 
-    
+
 
     function guardarEtiqueta(){
 
@@ -48,9 +48,9 @@
             method: 'POST',
             _token: _token,
             nombre: nombre,
-            color: color, 
+            color: color,
         }
-    
+
         $.post($('#store-etiqueta').attr('action'), data, function(response){
            let etiqueta = response;
           $('#modal-etiqueta').modal('hide');

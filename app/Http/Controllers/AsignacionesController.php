@@ -61,6 +61,7 @@ class AsignacionesController extends Controller
 
     public function store(Request $request)
     {
+
         $idContrato = null;
 
         if($request->contrato) {
@@ -76,10 +77,7 @@ class AsignacionesController extends Controller
             $mensaje='Debe adjuntar la documentación para la asignación del contrato digital';
             return back()->with('danger', $mensaje);
         }
-
-        $contrato = Contacto::where('id', $idContrato )->where('empresa', Auth::user()->empresa)->first();
-        dd($contrato);
-
+        $contrato = Contacto::where('id', $request->id)->where('empresa', Auth::user()->empresa)->first();
         if ($contrato) {
             if($request->firma_isp) {
                 $contrato->firma_isp = $request->firma_isp;
@@ -674,7 +672,7 @@ class AsignacionesController extends Controller
             if($request->file('documento')) {
                 $file = $request->file('documento');
                 $nombre =  'doc_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
-                $ruta = public_path('/adjuntos/documentos/');
+                  $ruta = public_path('/adjuntos/documentos/');
                 $file->move($ruta, $nombre);
                 $contrato->documento = $nombre;
 
