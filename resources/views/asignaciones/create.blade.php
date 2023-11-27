@@ -310,7 +310,7 @@
         });
     </script>
     <script>
-        window.routeContratos = '{{ route("clientes.contratos.show", ["id" => ":id"]) }}';
+        window.routeContratos = '{{ route("cliente.contratos", ["id" => ":id"]) }}';
     </script>
     <script>
          function cargarContratos() {
