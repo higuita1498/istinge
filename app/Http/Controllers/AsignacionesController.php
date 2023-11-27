@@ -78,6 +78,7 @@ class AsignacionesController extends Controller
         }
 
         $contrato = Contacto::where('id', $idContrato )->where('empresa', Auth::user()->empresa)->first();
+        dd($contrato);
 
         if ($contrato) {
             if($request->firma_isp) {
