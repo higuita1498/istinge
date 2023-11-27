@@ -67,7 +67,7 @@
             <div class="col-md-3 form-group">
                 <label class="control-label">Contrato <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="id" id="idcontrato" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <select class="form-control" name="contrato" id="idcontrato" required="" title="Seleccione" data-live-search="true" data-size="5">
                         {{-- @foreach($contratos as $contrato)
                         <option value="{{$contrato->id}}" {{$contrato->id == $idCliente ? 'selected' : '' }}>{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}} - {{$contrato->nit}}</option>
                         @endforeach --}}
