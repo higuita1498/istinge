@@ -57,7 +57,7 @@
             <div class="col-md-3 form-group">
                 <label class="control-label">Cliente <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="cargarContratos()">
+                    <select class="form-control selectpicker" name="id" id="idCliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="cargarContratos()">
                         @foreach($clientes as $cliente)
                         <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}>{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
                         @endforeach
@@ -313,7 +313,7 @@
          function cargarContratos() {
             // Obtén el valor seleccionado del cliente
             var selectedClientId = document.getElementById('idCliente').value;
-            console.log(selectedClientId);
+            console.log();
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
                 url: '/clientes/contratos/' + selectedClientId,
