@@ -341,17 +341,14 @@
                 selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
                 // Agregar nuevas opciones basadas en la respuesta del contrato
-                if ($contratos !== null) {
                 contratos.forEach(function(contrato) {
-                    console.log(contrato);
                     var option = document.createElement('option');
                     option.value = contrato.id;
-                    option.textContent = contrato.nombre + ' ' + contrato.apellido1 + ' ' + contrato.apellido2 + ' - ' + contrato.nit;
+                    option.textContent = 'contrato-nro'+contrato.nro;
                     selectContrato.appendChild(option);
                 });
 
                 console.log('Select de contratos actualizado correctamente.');
-            }
             } else {
                 console.error('Elemento select no encontrado.');
             }
