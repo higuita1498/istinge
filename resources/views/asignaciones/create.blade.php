@@ -68,8 +68,8 @@
                 <label class="control-label">Contrato <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
-                        @foreach($clientes as $cliente)
-                        <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}>{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
+                        @foreach($contratos as $contrato)
+                        <option value="{{$contrato->id}}" {{$contrato->id == $idCliente ? 'selected' : '' }}>{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}} - {{$contrato->nit}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -309,4 +309,42 @@
             });
         });
     </script>
+    <script>
+        document.getElementById('idCliente').addEventListener('change', function() {
+            // Obtén el valor seleccionado del cliente
+            var selectedClientId = this.value;
+            // Realiza la llamada al contrato utilizando AJAX, por ejemplo
+            // Reemplaza 'URL_DEL_CONTRATO' con la URL real de tu contrato
+            // Puedes ajustar este código según tus necesidades y la estructura de tu contrato
+            // Aquí se usa un ejemplo con jQuery para simplicidad, asegúrate de incluir jQuery si decides usarlo
+            $.ajax({
+                url: '/clientes/contratos/'+selectedClientId,
+                type: 'POST',
+                data: { clientId: selectedClientId },
+                success: function(response) {
+                    // Maneja la respuesta del contrato según tus necesidades
+                    updateContratosSelect(response);
+                    console.log('Contrato llamado con éxito:', response);
+                },
+                error: function(error) {
+                    console.error('Error al llamar al contrato:', error);
+                }
+            });
+        });
+
+        // Función para actualizar dinámicamente el segundo select con el resultado del contrato
+        function updateContratosSelect(contratos) {
+            var selectContrato = document.getElementById('idContrato');
+            selectContrato.innerHTML = ''; // Limpiar opciones existentes
+
+            // Agregar nuevas opciones basadas en la respuesta del contrato
+            contratos.forEach(function(contrato) {
+                var option = document.createElement('option');
+                option.value = contrato.id;
+                option.textContent = contrato.nombre + ' ' + contrato.apellido1 + ' ' + contrato.apellido2 + ' - ' + contrato.nit;
+                selectContrato.appendChild(option);
+            });
+        }
+    </script>
+
 @endsection

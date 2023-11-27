@@ -3719,8 +3719,6 @@ class ContratosController extends Controller
                            $allMorosos[] = $ARRAYS;
                        }
            }
-
-
            return $allMorosos;
        }
 
@@ -3746,5 +3744,8 @@ class ContratosController extends Controller
 
        }
 
+    public function clientes_contratos(Request $request){
+        dd($request->id);
+    }
 
 }

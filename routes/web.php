@@ -1545,3 +1545,5 @@ Route::get('/list/morosos', 'ContratosController@morosos');
 
 //redirecciona clientes al CRM
 Route::get('/clientes/cambiar/{id}','ContactosController@cambiares')->name('cliente.cambiares');
+Route::get('/clientes/contratos/{id}','ContactosController@clientes_contratos')->name('cliente.contratos');
+
