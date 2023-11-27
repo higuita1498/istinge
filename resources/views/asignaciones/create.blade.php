@@ -333,9 +333,8 @@
 
         // Función para actualizar dinámicamente el segundo select con el resultado del contrato
         function updateContratosSelect(contratos) {
-            console.log(contratos);
-            var selectContrato = document.getElementById('idCliente');
-            selectContrato.innerHTML = ''; // Limpiar opciones existentes
+          //  var selectContrato = document.getElementById('idCliente');
+          //  selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
             // Agregar nuevas opciones basadas en la respuesta del contrato
             contratos.forEach(function(contrato) {
