@@ -76,7 +76,7 @@ class AsignacionesController extends Controller
             $mensaje='Debe adjuntar la documentación para la asignación del contrato digital';
             return back()->with('danger', $mensaje);
         }
-        $contrato = Contacto::where('id', $request->id)->where('empresa', Auth::user()->empresa)->first();
+        $contrato = Contacto::where('id', $idContrato )->where('empresa', Auth::user()->empresa)->first();
         if ($contrato) {
             if($request->firma_isp) {
                 $contrato->firma_isp = $request->firma_isp;
