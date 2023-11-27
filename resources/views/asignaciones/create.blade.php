@@ -67,7 +67,7 @@
             <div class="col-md-3 form-group">
                 <label class="control-label">Contrato <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="id" id="id" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <select class="form-control selectpicker" name="id" id="idcontrato" required="" title="Seleccione" data-live-search="true" data-size="5">
                         {{-- @foreach($contratos as $contrato)
                         <option value="{{$contrato->id}}" {{$contrato->id == $idCliente ? 'selected' : '' }}>{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}} - {{$contrato->nit}}</option>
                         @endforeach --}}
@@ -333,7 +333,7 @@
 
         // Función para actualizar dinámicamente el segundo select con el resultado del contrato
         function updateContratosSelect(contratos) {
-            var selectContrato = document.getElementById('idCliente');
+            var selectContrato = document.getElementById('idcontrato');
             selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
             // Agregar nuevas opciones basadas en la respuesta del contrato
