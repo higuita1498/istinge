@@ -312,11 +312,11 @@
     <script>
          function cargarContratos() {
             // Obtén el valor seleccionado del cliente
-            var selectedClientId = document.getElementById('idCliente').value;
+            var url = route('clientes.contratos.show', { id: selectedClientId });
             console.log(selectedClientId);
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
-                url: '/clientes/contratos/' + selectedClientId,
+                url: url,
                 type: 'GET',
                 success: function(response) {
                     // Maneja la respuesta del contrato y actualiza el segundo select
