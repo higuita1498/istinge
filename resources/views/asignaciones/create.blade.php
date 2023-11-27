@@ -323,10 +323,7 @@
                 type: 'GET',
                 success: function(response) {
                     // Maneja la respuesta del contrato y actualiza el segundo select
-                    console.log('Contrato llamado con éxito:', response);
-
                     updateContratosSelect(response);
-                    console.log('Contrato llamado con éxito:', response);
                 },
                 error: function(error) {
                     console.error('Error al llamar al contrato:', error);
@@ -336,7 +333,7 @@
 
         // Función para actualizar dinámicamente el segundo select con el resultado del contrato
         function updateContratosSelect(contratos) {
-            var selectContrato = document.getElementById('idContrato');
+            var selectContrato = document.getElementById('idCliente');
             selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
             // Agregar nuevas opciones basadas en la respuesta del contrato
