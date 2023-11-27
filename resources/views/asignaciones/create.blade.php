@@ -312,7 +312,7 @@
     <script>
          function cargarContratos() {
             // Obtén el valor seleccionado del cliente
-            var url = {{ route("clientes.contratos.show", ["id" => ":id"]) }};
+            var url = {{ route("clientes.contratos", ["id" => ":id"]) }};
             console.log(selectedClientId);
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
