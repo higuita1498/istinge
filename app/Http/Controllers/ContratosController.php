@@ -3744,8 +3744,6 @@ class ContratosController extends Controller
 
        }
 
-    public function clientes_contratos(Request $request){
-        dd($request->id);
-    }
+
 
 }

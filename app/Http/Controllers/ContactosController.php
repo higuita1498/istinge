@@ -1526,4 +1526,8 @@ class ContactosController extends Controller
     public function newcampos(Request $request){
         dd($request);
     }
+
+    public function clientes_contratos(Request $request){
+        dd($request->id);
+    }
 }
