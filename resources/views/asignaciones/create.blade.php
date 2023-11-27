@@ -332,17 +332,26 @@
         }
 
         // Función para actualizar dinámicamente el segundo select con el resultado del contrato
+       // Supongamos que esta función se llama después de recibir la respuesta AJAX
         function updateContratosSelect(contratos) {
             var selectContrato = document.getElementById('idcontrato');
-            selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
-            // Agregar nuevas opciones basadas en la respuesta del contrato
-            contratos.forEach(function(contrato) {
-                var option = document.createElement('option');
-                option.value = contrato.id;
-                option.textContent = contrato.nombre + ' ' + contrato.apellido1 + ' ' + contrato.apellido2 + ' - ' + contrato.nit;
-                selectContrato.appendChild(option);
-            });
+            // Verificar si el elemento 'select' existe
+            if (selectContrato) {
+                selectContrato.innerHTML = ''; // Limpiar opciones existentes
+
+                // Agregar nuevas opciones basadas en la respuesta del contrato
+                contratos.forEach(function(contrato) {
+                    var option = document.createElement('option');
+                    option.value = contrato.id;
+                    option.textContent = contrato.nombre + ' ' + contrato.apellido1 + ' ' + contrato.apellido2 + ' - ' + contrato.nit;
+                    selectContrato.appendChild(option);
+                });
+
+                console.log('Select de contratos actualizado correctamente.');
+            } else {
+                console.error('Elemento select no encontrado.');
+            }
         }
     </script>
 
