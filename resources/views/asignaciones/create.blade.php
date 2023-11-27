@@ -317,7 +317,7 @@
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
                 url: '/clientes/contratos/' + selectedClientId,
-                type: 'POST',
+                type: 'GET',
                 data: { clientId: selectedClientId },
                 success: function(response) {
                     // Maneja la respuesta del contrato y actualiza el segundo select
