@@ -342,6 +342,7 @@
 
                 // Agregar nuevas opciones basadas en la respuesta del contrato
                 contratos.forEach(function(contrato) {
+                    console.log(contrato);
                     var option = document.createElement('option');
                     option.value = contrato.id;
                     option.textContent = contrato.nombre + ' ' + contrato.apellido1 + ' ' + contrato.apellido2 + ' - ' + contrato.nit;
