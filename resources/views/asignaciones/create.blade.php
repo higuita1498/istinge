@@ -68,9 +68,6 @@
                 <label class="control-label">Contrato <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <select class="form-control" name="contrato" id="idcontrato" required="" title="Seleccione" data-live-search="true" data-size="5">
-                        {{-- @foreach($contratos as $contrato)
-                        <option value="{{$contrato->id}}" {{$contrato->id == $idCliente ? 'selected' : '' }}>{{$contrato->nombre}} {{$contrato->apellido1}} {{$contrato->apellido2}} - {{$contrato->nit}}</option>
-                        @endforeach --}}
                     </select>
                 </div>
             </div>
