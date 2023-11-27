@@ -310,10 +310,13 @@
         });
     </script>
     <script>
+        window.routeContratos = '{{ route("clientes.contratos.show", ["id" => ":id"]) }}';
+    </script>
+    <script>
          function cargarContratos() {
             // Obtén el valor seleccionado del cliente
-            var url = {{ route("clientes.contratos", ["id" => ":id"]) }};
-            console.log(selectedClientId);
+            var selectedClientId = document.getElementById('idCliente').value;
+            var url = window.routeContratos.replace(':id', selectedClientId);
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
                 url: url,
