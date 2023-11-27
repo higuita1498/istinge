@@ -61,7 +61,7 @@ class AsignacionesController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->idcontrato);
+        dd($request);
         $idContrato = null;
 
         if($request->contrato) {
