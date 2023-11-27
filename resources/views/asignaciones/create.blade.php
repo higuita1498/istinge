@@ -341,6 +341,7 @@
                 selectContrato.innerHTML = ''; // Limpiar opciones existentes
 
                 // Agregar nuevas opciones basadas en la respuesta del contrato
+                if ($contratos !== null) {
                 contratos.forEach(function(contrato) {
                     console.log(contrato);
                     var option = document.createElement('option');
@@ -350,6 +351,7 @@
                 });
 
                 console.log('Select de contratos actualizado correctamente.');
+            }
             } else {
                 console.error('Elemento select no encontrado.');
             }
