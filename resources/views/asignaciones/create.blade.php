@@ -311,11 +311,9 @@
     </script>
     <script>
          function cargarContratos() {
-            console.log("Ingreso a la función cargarContratos");
-
-        // Obtén el valor seleccionado del cliente
+            // Obtén el valor seleccionado del cliente
             var selectedClientId = document.getElementById('idCliente').value;
-
+            console.log(selectedClientId);
             // Realiza la llamada al contrato utilizando AJAX
             $.ajax({
                 url: '/clientes/contratos/' + selectedClientId,
