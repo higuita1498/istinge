@@ -1269,7 +1269,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
     	Route::resource('solicitudes', 'SolicitudesController');
 
     //CONTRATOS
-
+    Route::get('/clientes/contratos/{id}','ContactosController@clientes_contratos')->name('cliente.contratos');
 	Route::group(['prefix' => 'contratos'], function() {
 		Route::post('{id}/state', 'ContratosController@state')->name('contratos.state');
 		Route::get('corte/{corte}', 'ContratosController@index')->name('contratos.corte');
@@ -1545,5 +1545,5 @@ Route::get('/list/morosos', 'ContratosController@morosos');
 
 //redirecciona clientes al CRM
 Route::get('/clientes/cambiar/{id}','ContactosController@cambiares')->name('cliente.cambiares');
-Route::get('/clientes/contratos/{id}','ContactosController@clientes_contratos')->name('cliente.contratos');
+
 
