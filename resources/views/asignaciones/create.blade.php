@@ -320,6 +320,7 @@
                 type: 'GET',
                 success: function(response) {
                     // Maneja la respuesta del contrato y actualiza el segundo select
+                    console.log('Contrato llamado con éxito:', response);
                     updateContratosSelect(response);
                     console.log('Contrato llamado con éxito:', response);
                 },
