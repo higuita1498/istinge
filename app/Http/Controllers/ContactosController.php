@@ -1528,6 +1528,8 @@ class ContactosController extends Controller
     }
 
     public function clientes_contratos(Request $request){
-        dd($request->id);
+
+        $contratos = Contrato::where('client_id',$request->id)->get();
+        return $contratos;
     }
 }
