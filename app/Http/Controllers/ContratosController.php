@@ -3226,7 +3226,7 @@ class ContratosController extends Controller
     }
 
     public function cargando(Request $request){
-        dd("ingresoi");
+
         $request->validate([
             'archivo' => 'required|mimes:xlsx',
         ],[
@@ -3308,9 +3308,9 @@ class ContratosController extends Controller
                 }
                 $num = count(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->get());
 
-                if($num < 1){
-                    $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
-                }
+                // if($num < 1){
+                //     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
+                // }
             }
             if (!$request->state) {
                 $error->state = "El campo estado es obligatorio";
