@@ -3396,7 +3396,13 @@ class ContratosController extends Controller
                 $request->mikrotik = Mikrotik::where('nombre', $request->mikrotik)->first()->id;
             }
             if($request->plan != ""){
-                $request->plan = PlanesVelocidad::where('name', $request->plan)->first()->id;
+                $planesVelocidad = PlanesVelocidad::where('name', $request->plan)->first()->id;
+                if ($planesVelocidad) {
+                    $request->plan = $planesVelocidad->id;
+                } else {
+                    // Manejar el caso en el que no se encuentra el plan de velocidad
+                    $error->plan = "El plan de velocidad " . $request->plan . " ingresado no se encuentra en nuestra base de datos";
+                }
             }
             if($request->grupo_corte != ""){
                 $request->grupo_corte = GrupoCorte::where('nombre', $request->grupo_corte)->first()->id;
