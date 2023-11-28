@@ -3306,7 +3306,7 @@ class ContratosController extends Controller
                 } else {
                     // Manejar el caso en el que $miko no sea un objeto válido
                 }
-                $resultados = PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->get();
+                $result = PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->first();
 
                 if(strcasecmp($result->name, $request->plan) === 0){
                     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
