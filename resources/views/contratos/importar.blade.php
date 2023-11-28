@@ -1,4 +1,4 @@
-@extends('layouts.app')	
+@extends('layouts.app')
 
 @section('content')
 	<div class="card-body">
@@ -109,7 +109,7 @@
             <li class="ml-3">El archivo debe ser extensión <b>.xlsx</b></li>
         </ul>
 
-        <form method="POST" action="{{ route('contratos.importar') }}" role="form" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('contratos.importar_cargando') }}" role="form" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="form-group col-md-6 offset-md-3">
