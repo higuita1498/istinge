@@ -3396,7 +3396,7 @@ class ContratosController extends Controller
                 $request->mikrotik = Mikrotik::where('nombre', $request->mikrotik)->first()->id;
             }
             if($request->plan != ""){
-                $planesVelocidad = PlanesVelocidad::where('name', $request->plan)->first()->id;
+                $planesVelocidad = PlanesVelocidad::where('name', $request->plan)->first();
                 if ($planesVelocidad) {
                     $request->plan = $planesVelocidad->id;
                 } else {
