@@ -3226,7 +3226,6 @@ class ContratosController extends Controller
     }
 
     public function cargando(Request $request){
-
         $request->validate([
             'archivo' => 'required|mimes:xlsx',
         ],[
@@ -3296,18 +3295,20 @@ class ContratosController extends Controller
                 if(Mikrotik::where('nombre', $request->mikrotik)->count() == 0){
                     $error->mikrotik = "El mikrotik ingresado no se encuentra en nuestra base de datos";
                 }
+                $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
+                $mikoId = $miko->id;
             }
             if($request->plan != ""){
-                $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
+                // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
 
-                if ($miko) {
-                    // El objeto $miko es válido, puedes acceder a su propiedad 'id'
-                    $mikoId = $miko->id;
-                } else {
-                    // Manejar el caso en el que $miko no sea un objeto válido
-                }
-                $cleanPlanName = trim($request->plan);
-                if(PlanesVelocidad::whereRaw('LOWER(`name`) LIKE ?', ['%' . strtolower($cleanPlanName) . '%'])->where('mikrotik', $mikoId)->count() === 0){
+                // if ($miko) {
+                //     // El objeto $miko es válido, puedes acceder a su propiedad 'id'
+                //     $mikoId = $miko->id;
+                // } else {
+                //     // Manejar el caso en el que $miko no sea un objeto válido
+                // }
+
+                if(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->count() === 0){
                     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
                 }
             }
