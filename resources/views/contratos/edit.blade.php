@@ -286,7 +286,9 @@
                                   <div class="input-group">
                                     <input type="hidden" id="segmento_bd" value="{{ $contrato->local_address }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
-
+                                        <option value="{{ $opcion->valor }}" {{ $opcion->valor == $contrato->local_address ? 'selected' : '' }}>
+                                            {{ $opcion->etiqueta }}
+                                        </option>
                                     </select>
                                     <span class="help-block error">
                                         <strong>{{ $errors->first('local_address') }}</strong>
