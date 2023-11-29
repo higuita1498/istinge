@@ -99,7 +99,7 @@ class Empresa extends Model
     public function soporte($parte = 'tlfno'){
         $campo = $this->soporte;
         $partes = explode(' ', $campo);
-        dd($partes);
+
         if (count($partes) > 1) {
             $prefijo = $partes[0];
             $campo = '';
