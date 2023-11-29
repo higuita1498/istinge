@@ -741,6 +741,7 @@ class ContratosController extends Controller
                 $contrato->simple_queue            = $request->simple_queue;
                 $contrato->interfaz                = $request->interfaz;
                 $contrato->local_address           = $request->local_address;
+                $contrato->direccion_local_address = $request->direccion_local_address;
                 $contrato->local_address_new       = $request->local_address_new;
                 $contrato->profile                 = $request->profile;
                 $contrato->local_adress_pppoe      = $ppoe_local_adress;
@@ -949,7 +950,7 @@ class ContratosController extends Controller
         'contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router',
         'contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz',
         'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte',
-         'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario','contracts.local_adress_pppoe', 'contracts.password',
+         'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario','contracts.local_adress_pppoe','contracts.direccion_local_adress', 'contracts.password',
          'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
          'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
          'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv',
