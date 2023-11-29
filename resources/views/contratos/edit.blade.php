@@ -305,10 +305,12 @@
                                     </span>
                                 </div>
                             </div>
+
                             <div class="col-md-4 form-group  {{$contrato->local_address_new?'':'d-none'}}" id="new_segmento">
                                 <label class="control-label">Segmento de IP</label>
                                 <input type="text" class="form-control" name="local_address_new" value="{{$contrato->local_address_new}}" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
+
                             <div class="col-md-4 form-group  {{$contrato->ip_new?'':'d-none'}}" id="new_ip">
                                 <label class="control-label" id="div_ip">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
