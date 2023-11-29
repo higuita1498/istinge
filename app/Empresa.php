@@ -101,7 +101,7 @@ class Empresa extends Model
         $partes = explode(' ', $campo);
 
         if (count($partes) > 1) {
-            $prefijo = $partes[1];
+            $prefijo = $partes[0];
             $campo = '';
             foreach ($partes as $key => $value) {
                 if ($key > 0) {
@@ -110,7 +110,9 @@ class Empresa extends Model
             }
 
             if ($parte <> 'tlfno') {
-                $codigo = explode('+', $prefijo)[1];
+                $explodedPrefijo = explode('+', $prefijo);
+               // $codigo = explode('+', $prefijo)[1];
+                $codigo = $explodedPrefijo[1];
                 $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
                 if (!$codigo) {
                     $prefijo = Auth::user()->empresaObj->codigo;
