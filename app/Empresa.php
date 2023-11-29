@@ -101,7 +101,7 @@ class Empresa extends Model
         $partes = explode(' ', $campo);
 
         if (count($partes) > 1) {
-            $prefijo = $partes[0];
+            $prefijo = $partes[1];
             $campo = '';
             foreach ($partes as $key => $value) {
                 if ($key > 0) {
