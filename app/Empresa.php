@@ -111,12 +111,15 @@ class Empresa extends Model
 
             if ($parte <> 'tlfno') {
                 $explodedPrefijo = explode('+', $prefijo);
+                if (count($explodedPrefijo) >= 2) {
                // $codigo = explode('+', $prefijo)[1];
                 $codigo = $explodedPrefijo[1];
                 $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
                 if (!$codigo) {
                     $prefijo = Auth::user()->empresaObj->codigo;
                 }
+            } else {
+            }
                 return $prefijo;
             }
         }
