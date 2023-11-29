@@ -120,6 +120,22 @@ class UsuariosController extends Controller
     
     public function update(Request $request, $id){//dd($request->all());
         $usuario =User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+
+        if(!DB::table('campos_usuarios')->where('id_usuario',$usuario->id)->first()){
+            $campos = Campos::all();
+            foreach ($campos as $campo) {
+                if($campo->orden != null){
+                    DB::table('campos_usuarios')->insert([
+                        'id_modulo'  => $campo->modulo,
+                        'id_usuario' => $usuario->id,
+                        'id_campo'   => $campo->id,
+                        'orden'      => $campo->orden,
+                        'estado'     => $campo->estado
+                    ]);
+                }
+            }
+        }
+
         if ($usuario) {
             $request->validate([
                 'email' => 'required|email',     
