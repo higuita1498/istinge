@@ -121,7 +121,7 @@ class UsuariosController extends Controller
     public function update(Request $request, $id){//dd($request->all());
         $usuario =User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
 
-        if(!Campos::where('id_usuario',$usuario->id)){
+        if(!Campos::where('id_usuario',$usuario->id)->first()){
             $campos = Campos::all();
             foreach ($campos as $campo) {
                 if($campo->orden != null){
