@@ -29,7 +29,7 @@ class Empresa extends Model
         $usuario= User::where('email',auth()->user()->email)->where('empresa',auth()->user()->id)->first();
         if(!$usuario){
             $usuario= User::where('empresa',$this->id)->whereIn('rol',[2,45])->OrderBy('id', 'asc')->first();
-            
+
         }
         return $usuario;
     }
@@ -44,7 +44,7 @@ class Empresa extends Model
 
     }
 
-    public function telef($parte='tlfno'){        
+    public function telef($parte='tlfno'){
         $campo=$this->telefono;
         $partes=explode(' ', $campo);
         if (count($partes)>1) {
@@ -99,6 +99,7 @@ class Empresa extends Model
     public function soporte($parte = 'tlfno'){
         $campo = $this->soporte;
         $partes = explode(' ', $campo);
+        dd($partes);
         if (count($partes) > 1) {
             $prefijo = $partes[0];
             $campo = '';
@@ -175,8 +176,8 @@ class Empresa extends Model
         return $this->tipo_persona=='n'?'Natural':'Jurídica';
 
     }
-    
-    
+
+
     public function municipio()
 {
     if (DB::table('municipios')->where('id',$this->fk_idmunicipio)->count() > 0) {
@@ -265,8 +266,8 @@ public function totalEmissions(){
             return ($subscriptions->first()->valid && $subscriptions->last()->valid) ? $subscriptions : false;
         }
         return false;
-    }   
-    
+    }
+
     /**
      * Verifica si la cuenta dispone de varias suscripciones vigentes.
      * Retornando falso cuando no sea asi.
@@ -318,21 +319,21 @@ public function totalEmissions(){
         public function validateResp()
         {
             $resp = 0;
-    
+
             $empresa  = Empresa::select('id')
                 ->with('responsabilidades')
                 ->where('id', auth()->user()->empresa)
                 ->first();
-    
+
             $listaResponsabilidadesDian = [5, 7, 12, 20, 29];
-    
+
             foreach ($empresa->responsabilidades as $responsabilidad) {
-    
+
                 if (in_array($responsabilidad->pivot->id_responsabilidad, $listaResponsabilidadesDian)) {
                     $resp = 1;
                 }
             }
-    
+
             return $resp;
         }
 
