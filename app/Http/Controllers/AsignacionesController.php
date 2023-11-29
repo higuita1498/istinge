@@ -62,7 +62,7 @@ class AsignacionesController extends Controller
     public function store(Request $request)
     {
         $num = count(Contrato::where('client_id',$request->contrato)->get());
-        if($num == 1){
+        if($num == 2){
             $idContrato = null;
 
             if($request->contrato) {
