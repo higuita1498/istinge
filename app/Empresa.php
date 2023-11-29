@@ -175,15 +175,35 @@ class Empresa extends Model
                     $campo .= $value;
                 }
             }
-
             if ($parte <> 'tlfno') {
-                $codigo = explode('+', $prefijo)[1];
+                $explodedPrefijo = explode('+', $prefijo);
+                if (count($explodedPrefijo) >= 2) {
+               // $codigo = explode('+', $prefijo)[1];
+                $codigo = $explodedPrefijo[1];
                 $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
                 if (!$codigo) {
                     $prefijo = Auth::user()->empresaObj->codigo;
                 }
-                return $prefijo;
+            } else {
             }
+            return $prefijo;
+            // if ($parte <> 'tlfno') {
+            //     $codigo = explode('+', $prefijo)[1];
+            //     $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
+            //     if (!$codigo) {
+            //         $prefijo = Auth::user()->empresaObj->codigo;
+            //     }
+            //     return $prefijo;
+            // }
+        }
+            // if ($parte <> 'tlfno') {
+            //     $codigo = explode('+', $prefijo)[1];
+            //     $codigo = DB::table('prefijos_telefonicos')->where('phone_code', $codigo)->first();
+            //     if (!$codigo) {
+            //         $prefijo = Auth::user()->empresaObj->codigo;
+            //     }
+            //     return $prefijo;
+            // }
         }
 
         return $campo;
