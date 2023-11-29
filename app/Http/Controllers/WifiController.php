@@ -97,7 +97,7 @@ class WifiController extends Controller
                 return  '<span class="font-weight-bold text-' . $solicitud->estatus(true) . '">' . $solicitud->estatus() . ' </span>';
             })
             ->editColumn('created_by', function (Wifi $solicitud) {
-                return  $solicitud->created_by ? $solicitud->created_by()->nombres : '';
+                return  $solicitud->created_by() ? $solicitud->created_by()->nombres : '';
             })
             ->addColumn('created_at', function (Wifi $solicitud) {
                 return  date('d-m-Y', strtotime($solicitud->fecha));
