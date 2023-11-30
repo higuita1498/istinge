@@ -232,7 +232,7 @@ class IntegracionSMSController extends Controller
                 $mensaje = 'EL MENSAJE DE PRUEBA NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                 return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
             }
-        }else{
+        }elseif($servicio->nombre == 'Colombia RED'){
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
                 $post['text'] = "SMS Prueba Colombia Red | Integra Colombia - Software Administrativo de ISP";
@@ -295,6 +295,73 @@ class IntegracionSMSController extends Controller
                 $mensaje = 'EL MENSAJE DE PRUEBA NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                 return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
             }
-        }
+
+
+        }elseif($servicio->nombre == '360nrs'){
+
+            dd("quieres enviar una prueba con 360nrs");
+            if($servicio->user && $servicio->pass && $servicio->numero){
+                $post['to'] = array('57'.$servicio->numero);
+                $post['text'] = "SMS Prueba Colombia Red | Integra Colombia - Software Administrativo de ISP";
+                $post['from'] = "";
+                $login = $servicio->user;
+                $password = $servicio->pass;
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                curl_setopt($ch, CURLOPT_HTTPHEADER,
+                array(
+                    "Accept: application/json",
+                    "Authorization: Basic ".base64_encode($login.":".$password)));
+                $result = curl_exec ($ch);
+                $err  = curl_error($ch);
+                curl_close($ch);
+
+                if ($err) {
+                    return back()->with('danger', 'Respuesta API Colombia Red: '.$err);
+                }else{
+                    $response = json_decode($result, true);
+
+                    if(isset($response['error'])){
+                        if($response['error']['code'] == 102){
+                            $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                        }else if($response['error']['code'] == 103){
+                            $msj = "Nombre de usuario o contraseña desconocidos";
+                        }else if($response['error']['code'] == 104){
+                            $msj = "Falta el mensaje de texto";
+                        }else if($response['error']['code'] == 105){
+                            $msj = "Mensaje de texto demasiado largo";
+                        }else if($response['error']['code'] == 106){
+                            $msj = "Falta el remitente";
+                        }else if($response['error']['code'] == 107){
+                            $msj = "Remitente demasiado largo";
+                        }else if($response['error']['code'] == 108){
+                            $msj = "No hay fecha y hora válida para enviar";
+                        }else if($response['error']['code'] == 109){
+                            $msj = "URL de notificación incorrecta";
+                        }else if($response['error']['code'] == 110){
+                            $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                        }else if($response['error']['code'] == 111){
+                            $msj = "Crédito/Saldo insuficiente";
+                        }else if($response['error']['code'] == 112){
+                            $msj = "Dirección IP no permitida";
+                        }else if($response['error']['code'] == 113){
+                            $msj = "Codificación no válida";
+                        }else{
+                            $msj = $response['error']['description'];
+                        }
+                        return back()->with('danger', 'Respuesta API Colombia Red: '.$msj);
+                    }else{
+                        return back()->with('success', 'Respuesta API Colombia Red: Mensaje enviado correctamente');
+                    }
+                }
+            }else{
+                $mensaje = 'EL MENSAJE DE PRUEBA NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
+                return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
+            }
+
     }
 }
