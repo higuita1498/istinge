@@ -302,7 +302,7 @@ class IntegracionSMSController extends Controller
 
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
-                $post['text'] = "SMS Prueba Colombia Red | Integra Colombia - Software Administrativo de ISP";
+                $post['text'] = "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP";
                 $post['from'] = "";
                 $login = $servicio->user;
                 $password = $servicio->pass;
@@ -320,7 +320,7 @@ class IntegracionSMSController extends Controller
                 }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
-                    'Authorization: dXNlcm5hbWU6YXBpUGFzc3dvcmQ'
+                    'Authorization: Basic dXNlcm5hbWU6YXBpUGFzc3dvcmQ='
                 ),
                 ));
 
