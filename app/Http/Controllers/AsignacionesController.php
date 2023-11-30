@@ -66,12 +66,9 @@ class AsignacionesController extends Controller
 
         // if($num == 2){
             $idContrato = null;
-
             if($request->id) {
-
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
-
             }
 
             $ext_permitidas = array('jpeg','png','gif');
@@ -653,8 +650,9 @@ class AsignacionesController extends Controller
                 $contrato->save();
                 return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
             }
-    }
-        return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
+        }
+
+        return redirect('empresa/asignaciones')->with('danger', 'No existe un registro con ese id');
     }
 
     public function edit($id)
