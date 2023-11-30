@@ -103,9 +103,8 @@ class AsignacionesController extends Controller
                     $ruta = public_path('/adjuntos/documentos/');
                     $file->move($ruta, $nombre);
                     $contrato->documento = $nombre;
-                    dd("ingreso en el try12");
+
                 } catch (\Exception $e) {
-                    dd("ingreso en el catch");
 
                     // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
                     \Log::error($e->getMessage());
@@ -653,8 +652,10 @@ class AsignacionesController extends Controller
                 // }else{
 
                 // }
-
+dd("antes de guarda");
                 $contrato->save();
+dd("despues de guarda");
+
                 return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
             }
         }
