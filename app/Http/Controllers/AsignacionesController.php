@@ -62,7 +62,7 @@ class AsignacionesController extends Controller
     public function store(Request $request)
     {
         $num = count(Contrato::where('client_id',$request->contrato)->get());
-        if($num == 2){
+        // if($num == 2){
             $idContrato = null;
 
             if($request->contrato) {
@@ -641,9 +641,9 @@ class AsignacionesController extends Controller
                             }
                         }
                     }
-                }else{
+                // }else{
 
-                }
+                // }
 
                 $contrato->save();
                 return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
