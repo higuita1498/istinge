@@ -70,7 +70,7 @@ class IntegracionSMSController extends Controller
     }
 
     public function act_desc(Request $request, $id){
-        dd($id);
+
         $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('status', 1)->where('id', '<>', $id)->count();
         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
@@ -90,6 +90,13 @@ class IntegracionSMSController extends Controller
                     }
                 }elseif($servicio->nombre == 'Colombia RED' || $servicio->nombre == 'SmsEasySms'){
                     if($servicio->user && $servicio->pass){
+                        $servicio->status = 1;
+                        $mensaje = 'SE HA HABILITADO EL SERVICIO CORRECTAMENTE';
+                    }else{
+                        $mensaje = 'EL SERVICIO DE '.$servicio->nombre.' NO SE PUEDE HABILITAR POR FALTA DE INFORMACIÓN DE AUTENTICACIÓN';
+                        return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
+                    }
+                }elseif($servicio->nombre == '360nrs'){
                         $servicio->status = 1;
                         $mensaje = 'SE HA HABILITADO EL SERVICIO CORRECTAMENTE';
                     }else{
