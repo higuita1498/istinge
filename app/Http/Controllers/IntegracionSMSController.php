@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Carbon\Carbon;  
-use Mail; 
+use Carbon\Carbon;
+use Mail;
 use Validator;
-use Illuminate\Validation\Rule;  
-use Auth; 
+use Illuminate\Validation\Rule;
+use Auth;
 use DB;
 use Session;
 
@@ -70,6 +70,7 @@ class IntegracionSMSController extends Controller
     }
 
     public function act_desc(Request $request, $id){
+        dd($id);
         $servicios = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('status', 1)->where('id', '<>', $id)->count();
         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('lectura', 1)->where('id', $id)->first();
 
