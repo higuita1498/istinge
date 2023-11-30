@@ -657,7 +657,6 @@ class AsignacionesController extends Controller
                 // }
 
                 $contrato->save();
-                dd("despues de guarda");
                 return redirect('empresa/asignaciones')->with('success', 'SE HA REGISTRADO SATISFACTORIAMENTE LA ASIGNACIÓN DEL CONTRATO DIGITAL.');
             }
 
