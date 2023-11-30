@@ -164,7 +164,7 @@ class AsignacionesController extends Controller
                         }
                     }
                 }
-                dd("antes de guarda15");
+
                 if($request->file('imgA')) {
                     $file = $request->file('imgA');
                     $nombre =  $idContrato.'imgA_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
@@ -581,7 +581,7 @@ class AsignacionesController extends Controller
                         }
                     }
                 }
-
+                dd("antes de guarda18");
                 if($request->file('adjunto_audio')){
                     $file = $request->file('adjunto_audio');
                     $nombre =  $idContrato.'adjunto_audio'.$contrato->nit.'.'.$file->getClientOriginalExtension();
