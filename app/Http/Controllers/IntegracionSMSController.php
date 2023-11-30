@@ -313,7 +313,7 @@ class IntegracionSMSController extends Controller
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
-                "to": ["3022501174"],
+                "to": ["573022501174"],
                 "from": "TEST",
                 "message": "SMS text message"
                 }',
