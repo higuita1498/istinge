@@ -63,14 +63,14 @@ class AsignacionesController extends Controller
     {
         // $num = count(Contrato::where('client_id',$request->contrato)->get());
         $num = Contrato::where('client_id',$request->id)->first();
-        dd($num);
+
         // if($num == 2){
             $idContrato = null;
 
             if($request->contrato) {
 
                 // $idContrato = $request->contrato;
-                $idContrato = $num->id;
+                $idContrato = $num->client_id;
 
             }
 
