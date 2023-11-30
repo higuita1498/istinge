@@ -299,6 +299,7 @@ class IntegracionSMSController extends Controller
 
         }elseif($servicio->nombre == '360nrs'){
 
+
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
                 $post['text'] = "SMS Prueba Colombia Red | Integra Colombia - Software Administrativo de ISP";
