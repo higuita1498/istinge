@@ -307,55 +307,64 @@ class IntegracionSMSController extends Controller
                 $login = $servicio->user;
                 $password = $servicio->pass;
 
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                curl_setopt($ch, CURLOPT_HTTPHEADER,
-                array(
-                    "Accept: application/json",
-                    "Authorization: Basic ".base64_encode($login.":".$password)));
-                $result = curl_exec ($ch);
-                $err  = curl_error($ch);
-                curl_close($ch);
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://dashboard.360nrs.com/api/rest/sms',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+                "to": ["3022501174"],
+                "from": "TEST",
+                "message": "SMS text message"
+                }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: dXNlcm5hbWU6YXBpUGFzc3dvcmQ'
+                ),
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+                echo $response;
 
                 if ($err) {
-                    return back()->with('danger', 'Respuesta API Colombia Red: '.$err);
+                    return back()->with('danger', 'Respuesta API 360nrs: '.$err);
                 }else{
                     $response = json_decode($result, true);
 
                     if(isset($response['error'])){
-                        if($response['error']['code'] == 102){
-                            $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
-                        }else if($response['error']['code'] == 103){
-                            $msj = "Nombre de usuario o contraseña desconocidos";
-                        }else if($response['error']['code'] == 104){
-                            $msj = "Falta el mensaje de texto";
-                        }else if($response['error']['code'] == 105){
-                            $msj = "Mensaje de texto demasiado largo";
-                        }else if($response['error']['code'] == 106){
-                            $msj = "Falta el remitente";
-                        }else if($response['error']['code'] == 107){
-                            $msj = "Remitente demasiado largo";
-                        }else if($response['error']['code'] == 108){
-                            $msj = "No hay fecha y hora válida para enviar";
-                        }else if($response['error']['code'] == 109){
-                            $msj = "URL de notificación incorrecta";
-                        }else if($response['error']['code'] == 110){
-                            $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
-                        }else if($response['error']['code'] == 111){
-                            $msj = "Crédito/Saldo insuficiente";
-                        }else if($response['error']['code'] == 112){
-                            $msj = "Dirección IP no permitida";
-                        }else if($response['error']['code'] == 113){
-                            $msj = "Codificación no válida";
-                        }else{
-                            $msj = $response['error']['description'];
-                        }
-                        return back()->with('danger', 'Respuesta API Colombia Red: '.$msj);
+                        // if($response['error']['code'] == 102){
+                        //     $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                        // }else if($response['error']['code'] == 103){
+                        //     $msj = "Nombre de usuario o contraseña desconocidos";
+                        // }else if($response['error']['code'] == 104){
+                        //     $msj = "Falta el mensaje de texto";
+                        // }else if($response['error']['code'] == 105){
+                        //     $msj = "Mensaje de texto demasiado largo";
+                        // }else if($response['error']['code'] == 106){
+                        //     $msj = "Falta el remitente";
+                        // }else if($response['error']['code'] == 107){
+                        //     $msj = "Remitente demasiado largo";
+                        // }else if($response['error']['code'] == 108){
+                        //     $msj = "No hay fecha y hora válida para enviar";
+                        // }else if($response['error']['code'] == 109){
+                        //     $msj = "URL de notificación incorrecta";
+                        // }else if($response['error']['code'] == 110){
+                        //     $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                        // }else if($response['error']['code'] == 111){
+                        //     $msj = "Crédito/Saldo insuficiente";
+                        // }else if($response['error']['code'] == 112){
+                        //     $msj = "Dirección IP no permitida";
+                        // }else if($response['error']['code'] == 113){
+                        //     $msj = "Codificación no válida";
+                        // }else{
+                        //     $msj = $response['error']['description'];
+                        // }
+                        return back()->with('danger', 'Respuesta API 360nrs: '.$msj);
                     }else{
-                        return back()->with('success', 'Respuesta API Colombia Red: Mensaje enviado correctamente');
+                        return back()->with('success', 'Respuesta API 360nrs: Mensaje enviado correctamente');
                     }
                 }
             }else{
