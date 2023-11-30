@@ -66,7 +66,10 @@ class AsignacionesController extends Controller
             $idContrato = null;
 
             if($request->contrato) {
-                $idContrato = $request->contrato;
+
+                // $idContrato = $request->contrato;
+                $idContrato = $request->id;
+
             }
 
             $ext_permitidas = array('jpeg','png','gif');
