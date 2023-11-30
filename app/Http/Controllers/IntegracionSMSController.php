@@ -299,7 +299,6 @@ class IntegracionSMSController extends Controller
 
         }elseif($servicio->nombre == '360nrs'){
 
-
             if($servicio->user && $servicio->pass && $servicio->numero){
                 $post['to'] = array('57'.$servicio->numero);
                 $post['text'] = "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP";
@@ -327,7 +326,7 @@ class IntegracionSMSController extends Controller
                 $response = curl_exec($curl);
 
                 curl_close($curl);
-                dd($response);
+
 
                 if ($err) {
                     return back()->with('danger', 'Respuesta API 360nrs: '.$err);
