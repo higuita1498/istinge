@@ -109,7 +109,7 @@ class AsignacionesController extends Controller
                     // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
                     \Log::error($e->getMessage());
                 }
-
+                dd("antes de guarda12");
                 $xmax = 1080;
                 $ymax = 720;
 
@@ -652,7 +652,7 @@ class AsignacionesController extends Controller
                 // }else{
 
                 // }
-dd("antes de guarda");
+
                 $contrato->save();
 dd("despues de guarda");
 
