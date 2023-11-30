@@ -315,7 +315,7 @@ class IntegracionSMSController extends Controller
                 CURLOPT_POSTFIELDS => '{
                 "to": ["573022501174"],
                 "from": "TEST",
-                "message": "SMS text message"
+                "message": "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP"
                 }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
