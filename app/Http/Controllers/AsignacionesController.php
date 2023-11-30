@@ -69,6 +69,7 @@ class AsignacionesController extends Controller
             if($request->id) {
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
+
             }
 
             $ext_permitidas = array('jpeg','png','gif');
@@ -81,6 +82,7 @@ class AsignacionesController extends Controller
                 return back()->with('danger', $mensaje);
             }
             $contrato = Contacto::where('id', $request->id)->where('empresa', Auth::user()->empresa)->first();
+
             if ($contrato) {
                 if($request->firma_isp) {
                     $contrato->firma_isp = $request->firma_isp;
@@ -92,7 +94,9 @@ class AsignacionesController extends Controller
                 //   $ruta = public_path('/adjuntos/documentos/');
                     // $file->move($ruta, $nombre);
                 // $contrato->documento = $nombre;
+
                 try {
+                    dd("ingreso en el try");
                     $contrato->fecha_isp = date('Y-m-d');
                     $file = $request->file('documento');
                     $nombre =  $idContrato . 'doc_' . $contrato->nit . '.' . $file->getClientOriginalExtension();
@@ -100,6 +104,8 @@ class AsignacionesController extends Controller
                     $file->move($ruta, $nombre);
                     $contrato->documento = $nombre;
                 } catch (\Exception $e) {
+                    dd("ingreso en el catch");
+
                     // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
                     \Log::error($e->getMessage());
                 }
@@ -1212,12 +1218,10 @@ class AsignacionesController extends Controller
                     }
                 }
             }
-dd("va guardar la asignacion");
+
             $contrato->save();
             return redirect('empresa/asignaciones')->with('success', 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA DOCUMENTACIÓN DEL CONTRATO DIGITAL.');
         }
-dd("no va guardar la asignacion");
-
         return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
     }
 
