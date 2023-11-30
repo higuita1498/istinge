@@ -581,7 +581,7 @@ class AsignacionesController extends Controller
                         }
                     }
                 }
-                dd("antes de guarda18");
+
                 if($request->file('adjunto_audio')){
                     $file = $request->file('adjunto_audio');
                     $nombre =  $idContrato.'adjunto_audio'.$contrato->nit.'.'.$file->getClientOriginalExtension();
@@ -597,7 +597,7 @@ class AsignacionesController extends Controller
                     $ruta = public_path('/adjuntos/documentos/');
                     $file->move($ruta, $nombre);
                     $contrato->imgH = $nombre;
-
+                    dd("antes de guarda35");
                     if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
                         switch($file->getClientOriginalExtension()) {
                             case 'jpeg':
