@@ -67,7 +67,7 @@ class AsignacionesController extends Controller
         // if($num == 2){
             $idContrato = null;
 
-            if($request->contrato) {
+            if($request->id) {
 
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
