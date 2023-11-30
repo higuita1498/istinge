@@ -103,7 +103,7 @@ class IntegracionSMSController extends Controller
                         $mensaje = 'EL SERVICIO DE '.$servicio->nombre.' NO SE PUEDE HABILITAR POR FALTA DE INFORMACIÓN DE AUTENTICACIÓN';
                         return redirect('empresa/configuracion/integracion-sms')->with('danger', $mensaje)->with('id', $servicio->id);
                     }
-                }
+
             }else{
                 $servicio->status = 0;
                 $mensaje = 'SE HA DESHABILITADO EL SERVICIO CORRECTAMENTE';
