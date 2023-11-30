@@ -1212,10 +1212,12 @@ class AsignacionesController extends Controller
                     }
                 }
             }
-
+dd("va guardar la asignacion");
             $contrato->save();
             return redirect('empresa/asignaciones')->with('success', 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA DOCUMENTACIÓN DEL CONTRATO DIGITAL.');
         }
+dd("no va guardar la asignacion");
+
         return redirect('empresa/asignaciones')->with('success', 'No existe un registro con ese id');
     }
 
