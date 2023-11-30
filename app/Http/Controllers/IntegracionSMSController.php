@@ -320,7 +320,7 @@ class IntegracionSMSController extends Controller
                 }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
-                    'Authorization: Basic dXNlcm5hbWU6YXBpUGFzc3dvcmQ='
+                    'Authorization: Basic 39edc9838d416ea07dda8ff3fdcda041'
                 ),
                 ));
 
