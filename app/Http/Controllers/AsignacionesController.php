@@ -96,13 +96,14 @@ class AsignacionesController extends Controller
                 // $contrato->documento = $nombre;
 
                 try {
-                    dd("ingreso en el try");
+
                     $contrato->fecha_isp = date('Y-m-d');
                     $file = $request->file('documento');
                     $nombre =  $idContrato . 'doc_' . $contrato->nit . '.' . $file->getClientOriginalExtension();
                     $ruta = public_path('/adjuntos/documentos/');
                     $file->move($ruta, $nombre);
                     $contrato->documento = $nombre;
+                    dd("ingreso en el try12");
                 } catch (\Exception $e) {
                     dd("ingreso en el catch");
 
