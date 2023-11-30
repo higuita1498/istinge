@@ -328,7 +328,7 @@ class IntegracionSMSController extends Controller
                 curl_close($curl);
 
 
-                if ($err) {
+                if (isset($response['error'])) {
                     return back()->with('danger', 'Respuesta API 360nrs: '.$err);
                 }else{
                     $response = json_decode($result, true);
