@@ -70,7 +70,7 @@ class AsignacionesController extends Controller
             if($request->contrato) {
 
                 // $idContrato = $request->contrato;
-                $idContrato = $num->client_id;
+                $idContrato = $num->id;
 
             }
 
