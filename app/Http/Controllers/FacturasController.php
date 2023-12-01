@@ -2882,7 +2882,7 @@ class FacturasController extends Controller{
                     $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                     return back()->with('danger', $mensaje);
                 }
-            }else{
+            }elseif{
                 if($servicio->user && $servicio->pass){
                     $post['to'] = array('57'.$numero);
                     $post['text'] = $mensaje;
@@ -2948,7 +2948,75 @@ class FacturasController extends Controller{
                     $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                     return back()->with('danger', $mensaje);
                 }
-            }
+            }elseif($servicio->nombre == '360nrs'){
+
+                if($servicio->user && $servicio->pass && $servicio->numero){
+                    $post['to'] = array('57'.$servicio->numero);
+                    $post['text'] = "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP";
+                    $post['from'] = "";
+                    $login = $servicio->user;
+                    $password = $servicio->pass;
+
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://dashboard.360nrs.com/api/rest/sms',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => '{
+                    "to": ["573022501174"],
+                    "from": "TEST",
+                    "message": "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP"
+                    }',
+                    CURLOPT_HTTPHEADER => array(
+                        'Content-Type: application/json',
+                        'Authorization: Basic aW50ZWdyYTM2MDpUUHlhNzQ/Iw=='
+                    ),
+                    ));
+
+                    $response = curl_exec($curl);
+
+                    curl_close($curl);
+
+
+                    if (isset($response['error'])) {
+                        return back()->with('danger', 'Respuesta API 360nrs: '.$err);
+                    }else{
+                        $response = json_decode($result, true);
+
+                        if(isset($response['error'])){
+                            // if($response['error']['code'] == 102){
+                            //     $msj = "No hay destinatarios válidos (Cumpla con el formato de nro +5700000000000)";
+                            // }else if($response['error']['code'] == 103){
+                            //     $msj = "Nombre de usuario o contraseña desconocidos";
+                            // }else if($response['error']['code'] == 104){
+                            //     $msj = "Falta el mensaje de texto";
+                            // }else if($response['error']['code'] == 105){
+                            //     $msj = "Mensaje de texto demasiado largo";
+                            // }else if($response['error']['code'] == 106){
+                            //     $msj = "Falta el remitente";
+                            // }else if($response['error']['code'] == 107){
+                            //     $msj = "Remitente demasiado largo";
+                            // }else if($response['error']['code'] == 108){
+                            //     $msj = "No hay fecha y hora válida para enviar";
+                            // }else if($response['error']['code'] == 109){
+                            //     $msj = "URL de notificación incorrecta";
+                            // }else if($response['error']['code'] == 110){
+                            //     $msj = "Se superó el número máximo de piezas permitido o número incorrecto de piezas";
+                            // }else if($response['error']['code'] == 111){
+                            //     $msj = "Crédito/Saldo insuficiente";
+                            // }else if($response['error']['code'] == 112){
+                            //     $msj = "Dirección IP no permitida";
+                            // }else if($response['error']['code'] == 113){
+                            //     $msj = "Codificación no válida";
+                            // }else{
+                            //     $msj = $response['error']['description'];
+                            // }
+                            return back()->with('danger', 'Respuesta API 360nrs: '.$msj);
+                        }else{
+                            return back()->with('success', 'Respuesta API 360nrs: Mensaje enviado correctamente');
+                        }
+                    }
         }else{
             return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
         }
