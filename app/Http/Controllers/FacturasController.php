@@ -2951,9 +2951,9 @@ class FacturasController extends Controller{
             }elseif($servicio->nombre == '360nrs'){
 
                 if($servicio->user && $servicio->pass && $servicio->numero){
-                    $post['to'] = array('57'.$servicio->numero);
-                    $post['text'] = "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP";
-                    $post['from'] = "";
+                    $post['to'] = array('573022501174');
+                    $post['text'] = $mensaje;
+                    $post['from'] = "SMS";
                     $login = $servicio->user;
                     $password = $servicio->pass;
 
@@ -2963,11 +2963,7 @@ class FacturasController extends Controller{
                     CURLOPT_URL => 'https://dashboard.360nrs.com/api/rest/sms',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => '{
-                    "to": ["573022501174"],
-                    "from": "TEST",
-                    "message": "SMS Prueba 360nrs | Integra Colombia - Software Administrativo de ISP"
-                    }',
+                    CURLOPT_POSTFIELDS => json_encode($post),
                     CURLOPT_HTTPHEADER => array(
                         'Content-Type: application/json',
                         'Authorization: Basic aW50ZWdyYTM2MDpUUHlhNzQ/Iw=='
