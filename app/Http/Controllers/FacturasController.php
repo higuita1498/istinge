@@ -2882,8 +2882,8 @@ class FacturasController extends Controller{
                     $mensaje = 'EL MENSAJE NO SE PUDO ENVIAR PORQUE FALTA INFORMACIÓN EN LA CONFIGURACIÓN DEL SERVICIO';
                     return back()->with('danger', $mensaje);
                 }
-            }elseif{
-                if($servicio->user && $servicio->pass){
+            }elseif($servicio->user && $servicio->pass){
+
                     $post['to'] = array('57'.$numero);
                     $post['text'] = $mensaje;
                     $post['from'] = "";
