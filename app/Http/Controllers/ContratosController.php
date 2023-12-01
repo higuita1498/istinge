@@ -520,6 +520,7 @@ class ContratosController extends Controller
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 $nro = Numeracion::where('empresa', 1)->first();
+                dd($nro);
                 $nro_contrato = $nro->contrato;
 
                 while (true) {
