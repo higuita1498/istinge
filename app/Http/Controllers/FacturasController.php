@@ -2954,8 +2954,6 @@ class FacturasController extends Controller{
                     $post['to'] = array('573022501174');
                     $post['text'] = $mensaje;
                     $post['from'] = "SMS";
-                    $login = $servicio->user;
-                    $password = $servicio->pass;
 
                     $curl = curl_init();
 
