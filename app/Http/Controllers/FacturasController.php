@@ -3017,6 +3017,7 @@ class FacturasController extends Controller{
                             return back()->with('success', 'Respuesta API 360nrs: Mensaje enviado correctamente');
                         }
                     }
+                }
         }else{
             return back()->with('danger', 'DISCULPE, NO POSEE NINGUN SERVICIO DE SMS HABILITADO. POR FAVOR HABILÍTELO PARA DISFRUTAR DEL SERVICIO');
         }
