@@ -2604,6 +2604,10 @@ class CronController extends Controller
 
     public function envioFacturaWpp(){
 
+        if(date('d') == 01){
+            $dia = 1;
+        }else $dia = date('d');
+
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',date('d'))->get();
 
         if($grupos_corte->count() > 0){
