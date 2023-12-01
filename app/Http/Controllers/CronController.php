@@ -2608,7 +2608,7 @@ class CronController extends Controller
             $dia = 1;
         }else $dia = date('d');
 
-        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',date('d'))->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
 
         if($grupos_corte->count() > 0){
 
