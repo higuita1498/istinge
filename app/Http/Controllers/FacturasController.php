@@ -871,6 +871,7 @@ class FacturasController extends Controller{
         $nro = false;
         $contrato = false;
         $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
+
         dd($num);
 
         if(!isset($request->electronica)){
