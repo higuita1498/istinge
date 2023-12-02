@@ -228,6 +228,23 @@ class CronController extends Controller
                                     $item_reg->save();
                                 }
 
+                                ## Se carga el item de otro tipo de servicio ##
+
+                                if($contrato->servicio_otro){
+                                    $item = Inventario::find($contrato->servicio_otro);
+                                    $item_reg = new ItemsFactura;
+                                    $item_reg->factura     = $factura->id;
+                                    $item_reg->producto    = $item->id;
+                                    $item_reg->ref         = $item->ref;
+                                    $item_reg->precio      = $item->precio;
+                                    $item_reg->descripcion = $item->producto;
+                                    $item_reg->id_impuesto = $item->id_impuesto;
+                                    $item_reg->impuesto    = $item->impuesto;
+                                    $item_reg->cant        = 1;
+                                    $item_reg->desc        = $contrato->descuento;
+                                    $item_reg->save();
+                                }
+
                                 ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
 
                                 $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();

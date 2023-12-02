@@ -455,13 +455,16 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         $servicios = Inventario::where('empresa', Auth::user()->empresa)->where('type', 'TV')->where('status', 1)->get();
+        $serviciosOtros = Inventario::where('empresa', Auth::user()->empresa)->where('type','<>','TV')->where('status', 1)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
 
         view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Nuevo Contrato']);
-        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones', 'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
+        return view('contratos.create')->with(compact('clientes', 'planes', 'servidores', 'identificaciones',
+        'paises', 'departamentos','nodos', 'aps', 'marcas', 'grupos', 'cliente', 'puertos', 'empresa',
+         'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas','serviciosOtros'));
     }
 
     public function store(Request $request){
@@ -941,6 +944,12 @@ class ContratosController extends Controller
 
             return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
         }
+
+        ## Otro tipo de servicio ingresa tenga o no tenga mk ##
+        if($request->servicio_otro){
+            $contrato->servicio_otro = $request->servicio_otro;
+            $contrato->save();
+        }
     }
 
     public function edit($id){
@@ -971,6 +980,7 @@ class ContratosController extends Controller
         $grupos = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $puertos = Puerto::where('empresa', Auth::user()->empresa)->get();
         $servicios = Inventario::where('empresa', Auth::user()->empresa)->where('type', 'TV')->where('status', 1)->get();
+        $serviciosOtros = Inventario::where('empresa', Auth::user()->empresa)->where('type','<>','TV')->where('status', 1)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $gmaps = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'GMAPS')->first();
@@ -978,7 +988,8 @@ class ContratosController extends Controller
 
         if ($contrato) {
             view()->share(['icon'=>'fas fa-file-contract', 'title' => 'Editar Contrato: '.$contrato->nro]);
-            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores', 'interfaces', 'grupos', 'puertos', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas'));
+            return view('contratos.edit')->with(compact('contrato','planes','nodos','aps', 'marcas', 'servidores',
+            'interfaces', 'grupos', 'puertos', 'servicios', 'vendedores', 'canales', 'gmaps', 'oficinas','serviciosOtros'));
         }
         return redirect('empresa/contratos')->with('danger', 'EL CONTRATO DE SERVICIOS NO HA ENCONTRADO');
     }
@@ -1381,7 +1392,7 @@ class ContratosController extends Controller
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
                     $contrato->tipo_contrato           = $request->tipo_contrato;
-                    $contrato->observaciones              = $request->observaciones;
+                    $contrato->observaciones           = $request->observaciones;
 
                     if($request->tipo_suspension_no == 1){
                         $contrato->tipo_nosuspension = 1;
@@ -1440,6 +1451,12 @@ class ContratosController extends Controller
                             Storage::disk('documentos')->put($nombre, \File::get($file));
                             $contrato->adjunto_d = $nombre;
                         }
+                    }
+
+                    ## Otro tipo de servicio ingresa tenga o no tenga mk ##
+                    if($request->servicio_otro){
+                        $contrato->servicio_otro = $request->servicio_otro;
+                        $contrato->save();
                     }
 
                     ### DOCUMENTOS ADJUNTOS ###

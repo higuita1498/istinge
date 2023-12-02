@@ -482,6 +482,22 @@
                         </div>
                     </div>
                     @endif
+                    <div class="tab-pane fade" id="television" role="tabpanel" aria-labelledby="television-tab">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Otros ítems</label>
+                                <select class="form-control selectpicker" name="servicio_otro" id="servicio_otro" title="Seleccione" data-live-search="true" data-size="5">
+                                    <option value="">NINGUNO</option>
+                                    @foreach($serviciosOtros as $servicioOtro)
+                                        <option value="{{$servicioOtro->id}}" {{ $servicioOtro->id==$contrato->servicio_otro?'selected':'' }}>{{$servicioOtro->producto}} - ({{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($servicioOtro->precio)}})</option>
+                                    @endforeach
+                                </select>
+                                <span style="color: red;">
+                                    <strong>{{ $errors->first('servicio_otro') }}</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="tab-pane fade" id="adjuntos" role="tabpanel" aria-labelledby="adjuntos-tab">
                         <div class="row">
                             <div class="col-md-3 form-group">
