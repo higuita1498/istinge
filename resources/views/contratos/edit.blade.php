@@ -117,6 +117,9 @@
                     </li>
                     @endif
                     <li class="nav-item">
+                        <a class="nav-link" id="television-tab" data-toggle="tab" href="#otrositems" role="tab" aria-controls="television" aria-selected="false">OTROS ITEMS A FACTURAR</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="adicionales-tab" data-toggle="tab" href="#adicionales" role="tab" aria-controls="adicionales" aria-selected="false">OPCIONES ADICIONALES</a>
                     </li>
                     <li class="nav-item">
@@ -482,7 +485,7 @@
                         </div>
                     </div>
                     @endif
-                    <div class="tab-pane fade" id="television" role="tabpanel" aria-labelledby="television-tab">
+                    <div class="tab-pane fade" id="otrositems" role="tabpanel" aria-labelledby="otrositems-tab">
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Otros ítems</label>
