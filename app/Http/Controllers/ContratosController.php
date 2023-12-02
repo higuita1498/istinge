@@ -963,7 +963,7 @@ class ContratosController extends Controller
          'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario','contracts.local_adress_pppoe','contracts.direccion_local_address', 'contracts.password',
          'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
          'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
-         'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv',
+         'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv','contracts.servicio_otro',
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu',
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
           'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
