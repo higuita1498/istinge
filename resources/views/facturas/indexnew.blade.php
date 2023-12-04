@@ -10,7 +10,7 @@
 	    </div>
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
-        @if(isset($_SESSION['permisos']['42']))
+        @if(isset($_SESSION['permisos']))
             @php
                 echo '<p>' . htmlspecialchars($_SESSION['permisos']['42']) . '</p>';
             @endphp
