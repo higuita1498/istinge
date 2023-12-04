@@ -51,7 +51,7 @@
 	        <a href="{{route('facturas.whatsapp',$id)}}" class="btn btn-outline-success btn-icons" title="Enviar Vía WhatsApp"><i class="fab fa-whatsapp"></i></a>
 	    @endif
 	@endif
-	@if($tipo == 2 && $emitida == 0)
+	@if(($tipo == 2 && $emitida == 0) && !isset($_SESSION['permisos']['857']))
 	<a href="#" class="btn btn-outline-primary btn-icons" title="Emitir Factura" onclick="validateDian({{ $id }}, '{{route('xml.factura',$id)}}', '{{$codigo}}')"><i class="fas fa-sitemap"></i></a>
 	@endif
 	<a href="{{route('facturas.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
