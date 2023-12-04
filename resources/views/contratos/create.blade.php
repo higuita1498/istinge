@@ -330,7 +330,7 @@
                             </div>
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label" id="div_local_address">Segmento de IP<span class="text-danger">*</span></label>
+                                <label class="control-label" id="div_local_address">Segmento de IP12<span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="hidden" id="segmento_bd" name="segmento_bd" value="{{ old('segmento_bd') }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
