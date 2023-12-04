@@ -10,7 +10,9 @@
 	    </div>
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+        @if(isset($_SESSION['permisos']['42']))
         <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
+        @endif
     @endif
 @endsection
 
@@ -160,9 +162,11 @@
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
+                    @if(isset($_SESSION['permisos']['774']))
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
                     </div>
+                    @endif
                 </div>
 			</div>
 		</div>
@@ -179,7 +183,7 @@
 			</table>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -398,7 +402,7 @@
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
-		getDataTable();   
+		getDataTable();
 	}
 
 	function exportar() {
