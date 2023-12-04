@@ -1036,7 +1036,7 @@ class ContratosController extends Controller
                 'ip' => 'required',
                 'conexion' => 'required',
             ]);
-        }else if($request->servicio_tv){
+        }elseif($request->servicio_tv){
             $request->validate([
                 'servicio_tv' => 'required'
             ]);
