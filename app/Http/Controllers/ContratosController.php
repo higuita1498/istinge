@@ -1109,12 +1109,12 @@ class ContratosController extends Controller
                         )
                     );
 
-                    if($queue){
-                        $API->comm("/queue/simple/remove", array(
-                            ".id" => $queue[0][".id"],
-                            )
-                        );
-                    }
+                    // if($queue){
+                    //     $API->comm("/queue/simple/remove", array(
+                    //         ".id" => $queue[0][".id"],
+                    //         )
+                    //     );
+                    // }
                     #ELMINAMOS DEL QUEUE#
 
                     #ELIMINAMOS DE IP_AUTORIZADAS#
