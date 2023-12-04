@@ -162,11 +162,11 @@
                     <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Acciones en Lote
                     </button>
-                    @if(isset($_SESSION['permisos']['774']))
+
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
                     </div>
-                    @endif
+
                 </div>
 			</div>
 		</div>

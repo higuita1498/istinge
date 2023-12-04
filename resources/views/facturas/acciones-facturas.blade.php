@@ -55,7 +55,7 @@
 	<a href="#" class="btn btn-outline-primary btn-icons" title="Emitir Factura" onclick="validateDian({{ $id }}, '{{route('xml.factura',$id)}}', '{{$codigo}}')"><i class="fas fa-sitemap"></i></a>
 	@endif
 	<a href="{{route('facturas.showmovimiento',$id)}}" class="btn btn-outline-info btn-icons" title="Ver movimientos"><i class="far fa-sticky-note"></i></a>
-	@if($tipo == 1 && isset($opciones_dian) && $opciones_dian == 1)
+	@if(($tipo == 1 && isset($opciones_dian) && $opciones_dian == 1) && isset($_SESSION['permisos']['857']))
 	<a onclick="convertirElectronica('{{$codigo}}','{{route('facturas.convertirelectronica',$id)}}')" class="btn btn-outline-info btn-icons" title="Convertir a electrónica"><i class="fas fa-exchange-alt"></i></a>
 	@endif
 @endif
