@@ -1225,6 +1225,7 @@ class ContratosController extends Controller
                         if($queue){
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
+                                "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
