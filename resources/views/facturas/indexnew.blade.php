@@ -11,10 +11,7 @@
 	@else
         <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
         @if(isset($_SESSION['permisos']['42']))
-            @php
-                echo '<p>' . htmlspecialchars($_SESSION['permisos']) . '</p>';
-            @endphp
-        <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
+                 <a href="{{route('facturas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Factura de Venta</a>
         @endif
     @endif
 @endsection
