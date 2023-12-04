@@ -984,6 +984,7 @@ class ContratosController extends Controller
     }
 
     public function update(Request $request, $id){
+        dd("ingreso a editar");
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
             'grupo_corte' => 'required',
