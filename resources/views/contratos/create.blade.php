@@ -330,7 +330,7 @@
                             </div>
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label" id="div_local_address">Segmento de IP12<span class="text-danger">*</span></label>
+                                <label class="control-label" id="div_local_address">Segmento de IP<span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="hidden" id="segmento_bd" name="segmento_bd" value="{{ old('segmento_bd') }}">
                                     <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -371,7 +371,7 @@
                             </div>
 
                             <div class="col-md-4 form-group d-none" id="new_ip">
-                                <label class="control-label" id="ip_new">Dirección IP (Remote Address) <span class="text-danger">*</span></label>
+                                <label class="control-label" id="ip_new">Dirección IP15 (Remote Address) <span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="ip_new" id="ip_new" readonly required="" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" value="{{ old('ip_new') }}">
                                     <div class="input-group-append">
