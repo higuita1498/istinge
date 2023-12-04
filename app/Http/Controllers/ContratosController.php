@@ -522,6 +522,7 @@ class ContratosController extends Controller
             //$API->debug = true;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                dd("hgola se conecto a la api");
                 $nro = Numeracion::where('empresa', 1)->first();
 
                 $nro_contrato = $nro->contrato;
@@ -553,6 +554,7 @@ class ContratosController extends Controller
                 if($request->conexion == 1){
 
                     $ppoe_local_adress = $request->local_address;
+
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
@@ -774,7 +776,7 @@ class ContratosController extends Controller
                 $contrato->address_street          = $request->address_street;
                 $contrato->tecnologia              = $request->tecnologia;
                 $contrato->tipo_contrato           = $request->tipo_contrato;
-                $contrato->observaciones              = $request->observaciones;
+                $contrato->observaciones           = $request->observaciones;
 
 
                 if($request->tipo_suspension_no == 1){
