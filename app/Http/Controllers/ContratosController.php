@@ -522,7 +522,7 @@ class ContratosController extends Controller
             //$API->debug = true;
 
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                dd("hgola se conecto a la api");
+
                 $nro = Numeracion::where('empresa', 1)->first();
 
                 $nro_contrato = $nro->contrato;
