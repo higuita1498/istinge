@@ -551,6 +551,7 @@ class ContratosController extends Controller
 
                 /*PPPOE*/
                 if($request->conexion == 1){
+                    dd("vas a ingresar al llamado de la api");
                     $ppoe_local_adress = $request->local_address;
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
@@ -562,6 +563,7 @@ class ContratosController extends Controller
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
+                    dd("ya debio conectarse a la api");
 
                     // $API->comm("/queue/simple/add", array(
                     //     "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
