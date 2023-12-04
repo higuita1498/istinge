@@ -117,6 +117,9 @@
                     </li>
                     @endif
                     <li class="nav-item">
+                        <a class="nav-link" id="television-tab" data-toggle="tab" href="#otrositems" role="tab" aria-controls="television" aria-selected="false">OTROS ITEMS A FACTURAR</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="adicionales-tab" data-toggle="tab" href="#adicionales" role="tab" aria-controls="adicionales" aria-selected="false">OPCIONES ADICIONALES</a>
                     </li>
                     <li class="nav-item">
@@ -482,6 +485,22 @@
                         </div>
                     </div>
                     @endif
+                    <div class="tab-pane fade" id="otrositems" role="tabpanel" aria-labelledby="otrositems-tab">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Otros ítems</label>
+                                <select class="form-control selectpicker" name="servicio_otro" id="servicio_otro" title="Seleccione" data-live-search="true" data-size="5">
+                                    <option value="">NINGUNO</option>
+                                    @foreach($serviciosOtros as $servicioOtro)
+                                        <option value="{{$servicioOtro->id}}" {{ $servicioOtro->id==$contrato->servicio_otro?'selected':'' }}>{{$servicioOtro->producto}} - ({{ Auth::user()->empresa()->moneda }} {{ App\Funcion::Parsear($servicioOtro->precio)}})</option>
+                                    @endforeach
+                                </select>
+                                <span style="color: red;">
+                                    <strong>{{ $errors->first('servicio_otro') }}</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="tab-pane fade" id="adjuntos" role="tabpanel" aria-labelledby="adjuntos-tab">
                         <div class="row">
                             <div class="col-md-3 form-group">
