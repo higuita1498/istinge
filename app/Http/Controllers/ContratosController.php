@@ -565,7 +565,7 @@ class ContratosController extends Controller
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
-
+                    $registro = true;
 
                     //  $API->comm("/queue/simple/add", array(
                     //      "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
