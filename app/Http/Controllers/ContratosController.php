@@ -558,7 +558,7 @@ class ContratosController extends Controller
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
-                        "profile"        => $request->profile,
+                       // "profile"        => $request->profile,
                         "local-address"  => $request->local_address,
                         "remote-address" => $request->ip,
                         "service"        => 'pppoe',
@@ -566,7 +566,9 @@ class ContratosController extends Controller
                         )
                     );
                     $registro = true;
-
+                    // $getall = $API->comm("/ppp/secret/getall", array(
+                    //     "?local-address" => $request->ip
+                    //     )
                     //  $API->comm("/queue/simple/add", array(
                     //      "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                     //      "target"          => $request->ip,
