@@ -554,7 +554,7 @@ class ContratosController extends Controller
                 if($request->conexion == 1){
 
                     $ppoe_local_adress = $request->local_address;
-                    dd($request);
+
                     $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
