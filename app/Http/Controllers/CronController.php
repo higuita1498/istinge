@@ -2623,7 +2623,7 @@ class CronController extends Controller
 
         if(getdate()['mday'] == 01){
             $dia = 1;
-        }else $dia = getdate()['mday'];;
+        }else $dia = getdate()['mday'];
 
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
 
