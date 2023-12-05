@@ -81,7 +81,7 @@ class CronController extends Controller
 
         if($empresa->factura_auto == 1){
             $i=0;
-            $date = date('d') * 1;
+            $date = getdate()['mday'] * 1;
             $numeros = [];
             $bulk = '';
             $fail = 0;
@@ -518,7 +518,7 @@ class CronController extends Controller
         }
 
         $swGrupo = 1; //masivo
-        // $grupos_corte = GrupoCorte::where('fecha_suspension', date('d') * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
+        // $grupos_corte = GrupoCorte::where('fecha_suspension', getdate()['mday'] * 1)->where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->count();
         $grupos_corte = GrupoCorte::where('hora_suspension','<=', date('H:i'))->where('hora_suspension_limit','>=', date('H:i'))->where('status', 1)->where('fecha_suspension','!=',0)->get();
 
         if($grupos_corte->count() > 0){
@@ -644,7 +644,7 @@ class CronController extends Controller
 
 
                     //por aca entra cuando estamos deshbilitando de un grupo de corte sus contratos.
-                    if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == date('d'))) {
+                    if (($contrato && $swGrupo == 1) || ($contrato && $swGrupo == 0 && $contrato->fecha_suspension == getdate()['mday'])) {
 
                         //segundo filtro de validacion, validando por rango de fechas
                         $diasHabilesNocobro = 0;
@@ -2621,9 +2621,9 @@ class CronController extends Controller
 
     public function envioFacturaWpp(){
 
-        if(date('d') == 01){
+        if(getdate()['mday'] == 01){
             $dia = 1;
-        }else $dia = date('d');
+        }else $dia = getdate()['mday'];;
 
         $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
 
