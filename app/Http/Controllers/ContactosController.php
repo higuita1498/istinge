@@ -349,7 +349,7 @@ class ContactosController extends Controller
 
     public function create()
     {
-        dd(auth()->user()->empresa());
+        dd(auth()->user()->empresa()->activo_mensaje);
         $this->getAllPermissions(Auth::user()->id);
         $identificaciones = TipoIdentificacion::all();
         $paises = DB::table('pais')->where('codigo', 'CO')->get();
