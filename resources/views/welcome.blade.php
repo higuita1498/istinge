@@ -111,7 +111,7 @@
         <div class="row card-description">
             @if(auth()->user()->modo_lectura())
             @else
-                @if (auth()->user()->empresa()->activo_mensaje() == 1)
+                @if (auth()->user()->empresa()->activo_mensaje == 1)
                     <div class="col-md-12" style="background:#57c7d4;">
                         {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
                             {{-- @csrf  --}}
