@@ -565,7 +565,7 @@ class ContratosController extends Controller
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
-                    dd($error);
+
                     $registro = true;
                     $getall = $API->comm("/ppp/secret/getall", array(
                         "?local-address" => $request->ip
