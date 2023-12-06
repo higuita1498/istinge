@@ -115,7 +115,7 @@
                     <div class="col-md-12" style="background:#57c7d4;">
                         {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
                             {{-- @csrf  --}}
-                            <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario su factura de servicio se encuentra vencida, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.</p>
+                            <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario su factura de servicio esta apunto de vencer, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.</p>
 
                             {{-- <div class="form-group">
                                 <label for="archivo">Adjuntar pago:</label>
