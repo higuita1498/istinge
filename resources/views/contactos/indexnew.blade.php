@@ -142,7 +142,7 @@
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-contactos">
 				<thead class="thead-dark">
-                    @if (!isset($_SESSION['permisos']['2']))
+                    @if (isset($_SESSION['permisos']['2']))
 					<tr>
 						@foreach($tabla as $campo)
 						    @if($tipo_usuario == 1)
