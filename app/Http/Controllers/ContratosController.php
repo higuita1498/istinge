@@ -434,7 +434,7 @@ class ContratosController extends Controller
     }
 
     public function create($cliente = false){
-        dd(auth()->user()->empresa());
+
         // $profile = $API->comm("/ppp/profile/getall");
         // dd($profile);
 
