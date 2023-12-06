@@ -1413,8 +1413,50 @@ class FacturasController extends Controller{
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount', 'tipo'));
+
+             if($factura->emitida == 1){
+                $impTotal = 0;
+                foreach ($factura->total()->imp as $totalImp){
+                    if(isset($totalImp->total)){
+                        $impTotal = $totalImp->total;
+                    }
+                }
+
+                $CUFEvr = $factura->info_cufe($factura->id, $impTotal);
+                $infoEmpresa = Empresa::find(Auth::user()->empresa);
+                $data['Empresa'] = $infoEmpresa->toArray();
+                $infoCliente = Contacto::find($factura->cliente);
+                $data['Cliente'] = $infoCliente->toArray();
+
+                /*..............................
+                Construcción del código qr a la factura
+                ................................*/
+
+                $impuesto = 0;
+                foreach ($factura->total()->imp as $key => $imp) {
+                    if(isset($imp->total)){
+                        $impuesto = $imp->total;
+                    }
+                }
+
+                $codqr = "NumFac:" . $factura->codigo . "\n" .
+                "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+                "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
+                "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
+                "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n" .
+                "CUFE:" . $CUFEvr;
+
+             }else{
+                 $codqr = null;
+             }
+
+
             if($empresa->formato_impresion == 1){
-                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
+                $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
             }else
             {
                 $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion'));
