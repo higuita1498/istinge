@@ -111,24 +111,26 @@
         <div class="row card-description">
             @if(auth()->user()->modo_lectura())
             @else
-
+                @if (auth()->user()->empresa()->activo_mensaje === 1)
                     <div class="col-md-12" style="background:#57c7d4;">
-                    {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
-                        {{-- @csrf  --}}
-                         <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario su factura de servicio se encuentra vencida, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.</p>
+                        {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
+                            {{-- @csrf  --}}
+                            <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señor usuario su factura de servicio se encuentra vencida, realice su pago a la siguiente cuenta de ahorros Bancolombia 24900001066 y adjunte su pago aquí.</p>
 
-                          {{-- <div class="form-group">
-                            <label for="archivo">Adjuntar pago:</label>
-                            <input type="file" name="archivo" id="archivo" class="form-control">
-                        </div> --}}
-                         <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
-                             <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
-                                 {{-- <button>¡Enviar comprobante!</button> --}}
-                             </a>
+                            {{-- <div class="form-group">
+                                <label for="archivo">Adjuntar pago:</label>
+                                <input type="file" name="archivo" id="archivo" class="form-control">
+                            </div> --}}
+                            <div class="container" style="text-align: center;height: 10vh;line-height: 10vh;">
+                                <a href="https://wa.me/+573027188808" target="_blank" style="text-align: center;color:white;background:black;padding:10px;border-radius:5px;">¡Enviar comprobante!
+                                    {{-- <button>¡Enviar comprobante!</button> --}}
+                                </a>
 
-                      </div>
-                    {{-- </form> --}}
-                </div>
+                        </div>
+                        {{-- </form> --}}
+                    </div>
+                @endif
+
 
             <div class="col-md-12">
                 <div class="card-body">
