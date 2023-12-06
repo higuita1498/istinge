@@ -142,7 +142,6 @@
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-contactos">
 				<thead class="thead-dark">
-
 					<tr>
 						@foreach($tabla as $campo)
 						    @if($tipo_usuario == 1)
@@ -157,7 +156,6 @@
 					</tr>
 				</thead>
 			</table>
-
 		</div>
 	</div>
 	@endif
