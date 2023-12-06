@@ -553,10 +553,10 @@ class ContratosController extends Controller
 
                 /*PPPOE*/
                 if($request->conexion == 1){
-                    dd("conexion pppoe");
+
                     $ppoe_local_adress = $request->local_address;
 
-                    $API->comm("/ppp/secret/add", array(
+                   $error = $API->comm("/ppp/secret/add", array(
                         "name"           => $request->usuario,
                         "password"       => $request->password,
                         "profile"        => $request->profile,
@@ -566,6 +566,7 @@ class ContratosController extends Controller
                         "comment"        => $this->normaliza($servicio).'-'.$nro_contrato
                         )
                     );
+                    dd($error);
                     $registro = true;
                     $getall = $API->comm("/ppp/secret/getall", array(
                         "?local-address" => $request->ip
