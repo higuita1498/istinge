@@ -327,12 +327,12 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group  {{old('conexion')==3?'':'d-none'}}" id="local_adress" {{$contrato->local_adress_pppoe ? '': 'd-none'}}>
+                            <div class="col-md-4 form-group  {{old('conexion')==1?'':'d-none'}}" id="local_adress" {{$contrato->local_adress_pppoe ? '': 'd-none'}}>
                                 <label class="control-label">Dirección IP (Local Address)</label>
                                 <input type="text" class="form-control" name="direccion_local_address" id="local_address" value="{{$contrato->local_adress_pppoe}}" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
-                            <div class="col-md-4 form-group  {{old('conexion')==3?'':'d-none'}}" id="profile" {{$contrato->profile?'':'d-none'}}>
+                            <div class="col-md-4 form-group  {{old('conexion')==1?'':'d-none'}}" id="profile" {{$contrato->profile?'':'d-none'}}>
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" value="{{ $contrato->profile}}">
                             </div>
