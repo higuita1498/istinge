@@ -1740,12 +1740,13 @@ class CronController extends Controller
         if($request->transaction_state == 'payment_approved'){
 
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
-            return "hola";
+
             if($factura->estatus == 1){
+
                 $empresa = Empresa::find($factura->empresa);
                 $nro = Numeracion::where('empresa', $empresa->id)->first();
                 $caja = $nro->caja;
-
+                return "hola";
                 while (true) {
                     $numero = Ingreso::where('empresa', $empresa->id)->where('nro', $caja)->count();
                     if ($numero == 0) {
