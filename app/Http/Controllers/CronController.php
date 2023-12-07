@@ -1739,10 +1739,10 @@ class CronController extends Controller
         $empresa = Empresa::find(1);
         if($request->transaction_state == 'payment_approved'){
 
-            $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
+            $factura = Factura::where('codigo', substr($request->invoice_number, 1))->first();
 
             if($factura->estatus == 1){
-                return "hola";
+
                 $empresa = Empresa::find($factura->empresa);
                 $nro = Numeracion::where('empresa', $empresa->id)->first();
                 $caja = $nro->caja;
