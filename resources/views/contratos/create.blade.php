@@ -360,12 +360,12 @@
                                 <input type="text" class="form-control" name="local_address_new" id="local_address_new" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
-                            <div class="col-md-4 form-group {{old('conexion')==1?'':'d-none'}}" id="local_adress">
+                            <div class="col-md-4 form-group d-none" id="local_adress">
                                 <label class="control-label">Dirección IP (Local Address)</label>
                                 <input type="text" class="form-control" name="direccion_local_address" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
-                            <div class="col-md-4 form-group {{old('conexion')==1?'':'d-none'}}" id="div_profile" >
+                            <div class="col-md-4 form-group d-none" id="div_profile" >
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" >
                             </div>
