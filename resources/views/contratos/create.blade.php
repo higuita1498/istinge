@@ -367,7 +367,7 @@
 
                             <div class="col-md-4 form-group {{old('conexion')==1?'':'d-none'}}" id="profile" >
                                 <label class="control-label">Profile</label>
-                                <input type="text" class="form-control" name="profile" id="profile">
+                                <input type="text" class="form-control" name="profile" id="profile" value="{{ old('profile') }}">
                             </div>
 
                             <div class="col-md-4 form-group d-none" id="new_ip">
