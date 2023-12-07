@@ -338,7 +338,7 @@
                             </div>
 
 
-                            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_usuario" {{$contrato->usuario ? '':'d-none'}}>
+                            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_usuario">
                                 <label class="control-label">Usuario <span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="usuario" id="usuario" value="{{ $contrato->usuario}}">
@@ -347,7 +347,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_password"  {{$contrato->password ? '':'d-none'}}>
+                            <div class="col-md-4 form-group {{$contrato->conexion==1?'':'d-none'}}" id="div_password">
                                 <label class="control-label">Contraseña <span class="text-danger">*</span></label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="password" id="password" value="{{ $contrato->password}}">
