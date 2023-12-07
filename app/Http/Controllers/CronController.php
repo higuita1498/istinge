@@ -1861,7 +1861,7 @@ class CronController extends Controller
                     }
 
                     # ENVÍO SMS
-                    $servicio = Integracion::where('empresa', $empresa->id)->where('tipo', 'SMS')->where('status', 1)->first();
+                    // $servicio = Integracion::where('empresa', $empresa->id)->where('tipo', 'SMS')->where('status', 1)->first();
                     // if($servicio){
                     //     $numero = str_replace('+','',$cliente->celular);
                     //     $numero = str_replace(' ','',$numero);
