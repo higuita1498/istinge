@@ -1742,11 +1742,11 @@ class CronController extends Controller
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
 
             if($factura->estatus == 1){
-
+                return "hola";
                 $empresa = Empresa::find($factura->empresa);
                 $nro = Numeracion::where('empresa', $empresa->id)->first();
                 $caja = $nro->caja;
-                return "hola";
+
                 while (true) {
                     $numero = Ingreso::where('empresa', $empresa->id)->where('nro', $caja)->count();
                     if ($numero == 0) {
