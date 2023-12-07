@@ -205,7 +205,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group d-none" id="div_direccion">
+                            <div class="col-md-4 form-group" id="div_direccion">
                                 <label class="control-label">¿Usar la misma dirección del contacto? <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" id="direccion" name="direccion"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getDireccion(this.value)" required="">
