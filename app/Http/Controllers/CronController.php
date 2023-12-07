@@ -1740,7 +1740,7 @@ class CronController extends Controller
         if($request->transaction_state == 'payment_approved'){
 
             $factura = Factura::where('codigo', substr($request->invoice_number, 4))->first();
-
+            return "hola";
             if($factura->estatus == 1){
                 $empresa = Empresa::find($factura->empresa);
                 $nro = Numeracion::where('empresa', $empresa->id)->first();
@@ -1767,7 +1767,7 @@ class CronController extends Controller
                 $ingreso->fecha         = date('Y-m-d');
                 $ingreso->observaciones = 'Pago ComboPay ID: '.$request->ticket_id;
                 $ingreso->save();
-                return "hola";
+
                 # REGISTRAMOS EL INGRESO_FACTURA
                 $precio = ($this->precisionAPI($request->transaction_value, $empresa->id) > $factura->porpagarAPI($empresa->id)) ? $factura->porpagarAPI($empresa->id) : $this->precisionAPI($request->transaction_value, $empresa->id);
                 //$precio         = $this->precisionAPI($request->transaction_value, $empresa->id);
