@@ -265,9 +265,10 @@ class MikrotikController extends Controller
             $API = new RouterosAPI();
 
             $API->port = $mikrotik->puerto_api;
-
+            $error=$API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
+            dd($error);
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                dd("ingreso para activar la microtik");
+
                 //$API->write('/ip/route/print');
                 //$API->write('/ip/address/print');
                 //$API->write("/interface/ethernet/getall", true);
