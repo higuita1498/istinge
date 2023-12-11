@@ -345,45 +345,50 @@ class IngresosController extends Controller
             //Si es tipo 1, osea coversion de factura estandar a electrónica con emisión
             if ($request->tipo == 1) {
 
-                foreach ($request->factura_pendiente as $key => $value) {
-
-                    $factura = Factura::find($request->factura_pendiente[$key]);
-                    if($factura->estatus == 0){
-                        $mensaje='DISCULPE ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
-                        return back()->with('danger', $mensaje)->withInput();
-                    }
-
-                    //Conversión de factura estandar a factura electrónica.
-                    if(isset($request->tipo_electronica)){
-                        //primero recuperamos
-                        $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
-                        $inicio = $nro->inicio;
-
-                        if($factura->tipo != 2 && $request->precio[$key] > 0)
-                        {
-                            $factura->tipo = 2;
-                            $factura->codigo = $nro->prefijo.$inicio;
-                            $factura->numeracion = $nro->id;
-                            $factura->fecha =  Carbon::now()->format('Y-m-d');
-                            if($factura->vencimiento < Carbon::now()->format('Y-m-d')){
-                                $factura->vencimiento = Carbon::now()->format('Y-m-d');
-                            }
-                            $factura->save();
-
-                            $nro->inicio += 1;
-                            $nro->save();
-                        }
-                    }
-                }
-
-                if($request->tipo_electronica == 2){
+                if(is_array($request->factura_pendiente)){
                     foreach ($request->factura_pendiente as $key => $value) {
+
                         $factura = Factura::find($request->factura_pendiente[$key]);
-                        //si tiene el tipo 2 es por que desean emitir la(s) factura(s).
-                        if($factura->emitida != 1){
-                            $emision = app(FacturasController::class)->xmlFacturaVentaMasivo($factura->id);
+                        if($factura->estatus == 0){
+                            $mensaje='DISCULPE ESTÁ INTENTANDO PAGAR UNA FACTURA YA PAGADA. (FACTURA N° '.$factura->codigo.')';
+                            return back()->with('danger', $mensaje)->withInput();
+                        }
+
+                        //Conversión de factura estandar a factura electrónica.
+                        if(isset($request->tipo_electronica)){
+                            //primero recuperamos
+                            $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+                            $inicio = $nro->inicio;
+
+                            if($factura->tipo != 2 && $request->precio[$key] > 0)
+                            {
+                                $factura->tipo = 2;
+                                $factura->codigo = $nro->prefijo.$inicio;
+                                $factura->numeracion = $nro->id;
+                                $factura->fecha =  Carbon::now()->format('Y-m-d');
+                                if($factura->vencimiento < Carbon::now()->format('Y-m-d')){
+                                    $factura->vencimiento = Carbon::now()->format('Y-m-d');
+                                }
+                                $factura->save();
+
+                                $nro->inicio += 1;
+                                $nro->save();
+                            }
                         }
                     }
+
+                    if($request->tipo_electronica == 2){
+                        foreach ($request->factura_pendiente as $key => $value) {
+                            $factura = Factura::find($request->factura_pendiente[$key]);
+                            //si tiene el tipo 2 es por que desean emitir la(s) factura(s).
+                            if($factura->emitida != 1){
+                                $emision = app(FacturasController::class)->xmlFacturaVentaMasivo($factura->id);
+                            }
+                        }
+                    }
+                }else {
+                        $mensaje='No hay facturas pendientes seleccionadas.';
+                        return back()->with('danger', $mensaje)->withInput();
                 }
             }
 
