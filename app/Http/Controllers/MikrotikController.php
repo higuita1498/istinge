@@ -266,7 +266,7 @@ class MikrotikController extends Controller
 
             $API->port = $mikrotik->puerto_api;
             $error=$API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
-            dd($error);
+            dd( $mikrotik);
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
 
                 //$API->write('/ip/route/print');
