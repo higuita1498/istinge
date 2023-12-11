@@ -451,6 +451,10 @@ class ContactosController extends Controller
         $contacto->fk_iddepartamento = $request->departamento;
         $contacto->fk_idmunicipio = $request->municipio;
         $contacto->cod_postal = $request->cod_postal;
+        if (empty($request->boton_emision)) {
+            // Asignar el valor "1" si está vacío o no está definido
+            $request->boton_emision = 0;
+        }
         $contacto->boton_emision = $request->boton_emision;
         //nuevos cmapos agregados
         $contacto->monitoreo = $request->monitoreo;
