@@ -263,10 +263,8 @@ class MikrotikController extends Controller
         $mikrotik = Mikrotik::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($mikrotik->status == 0) {
             $API = new RouterosAPI();
-
             $API->port = $mikrotik->puerto_api;
-            $error=$API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
-            dd( $mikrotik);
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
 
                 //$API->write('/ip/route/print');
