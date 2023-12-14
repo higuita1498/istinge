@@ -592,13 +592,13 @@ class AsignacionesController extends Controller
                 }
 
                 if($request->file('imgH')) {
-                    dd("ingreso h");
+
                     $file = $request->file('imgH');
                     $nombre =  $idContrato.'imgH_'.$contrato->nit.'.'.$file->getClientOriginalExtension();
                     $ruta = public_path('/adjuntos/documentos/');
                     $file->move($ruta, $nombre);
                     $contrato->imgH = $nombre;
-                    dd("antes de guarda35");
+
                     if(in_array($file->getClientOriginalExtension(), $ext_permitidas)) {
                         switch($file->getClientOriginalExtension()) {
                             case 'jpeg':
