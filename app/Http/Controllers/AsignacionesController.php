@@ -67,7 +67,7 @@ class AsignacionesController extends Controller
 
         // if($num == 2){
             $idContrato = null;
-            if($request->id) {
+            if(!empty($num)) {
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
 
@@ -95,7 +95,7 @@ class AsignacionesController extends Controller
                 //   $ruta = public_path('/adjuntos/documentos/');
                     // $file->move($ruta, $nombre);
                 // $contrato->documento = $nombre;
-                dd("antes de documento ");
+
                 try {
 
                     $contrato->fecha_isp = date('Y-m-d');
@@ -110,7 +110,7 @@ class AsignacionesController extends Controller
                     // Manejar el error, por ejemplo, registrar un mensaje de error o mostrarlo al usuario.
                     \Log::error($e->getMessage());
                 }
-                dd("despues de documento ");
+
 
                 $xmax = 1080;
                 $ymax = 720;
