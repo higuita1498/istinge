@@ -601,6 +601,7 @@
             var _token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             @php
                 use Illuminate\Support\Facades\DB;
+                use Illuminate\Support\Facades\Auth;
                 $instancia = DB::table("instancia")
                                 ->first();
 
@@ -666,22 +667,22 @@
                                 }
                             }
                             @php
-                            use Illuminate\Support\Facades\DB;
-                            use Auth;
+
                             $permisoWppNoti = DB::table("permisos_usuarios")
                                             ->where('id_usuario',Auth::user()->id)
+                                            ->where('id_permiso',857)
                                             ->first();
-
-                                @if($permisoWppNoti)
-                                alertawhat(
-                                            {
-                                                nombre:datos._data.notifyName,
-                                                mensaje:datos._data.body,
-                                                avatar:datos.picurl
-                                            }
-                                        );
-                                @endif
                             @endphp
+
+                            @if(!is_null($permisoWppNoti))
+                                alertawhat(
+                                    {
+                                        nombre:datos._data.notifyName,
+                                        mensaje:datos._data.body,
+                                        avatar:datos.picurl
+                                    }
+                                );
+                            @endif
                         }
                     }
                 })
@@ -715,6 +716,7 @@
                 });
 
             @endif
+
             function alertawhat(data) {
                 $.gritter.add({
                     title: data.nombre,
@@ -725,6 +727,7 @@
                     class_name: 'alerta-whatsapp'
                 });
             }
+
             $( document ).ready(function() {
 
                 $("#{{$seccion}}").addClass("active");
