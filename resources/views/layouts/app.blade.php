@@ -10,9 +10,9 @@
         <meta name="keyword" content="">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>{{$title}}</title>
-        
+
         <link rel="shortcut icon" href="{{asset('images/Empresas/Empresa1/favicon.png')}}" />
-        <link rel="stylesheet" href="{{asset('gritter/css/jquery.gritter.css')}}"> 
+        <link rel="stylesheet" href="{{asset('gritter/css/jquery.gritter.css')}}">
         <link rel="stylesheet" href="{{asset('vendors/iconfonts/mdi/css/materialdesignicons.min.css')}}">
         <link rel="stylesheet" href="{{asset('vendors/css/vendor.bundle.base.css')}}">
         <link rel="stylesheet" href="{{asset('vendors/css/vendor.bundle.addons.css')}}">
@@ -32,7 +32,7 @@
         <link rel="stylesheet" href="{{asset('css/style.css')}}">
         <link rel="stylesheet" href="{{asset('css/documentacion.css')}}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
-        
+
         <style>
                 .alerta-whatsapp{
                     background: #506de300 !important;
@@ -135,7 +135,7 @@
                 border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
             }
             .card-counter.primary:hover, .card-counter.success:hover, .card-counter.danger:hover {
-                background-color: #4f4f4f; 
+                background-color: #4f4f4f;
             }
             .page-link:hover {
                 color: #ffffff;
@@ -282,7 +282,7 @@
             return Redirect::to('login');
         @endphp
         @endif
-        
+
         <div id="contenedor_carga">
             <img id="carga" src="{{asset('images/gif-tuerca.gif')}}">
         </div>
@@ -357,7 +357,7 @@
                                     <!-- msj cconfirmacion CRM -->
                                     @if(Session::has('novence'))
                                         <div class="alert alert-warning alert-dismissible fade show" role="alert" style="background-color:#FFFC33;">
-                                            <strong>{{Session::get('novence')}}</strong> 
+                                            <strong>{{Session::get('novence')}}</strong>
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -370,7 +370,7 @@
                                             <input type="hidden" id="imprimir" value="{{route('facturas.imprimir', Session::get('print'))}}">
                                         @endif
                                     @endif
-                                    
+
                                     @yield('content')
                                 </div>
                             </div>
@@ -416,7 +416,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- NOTIFICACIONES -->
                     <input type="hidden" name="nro_notificacionesP" id="nro_notificacionesP" value="0">
                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
@@ -523,7 +523,7 @@
                     </div>
 
                     <input type="hidden" id="pageLength" value="{{Auth::user()->rol > 1 ? Auth::user()->empresa()->pageLength : '25'}}">
-                    
+
                     <footer class="footer">
                         <div class="container-fluid clearfix">
                             <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">
@@ -551,7 +551,7 @@
             }
         </script>
         <!-- container-scroller -->
-        
+
         <!-- plugins:js -->
         <script src="{{asset('vendors/js/vendor.bundle.base.js')}}"></script>
         <script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script>
@@ -591,7 +591,7 @@
         <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
 
         <script src="//cdn.datatables.net/plug-ins/1.12.1/sorting/ip-address.js"></script>
-        
+
         <script src="https://cdn.socket.io/4.3.1/socket.io.min.js"></script>
         <script src="{{asset('gritter/js/jquery.gritter.min.js')}}"></script>
         <div class="d-none" id="audioContainer"></div>
@@ -603,11 +603,11 @@
                 use Illuminate\Support\Facades\DB;
                 $instancia = DB::table("instancia")
                                 ->first();
-                
+
             @endphp
-            
+
             @if(!is_null($instancia??null) && !empty($instancia??""))
-                
+
                 const socketSerVER = io.connect('https://api.whatsive.com:{{$instancia->port}}', {
                     'reconnection': true,
                     'reconnectionDelay': 2000,
@@ -631,9 +631,9 @@
                     if(datos?.author!=null){
 
                     }else{
-                        
+
                         audioElement.play();
-                        
+
                         let typechats = {
                             "video": "  <span class = 'fas fa-video fa-lg' ></span> Video",
                             "ptt": "  <span class = 'fas fa-microphone fa-lg' ></span> Audio",
@@ -665,13 +665,23 @@
                                     datos._data.notifyName = datos.contact.pushname;
                                 }
                             }
-                            alertawhat(
-                                {
-                                    nombre:datos._data.notifyName,
-                                    mensaje:datos._data.body,
-                                    avatar:datos.picurl
-                                }
-                            );
+                            @php
+                            use Illuminate\Support\Facades\DB;
+                            use Auth;
+                            $permisoWppNoti = DB::table("permisos_usuarios")
+                                            ->where('id_usuario',Auth::user()->id)
+                                            ->first();
+
+                                @if($permisoWppNoti)
+                                alertawhat(
+                                            {
+                                                nombre:datos._data.notifyName,
+                                                mensaje:datos._data.body,
+                                                avatar:datos.picurl
+                                            }
+                                        );
+                                @endif
+                            @endphp
                         }
                     }
                 })
@@ -703,7 +713,7 @@
                         location.reload();
                     });
                 });
-            
+
             @endif
             function alertawhat(data) {
                 $.gritter.add({
@@ -716,7 +726,7 @@
                 });
             }
             $( document ).ready(function() {
-                
+
                 $("#{{$seccion}}").addClass("active");
                 if ($("#{{$seccion}}").find('.sub-menu').length) {
                     $("#{{$seccion}}").find('.collapse').addClass('show');
@@ -726,11 +736,11 @@
                 @endif
             });
         </script>
-        
+
         <!-- End custom js for this page-->
         <script src="{{asset('vendors/documentacion/index.all.min.js')}}"></script>
         <script src="{{asset('vendors/documentacion/popper.min.js')}}"></script>
-       
+
         <script type="text/javascript" src="{{asset('js/paginicio/floating-wpp.min.js')}}"></script>
         <link rel="stylesheet" href="{{asset('css/floating-wpp.min.css')}}">
         <script src="{{asset('vendors/ckeditor/ckeditor.js')}}"></script>
@@ -743,7 +753,7 @@
                 interactive: true,
             })
         </script>
-        
+
         <script type="text/javascript">
             $(document).on("mouseup",function(e) {
                 if($("#sidebar").hasClass('active')){
