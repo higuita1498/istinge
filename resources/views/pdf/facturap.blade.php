@@ -288,7 +288,7 @@
             </tr>
             @endforeach
             <tr class="foot">
-                <td colspan="{{ $marcaPermiso ? "5" : "4" }}"> </td>
+                <td colspan="4"></td>
                 <th class="right padding-right">Total</th>
                 <th class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </th>
             </tr>
