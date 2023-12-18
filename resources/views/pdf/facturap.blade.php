@@ -259,12 +259,12 @@
             </tr>
             @if($factura->total()->descuento>0)
             <tr class="foot">
-                <td></td>
+                <td colspan="4" class="smalltd"></td>
                 <td class="right">Descuento</td>
                 <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->descuento)}} </td>
             </tr>
             <tr class="foot">
-                <td></td>
+                <td colspan="4" class="smalltd"></td>
                 <td class="right">SubTotal</td>
                 <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->subsub)}}</td>
             </tr>
@@ -273,7 +273,7 @@
             @foreach($factura->total()->imp as $imp)
             @if(isset($imp->total))
             <tr class="foot">
-                <td></td>
+                <td colspan="4" class="smalltd"></td>
                 <td class="right">{{$imp->nombre}} ({{$imp->porcentaje}}%)</td>
                 <td class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($imp->total)}}</td>
             </tr>
@@ -282,13 +282,13 @@
             @endif
             @foreach($retenciones as $retencion)
             <tr class="foot">
-                <td></td>
+                <td colspan="4" class="smalltd"></td>
                 <td class="right">{{$retencion->tipo()}} {{$retencion->retencion}}%</td>
                 <td class="right padding-right">- {{$empresa->moneda}} {{App\Funcion::Parsear($retencion->valor)}}</td>
             </tr>
             @endforeach
             <tr class="foot">
-                <td colspan="4"></td>
+                <td colspan="4"> </td>
                 <th class="right padding-right">Total</th>
                 <th class="right padding-right">{{$empresa->moneda}}{{App\Funcion::Parsear($factura->total()->total)}} </th>
             </tr>
@@ -331,7 +331,7 @@
 
     </div>
     <div style="width: 50%; display: inline-block; text-align:right;margin-left:100px;">
-        <img style="width:75%; height:auto; position:absolute; bottom:20px;" src="{{asset('images/logo_factura.png')}}">
+        {{-- <img style="width:75%; height:auto; position:absolute; bottom:20px;" src="{{asset('images/logo_factura.png')}}"> --}}
     </div>
 </div>
 @endsection
