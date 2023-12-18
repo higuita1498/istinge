@@ -3,14 +3,14 @@
 namespace App\Model\Gastos;
 use App\TerminosPago;
 use Illuminate\Database\Eloquent\Model;
-use App\Contacto; use App\Impuesto; 
+use App\Contacto; use App\Impuesto;
 use App\Model\Gastos\ItemsFacturaProv;
 use App\Model\Gastos\FacturaProveedoresRetenciones;
 use App\Model\Gastos\GastosFactura;
 use App\Funcion;
-use Auth; use App\Model\Inventario\Bodega; 
-use App\Retencion; 
-use App\Model\Gastos\Ordenes_Compra; 
+use Auth; use App\Model\Inventario\Bodega;
+use App\Retencion;
+use App\Model\Gastos\Ordenes_Compra;
 use App\Model\Gastos\NotaDeditoFactura;
 use Carbon\Carbon;
 use App\FormaPago;
@@ -30,13 +30,18 @@ class FacturaProveedores extends Model
      * @var array
      */
     protected $fillable = [
-       'orden_nro', 'empresa','codigo', 'tipo', 'proveedor', 'fecha_factura', 'vencimiento_factura', 'observaciones', 'observaciones_factura', 'estatus', 'notas', 'created_at', 'updated_at', 'bodega', 'term_cond'    
+       'orden_nro', 'empresa','codigo', 'tipo', 'proveedor', 'fecha_factura', 'vencimiento_factura', 'observaciones', 'observaciones_factura', 'estatus', 'notas', 'created_at', 'updated_at', 'bodega', 'term_cond'
     ];
 
     protected $appends = ['session'];
 
     public function getSessionAttribute(){
         return $this->getAllPermissions(Auth::user()->id);
+    }
+
+    public static function formatoFecha($fecha)
+    {
+        return Carbon::parse($fecha)->format('d/m/Y');
     }
 
     public function getAllPermissions($id){
@@ -66,12 +71,12 @@ class FacturaProveedores extends Model
             return 'Vencimiento Manual';
             }else{
                 return TerminosPago::where('id',$this->plazo)->first()->nombre;
-            }    
+            }
         }else{
             return '';
         }
-        
-        
+
+
     }
 
     public function proveedor(){
@@ -86,7 +91,7 @@ class FacturaProveedores extends Model
             return 'Facturada';
         }
 
-        
+
         if ($this->estatus==0) {
             if ($class) {
                 return '';
@@ -111,7 +116,7 @@ class FacturaProveedores extends Model
             $result=$item->precio*$item->cant;
             $totales['subtotal']+=$result;
 
-            //SACAR EL DESCUENTO 
+            //SACAR EL DESCUENTO
             if ($item->desc>0) {
                 $desc=($result*$item->desc)/100;
             }
@@ -131,7 +136,7 @@ class FacturaProveedores extends Model
                         $totales["imp"][$key]->total+=$impuesto;
                         if ($imp->tipo==1) {
                             $totales["ivas"]+=$impuesto;
-                            
+
                         }
                     }
                 }
@@ -151,7 +156,7 @@ class FacturaProveedores extends Model
                         if ($reten->id==$item->id_retencion) {
                             if (!isset($totales["reten"][$key]->total)) {
                                 $totales["reten"][$key]->total=0;
-                            }                        
+                            }
                             $totales["reten"][$key]->total+=$item->valor;
                             $totales['totalreten']+=$item->valor;
 
@@ -202,7 +207,7 @@ class FacturaProveedores extends Model
         }
         /*$total+=$this->retenido();*/
         return $total;
-    }     
+    }
 
     public function retenido($por_id=false){
         $retenciones=FacturaProveedoresRetenciones::where('factura',$this->id)->get();
@@ -220,8 +225,8 @@ class FacturaProveedores extends Model
     public function porpagar(){
          $porpagar = Funcion::precision($this->total()->total);
         return abs($porpagar  - $this->pagado() - $this->devoluciones());
-    } 
-    
+    }
+
     public function gastos(){
         return GastosFactura::where('factura', $this->id)->get();
     }
@@ -236,7 +241,7 @@ class FacturaProveedores extends Model
 
     public function devoluciones(){
         return NotaDeditoFactura::where('factura',$this->id)->sum('pago');
-       
+
     }
 
     public function notas_debito($cont=false){
@@ -248,12 +253,12 @@ class FacturaProveedores extends Model
         return $notas->get();
 
     }
-    
+
     public function cliente(){
          return Contacto::where('id',$this->proveedor)->first();
     }
-    
-    
+
+
     public function info_cufe($id, $impTotal)
     {
         $factura = FacturaProveedores::find($id);
@@ -306,7 +311,7 @@ class FacturaProveedores extends Model
         // dd($CUFE);
         return hash('sha384', $CUFE);
     }
-    
+
     public function getDateAttribute()
     {
         return [
@@ -323,7 +328,7 @@ class FacturaProveedores extends Model
         $forma = FormaPago::find($this->cuenta_id);
 
         if($forma){
-            return Puc::find($forma->cuenta_id); 
+            return Puc::find($forma->cuenta_id);
         }
     }
 
@@ -332,9 +337,9 @@ class FacturaProveedores extends Model
 
         if($idIngreso == null){
             $forma = FormaPago::find($cuenta_id);
-    
+
             if($forma){
-                return Puc::find($forma->cuenta_id); 
+                return Puc::find($forma->cuenta_id);
             }
         //si es igual a cero es por que se trata de un anticipo.
         }else{
@@ -362,7 +367,7 @@ class FacturaProveedores extends Model
             ->where('documento_id',$this->id)
             ->select('i.id')
             ->get();
-        
+
             foreach ($gastosEdit as $id) {
                 $gastosArray[]=$id->id;
             }
