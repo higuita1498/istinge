@@ -917,6 +917,7 @@ class FacturaspController extends Controller
          **/
         view()->share(['title' => 'Descargar Factura']);
         $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('id', $id)->first();
+        $empresa = auth()->user()->empresaObj;
 
         if ($factura) {
 
@@ -971,7 +972,7 @@ class FacturaspController extends Controller
                 ................................*/
             }
 
-            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo','codqr','CUDSvr'));
+            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo','empresa','codqr','CUDSvr'));
             return $pdf->download('factura-'.$factura->codigo.($tipo<>'original'?'-copia':'').'.pdf');
 
         }
