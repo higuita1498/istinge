@@ -216,9 +216,6 @@
             <tr>
                 <th style="padding: 3px;" width="40%" class="center smalltd">Ítem</th>
                 <th style="padding: 3px;" width="18%" class="center smalltd">Referencia</th>
-                @if(isset($marcaPermiso) && $marcaPermiso)
-                    <th style="padding: 3px;" width="14%" class="center smalltd">Marca</th>
-                @endif
                 <th style="padding: 3px;"  class="center smalltd">Cantidad</th>
                 <th style="padding: 3px;" width="10%" class="center smalltd">Precio</th>
                 <th style="padding: 3px;" width="10%" class="center smalltd">Descuento</th>
@@ -234,10 +231,6 @@
                 <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->producto()}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
 
                 <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->ref}}</td>
-                @if(isset($marcaPermiso) && $marcaPermiso)
-                    <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->marca}}</td>
-                @endif
-
                 <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{round($item->cant,4)}}</td>
                 <td class="right padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->desc == 0 ? '' :  $item->desc . "%"}}</td>
