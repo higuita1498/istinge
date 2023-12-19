@@ -916,15 +916,63 @@ class FacturaspController extends Controller
          * datos debemos hacer la misma consulta
          **/
         view()->share(['title' => 'Descargar Factura']);
-        $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('id', $id)->first();
+        $empresa = auth()->user()->empresaObj;
+        $factura = FacturaProveedores::where('empresa',$empresa->id)->where('tipo',1)->where('id', $id)->first();
 
         if ($factura) {
 
             $items = ItemsFacturaProv::where('factura',$factura->id)->get();
             $itemscount=ItemsFacturaProv::where('factura',$factura->id)->count();
-            //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount', 'tipo'));
 
-            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo'));
+            //Implementacion de codigo qr.
+            $codqr = false;
+            $CUDSvr = false;
+            if ($factura->emitida == 1) {
+                $impTotal = 0;
+
+
+                foreach ($factura->total()->imp as $totalImp) {
+                    if (isset($totalImp->total)) {
+                        $impTotal += $totalImp->total;
+                    }
+                }
+                $items = ItemsFacturaProv::where('factura', $id)->get();
+
+                $decimal = explode(".", $impTotal);
+                if (
+                    isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
+                    || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
+                ) {
+                    $impTotal = round($impTotal, 2);
+                } else {
+                    $impTotal = round($impTotal, 2);
+                }
+
+                $data['Empresa'] = $empresa->toArray();
+                $infoCliente = Contacto::find($factura->proveedor);
+                $data['Cliente'] = $infoCliente->toArray();
+                $CUDSvr = $factura->info_cufe($factura->id, $impTotal);
+
+                /*..............................
+                    Construcción del código qr a la factura
+                    ................................*/
+                $codqr = "NumFac:" . $factura->codigo . "\n" .
+                    "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                    "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                    "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                    "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s') . '-05:00' . "\n" .
+                    "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
+                    "ValorIVA:" .  number_format($impTotal, 2, '.', '') . "\n" .
+                    "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                    "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n" .
+                    "CUDS:" . $CUDSvr;
+
+                /*..............................
+                    Construcción del código qr a la factura
+                ................................*/
+            }
+
+            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo','empresa','codqr','CUDSvr'));
             return $pdf->download('factura-'.$factura->codigo.($tipo<>'original'?'-copia':'').'.pdf');
 
         }
@@ -948,7 +996,8 @@ class FacturaspController extends Controller
          * datos debemos hacer la misma consulta
          **/
         view()->share(['title' => 'Imprimir Factura']);
-        $factura = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('tipo',1)->where('id', $id)->first();
+        $empresa = auth()->user()->empresaObj;
+        $factura = FacturaProveedores::where('empresa',$empresa->id)->where('tipo',1)->where('id', $id)->first();
 
 
         if($factura) {
@@ -956,7 +1005,56 @@ class FacturaspController extends Controller
             $itemscount=ItemsFacturaProv::where('factura',$factura->id)->count();
             $retenciones = FacturaProveedoresRetenciones::where('factura', $factura->id)->get();
 
-            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones'));
+             //Implementacion de codigo qr.
+             $codqr = false;
+             $CUDSvr = false;
+             if ($factura->emitida == 1) {
+                 $impTotal = 0;
+
+
+                 foreach ($factura->total()->imp as $totalImp) {
+                     if (isset($totalImp->total)) {
+                         $impTotal += $totalImp->total;
+                     }
+                 }
+                 $items = ItemsFacturaProv::where('factura', $id)->get();
+
+                 $decimal = explode(".", $impTotal);
+                 if (
+                     isset($decimal[1]) && $decimal[1] >= 50 || isset($decimal[1]) && $decimal[1] == 5 || isset($decimal[1]) && $decimal[1] == 4
+                     || isset($decimal[1]) && $decimal[1] == 3 || isset($decimal[1]) && $decimal[1] == 2 || isset($decimal[1]) && $decimal[1] == 1
+                 ) {
+                     $impTotal = round($impTotal, 2);
+                 } else {
+                     $impTotal = round($impTotal, 2);
+                 }
+
+                 $data['Empresa'] = $empresa->toArray();
+                 $infoCliente = Contacto::find($factura->proveedor);
+                 $data['Cliente'] = $infoCliente->toArray();
+                 $CUDSvr = $factura->info_cufe($factura->id, $impTotal);
+
+                 /*..............................
+                     Construcción del código qr a la factura
+                     ................................*/
+                 $codqr = "NumFac:" . $factura->codigo . "\n" .
+                     "NitFac:"  . $data['Empresa']['nit']   . "\n" .
+                     "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                     "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                     "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s') . '-05:00' . "\n" .
+                     "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
+                     "ValorIVA:" .  number_format($impTotal, 2, '.', '') . "\n" .
+                     "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                     "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n" .
+                     "CUDS:" . $CUDSvr;
+
+                 /*..............................
+                     Construcción del código qr a la factura
+                 ................................*/
+             }
+
+            $pdf = PDF::loadView('pdf.facturap', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones',
+            'empresa','codqr', 'CUDSvr'));
             return  response ($pdf->stream())->withHeaders([
                 'Content-Type' =>'application/pdf',]);
 
