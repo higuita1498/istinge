@@ -94,11 +94,18 @@
 		</div>
 
 
-		<div class="form-group col-md-6">
+		<div class="form-group col-md-3">
 			<label class="control-label">Dirección <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" id="direccion" name="direccion" maxlength="200"  value="{{$contacto->direccion}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('direccion') }}</strong>
+			</span>
+		</div>
+        <div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
+			<label class="control-label">Corregimiento/Vereda</label>
+			<input type="text" class="form-control" id="vereda" name="vereda" maxlength="200"  value="{{$contacto->vereda}}">
+			<span class="help-block error">
+				<strong>{{ $errors->first('vereda') }}</strong>
 			</span>
 		</div>
 		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
