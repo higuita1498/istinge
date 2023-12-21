@@ -147,7 +147,8 @@ class VentasExternasController extends Controller{
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         $identificaciones=TipoIdentificacion::all();
-        $paises  =DB::table('pais')->where('codigo', 'CO')->get();
+        $paises =DB::table('pais')->where('codigo', 'CO')->get();
+        $planes = DB::table('planes_velocidad')->get();
         $departamentos = DB::table('departamentos')->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
@@ -155,7 +156,7 @@ class VentasExternasController extends Controller{
 
         view()->share(['icon' =>'', 'title' => 'Nueva Venta Externa', 'subseccion' => 'ventas-externas', 'middel'=>true]);
 
-        return view('ventas_externas.create')->with(compact('identificaciones', 'paises', 'departamentos', 'vendedores', 'canales', 'oficinas'));
+        return view('ventas_externas.create')->with(compact('identificaciones', 'paises', 'departamentos', 'vendedores', 'canales', 'oficinas','planes'));
     }
 
     public function store(Request $request){
