@@ -93,7 +93,7 @@
 			<input type="text" class="form-control" id="cod_postal" name="cod_postal" maxlength="200"  value="{{$contacto->cod_postal}}">
 		</div>
 
-		<div class="form-group col-md-6">
+		<div class="form-group col-md-3">
 			<label class="control-label">Dirección <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" id="direccion" name="direccion" maxlength="200"  value="{{$contacto->direccion}}">
 			<span class="help-block error">
@@ -116,6 +116,15 @@
 				<strong>{{ $errors->first('barrio') }}</strong>
 			</span>
 		</div>
+
+        <div class="form-group col-md-3">
+			<label class="control-label" for="email">Correo Electrónico </label>
+			<input type="email" class="form-control" id="email" name="email" data-error="Dirección de correo electrónico invalida" maxlength="100"  value="{{$contacto->email}}" {{--{{ Auth::user()->empresa()->form_fe == 1 ? 'required' : ''}}--}}>
+			<div class="help-block error with-errors"></div>
+			<span class="help-block error">
+				<strong>{{ $errors->first('email') }}</strong>
+			</span>
+		</div>
 		@if($contacto->fk_idmunicipio == null && $contacto->ciudad != "")
 		<div class="form-group col-md-3">
 			<label class="control-label">Ciudad (antes)</label>
@@ -125,14 +134,7 @@
 			</span>
 		</div>
 		@endif
-		<div class="form-group col-md-3">
-			<label class="control-label" for="email">Correo Electrónico </label>
-			<input type="email" class="form-control" id="email" name="email" data-error="Dirección de correo electrónico invalida" maxlength="100"  value="{{$contacto->email}}" {{--{{ Auth::user()->empresa()->form_fe == 1 ? 'required' : ''}}--}}>
-			<div class="help-block error with-errors"></div>
-			<span class="help-block error">
-				<strong>{{ $errors->first('email') }}</strong>
-			</span>
-		</div>
+
 	</div>
   		<div class="row">
   			<div class="form-group col-md-3">
@@ -276,7 +278,7 @@
 			</div>
   			<div class="form-group col-md-12">
   				<label class="control-label">Observaciones</label>
-  				<textarea class="form-control" name="observaciones" >{{$contacto->observaciones}}</textarea>
+  				<textarea class="form-control" name="observaciones"  rows="10" cols="50" >{{$contacto->observaciones}}</textarea>
   				<span class="help-block error">
   					<strong>{{ $errors->first('observaciones') }}</strong>
   				</span>
