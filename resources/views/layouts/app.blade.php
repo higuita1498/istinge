@@ -633,7 +633,17 @@
 
                     }else{
 
+                        @php
+
+                            $permisoWppNoti = DB::table("permisos_usuarios")
+                                            ->where('id_usuario',Auth::user()->id)
+                                            ->where('id_permiso',857)
+                                            ->first();
+                        @endphp
+
+                         @if(!is_null($permisoWppNoti))
                         audioElement.play();
+                        @endif
 
                         let typechats = {
                             "video": "  <span class = 'fas fa-video fa-lg' ></span> Video",
@@ -666,13 +676,6 @@
                                     datos._data.notifyName = datos.contact.pushname;
                                 }
                             }
-                            @php
-
-                            $permisoWppNoti = DB::table("permisos_usuarios")
-                                            ->where('id_usuario',Auth::user()->id)
-                                            ->where('id_permiso',857)
-                                            ->first();
-                            @endphp
 
                             @if(!is_null($permisoWppNoti))
                                 alertawhat(
