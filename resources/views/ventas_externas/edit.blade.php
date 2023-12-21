@@ -101,7 +101,7 @@
 			</span>
 		</div>
 
-        <div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}}">
+        <div class="form-group col-md-3">
 			<label class="control-label">Corregimiento/Vereda</label>
 			<input type="text" class="form-control" id="vereda" name="vereda" maxlength="200"  value="{{$contacto->vereda}}">
 			<span class="help-block error">
@@ -109,7 +109,7 @@
 			</span>
 		</div>
 
-		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
+		<div class="form-group col-md-3">
 			<label class="control-label">Barrio</label>
 			<input type="text" class="form-control" id="barrio" name="barrio" maxlength="200"  value="{{$contacto->barrio}}">
 			<span class="help-block error">
