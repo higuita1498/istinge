@@ -35,7 +35,7 @@ class VentasExternasController extends Controller{
         set_time_limit(300);
         view()->share(['inicio' => 'master', 'seccion' => 'ventas-externas', 'title' => 'Ventas Externas', 'icon' => 'fas fa-hand-holding-usd']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 14)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
@@ -157,10 +157,10 @@ class VentasExternasController extends Controller{
 
         return view('ventas_externas.create')->with(compact('identificaciones', 'paises', 'departamentos', 'vendedores', 'canales', 'oficinas'));
     }
-    
+
     public function store(Request $request){
         $contacto = VentasExternas::where('nit', $request->nit)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($contacto) {
             $errors= (object) array();
             $errors->nit='LA IDENTIFICACIÓN ESTA REGISTRADA PARA OTRO USUARIO';
@@ -178,6 +178,7 @@ class VentasExternasController extends Controller{
         $contacto->ciudad            = ucwords(mb_strtolower($request->ciudad));
         $contacto->barrio            = $request->barrio;
         $contacto->direccion         = $request->direccion;
+        $contacto->vereda            = $request->vereda;
         $contacto->email             = mb_strtolower($request->email);
         $contacto->telefono1         = $request->telefono1;
         $contacto->telefono2         = $request->telefono2;
@@ -196,8 +197,14 @@ class VentasExternasController extends Controller{
         $contacto->canal_externa     = $request->canal;
         $contacto->vendedor_externa  = $request->vendedor;
         $contacto->oficina           = $request->oficina;
+        $contacto->monitoreo         = $request->monitoreo;
+        $contacto->refiere           = $request->refiere;
+        $contacto->combo_int_tv      = $request->combo_int_tv;
+        $contacto->referencia_1      = $request->referencia_1;
+        $contacto->referencia_2      = $request->referencia_2;
+        $contacto->cierra_venta      = $request->cierra_venta;
 
-        if ($request->tipo_persona == null) { 
+        if ($request->tipo_persona == null) {
             $contacto->tipo_persona   = 1;
             $contacto->responsableiva = 2;
         }else{
@@ -214,7 +221,7 @@ class VentasExternasController extends Controller{
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $contacto = VentasExternas::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
-        
+
         if ($contacto) {
             $identificaciones = TipoIdentificacion::all();
             $paises           = DB::table('pais')->where('codigo', 'CO')->get();

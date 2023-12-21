@@ -178,7 +178,7 @@
         </div>
         <div class="form-group col-md-3">
             <label class="control-label">Referencia I</label>
-            <input type="text" class="form-control" id="referencia_1" name="referencia_1" maxlength="15" value="{{old('referencia_1')}}" >
+            <input type="text" class="form-control" id="referencia_1" name="referencia_1" maxlength="50" value="{{old('referencia_1')}}" >
             <span class="help-block error">
                 <strong>{{ $errors->first('referencia_1') }}</strong>
             </span>
@@ -252,7 +252,7 @@
   		@endif
   		<div class="form-group col-md-12">
   			<label class="control-label">Observaciones</label>
-  			<textarea class="form-control" name="observaciones" >{{old('observaciones')}}</textarea>
+  			<textarea class="form-control" name="observaciones" cols="50">{{old('observaciones')}}</textarea>
   			<span class="help-block error">
   				<strong>{{ $errors->first('observaciones') }}</strong>
   			</span>

@@ -150,7 +150,7 @@
 	  		</div>
 	  		<div class="form-group col-md-3">
 	  			<label class="control-label">Fax</label>
-	  			<input type="text" class="form-control" id="fax" name="fax" maxlength="15" value="{{old('fax')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
+	  			<input type="text" class="form-control" id="fax" name="fax" maxlength="50" value="{{old('fax')}}" onkeypress="return event.charCode >= 48 && event.charCode <=57">
 	  			<span class="help-block error">
 	  				<strong>{{ $errors->first('fax') }}</strong>
 	  			</span>
@@ -267,9 +267,9 @@
 					<strong>{{ $errors->first('contacto') }}</strong>
 				</span>
 			</div>
-	  		<div class="form-group col-md-12">
+	  		<div class="form-group col-md-6">
 	  			<label class="control-label">Observaciones</label>
-	  			<textarea class="form-control" name="observaciones" >{{old('observaciones')}}</textarea>
+	  			<textarea class="form-control" name="observaciones" cols="50" >{{old('observaciones')}}</textarea>
 	  			<span class="help-block error">
 	  				<strong>{{ $errors->first('observaciones') }}</strong>
 	  			</span>
