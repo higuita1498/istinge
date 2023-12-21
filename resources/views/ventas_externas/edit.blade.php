@@ -93,7 +93,6 @@
 			<input type="text" class="form-control" id="cod_postal" name="cod_postal" maxlength="200"  value="{{$contacto->cod_postal}}">
 		</div>
 
-
 		<div class="form-group col-md-6">
 			<label class="control-label">Dirección <span class="text-danger">*</span></label>
 			<input type="text" class="form-control" id="direccion" name="direccion" maxlength="200"  value="{{$contacto->direccion}}">
@@ -101,13 +100,15 @@
 				<strong>{{ $errors->first('direccion') }}</strong>
 			</span>
 		</div>
-        <div class="form-group col-md-3">
+
+        <div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}}">
 			<label class="control-label">Corregimiento/Vereda</label>
 			<input type="text" class="form-control" id="vereda" name="vereda" maxlength="200"  value="{{$contacto->vereda}}">
 			<span class="help-block error">
 				<strong>{{ $errors->first('vereda') }}</strong>
 			</span>
 		</div>
+
 		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
 			<label class="control-label">Barrio</label>
 			<input type="text" class="form-control" id="barrio" name="barrio" maxlength="200"  value="{{$contacto->barrio}}">
