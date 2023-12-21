@@ -252,7 +252,7 @@
   		@endif
   		<div class="form-group col-md-12">
   			<label class="control-label">Observaciones</label>
-  			<textarea class="form-control" name="observaciones" cols="50">{{old('observaciones')}}</textarea>
+  			<textarea class="form-control" name="observaciones" rows="10" cols="50">{{old('observaciones')}}</textarea>
   			<span class="help-block error">
   				<strong>{{ $errors->first('observaciones') }}</strong>
   			</span>
