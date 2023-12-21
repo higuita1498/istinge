@@ -204,6 +204,8 @@ class VentasExternasController extends Controller{
         $contacto->referencia_1      = $request->referencia_1;
         $contacto->referencia_2      = $request->referencia_2;
         $contacto->cierra_venta      = $request->cierra_venta;
+        $contacto->plan_velocidad    = $request->plan;
+        $contacto->costo_instalacion = $request->costo_instalacion;
 
         if ($request->tipo_persona == null) {
             $contacto->tipo_persona   = 1;

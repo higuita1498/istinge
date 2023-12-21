@@ -446,6 +446,8 @@ class ContactosController extends Controller
         $contacto->estrato = $request->estrato;
         $contacto->observaciones = $request->observaciones;
         $contacto->tipo_contacto = count($request->tipo_contacto) == 2 ? 2 : $request->tipo_contacto[0];
+        $contacto->plan_velocidad    = 0;
+        $contacto->costo_instalacion = "a";
 
         $contacto->fk_idpais = $request->pais;
         $contacto->fk_iddepartamento = $request->departamento;
