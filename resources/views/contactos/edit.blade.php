@@ -302,7 +302,7 @@
 				</select>
 			</div> --}}
 			@endif
-  			<div class="form-group col-md-12">
+  			<div class="form-group col-md-6">
   				<label class="control-label">Observaciones</label>
   				<textarea class="form-control" name="observaciones"  rows="10" cols="50">{{$contacto->observaciones}}</textarea>
   				<span class="help-block error">
