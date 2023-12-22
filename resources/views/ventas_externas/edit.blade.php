@@ -218,7 +218,7 @@
 
             <div class="form-group col-md-3">
                 <label class="control-label">Costo Instalación</label>
-                <input type="text" class="form-control" id="costo_instalacion" name="costo_instalacion" maxlength="50" value="{{old('costo_instalacion')}}" >
+                <input type="text" class="form-control" id="costo_instalacion" name="costo_instalacion" maxlength="50" value="{{$contacto->telef('costo_instalacion')}}" >
                 <span class="help-block error">
                     <strong>{{ $errors->first('costo_instalacion') }}</strong>
                 </span>
