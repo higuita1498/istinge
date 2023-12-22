@@ -1984,6 +1984,7 @@ class ContratosController extends Controller
                 'contactos.direccion as c_direccion',
                 'contactos.estrato as c_estrato',
                 'contactos.fk_idmunicipio as c_municipio',
+                'municipios.nombre as c_nombre_municipio'
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
@@ -2140,7 +2141,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
                 ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[21].$i, $contrato->c_municipio);
+                ->setCellValue($letras[21].$i, $contrato->c_nombre_municipio);
             $i++;
         }
 
