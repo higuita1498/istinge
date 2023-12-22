@@ -208,7 +208,23 @@
                 </span>
             </div>
   		</div>
+		<div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Planes</label>
+                <select class="form-control  selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validateCountry(this.value)">
+                    @foreach($planes as $plan)
+                      <option value="{{$contacto->plan_velocidad==$plan->id?'selected':''}}">{{$plan->name}}</option>
+                    @endforeach
+                </select>
+            </div>
 
+            <div class="form-group col-md-3">
+                <label class="control-label">Costo Instalación</label>
+                <input type="text" class="form-control" id="costo_instalacion" name="costo_instalacion" maxlength="50" value="{{old('costo_instalacion')}}" >
+                <span class="help-block error">
+                    <strong>{{ $errors->first('costo_instalacion') }}</strong>
+                </span>
+            </div>
   		<div class="row">
   			<div class="form-group col-md-3">
                 <label class="control-label">Estrato</label>
