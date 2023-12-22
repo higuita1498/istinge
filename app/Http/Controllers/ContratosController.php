@@ -3352,7 +3352,7 @@ class ContratosController extends Controller
                     $num = PlanesVelocidad::where('name', 'LIKE', '%' . $request->plan . '%')
                      ->where('mikrotik', $miko->id)
                      ->count();
-                     dd($num);
+
                 if($num <= 0){
                     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
                 }
