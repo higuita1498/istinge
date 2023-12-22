@@ -2045,6 +2045,13 @@ class ContratosController extends Controller
                 $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
             });
         }
+        if($request->fk_idmunicipio != null){
+            $contrato->nombre_municipio;
+            // $contratos->where(function ($query) use ($request) {
+            //     $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
+            // });
+        }
+
         if($request->direccion_precisa != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.address_street', 'like', "%{$request->c_direccion_precisa}%");
