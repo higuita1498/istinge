@@ -208,7 +208,7 @@
                 </span>
             </div>
   		</div>
-		<div class="row">
+
             <div class="form-group col-md-3">
                 <label class="control-label">Planes</label>
                 <select class="form-control  selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="validateCountry(this.value)">
