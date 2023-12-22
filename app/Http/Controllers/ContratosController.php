@@ -1985,6 +1985,7 @@ class ContratosController extends Controller
                 'contactos.estrato as c_estrato',
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->where('contracts.empresa', Auth::user()->empresa);
 
 	    if($request->client_id != null){
