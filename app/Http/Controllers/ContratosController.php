@@ -3353,9 +3353,9 @@ class ContratosController extends Controller
                      ->where('mikrotik', $miko->id)
                      ->count();
 
-                if($num <= 0){
-                    $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
-                }
+                // if($num <= 0){
+                //     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
+                // }
             }
             if (!$request->state) {
                 $error->state = "El campo estado es obligatorio";
