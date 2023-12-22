@@ -2140,7 +2140,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
                 ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[21].$i, ucfirst($contrato->tipo_contrato));;
+                ->setCellValue($letras[21].$i, $contrato->nombre_municipio);
             $i++;
         }
 
