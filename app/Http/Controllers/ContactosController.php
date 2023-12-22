@@ -646,6 +646,8 @@ class ContactosController extends Controller
             $contacto->referencia_1 = $request->referencia_1;
             $contacto->referencia_2 = $request->referencia_2;
             $contacto->cierra_venta = $request->cierra_venta;
+            $contacto->plan_velocidad    = 0;
+            $contacto->costo_instalacion = "a";
 
             $contacto->save();
 

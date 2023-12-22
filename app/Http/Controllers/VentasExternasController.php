@@ -267,6 +267,14 @@ class VentasExternasController extends Controller{
             $contacto->canal_externa     = $request->canal;
             $contacto->vendedor_externa  = $request->vendedor;
             $contacto->oficina           = $request->oficina;
+            $contacto->monitoreo         = $request->monitoreo;
+            $contacto->refiere           = $request->refiere;
+            $contacto->combo_int_tv      = $request->combo_int_tv;
+            $contacto->referencia_1      = $request->referencia_1;
+            $contacto->referencia_2      = $request->referencia_2;
+            $contacto->cierra_venta      = $request->cierra_venta;
+            $contacto->plan_velocidad    = $request->plan;
+            $contacto->costo_instalacion = $request->costo_instalacion;
             $contacto->save();
 
             return redirect('empresa/ventas-externas')->with('success', 'SE HA MODIFICADO SATISFACTORIAMENTE LA VENTA EXTERNA');
