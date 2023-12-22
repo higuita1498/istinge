@@ -1988,7 +1988,7 @@ class ContratosController extends Controller
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->where('contracts.empresa', Auth::user()->empresa);
-                dd($request);
+
 	    if($request->client_id != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.client_id', $request->client_id);
