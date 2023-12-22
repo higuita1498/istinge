@@ -3532,6 +3532,7 @@ class ContratosController extends Controller
     }
 
     public function importarMK(){
+        dd("hola es una prueba");
         $contratos = Contrato::
         join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
         join('mikrotik as m', 'm.id', '=', 'contracts.server_configuration_id')->
