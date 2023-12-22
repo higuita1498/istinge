@@ -1908,8 +1908,9 @@ class ContratosController extends Controller
             'Grupo de Corte',
             'Facturacion',
             'Costo Reconexion',
-            'Tipo Contrato',
             'Municipio',
+            'Tipo Contrato',
+
 
         );
 
