@@ -1896,6 +1896,7 @@ class ContratosController extends Controller
             'Direccion',
             'Barrio',
             'Corregimiento/Vereda',
+            'Municipio',
             'Estrato',
             'Plan TV',
             'Plan Internet',
