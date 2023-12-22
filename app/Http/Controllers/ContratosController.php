@@ -3348,7 +3348,7 @@ class ContratosController extends Controller
                 // } else {
                 //     // Manejar el caso en el que $miko no sea un objeto válido
                 // }
-                    $num = (PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $miko->id)->get());
+                    $num = count(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $miko->id)->get());
                 if($num === 0){
                     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
                 }
