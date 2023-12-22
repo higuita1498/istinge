@@ -2004,6 +2004,7 @@ class ContratosController extends Controller
                 $query->orWhere('contracts.ip', 'like', "%{$request->ip}%");
             });
         }
+
         if($request->mac != null){
             $contratos->where(function ($query) use ($request) {
                 $query->orWhere('contracts.mac_address', 'like', "%{$request->mac}%");
