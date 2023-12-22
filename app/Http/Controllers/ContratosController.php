@@ -1908,8 +1908,8 @@ class ContratosController extends Controller
             'Grupo de Corte',
             'Facturacion',
             'Costo Reconexion',
-            'Municipio',
             'Tipo Contrato',
+            'Municipio',
 
         );
 
@@ -2135,9 +2135,8 @@ class ContratosController extends Controller
                 ->setCellValue($letras[17].$i, $contrato->grupo_corte('true'))
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[21].$i, $contrato->c_nombre_municipio)
-                ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato));
-
+                ->setCellValue($letras[21].$i, ucfirst($contrato->tipo_contrato))
+                ->setCellValue($letras[20].$i, $contrato->c_nombre_municipio);
             $i++;
         }
 
