@@ -1908,8 +1908,9 @@ class ContratosController extends Controller
             'Grupo de Corte',
             'Facturacion',
             'Costo Reconexion',
+            'Municipio',
             'Tipo Contrato',
-            'Municipio'
+
         );
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
@@ -2046,12 +2047,6 @@ class ContratosController extends Controller
                 $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
             });
         }
-        if($request->fk_idmunicipio != null){
-            $contrato->nombre_municipio;
-            // $contratos->where(function ($query) use ($request) {
-            //     $query->orWhere('contactos.direccion', 'like', "%{$request->direccion}%");
-            // });
-        }
 
         if($request->direccion_precisa != null){
             $contratos->where(function ($query) use ($request) {
@@ -2140,8 +2135,9 @@ class ContratosController extends Controller
                 ->setCellValue($letras[17].$i, $contrato->grupo_corte('true'))
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
-                ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[21].$i, $contrato->c_nombre_municipio);
+                ->setCellValue($letras[21].$i, $contrato->c_nombre_municipio)
+                ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato));
+
             $i++;
         }
 
