@@ -2117,7 +2117,7 @@ class ContratosController extends Controller
         $contratos = $contratos->where('contracts.status', 1)->get();
 
         foreach ($contratos as $contrato) {
-
+            dd($contrato);
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contrato->nro)
                 ->setCellValue($letras[1].$i, $contrato->c_nombre.' '.$contrato->c_apellido1.' '.$contrato->c_apellido2)
@@ -2140,7 +2140,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
                 ->setCellValue($letras[20].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[21].$i, $contrato->contacto);
+                ->setCellValue($letras[21].$i, $contrato);
             $i++;
         }
 
