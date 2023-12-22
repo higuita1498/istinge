@@ -3349,7 +3349,7 @@ class ContratosController extends Controller
                 //     // Manejar el caso en el que $miko no sea un objeto válido
                 // }
                     // $num = count(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $miko->id)->get());
-                    $num = PlanesVelocidad::where('name', $request->plan)
+                    $num = PlanesVelocidad::where('name', 'LIKE', '%' . $request->plan . '%')
                      ->where('mikrotik', $miko->id)
                      ->count();
                 if($num === 0){
