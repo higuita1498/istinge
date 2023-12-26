@@ -1296,7 +1296,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 
         Route::get('importar', 'ContratosController@importar')->name('contratos.importar');
-        Route::post('ejemplo/{id}', 'ContratosController@ejemplo')->name('contratos.ejemplo');
+        Route::post('ejemplo', 'ContratosController@ejemplo')->name('contratos.ejemplo');
         Route::post('importar', 'ContratosController@cargando')->name('contratos.importar_cargando');
 
         Route::get('importarMK', 'ContratosController@importarMK')->name('contratos.importarMK');
