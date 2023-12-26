@@ -3527,6 +3527,9 @@ class ContratosController extends Controller
             $contrato->serial_onu              = $request->serial_onu;
             $contrato->created_at              = $request->created_at;
             $contrato->mk                      = $request->mk;
+            $contrato->usuario                 = $request->usuario;
+            $contrato->password                = $request->clave;
+
 
             $contrato->save();
         }
