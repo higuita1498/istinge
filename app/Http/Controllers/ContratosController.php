@@ -3127,7 +3127,8 @@ class ContratosController extends Controller
         return view('contratos.importar')->with(compact('mikrotiks', 'planes', 'grupos'));
     }
 
-    public function ejemplo(){
+    public function ejemplo(Request $request){
+        dd($request->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
         $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');

@@ -5,7 +5,17 @@
         <p>Esta opción permite crear nuevos contratos y/o modificarlos por el nro de identificación que posea el cliente que ya se encuentre registrado en el sistema.</p>
         <h4>Tome en cuenta las siguientes reglas para cargar la data</h4>
         <ul>
-            <li class="ml-3">Verifique que el orden de las columnas en su documento sea correcto. <small>Si no lo conoce haga clic <a href="{{ route('contratos.ejemplo') }}"><b>aqui</b></a> para descargar archivo Excel de ejemplo.</small></li>
+            <form action="{{ route('contratos.ejemplo') }}" method="post">
+                <label for="conexion">Selecciona tipo de conexión para descargar archivo Excel de ejemplo.:</label>
+                <select name="conexion" id="conexion">
+                    <option value="1">PPPoE</option>
+                    <option value="0">IP Estática</option>
+                </select>
+                <br><br>
+                <input type="submit" value="Enviar">
+            </form>
+
+            {{-- <li class="ml-3">Verifique que el orden de las columnas en su documento sea correcto. <small>Si no lo conoce haga clic <a href="{{ route('contratos.ejemplo') }}"><b>aqui</b></a> para descargar archivo Excel de ejemplo.</small></li> --}}
             <li class="ml-3">Verifique que el comienzo de la data sea a partir de la fila 4.</li>
             <li class="ml-3">Los campos obligatorios son <b>Identificacion, Servicio, Mikrotik, Plan, Estado, IP, Conexion, Interfaz, Segmento, Grupo de Corte, Facturacion, Tecnologia</b>.</li>
 
