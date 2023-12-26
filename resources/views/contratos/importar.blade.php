@@ -6,6 +6,7 @@
         <h4>Tome en cuenta las siguientes reglas para cargar la data</h4>
         <ul>
             <form action="{{ route('contratos.ejemplo') }}" method="post">
+                @csrf
                 <label for="conexion">Selecciona tipo de conexión para descargar archivo Excel de ejemplo.:</label>
                 <select name="conexion" id="conexion">
                     <option value="1">PPPoE</option>

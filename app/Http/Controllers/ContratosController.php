@@ -3128,10 +3128,19 @@ class ContratosController extends Controller
     }
 
     public function ejemplo(Request $request){
-        dd($request->id);
+        $conexion = $request->input('conexion');
+
+        // Ahora puedes hacer lo que necesites con el valor de $conexion
+        if ($conexion == 1) {
+            // Lógica para PPPoE
+            $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik','Tipo Contrato','Profile','Usuario','Contraseña');
+        } else{
+            // Lógica para IP Estática
+            $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');
+        }
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Archivo de Importación de Contratos Internet ".Auth::user()->empresa()->nombre;
-        $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');
+
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
