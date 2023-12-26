@@ -3266,6 +3266,7 @@ class ContratosController extends Controller
     }
 
     public function cargando(Request $request){
+        dd("voy a importar informacion");
         $request->validate([
             'archivo' => 'required|mimes:xlsx',
         ],[
