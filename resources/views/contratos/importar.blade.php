@@ -5,7 +5,7 @@
         <p>Esta opción permite crear nuevos contratos y/o modificarlos por el nro de identificación que posea el cliente que ya se encuentre registrado en el sistema.</p>
         <h4>Tome en cuenta las siguientes reglas para cargar la data</h4>
         <ul>
-            <form action="{{ route('contratos.ejemplo') }}" method="post" style="display: flex;flex-direction: row;align-items: center;">
+            <li class="ml-3"> <form action="{{ route('contratos.ejemplo') }}" method="post" style="display: flex;flex-direction: row;align-items: center;">
                 @csrf
                 <label for="conexion">Selecciona tipo de conexión para descargar archivo Excel de ejemplo.:</label>
                 <select name="conexion" id="conexion" style="padding-left:10px;">
@@ -14,7 +14,7 @@
                 </select>
                 <br><br>
                 <input type="submit" value="Click Aqui!" style="border:1px solid #305498;background-color: #305498 !important; color: #fff;">
-            </form>
+            </form></li>
 
             {{-- <li class="ml-3">Verifique que el orden de las columnas en su documento sea correcto. <small>Si no lo conoce haga clic <a href="{{ route('contratos.ejemplo') }}"><b>aqui</b></a> para descargar archivo Excel de ejemplo.</small></li> --}}
             <li class="ml-3">Verifique que el comienzo de la data sea a partir de la fila 4.</li>
