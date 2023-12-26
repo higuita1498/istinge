@@ -5,7 +5,7 @@
         <p>Esta opción permite crear nuevos contratos y/o modificarlos por el nro de identificación que posea el cliente que ya se encuentre registrado en el sistema.</p>
         <h4>Tome en cuenta las siguientes reglas para cargar la data</h4>
         <ul>
-            <form action="{{ route('contratos.ejemplo') }}" method="post">
+            <form action="{{ route('contratos.ejemplo') }}" method="post" style="display: flex;flex-direction: row;align-items: center;">
                 @csrf
                 <label for="conexion">Selecciona tipo de conexión para descargar archivo Excel de ejemplo.:</label>
                 <select name="conexion" id="conexion">
