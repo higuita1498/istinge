@@ -3428,7 +3428,7 @@ class ContratosController extends Controller
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
             $request->profle        = $sheet->getCell("W".$row)->getValue();
-            $request->local_address = $sheet->getCell("X".$row)->getValue();
+            $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
             $request->clave         = $sheet->getCell("Z".$row)->getValue();
 
@@ -3529,7 +3529,7 @@ class ContratosController extends Controller
             $contrato->mk                      = $request->mk;
             $contrato->usuario                 = $request->usuario;
             $contrato->password                = $request->clave;
-
+            $contrato->local_adress_pppoe      = $request->local_address_pppoe;
 
             $contrato->save();
         }
