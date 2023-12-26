@@ -3133,7 +3133,7 @@ class ContratosController extends Controller
         // Ahora puedes hacer lo que necesites con el valor de $conexion
         if ($conexion == 1) {
             // Lógica para PPPoE
-            $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik','Tipo Contrato','Profile','Usuario','Contraseña');
+            $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik','Tipo Contrato','Profile','Usuario','Contrasena');
         } else{
             // Lógica para IP Estática
             $titulosColumnas = array('Identificacion', 'Servicio', 'Serial ONU', 'Plan', 'Mikrotik', 'Estado', 'IP', 'MAC', 'Conexion', 'Interfaz', 'Segmento', 'Nodo', 'Access Point', 'Grupo de Corte', 'Facturacion', 'Descuento', 'Canal', 'Oficina', 'Tecnologia','Fecha del Contrato', 'Cliente en Mikrotik');
