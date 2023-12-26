@@ -3321,12 +3321,6 @@ class ContratosController extends Controller
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
-            $request->profle        = $sheet->getCell("V".$row)->getValue();
-            dd($request->profle);
-            $request->mk            = $sheet->getCell("W".$row)->getValue();
-            $request->mk            = $sheet->getCell("X".$row)->getValue();
-            $request->mk            = $sheet->getCell("Y".$row)->getValue();
-
 
             $error=(object) array();
 
