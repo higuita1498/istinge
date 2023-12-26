@@ -66,6 +66,13 @@
 	                <strong>{{ $errors->first('hora_suspension') }}</strong>
 	            </span>
 	        </div>
+            <div class="col-md-3 form-group">
+	            <label class="control-label">Hora de Crecion de factura <span class="text-danger">*</span></label>
+	            <input type="text" class="timepicker-2 form-control" id="hora_creacion_factura" name="hora_creacion_factura"  required="" value="{{old('hora_crecion_factura', '00:00')}}">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('hora_creacion_factura') }}</strong>
+	            </span>
+	        </div>
 
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Estado <span class="text-danger">*</span></label>
@@ -93,6 +100,11 @@
     <script>
         $(document).ready(function() {
         	$('.timepicker').timepicker({
+        		locale: 'es-es',
+        		uiLibrary: 'bootstrap4',
+        	});
+
+            $('.timepicker-2').timepicker({
         		locale: 'es-es',
         		uiLibrary: 'bootstrap4',
         	});

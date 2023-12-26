@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-	<a>Recuerda que si haces un cambio en la <strong>fecha de suspensión del grupo de corte,</strong> todas las facturas que tengan su 
+	<a>Recuerda que si haces un cambio en la <strong>fecha de suspensión del grupo de corte,</strong> todas las facturas que tengan su
 		<strong>fecha de vencimiento</strong> en el mismo mes que se realiza el cambio también cambiarán su fecha de vencimiento</a>
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 		<span aria-hidden="true">&times;</span>
@@ -73,6 +73,13 @@
 	                <strong>{{ $errors->first('hora_suspension') }}</strong>
 	            </span>
 	        </div>
+            <div class="col-md-3 form-group">
+	            <label class="control-label">Hora de Crecion de factura <span class="text-danger">*</span></label>
+	            <input type="text" class="timepicker-2 form-control" id="hora_creacion_factura" name="hora_creacion_factura"  required="" value="{{$grupo->hora_creacion_factura}}">
+	            <span class="help-block error">
+	                <strong>{{ $errors->first('hora_creacion_factura') }}</strong>
+	            </span>
+	        </div>
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Estado <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" name="status" id="status" title="Seleccione" required="">
@@ -99,6 +106,11 @@
     <script>
         $(document).ready(function() {
         	$('.timepicker').timepicker({
+        		locale: 'es-es',
+        		uiLibrary: 'bootstrap4',
+        	});
+
+            $('.timepicker-2').timepicker({
         		locale: 'es-es',
         		uiLibrary: 'bootstrap4',
         	});
