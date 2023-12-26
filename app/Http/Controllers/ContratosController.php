@@ -3321,6 +3321,13 @@ class ContratosController extends Controller
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
+            $request->profle        = $sheet->getCell("V".$row)->getValue();
+            dd($request->profle);
+            $request->mk            = $sheet->getCell("W".$row)->getValue();
+            $request->mk            = $sheet->getCell("X".$row)->getValue();
+            $request->mk            = $sheet->getCell("Y".$row)->getValue();
+
+
             $error=(object) array();
 
             if($nit != ""){
@@ -3336,8 +3343,7 @@ class ContratosController extends Controller
                     $error->mikrotik = "El mikrotik ingresado no se encuentra en nuestra base de datos";
                 }
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
-
-              //  $mikoId = $miko->id;
+                $mikoId = $miko->id;
             }
             if($request->plan != ""){
                 // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
@@ -3348,14 +3354,10 @@ class ContratosController extends Controller
                 // } else {
                 //     // Manejar el caso en el que $miko no sea un objeto válido
                 // }
-                    // $num = count(PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $miko->id)->get());
-                    // $num = PlanesVelocidad::where('name', 'LIKE', '%' . $request->plan . '%')
-                    //  ->where('mikrotik', $miko->id)
-                    //  ->count();
-
-                // if($num <= 0){
-                //     $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
-                // }
+                    $num = (PlanesVelocidad::where('name', $request->plan)->where('mikrotik', $mikoId)->get());
+                if($num === 0){
+                    $error->plan = "El plan de velocidad ".$request->plan." ingresado no se encuentra en nuestra base de datos";
+                }
             }
             if (!$request->state) {
                 $error->state = "El campo estado es obligatorio";
@@ -3537,7 +3539,6 @@ class ContratosController extends Controller
     }
 
     public function importarMK(){
-
         $contratos = Contrato::
         join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
         join('mikrotik as m', 'm.id', '=', 'contracts.server_configuration_id')->
