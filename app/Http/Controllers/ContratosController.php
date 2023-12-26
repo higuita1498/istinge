@@ -3322,11 +3322,9 @@ class ContratosController extends Controller
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
             $request->profle        = $sheet->getCell("W".$row)->getValue();
-            dd($request->profle);
-
-            $request->mk            = $sheet->getCell("W".$row)->getValue();
-            $request->mk            = $sheet->getCell("X".$row)->getValue();
-            $request->mk            = $sheet->getCell("Y".$row)->getValue();
+            $request->local_address = $sheet->getCell("X".$row)->getValue();
+            $request->usuario       = $sheet->getCell("Y".$row)->getValue();
+            $request->clave         = $sheet->getCell("Z".$row)->getValue();
 
 
             $error=(object) array();
@@ -3429,6 +3427,10 @@ class ContratosController extends Controller
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
+            $request->profle        = $sheet->getCell("W".$row)->getValue();
+            $request->local_address = $sheet->getCell("X".$row)->getValue();
+            $request->usuario       = $sheet->getCell("Y".$row)->getValue();
+            $request->clave         = $sheet->getCell("Z".$row)->getValue();
 
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
@@ -3514,6 +3516,7 @@ class ContratosController extends Controller
             $contrato->grupo_corte             = $request->grupo_corte;
             $contrato->facturacion             = $request->facturacion;
             $contrato->tecnologia              = $request->tecnologia;
+            $contrato->profile                 = $request->profle;
 
             $contrato->descuento               = $request->descuento;
             $contrato->canal                   = $request->canal;
