@@ -13,7 +13,7 @@
                     <option value="0">IP Estática</option>
                 </select>
                 <br><br>
-                <input type="submit" value="Enviar">
+                <input type="submit" value="Click Aqui!" style="border-radius:8px;background-color: #305498 !important; color: #fff;">
             </form>
 
             {{-- <li class="ml-3">Verifique que el orden de las columnas en su documento sea correcto. <small>Si no lo conoce haga clic <a href="{{ route('contratos.ejemplo') }}"><b>aqui</b></a> para descargar archivo Excel de ejemplo.</small></li> --}}
