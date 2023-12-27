@@ -212,7 +212,7 @@ class AvisosController extends Controller
                                 //             ->subject($tituloCorreo)
                                 //             ->setBody($correo);
                                 // });
-                                // Mail::to($mailC)->send($correo);
+                                 Mail::to($mailC)->send($correo);
 
                             // } catch (\Throwable $th) {
 
