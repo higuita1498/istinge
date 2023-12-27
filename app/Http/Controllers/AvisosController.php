@@ -202,7 +202,7 @@ class AvisosController extends Controller
                             $to_email = 'reywisveliz@gmail.com';
                             $to_name = 'Reywis Veliz';
                             $data = array('name'=>"Reywis Veliz", "body" => "Este es un mensaje de prueba.");
-                            $email = 'emails'.'plantilla13';
+                            $email = 'emails'.'plantilla14';
                             Mail::send($email, $data, function($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                         ->subject('Prueba de correo electrónico');
