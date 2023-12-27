@@ -197,7 +197,7 @@ class AvisosController extends Controller
                     $correo = new NotificacionMailable($datos);
 
                     if($mailC = $contrato->cliente()->email){
-
+                        $tituloCorreo = $plantilla->title;
                         if(str_contains($mailC, '@')){
                             // try {
                                 $cor++;
@@ -207,6 +207,11 @@ class AvisosController extends Controller
                                             ->subject($tituloCorreo)
                                             ->setBody($correo);
                                 });
+                                // self::sendMail(function($message) use ($mailC, $tituloCorreo){
+                                //     $message->to($mailC)
+                                //             ->subject($tituloCorreo)
+                                //             ->setBody($correo);
+                                // });
                                 // Mail::to($mailC)->send($correo);
 
                             // } catch (\Throwable $th) {

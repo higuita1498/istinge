@@ -83,12 +83,37 @@ class PlantillasController extends Controller
         $plantilla->save();
 
         if($plantilla->tipo==1){
+            // Definir la ruta del archivo
+            $rutaCarpeta = resource_path('views/emails');
 
-            $plantilla->archivo = 'plantilla'.$plantilla->id;
+            // Verificar si la carpeta existe, si no, intentar crearla
+            if (!file_exists($rutaCarpeta)) {
+                if (!mkdir($rutaCarpeta, 0777, true)) {
+                    // Manejar el error aquí, como registrar un mensaje o lanzar una excepción
+                    die('Error al crear la carpeta.');
+                }
+            }
+
+            // Asignar el nombre del archivo basado en el ID
+            $nombreArchivo = 'plantilla' . $plantilla->id;
+
+            // Guardar el archivo en la ruta especificada
+            $rutaArchivo = $rutaCarpeta . '/' . $nombreArchivo . '.blade.php';
+
+            // Intentar escribir el contenido en el archivo
+            if (file_put_contents($rutaArchivo, $plantilla->contenido) === false) {
+                // Manejar el error aquí, como registrar un mensaje o lanzar una excepción
+                die('Error al escribir el archivo.');
+            }
+
+            // Guardar los cambios en la base de datos (suponiendo que estás usando un ORM como Eloquent)
+            $plantilla->archivo = $nombreArchivo;
             $plantilla->save();
-            $rutaArchivo = resource_path('views/emails' . $plantilla->archivo.'.blade.php');
-            // Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
-            file_put_contents($rutaArchivo, $plantilla->contenido);
+            // $plantilla->archivo = 'plantilla'.$plantilla->id;
+            // $plantilla->save();
+            // $rutaArchivo = resource_path('views/emails' . $plantilla->archivo.'.blade.php');
+            // // Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+            // file_put_contents($rutaArchivo, $plantilla->contenido);
         }
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE LA PLANTILLA';
