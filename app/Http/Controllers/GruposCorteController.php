@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Carbon\Carbon;  
-use Mail; 
+use Carbon\Carbon;
+use Mail;
 use Validator;
-use Illuminate\Validation\Rule;  
-use Auth; 
+use Illuminate\Validation\Rule;
+use Auth;
 use DB;
 use Session;
 
@@ -27,7 +27,7 @@ class GruposCorteController extends Controller
         set_time_limit(300);
         view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'grupo_corte', 'title' => 'Grupos de Corte', 'icon' => 'fas fa-project-diagram']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         return view('grupos-corte.index');
@@ -105,7 +105,7 @@ class GruposCorteController extends Controller
         view()->share(['title' => 'Nuevo Grupo de Corte']);
         return view('grupos-corte.create');
     }
-    
+
     public function store(Request $request){
         $request->validate([
             'nombre' => 'required|max:250',
@@ -119,7 +119,7 @@ class GruposCorteController extends Controller
         $hora_suspension = explode(":", $request->hora_suspension);
         $hora_suspension_limit = $hora_suspension[0]+4;
         $hora_suspension_limit = $hora_suspension_limit.':'.$hora_suspension[1];
-        
+
         $grupo = new GrupoCorte;
         $grupo->nombre = $request->nombre;
         $grupo->fecha_factura = $request->fecha_factura;
@@ -128,6 +128,7 @@ class GruposCorteController extends Controller
         $grupo->fecha_suspension = $request->fecha_suspension;
         $grupo->hora_suspension = $request->hora_suspension;
         $grupo->hora_suspension_limit = $hora_suspension_limit;
+        $grupo->hora_creacion_factura = $request->hora_creacion_factura;
         $grupo->status = $request->status;
         $grupo->created_by = Auth::user()->id;
         $grupo->empresa = Auth::user()->empresa;
@@ -178,11 +179,11 @@ class GruposCorteController extends Controller
         }
         return redirect('empresa/grupos-corte')->with('danger', 'GRUPO DE CORTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $grupo = GrupoCorte::find($id);
-        
+
         if ($grupo) {
             view()->share(['title' => 'Editar: '.$grupo->nombre]);
             return view('grupos-corte.edit')->with(compact('grupo'));
@@ -199,9 +200,9 @@ class GruposCorteController extends Controller
             'fecha_pago' => 'required|numeric',
             'hora_suspension' => 'required',
         ]);
-        
-        $grupo = GrupoCorte::find($id);        
-        
+
+        $grupo = GrupoCorte::find($id);
+
         if ($grupo) {
             $hora_suspension = explode(":", $request->hora_suspension);
             $hora_suspension_limit = $hora_suspension[0]+4;
@@ -234,19 +235,20 @@ class GruposCorteController extends Controller
             $grupo->fecha_suspension = $request->fecha_suspension;
             $grupo->hora_suspension  = $request->hora_suspension;
             $grupo->hora_suspension_limit = $hora_suspension_limit;
+            $grupo->hora_creacion_factura = $request->hora_creacion_factura;
             $grupo->status           = $request->status;
             $grupo->updated_by       = Auth::user()->id;
             $grupo->save();
-            
+
             $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL GRUPO DE CORTE';
             return redirect('empresa/grupos-corte')->with('success', $mensaje);
         }
         return redirect('empresa/grupos-corte')->with('danger', 'GRUPO DE CORTE NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function destroy($id){
         $grupo = GrupoCorte::find($id);
-        
+
         if($grupo){
             $grupo->delete();
             $mensaje = 'SE HA ELIMINADO EL GRUPO DE CORTE CORRECTAMENTE';
@@ -255,10 +257,10 @@ class GruposCorteController extends Controller
             return redirect('empresa/grupos-corte')->with('danger', 'GRUPO DE CORTE NO ENCONTRADO, INTENTE NUEVAMENTE');
         }
     }
-    
+
     public function act_des($id){
         $grupo = GrupoCorte::find($id);
-        
+
         if($grupo){
             if($grupo->status == 0){
                 $grupo->status = 1;
@@ -407,7 +409,7 @@ class GruposCorteController extends Controller
     public function estadosGruposCorte($grupo = null, $fecha = null){
 
         $this->getAllPermissions(Auth::user()->id);
-        
+
         view()->share(['inicio' => 'master', 'seccion' => 'zonas', 'subseccion' => 'estados_corte', 'title' => 'Estados de corte', 'icon' => 'fas fa-project-diagram']);
 
         if($grupo == 'all'){
@@ -431,11 +433,11 @@ class GruposCorteController extends Controller
 
 
         if(false){
-            $grupos_corte_array = array();    
+            $grupos_corte_array = array();
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
             }
-            
+
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
                 join('contracts as cs','cs.client_id','=','contactos.id')->
                 join('grupos_corte as gp', 'gp.id', '=', 'cs.grupo_corte')->
@@ -447,12 +449,12 @@ class GruposCorteController extends Controller
                 where('cs.state','enabled')->
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null);
-               
+
                 if($grupo){
                     $contactos->where('gp.id', $grupo);
                 }
 
-                $contactos = $contactos->get()->all(); 
+                $contactos = $contactos->get()->all();
                 $swGrupo = 1; //masivo
         }else{
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
@@ -465,13 +467,13 @@ class GruposCorteController extends Controller
             where('contactos.status',1)->
             where('cs.state','enabled')->
             where('cs.fecha_suspension', null);
-            
+
             if($grupo){
                 $contactos->where('gp.id', $grupo);
             }
-            
 
-            $contactos = $contactos->get()->all(); 
+
+            $contactos = $contactos->get()->all();
            // dd($contactos);
             $swGrupo = 0; // personalizado
         }
@@ -486,7 +488,7 @@ class GruposCorteController extends Controller
                 }
             }
         }
-    
+
         $contactos = collect($contactos);
         $totalFacturas = $contactos->count();
         $contactos = $contactos->groupBy('idGrupo');
@@ -513,7 +515,7 @@ class GruposCorteController extends Controller
                                      get();
 
 
-        
+
         $facturasGeneradas = Factura::select('factura.*', 'contactos.nombre as nombreCliente', 'gp.nombre as nombreGrupo', 'gp.hora_suspension', 'gp.id as idGrupo')->
                                      join('contactos', 'contactos.id', '=', 'factura.cliente')->
                                      join('contracts as cs','cs.client_id','=','contactos.id')->
@@ -531,7 +533,7 @@ class GruposCorteController extends Controller
                                      orderby('id', 'desc')->
                                      get();
 
-        
+
 
         $request = request();
 
@@ -544,9 +546,9 @@ class GruposCorteController extends Controller
                                         if($grupo){
                                             $cantidadContratos->where('grupos_corte.id', $grupo);
                                         }
-                        
+
         $cantidadContratos = $cantidadContratos->count();
-                                     
+
         return view('grupos-corte.estados', compact('contactos', 'gruposFaltantes', 'perdonados', 'grupo', 'fecha', 'totalFacturas', 'grupos_corte', 'facturasCortadas', 'request', 'facturasGeneradas', 'cantidadContratos'));
     }
 
