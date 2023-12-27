@@ -203,19 +203,19 @@ class AvisosController extends Controller
                             $to_name = 'Reywis Veliz';
                             $data = array('name'=>"Reywis Veliz", "body" => "Este es un mensaje de prueba.");
                             $email = 'emails.'.'plantilla14';
-                            Mail::send($email, $data, function($message) use ($to_name, $to_email) {
-                                $message->to($to_email, $to_name)
-                                        ->subject('Prueba de correo electrónico');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-                            });
+                            // Mail::send($email, $data, function($message) use ($to_name, $to_email) {
+                            //     $message->to($to_email, $to_name)
+                            //             ->subject('Prueba de correo electrónico');
+                            //     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            // });
                             // try {
                                 // $cor++;
-                                // self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
-                                // self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
-                                //     $message->to($mailC)
-                                //             ->subject($tituloCorreo)
-                                //             ->setBody($correo);
-                                // });
+                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
+                                 self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
+                                     $message->to($mailC)
+                                             ->subject($tituloCorreo)
+                                             ->setBody($correo);
+                                 });
                                 // self::sendMail(function($message) use ($mailC, $tituloCorreo){
                                 //     $message->to($mailC)
                                 //             ->subject($tituloCorreo)
