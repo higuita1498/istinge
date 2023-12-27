@@ -199,20 +199,29 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
                         $tituloCorreo = $plantilla->title;
                         if(str_contains($mailC, '@')){
+                            $to_email = 'reywisveliz@gmail.com';
+                            $to_name = 'Reywis Veliz';
+                            $data = array('name'=>"Reywis Veliz", "body" => "Este es un mensaje de prueba.");
+
+                            Mail::send('emails.test', $data, function($message) use ($to_name, $to_email) {
+                                $message->to($to_email, $to_name)
+                                        ->subject('Prueba de correo electrónico');
+                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            });
                             // try {
-                                $cor++;
-                                self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
-                                self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
-                                    $message->to($mailC)
-                                            ->subject($tituloCorreo)
-                                            ->setBody($correo);
-                                });
+                                // $cor++;
+                                // self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
+                                // self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
+                                //     $message->to($mailC)
+                                //             ->subject($tituloCorreo)
+                                //             ->setBody($correo);
+                                // });
                                 // self::sendMail(function($message) use ($mailC, $tituloCorreo){
                                 //     $message->to($mailC)
                                 //             ->subject($tituloCorreo)
                                 //             ->setBody($correo);
                                 // });
-                                 Mail::to($mailC)->send($correo);
+                                // Mail::to($mailC)->send($correo);
 
                             // } catch (\Throwable $th) {
 
