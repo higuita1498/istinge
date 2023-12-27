@@ -195,7 +195,7 @@ class AvisosController extends Controller
                         'date' => date('d-m-Y'),
                     );
                     $correo = new NotificacionMailable($datos);
-                    dd($correo);
+
                     if($mailC = $contrato->cliente()->email){
                         $tituloCorreo = $plantilla->title;
                         if(str_contains($mailC, '@')){
@@ -210,7 +210,7 @@ class AvisosController extends Controller
                             // });
                             // try {
                                 // $cor++;
-
+dd($correo->build()->render());
                                  self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
                                  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                      $message->to($mailC)
