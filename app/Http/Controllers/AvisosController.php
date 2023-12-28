@@ -20,6 +20,7 @@ use App\Integracion;
 use App\Contacto;
 use App\Mikrotik;
 use App\GrupoCorte;
+use Illuminate\Support\Facades\View;
 
 class AvisosController extends Controller
 {
