@@ -216,17 +216,17 @@ class PlantillasController extends Controller
             //     Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
             // }
 
-            // $plantilla->tipo = $request->tipo;
-            // $plantilla->clasificacion = $request->clasificacion;
-            // $plantilla->title = $request->title;
+             $plantilla->tipo = $request->tipo;
+             $plantilla->clasificacion = $request->clasificacion;
+             $plantilla->title = $request->title;
 
-            // if($request->tipo==0){
-            //     $plantilla->contenido = strip_tags($request->contenido_sms);
-            // }elseif($request->tipo==1){
-            //     $plantilla->contenido = $request->contenido;
-            // }elseif($request->tipo==2){
-            //     $plantilla->contenido = $request->contenido_whatsapp;
-            // }
+             if($request->tipo==0){
+                 $plantilla->contenido = strip_tags($request->contenido_sms);
+             }elseif($request->tipo==1){
+                 $plantilla->contenido = $request->contenido;
+             }elseif($request->tipo==2){
+                 $plantilla->contenido = $request->contenido_whatsapp;
+             }
 
             // $plantilla->updated_by = Auth::user()->id;
             // $plantilla->save();
