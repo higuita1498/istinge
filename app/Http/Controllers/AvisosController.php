@@ -194,6 +194,8 @@ class AvisosController extends Controller
                         'empresa' => Auth::user()->empresa()->nombre,
                         'nit' => Auth::user()->empresa()->nit.'-'.Auth::user()->empresa()->dv,
                         'date' => date('d-m-Y'),
+                        'name' => $contrato->cliente()->nombre.' '.$contrato->cliente()->apellidos(),
+                        'company' => Auth::user()->empresa()->nombre,
                     );
 
                     $correo = new NotificacionMailable($datos);
