@@ -197,14 +197,7 @@ class PlantillasController extends Controller
             $rutaArchivoNuevo = $rutaCarpeta . '/' . $nombreArchivo . '.blade.php';
 
             // Intentar escribir el contenido en el nuevo archivo
-            if (file_put_contents($rutaArchivoNuevo, $plantilla->contenido) === false) {
-                // Manejar el error aquí, como registrar un mensaje o lanzar una excepción
-                die('Error al escribir el archivo.');
-            }
 
-            // Actualizar el nombre del archivo en la base de datos
-            $plantilla->archivo = $nombreArchivo;
-            $plantilla->save();
 
            // return 'Plantilla actualizada correctamente.';
 
@@ -227,9 +220,14 @@ class PlantillasController extends Controller
              }elseif($request->tipo==2){
                  $plantilla->contenido = $request->contenido_whatsapp;
              }
+             if (file_put_contents($rutaArchivoNuevo, $plantilla->contenido) === false) {
+                // Manejar el error aquí, como registrar un mensaje o lanzar una excepción
+                die('Error al escribir el archivo.');
+            }
 
-             $plantilla->updated_by = Auth::user()->id;
-             $plantilla->save();
+            // Actualizar el nombre del archivo en la base de datos
+            $plantilla->archivo = $nombreArchivo;
+            $plantilla->save();
 
              if($plantilla->tipo==1){
                  Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
