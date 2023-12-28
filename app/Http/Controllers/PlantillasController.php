@@ -166,7 +166,6 @@ class PlantillasController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $request->validate([
             'title' => 'required',
             'tipo' => 'required',
@@ -174,21 +173,48 @@ class PlantillasController extends Controller
         ]);
 
         $plantilla = Plantilla::find($id);
-        $rutaArchivo = resource_path("views/emails/{$plantilla->archivo}.blade.php");
-        if (file_exists($rutaArchivo)) {
-            // Intenta eliminar el archivo
-            if (unlink($rutaArchivo)) {
-                return 'Vista eliminada correctamente.';
-            } else {
-                return 'No se pudo eliminar la vista.';
-            }
-        } else {
-            return 'La vista no existe en la carpeta emails.';
-        }
+
         if($plantilla){
-            // if($plantilla->tipo==1){
-            //     Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
-            // }
+            $rutaCarpeta = resource_path('views/emails');
+
+            // Si la plantilla ya tiene un archivo asociado, elimínalo
+            if ($plantilla->archivo) {
+                $rutaArchivoExistente = $rutaCarpeta . '/' . $plantilla->archivo . '.blade.php';
+
+                // Verificar si el archivo existe antes de intentar eliminarlo
+                if (file_exists($rutaArchivoExistente)) {
+                    if (!unlink($rutaArchivoExistente)) {
+                        // Manejar el error si no se puede eliminar
+                        die('Error al eliminar la plantilla existente.');
+                    }
+                }
+            }
+
+            // Asignar el nombre del archivo basado en el ID
+            $nombreArchivo = 'plantilla' . $plantilla->id;
+
+            // Ruta completa para el nuevo archivo
+            $rutaArchivoNuevo = $rutaCarpeta . '/' . $nombreArchivo . '.blade.php';
+
+            // Intentar escribir el contenido en el nuevo archivo
+            if (file_put_contents($rutaArchivoNuevo, $plantilla->contenido) === false) {
+                // Manejar el error aquí, como registrar un mensaje o lanzar una excepción
+                die('Error al escribir el archivo.');
+            }
+
+            // Actualizar el nombre del archivo en la base de datos
+            $plantilla->archivo = $nombreArchivo;
+            $plantilla->save();
+
+            return 'Plantilla actualizada correctamente.';
+
+
+
+
+
+            if($plantilla->tipo==1){
+                Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            }
 
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
