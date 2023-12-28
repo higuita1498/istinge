@@ -174,7 +174,7 @@ class PlantillasController extends Controller
         ]);
 
         $plantilla = Plantilla::find($id);
-        $rutaArchivo = resource_path("views/{$plantilla->archivo}.blade.php");
+        $rutaArchivo = resource_path("views/emails/{$plantilla->archivo}.blade.php");
         if (Storage::disk('local')->exists($rutaArchivo)) {
             // Intenta eliminar el archivo
             if (Storage::disk('local')->delete($rutaArchivo)) {
