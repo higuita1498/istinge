@@ -228,12 +228,12 @@ class PlantillasController extends Controller
                  $plantilla->contenido = $request->contenido_whatsapp;
              }
 
-            // $plantilla->updated_by = Auth::user()->id;
-            // $plantilla->save();
+             $plantilla->updated_by = Auth::user()->id;
+             $plantilla->save();
 
-            // if($plantilla->tipo==1){
-            //     Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
-            // }
+             if($plantilla->tipo==1){
+                 Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+             }
 
             $mensaje = 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
