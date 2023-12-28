@@ -174,11 +174,21 @@ class PlantillasController extends Controller
         ]);
 
         $plantilla = Plantilla::find($id);
-
-        if($plantilla){
-            if($plantilla->tipo==1){
-                Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+        $rutaArchivo = resource_path("views/{$plantilla->archivo}.blade.php");
+        if (Storage::disk('local')->exists($rutaArchivo)) {
+            // Intenta eliminar el archivo
+            if (Storage::disk('local')->delete($rutaArchivo)) {
+                return 'Vista eliminada correctamente.';
+            } else {
+                return 'No se pudo eliminar la vista.';
             }
+        } else {
+            return 'La vista no existe.';
+        }
+        if($plantilla){
+            // if($plantilla->tipo==1){
+            //     Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            // }
 
             $plantilla->tipo = $request->tipo;
             $plantilla->clasificacion = $request->clasificacion;
