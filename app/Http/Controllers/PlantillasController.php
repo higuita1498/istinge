@@ -206,7 +206,7 @@ class PlantillasController extends Controller
             $plantilla->archivo = $nombreArchivo;
             $plantilla->save();
 
-            return 'Plantilla actualizada correctamente.';
+           // return 'Plantilla actualizada correctamente.';
 
         }
 
