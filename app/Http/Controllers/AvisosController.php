@@ -200,10 +200,6 @@ class AvisosController extends Controller
                     if($mailC = $contrato->cliente()->email){
                         $tituloCorreo = $plantilla->title;
                         if(str_contains($mailC, '@')){
-                            $to_email = 'reywisveliz@gmail.com';
-                            $to_name = 'Reywis Veliz';
-                            $data = array('name'=>"Reywis Veliz", "body" => "Este es un mensaje de prueba.");
-                            $email = 'emails.'.'plantilla14';
                             // Mail::send($email, $data, function($message) use ($to_name, $to_email) {
                             //     $message->to($to_email, $to_name)
                             //             ->subject('Prueba de correo electrónico');
@@ -211,8 +207,8 @@ class AvisosController extends Controller
                             // });
                             // try {
                                 // $cor++;
-                      //  dd($correo->build()->render());
-                      $content = View::make('emails.plantilla14', $data)->render();
+                      $template = 'emails.'.$plantilla->title;
+                      $content = View::make($template, $data)->render();
                                  self::sendInBlue($content, $correo->subject, [$mailC], $correo->name, []);
 
                                 //  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
