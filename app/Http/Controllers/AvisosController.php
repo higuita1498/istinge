@@ -212,7 +212,7 @@ class AvisosController extends Controller
                                 // $cor++;
                       //  dd($correo->build()->render());
                       $data = [
-                        'name' => $name,
+
                         'content' => 'Aquí puedes colocar el contenido que desees mostrar en el correo. Por ejemplo, $correo->subject.'
                     ];
                                  self::sendInBlue($data, $correo->subject, [$mailC], $correo->name, []);
