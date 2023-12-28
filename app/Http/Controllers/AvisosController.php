@@ -207,7 +207,7 @@ class AvisosController extends Controller
                             // });
                             // try {
                                 // $cor++;
-                      $template = 'emails.'.$plantilla->title;
+                      $template = 'emails.'.$plantilla->archivo;
                       $content = View::make($template, $correo)->render();
                                  self::sendInBlue($content, $correo->subject, [$mailC], $correo->name, []);
 
