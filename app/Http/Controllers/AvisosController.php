@@ -215,7 +215,7 @@ class AvisosController extends Controller
 
                         'content' => 'Aquí puedes colocar el contenido que desees mostrar en el correo. Por ejemplo, $correo->subject.'
                     ];
-                                 self::sendInBlue($data, $correo->subject, [$mailC], $correo->name, []);
+                                 self::sendInBlue('Aquí puedes colocar el contenido que desees mostrar en el correo. Por ejemplo, $correo->subject.', $correo->subject, [$mailC], $correo->name, []);
                                  dd("llego hasta aqui");
                                  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                      $message->to($mailC)
