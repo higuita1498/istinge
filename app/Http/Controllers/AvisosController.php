@@ -216,7 +216,7 @@ class AvisosController extends Controller
                                  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                      $message->to($mailC)
                                              ->subject($tituloCorreo)
-                                             ->setBody($correo);
+                                             ->setBody($email);
                                  });
                                 // self::sendMail(function($message) use ($mailC, $tituloCorreo){
                                 //     $message->to($mailC)
