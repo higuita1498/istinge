@@ -176,7 +176,7 @@ class PlantillasController extends Controller
 
         if($plantilla){
             $rutaCarpeta = resource_path('views/emails');
-
+            if($plantilla->tipo==1){
             // Si la plantilla ya tiene un archivo asociado, elimínalo
             if ($plantilla->archivo) {
                 $rutaArchivoExistente = $rutaCarpeta . '/' . $plantilla->archivo . '.blade.php';
@@ -208,32 +208,32 @@ class PlantillasController extends Controller
 
             return 'Plantilla actualizada correctamente.';
 
+        }
 
 
 
+            // if($plantilla->tipo==1){
+            //     Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
+            // }
 
-            if($plantilla->tipo==1){
-                Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
-            }
+            // $plantilla->tipo = $request->tipo;
+            // $plantilla->clasificacion = $request->clasificacion;
+            // $plantilla->title = $request->title;
 
-            $plantilla->tipo = $request->tipo;
-            $plantilla->clasificacion = $request->clasificacion;
-            $plantilla->title = $request->title;
+            // if($request->tipo==0){
+            //     $plantilla->contenido = strip_tags($request->contenido_sms);
+            // }elseif($request->tipo==1){
+            //     $plantilla->contenido = $request->contenido;
+            // }elseif($request->tipo==2){
+            //     $plantilla->contenido = $request->contenido_whatsapp;
+            // }
 
-            if($request->tipo==0){
-                $plantilla->contenido = strip_tags($request->contenido_sms);
-            }elseif($request->tipo==1){
-                $plantilla->contenido = $request->contenido;
-            }elseif($request->tipo==2){
-                $plantilla->contenido = $request->contenido_whatsapp;
-            }
+            // $plantilla->updated_by = Auth::user()->id;
+            // $plantilla->save();
 
-            $plantilla->updated_by = Auth::user()->id;
-            $plantilla->save();
-
-            if($plantilla->tipo==1){
-                Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
-            }
+            // if($plantilla->tipo==1){
+            //     Storage::disk('emails')->put($plantilla->archivo.'.blade.php', $plantilla->contenido);
+            // }
 
             $mensaje = 'SE HA ACTUALIZADO SATISFACTORIAMENTE LA PLANTILLA';
             return redirect('empresa/plantillas')->with('success', $mensaje)->with('plantilla_id', $plantilla->id);
