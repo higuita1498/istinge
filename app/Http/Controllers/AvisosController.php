@@ -212,7 +212,7 @@ class AvisosController extends Controller
                                 // $cor++;
                       //  dd($correo->build()->render());
                       $content = View::make('emails.plantilla14', $data)->render();
-                                 self::sendInBlue($content, $correo->subject.', $correo->subject, [$mailC], $correo->name, []);
+                                 self::sendInBlue($content, $correo->subject, [$mailC], $correo->name, []);
 
                                 //  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                 //      $message->to($mailC)
