@@ -210,9 +210,9 @@ class AvisosController extends Controller
                             // });
                             // try {
                                 // $cor++;
-                        dd($correo->build()->render());
+                      //  dd($correo->build()->render());
 
-                                 self::sendInBlue($correo->build()->render(), $correo->subject, [$mailC], $correo->name, []);
+                                 self::sendInBlue($email, $correo->subject, [$mailC], $correo->name, []);
                                  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                      $message->to($mailC)
                                              ->subject($tituloCorreo)
