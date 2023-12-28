@@ -211,11 +211,8 @@ class AvisosController extends Controller
                             // try {
                                 // $cor++;
                       //  dd($correo->build()->render());
-                      $data = [
-
-                        'content' => 'Aquí puedes colocar el contenido que desees mostrar en el correo. Por ejemplo, $correo->subject.'
-                    ];
-                                 self::sendInBlue('Aquí puedes colocar el contenido que desees mostrar en el correo. Por ejemplo, $correo->subject.', $correo->subject, [$mailC], $correo->name, []);
+                      $content = View::make('emails.plantilla14', $data)->render();
+                                 self::sendInBlue($content, $correo->subject.', $correo->subject, [$mailC], $correo->name, []);
 
                                 //  self::sendMail($mailC, $tituloCorreo, $correo, function($message) use ($mailC, $tituloCorreo, $correo) {
                                 //      $message->to($mailC)
