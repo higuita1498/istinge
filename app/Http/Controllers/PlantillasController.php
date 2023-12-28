@@ -202,9 +202,6 @@ class PlantillasController extends Controller
            // return 'Plantilla actualizada correctamente.';
 
         }
-
-
-
             // if($plantilla->tipo==1){
             //     Storage::disk('emails')->delete($plantilla->archivo.'.blade.php');
             // }

@@ -236,7 +236,9 @@ class AvisosController extends Controller
         }
 
         if($request->type == 'EMAIL'){
-            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
+            // return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con '.$cor.' notificaciones de email');
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con exito notificaciones de email');
+
         }
 
         if($request->type == 'SMS'){
