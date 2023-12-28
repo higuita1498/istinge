@@ -175,15 +175,15 @@ class PlantillasController extends Controller
 
         $plantilla = Plantilla::find($id);
         $rutaArchivo = resource_path("views/emails/{$plantilla->archivo}.blade.php");
-        if (Storage::disk('local')->exists($rutaArchivo)) {
+        if (file_exists($rutaArchivo)) {
             // Intenta eliminar el archivo
-            if (Storage::disk('local')->delete($rutaArchivo)) {
+            if (unlink($rutaArchivo)) {
                 return 'Vista eliminada correctamente.';
             } else {
                 return 'No se pudo eliminar la vista.';
             }
         } else {
-            return 'La vista no existe.';
+            return 'La vista no existe en la carpeta emails.';
         }
         if($plantilla){
             // if($plantilla->tipo==1){
