@@ -76,6 +76,7 @@ class CronController extends Controller
     }
 
     public static function CrearFactura(){
+
         ini_set('max_execution_time', 500);
         $empresa = Empresa::find(1);
 
@@ -100,7 +101,12 @@ class CronController extends Controller
             foreach($grupos_corte as $grupo_corte){
 
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-                join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->
+                join('empresas as e', 'e.id', '=', 'contracts.empresa')
+                ->select('contracts.id', 'contracts.iva_factura', 'contracts.public_id', 'c.id as cliente',
+                'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion',
+                'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1',
+                'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')
+                ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
                 // whereIn('contracts.id',[992,1612])->
                 where('contracts.state','enabled')->get();
@@ -185,7 +191,22 @@ class CronController extends Controller
                                 $factura->tipo          = $tipo;
                                 $factura->vencimiento   = $date->format('Y-m-d');
                                 $factura->suspension    = $date->format('Y-m-d');
-                                $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+
+                                //Calculo fecha pago oportuno.
+                                $y = Carbon::now()->format('Y');
+                                $m = Carbon::now()->format('m');
+                                $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+
+                                if($grupo_corte->fecha_factura > $grupo_corte->fecha_pago && $m!=12){
+                                    $m=$m+1;
+                                }
+
+                                if($m == 12){
+                                    $y = $y+1;
+                                    $m = 01;
+                                }
+
+                                $factura->pago_oportuno = $y . '-' . $m . '-' . $d;
                                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                                 $factura->bodega        = 1;
                                 $factura->vendedor      = 1;
@@ -212,6 +233,10 @@ class CronController extends Controller
                                     $item_reg->descripcion = $plan->name;
                                     $item_reg->id_impuesto = $item->id_impuesto;
                                     $item_reg->impuesto    = $item->impuesto;
+                                    if($contrato->iva_factura == 1){
+                                        $item->id_impuesto = 1;
+                                        $item->impuesto = 19;
+                                    }
                                     $item_reg->cant        = 1;
                                     $item_reg->desc        = $contrato->descuento;
                                     $item_reg->save();
