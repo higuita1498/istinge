@@ -237,8 +237,8 @@ class CronController extends Controller
                                     $item_reg->id_impuesto = $item->id_impuesto;
                                     $item_reg->impuesto    = $item->impuesto;
                                     if($contrato->iva_factura == 1){
-                                        $item->id_impuesto = 1;
-                                        $item->impuesto = 19;
+                                        $item_reg->id_impuesto = 1;
+                                        $item_reg->impuesto = 19;
                                     }
                                     $item_reg->cant        = 1;
                                     $item_reg->desc        = $contrato->descuento;
