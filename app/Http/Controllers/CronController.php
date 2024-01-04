@@ -76,6 +76,7 @@ class CronController extends Controller
     }
 
     public static function CrearFactura(){
+
         ini_set('max_execution_time', 500);
         $empresa = Empresa::find(1);
 
@@ -90,7 +91,8 @@ class CronController extends Controller
             $horaInicio = now()->subMinutes(5)->format('H:i');
             $horaFin = now()->addMinutes(5)->format('H:i');
 
-            $grupos_corte = GrupoCorte::where('hora_creacion_factura','>=', $horaInicio)
+            $grupos_corte = GrupoCorte
+            ::where('hora_creacion_factura','>=', $horaInicio)
             ->where('hora_creacion_factura','<=', $horaFin)
             ->where('fecha_factura', $date)
             ->where('status', 1)->get();
@@ -100,7 +102,12 @@ class CronController extends Controller
             foreach($grupos_corte as $grupo_corte){
 
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-                join('empresas as e', 'e.id', '=', 'contracts.empresa')->select('contracts.id', 'contracts.public_id', 'c.id as cliente', 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion', 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1', 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')->where('contracts.grupo_corte',$grupo_corte->id)->
+                join('empresas as e', 'e.id', '=', 'contracts.empresa')
+                ->select('contracts.id', 'contracts.iva_factura', 'contracts.public_id', 'c.id as cliente',
+                'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion',
+                'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1',
+                'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv')
+                ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
                 // whereIn('contracts.id',[992,1612])->
                 where('contracts.state','enabled')->get();
@@ -185,7 +192,22 @@ class CronController extends Controller
                                 $factura->tipo          = $tipo;
                                 $factura->vencimiento   = $date->format('Y-m-d');
                                 $factura->suspension    = $date->format('Y-m-d');
-                                $factura->pago_oportuno = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+
+                                //Calculo fecha pago oportuno.
+                                $y = Carbon::now()->format('Y');
+                                $m = Carbon::now()->format('m');
+                                $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+
+                                if($grupo_corte->fecha_factura > $grupo_corte->fecha_pago && $m!=12){
+                                    $m=$m+1;
+                                }
+
+                                if($m == 12){
+                                    $y = $y+1;
+                                    $m = 01;
+                                }
+
+                                $factura->pago_oportuno = $y . '-' . $m . '-' . $d;
                                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                                 $factura->bodega        = 1;
                                 $factura->vendedor      = 1;
@@ -196,7 +218,9 @@ class CronController extends Controller
                                     $factura->contrato_id = $contrato->id;
                                 }
 
-                                $factura->save();
+                                //validacion extra antes de guardar que no haya ningun mismo codigo.
+                                if(Factura::where('codigo',$factura->codigo)->count() <= 1){
+                                    $factura->save();
 
                                 ## Se carga el item a la factura (Plan de Internet) ##
 
@@ -212,6 +236,10 @@ class CronController extends Controller
                                     $item_reg->descripcion = $plan->name;
                                     $item_reg->id_impuesto = $item->id_impuesto;
                                     $item_reg->impuesto    = $item->impuesto;
+                                    if($contrato->iva_factura == 1){
+                                        $item_reg->id_impuesto = 1;
+                                        $item_reg->impuesto = 19;
+                                    }
                                     $item_reg->cant        = 1;
                                     $item_reg->desc        = $contrato->descuento;
                                     $item_reg->save();
@@ -325,13 +353,18 @@ class CronController extends Controller
                                     }
                                 }
                                 //>>>>Fin posible aplicación prorrateo al total<<<<//
+
+
+                                }// fin de validacion factura doble.
+
                             }
                             }//validacion que no se creen dos el mismo dia
                         }
                     } //Comentando factura abierta del mes pasado
                     }
 
-                }
+
+                }// fin foreach contratos.
             }
 
 
@@ -2380,129 +2413,12 @@ class CronController extends Controller
 
             return $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
-            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-07-29")
+            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-12-30")
+            ->where('factura.created_at','lIKE',"%2024-01-02%")
             ->where('c.grupo_corte',1)
-            ->where('factura.whatsapp',0)
+            // ->where('factura.whatsapp',0)
             ->select('factura.*')
             ->get();
-
-            foreach($facturas as $factura){
-
-                view()->share(['title' => 'Imprimir Factura']);
-                $empresa = Empresa::find($factura->empresa);
-                $items = ItemsFactura::where('factura',$factura->id)->get();
-                $itemscount=ItemsFactura::where('factura',$factura->id)->count();
-                $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-                $resolucion = NumeracionFactura::where('empresa',$factura->empresa)->latest()->first();
-
-                $tipo = $factura->tipo;
-
-                if($factura->emitida == 1){
-                        $impTotal = 0;
-                        foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
-                            if(isset($totalImp->total)){
-                                $impTotal = $totalImp->total;
-                            }
-                        }
-
-                        $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
-                        $infoEmpresa = Empresa::find($empresa->id);
-                        $data['Empresa'] = $infoEmpresa->toArray();
-                        $infoCliente = Contacto::find($factura->cliente);
-                        $data['Cliente'] = $infoCliente->toArray();
-                        /*..............................
-                        Construcción del código qr a la factura
-                        ................................*/
-                        $impuesto = 0;
-                        foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
-                            if(isset($imp->total)){
-                                $impuesto = $imp->total;
-                            }
-                        }
-
-                        $codqr = "NumFac:" . $factura->codigo . "\n" .
-                        "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-                        "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-                        "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-                        "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-                        "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
-                        "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-                        "ValorOtrosImpuestos:" .  0.00 . "\n" .
-                        "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
-                        "CUFE:" . $CUFEvr;
-                        /*..............................
-                        Construcción del código qr a la factura
-                        ................................*/
-                        $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
-                    }else{
-                        $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
-                    }
-
-                // envio de mensajes por whatsapp //
-                $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
-
-                if($plantilla){
-                    $mensaje = str_replace('{{ $company }}', Auth::user()->empresa()->nombre, $plantilla->contenido);
-                    $mensaje = str_replace('{{ $name }}', ucfirst($factura->cliente()->nombre), $mensaje);
-                    $mensaje = str_replace('{{ $factura->codigo }}', $factura->codigo, $mensaje);
-                    $mensaje = str_replace('{{ $factura->parsear($factura->total()->total) }}', $factura->parsear($factura->total()->total), $mensaje);
-                }else{
-                    $mensaje = Auth::user()->empresa()->nombre.", le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
-                }
-
-                $numero = str_replace('+','',$factura->cliente()->celular);
-                $numero = str_replace(' ','',$numero);
-                $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
-
-
-                $fields = [
-                    "action"=>"sendFile",
-                    "id"=>$numero."@c.us",
-                    "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
-                    "mime"=>"application/pdf",
-                    "namefile"=>$factura->codigo,
-                    "mensaje"=>$mensaje,
-                    "cron"=>"true"
-                ];
-
-                $request = new Request();
-                $request->merge($fields);
-                $controller = new CRMController();
-
-                $instancia = DB::table("instancia")
-                                        ->first();
-                $response;
-                if(!is_null($instancia) && !empty($instancia)){
-                    if($instancia->status == "1"){
-                        $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
-                        $response = json_decode($response,true);
-
-                        if($response['salida'] == 'success'){
-                            $factura->whatsapp = 1;
-                            $factura->correo_sendinblue = 1;
-                            $factura->save();
-                        }
-
-
-                        $factura->response_sendinblue = $response;
-                        $factura->save();
-                    }else{
-                        $factura->correo_sendinblue = 0;
-
-
-                        $factura->response_sendinblue = $response;
-                        $factura->save();
-                    }
-                }else{
-                    $factura->correo_sendinblue = 0;
-
-
-                    $factura->response_sendinblue = $response;
-                    $factura->save();
-                }
-
-                unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
-            }
 
         // --------- fin enviar fcturas por wpp segun fecha ---------- //
 
@@ -2541,19 +2457,19 @@ class CronController extends Controller
 
         // return "ok contratos habilitados";
 
-        // $eliminadas = 0;
-        // foreach($facturas as $f){
+        $eliminadas = 0;
+        foreach($facturas as $f){
 
-        //     if($f->pagado() == 0){
-        //     $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
-        // DB::table('crm')->where('factura',$f->id)->delete();
-        //     $eliminadas++;
-        //     $f->delete();
-        //     }
-        // }
+            if($f->pagado() == 0){
+            $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+        DB::table('crm')->where('factura',$f->id)->delete();
+            $eliminadas++;
+            $f->delete();
+            }
+        }
 
 
-        // return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
+        return "Se eliminaron un total de:" . $eliminadas . " facturas correctamente";
 
         //comprobar en bd
         //SELECT factura.* FROM `factura` WHERE factura.observaciones LIKE "%Facturación Automática - Corte%" AND factura.fecha = "2022-08-25"

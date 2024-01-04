@@ -780,6 +780,7 @@ class ContratosController extends Controller
                 $contrato->address_street          = $request->address_street;
                 $contrato->tecnologia              = $request->tecnologia;
                 $contrato->tipo_contrato           = $request->tipo_contrato;
+                $contrato->iva_factura             = $request->iva_factura;
                 $contrato->observaciones           = $request->observaciones;
 
 
@@ -972,7 +973,7 @@ class ContratosController extends Controller
          'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
          'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
          'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv','contracts.servicio_otro',
-         'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu',
+         'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu','contracts.iva_factura',
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
           'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
           'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension')
@@ -1404,6 +1405,7 @@ class ContratosController extends Controller
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
                     $contrato->tipo_contrato           = $request->tipo_contrato;
+                    $contrato->iva_factura             = $request->iva_factura; //es el iva al plan de internet.
                     $contrato->observaciones           = $request->observaciones;
 
                     if($request->tipo_suspension_no == 1){
