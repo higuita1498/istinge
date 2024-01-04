@@ -40,7 +40,7 @@
     @endif
 @endif
 
-@if($estatus==0)
+@if($estatus==3)
     @if(isset($session['204']))
         <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-{{$id}}', '¿Estas seguro que deseas eliminar el radicado?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
     @endif
