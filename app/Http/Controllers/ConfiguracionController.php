@@ -908,7 +908,7 @@ class ConfiguracionController extends Controller
     </cac:PhysicalLocation>
     <cac:PartyTaxScheme>
     <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
-    <cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
+    <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
     <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
     <cac:RegistrationAddress>
     <cbc:ID>05001</cbc:ID>
@@ -1212,7 +1212,7 @@ class ConfiguracionController extends Controller
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
       <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
-      <cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
+      <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
       <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
       <cac:RegistrationAddress>
       <cbc:ID>05001</cbc:ID>
@@ -1503,7 +1503,7 @@ class ConfiguracionController extends Controller
       </cac:PhysicalLocation>
       <cac:PartyTaxScheme>
       <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
-      <cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
+      <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
       <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
       <cac:RegistrationAddress>
       <cbc:ID>05001</cbc:ID>
