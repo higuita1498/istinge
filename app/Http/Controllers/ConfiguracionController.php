@@ -789,315 +789,315 @@ class ConfiguracionController extends Controller
 
   public function getGenerarValidacion()
   {
-      $xml_ = '<?xml version="1.0" encoding="UTF-8"?>
-  <Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
-  <ext:UBLExtensions>
-  <ext:UBLExtension>
-  <ext:ExtensionContent>
-  <sts:DianExtensions>
-  <sts:InvoiceControl>
-  <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
-  <sts:AuthorizationPeriod>
-  <cbc:StartDate>2019-01-19</cbc:StartDate>
-  <cbc:EndDate>2030-01-19</cbc:EndDate>
-  </sts:AuthorizationPeriod>
-  <sts:AuthorizedInvoices>
-  <sts:Prefix>SETT</sts:Prefix>
-  <sts:From>1</sts:From>
-  <sts:To>5000000</sts:To>
-  </sts:AuthorizedInvoices>
-  </sts:InvoiceControl>
-  </sts:DianExtensions>
-  </ext:ExtensionContent>
-  </ext:UBLExtension>
-  </ext:UBLExtensions>
-  <cbc:CustomizationID>10</cbc:CustomizationID>
-  <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
-  <cbc:ID>--numf--</cbc:ID>
-  <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">--cufe--</cbc:UUID>
-  <cbc:IssueDate>--fecha--</cbc:IssueDate>
-  <cbc:IssueTime>--horafecha--</cbc:IssueTime>
-  <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
-  <cbc:Note>--nota--</cbc:Note>
-  <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
-  <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
+    $xml_ = '<?xml version="1.0" encoding="UTF-8"?>
+    <Invoice xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+    <ext:UBLExtensions>
+    <ext:UBLExtension>
+    <ext:ExtensionContent>
+    <sts:DianExtensions>
+    <sts:InvoiceControl>
+    <sts:InvoiceAuthorization>18760000001</sts:InvoiceAuthorization>
+    <sts:AuthorizationPeriod>
+    <cbc:StartDate>2019-01-19</cbc:StartDate>
+    <cbc:EndDate>2030-01-19</cbc:EndDate>
+    </sts:AuthorizationPeriod>
+    <sts:AuthorizedInvoices>
+    <sts:Prefix>SETT</sts:Prefix>
+    <sts:From>1</sts:From>
+    <sts:To>5000000</sts:To>
+    </sts:AuthorizedInvoices>
+    </sts:InvoiceControl>
+    </sts:DianExtensions>
+    </ext:ExtensionContent>
+    </ext:UBLExtension>
+    </ext:UBLExtensions>
+    <cbc:CustomizationID>10</cbc:CustomizationID>
+    <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
+    <cbc:ID>--numf--</cbc:ID>
+    <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">--cufe--</cbc:UUID>
+    <cbc:IssueDate>--fecha--</cbc:IssueDate>
+    <cbc:IssueTime>--horafecha--</cbc:IssueTime>
+    <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
+    <cbc:Note>--nota--</cbc:Note>
+    <cbc:DocumentCurrencyCode>COP</cbc:DocumentCurrencyCode>
+    <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
 
-  <!-- Informacion Emisor  -->
-  <cac:AccountingSupplierParty>
-  <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
-  <cac:Party>
-  <cac:PartyName>
-  <cbc:Name>--nombre--</cbc:Name>
-  </cac:PartyName>
-  <cac:PhysicalLocation>
-  <cac:Address>
-  <cbc:ID>--codeciudad--</cbc:ID>
-  <cbc:CityName>--nameciudad--</cbc:CityName>
-  <cbc:PostalZone>--codepostal--</cbc:PostalZone>
-  <cbc:CountrySubentity>--departamento--</cbc:CountrySubentity>
-  <cbc:CountrySubentityCode>--codigodep--</cbc:CountrySubentityCode>
-  <cac:AddressLine>
-  <cbc:Line>--dir--</cbc:Line>
-  </cac:AddressLine>
-  <cac:Country>
-  <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-  <cbc:Name languageID="es">Colombia</cbc:Name>
-  </cac:Country>
-  </cac:Address>
-  </cac:PhysicalLocation>
-  <cac:PartyTaxScheme>
-  <cbc:RegistrationName>--nombre--</cbc:RegistrationName>
-  <cbc:CompanyID schemeID="--dv--" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">--nit--</cbc:CompanyID>
-  <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
-  <cac:RegistrationAddress>
-  <cbc:ID>--codeciudad--</cbc:ID>
-  <cbc:CityName>--nameciudad--</cbc:CityName>
-  <cbc:PostalZone>--codepostal--</cbc:PostalZone>
-  <cbc:CountrySubentity>--departamento--</cbc:CountrySubentity>
-  <cbc:CountrySubentityCode>--codigodep--</cbc:CountrySubentityCode>
-  <cac:AddressLine>
-  <cbc:Line>--dir--</cbc:Line>
-  </cac:AddressLine>
-  <cac:Country>
-  <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-  <cbc:Name languageID="es">Colombia</cbc:Name>
-  </cac:Country>
-  </cac:RegistrationAddress>
-  <cac:TaxScheme>
-  <cbc:ID>01</cbc:ID>
-  <cbc:Name>IVA</cbc:Name>
-  </cac:TaxScheme>
-  </cac:PartyTaxScheme>
-  <cac:PartyLegalEntity>
-  <cbc:RegistrationName>--nombre--</cbc:RegistrationName>
-  <cbc:CompanyID schemeID="--dv--" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">--nit--</cbc:CompanyID>
-  <cac:CorporateRegistrationScheme>
-  <cbc:ID>SETT</cbc:ID>
-  <cbc:Name>1485596</cbc:Name>
-  </cac:CorporateRegistrationScheme>
-  </cac:PartyLegalEntity>
-  <cac:Contact>
-  <cbc:ElectronicMail>--mail--</cbc:ElectronicMail>
-  </cac:Contact>
-  </cac:Party>
-  </cac:AccountingSupplierParty>
-  <!-- /Informacion Emisor  -->
+    <!-- Informacion Emisor  -->
+    <cac:AccountingSupplierParty>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <cac:Party>
+    <cac:PartyName>
+    <cbc:Name>--nombre--</cbc:Name>
+    </cac:PartyName>
+    <cac:PhysicalLocation>
+    <cac:Address>
+    <cbc:ID>--codeciudad--</cbc:ID>
+    <cbc:CityName>--nameciudad--</cbc:CityName>
+    <cbc:PostalZone>--codepostal--</cbc:PostalZone>
+    <cbc:CountrySubentity>--departamento--</cbc:CountrySubentity>
+    <cbc:CountrySubentityCode>--codigodep--</cbc:CountrySubentityCode>
+    <cac:AddressLine>
+    <cbc:Line>--dir--</cbc:Line>
+    </cac:AddressLine>
+    <cac:Country>
+    <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+    <cbc:Name languageID="es">Colombia</cbc:Name>
+    </cac:Country>
+    </cac:Address>
+    </cac:PhysicalLocation>
+    <cac:PartyTaxScheme>
+    <cbc:RegistrationName>--nombre--</cbc:RegistrationName>
+    <cbc:CompanyID schemeID="--dv--" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">--nit--</cbc:CompanyID>
+    <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
+    <cac:RegistrationAddress>
+    <cbc:ID>--codeciudad--</cbc:ID>
+    <cbc:CityName>--nameciudad--</cbc:CityName>
+    <cbc:PostalZone>--codepostal--</cbc:PostalZone>
+    <cbc:CountrySubentity>--departamento--</cbc:CountrySubentity>
+    <cbc:CountrySubentityCode>--codigodep--</cbc:CountrySubentityCode>
+    <cac:AddressLine>
+    <cbc:Line>--dir--</cbc:Line>
+    </cac:AddressLine>
+    <cac:Country>
+    <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+    <cbc:Name languageID="es">Colombia</cbc:Name>
+    </cac:Country>
+    </cac:RegistrationAddress>
+    <cac:TaxScheme>
+    <cbc:ID>01</cbc:ID>
+    <cbc:Name>IVA</cbc:Name>
+    </cac:TaxScheme>
+    </cac:PartyTaxScheme>
+    <cac:PartyLegalEntity>
+    <cbc:RegistrationName>--nombre--</cbc:RegistrationName>
+    <cbc:CompanyID schemeID="--dv--" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">--nit--</cbc:CompanyID>
+    <cac:CorporateRegistrationScheme>
+    <cbc:ID>SETT</cbc:ID>
+    <cbc:Name>1485596</cbc:Name>
+    </cac:CorporateRegistrationScheme>
+    </cac:PartyLegalEntity>
+    <cac:Contact>
+    <cbc:ElectronicMail>--mail--</cbc:ElectronicMail>
+    </cac:Contact>
+    </cac:Party>
+    </cac:AccountingSupplierParty>
+    <!-- /Informacion Emisor  -->
 
-  <!-- Informacion Receptor  -->
-  <cac:AccountingCustomerParty>
-  <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
-  <cac:Party>
-  <cac:PartyName>
-  <cbc:Name>Julian Rios</cbc:Name>
-  </cac:PartyName>
-  <cac:PhysicalLocation>
-  <cac:Address>
-  <cbc:ID>05001</cbc:ID>
-  <cbc:CityName>Medellín</cbc:CityName>
-  <cbc:PostalZone>050030</cbc:PostalZone>
-  <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-  <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
-  <cac:AddressLine>
-  <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-  </cac:AddressLine>
-  <cac:Country>
-  <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-  <cbc:Name languageID="es">Colombia</cbc:Name>
-  </cac:Country>
-  </cac:Address>
-  </cac:PhysicalLocation>
-  <cac:PartyTaxScheme>
-  <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
-  <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
-  <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
-  <cac:RegistrationAddress>
-  <cbc:ID>05001</cbc:ID>
-  <cbc:CityName>Medellin</cbc:CityName>
-  <cbc:PostalZone>050030</cbc:PostalZone>
-  <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
-  <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
-  <cac:AddressLine>
-  <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-  </cac:AddressLine>
-  <cac:Country>
-  <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-  <cbc:Name languageID="es">Colombia</cbc:Name>
-  </cac:Country>
-  </cac:RegistrationAddress>
-  <cac:TaxScheme>
-  <cbc:ID>01</cbc:ID>
-  <cbc:Name>IVA</cbc:Name>
-  </cac:TaxScheme>
-  </cac:PartyTaxScheme>
-  <cac:PartyLegalEntity>
-  <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
-  <cbc:CompanyID schemeID="8" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431231</cbc:CompanyID>
-  <cac:CorporateRegistrationScheme>
-  <cbc:Name>1485596</cbc:Name>
-  </cac:CorporateRegistrationScheme>
-  </cac:PartyLegalEntity>
-  <cac:Contact>
-  <cbc:ElectronicMail>julianrp89@gmail.com</cbc:ElectronicMail>
-  </cac:Contact>
-  </cac:Party>
-  </cac:AccountingCustomerParty>
-  <!-- /Informacion Receptor  -->
-  <!-- Medio de pago -->
-  <cac:PaymentMeans>
-  <cbc:ID>1</cbc:ID>
-  <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
-  <cbc:PaymentID>Efectivo</cbc:PaymentID>
-  </cac:PaymentMeans>
-  <!-- /Medio de pago -->
-  <cac:TaxTotal>
-  <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
-  <cbc:RoundingAmount currencyID="COP">0.0</cbc:RoundingAmount>
-  <cac:TaxSubtotal>
-  <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-  <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
-  <cac:TaxCategory>
-  <cbc:Percent>19.00</cbc:Percent>
-  <cac:TaxScheme>
-  <cbc:ID>01</cbc:ID>
-  <cbc:Name>IVA</cbc:Name>
-  </cac:TaxScheme>
-  </cac:TaxCategory>
-  </cac:TaxSubtotal>
-  </cac:TaxTotal>
-  <cac:LegalMonetaryTotal>
-  <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
-  <cbc:TaxExclusiveAmount currencyID="COP">100000.00</cbc:TaxExclusiveAmount>
-  <cbc:TaxInclusiveAmount currencyID="COP">119000.00</cbc:TaxInclusiveAmount>
-  <cbc:PayableAmount currencyID="COP">119000.00</cbc:PayableAmount>
-  </cac:LegalMonetaryTotal>
-  <!-- Linea de Detalles -->
-  <cac:InvoiceLine>
-  <cbc:ID>1</cbc:ID>
-  <cbc:InvoicedQuantity unitCode="94">1.00</cbc:InvoicedQuantity>
-  <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
-  <cac:TaxTotal>
-  <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
-  <cbc:RoundingAmount currencyID="COP">0.0</cbc:RoundingAmount>
-  <cac:TaxSubtotal>
-  <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
-  <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
-  <cac:TaxCategory>
-  <cbc:Percent>19.00</cbc:Percent>
-  <cac:TaxScheme>
-  <cbc:ID>01</cbc:ID>
-  <cbc:Name>IVA</cbc:Name>
-  </cac:TaxScheme>
-  </cac:TaxCategory>
-  </cac:TaxSubtotal>
-  </cac:TaxTotal>
-  <cac:Item>
-  <cbc:Description>Producto Prueba</cbc:Description>
-  <cac:StandardItemIdentification>
-  <cbc:ID schemeID="999">prueba123456</cbc:ID>
-  </cac:StandardItemIdentification>
-  </cac:Item>
-  <cac:Price>
-  <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
-  <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
-  </cac:Price>
-  </cac:InvoiceLine>
-  <!-- Linea de Detalles -->
-  <!-- Información de la Dian -->
-  <DATA>
-  <UBL21>true</UBL21>
-  <Partnership>
-  <ID>1128464945</ID>
-  <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
-  <SetTestID>--fe_resolucion--</SetTestID>
-  </Partnership>
-  </DATA>
-  <!-- /Información de la Dian -->
-  </Invoice>';
-      $fecha = date('Y-m-d');
-      $fechahora = date('H:i:s') . "-05:00";
-      $empresa = Empresa::find(auth()->user()->empresa);
-      if ($empresa->estado_dian == 0 && preg_match('/^([0-9a-zA-Z]{8}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{12})$/', $empresa->fe_resolucion) == 1) {
-          $departamentos  = DB::table('departamentos')->where('id', $empresa->fk_iddepartamento)->first();
-          $municipios  = DB::table('municipios')->where('id', $empresa->fk_idmunicipio)->first();
-          $validos = [];
-          $fallidos = [];
-          for ($i = 1; $i <= 1; $i++) {
-              $xml = $xml_;
-              $cu = 'SETT' . $i . $fecha . $fechahora . '100000.000119000.00040.00030.00119000.00' . $empresa->nit . '1128431331fc8eac422eba16e22ffd8c6f94b3f40a6e38162c2';
-              $cufe = hash('sha384', $cu);
-              $numfactura = 'SETT' . $i;
-              $nota = 'Fac-Sett-' . $i;
-              $xml = str_replace('--numf--', $numfactura, $xml);
-              $xml = str_replace('--cufe--', $cufe, $xml);
-              $xml = str_replace('--fe_resolucion--', $empresa->fe_resolucion, $xml);
-              $xml = str_replace('--nit--', $empresa->nit, $xml);
-              $xml = str_replace('--dv--', $empresa->dv, $xml);
-              $xml = str_replace('--mail--', $empresa->email, $xml);
-              $xml = str_replace('--nombre--', $empresa->nombre, $xml);
-              $xml = str_replace('--dir--', $empresa->direccion, $xml);
-              $xml = str_replace('--codepostal--', $empresa->cod_postal, $xml);
-              $xml = str_replace('--fecha--', $fecha, $xml);
-              $xml = str_replace('--horafecha--', $fechahora, $xml);
-              $xml = str_replace('--nota--', $nota, $xml);
-              $xml = str_replace('--codeciudad--', $municipios->codigo_completo, $xml);
-              $xml = str_replace('--nameciudad--', $municipios->nombre, $xml);
-              $xml = str_replace('--departamento--', $departamentos->nombre, $xml);
-              $xml = str_replace('--codigodep--', $departamentos->codigo, $xml);
-              $res = $this->getEnviarDatos($xml);
-              $res = json_decode($res, true);
-
-
-
-              if (!isset($res['statusCode'])) {
-                  return response()->json([
-                      'success' => false,
-                      'message' => (isset($res['message'])) ? $res['message'] : 'la DIAN esta presentando problemas'
-                  ]);
-              }
-
-              if ($res['statusCode'] == '200') {
-                  $validos[] = ([
-                      "statusCode" => $res['statusCode'],
-                      "trackId" => $res['trackId'],
-                      "uuid" => $res['uuid'],
-                      "statusMessage" => $res['statusMessage'],
-                      "statusDescription" => $res['statusDescription'],
-                      "warnings" => $res['warnings']
-                  ]);
-
-                  //desarrollo nuevo ya que se esta dejando habilitar con un solo documento emitido.
-                  $empresa->estado_dian = 1;
-                  $empresa->save();
-
-                  $emails = $empresa->email;
-                  $tituloCorreo = "Set de Pruebas Habilitado";
-                  // Mail::send('emails.dian.settestid', compact('empresa'), function ($message) use ($emails, $tituloCorreo) {
-                  //     $message->from('info@gestordepartes.net', 'Facturación Electrónica - Gestor de Partes');
-                  //     $message->to($emails)->subject($tituloCorreo);
-                  // });
+    <!-- Informacion Receptor  -->
+    <cac:AccountingCustomerParty>
+    <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+    <cac:Party>
+    <cac:PartyName>
+    <cbc:Name>Julian Rios</cbc:Name>
+    </cac:PartyName>
+    <cac:PhysicalLocation>
+    <cac:Address>
+    <cbc:ID>05001</cbc:ID>
+    <cbc:CityName>Medellín</cbc:CityName>
+    <cbc:PostalZone>050030</cbc:PostalZone>
+    <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+    <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+    <cac:AddressLine>
+    <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
+    </cac:AddressLine>
+    <cac:Country>
+    <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+    <cbc:Name languageID="es">Colombia</cbc:Name>
+    </cac:Country>
+    </cac:Address>
+    </cac:PhysicalLocation>
+    <cac:PartyTaxScheme>
+    <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
+    <cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431331</cbc:CompanyID>
+    <cbc:TaxLevelCode listName="05">R-99-PN</cbc:TaxLevelCode>
+    <cac:RegistrationAddress>
+    <cbc:ID>05001</cbc:ID>
+    <cbc:CityName>Medellin</cbc:CityName>
+    <cbc:PostalZone>050030</cbc:PostalZone>
+    <cbc:CountrySubentity>Antioquia</cbc:CountrySubentity>
+    <cbc:CountrySubentityCode>05</cbc:CountrySubentityCode>
+    <cac:AddressLine>
+    <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
+    </cac:AddressLine>
+    <cac:Country>
+    <cbc:IdentificationCode>CO</cbc:IdentificationCode>
+    <cbc:Name languageID="es">Colombia</cbc:Name>
+    </cac:Country>
+    </cac:RegistrationAddress>
+    <cac:TaxScheme>
+    <cbc:ID>01</cbc:ID>
+    <cbc:Name>IVA</cbc:Name>
+    </cac:TaxScheme>
+    </cac:PartyTaxScheme>
+    <cac:PartyLegalEntity>
+    <cbc:RegistrationName>Julian SAS</cbc:RegistrationName>
+    <cbc:CompanyID schemeID="1" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">1128431231</cbc:CompanyID>
+    <cac:CorporateRegistrationScheme>
+    <cbc:Name>1485596</cbc:Name>
+    </cac:CorporateRegistrationScheme>
+    </cac:PartyLegalEntity>
+    <cac:Contact>
+    <cbc:ElectronicMail>julianrp89@gmail.com</cbc:ElectronicMail>
+    </cac:Contact>
+    </cac:Party>
+    </cac:AccountingCustomerParty>
+    <!-- /Informacion Receptor  -->
+    <!-- Medio de pago -->
+    <cac:PaymentMeans>
+    <cbc:ID>1</cbc:ID>
+    <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    <cbc:PaymentID>Efectivo</cbc:PaymentID>
+    </cac:PaymentMeans>
+    <!-- /Medio de pago -->
+    <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cbc:RoundingAmount currencyID="COP">0.0</cbc:RoundingAmount>
+    <cac:TaxSubtotal>
+    <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
+    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cac:TaxCategory>
+    <cbc:Percent>19.00</cbc:Percent>
+    <cac:TaxScheme>
+    <cbc:ID>01</cbc:ID>
+    <cbc:Name>IVA</cbc:Name>
+    </cac:TaxScheme>
+    </cac:TaxCategory>
+    </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="COP">100000.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="COP">119000.00</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="COP">119000.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <!-- Linea de Detalles -->
+    <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="94">1.00</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="COP">100000.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cbc:RoundingAmount currencyID="COP">0.0</cbc:RoundingAmount>
+    <cac:TaxSubtotal>
+    <cbc:TaxableAmount currencyID="COP">100000.00</cbc:TaxableAmount>
+    <cbc:TaxAmount currencyID="COP">19000.00</cbc:TaxAmount>
+    <cac:TaxCategory>
+    <cbc:Percent>19.00</cbc:Percent>
+    <cac:TaxScheme>
+    <cbc:ID>01</cbc:ID>
+    <cbc:Name>IVA</cbc:Name>
+    </cac:TaxScheme>
+    </cac:TaxCategory>
+    </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+    <cbc:Description>Producto Prueba</cbc:Description>
+    <cac:StandardItemIdentification>
+    <cbc:ID schemeID="999">prueba123456</cbc:ID>
+    </cac:StandardItemIdentification>
+    </cac:Item>
+    <cac:Price>
+    <cbc:PriceAmount currencyID="COP">100000.00</cbc:PriceAmount>
+    <cbc:BaseQuantity unitCode="EA">1.00</cbc:BaseQuantity>
+    </cac:Price>
+    </cac:InvoiceLine>
+    <!-- Linea de Detalles -->
+    <!-- Información de la Dian -->
+    <DATA>
+    <UBL21>true</UBL21>
+    <Partnership>
+    <ID>1128464945</ID>
+    <TechKey>fc8eac422eba16e22ffd8c6f94b3f40a6e38162c</TechKey>
+    <SetTestID>--fe_resolucion--</SetTestID>
+    </Partnership>
+    </DATA>
+    <!-- /Información de la Dian -->
+    </Invoice>';
+        $fecha = date('Y-m-d');
+        $fechahora = date('H:i:s') . "-05:00";
+        $empresa = Empresa::find(auth()->user()->empresa);
+        if ($empresa->estado_dian == 0 && preg_match('/^([0-9a-zA-Z]{8}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{4}\-[0-9a-zA-Z]{12})$/', $empresa->fe_resolucion) == 1) {
+            $departamentos  = DB::table('departamentos')->where('id', $empresa->fk_iddepartamento)->first();
+            $municipios  = DB::table('municipios')->where('id', $empresa->fk_idmunicipio)->first();
+            $validos = [];
+            $fallidos = [];
+            for ($i = 1; $i <= 1; $i++) {
+                $xml = $xml_;
+                $cu = 'SETT' . $i . $fecha . $fechahora . '100000.000119000.00040.00030.00119000.00' . $empresa->nit . '1128431331fc8eac422eba16e22ffd8c6f94b3f40a6e38162c2';
+                $cufe = hash('sha384', $cu);
+                $numfactura = 'SETT' . $i;
+                $nota = 'Fac-Sett-' . $i;
+                $xml = str_replace('--numf--', $numfactura, $xml);
+                $xml = str_replace('--cufe--', $cufe, $xml);
+                $xml = str_replace('--fe_resolucion--', $empresa->fe_resolucion, $xml);
+                $xml = str_replace('--nit--', $empresa->nit, $xml);
+                $xml = str_replace('--dv--', $empresa->dv, $xml);
+                $xml = str_replace('--mail--', $empresa->email, $xml);
+                $xml = str_replace('--nombre--', $empresa->nombre, $xml);
+                $xml = str_replace('--dir--', $empresa->direccion, $xml);
+                $xml = str_replace('--codepostal--', $empresa->cod_postal, $xml);
+                $xml = str_replace('--fecha--', $fecha, $xml);
+                $xml = str_replace('--horafecha--', $fechahora, $xml);
+                $xml = str_replace('--nota--', $nota, $xml);
+                $xml = str_replace('--codeciudad--', $municipios->codigo_completo, $xml);
+                $xml = str_replace('--nameciudad--', $municipios->nombre, $xml);
+                $xml = str_replace('--departamento--', $departamentos->nombre, $xml);
+                $xml = str_replace('--codigodep--', $departamentos->codigo, $xml);
+                $res = $this->getEnviarDatos($xml);
+                $res = json_decode($res, true);
 
 
-              } else {
-                  $fallidos[] = ([
 
-                      "statusCode" => $res['statusCode'],
-                      "trackId" => $res['trackId'] ?? null,
-                      "uuid" => $res['uuid'] ?? null,
-                      "errorMessage" => $res['errorMessage'] ?? null,
-                      "errorReason" => $res['errorReason'] ?? null
-                  ]);
-              }
-          }
+                if (!isset($res['statusCode'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => (isset($res['message'])) ? $res['message'] : 'la DIAN esta presentando problemas'
+                    ]);
+                }
+
+                if ($res['statusCode'] == '200') {
+                    $validos[] = ([
+                        "statusCode" => $res['statusCode'],
+                        "trackId" => $res['trackId'],
+                        "uuid" => $res['uuid'],
+                        "statusMessage" => $res['statusMessage'],
+                        "statusDescription" => $res['statusDescription'],
+                        "warnings" => $res['warnings']
+                    ]);
+
+                    //desarrollo nuevo ya que se esta dejando habilitar con un solo documento emitido.
+                    $empresa->estado_dian = 1;
+                    $empresa->save();
+
+                    $emails = $empresa->email;
+                    $tituloCorreo = "Set de Pruebas Habilitado";
+                    // Mail::send('emails.dian.settestid', compact('empresa'), function ($message) use ($emails, $tituloCorreo) {
+                    //     $message->from('info@gestordepartes.net', 'Facturación Electrónica - Gestor de Partes');
+                    //     $message->to($emails)->subject($tituloCorreo);
+                    // });
 
 
-          $resp = array('validos' => count($validos), 'data_validos' => $validos, 'fallidos' => count($fallidos), 'data_fallidos' => $fallidos);
-          $empresa->json_test = json_encode($resp);
-          //if(count($validos)>10)$empresa->estado_dian=1;
-          $empresa->save();
-      } else {
-          $resp = array('status' => 200, 'msj' => 'Cliente ya se encuenta validado');
-      }
-      //$this->generateCreditNote();
+                } else {
+                    $fallidos[] = ([
+
+                        "statusCode" => $res['statusCode'],
+                        "trackId" => $res['trackId'] ?? null,
+                        "uuid" => $res['uuid'] ?? null,
+                        "errorMessage" => $res['errorMessage'] ?? null,
+                        "errorReason" => $res['errorReason'] ?? null
+                    ]);
+                }
+            }
+
+
+            $resp = array('validos' => count($validos), 'data_validos' => $validos, 'fallidos' => count($fallidos), 'data_fallidos' => $fallidos);
+            $empresa->json_test = json_encode($resp);
+            //if(count($validos)>10)$empresa->estado_dian=1;
+            $empresa->save();
+        } else {
+            $resp = array('status' => 200, 'msj' => 'Cliente ya se encuenta validado');
+        }
+        //$this->generateCreditNote();
   }
 
   public function generateCreditNote()
