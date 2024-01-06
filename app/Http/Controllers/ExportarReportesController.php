@@ -142,7 +142,7 @@ class ExportarReportesController extends Controller
                     $factura->estatus = 0;
                     $factura->save();
                 }
-                
+
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue($letras[0].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
                     ->setCellValue($letras[1].$i, $factura->cliente()->nit)
@@ -208,7 +208,7 @@ class ExportarReportesController extends Controller
         ->where('factura.empresa',Auth::user()->empresa)
         ->where('emitida',$request->tipo)
         ->groupBy('factura.id');
-        
+
         $dates = $this->setDateRequest($request);
         $comprobacionFacturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
         if($comprobacionFacturas->count() >2100){
@@ -263,7 +263,7 @@ class ExportarReportesController extends Controller
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
-    
+
         $ides=array();
         $factures=$facturas->get();
         $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -313,7 +313,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[16].$i,$factura->total()->total);
             $i++;
         }
- 
+
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[14].$i, "TOTAL: ")
             ->setCellValue($letras[15].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
@@ -361,7 +361,7 @@ class ExportarReportesController extends Controller
         ->where('factura.tipo',1)
         ->where('factura.empresa',Auth::user()->empresa)
         ->groupBy('factura.id');
-        
+
         $dates = $this->setDateRequest($request);
         $comprobacionFacturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
         if($comprobacionFacturas->count() >2100){
@@ -414,7 +414,7 @@ class ExportarReportesController extends Controller
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
-    
+
         $ides=array();
         $factures=$facturas->get();
         $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -464,7 +464,7 @@ class ExportarReportesController extends Controller
             ->setCellValue($letras[16].$i,$factura->total()->total);
             $i++;
         }
- 
+
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue($letras[14].$i, "TOTAL: ")
             ->setCellValue($letras[15].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
@@ -544,7 +544,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel = new PHPExcel();
             $tituloReporte = "Reporte de Facturas Pagadas desde ".$request->fecha." hasta ".$request->hasta;
 
-            $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Celular','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Periodo','Items','pagada','Iva','Antes de Impuesto','Despues de Impuesto');
+            $titulosColumnas = array('Nro. Factura', 'Cliente', 'Cedula', 'Estrato', 'Municipio','Direccion','Celular','Creacion','Vencimiento','Dian','Estatus','Forma Pago','Periodo','Items','pagada','Iva','Antes de Impuesto','Descuento','Pagado','Total');
             $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
             $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
             ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -555,17 +555,17 @@ class ExportarReportesController extends Controller
             ->setCategory("Reporte excel"); //Categorias
             // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
             $objPHPExcel->setActiveSheetIndex(0)
-                ->mergeCells('A1:R1');
+                ->mergeCells('A1:T1');
             // Se agregan los titulos del reporte
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A1',$tituloReporte);
             $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
             ));
-            $objPHPExcel->getActiveSheet()->getStyle('A1:R1')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A1:T1')->applyFromArray($estilo);
             $estilo =array('fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array('rgb' => 'd08f50')));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:R3')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
 
 
             for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -604,7 +604,7 @@ class ExportarReportesController extends Controller
             if($request->formapago){
                 $facturas=$facturas->where('ig.puc_banco', $request->formapago);
             }
-            
+
             $ides=array();
             $factures=$facturas->get();
             $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -625,7 +625,7 @@ class ExportarReportesController extends Controller
             // Aquí se escribe en el archivo
             $i=4;
 
-            
+
             foreach ($facturas as $factura) {
                 $formaPago = $factura->cuentaPagoListIngreso();
                 $objPHPExcel->setActiveSheetIndex(0)
@@ -646,7 +646,10 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[14].$i, date('d-m-Y', strtotime($factura->pagada)))
                 ->setCellValue($letras[15].$i, $factura->total()->valImpuesto)
                 ->setCellValue($letras[16].$i, $factura->total()->subtotal)
-                ->setCellValue($letras[17].$i,$factura->total()->total);                $i++;
+                ->setCellValue($letras[17].$i, $factura->total()->descuento)
+                ->setCellValue($letras[18].$i, $factura->pagado())
+                ->setCellValue($letras[19].$i,$factura->total()->total);
+                $i++;
             }
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[4].$i, "TOTAL: ")
@@ -659,7 +662,7 @@ class ExportarReportesController extends Controller
                         'style' => PHPExcel_Style_Border::BORDER_THIN
                     )
                 ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:R'.$i)->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:T'.$i)->applyFromArray($estilo);
 
 
             for($i = 'A'; $i <= $letras[20]; $i++){
@@ -3446,7 +3449,7 @@ class ExportarReportesController extends Controller
             'fin'       => $fin
         );
     }
-    
+
     public function cajas(Request $request) {
         $objPHPExcel = new PHPExcel();
 
@@ -3492,7 +3495,7 @@ class ExportarReportesController extends Controller
             $dates = $this->setDateRequest($request, true);*/
 
         //Código base tomado de datatable_movimientos
-        
+
         if(!isset($request->servidor) ||  $request->servidor == 0){
         $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
@@ -3626,7 +3629,7 @@ class ExportarReportesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function facturasImpagas(Request $request){
         //Acá se obtiene la información a impimir
         DB::enableQueryLog();
@@ -3653,7 +3656,7 @@ class ExportarReportesController extends Controller
             if($request->nro && $request->nro != 0){
                 $comprobacionFacturas=$comprobacionFacturas->where('factura.numeracion', $request->nro);
             }
-           
+
 
             $dates = $this->setDateRequest($request);
             $comprobacionFacturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
@@ -3719,7 +3722,7 @@ class ExportarReportesController extends Controller
                 $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
             }
             $ides=array();
-            
+
             $factures=$facturas->get();
             $facturas=$facturas->groupBy('factura.id');
             $facturas=$facturas->OrderBy('c.nombre', 'ASC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -3739,7 +3742,7 @@ class ExportarReportesController extends Controller
 
             // Aquí se escribe en el archivo
             $i=4;
-            
+
             foreach ($facturas as $factura) {
                 if($factura->porpagar() == 0 && $factura->estatus == 1){
                     $factura->estatus = 0;
@@ -3800,7 +3803,7 @@ class ExportarReportesController extends Controller
         }
 
     }
-    
+
     public function recargas(Request $request) {
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Recargas ".$request->fecha." hasta ".$request->hasta;
@@ -3900,7 +3903,7 @@ class ExportarReportesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function puntoVenta(Request $request) {
         $objPHPExcel = new PHPExcel();
 
@@ -3945,7 +3948,7 @@ class ExportarReportesController extends Controller
             $dates = $this->setDateRequest($request, true);*/
 
         //Código base tomado de datatable_movimientos
-        
+
         $cajas = Banco::where('estatus',1)->where('tipo_cta',4)->get();
         $puntos = [];
 
@@ -4012,7 +4015,7 @@ class ExportarReportesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function puntoVentaRecaudo(Request $request) {
         $objPHPExcel = new PHPExcel();
 
@@ -4057,7 +4060,7 @@ class ExportarReportesController extends Controller
             $dates = $this->setDateRequest($request, true);*/
 
         //Código base tomado de datatable_movimientos
-        
+
         $cajas = Banco::where('estatus',1)->where('tipo_cta',4)->get();
         $puntos = [];
 
@@ -4158,7 +4161,7 @@ class ExportarReportesController extends Controller
         $objPHPExcel->getActiveSheet()->getStyle('A3:D3')->applyFromArray($estilo);
 
         $dates = $this->setDateRequest($request);
-        
+
         $empresa = Auth::user()->empresa;
 
         if(!isset($request->documento)){
@@ -4202,7 +4205,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[3].$i, $documento->impuestos_totales());
             $i++;
         }
-        
+
         $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue($letras[2] . $i, "TOTAL: ")
         ->setCellValue($letras[3] . $i, $totalIva);
@@ -4238,7 +4241,7 @@ class ExportarReportesController extends Controller
         }elseif($request->documento == 2){
             header('Content-Disposition: attachment;filename="REPORTE_IVAS_NOTAS_CREDITO.xlsx"');
         }
-        
+
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
@@ -4577,7 +4580,7 @@ class ExportarReportesController extends Controller
 
          $objPHPExcel = new PHPExcel();
          $tituloReporte = "Reporte de Balances desde " . $request->fecha . " hasta " . $request->hasta;
- 
+
          $titulosColumnas = array(
              'Nombre',
              'Codigo',
@@ -4640,12 +4643,12 @@ class ExportarReportesController extends Controller
              )
          );
          $objPHPExcel->getActiveSheet()->getStyle('A3:E3')->applyFromArray($estilo);
- 
- 
+
+
          for ($i = 0; $i < count($titulosColumnas); $i++) {
              $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
          }
- 
+
          if($request->fechas != 8){
              if (!$request->fecha) {
                  $arrayDate = $this->setDateRequest($request);
@@ -4659,17 +4662,17 @@ class ExportarReportesController extends Controller
              $desde = '2000-01-01';
              $hasta = now()->format('Y-m-d');
          }
-             
-        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')           
+
+        $movimientosContables = PucMovimiento::join('puc as p','p.id','puc_movimiento.cuenta_id')
         ->select('puc_movimiento.*','p.nombre as cuentacontable',
-        DB::raw("SUM((`debito`)) as totaldebito"), 
+        DB::raw("SUM((`debito`)) as totaldebito"),
         DB::raw("SUM((`credito`)) as totalcredito"),
         DB::raw("ABS(SUM((`credito`)) -  SUM((`debito`))) as totalfinal"))
         ->orderBy('id', 'DESC')
         ->groupBy('cuenta_id')
         ->get();
 
- 
+
          // Aquí se escribe en el archivo
          $i = 4;
          foreach ($movimientosContables as $mov) {
@@ -4681,7 +4684,7 @@ class ExportarReportesController extends Controller
                  ->setCellValue($letras[4] . $i, Auth::user()->empresa()->moneda . Funcion::Parsear($mov->totalfinal));
              $i++;
          }
- 
+
          $estilo = array(
              'font' => array('size' => 12, 'name' => 'Times New Roman'),
              'borders' => array(
@@ -4692,18 +4695,18 @@ class ExportarReportesController extends Controller
              'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
          );
          $objPHPExcel->getActiveSheet()->getStyle('A3:E' . $i)->applyFromArray($estilo);
- 
- 
+
+
          for ($i = 'A'; $i <= $letras[20]; $i++) {
              $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
          }
- 
+
          // Se asigna el nombre a la hoja
          $objPHPExcel->getActiveSheet()->setTitle('Reporte de Balances');
- 
+
          // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
          $objPHPExcel->setActiveSheetIndex(0);
- 
+
          // Inmovilizar paneles
          $objPHPExcel->getActiveSheet(0)->freezePane('A2');
          $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
