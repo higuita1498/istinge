@@ -296,8 +296,14 @@ class NominaPrestacionSocialController extends Controller
         $tipo = $request->tipo;
         $subYear = 1;
 
-        if($request->presente == 'si'){
+        if(!Nomina::where('fk_idempresa', Auth::user()->empresa)
+        ->where('ne_nomina.year', $year - $subYear)->first()){
             $subYear = 0;
+        }
+        else{
+            if($request->presente == 'si'){
+                $subYear = 0;
+            }
         }
 
         $nominas = Nomina::with('nominaperiodos')
