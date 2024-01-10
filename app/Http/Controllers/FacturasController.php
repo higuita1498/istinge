@@ -1331,6 +1331,7 @@ class FacturasController extends Controller{
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $factura = Factura::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+
         $contrato = Contrato::where('client_id',$factura->cliente)->first();
         $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
 

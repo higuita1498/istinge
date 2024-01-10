@@ -208,6 +208,7 @@
                                 <select name="year" id="year" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
                                     <option value="{{ 2021 }}" selected="">{{ 2021 }}</option>
                                     <option value="{{ 2022 }}" selected="">{{ 2022 }}</option>
+                                    <option value="{{ 2023 }}" selected="">{{ 2023 }}</option>
                                     <option value="{{ date('Y') }}" selected="">{{ date('Y') }}</option>
                                 </select>
                             </div>

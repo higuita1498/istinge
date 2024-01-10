@@ -168,9 +168,16 @@ class NominaPrestacionSocialController extends Controller
         $tipo = $request->tipo;
         $subYear = 1;
 
-        if($request->presente == 'si'){
+        if(!Nomina::where('fk_idempresa', Auth::user()->empresa)
+        ->where('ne_nomina.year', $year - $subYear)->first()){
             $subYear = 0;
         }
+        else{
+            if($request->presente == 'si'){
+                $subYear = 0;
+            }
+        }
+
 
         $nominas = Nomina::with('nominaperiodos')
             ->where('ne_nomina.year', $year - $subYear)
@@ -222,27 +229,27 @@ class NominaPrestacionSocialController extends Controller
                                                 ->latest()
                                                 ->first();
         }
-        
+
         $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa);
-        
+
         if($request->persona){
             $personasVigentes->where('id', $request->persona);
         }
-        
+
         $personasVigentes->get();
-    
+
         foreach($personasVigentes as $kV => $pV){
-            
+
             if(!isset($totalidadesPersonas->all()[$pV->id])){
-                
+
                 $nominas = Nomina::with('nominaperiodos')
                 ->where('ne_nomina.year', $year)
                 //    ->where('ne_nomina.periodo', $periodo)
                 ->where('fk_idempresa', Auth::user()->empresa)
                 ->where('fk_idpersona', $pV->id);
-    
+
                 $nominas = $nominas->get();
-    
+
                 $totalidad = collect([]);
 
                 foreach ($nominas as $key => $nomina) {
@@ -250,8 +257,8 @@ class NominaPrestacionSocialController extends Controller
                         $totalidad->push($nominaPeriodo->resumenTotal());
                     }
                 }
-                
-                
+
+
 
                 if($totalidad->count() > 0){
 
@@ -272,9 +279,9 @@ class NominaPrestacionSocialController extends Controller
             }
 
         }
-      
+
         $personas = $personas->concat($personasVigentes);
-        
+
         view()->share(['seccion' => 'nomina', 'title' => 'Cesantias ' . $year, 'icon' => 'fas fa-dollar-sign']);
         return view('nomina.prestacion-social.cesantias', compact('year', 'periodo', 'rango', 'personas', 'request'));
     }
@@ -289,8 +296,14 @@ class NominaPrestacionSocialController extends Controller
         $tipo = $request->tipo;
         $subYear = 1;
 
-        if($request->presente == 'si'){
+        if(!Nomina::where('fk_idempresa', Auth::user()->empresa)
+        ->where('ne_nomina.year', $year - $subYear)->first()){
             $subYear = 0;
+        }
+        else{
+            if($request->presente == 'si'){
+                $subYear = 0;
+            }
         }
 
         $nominas = Nomina::with('nominaperiodos')
@@ -352,11 +365,11 @@ class NominaPrestacionSocialController extends Controller
 
 
         $personasVigentes = Persona::where('fk_empresa', Auth::user()->empresa);
-        
+
          if($request->persona){
             $personasVigentes->where('id', $request->persona);
         }
-        
+
         $personasVigentes->get();
 
         foreach($personasVigentes as $kV => $pV){
@@ -368,9 +381,9 @@ class NominaPrestacionSocialController extends Controller
                 //    ->where('ne_nomina.periodo', $periodo)
                 ->where('fk_idempresa', Auth::user()->empresa)
                 ->where('fk_idpersona', $pV->id);
-    
+
                 $nominas = $nominas->get();
-    
+
                 $totalidad = collect([]);
 
                 foreach ($nominas as $key => $nomina) {
@@ -384,13 +397,13 @@ class NominaPrestacionSocialController extends Controller
 
                     $base = ['diasTrabajados' => 0, 'salarioSubsidio' => 0];
                     $base['diasTrabajados'] = $totalidad->sum('diasTrabajados.diasPeriodo');
-        
+
                     $base['diasTrabajadosFijos'] = $base['diasTrabajados'];
                     $base['salarioSubsidio'] = ($base['salarioBase'] = (($base['totalSalarioPeriodo'] = $totalidad->sum('salarioSubsidio.salario') * 30) / $base['diasTrabajados'])) + ($base['subsidioTransporte'] = ($totalidad->sum('salarioSubsidio.subsidioTransporte') / ($totalidad->count())));
-        
+
                     $base['cesantiaBase'] = ($base['salarioSubsidio'] * $base['diasTrabajados']) / 360;
                     $base['interesesCesantia'] = $base['cesantiaBase'] * 0.12 * $base['diasTrabajados'] / 360;
-        
+
                     $pV->totalidades = $base;
                     $pV->nominaSeleccionada = $nominas->where('periodo', $periodo)->first();
 
