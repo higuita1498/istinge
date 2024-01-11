@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('content')  
+@section('content')
   @if(Session::has('success'))
     <div class="alert alert-success" >
       {{Session::get('success')}}
     </div>
 
     <script type="text/javascript">
-      setTimeout(function(){ 
+      setTimeout(function(){
           $('.alert').hide();
           $('.active_table').attr('class', ' ');
       }, 5000);
@@ -34,15 +34,15 @@
 		  				@endforeach
             	</select>
 		  			</div>
-		  			
+
 					<span class="help-block error">
 			        	<strong>{{ $errors->first('cliente') }}</strong>
 			    </span>
-	  		</div>  	
- 
+	  		</div>
+
         <div class="form-group row occultrd">
           <label class="col-sm-4 col-form-label">Cuenta <span class="text-danger">*</span><a><i data-tippy-content="Crea tus cuentas haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
-          <div class="col-sm-8"> 
+          <div class="col-sm-8">
             <select class="form-control selectpicker" name="cuenta" id="cuenta" title="Seleccione" data-live-search="true" data-size="5" required="">
               @php $tipos_cuentas=\App\Banco::tipos();@endphp
               @foreach($tipos_cuentas as $tipo_cuenta)
@@ -60,9 +60,9 @@
                   <strong>{{ $errors->first('cuenta') }}</strong>
             </span>
           </div>
-          
-        
-      </div> 
+
+
+      </div>
       <div class="form-group row occultrd">
           <label class="col-sm-4 col-form-label">Método de pago </label>
           <div class="col-sm-8">
@@ -72,11 +72,11 @@
                 @endforeach
             </select>
           </div>
-          
+
         <span class="help-block error">
               <strong>{{ $errors->first('metodo_pago') }}</strong>
         </span>
-      </div> 
+      </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Realizar un</label>
         <div class="col-sm-8">
@@ -85,11 +85,11 @@
               <option value="2" >Anticipo</option>
           </select>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
-    </div> 
+    </div>
     <div class="cls-realizar-inv">
     <div class="form-group row">
       <label class="col-sm-4 col-form-label">Forma de pago</label>
@@ -100,11 +100,11 @@
           @endforeach
         </select>
       </div>
-      
+
     <span class="help-block error">
           <strong>{{ $errors->first('realizar') }}</strong>
     </span>
-  </div> 
+  </div>
 </div>
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
@@ -116,12 +116,12 @@
           @endforeach
         </select>
       </div>
-      
+
     <span class="help-block error">
           <strong>{{ $errors->first('puc') }}</strong>
     </span>
        </div>
-  </div> 
+  </div>
     <div class="form-group row cls-realizar d-none" >
       <div class="form-group row ">
     <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
@@ -132,24 +132,24 @@
         @endforeach
       </select>
     </div>
-    
+
   <span class="help-block error">
         <strong>{{ $errors->first('anticipo') }}</strong>
   </span>
       </div>
-  </div> 
+  </div>
     <div class="cls-realizar d-none" >
       <div class="form-group row ">
         <label class="col-sm-4 col-form-label">Valor Recibido <span class="text-danger">*</span></label>
         <div class="col-sm-8">
           <input type="number" class="form-control" name="valor_recibido" id="valor_recibido" required>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('valor_recibido') }}</strong>
       </span>
       </div>
-    </div> 
+    </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
@@ -190,7 +190,7 @@
           }
         </style>
 
-      
+
 <div class="col-md-12" style="background: #80808061;border: 1px solid #80808061; display: none;" id="saldo123">
     <div class="row">
       <div class="col-md-4 text-right" style="    padding: 4%; font-weight: bold; color:#808080 ">Saldo</div>
@@ -198,8 +198,8 @@
         <input class="col-md-8 text-left text-danger" style="padding: 4%; font-weight: bold" name="total_saldo" id="total_saldo" type="text" value="0" disabled>
     </div>
   </div>
-      
-      
+
+
 		</div>
 		<div class="col-md-5 offset-md-2">
 		    <div class="form-group row">
@@ -224,7 +224,7 @@
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   		</div>
 
-  
+
 
   		</div>
 
@@ -270,11 +270,11 @@
             			<th width="10%">Total</th>
                   <th width="2%"></th>
             		</tr>
-            	</thead> 
+            	</thead>
             	<tbody>
             		<tr id="1">
                   <td  class="no-padding">
-                      <div class="resp-item">                     
+                      <div class="resp-item">
                     <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria1" required="" onchange="enabled(1);" >
               				@foreach($categorias as $categoria)
                         <optgroup label="{{$categoria->nombre}}">
@@ -313,14 +313,14 @@
                   <td width="5%">
                     <input type="number" class="form-control form-control-sm" id="cant_categoria1" name="cant_categoria[]" placeholder="Cantidad" onchange="total_linea(1);" min="1" required="" disabled="">
                   </td>
-            			<td  style="padding-top: 1% !important;">   
+            			<td  style="padding-top: 1% !important;">
             			<div class="resp-observaciones">
 						        <textarea  class="form-control form-control-sm" id="descripcion_categoria1" name="descripcion_categoria[]" placeholder="Observaciones" disabled=""></textarea>
             			</div>
             			</td>
             			<td>
             			    <div class="resp-total">
-	  				        <input type="text" class="form-control form-control-sm text-right" id="total_categoria1" value="0.00" disabled="">	
+	  				        <input type="text" class="form-control form-control-sm text-right" id="total_categoria1" value="0.00" disabled="">
         	  			    </div>
         	  			</td>
 	  			      <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar(1);">X</button></td>
@@ -363,7 +363,7 @@
                     </div>
                     <div class="col-md-6 d-flex justify-content-between pt-3">
                       <h5>Total:</h5>
-                      <span>$</span><span id="anticipototal">0</span>  
+                      <span>$</span><span id="anticipototal">0</span>
                     </div>
                     <div class="col-md-12">
                       <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
@@ -371,7 +371,7 @@
                   </div>
               </div>
           </div>
-          
+
 
       <div class="row" style="margin-top: 5%;">
         <div class="col-md-4 offset-md-8">
@@ -394,11 +394,11 @@
             </tr>
           </table>
         </div>
-        </div> 
+        </div>
       </div>
   		</div>
 </div>
-  		
+
   		<hr>
 
       <div class="row">
@@ -407,13 +407,13 @@
                 <div class="form-group">
               <label class="col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
 
-            
+
                 <select class="form-control selectpicker" name="puc_banco" id="puc_banco" title="Seleccione" data-live-search="true" data-size="5" required>
                   @foreach($formas as $f)
                     <option value="{{$f->id}}" >{{$f->nombre}} - {{$f->codigo}}</option>
                   @endforeach
                 </select>
-              
+
             <span class="help-block error">
                   <strong>{{ $errors->first('puc_banco') }}</strong>
             </span>
@@ -435,7 +435,7 @@
                       <strong>{{ $errors->first('anticipo_factura') }}</strong>
                 </span>
               </div>
-          </div> 
+          </div>
         </div>
       </div>
 
@@ -460,19 +460,21 @@
             </label>
           </div>
         </div>
+        @if(Auth::user()->empresa()->isWhatsapp() == 1)
         <div class="col-md-3">
           <div class="form-check form-check-flat">
             <label class="form-check-label">
-              <input type="checkbox" class="form-check-input" name="tirilla_wpp" value="1">Enviar tirilla por whatsapp
+              <input type="checkbox" class="form-check-input" name="tirilla_wpp" value="1" checked>Enviar tirilla por whatsapp
               <i class="input-helper"></i>
             </label>
           </div>
         </div>
+        @endif
       </div>
       <hr>
-      
 
-      <input type="hidden" @if($contrato) value="{{$contrato->opciones_dian}}" @else value="0" @endif id="input-ingresos-electronica"> 
+
+      <input type="hidden" @if($contrato) value="{{$contrato->opciones_dian}}" @else value="0" @endif id="input-ingresos-electronica">
       @if($contrato)
         @if($contrato->cliente()->boton_emision == 1)
       <div class="row form-inline fact-table" id="form-ingresos-electronica">

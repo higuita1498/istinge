@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Nomina;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Auth;
-use DB;
 use App\Model\Nomina\NominaPrestacionSocial;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\Persona;
 use Barryvdh\DomPDF\Facade as PDF;
 use Validator;
+use Illuminate\Support\Facades\Auth as Auth;
 
 class NominaPrestacionSocialController extends Controller
 {

@@ -8,10 +8,12 @@ use App\Model\Ingresos\NotaCredito;
 use App\Model\Nomina\NominaConfiguracionCalculos;
 use Illuminate\Database\Eloquent\Model;
 use App\User; use App\TipoIdentificacion;
-use Auth; use DB; use StdClass;
+use DB; use StdClass;
 use App\Responsabilidad;
 use Carbon\Carbon;
-use Cassandra\Collection;
+use Illuminate\Support\Facades\Auth as Auth;
+use App\Instancia;
+
 class Empresa extends Model
 {
     protected $table = "empresas";
@@ -372,6 +374,14 @@ public function totalEmissions(){
             }
 
             return $resp;
+        }
+
+        public function isWhatsapp(){
+
+            if(DB::table('instancia')->where('status',1)->first()){
+                return 1;
+            }else return 0;
+
         }
 
 }
