@@ -127,7 +127,15 @@ class PlanesVelocidadController extends Controller
                 return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
             })
             ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
-                return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>, <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
+                if ($plan->mikrotik() !== null) {
+                    $html .= "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
+                }
+
+                // Similarmente, verifica si mikrotik1 no es nulo antes de intentar acceder a sus propiedades
+                if ($plan->mikrotik1() !== null) {
+                    $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
+                }
+              //  return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>, <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
                 return ;
             })
             ->editColumn('status', function (PlanesVelocidad $plan) {
