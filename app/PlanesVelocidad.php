@@ -18,7 +18,7 @@ class PlanesVelocidad extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik', 'limit_at_subida', 'limit_at_bajada', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik','mikrotik1', 'limit_at_subida', 'limit_at_bajada', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
 
     protected $appends = ['uso'];
@@ -35,11 +35,11 @@ class PlanesVelocidad extends Model
     public function updated_by(){
         return User::where('id', $this->updated_by)->first();
     }
-    
+
     public function created_by(){
         return User::where('id', $this->created_by)->first();
     }
-    
+
     public function mikrotik(){
         return Mikrotik::where('id', $this->mikrotik)->first();
     }
@@ -53,7 +53,7 @@ class PlanesVelocidad extends Model
             }
             return $status;
         }
-        
+
         if($this->status == 0){
             $status = 'Deshabilitado';
         }elseif($this->status == 1){
@@ -61,7 +61,7 @@ class PlanesVelocidad extends Model
         }
         return $status;
     }
-    
+
     public function type($class = false){
         if($class){
             if($this->type == 0){
@@ -71,7 +71,7 @@ class PlanesVelocidad extends Model
             }
             return $status;
         }
-        
+
         if($this->type == 0){
             return 'Plan Queue Simple';
         }elseif($this->type == 1){
@@ -79,7 +79,7 @@ class PlanesVelocidad extends Model
         }
         return $status;
     }
-    
+
     public function uso(){
         return Contrato::where('plan_id', $this->id)->count();
     }
