@@ -134,19 +134,19 @@ class PlanesVelocidadController extends Controller
 
                 // Similarmente, verifica si mikrotik1 no es nulo antes de intentar acceder a sus propiedades
                 if ($plan->mikrotik1() !== null) {
-                    $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
+                    $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
                 }
 
                 if ($plan->mikrotik2() !== null) {
-                    $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik2()->id) . " target='_blank'>{$plan->mikrotik2()->nombre}</div></a>";
+                    $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik2()->id) . " target='_blank'>{$plan->mikrotik2()->nombre}</div></a>";
                 }
 
                 if ($plan->mikrotik3() !== null) {
-                    $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik3()->id) . " target='_blank'>{$plan->mikrotik3()->nombre}</div></a>";
+                    $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik3()->id) . " target='_blank'>{$plan->mikrotik3()->nombre}</div></a>";
                 }
 
                 if ($plan->mikrotik4() !== null) {
-                    $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik4()->id) . " target='_blank'>{$plan->mikrotik4()->nombre}</div></a>";
+                    $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik4()->id) . " target='_blank'>{$plan->mikrotik4()->nombre}</div></a>";
                 }
               //  return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>, <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
               return $html;
@@ -193,7 +193,7 @@ class PlanesVelocidadController extends Controller
             'type' => 'required|max:200',
             'tipo_plan' => 'required|max:200',
         ]);
-
+        dd($request);
         if($request->mikrotik == null){
             return back()->with('error', 'Debe asociar la mikrotik');
         }
