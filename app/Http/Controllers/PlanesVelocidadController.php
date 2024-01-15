@@ -193,7 +193,7 @@ class PlanesVelocidadController extends Controller
             'type' => 'required|max:200',
             'tipo_plan' => 'required|max:200',
         ]);
-        dd($request);
+
         if($request->mikrotik == null){
             return back()->with('error', 'Debe asociar la mikrotik');
         }
