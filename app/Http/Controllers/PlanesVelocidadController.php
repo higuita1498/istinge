@@ -127,7 +127,7 @@ class PlanesVelocidadController extends Controller
                 return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
             })
             ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
-
+                return $plan;
                 return "<a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
                 return ;
             })
