@@ -44,6 +44,14 @@ class PlanesVelocidad extends Model
         return Mikrotik::where('id', $this->mikrotik)->first();
     }
 
+    public function mikrotik1(){
+        return Mikrotik::where('id', $this->mikrotik)->first();
+    }
+
+    public function mikrotik2(){
+        return Mikrotik::where('id', $this->mikrotik)->first();
+    }
+
     public function status($class = false){
         if($class){
             if($this->status == 0){
