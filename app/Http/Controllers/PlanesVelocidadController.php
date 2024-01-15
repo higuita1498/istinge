@@ -136,7 +136,8 @@ class PlanesVelocidadController extends Controller
                     $html .= ", <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
                 }
               //  return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>, <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
-                return ;
+              return $html;
+              return ;
             })
             ->editColumn('status', function (PlanesVelocidad $plan) {
                 return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
