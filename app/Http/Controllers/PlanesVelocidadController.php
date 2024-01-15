@@ -22,8 +22,8 @@ use App\PlanesVelocidad;
 use App\Puc;
 use App\Retencion;
 
-use App\Impuesto;  
-use App\Model\Inventario\Inventario; 
+use App\Impuesto;
+use App\Model\Inventario\Inventario;
 use App\Contrato;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
@@ -41,7 +41,7 @@ class PlanesVelocidadController extends Controller
         $this->middleware('auth');
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_planes', 'title' => 'Planes de Velocidad', 'icon' =>'fas fa-server']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
 
@@ -127,7 +127,7 @@ class PlanesVelocidadController extends Controller
                 return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
             })
             ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
-                return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
+                return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>,<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>,<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
                 return ;
             })
             ->editColumn('status', function (PlanesVelocidad $plan) {
@@ -144,7 +144,7 @@ class PlanesVelocidadController extends Controller
             ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik', 'nro_clientes'])
             ->toJson();
     }
-    
+
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Plan', 'icon' => 'fas fa-server']);
@@ -161,7 +161,7 @@ class PlanesVelocidadController extends Controller
 
         return view('planesvelocidad.create')->with(compact('mikrotiks','cuentas','autoRetenciones','type'));
     }
-    
+
     public function store(Request $request){
         $request->validate([
             'name' => 'required|max:200',
@@ -241,7 +241,7 @@ class PlanesVelocidadController extends Controller
                 $pr->tipo = 1;
                 $pr->save();
             }
-        
+
             if(isset($request->costo) && $request->costo != 0){
                 $pr = new ProductoCuenta;
                 $pr->cuenta_id = $request->costo;
@@ -274,7 +274,7 @@ class PlanesVelocidadController extends Controller
                 $pr->save();
             }
         }
-            
+
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PLAN';
         return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);
     }
@@ -372,7 +372,7 @@ class PlanesVelocidadController extends Controller
             exit;
         }
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
@@ -392,7 +392,7 @@ class PlanesVelocidadController extends Controller
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function update(Request $request, $id){
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
@@ -404,7 +404,7 @@ class PlanesVelocidadController extends Controller
                 'type' => 'required|max:200',
                 'mikrotik' => 'required|max:200',
             ]);
-            
+
             $plan->mikrotik = $request->mikrotik;
             $plan->name = $request->name;
             $plan->price = $request->price;
@@ -428,7 +428,7 @@ class PlanesVelocidadController extends Controller
             $plan->limit_at_subida = $request->limit_at_subida.''.$request->inicial_limit_at_subida;
             $plan->limit_at_bajada = $request->limit_at_bajada.''.$request->inicial_limit_at_bajada;
             $plan->save();
-            
+
             $inventario              = Inventario::find($plan->item);
             $inventario->producto    = strtoupper($request->name);
             $inventario->ref         = strtoupper($request->name);
@@ -439,7 +439,7 @@ class PlanesVelocidadController extends Controller
             $inventario->save();
 
             $services = array();
-            
+
             if(isset($request->inventario)){
                 array_push($services,$request->inventario);
             }
@@ -451,7 +451,7 @@ class PlanesVelocidadController extends Controller
             if(isset($request->venta)){
                 array_push($services,$request->venta);
             }
-            
+
             if(isset($request->devolucion)){
                 array_push($services,$request->devolucion);
             }
@@ -475,7 +475,7 @@ class PlanesVelocidadController extends Controller
                     if(!DB::table('producto_cuentas')->
                     where('cuenta_id',$key)->
                     where('inventario_id',$inventario->id)->first()){
-                        
+
                         $idCuentaPro = DB::table('producto_cuentas')->insertGetId([
                             'cuenta_id' => $key,
                             'inventario_id' => $inventario->id
@@ -544,13 +544,13 @@ class PlanesVelocidadController extends Controller
                     }
                 }
             }
-            
+
             $mensaje = 'SE HA MODIFICADO SATISFACTORIAMENTE EL PLAN';
             return redirect('empresa/planes-velocidad/'.$plan->id.'/aplicar-cambios')->with('success', $mensaje)->with('plan_id', $plan->id);
       }
       return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function destroy($id){
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
@@ -559,7 +559,7 @@ class PlanesVelocidadController extends Controller
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
@@ -570,7 +570,7 @@ class PlanesVelocidadController extends Controller
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function status($id){
         $this->getAllPermissions(Auth::user()->id);
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
@@ -588,17 +588,17 @@ class PlanesVelocidadController extends Controller
         }
         return redirect('empresa/planes-velocidad')->with('danger', 'No existe un registro con ese id');
     }
-    
+
     public function reglas($id){
         $this->getAllPermissions(Auth::user()->id);
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             $mikrotik = $plan->mikrotik();
             $API = new RouterosAPI();
-            
+
             $API->port = $mikrotik->puerto_api;
             $API->debug = true;
-            
+
             if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
                 #REGLA BAJADA
                 $API->comm("/ip/firewall/mangle/add", array(
@@ -610,7 +610,7 @@ class PlanesVelocidadController extends Controller
                     "comment" => $plan->name
                     )
                 );
-                
+
                 #REGLA SUBIDA
                 $API->comm("/ip/firewall/mangle/add", array(
                     "chain" => "forward",
@@ -621,17 +621,17 @@ class PlanesVelocidadController extends Controller
                     "comment" => $plan->name
                     )
                 );
-                
+
                 #CREACI�0�7N PCQ SUBIDA
                 $API->comm("/queue/type/add", array(
                     "name" => strtolower(str_replace(' ', '_', $plan->name))."_up",
                     "kind" => "pcq",
                     "pcq-rate" => $plan->upload,
                     "pcq-classifier" => "dst-address"
-                    
+
                     )
                 );
-                
+
                 #CREACI�0�7N PCQ BAJADA
                 $API->comm("/queue/type/add", array(
                     "name" => strtolower(str_replace(' ', '_', $plan->name))."_down",
@@ -640,14 +640,14 @@ class PlanesVelocidadController extends Controller
                     "pcq-classifier" => "src-address"
                     )
                 );
-                
+
                 #COLA PADRE DE BAJADA
                 $API->comm("/queue/tree/add", array(
                     "name" => "DOWN-GLOBAL",
                     "parent" => "global"
                     )
                 );
-                
+
                 #COLA HIJA DE BAJADA
                 $API->comm("/queue/tree/add", array(
                     "name" => strtolower(str_replace(' ', '_', $plan->name))."_down",
@@ -656,14 +656,14 @@ class PlanesVelocidadController extends Controller
                     "parent" => "DOWN-GLOBAL"
                     )
                 );
-                
+
                 #COLA PADRE DE SUBIDA
                 $API->comm("/queue/tree/add", array(
                     "name" => "UP-GLOBAL",
                     "parent" => "global"
                     )
                 );
-                
+
                 #COLA HIJA DE SUBIDA
                 $API->comm("/queue/tree/add", array(
                     "name" => strtolower(str_replace(' ', '_', $plan->name))."_up",
@@ -672,9 +672,9 @@ class PlanesVelocidadController extends Controller
                     "parent" => "UP-GLOBAL"
                     )
                 );
-                
+
                 $API->disconnect();
-                
+
                 $mensaje='Reglas aplicadas satisfactoriamente a la Mikrotik '.$mikrotik->nombre;
                 $type = 'success';
             } else {
