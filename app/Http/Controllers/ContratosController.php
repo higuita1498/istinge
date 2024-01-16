@@ -3355,7 +3355,7 @@ class ContratosController extends Controller
                 }
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
                 $mikoId = $miko->id;
-                dd($mikoId);
+              
             }
             if($request->plan != ""){
                 // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
