@@ -197,7 +197,7 @@ class PlanesVelocidadController extends Controller
         if($request->mikrotik == null){
             return back()->with('error', 'Debe asociar la mikrotik');
         }
-        //$num_microtik = count($request->mikrotik);
+        $num_microtik = count($request->mikrotik);
        // for ($i=0; $i < count($request->mikrotik) ; $i++) {
             $inventario                = new Inventario;
             $inventario->empresa       = Auth::user()->empresa;
@@ -219,16 +219,16 @@ class PlanesVelocidadController extends Controller
 
             $plan = new PlanesVelocidad;
             $plan->mikrotik = $request->mikrotik[0];
-            if (empty($request->mikrotik[1])) {
+            if (empty($request->mikrotik[1]) && (isset($request->mikrotik[1]))) {
                 $plan->mikrotik1 = $request->mikrotik[1];
             }
-            if (empty($request->mikrotik[2])) {
+            if (empty($request->mikrotik[2]) && (isset($request->mikrotik[1]))) {
                 $plan->mikrotik2 = $request->mikrotik[2];
             }
-            if (empty($request->mikrotik[3])) {
+            if (empty($request->mikrotik[3]) && (isset($request->mikrotik[1]))) {
                 $plan->mikrotik3 = $request->mikrotik[3];
             }
-            if (empty($request->mikrotik[4])) {
+            if (empty($request->mikrotik[4]) && (isset($request->mikrotik[1]))) {
                 $plan->mikrotik4 = $request->mikrotik[4];
             }
 
