@@ -231,7 +231,7 @@ class PlanesVelocidadController extends Controller
             if (empty($request->mikrotik[4]) && (isset($request->mikrotik[4]))) {
                 $plan->mikrotik4 = $request->mikrotik[4];
             }
-            dd(isset($request->mikrotik[4]));
+           
             $plan->name = $request->name;
             $plan->price = $request->price;
             $plan->upload = $request->upload.''.$request->inicial_download;
