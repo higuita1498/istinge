@@ -219,6 +219,7 @@ class PlanesVelocidadController extends Controller
 
             $plan = new PlanesVelocidad;
             $plan->mikrotik = $request->mikrotik[0];
+            dd($request->mikrotik[1]);
             if (empty($request->mikrotik[1]) && (isset($request->mikrotik[1]))) {
                 $plan->mikrotik1 = $request->mikrotik[1];
             }
