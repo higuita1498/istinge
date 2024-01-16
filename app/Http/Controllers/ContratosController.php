@@ -3440,7 +3440,7 @@ class ContratosController extends Controller
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
             $request->created_at    = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
-            $request->profle        = $sheet->getCell("W".$row)->getValue();
+            $request->profile        = $sheet->getCell("W".$row)->getValue();
             $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
             $request->clave         = $sheet->getCell("Z".$row)->getValue();
