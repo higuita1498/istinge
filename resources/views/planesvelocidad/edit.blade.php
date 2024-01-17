@@ -46,7 +46,7 @@
 	<form method="POST" action="{{ route('planes-velocidad.update', $plan->id) }}" style="padding: 2% 3%;" role="form" class="forms-sample" novalidate id="form-retencion" >
 	    {{ csrf_field() }}
 	    <input name="_method" type="hidden" value="PATCH">
-	    
+
 	    <ul class="nav nav-pills mb-5" id="pills-tab" role="tablist">
 	        <li class="nav-item">
 	            <a class="nav-link active" id="pills-basica-tab" data-toggle="pill" href="#pills-basica" role="tab" aria-controls="pills-basica" aria-selected="true">Configuración Básica</a>
@@ -58,13 +58,13 @@
 	            <a class="nav-link" id="pills-contabilidad-tab" data-toggle="pill" href="#pills-contabilidad" role="tab" aria-controls="pills-contabilidad" aria-selected="false">Contabilidad</a>
 	        </li>
 	    </ul>
-	    
+
 	    <div class="tab-content" id="pills-tabContent">
 	        <div class="tab-pane fade show active" id="pills-basica" role="tabpanel" aria-labelledby="pills-basica-tab">
         	    <div class="row">
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Mikrotik Asociada <span class="text-danger">*</span></label>
-        	            <select name="mikrotik" id="mikrotik" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
+        	            <select name="mikrotik" id="mikrotik" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required multiple>
                         @foreach($mikrotiks as $mikrotik)
                             <option {{$plan->mikrotik==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
                         @endforeach
@@ -311,7 +311,7 @@
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
 							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
-								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach 
+								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach
 									value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 								</option>
 							@endforeach
@@ -325,9 +325,9 @@
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
 							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
-							</option>				
+							</option>
 							@endforeach
 					</select>
 					<span class="help-block error">
@@ -339,7 +339,7 @@
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
 							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 							</option>
 							@endforeach
@@ -353,7 +353,7 @@
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
 							<option value="0" >Ninguno</option>
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 							</option>
 							@endforeach
@@ -365,7 +365,7 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-5">
-						
+
 					</div>
 					<div class="form-group col-md-7 ">
 						<div class="row">
@@ -383,8 +383,8 @@
 										<tr id="tr_cuenta_{{($key2+1)}}">
 											<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">* {{$cuenta->nombreProductoServicio()}}</span></label></td>
 											<td width="30%">
-												<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">							        		
-													@foreach($cuentas as $c) 
+												<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">
+													@foreach($cuentas as $c)
 													<option value="{{$c->id}}" {{$cuenta->cuenta_id ==$c->id ? 'selected':''}}  >{{$c->nombre}} - {{$c->codigo}}</option>
 													@endforeach
 												</select>
@@ -433,7 +433,7 @@
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione">
 							<option value="0" >Ninguno</option>
 							@foreach($autoRetenciones as $cuenta)
-								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 5){{'selected'}}@endif @endforeach 
+								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 5){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
 							@endforeach
 					</select>

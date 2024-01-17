@@ -18,7 +18,7 @@ class PlanesVelocidad extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik','mikrotik1', 'limit_at_subida', 'limit_at_bajada', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'id', 'name', 'price', 'download', 'upload', 'type', 'address_list', 'mikrotik','mikrotik1','mikrotik2','mikrotik3','mikrotik4', 'limit_at_subida', 'limit_at_bajada', 'dhcp_server', 'created_by', 'updated_by', 'created_at', 'updated_at'
     ];
 
     protected $appends = ['uso'];
