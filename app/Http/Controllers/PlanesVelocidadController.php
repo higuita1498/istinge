@@ -431,7 +431,7 @@ class PlanesVelocidadController extends Controller
     }
 
     public function update(Request $request, $id){
-        dd($request->mikrotik);
+        dd($request);
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
         if ($plan) {
             $request->validate([
