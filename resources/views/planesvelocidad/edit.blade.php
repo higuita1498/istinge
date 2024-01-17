@@ -66,11 +66,8 @@
         	            <label class="control-label">Mikrotik Asociada <span class="text-danger">*</span></label>
         	            <select name="mikrotik" id="mikrotik" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required multiple>
                         @foreach($mikrotiks as $mikrotik)
-                            <option {{$plan->mikrotik==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
-                            <option {{$plan->mikrotik1==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
-                            <option {{$plan->mikrotik2==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
-                            <option {{$plan->mikrotik3==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
-                            <option {{$plan->mikrotik4==$mikrotik->id?'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
+                            <option {{$plan->mikrotik == $mikrotik->id || $plan->mikrotik1 == $mikrotik->id || $plan->mikrotik2 == $mikrotik->id || $plan->mikrotik3 == $mikrotik->id || $plan->mikrotik4 == $mikrotik->id? 'selected':''}} value="{{$mikrotik->id}}">{{$mikrotik->nombre}}</option>
+
                         @endforeach
                         </select>
         	            <span class="help-block error">
