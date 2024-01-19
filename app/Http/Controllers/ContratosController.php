@@ -1385,6 +1385,10 @@ class ContratosController extends Controller
                     $contrato->puerto_conexion    = $request->puerto_conexion;
                     $contrato->usuario            = $request->usuario;
                     $contrato->password           = $request->password;
+                    $contrato->direccion_local_address = $request->direccion_local_address;
+                    $contrato->local_address_new       = $request->local_address_new;
+                    $contrato->profile                 = $request->profile;
+                    $contrato->local_adress_pppoe      = $ppoe_local_adress;
                     $contrato->simple_queue       = $request->simple_queue;
                     $contrato->conexion           = $request->conexion;
                     $contrato->latitude           = $request->latitude;
@@ -1407,6 +1411,7 @@ class ContratosController extends Controller
                     $contrato->tipo_contrato           = $request->tipo_contrato;
                     $contrato->iva_factura             = $request->iva_factura; //es el iva al plan de internet.
                     $contrato->observaciones           = $request->observaciones;
+
 
                     if($request->tipo_suspension_no == 1){
                         $contrato->tipo_nosuspension = 1;
@@ -1508,7 +1513,7 @@ class ContratosController extends Controller
                 $contrato->nro                  = $request->nro;
                 $contrato->address_street       = $request->address_street;
                 $contrato->tipo_contrato        = $request->tipo_contrato;
-                $contrato->observaciones           = $request->observaciones;
+                $contrato->observaciones        = $request->observaciones;
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
@@ -3355,7 +3360,7 @@ class ContratosController extends Controller
                 }
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
                 $mikoId = $miko->id;
-              
+
             }
             if($request->plan != ""){
                 // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
