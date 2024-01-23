@@ -48,7 +48,7 @@
             }, 5000);
         </script>
     @endif
-    
+
     @if(Session::has('danger'))
         <div class="alert alert-danger" style="margin-left: 2%;margin-right: 2%;">
 	    {{Session::get('danger')}}
@@ -68,7 +68,12 @@
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
 						<div class="col-md-3 pl-1 pt-1">
-							<input type="text" placeholder="Nombre" id="name" class="form-control rounded">
+							{{-- <input type="text" placeholder="Nombre" id="name" class="form-control rounded"> --}}
+                            <select title="Mikrotik" class="form-control rounded selectpicker" id="name" data-size="5" data-live-search="true">
+								@foreach($planes_velocidad as $plan)
+								<option value="{{$plan->id}}">{{$plan->nombre}}</option>
+								@endforeach
+							</select>
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="number" placeholder="Precio" id="price" class="form-control rounded">

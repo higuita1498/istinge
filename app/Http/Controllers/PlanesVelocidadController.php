@@ -47,7 +47,8 @@ class PlanesVelocidadController extends Controller
 
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 10)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $mikrotiks = Mikrotik::where('empresa', Auth::user()->empresa)->get();
-        return view('planesvelocidad.index')->with(compact('mikrotiks','tabla'));
+        $planes_velocidad = PlanesVelocidad::all();
+        return view('planesvelocidad.index')->with(compact('mikrotiks','tabla','planes_velocidad'));
     }
 
     public function planes(Request $request){
