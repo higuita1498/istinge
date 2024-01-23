@@ -71,7 +71,7 @@
 							{{-- <input type="text" placeholder="Nombre" id="name" class="form-control rounded"> --}}
                             <select title="Planes" class="form-control rounded selectpicker" id="name" data-size="5" data-live-search="true">
 								@foreach($planes_velocidad as $plan)
-								<option value="{{$plan->id}}">{{$plan->name}}</option>
+								<option value="{{$plan->name}}">{{$plan->name}}</option>
 								@endforeach
 							</select>
 						</div>
