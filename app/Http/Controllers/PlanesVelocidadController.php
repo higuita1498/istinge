@@ -444,19 +444,19 @@ class PlanesVelocidadController extends Controller
             ]);
 
             $plan->mikrotik = $request->mikrotik;
-            if ((!empty($request->mikrotik[1])) && (isset($request->mikrotik[1]))) {
+            // if ((!empty($request->mikrotik[1])) && (isset($request->mikrotik[1]))) {
 
-                $plan->mikrotik1 = $request->mikrotik[1];
-            }
-            if (!empty($request->mikrotik[2]) && (isset($request->mikrotik[2]))) {
-                $plan->mikrotik2 = $request->mikrotik[2];
-            }
-            if (!empty($request->mikrotik[3]) && (isset($request->mikrotik[3]))) {
-                $plan->mikrotik3 = $request->mikrotik[3];
-            }
-            if (!empty($request->mikrotik[4]) && (isset($request->mikrotik[4]))) {
-                $plan->mikrotik4 = $request->mikrotik[4];
-            }
+            //     $plan->mikrotik1 = $request->mikrotik[1];
+            // }
+            // if (!empty($request->mikrotik[2]) && (isset($request->mikrotik[2]))) {
+            //     $plan->mikrotik2 = $request->mikrotik[2];
+            // }
+            // if (!empty($request->mikrotik[3]) && (isset($request->mikrotik[3]))) {
+            //     $plan->mikrotik3 = $request->mikrotik[3];
+            // }
+            // if (!empty($request->mikrotik[4]) && (isset($request->mikrotik[4]))) {
+            //     $plan->mikrotik4 = $request->mikrotik[4];
+            // }
             $plan->name = $request->name;
             $plan->price = $request->price;
             $plan->upload = $request->upload.''.$request->inicial_download;
