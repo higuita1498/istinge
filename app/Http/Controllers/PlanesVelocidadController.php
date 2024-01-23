@@ -91,6 +91,9 @@ class PlanesVelocidadController extends Controller
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('mikrotik', $request->mikrotik_s);
                 });
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('name', 'like', "%{$request->name}%");
+                });
             }
             if($request->status){
                 if($request->status == 'A'){
