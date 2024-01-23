@@ -198,7 +198,7 @@ class PlanesVelocidadController extends Controller
             return back()->with('error', 'Debe asociar la mikrotik');
         }
         $num_microtik = count($request->mikrotik);
-       // for ($i=0; $i < count($request->mikrotik) ; $i++) {
+        for ($i=0; $i < count($request->mikrotik) ; $i++) {
             $inventario                = new Inventario;
             $inventario->empresa       = Auth::user()->empresa;
             $inventario->producto      = strtoupper($request->name);
@@ -218,21 +218,21 @@ class PlanesVelocidadController extends Controller
             $inventario->save();
 
             $plan = new PlanesVelocidad;
-            $plan->mikrotik = $request->mikrotik[0];
+            $plan->mikrotik = $request->mikrotik[$i];
 
-            if ((!empty($request->mikrotik[1])) && (isset($request->mikrotik[1]))) {
+            // if ((!empty($request->mikrotik[1])) && (isset($request->mikrotik[1]))) {
 
-                $plan->mikrotik1 = $request->mikrotik[1];
-            }
-            if (!empty($request->mikrotik[2]) && (isset($request->mikrotik[2]))) {
-                $plan->mikrotik2 = $request->mikrotik[2];
-            }
-            if (!empty($request->mikrotik[3]) && (isset($request->mikrotik[3]))) {
-                $plan->mikrotik3 = $request->mikrotik[3];
-            }
-            if (!empty($request->mikrotik[4]) && (isset($request->mikrotik[4]))) {
-                $plan->mikrotik4 = $request->mikrotik[4];
-            }
+            //     $plan->mikrotik1 = $request->mikrotik[1];
+            // }
+            // if (!empty($request->mikrotik[2]) && (isset($request->mikrotik[2]))) {
+            //     $plan->mikrotik2 = $request->mikrotik[2];
+            // }
+            // if (!empty($request->mikrotik[3]) && (isset($request->mikrotik[3]))) {
+            //     $plan->mikrotik3 = $request->mikrotik[3];
+            // }
+            // if (!empty($request->mikrotik[4]) && (isset($request->mikrotik[4]))) {
+            //     $plan->mikrotik4 = $request->mikrotik[4];
+            // }
 
             $plan->name = $request->name;
             $plan->price = $request->price;
@@ -310,7 +310,7 @@ class PlanesVelocidadController extends Controller
                 $pr->tipo = 5;
                 $pr->save();
             }
-       // }
+        }
 
         $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PLAN';
         return redirect('empresa/planes-velocidad')->with('success', $mensaje)->with('mikrotik_id', $plan->id);

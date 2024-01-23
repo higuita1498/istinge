@@ -1383,6 +1383,7 @@ class ContratosController extends Controller
                     }
 
                     $contrato->puerto_conexion    = $request->puerto_conexion;
+                    $contrato->plan_id            = $request->plan_id;
                     $contrato->usuario            = $request->usuario;
                     $contrato->password           = $request->password;
                     $contrato->direccion_local_address = $request->direccion_local_address;
