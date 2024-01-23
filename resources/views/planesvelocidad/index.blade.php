@@ -69,9 +69,9 @@
 					<div class="row">
 						<div class="col-md-3 pl-1 pt-1">
 							{{-- <input type="text" placeholder="Nombre" id="name" class="form-control rounded"> --}}
-                            <select title="Mikrotik" class="form-control rounded selectpicker" id="name" data-size="5" data-live-search="true">
+                            <select title="Planes" class="form-control rounded selectpicker" id="name" data-size="5" data-live-search="true">
 								@foreach($planes_velocidad as $plan)
-								<option value="{{$plan->id}}">{{$plan->nombre}}</option>
+								<option value="{{$plan->id}}">{{$plan->name}}</option>
 								@endforeach
 							</select>
 						</div>
