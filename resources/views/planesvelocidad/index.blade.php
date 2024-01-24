@@ -243,8 +243,34 @@
         });
 
         $('#type, #mikrotik_s, #status, #tipo_plan').on('change',function() {
-        	getDataTable();
-        	return false;
+        	//getDataTable();
+        	//return false;
+             if ($(this).attr('id') === 'mikrotik_s') {
+                // Obtener el nuevo valor de #mikrotik_s
+                var mikrotikValue = $(this).val();
+
+                // Realizar una llamada AJAX para obtener los planes asociados al valor de #mikrotik_s
+                $.ajax({
+                    url: 'tu_ruta_para_obtener_planes.php',  // Reemplaza esto con la URL correcta de tu servidor
+                    type: 'POST',
+                    data: { mikrotik_s: mikrotikValue },
+                    success: function(data) {
+                        // 'data' contiene la respuesta del servidor, que debería ser los planes asociados
+                        // Actualizar la tabla o realizar cualquier otra acción con los datos obtenidos
+                        console.log(data);  // Puedes mostrarlo en la consola para verificar
+                        // Aquí puedes llamar a la función que actualiza la tabla con los nuevos datos
+                        updateDataTable(data);
+                    },
+                    error: function(error) {
+                        console.error('Error al obtener planes:', error);
+                    }
+                });
+            } else {
+                // Si el cambio no fue en #mikrotik_s, simplemente actualiza la tabla
+                getDataTable();
+            }
+
+            return false;
         });
 
         $('#btn_enabled').click( function () {
