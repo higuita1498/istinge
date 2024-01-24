@@ -75,7 +75,7 @@
   				<label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
 	  			<div class="col-sm-8">
             <div class="input-group">
-              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value);">
+              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value); contratos_facturas(this.value);">
                 @foreach($clientes as $client)
                   <option {{old('cliente')==$client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                 @endforeach
@@ -86,16 +86,31 @@
                 </span>
               </div>
             </div>
-            {{-- <p class="text-left nomargin">
-              <a href="#" id="contacto">
-                <i class="fas fa-plus"></i> Nuevo Contacto
-              </a>
-            </p> --}}
+
 	  			</div>
           <span class="help-block error">
           	<strong>{{ $errors->first('cliente') }}</strong>
           </span>
   		  </div>
+
+        {{-- Nuevo desarrollo de contratos. --}}
+        <div class="form-group row d-none" id="divcontratos">
+            <label class="col-sm-4 col-form-label">Contrato <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+            <div class="input-group">
+                <select class="form-control selectpicker" name="contratos_json" id="contratos_json" required=""
+                title="Seleccione un contrato" plac data-live-search="true" data-size="5"
+                onchange="rowItemsContrato(this.value)"
+                >
+
+                </select>
+            </div>
+
+                    </div>
+            <span class="help-block error">
+                <strong>{{ $errors->first('contratos_json') }}</strong>
+            </span>
+        </div>
 
 	  		<div class="form-group row">
   				<label class="col-sm-4 col-form-label">Identificación</label>
@@ -206,6 +221,7 @@
         @endif
   		</div>
     </div>
+
     <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
@@ -219,20 +235,27 @@
     			</div>
 		    </div>
 			</div>
-      <div class="col-md-4 offset-md-3">
-        <div class="form-group row">
-          <label class="col-sm-4 col-form-label">Lista de Precios <a><i data-tippy-content="Lista de precios asociada a la factura de venta, puedes agregar nuevas listas de precio haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
-          <div class="col-sm-8">
-            <select name="lista_precios" id="lista_precios" class="form-control selectpicker">
-              @foreach($listas as $lista)
-                <option value="{{$lista->id}}">{{$lista->nombre()}} </option>
-              @endforeach
-            </select>
-          </div>
+            <div class="col-md-4 offset-md-3">
+                <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Lista de Precios <a><i data-tippy-content="Lista de precios asociada a la factura de venta, puedes agregar nuevas listas de precio haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
+                <div class="col-sm-8">
+                    <select name="lista_precios" id="lista_precios" class="form-control selectpicker">
+                    @foreach($listas as $lista)
+                        <option value="{{$lista->id}}">{{$lista->nombre()}} </option>
+                    @endforeach
+                    </select>
+                </div>
+                </div>
+            </div>
         </div>
-      </div>
-		</div>
     <hr>
+
+
+    <div>
+        <p id="contratos_nombres"></p>
+        <input type="hidden" name="contratos_asociados" id="contratos_asociados">
+    </div>
+
     <div id="notasaui"></div>
     <!-- Desgloce -->
         <div id="noMore">
@@ -366,7 +389,7 @@
                   </div>
                   <div class="col-md-6 d-flex justify-content-between pt-3">
                     <h5>Total:</h5>
-                    <span>$</span><span id="anticipototal">0</span>  
+                    <span>$</span><span id="anticipototal">0</span>
                   </div>
                   <div class="col-md-12">
                     <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
@@ -462,7 +485,7 @@
       </div>
       </div>
 
-    
+
       <div class="row ">
         <div class="col-sm-12 text-right" style="padding-top: 1%;">
           <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success">Guardar</button>
@@ -497,9 +520,6 @@
           <div class="modal-body" id="modal-bodyc">
             {{--@include('contactos.modal.modal')--}}
           </div>
-         {{-- <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>--}}
         </div>
       </div>
     </div>
@@ -512,8 +532,7 @@
             <h4 class="modal-title">Editar información Básica.</h4>
           </div>
           <div class="modal-body">
-        {{-- <form method="POST" action="" style="padding: 2% 3%;" role="form"
-        class="forms-sample border-btm marginb" novalidate id="form-editDirection"> --}}
+
         <div class="container">
           <div id="conte-modalesedit"></div>
         </div>
@@ -522,7 +541,6 @@
 
     </div>
     <div class="modal-footer">
-      {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}
     </div>
   </div>
 </div>
@@ -552,22 +570,6 @@
 
     <script>
         $(document).ready(function() {
-
-
-       /*
-            $.ajax({
-                url: '{{url('empresa/facturas/productos')}}',
-                type: 'get',
-                dataType: 'json',
-                success: function(data){
-                    $(data).each(function(i, v){ // indice, valor
-                        $('.items_inv').append('<option value="' + v.id + '">' + v.id + '</option>');
-                    })
-
-                }
-
-        });*/
-
         });
     </script>
 @endsection

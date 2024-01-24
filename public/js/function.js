@@ -682,6 +682,116 @@ function notif(id) {
 
 }*/
 
+function rowItemsContrato(contrato){
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/empresa/contratos/rowitem';
+    } else {
+        var url = '/empresa/contratos/rowitem';
+    }
+
+    let cliente = $("#cliente").val();
+
+    $.ajax({
+
+        url: url,
+        data: {
+            contrato_id: contrato,
+            cliente_id: cliente
+
+        },
+        beforeSend: function() {
+            cargando(true)
+        },
+
+        success: function(data) {
+
+
+            if(data.code == 200){
+
+                //procedemos a llenar el row de la factura.
+                let it=1
+                let contratosText = "";
+                let arrayContratos = []
+                eliminarTodaFila()
+                data.data.map(item => {
+                    createRow()
+                    $('#item' + it).val(item.id).selectpicker('refresh')
+                    rellenar(it, item.id)
+                    it=it+1
+
+                    if (!arrayContratos.includes(item.contrato_nro)) {
+                        // Si no está presente, agregarlo al arrayContratos
+                        arrayContratos.push(item.contrato_nro);
+                        contratosText+= item.contrato_nro + " ";
+                    }
+
+                })
+
+                $("#contratos_asociados").val(arrayContratos)
+                $("#contratos_nombres").text("Los contratos asociados a esta factura son:" + contratosText)
+                cargando(false)
+
+            }else{
+
+                alert("Estamos presentando  problemas al mostrar los ítems.")
+                cargando(false)
+                return
+
+            }
+        },
+
+        error: function(data) {
+            alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
+            cargando(false);
+        }
+    });
+}
+
+function contratos_facturas(contacto){
+
+    if (window.location.pathname.split("/")[1] === "software") {
+        var url = '/software/empresa/contratos/' + contacto + '/json';
+    } else {
+        var url = '/empresa/contratos/' + contacto + '/json';
+    }
+
+    $.ajax({
+        url: url,
+        beforeSend: function() {
+            cargando(true)
+        },
+        success: function(data) {
+
+            $("#contratos_json").empty();
+            $("#contratos_json").selectpicker('refresh')
+
+            if(data.data.length == 0){
+                $("#divcontratos").addClass('d-none')
+                return;
+            }
+
+            let contratos = data.data
+
+            contratos.map(contrato => {
+                console.log(contrato.nro)
+                $("#contratos_json").append(
+                    `<option value="${contrato.id}">${contrato.nro}</option>`
+                );
+            })
+
+            $("#contratos_json").selectpicker('refresh')
+            $("#divcontratos").removeClass('d-none')
+            cargando(false)
+
+        },
+        error: function(data) {
+            alert('Disculpe, estamos presentando problemas al tratar de enviar el formulario, intentelo mas tarde');
+            cargando(false);
+        }
+    });
+}
+
 /* type 1 = fact estandar, 2= fact electronica */
 function contacto(selected, modificar = false, type = 1) {
 
@@ -714,7 +824,6 @@ function contacto(selected, modificar = false, type = 1) {
         },
         success: function(data) {
             data = JSON.parse(data);
-
             if (type == 1) {
                 if (data[0]) {
                     data = data[0];
@@ -743,7 +852,7 @@ function contacto(selected, modificar = false, type = 1) {
                             position: 'top-center',
                             type: 'error',
                             title: 'Cliente sin contrato.',
-                            text: 'El cliente seleccionado no cuenta con nigun contrato asignado',
+                            text: 'El cliente seleccionado no cuenta con nigun contrato asignado o habilitado',
                             showConfirmButton: true,
                         });
                         $("#cliente").val("");
@@ -1727,6 +1836,14 @@ function Eliminar(i) {
     if ($('#table-form').length > 0 && $('#totalesreten').length == 0) {
         totalall();
     }
+}
+
+function eliminarTodaFila() {
+    let k=1
+    $('#table-form  tbody tr').each(function() {
+        Eliminar(k);
+        k=k+1
+    })
 }
 
 function Eliminar_forma(i) {

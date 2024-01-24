@@ -154,7 +154,7 @@
                                     <strong>{{ $errors->first('facturacion') }}</strong>
                                 </span>
                             </div>
-                            <div class="col-md-4 form-group d-none" id="div_facturacion">
+                            <div class="col-md-4 form-group" id="div_facturacion">
                                 <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group">
                                     <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -737,7 +737,7 @@
                             </div>
 
                             <div class="form-group col-md-4">
-                                <label class="control-label">¿Agregar fechas de No suspensión?  <a><i data-tippy-content="Decida si este cnotrato tendrá un rango de fechas donde si tiene facturas abiertas no lo suspenderá (esto solo pasará en el rango escogido)" class="icono far fa-question-circle"></i></a></label>
+                                <label class="control-label">¿Agregar fechas de No suspensión?  <a><i data-tippy-content="Decida si este contrato tendrá un rango de fechas donde si tiene facturas abiertas no lo suspenderá (esto solo pasará en el rango escogido)" class="icono far fa-question-circle"></i></a></label>
                               <div class="row">
                                   <div class="col-sm-6">
                                   <div class="form-radio">

@@ -33,7 +33,7 @@ use PHPExcel_Style_Border;
 use DOMDocument;
 use App\TipoEmpresa; use App\Categoria;
 use App\Retencion;
-use Auth; use Mail; use bcrypt; use DB;
+ use Mail; use bcrypt;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
 use App\GrupoCorte;
@@ -51,6 +51,8 @@ use App\PucMovimiento; use App\Puc;
 use App\Plantilla;
 use App\Services\ElectronicBillingService;
 use App\CRM;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FacturasController extends Controller{
 
@@ -864,16 +866,18 @@ class FacturasController extends Controller{
   * @return redirect
   */
     public function store(Request $request){
+
         $request->validate([
             'vendedor' => 'required',
         ]);
 
+        $user = Auth::user();
         $nro = false;
         $contrato = false;
         $num = Factura::where('empresa',1)->orderby('nro','asc')->get()->last();
 
         if(!isset($request->electronica)){
-            $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
+            $nro=NumeracionFactura::where('empresa',$user->empresa)->where('preferida',1)->where('estado',1)->where('tipo',1)->first();
             $contrato =    Contrato::where('client_id',$request->cliente)->first();
 
             //Obtenemos el número depende del contrato que tenga asignado (con fact electrónica o estandar).
@@ -884,7 +888,7 @@ class FacturasController extends Controller{
         if (!$nro) {
             if(isset($request->electronica)){
                 //No se llama el metodo de tipoNumeracion por que las facturas electrónicas no necesitan de un contrato para ser generadas.
-                $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+                $nro=NumeracionFactura::where('empresa',$user->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
                 if(!$nro){
                     $mensaje='Debes crear una numeración para facturas de venta preferida';
                     return redirect('empresa/configuracion/numeraciones')->with('error', $mensaje);
@@ -950,7 +954,7 @@ class FacturasController extends Controller{
         $factura->plazo=$request->plazo;
         $factura->term_cond=$request->term_cond;
         $factura->facnotas=$request->notas;
-        $factura->empresa=Auth::user()->empresa;
+        $factura->empresa=$user->empresa;
         $factura->cliente=$request->cliente;
         $factura->tipo=$tipo;
         $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
@@ -966,7 +970,7 @@ class FacturasController extends Controller{
         $factura->ordencompra    = $request->ordencompra;
         $factura->cuenta_id    = $request->formapago;
         $factura->periodo_facturacion = $request->periodo_facturacion;
-        $factura->created_by = Auth::user()->id;
+        $factura->created_by = $user->id;
 
         if($contrato){
             $factura->contrato_id = $contrato->id;
@@ -983,6 +987,23 @@ class FacturasController extends Controller{
 
         $factura->save();
         $nro->save();
+
+        //Asociamos los contratos asociados a la factura.
+        if(isset($request->contratos_asociados)){
+
+            $contratosArray = explode(',',$request->contratos_asociados);
+            for($i = 0 ; $i < count($contratosArray); $i++){
+                DB::table('facturas_contratos')->insert([
+                    'factura_id' => $factura->id,
+                    'contrato_nro' => $contratosArray[$i],
+                    'created_by' => $user->id,
+                    'client_id' => $factura->cliente,
+                    'is_cron' => 0,
+                    'created_at' => Carbon::now()
+                ]);
+            }
+        }
+
 
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -1159,7 +1180,13 @@ class FacturasController extends Controller{
                     view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
                 }
 
-                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones','formasPago'));
+                $contratos = Contrato::where('client_id',$factura->cliente)->where('state','enabled')->get();
+                $contratosFacturas = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
+
+                response()->json($contratosFacturas);
+                return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones','formasPago',
+                'contratos','contratosFacturas'
+            ));
             }
             return redirect('empresa/facturas')->with('success', 'La factura de venta '.$factura->codigo.' ya esta cerrada');
         }
@@ -1172,16 +1199,18 @@ class FacturasController extends Controller{
   * @return redirect
   */
     public function update(Request $request, $id){
+
         $desc=0;
         $factura =Factura::find($id);
+        $user = Auth::user();
         if ($factura) {
             if ($factura->estatus==1) {
                 //se devolveran todos los items al inventario
                 // Asi evitar que no exista la posibilidad de error en el momento de restar los items abajo
-                $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('id', $factura->bodega)->first();
+                $bodega = Bodega::where('empresa',$user->empresa)->where('id', $factura->bodega)->first();
                 $items = ItemsFactura::join('inventario as inv', 'inv.id', '=', 'items_factura.producto')->select('items_factura.*')->where('items_factura.factura',$factura->id)->where('inv.tipo_producto', 1)->get();
                 foreach ($items as $item) {
-                    $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $item->producto)->first();
+                    $ajuste=ProductosBodega::where('empresa', $user->empresa)->where('bodega', $bodega->id)->where('producto', $item->producto)->first();
                     if ($ajuste) {
                         $ajuste->nro+=$item->cant;
                         $ajuste->save();
@@ -1194,7 +1223,7 @@ class FacturasController extends Controller{
                 $factura->fecha=Carbon::parse($request->fecha)->format('Y-m-d');
                 $factura->vencimiento=Carbon::parse($request->vencimiento)->format('Y-m-d');
                 $factura->suspension=Carbon::parse($request->vencimiento)->format('Y-m-d');
-                $factura->observaciones=mb_strtolower($request->observaciones).' | Factura Editada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
+                $factura->observaciones=mb_strtolower($request->observaciones).' | Factura Editada por: '.$user->nombres.' el '.date('d-m-Y g:i:s A');
                 $factura->vendedor=$request->vendedor;
                 $factura->lista_precios=$request->lista_precios;
                 $factura->bodega=$request->bodega;
@@ -1208,10 +1237,33 @@ class FacturasController extends Controller{
                 $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
                 $factura->save();
 
+
+                //Asociamos los contratos asociados a la factura.
+                $contratoAntiguo = DB::table('facturas_contratos')->where('factura_id',$id)->where('contrato_nro',$request->contratos)->first();
+                //Si no hay contrato antiguo es por que seleccionaron un nuevo contrato y toca elminar las relaciones existentes.
+                if(!$contratoAntiguo){
+                    DB::table('facturas_contratos')->where('factura_id',$id)->delete();
+                }
+
+                //Asociamos los contratos asociados a la factura.
+                if(isset($request->contratos_asociados)){
+
+                    $contratosArray = explode(',',$request->contratos_asociados);
+                    for($i = 0 ; $i < count($contratosArray); $i++){
+                        DB::table('facturas_contratos')->insert([
+                            'factura_id' => $factura->id,
+                            'contrato_nro' => $contratosArray[$i],
+                            'client_id' => $factura->cliente,
+                            'is_cron' => 0,
+                            'created_by' => $user->id,
+                        ]);
+                    }
+                }
+
                 $inner=array();
-                $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
+                $bodega = Bodega::where('empresa',$user->empresa)->where('status', 1)->where('id', $request->bodega)->first();
                 if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
-                    $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
+                    $bodega = Bodega::where('empresa',$user->empresa)->where('status', 1)->first();
                 }
                 //Ciclo para registrar y/o modificar los itemas de la factura
                 for ($i=0; $i < count($request->ref) ; $i++) {
@@ -1225,7 +1277,7 @@ class FacturasController extends Controller{
                     $producto = Inventario::where('id', $request->item[$i])->first();
                     //Si el producto es inventariable y existe esa bodega, restará el valor registrado
                     if ($producto->tipo_producto==1) {
-                        $ajuste=ProductosBodega::where('empresa', Auth::user()->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
+                        $ajuste=ProductosBodega::where('empresa', $user->empresa)->where('bodega', $bodega->id)->where('producto', $producto->id)->first();
                         if ($ajuste) {
                             $ajuste->nro-=$request->cant[$i];
                             $ajuste->save();
@@ -1277,7 +1329,7 @@ class FacturasController extends Controller{
                     $descuento = new Descuento;
                     $descuento->factura    = $items->factura;
                     $descuento->descuento  = $desc;
-                    $descuento->created_by = Auth::user()->id;
+                    $descuento->created_by = $user->id;
                     if($request->comentario_2){
                         $descuento->comentario_2 = $request->comentario_2;
                     }
@@ -1831,7 +1883,7 @@ class FacturasController extends Controller{
             7=>'factura.estatus',
             8=>'acciones'
         );
-        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')->select('factura.*', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',1);
+        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')->select('factura.*', DB::raw('c.nombre as nombrecliente'), FacadesDB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',1);
 
         $facturas=$facturas->whereRaw('factura.id in (Select distinct(factura) from items_factura where producto='.$producto.' and tipo_inventario=1)');
 

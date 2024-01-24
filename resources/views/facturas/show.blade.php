@@ -2,7 +2,7 @@
 
 @section('boton')
 
-@endsection   
+@endsection
 
 @section('content')
     <style>
@@ -18,7 +18,7 @@
             text-overflow: ellipsis;
         }
     </style>
-    
+
     @if(auth()->user()->modo_lectura())
         <div class="alert alert-warning text-left" role="alert">
             <h4 class="alert-heading text-uppercase">Integra Colombia: Suscripción Vencida</h4>
@@ -58,7 +58,7 @@
                                  <a class="btn btn-outline-danger btn-sm" href="#" onclick="confirmar('anular-factura{{$factura->id}}', '¿Está seguro de que desea anular la factura?', ' ');"><i class="fas fa-minus"></i> Anular</a>
                             @endif
                         @endif
-                        
+
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                             <div class="btn-group" role="group">
                                 <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -88,7 +88,7 @@
             </div>
         @endif
     @endif
-    
+
     <!-- BANNER DE VALORES -->
     <div class="card-body">
         <div class="row" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
@@ -134,7 +134,7 @@
             <div class="float-center">
               <p class="mb-0 text-center">Cobrado</p>
               <div class="fluid-container">
-                <h4 class="font-weight-medium text-center mb-0 text-success">{{Auth::user()->empresa()->moneda}} 
+                <h4 class="font-weight-medium text-center mb-0 text-success">{{Auth::user()->empresa()->moneda}}
                 {{App\Funcion::Parsear($factura->pagado())}}</h4>
               </div>
             </div>
@@ -147,7 +147,7 @@
             <div class="float-center">
               <p class="mb-0 text-center">Por cobrar</p>
               <div class="fluid-container">
-                <h4 class="font-weight-medium text-center mb-0 text-danger">{{Auth::user()->empresa()->moneda}} 
+                <h4 class="font-weight-medium text-center mb-0 text-danger">{{Auth::user()->empresa()->moneda}}
                 {{App\Funcion::Parsear($factura->porpagar())}}</h4>
               </div>
             </div>
@@ -167,9 +167,12 @@
             <div class="clearfix">
                 <div class="float-center">
                     <p class="mb-0 text-center">Contrato asociado</p>
-                    <div class="fluid-container">
-                        @if(isset($factura->contrato()->nro))
-                        <h4 class="font-weight-medium text-center mb-0">No. <a href="{{route('contratos.show',$factura->contrato_id)}}" target="_blank">{{$factura->contrato()->nro}}</a></h4>
+                        <div class="fluid-container">
+
+                        @if($factura->contratos() != false)
+                            @foreach ( $factura->contratos() as $detalleContrato )
+                            <h4 class="font-weight-medium text-center mb-0">No. <a href="{{route('contratos.show',$detalleContrato->contrato_nro)}}" target="_blank">{{$detalleContrato->contrato_nro}}</a></h4>
+                            @endforeach
                         @endif
                     </div>
                 </div>
@@ -194,7 +197,7 @@
   </div>
   @endif
   <script type="text/javascript">
-    setTimeout(function(){ 
+    setTimeout(function(){
         $('.alert').hide();
         $('.active_table').attr('class', ' ');
     }, 5000);
@@ -253,12 +256,12 @@
                 </table>
             </div>
         </div>
-        
+
         <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
 		</div>
-		
+
         <!-- Desgloce -->
         <div class="row" style="padding: 2% 6%;">
             <div class="col-md-12 fact-table">
@@ -298,7 +301,7 @@
       <div class="row">
         <div class="col-md-4 offset-md-1 retenciones"> <b>RETENCIONES APLICADAS:</b> {{$factura->retenciones()}}  </div>
       </div>
-    @endif  
+    @endif
 
     <!-- Totales -->
     <div class="row" style="margin-top: 2%; padding: 2% 6%;">
@@ -402,7 +405,7 @@
                         <th class="text-right">{{$factura->bodega()}}</th>
                     </tr>
                 </tbody>
-            </table>        
+            </table>
         </div>
     </div>
 
@@ -410,12 +413,12 @@
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
 	</div>
-	
+
     <div class="row card-description" style="padding: 0 2.7%; margin-top: 2%;">
         <div class="col-md-12 fact-table" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:2% !important;">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#pagos_recibidos" role="tab" aria-controls="pagos_recibidos-tab" aria-selected="false" style="font-size: 1.1em; display: inline-block;">Pagos recibidos  
+                    <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#pagos_recibidos" role="tab" aria-controls="pagos_recibidos-tab" aria-selected="false" style="font-size: 1.1em; display: inline-block;">Pagos recibidos
                         @if(auth()->user()->modo_lectura())
                         @else
                         @if($factura->estatus==1)
@@ -452,7 +455,7 @@
                             <td>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($pago->pago())}}</td>
                             <td>{{$pago->ingreso()->observaciones}}</td>
                         </tr>
-                        @endforeach                
+                        @endforeach
                     @else
                         @if(auth()->user()->modo_lectura())
                         @else
@@ -466,7 +469,7 @@
                         @endif
                     @endif
                 </tbody>
-            </table>          
+            </table>
         </div>
 
       @if($factura->notas_credito(true)>0)
@@ -478,7 +481,7 @@
                 <th>Nota crédito #</th>
                 <th>Monto</th>
                 <th>Observaciones</th>
-              </tr>                              
+              </tr>
             </thead>
             <tbody>
               @foreach($factura->notas_credito() as $notas)
@@ -509,7 +512,7 @@
                 <div class="modal-body">
                     <table class="table table-striped">
                         <tr>
-                            <td><b>Estado de factura:</b> 
+                            <td><b>Estado de factura:</b>
                                 @if($realStatus)
                                    {{$factura->statusdian==0 ? "RECHAZADA" : "ACEPTADA"}}
                                 @else

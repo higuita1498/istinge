@@ -11,14 +11,7 @@
 |
 */
 use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\Nomina\NominaController;
-use App\Http\Controllers\Nomina\NominaDianController;
-use App\Http\Controllers\ContactosController;
-use App\Model\Nomina\Nomina;
-use App\Model\Nomina\NominaPeriodos;
-use App\Http\Controllers\AsignacionMaterialController;
-
-
+use Illuminate\Support\Facades\Route;
 
 Route::get('sendmail','Controller@sendmail');
 
@@ -1292,6 +1285,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
         Route::get('{contratos}/{state}/state_lote', 'ContratosController@state_lote')->name('contratos.state_lote');
         Route::get('{contratos}/enviar_mk_lote', 'ContratosController@enviar_mk_lote')->name('contratos.enviar_mk_lote');
         Route::get('{contratos}/{server_configuration_id}/{plan_id}/planes_lote', 'ContratosController@planes_lote')->name('contratos.planes_lote');
+        Route::get('{cliente}/json','ContratosController@json')->name('contratos.json');
+        Route::get('rowitem','ContratosController@rowItem')->name('contratos.row_item');
 
 
 

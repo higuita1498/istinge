@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Contrato;
 use App\Contacto;
 use App\User;
-use App\CRM;
 use App\TipoIdentificacion;
 use App\Mikrotik;
-use Auth;
-use DB;
 use App\GrupoCorte;
 use App\Model\Ingresos\Factura;
 use App\Etiqueta;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CRM extends Model
 {
@@ -46,11 +45,11 @@ class CRM extends Model
             else return null;
         }
     }
-    
+
     public function cliente(){
         return Contacto::find($this->cliente);
     }
-    
+
     public function estado($class = false){
         if ($class) {
             if($this->estado == 0){
@@ -63,7 +62,7 @@ class CRM extends Model
                 return 'info';
             }
         }
-        
+
         if($this->estado == 0){
             return 'SIN GESTIONAR';
         }else if($this->estado == 1){
@@ -84,7 +83,7 @@ class CRM extends Model
     public function etiqueta(){
         return $this->belongsTo(Etiqueta::class);
     }
-    
+
     public function created_by(){
         if($this->created_by){
             $user = User::find($this->created_by);
@@ -92,7 +91,7 @@ class CRM extends Model
         }
         return '';
     }
-    
+
     public function updated_by(){
         if($this->updated_by){
             $user = User::find($this->updatedd_by);
@@ -100,20 +99,20 @@ class CRM extends Model
         }
         return '';
     }
-    
+
     public function updated_at(){
         if($this->updated_at){
             return date('d-m-Y h:i:s', strtotime($this->updated_at));
         }
     }
-    
+
     public function factura($class=false){
         if($class){
             return ($this->estatus == 0) ? 'success' : 'danger';
         }
         return ($this->estatus == 0) ? 'PAGADA' : 'SIN PAGAR';
     }
-    
+
     public function servidor(){
         if($this->servidor){
             $mikrotik = Mikrotik::find($this->servidor);

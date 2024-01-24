@@ -20,13 +20,13 @@ use App\Model\Inventario\ListaPrecios;
 use App\Model\Inventario\Bodega;
 use App\Model\Inventario\Inventario;
 use Carbon\Carbon;
-use DB;
 use App\GrupoCorte;
 use App\Puc;
 use App\PucMovimiento;
 use App\FormaPago;
 use stdClass;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class Factura extends Model
 {
@@ -86,6 +86,13 @@ class Factura extends Model
         if($this->contrato_id){
         return $contrato = Contrato::where('id',$this->contrato_id)->first();
         }
+    }
+
+    public function contratos(){
+        if(DB::table('facturas_contratos')->where('factura_id',$this->id)->first()){
+            return $contratos = DB::table('facturas_contratos')->where('factura_id',$this->id)->get();
+        }
+        else return false;
     }
 
     public function contratoAsociado(){

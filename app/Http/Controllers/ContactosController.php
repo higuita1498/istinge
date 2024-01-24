@@ -15,13 +15,13 @@ use App\Oficina;
 use App\TipoEmpresa;
 use App\TipoIdentificacion;
 use App\Vendedor;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PHPExcel;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 include_once app_path().'/../public/PHPExcel/Classes/PHPExcel.php';
 use PHPExcel_IOFactory;
@@ -759,7 +759,7 @@ class ContactosController extends Controller
                 C.saldo_favor, C.saldo_favor2 ,CS.public_id as contrato, CS.facturacion, I.id as plan,
                  GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id)
                  INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)
-                 INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.status = '1'
+                 INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.state = 'enabled'
                  AND C.status = '1' AND  C.id = '".$id."'");
             }
         }

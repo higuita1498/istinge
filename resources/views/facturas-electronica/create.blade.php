@@ -74,7 +74,7 @@
   				<label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
 	  			<div class="col-sm-8">
             <div class="input-group">
-              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value,false,2);">
+              <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value,false,2); contratos_facturas(this.value);">
                 @foreach($clientes as $client)
                   <option {{old('cliente')==$client->id?'selected':''}} {{$cliente==$client->id?'selected':''}}  value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                 @endforeach
@@ -95,6 +95,25 @@
           	<strong>{{ $errors->first('cliente') }}</strong>
           </span>
   		  </div>
+
+          {{-- Nuevo desarrollo de contratos. --}}
+        <div class="form-group row d-none" id="divcontratos">
+            <label class="col-sm-4 col-form-label">Contrato</label>
+            <div class="col-sm-8">
+            <div class="input-group">
+                <select class="form-control selectpicker" name="contratos_json" id="contratos_json"
+                title="Seleccione un contrato" plac data-live-search="true" data-size="5"
+                onchange="rowItemsContrato(this.value)"
+                >
+
+                </select>
+            </div>
+
+                    </div>
+            <span class="help-block error">
+                <strong>{{ $errors->first('contratos_json') }}</strong>
+            </span>
+        </div>
 
 	  		<div class="form-group row">
   				<label class="col-sm-4 col-form-label">Identificación</label>
@@ -221,6 +240,12 @@
         </div>
       </div>
 		</div>
+
+        <div>
+            <p id="contratos_nombres"></p>
+            <input type="hidden" name="contratos_asociados" id="contratos_asociados">
+        </div>
+
     <hr>
     <div id="notasaui"></div>
     <!-- Desgloce -->
@@ -355,7 +380,7 @@
               </div>
               <div class="col-md-6 d-flex justify-content-between pt-3">
                 <h5>Total:</h5>
-                <span>$</span><span id="anticipototal">0</span>  
+                <span>$</span><span id="anticipototal">0</span>
               </div>
               <div class="col-md-12">
                 <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
