@@ -155,6 +155,18 @@
                                     <strong>{{ $errors->first('facturacion') }}</strong>
                                 </span>
                             </div>
+                            <div class="col-md-4 form-group" id="div_facturacion">
+                                <label class="control-label">Facturación Individual <span class="text-danger">*</span> <a><i data-tippy-content="Indicar si desea crear una factura general con los otros contratos o crear individualmente" class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group">
+                                    <select class="form-control selectpicker" name="factura_individual" id="factura_individual" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                        <option value="1" {{$contrato->factura_individual == 1 ? 'selected' : ''}}>Si</option>
+                                        <option value="0" {{$contrato->factura_individual == 0 ? 'selected' : ''}}>No</option>
+                                    </select>
+                                </div>
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('factura_individual') }}</strong>
+                                </span>
+                            </div>
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Fecha de Suspensión <a><i data-tippy-content="Fecha de suspensión personalizada, distinta a la asociada al grupo de corte" class="icono far fa-question-circle"></i></a></label>
                                 <input type="number" class="form-control"  id="fecha_suspension" value="{{$contrato->fecha_suspension}}" name="fecha_suspension" min="1" max="30">

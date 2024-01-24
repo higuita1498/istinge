@@ -34,3 +34,213 @@ Facturas Generadas: 0
 SMS Enviados: 0
 SMS NO Enviados: 0
 -----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 1
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 2
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-23
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 1
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 1
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------
+-----------------
+Fecha de Generación: 2024-01-24
+Facturas Generadas: 0
+SMS Enviados: 0
+SMS NO Enviados: 0
+-----------------

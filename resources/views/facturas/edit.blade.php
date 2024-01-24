@@ -1,4 +1,7 @@
 @extends('layouts.app')
+
+
+
 @section('content')
     <div class="paper">
         <!-- Membrete -->
@@ -33,7 +36,7 @@
                         <label class="col-sm-4 col-form-label">Cliente <span class="text-danger">*</span></label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value);">
+                                <select class="form-control selectpicker" name="cliente" id="cliente" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="contacto(this.value); contratos_facturas(this.value);">
                                     @foreach($clientes as $client)
                                         <option {{$factura->cliente==$client->id?'selected':''}}   value="{{$client->id}}">{{$client->nombre}} {{$client->apellido1}} {{$client->apellido2}} - {{$client->nit}}</option>
                                     @endforeach
@@ -52,22 +55,46 @@
           </span>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Identificación</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" readonly="" id="ident" value="">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Teléfono</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" readonly="" id="telefono" value="">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
-                    </div>
+            {{-- Nuevo desarrollo de contratos. --}}
+            @if(count($contratos) > 0 && isset($contratosFacturas))
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Contrato <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                <div class="input-group">
+                    <select class="form-control selectpicker" name="contratos_json" id="contratos_json" required=""
+                    title="Seleccione un contrato" data-live-search="true" data-size="5"
+                    onchange="rowItemsContrato(this.value)"
+                    >
+                        @foreach($contratos as $co)
+                            <option value="{{$co->id}}" {{isset($contratosFacturas) && $contratosFacturas->contrato_nro==$co->nro?'selected':''}}
+                                >{{$co->nro}}</option>
+                        @endforeach
+                    </select>
                 </div>
+
+                        </div>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('contratos_json') }}</strong>
+                </span>
+            </div>
+            @endif
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Identificación</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" readonly="" id="ident" value="">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Teléfono</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" readonly="" id="telefono" value="">
+                </div>
+            </div>
+            <div class="form-group row">
+                <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
+            </div>
+        </div>
 
                 <div class="col-md-5 offset-md-2">
                     <div class="form-group row">
@@ -103,7 +130,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-group row">
               <label class="col-sm-4 col-form-label">Tipo de operación <span class="text-danger">*</span></label>
               <div class="col-sm-8">
@@ -113,7 +140,7 @@
                   </select>
               </div>
           </div>
-                    
+
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Tipo de documento <span class="text-danger">*</span><a><i data-tippy-content="Elige el nombre que desees dar a tus documentos" class="icono far fa-question-circle"></i></a></label>
                         <div class="col-sm-8">
@@ -123,7 +150,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     @if(auth()->user()->empresa()->estado_dian == 1)
                         <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Orden de compra<a><i data-tippy-content="Número de orden de compra o servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
@@ -190,6 +217,12 @@
     </div>
     @endif
 </div>
+
+<div>
+    <p id="contratos_nombres"></p>
+    <input type="hidden" name="contratos_asociados" id="contratos_asociados">
+</div>
+
             <!-- Desgloce -->
             <div class="fact-table">
                 <div class="row">
@@ -212,7 +245,7 @@
                             <tbody>
                             @php $cont=0; @endphp
                             @if(Auth::user()->empresa == 44)
-                                
+
                             @endif
                             @foreach($items as $item)
                                 @php $cont++; @endphp
@@ -277,7 +310,7 @@
                         <div class="alert alert-danger" style="display: none;" id="error-items"></div>
                     </div>
                 </div>
-            
+
             <button class="btn btn-outline-primary" onclick="createRow();" type="button" style="margin-top: 5%">Agregar línea</button>
             <!-- Retenciones -->
             <div class="row"  style="margin-top: 10%; margin-left:0px;">
@@ -329,7 +362,7 @@
                           </thead>
                           <tbody>
                             @php $cont=0; $totalformas= 0; @endphp
-                              @foreach($formasPago as $forma) 
+                              @foreach($formasPago as $forma)
                             @php $cont+=1; $totalformas+=$forma->debito; @endphp
                               <tr id="forma{{$cont}}" fila="{{$cont}}">
                                 <td  class="no-padding">
@@ -355,7 +388,7 @@
                                     <input type="hidden" value='0' id="lock_forma{{$cont}}">
                                     <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->debito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="valor forma de pago" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
                                   </td>
-                                <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>                          
+                                <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>
                               </tr>
                               @endforeach
                           </tbody>
@@ -366,7 +399,7 @@
                           </div>
                           <div class="col-md-6 d-flex justify-content-between pt-3">
                             <h5>Total:</h5>
-                            <span>$</span><span id="anticipototal">{{$totalformas}}</span>  
+                            <span>$</span><span id="anticipototal">{{$totalformas}}</span>
                           </div>
                           <div class="col-md-12">
                             <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
@@ -453,7 +486,7 @@
                 <div class="col-md-4 form-group">
                     <label class="form-label">Notas
                     <div id="notasaui"></div></label>
-                    
+
                     <textarea  class="form-control form-control-sm min_max_100" name="notas">{{$factura->facnotas}}</textarea>
                 </div>
             </div>
@@ -478,11 +511,11 @@
         <input type="hidden" id="retenciones" value="{{json_encode($retenciones)}}">
         <input type="hidden" id="formaspago" value="{{json_encode($relaciones)}}">
         <input type="hidden" id="edit" value="1">
-        <input type="hidden" id="factura" value="{{$factura->id}}">    
+        <input type="hidden" id="factura" value="{{$factura->id}}">
         {{-- VARIABLE DE SALDO A FAVOR DEL CLIENTE --}}
         <input type="hidden" id="saldofavorcliente" name="saldofavorcliente">
     </div>
-    
+
             {{-- Modal Editar Direccion Contacto--}}
     <div class="modal fade" id="modaleditDirection" role="dialog"  data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">

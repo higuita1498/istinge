@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Validator;
-use Auth;
-use DB;
 use Session;
 
 use App\Model\Ingresos\Ingreso;
@@ -46,6 +44,9 @@ use App\Campos;
 use App\Puerto;
 use App\Oficina;
 use App\CRM;
+use App\Model\Ingresos\ItemsFactura;
+use Illuminate\Support\Facades\Auth as Auth;
+use Illuminate\Support\Facades\DB as DB;
 
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel;
@@ -970,7 +971,7 @@ class ContratosController extends Controller
         'contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz',
         'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte',
          'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario','contracts.local_adress_pppoe','contracts.direccion_local_address', 'contracts.password',
-         'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b',
+         'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.factura_individual',
          'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
          'contracts.simple_queue', 'contracts.latitude', 'contracts.longitude', 'contracts.servicio_tv','contracts.servicio_otro',
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu','contracts.iva_factura',
@@ -1413,6 +1414,9 @@ class ContratosController extends Controller
                     $contrato->iva_factura             = $request->iva_factura; //es el iva al plan de internet.
                     $contrato->observaciones           = $request->observaciones;
 
+                    if(isset($request->factura_individual)){
+                        $contrato->factura_individual = $request->factura_individual;
+                    }
 
                     if($request->tipo_suspension_no == 1){
                         $contrato->tipo_nosuspension = 1;
@@ -3614,8 +3618,8 @@ class ContratosController extends Controller
         readfile($filePath);
         exit;
 
-
         foreach($contratos as $contrato){
+            $API = new RouterosAPI();
             /*PPPOE*/
             if($contrato->conexion == 1){
                 $API->comm("/ppp/secret/add",
@@ -3825,6 +3829,91 @@ class ContratosController extends Controller
 
        }
 
+    //Metodo para obtener los contratos del cliente.
+    public function json($cliente){
 
+        try {
+            $contratos = Contrato::
+            where('client_id',$cliente)->where('state','enabled')
+            ->get();
+
+            // $hoy = Carbon::now()->toDateString();
+            // $hoy = "2024-01-23";
+            // if(DB::table('facturas_contratos')->whereDate('created_at',$hoy)->where('contrato_nro',1932)->first()){
+            //     return "se creo uno hoy";
+            // }
+            // else return "no se creo uno hoy";
+
+            return response()->json([
+                'status' => true,
+                'code' => 200,
+                'message' => "Contratos obtenidos correctamente.",
+                'data' => $contratos
+            ]);
+
+        } catch (\Throwable $th) {
+            $errorData = json_decode($th->getMessage(), true);
+            return response()->json(['code' => 422, 'message' => $errorData]);
+        }
+    }
+
+    //Metodo para obtener los items de los contratos que tienen la opcion de facturar agruapada
+    public function rowItem(Request $request){
+        //No se que significa item pendiente de asignacion en el cron controller, este es otor motivo de creacion de item.
+
+        try {
+            if(isset($request->contrato_id) && isset($request->cliente_id)){
+
+                $contrato = Contrato::find($request->contrato_id);
+
+                /* Preguntamos primero si el contrato seleccionado tiene facturacion agrupada,
+                 si es asi entonces tenemos que investigar los demas contratos asociados para saber si son agrupados tambien.
+                */
+                if($contrato->factura_individual == 0){
+                    $contratos = Contrato::where('client_id',$request->cliente_id)->where('factura_individual', 0)->get();
+                }
+                else {
+                    $contratos = Contrato::where('id',$request->contrato_id)->get();
+                }
+
+                $items = [];
+                foreach($contratos as $co){
+
+                    //Buscamos los items del contrato y los vamos almecenando en items.
+                    if($co->plan_id){
+                        $plan = PlanesVelocidad::find($co->plan_id);
+                        $item = Inventario::find($plan->item);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+
+                    if($co->servicio_tv){
+                        $item = Inventario::find($co->servicio_tv);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+
+                    if($co->servicio_otro){
+                        $item = Inventario::find($co->servicio_otro);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'code' => 200,
+                    'message' => "Items obtenidos correctamente.",
+                    'data' => $items
+                ]);
+
+            }
+        } catch (\Throwable $th) {
+            $errorData = json_decode($th->getMessage(), true);
+            return response()->json(['code' => 422, 'message' => $errorData]);
+        }
+
+
+    }
 
 }
