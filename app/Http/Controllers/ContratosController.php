@@ -3390,9 +3390,9 @@ class ContratosController extends Controller
             if (!$request->conexion) {
                 $error->conexion = "El campo conexión es obligatorio";
             }
-            if (!$request->interfaz) {
-                $error->interfaz = "El campo interfaz es obligatorio";
-            }
+            // if (!$request->interfaz) {
+            //     $error->interfaz = "El campo interfaz es obligatorio";
+            // }
             if (!$request->local_address) {
                 $error->local_address = "El campo segmento es obligatorio";
             }
@@ -3440,7 +3440,6 @@ class ContratosController extends Controller
             $request->mac           = $sheet->getCell("H".$row)->getValue();
             $request->conexion      = $sheet->getCell("I".$row)->getValue();
             $request->interfaz      = $sheet->getCell("J".$row)->getValue();
-            dd($request->interfaz);
             $request->local_address = $sheet->getCell("K".$row)->getValue();
             $request->nodo          = $sheet->getCell("L".$row)->getValue();
             $request->ap            = $sheet->getCell("M".$row)->getValue();
