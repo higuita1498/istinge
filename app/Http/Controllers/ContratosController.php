@@ -3396,6 +3396,7 @@ class ContratosController extends Controller
             if (!$request->local_address) {
                 $error->local_address = "El campo segmento es obligatorio";
             }
+            dd($request->grupo_corte);
             if($request->grupo_corte != ""){
                 if(GrupoCorte::where('nombre', $request->grupo_corte)->where('status', 1)->count() == 0){
                     $error->grupo_corte = "El grupo de corte ingresado no se encuentra en nuestra base de datos";
