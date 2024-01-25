@@ -3440,6 +3440,7 @@ class ContratosController extends Controller
             $request->mac           = $sheet->getCell("H".$row)->getValue();
             $request->conexion      = $sheet->getCell("I".$row)->getValue();
             $request->interfaz      = $sheet->getCell("J".$row)->getValue();
+            dd($request->interfaz);
             $request->local_address = $sheet->getCell("K".$row)->getValue();
             $request->nodo          = $sheet->getCell("L".$row)->getValue();
             $request->ap            = $sheet->getCell("M".$row)->getValue();
@@ -3535,7 +3536,7 @@ class ContratosController extends Controller
             $contrato->state                   = $request->state;
             $contrato->ip                      = $request->ip;
             $contrato->conexion                = $request->conexion;
-            $contrato->interfaz                = 0;
+            $contrato->interfaz                = $request->interfaz;
             $contrato->local_address           = $request->local_address;
             $contrato->grupo_corte             = $request->grupo_corte;
             $contrato->facturacion             = $request->facturacion;
