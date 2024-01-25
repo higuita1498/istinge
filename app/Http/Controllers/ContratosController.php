@@ -3535,7 +3535,7 @@ class ContratosController extends Controller
             $contrato->state                   = $request->state;
             $contrato->ip                      = $request->ip;
             $contrato->conexion                = $request->conexion;
-          //  $contrato->interfaz                = $request->interfaz;
+            $contrato->interfaz                = 0;
             $contrato->local_address           = $request->local_address;
             $contrato->grupo_corte             = $request->grupo_corte;
             $contrato->facturacion             = $request->facturacion;
