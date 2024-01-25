@@ -3540,7 +3540,7 @@ class ContratosController extends Controller
             $contrato->grupo_corte             = $request->grupo_corte;
             $contrato->facturacion             = $request->facturacion;
             $contrato->tecnologia              = $request->tecnologia;
-            $contrato->profile                 = $request->profle;
+            $contrato->profile                 = $request->profile;
 
             $contrato->descuento               = $request->descuento;
             $contrato->canal                   = $request->canal;
