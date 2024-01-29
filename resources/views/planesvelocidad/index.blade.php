@@ -216,6 +216,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
             data.name = $('#name').val();
+            data.nombre = $('#nombre').val();
             data.price = $('#price').val();
             data.download = $('#download').val();
             data.upload = $('#upload').val();
@@ -238,7 +239,7 @@
             }
         });
 
-        $('#name, #price, #download, #upload').on('keyup',function(e) {
+        $('#name, #price, #download, #upload, #nombre').on('keyup',function(e) {
         	if(e.which > 32 || e.which == 8) {
         		getDataTable();
         		return false;
@@ -279,6 +280,7 @@
 
 	function cerrarFiltrador() {
 		$('#name').val('');
+        $('#nombre').val('');
 		$('#price').val('');
 		$('#download').val('');
 		$('#upload').val('');
