@@ -146,6 +146,7 @@
 			</div>
 		</div>
 		@endif
+        @if(!isset($_SESSION['permisos']['858']))
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-planes">
 				<thead class="thead-dark">
@@ -158,6 +159,7 @@
 				</thead>
 			</table>
 		</div>
+        @endif
 	</div>
 @endsection
 
@@ -182,14 +184,13 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
-            @if(!isset($_SESSION['permisos']['858']))
-                columns: [
+            columns: [
                     @foreach($tabla as $campo)
                     {data: '{{$campo->campo}}'},
                     @endforeach
                     {data: 'acciones'},
-                ],
-            @endif
+            ],
+
 			@if(isset($_SESSION['permisos']['834']))
 			select: true,
             select: {
