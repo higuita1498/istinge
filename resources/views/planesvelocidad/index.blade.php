@@ -170,7 +170,7 @@
 			responsive: true,
 			serverSide: true,
 			processing: true,
-			searching: false,
+			searching: true,
 			language: {
 				'url': '/vendors/DataTables/es.json'
 			},
