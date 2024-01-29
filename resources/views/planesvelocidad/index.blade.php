@@ -267,6 +267,8 @@
             destroy();
         });
     });
+    @else
+        alert("Eres usuario restringido");
     @endif
 	function getDataTable() {
 		tabla.ajax.reload();
