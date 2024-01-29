@@ -57,6 +57,11 @@ class PlanesVelocidadController extends Controller
         $planes = PlanesVelocidad::query();
 
         if ($request->filtro == true) {
+            if($request->nombre){
+                $planes->where(function ($query) use ($request) {
+                    $query->orWhere('name', 'like', "%{$request->nombre}%");
+                });
+            }
             if($request->name){
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('name', 'like', "%{$request->name}%");

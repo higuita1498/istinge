@@ -67,6 +67,9 @@
 			<div class="card shadow-sm border-0">
 				<div class="card-body pb-3 pt-2" style="background: #f9f9f9;">
 					<div class="row">
+                        <div class="col-md-3 pl-1 pt-1">
+							<input type="text" placeholder="Nombre" id="nombre" class="form-control rounded">
+						</div>
 						<div class="col-md-3 pl-1 pt-1">
 							{{-- <input type="text" placeholder="Nombre" id="name" class="form-control rounded"> --}}
                             <select title="Planes" class="form-control rounded selectpicker" id="name" data-size="5" data-live-search="true">
