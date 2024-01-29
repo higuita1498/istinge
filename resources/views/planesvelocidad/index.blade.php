@@ -146,7 +146,7 @@
 			</div>
 		</div>
 		@endif
-        @if(!isset($_SESSION['permisos']['858']))
+
 		<div class="col-md-12">
 			<table class="table table-striped table-hover w-100" id="tabla-planes">
 				<thead class="thead-dark">
@@ -159,13 +159,14 @@
 				</thead>
 			</table>
 		</div>
-        @endif
+
 	</div>
 @endsection
 
 @section('scripts')
 <script>
     var tabla = null;
+    @if(!isset($_SESSION['permisos']['858']))
     window.addEventListener('load',
     function() {
 		tabla = $('#tabla-planes').DataTable({
@@ -266,7 +267,7 @@
             destroy();
         });
     });
-
+    @endif
 	function getDataTable() {
 		tabla.ajax.reload();
 	}
