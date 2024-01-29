@@ -268,7 +268,10 @@
         });
     });
     @else
-        alert("Eres usuario restringido");
+            document.getElementById('tu-boton').addEventListener('click', function() {
+            // Llama a la función de inicialización cuando se hace clic en el botón
+            inicializarDataTable();
+        });
     @endif
 	function getDataTable() {
 		tabla.ajax.reload();
@@ -428,5 +431,82 @@
             }
         })
     }
+
+    function inicializarDataTable() {
+    tabla = $('#tabla-planes').DataTable({
+        responsive: true,
+        serverSide: true,
+        processing: true,
+        searching: false,
+        language: {
+            'url': '/vendors/DataTables/es.json'
+        },
+        order: [
+            [0, "asc"]
+        ],
+        "pageLength": {{ Auth::user()->empresa()->pageLength }},
+        ajax: '{{url("/planes")}}',
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        },
+        columns: [
+            @foreach($tabla as $campo)
+            {data: '{{$campo->campo}}'},
+            @endforeach
+            {data: 'acciones'},
+        ],
+
+        @if(isset($_SESSION['permisos']['834']))
+        select: true,
+        select: {
+            style: 'multi',
+        },
+        dom: 'Blfrtip',
+        buttons: [{
+            text: '<i class="fas fa-check"></i> Seleccionar todos',
+            action: function() {
+                tabla.rows({
+                    page: 'current'
+                }).select();
+            }
+        },
+        {
+            text: '<i class="fas fa-times"></i> Deseleccionar todos',
+            action: function() {
+                tabla.rows({
+                    page: 'current'
+                }).deselect();
+            }
+        }]
+        @endif
+    });
+
+    // Agrega el resto de las operaciones y eventos aquí
+    tabla.on('preXhr.dt', function(e, settings, data) {
+        // ... código ...
+    });
+
+    // ... más código ...
+
+    // Operaciones asociadas al filtrar
+    $('#filtrar').on('click', function(e) {
+        getDataTable();
+        return false;
+    });
+
+    // ... más eventos ...
+
+    $('#btn_enabled').click( function () {
+        states('enabled');
+    });
+
+    $('#btn_disabled').click( function () {
+        states('disabled');
+    });
+
+    $('#btn_destroy').click( function () {
+        destroy();
+    });
+}
 </script>
 @endsection
