@@ -182,7 +182,7 @@
 			headers: {
 				'X-CSRF-TOKEN': '{{csrf_token()}}'
 			},
-            @if(!isset($_SESSION['permisos']['858']))
+            @if(isset($_SESSION['permisos']['858']))
                 columns: [
                     @foreach($tabla as $campo)
                     {data: '{{$campo->campo}}'},
