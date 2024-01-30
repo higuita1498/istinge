@@ -91,7 +91,7 @@ class CronController extends Controller
             $horaInicio = now()->subMinutes(5)->format('H:i');
             $horaFin = now()->addMinutes(5)->format('H:i');
 
-            $grupos_corte = GrupoCorte::
+            return $grupos_corte = GrupoCorte::
             where('hora_creacion_factura','>=', $horaInicio)
             ->where('hora_creacion_factura','<=', $horaFin)
             ->where('fecha_factura', $date)

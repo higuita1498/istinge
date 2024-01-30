@@ -759,8 +759,8 @@ class ContactosController extends Controller
                 C.saldo_favor, C.saldo_favor2 ,CS.public_id as contrato, CS.facturacion, I.id as plan,
                  GC.fecha_corte, GC.fecha_suspension, CS.servicio_tv FROM contactos AS C INNER JOIN contracts AS CS ON (C.id = CS.client_id)
                  INNER JOIN planes_velocidad AS P ON (P.id = CS.plan_id) INNER JOIN inventario AS I ON (I.id = P.item)
-                 INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte) WHERE CS.state = 'enabled'
-                 AND C.status = '1' AND  C.id = '".$id."'");
+                 INNER JOIN grupos_corte AS GC ON (GC.id = CS.grupo_corte)
+                 WHERE C.status = '1' AND  C.id = '".$id."'");
             }
         }
 
