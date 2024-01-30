@@ -285,9 +285,7 @@
     });
 
     @endif
-	function getDataTable() {
-		tabla.ajax.reload();
-	}
+
 
 	function abrirFiltrador() {
 		if ($('#form-filter').hasClass('d-none')) {
