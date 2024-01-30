@@ -51,147 +51,17 @@ class PlanesVelocidadController extends Controller
         return view('planesvelocidad.index')->with(compact('mikrotiks','tabla','planes_velocidad'));
     }
 
-    public function planesRestringido(Request $request){
-
-        $modoLectura = auth()->user()->modo_lectura();
-        $moneda = auth()->user()->empresa()->moneda;
-        $planes = PlanesVelocidad::query();
-        dd($request->name);
-
-            if($request->nombre){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('name', 'like', "%{$request->nombre}%");
-                });
-            }
-
-            if($request->name){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('name', 'like', "%{$request->name}%");
-                });
-            }
-            if($request->price){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('price', 'like', "%{$request->price}%");
-                });
-            }
-            if($request->download){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('download', 'like', "%{$request->download}%");
-                });
-            }
-            if($request->upload){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('upload', 'like', "%{$request->upload}%");
-                });
-            }
-            if($request->type){
-                if($request->type == 'A'){
-                    $type = 0;
-                }else{
-                    $type = $request->type;
-                }
-                $planes->where(function ($query) use ($type) {
-                    $query->orWhere('type', $type);
-                });
-            }
-            if($request->mikrotik_s){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('mikrotik', $request->mikrotik_s);
-                });
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('name', 'like', "%{$request->name}%");
-                });
-            }
-            if($request->status){
-                if($request->status == 'A'){
-                    $status = 0;
-                }else{
-                    $status = $request->status;
-                }
-                $planes->where(function ($query) use ($status) {
-                    $query->orWhere('status', $status);
-                });
-            }
-            if($request->tipo_plan){
-                $planes->where(function ($query) use ($request) {
-                    $query->orWhere('tipo_plan', $request->tipo_plan);
-                });
-            }
-
-
-        $planes->where('planes_velocidad.empresa', auth()->user()->empresa);
-
-        return datatables()->eloquent($planes)
-            ->editColumn('name', function (PlanesVelocidad $plan) {
-                return "<div class='elipsis-short-300'><a href=" . route('planes-velocidad.show', $plan->id) . ">{$plan->name}</a></div>";
-            })
-            ->editColumn('price', function (PlanesVelocidad $plan) use ($moneda) {
-                return "{$moneda} {$plan->parsear($plan->price)}";
-            })
-            ->editColumn('download', function (PlanesVelocidad $plan) {
-                return $plan->download;
-            })
-            ->editColumn('upload', function (PlanesVelocidad $plan) {
-                return $plan->upload;
-            })
-            ->editColumn('type', function (PlanesVelocidad $plan) {
-                return '<span class="text-' . $plan->type(true) . '">' . $plan->type(). '</span>';
-            })
-            ->editColumn('mikrotik', function (PlanesVelocidad $plan) {
-                $html = '';
-                if ($plan->mikrotik() !== null) {
-                    $html .= "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>";
-                }
-
-                // Similarmente, verifica si mikrotik1 no es nulo antes de intentar acceder a sus propiedades
-                // if ($plan->mikrotik1() !== null) {
-                //     $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
-                // }
-
-                // if ($plan->mikrotik2() !== null) {
-                //     $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik2()->id) . " target='_blank'>{$plan->mikrotik2()->nombre}</div></a>";
-                // }
-
-                // if ($plan->mikrotik3() !== null) {
-                //     $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik3()->id) . " target='_blank'>{$plan->mikrotik3()->nombre}</div></a>";
-                // }
-
-                // if ($plan->mikrotik4() !== null) {
-                //     $html .= "; <a href=" . route('mikrotik.show', $plan->mikrotik4()->id) . " target='_blank'>{$plan->mikrotik4()->nombre}</div></a>";
-                // }
-              //  return "<a href=" . route('mikrotik.show', $plan->mikrotik()->id) . " target='_blank'>{$plan->mikrotik()->nombre}</div></a>, <a href=" . route('mikrotik.show', $plan->mikrotik1()->id) . " target='_blank'>{$plan->mikrotik1()->nombre}</div></a>";
-              return $html;
-              return ;
-            })
-            ->editColumn('status', function (PlanesVelocidad $plan) {
-                return   '<span class="text-' . $plan->status(true) . '">' . $plan->status(). '</span>';
-            })
-            ->editColumn('tipo_plan', function (PlanesVelocidad $plan) {
-                return $plan->tipo();
-            })
-            ->editColumn('nro_clientes', function (PlanesVelocidad $plan) {
-                return '<span class="badge badge-success">'.$plan->uso_state('enabled').'</span> Habilitados<br>
-                            <span class="badge badge-danger mt-1">'.$plan->uso_state('disabled').'</span> Deshabilitados';
-            })
-            ->addColumn('acciones', $modoLectura ?  "" : "planesvelocidad.acciones")
-            ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik', 'nro_clientes'])
-            ->toJson();
-    }
-
-
     public function planes(Request $request){
-
         $modoLectura = auth()->user()->modo_lectura();
         $moneda = auth()->user()->empresa()->moneda;
         $planes = PlanesVelocidad::query();
-        dd($request->filtro);
+
         if ($request->filtro == true) {
             if($request->nombre){
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('name', 'like', "%{$request->nombre}%");
                 });
             }
-
             if($request->name){
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('name', 'like', "%{$request->name}%");
@@ -305,8 +175,6 @@ class PlanesVelocidadController extends Controller
             ->rawColumns(['acciones', 'name', 'status', 'type', 'mikrotik', 'nro_clientes'])
             ->toJson();
     }
-
-
 
     public function create(){
         $this->getAllPermissions(Auth::user()->id);

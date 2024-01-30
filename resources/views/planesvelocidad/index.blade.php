@@ -267,7 +267,7 @@
         });
 
         $('#type, #mikrotik_s, #status, #tipo_plan').on('change',function() {
-        	getDataTable();
+        //	getDataTable();
         	return false;
         });
 
