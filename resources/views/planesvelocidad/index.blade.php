@@ -232,7 +232,7 @@
             }]
             @endif
 		});
-
+        @endif
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
             data.name = $('#name').val();
