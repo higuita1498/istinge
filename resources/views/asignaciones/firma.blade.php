@@ -26,6 +26,7 @@
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
+        <h1>estoy en la vista</h1>
         <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
