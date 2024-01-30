@@ -29,10 +29,10 @@
 <p>Medios de pago Nequi: 3026003360 Cuenta de ahorros Bancolombia 42081411021 CC 1001912928 Ximena Herrera representante legal. Adjunte su pago para reactivar su membresía</p>
 	    </div>
 	@else
-    @if(isset($_SESSION['permisos']['435']))
-        <a href="{{route('planes-velocidad.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
-    @endif
-    <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+        @if(isset($_SESSION['permisos']['435']))
+            <a href="{{route('planes-velocidad.create')}}" class="btn btn-primary btn-sm" ><i class="fas fa-plus"></i> Nuevo Plan</a>
+        @endif
+        <a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
     @endif
 @endsection
 
@@ -276,10 +276,6 @@
             destroy();
         });
     });
-
-	function getDataTable() {
-		tabla.ajax.reload();
-	}
 
 	function abrirFiltrador() {
 		if ($('#form-filter').hasClass('d-none')) {
