@@ -481,5 +481,6 @@
         }]
         @endif
     });
+    }
 </script>
 @endsection
