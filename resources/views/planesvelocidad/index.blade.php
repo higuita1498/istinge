@@ -178,9 +178,9 @@
     // //     // Llama a la función de inicialización cuando se hace clic en el botón
     //      inicializarDataTable();
     //  });
-    //  function getDataTable() {
-    //      tabla.ajax.reload();
-    //  }
+      function getDataTable() {
+          tabla.ajax.reload();
+      }
 
     @if(!isset($_SESSION['permisos']['858']))
     window.addEventListener('load',
