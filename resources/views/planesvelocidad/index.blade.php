@@ -284,7 +284,7 @@
         });
     });
 
-    @endif
+
 
 
 	function abrirFiltrador() {
