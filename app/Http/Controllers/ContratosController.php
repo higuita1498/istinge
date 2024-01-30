@@ -3835,7 +3835,8 @@ class ContratosController extends Controller
 
         try {
             $contratos = Contrato::
-            where('client_id',$cliente)->where('state','enabled')
+            where('client_id',$cliente)
+            // ->where('state','enabled')
             ->get();
 
             // $hoy = Carbon::now()->toDateString();

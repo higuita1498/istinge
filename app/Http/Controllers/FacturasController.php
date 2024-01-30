@@ -1180,10 +1180,11 @@ class FacturasController extends Controller{
                     view()->share(['title' => 'Cuenta de Cobro '.$factura->codigo]);
                 }
 
-                $contratos = Contrato::where('client_id',$factura->cliente)->where('state','enabled')->get();
+                $contratos = Contrato::where('client_id',$factura->cliente)
+                // ->where('state','enabled')
+                ->get();
                 $contratosFacturas = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
 
-                response()->json($contratosFacturas);
                 return view('facturas.edit')->with(compact('clientes', 'inventario', 'vendedores', 'terminos', 'impuestos', 'factura', 'items', 'listas', 'bodegas', 'retencionesFacturas', 'retenciones', 'tipo_documento', 'categorias', 'medidas', 'unidades', 'prefijos', 'tipos_empresa', 'identificaciones', 'extras','relaciones','formasPago',
                 'contratos','contratosFacturas'
             ));
