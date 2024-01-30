@@ -174,13 +174,13 @@
         alert("estas consultando");
     }
     // Evento que escucha cuando se hace clic en el botón específico
-     document.getElementById('filtrar').addEventListener('click', function() {
-    //     // Llama a la función de inicialización cuando se hace clic en el botón
-         inicializarDataTable();
-     });
-     function getDataTable() {
-         tabla.ajax.reload();
-     }
+    //  document.getElementById('filtrar').addEventListener('click', function() {
+    // //     // Llama a la función de inicialización cuando se hace clic en el botón
+    //      inicializarDataTable();
+    //  });
+    //  function getDataTable() {
+    //      tabla.ajax.reload();
+    //  }
 
     @if(!isset($_SESSION['permisos']['858']))
     window.addEventListener('load',
