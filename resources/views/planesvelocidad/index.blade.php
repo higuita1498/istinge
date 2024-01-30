@@ -225,7 +225,7 @@
             }]
             @endif
 		});
-        @endif
+
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
             data.name = $('#name').val();
@@ -276,7 +276,7 @@
             destroy();
         });
     });
-
+    @endif
 	function abrirFiltrador() {
 		if ($('#form-filter').hasClass('d-none')) {
 			$('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
@@ -434,53 +434,53 @@
 
     //metodo
     function inicializarDataTable() {
-    var tabla = $('#tabla-planes').DataTable({
-        responsive: true,
-        serverSide: true,
-        processing: true,
-        searching: false,
-        language: {
-            'url': '/vendors/DataTables/es.json'
-        },
-        order: [
-            [0, "asc"]
-        ],
-        "pageLength": {{ Auth::user()->empresa()->pageLength }},
-        ajax: '{{url("/planes")}}',
-        headers: {
-            'X-CSRF-TOKEN': '{{csrf_token()}}'
-        },
-        columns: [
-            @foreach($tabla as $campo)
-            {data: '{{$campo->campo}}'},
-            @endforeach
-            {data: 'acciones'},
-        ],
+        var tabla = $('#tabla-planes').DataTable({
+            responsive: true,
+            serverSide: true,
+            processing: true,
+            searching: false,
+            language: {
+                'url': '/vendors/DataTables/es.json'
+            },
+            order: [
+                [0, "asc"]
+            ],
+            "pageLength": {{ Auth::user()->empresa()->pageLength }},
+            ajax: '{{url("/planes")}}',
+            headers: {
+                'X-CSRF-TOKEN': '{{csrf_token()}}'
+            },
+            columns: [
+                @foreach($tabla as $campo)
+                {data: '{{$campo->campo}}'},
+                @endforeach
+                {data: 'acciones'},
+            ],
 
-        @if(isset($_SESSION['permisos']['834']))
-        select: true,
-        select: {
-            style: 'multi',
-        },
-        dom: 'Blfrtip',
-        buttons: [{
-            text: '<i class="fas fa-check"></i> Seleccionar todos',
-            action: function() {
-                tabla.rows({
-                    page: 'current'
-                }).select();
-            }
-        },
-        {
-            text: '<i class="fas fa-times"></i> Deseleccionar todos',
-            action: function() {
-                tabla.rows({
-                    page: 'current'
-                }).deselect();
-            }
-        }]
-        @endif
-    });
+            @if(isset($_SESSION['permisos']['834']))
+            select: true,
+            select: {
+                style: 'multi',
+            },
+            dom: 'Blfrtip',
+            buttons: [{
+                text: '<i class="fas fa-check"></i> Seleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).select();
+                }
+            },
+            {
+                text: '<i class="fas fa-times"></i> Deseleccionar todos',
+                action: function() {
+                    tabla.rows({
+                        page: 'current'
+                    }).deselect();
+                }
+            }]
+            @endif
+        });
     }
 </script>
 @endsection
