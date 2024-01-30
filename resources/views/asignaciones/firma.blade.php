@@ -27,7 +27,7 @@
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
             <div>
-                <embed src="https://maxinet.online/software/empresa/asignaciones/1036/imprimir" type="application/pdf" width="100%" height="600px" style="margin-bottom:50px;"/>
+                <embed src="https://maxinet.online/software/empresa/asignaciones/1036/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
