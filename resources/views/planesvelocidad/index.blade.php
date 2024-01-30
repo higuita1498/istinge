@@ -115,8 +115,12 @@
 
 						<div class="col-md-1 pl-1 pt-1 text-left">
 							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
-						</div>
+							@if(!isset($_SESSION['permisos']['858']))
+                                <a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+                            @else
+                                <a href="" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada" onclick="alerta()"><i class="fas fa-search"></i></a>
+                            @endif
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -165,7 +169,19 @@
 
 @section('scripts')
 <script>
+    function alerta(){
+        alert("Hola estas intentando filtar usuario restringido");
+    }
     var tabla = null;
+    // Evento que escucha cuando se hace clic en el botón específico
+    document.getElementById('filtrar').addEventListener('click', function() {
+        // Llama a la función de inicialización cuando se hace clic en el botón
+        inicializarDataTable();
+    });
+    function getDataTable() {
+        tabla.ajax.reload();
+    }
+
     @if(!isset($_SESSION['permisos']['858']))
     window.addEventListener('load',
     function() {
@@ -267,11 +283,7 @@
             destroy();
         });
     });
-    @else
-            document.getElementById('tu-boton').addEventListener('click', function() {
-            // Llama a la función de inicialización cuando se hace clic en el botón
-            inicializarDataTable();
-        });
+
     @endif
 	function getDataTable() {
 		tabla.ajax.reload();
@@ -432,8 +444,9 @@
         })
     }
 
+    //metodo
     function inicializarDataTable() {
-    tabla = $('#tabla-planes').DataTable({
+    var tabla = $('#tabla-planes').DataTable({
         responsive: true,
         serverSide: true,
         processing: true,
@@ -480,33 +493,5 @@
         }]
         @endif
     });
-
-    // Agrega el resto de las operaciones y eventos aquí
-    tabla.on('preXhr.dt', function(e, settings, data) {
-        // ... código ...
-    });
-
-    // ... más código ...
-
-    // Operaciones asociadas al filtrar
-    $('#filtrar').on('click', function(e) {
-        getDataTable();
-        return false;
-    });
-
-    // ... más eventos ...
-
-    $('#btn_enabled').click( function () {
-        states('enabled');
-    });
-
-    $('#btn_disabled').click( function () {
-        states('disabled');
-    });
-
-    $('#btn_destroy').click( function () {
-        destroy();
-    });
-}
 </script>
 @endsection
