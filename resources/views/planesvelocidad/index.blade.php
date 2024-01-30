@@ -118,7 +118,7 @@
 							@if(!isset($_SESSION['permisos']['858']))
                                 <a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
                             @else
-                                <a href="" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada" onclick="alerta()"><i class="fas fa-search"></i></a>
+                                <a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada" onclick="alerta()"><i class="fas fa-search"></i></a>
                             @endif
                         </div>
 					</div>
