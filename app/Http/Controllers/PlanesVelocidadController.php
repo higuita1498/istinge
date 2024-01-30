@@ -56,14 +56,14 @@ class PlanesVelocidadController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $moneda = auth()->user()->empresa()->moneda;
         $planes = PlanesVelocidad::query();
-
+        dd($request);
         if ($request->filtro == true) {
             if($request->nombre){
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('name', 'like', "%{$request->nombre}%");
                 });
             }
-            dd($request);
+
             if($request->name){
                 $planes->where(function ($query) use ($request) {
                     $query->orWhere('name', 'like', "%{$request->name}%");
