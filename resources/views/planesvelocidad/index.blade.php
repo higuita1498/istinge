@@ -453,7 +453,7 @@
                 [0, "asc"]
             ],
             "pageLength": {{ Auth::user()->empresa()->pageLength }},
-            ajax: '{{url("/planes-restringido")}}',
+            ajax: '{{url("/planes")}}',
             headers: {
                 'X-CSRF-TOKEN': '{{csrf_token()}}'
             },
