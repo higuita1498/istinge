@@ -26,8 +26,10 @@
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
-            <embed src="https://maxinet.online/software/empresa/asignaciones/1036/imprimir" type="application/pdf" width="100%" height="600px" />
-        <center>
+            <div>
+                <embed src="https://maxinet.online/software/empresa/asignaciones/1036/imprimir" type="application/pdf" width="100%" height="600px" style="margin-bottom:50px;"/>
+            </div>
+            <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
                 <div class="jay-signature-pad--body">
