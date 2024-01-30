@@ -248,7 +248,7 @@
         });
 
         $('#filtrar').on('click', function(e) {
-            inicializarDataTable();
+            getDataTable();
             return false;
         });
 
@@ -453,7 +453,7 @@
                 [0, "asc"]
             ],
             "pageLength": {{ Auth::user()->empresa()->pageLength }},
-            ajax: '{{url("/planes")}}',
+            ajax: '{{url("/planes-restringido")}}',
             headers: {
                 'X-CSRF-TOKEN': '{{csrf_token()}}'
             },

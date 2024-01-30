@@ -97,6 +97,7 @@ Route::get('reporte', 'CRMController@reporte');
 Route::get('logsCRM/{crm}', 'CRMController@logsCRM');
 Route::get('puertos', 'PuertosController@puertos');
 Route::get('planes', 'PlanesVelocidadController@planes');
+Route::get('planes-restringido', 'PlanesVelocidadController@planesRestringido');
 Route::get('promesas', 'PromesasPagoController@promesas');
 Route::get('blacklist', 'BlacklistController@blacklist');
 Route::get('pagos', 'PagosController@pagos');
