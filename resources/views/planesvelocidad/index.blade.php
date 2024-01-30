@@ -115,12 +115,8 @@
 
 						<div class="col-md-1 pl-1 pt-1 text-left">
 							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
-							{{-- @if(!isset($_SESSION['permisos']['858'])) --}}
-                                <a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
-                            {{-- @else
-                                <a href="" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada" onclick="alerta()"><i class="fas fa-search"></i></a>
-                            @endif --}}
-                        </div>
+							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -169,9 +165,6 @@
 
 @section('scripts')
 <script>
-    function alerta(){
-        alert("Hola estas intentando filtar usuario");
-    }
     var tabla = null;
     // Evento que escucha cuando se hace clic en el botón específico
     document.getElementById('filtrar').addEventListener('click', function() {
@@ -232,7 +225,7 @@
             }]
             @endif
 		});
-        @endif
+
         tabla.on('preXhr.dt', function(e, settings, data) {
             //data.serial_onu = $('#serial_onu').val();
             data.name = $('#name').val();
@@ -284,8 +277,10 @@
         });
     });
 
-
-
+    @endif
+	function getDataTable() {
+		tabla.ajax.reload();
+	}
 
 	function abrirFiltrador() {
 		if ($('#form-filter').hasClass('d-none')) {
