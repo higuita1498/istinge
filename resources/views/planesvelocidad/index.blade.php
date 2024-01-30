@@ -248,7 +248,7 @@
         });
 
         $('#filtrar').on('click', function(e) {
-            getDataTable();
+            inicializarDataTable();
             return false;
         });
 
