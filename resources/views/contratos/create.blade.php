@@ -418,7 +418,7 @@
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad()">
+                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad(this)">
                                     <option value="1">Fibra</option>
                                     <option value="2">Inalámbrico</option>
                                 </select>
@@ -898,8 +898,8 @@
         </div>
     </div>
     <script>
-        function visibilidad() {
-
+        function visibilidad(selectElement) {
+            var selectedOption = selectElement.value;
             // Mostrar los inputs inalámbricos si la opción es igual a 2
             if (selectedOption == 2) {
                 document.getElementById('puerto_receptor').style.display = 'block';
