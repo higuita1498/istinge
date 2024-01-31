@@ -426,7 +426,7 @@
                                     <strong>{{ $errors->first('tecnologia') }}</strong>
                                 </span>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group {{old('tecnologia')==1?'':'d-none'}}">
                                 <label class="control-label d-none">Ip Receptora <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" >
                                 <span class="help-block error">
