@@ -35,7 +35,7 @@
             <div>
                 <embed src="https://telepon.com.co/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
-            {{$appUrl}}
+            {{$appUrl}}{{$rutaPdf}}
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
