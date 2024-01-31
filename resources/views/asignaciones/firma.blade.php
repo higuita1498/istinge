@@ -25,9 +25,7 @@
     <form method="POST" action="{{ route('asignaciones.store_firma', $contacto->referencia_asignacion) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-asignacion">
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
-       <div>
-                <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-            </div>
+
         @csrf
             <div>
                 <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
