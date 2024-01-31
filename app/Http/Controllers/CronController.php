@@ -95,7 +95,7 @@ class CronController extends Controller
             where('hora_creacion_factura','>=', $horaInicio)
             ->where('hora_creacion_factura','<=', $horaFin)
             ->where('fecha_factura', $date)
-            ->where('status', 1)->get();
+            ->where('id', 1)->get();
 
             $fecha = Carbon::now()->format('Y-m-d');
 
@@ -119,11 +119,40 @@ class CronController extends Controller
                     $numero = 0;
                 }
 
-                if(Carbon::now()->format('d')*1 > $grupo_corte->fecha_suspension){
-                    $date = Carbon::create(Carbon::now()->addMonth()->format('Y'), Carbon::now()->addMonth()->format('m'), $grupo_corte->fecha_suspension,0);
-                }else{
-                    $date = Carbon::create(Carbon::now()->addDays(15)->format('Y'), Carbon::now()->format('m'), $grupo_corte->fecha_suspension, 0);
+            //Calculo fecha pago oportuno.
+                $y = Carbon::now()->format('Y');
+                $m = Carbon::now()->format('m');
+                $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+
+                if($grupo_corte->fecha_factura > $grupo_corte->fecha_pago && $m!=12){
+                    $m=$m+1;
                 }
+
+                if($m == 12){
+                    $y = $y+1;
+                    $m = 01;
+                }
+            $date_pagooportuno = $y . "-" . $m . "-" . $d;
+            //Fin calculo fecha de pago oportuno
+
+            //calculo fecha suspension
+                $y = Carbon::now()->format('Y');
+                $m = Carbon::now()->format('m');
+                $ds = substr(str_repeat(0, 2).$grupo_corte->fecha_suspension, - 2);
+                $da = Carbon::now()->format('d')*1;
+
+                 if($da > $grupo_corte->fecha_suspension && $m!=12){
+                    $m=$m+1;
+                }
+
+                if($m == 12){
+                    if($da > $grupo_corte->fecha_suspension){
+                        $m = 01;
+                    }
+                    $y = $y+1;
+                }
+                $date_suspension = $y . "-" . $m . "-" . $d;
+            //Fin calculo fecha suspension
 
                 foreach ($contratos as $contrato) {
 
@@ -165,7 +194,7 @@ class CronController extends Controller
                                         $fecha_suspension = $grupo_corte->fecha_suspension;
                                 }
 
-                                $plazo=TerminosPago::where('dias', Funcion::diffDates($date, Carbon::now())+1)->first();
+                                $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
                                 $tipo = 1; //1= normal, 2=Electrónica.
                                 $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
 
@@ -180,7 +209,7 @@ class CronController extends Controller
 
                                 // Validacion para que solo asigne numero consecutivo si no existe.
                                 while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
-                                    $nro->save();
+                                    // $nro->save();
                                     $inicio=$nro->inicio;
                                     $nro->inicio += 1;
                                 }
@@ -196,24 +225,10 @@ class CronController extends Controller
                                 $factura->cliente       = $contrato->cliente;
                                 $factura->fecha         = $fecha;
                                 $factura->tipo          = $tipo;
-                                $factura->vencimiento   = $date->format('Y-m-d');
-                                $factura->suspension    = $date->format('Y-m-d');
-
-                                //Calculo fecha pago oportuno.
-                                $y = Carbon::now()->format('Y');
-                                $m = Carbon::now()->format('m');
-                                $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
-
-                                if($grupo_corte->fecha_factura > $grupo_corte->fecha_pago && $m!=12){
-                                    $m=$m+1;
-                                }
-
-                                if($m == 12){
-                                    $y = $y+1;
-                                    $m = 01;
-                                }
-
-                                $factura->pago_oportuno = $y . '-' . $m . '-' . $d;
+                                $factura->vencimiento   = $date_suspension;
+                                $factura->suspension    = $date_suspension;
+                                $factura->pago_oportuno = $date_pagooportuno;
+                                return $factura;
                                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                                 $factura->bodega        = 1;
                                 $factura->vendedor      = 1;
@@ -333,7 +348,7 @@ class CronController extends Controller
                                         $nombreEmpresa = $empresa->nombre;
                                         $codigoFactura = $factura->codigo ?? $factura->nro;
                                         $valorFactura =  $factura->totalAPI($empresa->id)->total;
-                                        $fechaVencimiento = $date->format('d-m-Y');
+                                        $fechaVencimiento = Carbon::parse($date_suspension)->format('d-m-Y');
 
                                         $bulksms = $empresa->sms_factura_generada;
                                         $bulksms = str_replace("{cliente}", $nombreCliente, $bulksms);
