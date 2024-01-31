@@ -382,15 +382,15 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Ip Receptora <span class="text-danger">*</span></label>
+                            <div class="col-md-4 form-group {{$contrato->tecnologia==2?'':'d-none'}}">
+                                <label class="control-label d-none">Ip Receptora <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" value="{{ $contrato->ip_receptora}}">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('ip_receptora') }}</strong>
                                 </span>
                             </div>
 
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group {{$contrato->tecnologia==2?'':'d-none'}}">
                                 <label class="control-label d-none">Puerto Receptor <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor}}">
                                 <span class="help-block error">
