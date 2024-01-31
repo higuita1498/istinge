@@ -385,7 +385,7 @@
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label d-none">Tipo de Tecnología <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
+                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad(this)">
                                     <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
                                     <option value="2" {{$contrato->tecnologia==2?'selected':''}}>Inalámbrico</option>
                                 </select>
@@ -393,17 +393,17 @@
                                     <strong>{{ $errors->first('tecnologia') }}</strong>
                                 </span>
                             </div>
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Ip Receptora <span class="text-danger"></span></label>
-                                <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" value="{{ $contrato->ip_receptora}}">
+                            <div class="col-md-4 form-group d-none" id="ip_receptora">
+                                <label class="control-label">Ip Receptora</label>
+                                <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" value="{{ $contrato->ip_receptora }}">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('ip_receptora') }}</strong>
                                 </span>
                             </div>
 
-                            <div class="col-md-4 form-group ">
-                                <label class="control-label ">Puerto Receptor <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor}}">
+                            <div class="col-md-4 form-group d-none" id="puerto_receptor">
+                                <label class="control-label ">Puerto Receptor</label>
+                                <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor }}" >
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('puerto_receptor') }}</strong>
                                 </span>
@@ -812,7 +812,18 @@
 @endsection
 
 @section('scripts')
+
     <script>
+        function visibilidad(selectElement) {
+
+            var selectedOption = selectElement.value;
+            // Mostrar los inputs inalámbricos si la opción es igual a 2
+            if (selectedOption == 2) {
+
+                document.getElementById('puerto_receptor').classList.toggle('d-none', selectedOption != 2);
+                document.getElementById('ip_receptora').classList.toggle('d-none', selectedOption != 2);
+            }
+            }
         $('#us2').locationpicker({
             location: {
                 latitude: {{ $contrato->latitude ? $contrato->latitude : $gmaps->latitude }},

@@ -971,7 +971,7 @@ class ContratosController extends Controller
         'c.nombre','c.apellido1', 'c.apellido2','c.nit','c.celular','c.telefono1','contracts.ip','contracts.mac_address',
         'contracts.server_configuration_id','contracts.conexion','contracts.marca_router','contracts.modelo_router',
         'contracts.marca_antena','contracts.modelo_antena','contracts.nodo','contracts.ap','contracts.interfaz',
-        'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte','contracts.contrasena_wifi','contracts.usuario_wifi',
+        'contracts.local_address','contracts.local_address_new','contracts.ip_new','contracts.grupo_corte','contracts.contrasena_wifi','contracts.usuario_wifi','contracts.ip_receptora','contracts.puerto_receptor',
          'contracts.facturacion', 'contracts.fecha_suspension', 'contracts.usuario','contracts.local_adress_pppoe','contracts.direccion_local_address', 'contracts.password',
          'contracts.adjunto_a', 'contracts.referencia_a', 'contracts.adjunto_b', 'contracts.referencia_b', 'contracts.factura_individual',
          'contracts.adjunto_c', 'contracts.referencia_c', 'contracts.adjunto_d','contracts.profile', 'contracts.referencia_d',
