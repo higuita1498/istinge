@@ -418,7 +418,7 @@
 
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
+                                <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad()">
                                     <option value="1">Fibra</option>
                                     <option value="2">Inalámbrico</option>
                                 </select>
@@ -899,6 +899,9 @@
     </div>
 
     <script>
+        function visibilidad(){
+            alert("ocultar ");
+        }
             $('#tipo_suspension_no1').change(function (e) {
             if ($('#tipo_suspension_no1').val() == 1) {
                 $('.cls-nosuspension').removeClass('d-none');
