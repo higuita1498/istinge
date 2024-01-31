@@ -32,10 +32,8 @@
             $urlPdf = "{$appUrl}{$rutaPdf}";
         @endphp
             <div>
-
+                {{-- <embed src="{{ $urlPdf }}" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/> --}}
                 <embed src="{{ $urlPdf }}" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-
-                {{-- <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/> --}}
             </div>
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
