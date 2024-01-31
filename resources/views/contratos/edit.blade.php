@@ -383,6 +383,21 @@
                             </div>
 
                             <div class="col-md-4 form-group">
+                                <label class="control-label">Ip Receptora <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" value="{{ $contrato->ip_receptora}}">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('ip_receptora') }}</strong>
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Puerto Receptor <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor}}">
+                                <span class="help-block error">
+                                    <strong>{{ $errors->first('puerto_receptor') }}</strong>
+                                </span>
+                            </div>
+                            <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
                                     <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
