@@ -428,7 +428,7 @@
                             </div>
                             <div class="col-md-4 form-group {{old('conexion')==2?'':'d-none'}}">
                                 <label class="control-label d-none">Ip Receptora <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" value="{{ $contrato->ip_receptora}}">
+                                <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" >
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('ip_receptora') }}</strong>
                                 </span>
@@ -436,7 +436,7 @@
 
                             <div class="col-md-4 form-group {{old('conexion')==2?'':'d-none'}}">
                                 <label class="control-label d-none">Puerto Receptor <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor}}">
+                                <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" >
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('puerto_receptor') }}</strong>
                                 </span>
