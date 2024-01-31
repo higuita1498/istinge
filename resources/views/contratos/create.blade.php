@@ -378,7 +378,7 @@
                                 <input type="text" class="form-control" name="direccion_local_address" id="local_address" onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46 || event.charCode==47">
                             </div>
 
-                            <div class="col-md-4 form-group d-none" id="div_profile" >
+                            <div class="col-md-4 form-group d-none" id="profile" >
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="profile" >
                             </div>
