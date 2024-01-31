@@ -237,6 +237,19 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Usuario Wifi <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas." class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="us2-lat" name="usuario_wifi" value="">
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Contraseña Wifi <a><i data-tippy-content="Arrastre el pin para indicar las coordenadas deseadas." class="icono far fa-question-circle"></i></a></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="us2-lat" name="contrasena_wifi" value="">
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">

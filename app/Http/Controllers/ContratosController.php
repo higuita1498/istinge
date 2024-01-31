@@ -1415,6 +1415,8 @@ class ContratosController extends Controller
                     $contrato->tipo_contrato           = $request->tipo_contrato;
                     $contrato->iva_factura             = $request->iva_factura; //es el iva al plan de internet.
                     $contrato->observaciones           = $request->observaciones;
+                    $contrato->usuario_wifi            = $request->usuario_wifi ;
+                    $contrato->contrasena_wifi         = $request->contrasena_wifi;
 
                     if(isset($request->factura_individual)){
                         $contrato->factura_individual = $request->factura_individual;
