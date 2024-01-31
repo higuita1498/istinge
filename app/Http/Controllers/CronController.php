@@ -95,7 +95,7 @@ class CronController extends Controller
             where('hora_creacion_factura','>=', $horaInicio)
             ->where('hora_creacion_factura','<=', $horaFin)
             ->where('fecha_factura', $date)
-            ->where('id', 1)->get();
+            ->where('status', 1)->get();
 
             $fecha = Carbon::now()->format('Y-m-d');
 
