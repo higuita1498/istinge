@@ -26,6 +26,15 @@
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
+        @php
+            $appUrl = env('APP_URL');
+            $rutaPdf = "/empresa/asignaciones/{$contacto->id}/imprimir";
+            $urlPdf = "{$appUrl}{$rutaPdf}";
+        @endphp
+        {{-- Imprime o debuggea las variables --}}
+        {{ $appUrl }}
+        {{ $rutaPdf }}
+        {{ $urlPdf }}
             <div>
                 <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
