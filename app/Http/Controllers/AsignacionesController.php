@@ -30,7 +30,7 @@ class AsignacionesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+      //  $this->middleware('auth');
         set_time_limit(300);
         view()->share(['seccion' => 'contratos', 'subseccion' => 'asignaciones', 'title' => 'Asignaciones', 'icon' =>'fas fa-file-contract']);
     }
