@@ -426,7 +426,7 @@
                                     <strong>{{ $errors->first('tecnologia') }}</strong>
                                 </span>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group d-none" id="ip_receptora">
                                 <label class="control-label d-none">Ip Receptora <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" >
                                 <span class="help-block error">
@@ -434,7 +434,7 @@
                                 </span>
                             </div>
 
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group d-none" id="puerto_receptor">
                                 <label class="control-label ">Puerto Receptor <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" >
                                 <span class="help-block error">
@@ -898,21 +898,17 @@
         </div>
     </div>
     <script>
-        $(document).ready(function() {
-            // Detectar cambio en el select
-            $('#tecnologia').change(function() {
-                // Obtener el valor seleccionado
-                var selectedOption = $(this).val();
+        function visibilidad() {
 
-                // Ocultar todos los inputs
-                $('#puerto_receptor, #ip_receptora').hide();
+            // Mostrar los inputs inalámbricos si la opción es igual a 2
+            if (selectedOption == 2) {
+                document.getElementById('puerto_receptor').style.display = 'block';
+                document.getElementById('ip_receptora').style.display = 'block';
+            }
+        }
 
-                // Mostrar los inputs según la opción seleccionada
-                if (selectedOption == 2) { // Inalámbrico
-                    $('#puerto_receptor, #ip_receptora').show();
-                }
-            });
-        });
+        // Llamar a la función una vez al inicio para manejar el estado inicial
+        handleTecnologiaChange(document.getElementById('tecnologia'));
     </script>
     <script>
             $('#tipo_suspension_no1').change(function (e) {
