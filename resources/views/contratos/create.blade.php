@@ -903,8 +903,9 @@
             var selectedOption = selectElement.value;
             // Mostrar los inputs inalámbricos si la opción es igual a 2
             if (selectedOption == 2) {
-                document.getElementById('puerto_receptor').style.display = 'block';
-                document.getElementById('ip_receptora').style.display = 'block';
+
+                document.getElementById('puerto_receptor').classList.toggle('d-none', selectedOption != 2);
+                document.getElementById('ip_receptora').classList.toggle('d-none', selectedOption != 2);
             }
         }
 
