@@ -899,6 +899,7 @@
     </div>
     <script>
         function visibilidad(selectElement) {
+            alert("hola");
             var selectedOption = selectElement.value;
             // Mostrar los inputs inalámbricos si la opción es igual a 2
             if (selectedOption == 2) {
