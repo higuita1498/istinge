@@ -228,7 +228,6 @@ class CronController extends Controller
                                 $factura->vencimiento   = $date_suspension;
                                 $factura->suspension    = $date_suspension;
                                 $factura->pago_oportuno = $date_pagooportuno;
-                                return $factura;
                                 $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
                                 $factura->bodega        = 1;
                                 $factura->vendedor      = 1;
