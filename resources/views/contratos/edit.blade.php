@@ -391,14 +391,14 @@
                             </div>
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Puerto Receptor <span class="text-danger">*</span></label>
+                                <label class="control-label d-none">Puerto Receptor <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="puerto_receptor" id="puerto_receptor" value="{{ $contrato->puerto_receptor}}">
                                 <span class="help-block error">
                                     <strong>{{ $errors->first('puerto_receptor') }}</strong>
                                 </span>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
+                                <label class="control-label d-none">Tipo de Tecnología <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione">
                                     <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
                                     <option value="2" {{$contrato->tecnologia==2?'selected':''}}>Inalámbrico</option>
