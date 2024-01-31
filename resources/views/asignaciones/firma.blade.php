@@ -25,9 +25,10 @@
     <form method="POST" action="{{ route('asignaciones.store_firma', $contacto->referencia_asignacion) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-asignacion">
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
-
         @csrf
-
+            <div>
+                <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
+            </div>
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
@@ -56,9 +57,7 @@
             </div>
         </div>
     </form>
-    <div>
-        <embed src="https://maxinet.online/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-    </div>
+
     <script src="{{asset('vendors/signature_pad/2.3.2/signature_pad.min.js')}}"></script>
     <script src="{{asset('vendors/signature_pad/1.5.3/signature_pad.min.js')}}"></script>
 
