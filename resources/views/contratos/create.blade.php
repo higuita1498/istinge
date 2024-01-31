@@ -426,7 +426,7 @@
                                     <strong>{{ $errors->first('tecnologia') }}</strong>
                                 </span>
                             </div>
-                            <div class="col-md-4 form-group {{old('tecnologia')==2?'':'d-none'}}">
+                            <div class="col-md-4 form-group">
                                 <label class="control-label d-none">Ip Receptora <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="ip_receptora" id="ip_receptora" >
                                 <span class="help-block error">
@@ -897,11 +897,24 @@
             </div>
         </div>
     </div>
-
     <script>
-        function visibilidad(){
-            alert("ocultar ");
-        }
+        $(document).ready(function() {
+            // Detectar cambio en el select
+            $('#tecnologia').change(function() {
+                // Obtener el valor seleccionado
+                var selectedOption = $(this).val();
+
+                // Ocultar todos los inputs
+                $('#puerto_receptor, #ip_receptora').hide();
+
+                // Mostrar los inputs según la opción seleccionada
+                if (selectedOption == 2) { // Inalámbrico
+                    $('#puerto_receptor, #ip_receptora').show();
+                }
+            });
+        });
+    </script>
+    <script>
             $('#tipo_suspension_no1').change(function (e) {
             if ($('#tipo_suspension_no1').val() == 1) {
                 $('.cls-nosuspension').removeClass('d-none');
