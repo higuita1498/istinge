@@ -783,6 +783,8 @@ class ContratosController extends Controller
                 $contrato->tipo_contrato           = $request->tipo_contrato;
                 $contrato->iva_factura             = $request->iva_factura;
                 $contrato->observaciones           = $request->observaciones;
+                $contrato->usuario_wifi            = $request->usuario_wifi ;
+                $contrato->contrasena_wifi         = $request->contrasena_wifi;
 
 
                 if($request->tipo_suspension_no == 1){
