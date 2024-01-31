@@ -502,7 +502,9 @@ class Factura extends Model
         if ($this->plazo=='n') {
             return 'Vencimiento Manual';
         }
-        return TerminosPago::where('id',$this->plazo)->first()->nombre;
+        if(TerminosPago::where('id',$this->plazo)->first()){
+            return TerminosPago::where('id',$this->plazo)->first()->nombre;
+        }
     }
 
     public function vendedor(){
