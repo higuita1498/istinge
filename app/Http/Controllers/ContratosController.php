@@ -1523,6 +1523,8 @@ class ContratosController extends Controller
                 $contrato->address_street       = $request->address_street;
                 $contrato->tipo_contrato        = $request->tipo_contrato;
                 $contrato->observaciones        = $request->observaciones;
+                $contrato->usuario_wifi            = $request->usuario_wifi ;
+                $contrato->contrasena_wifi         = $request->contrasena_wifi;
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
