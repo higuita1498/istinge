@@ -536,7 +536,7 @@
 
     <li class="nav-item">
 
-        <a href="{{Auth::user()->empresa()->adminOLT}}" target="_blank">
+        <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank" rel="noopener noreferrer">
             <i class="menu-icon fas fa-server"></i>
             <span class="menu-title">Admin OLT</span>
         </a>
