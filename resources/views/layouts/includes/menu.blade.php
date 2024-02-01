@@ -533,12 +533,12 @@
     @endif
 
     @if(Auth::user()->empresa()->adminOLT && isset($_SESSION['permisos']['761']))
-
+    @php
+        $adminOLT = Auth::user()->empresa()->adminOLT;
+    @endphp
     <li class="nav-item">
-        @php
-            $adminOLT = Auth::user()->empresa()->adminOLT;
-        @endphp
-        <a class="nav-link" href="{{ $adminOLT }}" target="_blank" rel="noopener noreferrer" onclick="event.preventDefault(); window.open('{{ $adminOLT }}', '_blank').opener = null;">
+        {{-- <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank"> --}}
+        <a class="nav-link" href="#" onclick="openExternalURL('{{ $adminOLT }}'); return false;">
             <i class="menu-icon fas fa-server"></i>
             <span class="menu-title">Admin OLT</span>
         </a>
