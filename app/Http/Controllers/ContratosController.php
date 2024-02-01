@@ -1188,7 +1188,7 @@ class ContratosController extends Controller
                             "?local-address" => $request->ip
                             )
                         );
-                        dd($error);
+
                     }
 
                     /*DHCP*/
@@ -1218,6 +1218,7 @@ class ContratosController extends Controller
                                 "?address" => $request->ip
                                 )
                             );
+
                         }else{
                             $mensaje='NO SE HA PODIDO EDITAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
                             return redirect('empresa/contratos')->with('danger', $mensaje);
@@ -1227,7 +1228,7 @@ class ContratosController extends Controller
                     /*IP ESTÁTICA*/
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
-                            $API->comm("/ip/arp/add", array(
+                            $error = $API->comm("/ip/arp/add", array(
                                 "comment"     => $this->normaliza($servicio).'-'.$request->nro,
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
@@ -1241,7 +1242,7 @@ class ContratosController extends Controller
                             );
                         }
                         if($queue){
-                            $API->comm("/queue/simple/set", array(
+                            $error = $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
@@ -1254,7 +1255,7 @@ class ContratosController extends Controller
                                 )
                             );
                         }else{
-                            $API->comm("/queue/simple/add", array(
+                            $error = $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
@@ -1266,6 +1267,7 @@ class ContratosController extends Controller
                                 )
                             );
                         }
+                        dd($error);
                     }
 
                     /*VLAN*/
