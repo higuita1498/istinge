@@ -151,7 +151,7 @@ class CronController extends Controller
                     }
                     $y = $y+1;
                 }
-                $date_suspension = $y . "-" . $m . "-" . $d;
+                $date_suspension = $y . "-" . $m . "-" . $ds;
             //Fin calculo fecha suspension
 
                 foreach ($contratos as $contrato) {
