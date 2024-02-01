@@ -785,6 +785,8 @@ class ContratosController extends Controller
                 $contrato->observaciones           = $request->observaciones;
                 $contrato->usuario_wifi            = $request->usuario_wifi ;
                 $contrato->contrasena_wifi         = $request->contrasena_wifi;
+                $contrato->ip_receptora            = $request->ip_receptora;
+                $contrato->puerto_receptor         = $request->puerto_receptor;
 
 
                 if($request->tipo_suspension_no == 1){
@@ -898,6 +900,9 @@ class ContratosController extends Controller
             $contrato->address_street       = $request->address_street;
             $contrato->tipo_contrato        = $request->tipo_contrato;
             $contrato->observaciones           = $request->observaciones;
+            $contrato->ip_receptora            = $request->ip_receptora;
+                $contrato->puerto_receptor         = $request->puerto_receptor;
+
 
             if($request->factura_individual){
                 $contrato->factura_individual   = $request->factura_individual;
@@ -1417,6 +1422,8 @@ class ContratosController extends Controller
                     $contrato->observaciones           = $request->observaciones;
                     $contrato->usuario_wifi            = $request->usuario_wifi ;
                     $contrato->contrasena_wifi         = $request->contrasena_wifi;
+                    $contrato->ip_receptora            = $request->ip_receptora;
+                    $contrato->puerto_receptor         = $request->puerto_receptor;
 
                     if(isset($request->factura_individual)){
                         $contrato->factura_individual = $request->factura_individual;
@@ -1525,6 +1532,8 @@ class ContratosController extends Controller
                 $contrato->observaciones        = $request->observaciones;
                 $contrato->usuario_wifi            = $request->usuario_wifi ;
                 $contrato->contrasena_wifi         = $request->contrasena_wifi;
+                $contrato->ip_receptora            = $request->ip_receptora;
+                $contrato->puerto_receptor         = $request->puerto_receptor;
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;
