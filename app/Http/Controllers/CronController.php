@@ -209,7 +209,7 @@ class CronController extends Controller
 
                                 // Validacion para que solo asigne numero consecutivo si no existe.
                                 while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
-                                    // $nro->save();
+                                    $nro->save();
                                     $inicio=$nro->inicio;
                                     $nro->inicio += 1;
                                 }
@@ -246,7 +246,7 @@ class CronController extends Controller
                                         if($contrato->factura_individual == 0){
                                             $contratos_multiples = Contrato::where('client_id',$factura->cliente)->where('factura_individual', 0)->get();
                                         }else {
-                                            $contratos_multiples = Contrato::where('id',$factura->cliente)->get();
+                                            $contratos_multiples = Contrato::where('client_id',$factura->cliente)->get();
                                         }
 
                                         foreach($contratos_multiples as $cm){
@@ -487,99 +487,7 @@ class CronController extends Controller
                     }
                 }
             }
-
             ## ENVIO SMS ##
-
-            ## ENVIO CORREO ##
-
-            $facturas = Factura::where('facturacion_automatica', 1)->where('fecha', date('Y-m-d'))->where('correo_sendinblue', 0)->get();
-            foreach ($facturas as $factura) {
-                $empresa = Empresa::find($factura->empresa);
-                $emails  = $factura->cliente()->email;
-                $tipo    = 'Factura de venta original';
-                view()->share(['title' => 'Imprimir Factura']);
-                if ($factura) {
-                    $items = ItemsFactura::where('factura',$factura->id)->get();
-                    $itemscount=ItemsFactura::where('factura',$factura->id)->count();
-                    $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-                    $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
-                    //---------------------------------------------//
-                    if($factura->emitida == 1){
-                        $impTotal = 0;
-                        foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
-                            if(isset($totalImp->total)){
-                                $impTotal = $totalImp->total;
-                            }
-                        }
-
-                        $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
-                        $infoEmpresa = Empresa::find($empresa->id);
-                        $data['Empresa'] = $infoEmpresa->toArray();
-                        $infoCliente = Contacto::find($factura->cliente);
-                        $data['Cliente'] = $infoCliente->toArray();
-                        /*..............................
-                        Construcción del código qr a la factura
-                        ................................*/
-                        $impuesto = 0;
-                        foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
-                            if(isset($imp->total)){
-                                $impuesto = $imp->total;
-                            }
-                        }
-
-                        $codqr = "NumFac:" . $factura->codigo . "\n" .
-                        "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-                        "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-                        "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-                        "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-                        "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
-                        "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-                        "ValorOtrosImpuestos:" .  0.00 . "\n" .
-                        "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
-                        "CUFE:" . $CUFEvr;
-                        /*..............................
-                        Construcción del código qr a la factura
-                        ................................*/
-                        $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
-                    }else{
-                        // $pdf = PDF::loadView('pdf.electronicaAPI', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->stream();
-                    }
-                     //-----------------------------------------------//
-
-                    $total = Funcion::ParsearAPI($factura->totalAPI($empresa->id)->total, $empresa->id);
-                    $key = Hash::make(date("H:i:s"));
-                    $toReplace = array('/', '$','.');
-                    $key = str_replace($toReplace, "", $key);
-                    $factura->nonkey = $key;
-                    $factura->save();
-                    $cliente = $factura->cliente()->nombre;
-                    $tituloCorreo = $empresa->nombre.": Factura N° $factura->codigo";
-                    $xmlPath = 'xml/empresa1/FV/FV-'.$factura->codigo.'.xml';
-                }
-            }
-
-            ## ENVIO CORREO ##
-            if (file_exists("CrearFactura.txt")){
-                $file = fopen("CrearFactura.txt", "a");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }else{
-                $file = fopen("CrearFactura.txt", "w");
-                fputs($file, "-----------------".PHP_EOL);
-                fputs($file, "Fecha de Generación: ".date('Y-m-d').''. PHP_EOL);
-                fputs($file, "Facturas Generadas: ".$i.''. PHP_EOL);
-                fputs($file, "SMS Enviados: ".$succ.''. PHP_EOL);
-                fputs($file, "SMS NO Enviados: ".$fail.''. PHP_EOL);
-                fputs($file, "-----------------".PHP_EOL);
-                fclose($file);
-            }
-
-
         }
     }
 
