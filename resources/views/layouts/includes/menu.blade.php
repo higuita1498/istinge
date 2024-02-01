@@ -522,10 +522,7 @@
             </a>
         </li>
     @endif
-    <a  class="nav-link" href="{{Auth::user()->empresa()->smartOLT}}" target="_blank">
-        <i class="menu-icon fas fa-server"></i>
-        <span class="menu-title">Smart OLT</span>
-    </a>
+
     @if(Auth::user()->empresa()->smartOLT && isset($_SESSION['permisos']['760']))
     <li class="nav-item">
         <a  class="nav-link" href="{{Auth::user()->empresa()->smartOLT}}" target="_blank">
