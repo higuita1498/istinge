@@ -1258,7 +1258,7 @@ class ContratosController extends Controller
                             );
                         }else{
 
-                             $API->comm("/queue/simple/add", array(
+                            $error = $API->comm("/queue/simple/add", array(
                               //  "name"            => $this->normaliza($servicio).'-'.$request->nro,
                               "name"            => 'prueba',
                                 "target"          => $request->ip,
