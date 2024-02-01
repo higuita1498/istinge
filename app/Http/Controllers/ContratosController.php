@@ -1171,7 +1171,7 @@ class ContratosController extends Controller
                     /*PPPOE*/
 
                     if($request->conexion == 1){
-                        dd("hola 1");
+
                         $ppoe_local_adress = $request->direccion_local_address;
                         $error = $API->comm("/ppp/secret/add", array(
                             "name"           => $request->usuario,
@@ -1183,11 +1183,12 @@ class ContratosController extends Controller
                             "comment"        => $this->normaliza($servicio).'-'.$request->nro
                             )
                         );
-                            dd($error);
+
                             $getall = $API->comm("/ppp/secret/getall", array(
                             "?local-address" => $request->ip
                             )
                         );
+                        dd($error);
                     }
 
                     /*DHCP*/
