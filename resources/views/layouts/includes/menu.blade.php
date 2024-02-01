@@ -612,3 +612,8 @@
     <input type="hidden" id="notificacionPings" value="{{ isset($_SESSION['permisos']['781']) ? 1 : 0 }}">
     <input type="hidden" id="notificacionTecnico" value="{{ isset($_SESSION['permisos']['833']) ? 1 : 0 }}">
 @endif
+<script>
+    function openExternalURL(url) {
+            window.open(url, '_blank', 'noopener noreferrer');
+        }
+</script>
