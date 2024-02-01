@@ -534,8 +534,8 @@
 
     @if(Auth::user()->empresa()->adminOLT && isset($_SESSION['permisos']['761']))
     <li class="nav-item">
-        {{Auth::user()->empresa()->adminOLT}}
-        <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank">
+
+        <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}">
             <i class="menu-icon fas fa-server"></i>
             <span class="menu-title">Admin OLT</span>
         </a>
