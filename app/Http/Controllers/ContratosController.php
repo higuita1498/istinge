@@ -1169,9 +1169,7 @@ class ContratosController extends Controller
                     if($limit_at){ $rate_limit .= ' '.$limit_at; }
 
                     /*PPPOE*/
-
                     if($request->conexion == 1){
-
                         $ppoe_local_adress = $request->direccion_local_address;
                          $API->comm("/ppp/secret/add", array(
                             "name"           => $request->usuario,
@@ -1188,7 +1186,6 @@ class ContratosController extends Controller
                             "?local-address" => $request->ip
                             )
                         );
-
                     }
 
                     /*DHCP*/
@@ -1218,7 +1215,6 @@ class ContratosController extends Controller
                                 "?address" => $request->ip
                                 )
                             );
-
                         }else{
                             $mensaje='NO SE HA PODIDO EDITAR EL CONTRATO DE SERVICIOS, NO EXISTE UN SERVIDOR DHCP DEFINIDO PARA EL PLAN '.$plan->name;
                             return redirect('empresa/contratos')->with('danger', $mensaje);
@@ -1228,8 +1224,7 @@ class ContratosController extends Controller
                     /*IP ESTÁTICA*/
                     if($request->conexion == 3){
                         if($mikrotik->amarre_mac == 1){
-
-                             $API->comm("/ip/arp/add", array(
+                            $API->comm("/ip/arp/add", array(
                                 "comment"     => $this->normaliza($servicio).'-'.$request->nro,
                                 "address"     => $request->ip,
                                 "interface"   => $request->interfaz,
@@ -1243,8 +1238,7 @@ class ContratosController extends Controller
                             );
                         }
                         if($queue){
-
-                             $API->comm("/queue/simple/set", array(
+                            $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
@@ -1257,10 +1251,8 @@ class ContratosController extends Controller
                                 )
                             );
                         }else{
-
-                            $error = $API->comm("/queue/simple/add", array(
-                              //  "name"            => $this->normaliza($servicio).'-'.$request->nro,
-                              "name"            => 'prueba',
+                            $API->comm("/queue/simple/add", array(
+                                "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
                                 "burst-limit"     => $burst_limit,
@@ -1271,7 +1263,6 @@ class ContratosController extends Controller
                                 )
                             );
                         }
-                      //  dd($error);
                     }
 
                     /*VLAN*/
