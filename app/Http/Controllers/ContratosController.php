@@ -1169,6 +1169,7 @@ class ContratosController extends Controller
                     if($limit_at){ $rate_limit .= ' '.$limit_at; }
 
                     /*PPPOE*/
+                    dd("hola");
                     if($request->conexion == 1){
                         $ppoe_local_adress = $request->direccion_local_address;
                         $error = $API->comm("/ppp/secret/add", array(
