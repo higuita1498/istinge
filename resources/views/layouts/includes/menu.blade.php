@@ -522,7 +522,10 @@
             </a>
         </li>
     @endif
-
+    <a  class="nav-link" href="{{Auth::user()->empresa()->smartOLT}}" target="_blank">
+        <i class="menu-icon fas fa-server"></i>
+        <span class="menu-title">Smart OLT</span>
+    </a>
     @if(Auth::user()->empresa()->smartOLT && isset($_SESSION['permisos']['760']))
     <li class="nav-item">
         <a  class="nav-link" href="{{Auth::user()->empresa()->smartOLT}}" target="_blank">
@@ -533,12 +536,8 @@
     @endif
 
     @if(Auth::user()->empresa()->adminOLT && isset($_SESSION['permisos']['761']))
-    @php
-        $adminOLT = Auth::user()->empresa()->adminOLT;
-    @endphp
     <li class="nav-item">
-        {{-- <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank"> --}}
-        <a class="nav-link" href="#" onclick="openExternalURL('{{ $adminOLT }}'); return false;">
+        <a  class="nav-link" href="{{Auth::user()->empresa()->adminOLT}}" target="_blank">
             <i class="menu-icon fas fa-server"></i>
             <span class="menu-title">Admin OLT</span>
         </a>
@@ -612,8 +611,3 @@
     <input type="hidden" id="notificacionPings" value="{{ isset($_SESSION['permisos']['781']) ? 1 : 0 }}">
     <input type="hidden" id="notificacionTecnico" value="{{ isset($_SESSION['permisos']['833']) ? 1 : 0 }}">
 @endif
-<script>
-    function openExternalURL(url) {
-            window.open(url, '_blank', 'noopener noreferrer');
-        }
-</script>
