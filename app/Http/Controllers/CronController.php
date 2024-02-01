@@ -578,7 +578,7 @@ class CronController extends Controller
                 if($factura->id == $ultimaFacturaRegistrada){
 
                     //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
-                    $contratos = Contrato::whereIn('id',$facturaContratos)->get();
+                    $contratos = Contrato::whereIn('nro',$facturaContratos)->get();
                     if(!$contratos){
                         if($factura->contrato_id != null){
                             $contratos = Contrato::where('id',$factura->contrato_id)->get();
