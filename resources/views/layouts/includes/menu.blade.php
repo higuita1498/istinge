@@ -538,7 +538,7 @@
         @php
         $adminOLT = Auth::user()->empresa()->adminOLT;
     @endphp
-        <a  class="nav-link" href="{{ $adminOLT }}" target="_blank" rel="noopener noreferrer">
+        <a  class="nav-link" href="{{ $adminOLT }}" target="_blank" rel="noopener noreferrer" onclick="event.preventDefault(); window.open('{{ $adminOLT }}', '_blank').opener = null;">
             <i class="menu-icon fas fa-server"></i>
             <span class="menu-title">Admin OLT</span>
         </a>
