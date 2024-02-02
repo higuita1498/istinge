@@ -4334,17 +4334,19 @@ function getPlanes(mikrotik) {
     })
 }
 
-function interfazChange() {
-    if (document.getElementById("conexion").value == 3) {
+function interfazChange(){
+    if(document.getElementById("conexion").value == 3){
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_mac").classList.remove('d-none');
+        document.getElementById("local_adress").classList.add('d-none');
+        document.getElementById("div_profile").classList.add('d-none');
 
         //document.getElementById("mac_address").setAttribute('required', true);
         document.getElementById("interfaz").setAttribute('required', true);
         document.getElementById("div_local_address").innerHTML = "Segmento de IP <span class='text-danger'>*</span>";
         document.getElementById("div_ip").innerHTML = "Dirección IP (Remote Address)";
-        document.getElementById("div_name_vlan").classList.add('d-none');
-        document.getElementById("div_id_vlan").classList.add('d-none');
+      //  document.getElementById("div_name_vlan").classList.add('d-none');
+       // document.getElementById("div_id_vlan").classList.add('d-none');
         document.getElementById("div_usuario").classList.add('d-none');
         document.getElementById("div_password").classList.add('d-none');
 
@@ -4355,7 +4357,9 @@ function interfazChange() {
         document.getElementById("password").removeAttribute('required');
         document.getElementById("div_dhcp").classList.add('d-none');
         document.getElementById("simple_queue").removeAttribute('required');
-    } else if (document.getElementById("conexion").value == 4) {
+    }else if(document.getElementById("conexion").value == 4){
+        document.getElementById("local_adress").classList.add('d-none');
+        document.getElementById("div_profile").classList.add('d-none');
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("div_name_vlan").classList.remove('d-none');
         document.getElementById("div_id_vlan").classList.remove('d-none');
@@ -4378,7 +4382,9 @@ function interfazChange() {
         document.getElementById("password").removeAttribute('required');
         document.getElementById("div_dhcp").classList.add('d-none');
         document.getElementById("simple_queue").removeAttribute('required');
-    } else if (document.getElementById("conexion").value == 2) {
+    }else if(document.getElementById("conexion").value == 2){
+        document.getElementById("local_adress").classList.add('d-none');
+        document.getElementById("div_profile").classList.add('d-none');
         document.getElementById("div_interfaz").classList.remove('d-none');
         document.getElementById("interfaz").setAttribute('required', true);
 
@@ -4391,8 +4397,19 @@ function interfazChange() {
 
         document.getElementById("div_dhcp").classList.remove('d-none');
         document.getElementById("simple_queue").setAttribute('required', true);
+    }else if(document.getElementById("conexion").value == 1){
 
-    } else if (document.getElementById("conexion").value == 1) {
+      //  document.getElementById("usuario").value = '';
+      //  document.getElementById("password").value = '';
+     //   document.getElementById("div_usuario").classList.remove('d-none');
+     //   document.getElementById("usuario").setAttribute('required', true);
+     //   document.getElementById("div_password").classList.remove('d-none');
+     //   document.getElementById("password").setAttribute('required', true);
+
+    //    document.getElementById("div_mac").classList.add('d-none');
+     //   document.getElementById("mac_address").removeAttribute('required');
+     //   document.getElementById("div_dhcp").classList.add('d-none');
+     //   document.getElementById("simple_queue").removeAttribute('required');
         document.getElementById("usuario").value = '';
         document.getElementById("password").value = '';
         document.getElementById("div_usuario").classList.remove('d-none');
@@ -4404,12 +4421,12 @@ function interfazChange() {
         document.getElementById("mac_address").removeAttribute('required');
         document.getElementById("div_dhcp").classList.add('d-none');
         document.getElementById("simple_queue").removeAttribute('required');
-        // Campo que se activa nada mas cuando es pppoe
+         // Campo que se activa nada mas cuando es pppoe
         document.getElementById("local_adress").classList.remove('d-none');
         document.getElementById("local_adress").setAttribute('required', true);
-        document.getElementById("profile").classList.remove('d-none');
+        document.getElementById("div_profile").classList.remove('d-none');
 
-    } else {
+    }else{
         document.getElementById("div_interfaz").classList.add('d-none');
         document.getElementById("div_name_vlan").classList.add('d-none');
         document.getElementById("div_id_vlan").classList.add('d-none');
@@ -4433,16 +4450,16 @@ function interfazChange() {
     document.getElementById("interfaz").value = '';
     document.getElementById("simple_queue").value = '';
     //document.getElementById("mac_address").value = '';
-    document.getElementById("name_vlan").value = '';
-    document.getElementById("id_vlan").value = '';
+   // document.getElementById("name_vlan").value = '';
+   // document.getElementById("id_vlan").value = '';
     document.getElementById("usuario").value = '';
     document.getElementById("password").value = '';
     document.getElementById("mac_address").removeAttribute('required');
 
-    if (document.getElementById("conexion").value == 3) {
-        if (document.getElementById("amarre_mac").value == 1) {
+    if(document.getElementById("conexion").value == 3){
+        if(document.getElementById("amarre_mac").value == 1){
             document.getElementById("mac_address").setAttribute('required', true);
-        } else {
+        }else{
             document.getElementById("mac_address").removeAttribute('required');
         }
     }
