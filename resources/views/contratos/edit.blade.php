@@ -384,7 +384,7 @@
 
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label d-none">Tipo de Tecnología <span class="text-danger">*</span></label>
+                                <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad(this)">
                                     <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
                                     <option value="2" {{$contrato->tecnologia==2?'selected':''}}>Inalámbrico</option>
