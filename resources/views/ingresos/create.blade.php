@@ -277,7 +277,7 @@
                       <div class="resp-item">
                     <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria1" required="" onchange="enabled(1);" >
               				@foreach($categorias as $categoria)
-                              <option value="{{$categoria1->id}}">{{$categoria1->nombre}}</option>
+                              <option value="{{$categoria->id}}">{{$categoria->nombre}}</option>
 
                         {{-- <optgroup label="{{$categoria->nombre}}">
                             @foreach($categoria->hijos(true) as $categoria1)
