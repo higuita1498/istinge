@@ -239,7 +239,7 @@ class IngresosController extends Controller
          $categorias = Puc::where('empresa',auth()->user()->empresa)
          ->whereRaw('length(codigo) > 6')
          ->get();
-
+        dd($categorias);
         //obtiene los anticipos relacionados con este modulo (Ingresos)
         $anticipos = Anticipo::where('relacion',1)->orWhere('relacion',3)->get();
 

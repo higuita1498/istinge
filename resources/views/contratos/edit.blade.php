@@ -290,7 +290,7 @@
                             </div>
                             <div class="col-md-4 form-group {{$contrato->conexion==2?'':'d-none'}}" id="div_dhcp">
                                 <label class="control-label">Simple Queue <span class="text-danger">*</span></label>
-                                <select class="form-control selectpicker" id="simple_queue" name="simple_queue"  required="" title="Seleccione" data-live-search="true" >
+                                <select class="form-control selectpicker" id="simple_queue" name="simple_queue"  required="" title="Seleccione" data-live-search="true" data-size="5">
                                     <option value="dinamica" {{$contrato->simple_queue == 'dinamica' ? 'selected':''}}>Dinámica</option>
                                     <option value="estatica" {{$contrato->simple_queue == 'estatica' ? 'selected':''}}>Estática</option>
                                 </select>
@@ -299,7 +299,7 @@
                                 <label class="control-label">Interfaz de Conexión <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="hidden" id="interfaz_bd" value="{{ $contrato->interfaz }}">
-                                    <select class="form-control selectpicker" name="interfaz" id="interfaz" required="" title="Seleccione" data-live-search="true" >
+                                    <select class="form-control selectpicker" name="interfaz" id="interfaz" required="" title="Seleccione" data-live-search="true" data-size="5">
                                         @foreach($interfaces as $interfaz)
                                         <option value="{{$interfaz->name}}" {{$interfaz->name==$contrato->interfaz?'selected':''}}>{{$interfaz->name}}</option>
                                         @endforeach
@@ -313,7 +313,7 @@
                                 <label class="control-label" id="div_local_address">Segmento de IP</label>
                                   <div class="input-group">
                                     <input type="hidden" id="segmento_bd" value="{{ $contrato->local_address }}">
-                                    <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true">
+                                    <select class="form-control selectpicker" name="local_address" id="local_address" required="" title="Seleccione" data-live-search="true" data-size="5">
 
                                     </select>
                                     <span class="help-block error">
@@ -384,7 +384,7 @@
 
 
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Tipo de Tecnología <span class="text-danger">*</span></label>
+                                <label class="control-label d-none">Tipo de Tecnología <span class="text-danger">*</span></label>
                                 <select class="form-control selectpicker" id="tecnologia" name="tecnologia" required="" title="Seleccione" onchange="visibilidad(this)">
                                     <option value="1" {{$contrato->tecnologia==1?'selected':''}}>Fibra</option>
                                     <option value="2" {{$contrato->tecnologia==2?'selected':''}}>Inalámbrico</option>
