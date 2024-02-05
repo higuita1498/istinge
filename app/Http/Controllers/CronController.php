@@ -2428,6 +2428,7 @@ class CronController extends Controller
         foreach($facturas as $f){
 
             if($f->pagado() == 0){
+            DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
             $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
         DB::table('crm')->where('factura',$f->id)->delete();
             $eliminadas++;
