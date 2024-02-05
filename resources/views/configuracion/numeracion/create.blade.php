@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-3 form-group">
       <label class="control-label">Número final </label>
-      <input type="text" class="form-control nro"  id="final" name="final"   value="{{old('final')}}" maxlength="15">
+      <input type="text" class="form-control"  id="final" name="final"   value="{{old('final')}}" maxlength="15">
       <span class="help-block error">
         <strong>{{ $errors->first('final') }}</strong>
       </span>
