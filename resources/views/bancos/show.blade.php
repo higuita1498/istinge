@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('boton')
-	<input type="hidden" id="url_base" value="{{route('bancos.index')}}">
-	
+	{{-- <input type="hidden" id="url_base" value="{{route('bancos.index')}}">
+
 	<div class="row">
 		<div class="col-md-12 nopadding">
 			@if(auth()->user()->modo_lectura())
@@ -47,7 +47,7 @@
 				</div>
 			@endif
 		</div>
-	</div>
+	</div> --}}
 @endsection
 
 @section('content')
@@ -59,7 +59,7 @@
 	<div class="offset-md-9 col-md-3" style="background: #80808061;border: 1px solid #80808061;">
 		<div class="row">
 			<div class="col-md-4 text-right" style="    padding: 4%; font-weight: bold; color:#808080 ">Saldo</div>
-			<div class="col-md-8 text-left text-{{$saldo>0?'success':'danger'}}" style="padding: 4%; font-weight: bold;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($saldo)}}</div>			
+			<div class="col-md-8 text-left text-{{$saldo>0?'success':'danger'}}" style="padding: 4%; font-weight: bold;">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($saldo)}}</div>
 		</div>
 	</div>
 </div>
