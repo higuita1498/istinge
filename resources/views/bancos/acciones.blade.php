@@ -1,6 +1,6 @@
 @if(auth()->user()->modo_lectura())
 @else
-    <form action="{{ route('bancos.destroy',$id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-banco-{{$id}}">
+    {{-- <form action="{{ route('bancos.destroy',$id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-banco-{{$id}}">
         @csrf
         <input name="_method" type="hidden" value="DELETE">
     </form>
@@ -20,5 +20,5 @@
         @endif
     @endif
 
-    <button class="btn {{ ($oculto==0) ? 'btn-outline-success' : 'btn-outline-danger' }} btn-icons" type="button" title="{{ ($oculto==0) ? 'Mover a Ocultos' : 'Mover a Disponibles' }}" onclick="confirmar('ocultar-{{$id}}', '¿Está seguro de que desea {{ ($oculto==0) ? 'mover a ocultos' : 'mover a disponibles' }} el banco?', ' ');"><i class="fas fa-power-off"></i></button>
+    <button class="btn {{ ($oculto==0) ? 'btn-outline-success' : 'btn-outline-danger' }} btn-icons" type="button" title="{{ ($oculto==0) ? 'Mover a Ocultos' : 'Mover a Disponibles' }}" onclick="confirmar('ocultar-{{$id}}', '¿Está seguro de que desea {{ ($oculto==0) ? 'mover a ocultos' : 'mover a disponibles' }} el banco?', ' ');"><i class="fas fa-power-off"></i></button> --}}
 @endif
