@@ -2213,7 +2213,6 @@ class ReportesController extends Controller
         $movimientosTodos = $movimientosTodos->get();
 
         $tecnicos = User::whereIn('rol',[43,46])->get();
-        dd($tecnicos);
         $servicios = DB::table('servicios')->where('estatus',1)->get();
 
         return view('reportes.radicados.index')
