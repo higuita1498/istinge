@@ -299,7 +299,7 @@
                 '<input type="number" class="form-control form-control-sm calcularLinea" cont="'+nro+'" id="precio'+nro+'" maxlength="24" min="0" name="precio[]" placeholder="Precio Unitario" required>' +
                 '</td>' +
                 '<td>' +
-                '<input type="text" class="form-control form-control-sm nro calcularLinea" cont="'+nro+'" id="desc'+nro+'" name="desc[]" maxlength="5" placeholder="%" >' +
+                '<input type="text" class="form-control form-control-sm nro calcularLinea" cont="'+nro+'" id="desc'+nro+'" name="desc[]" maxlength="15" placeholder="%" >' +
                 '</td>' +
                 '<td>' +
                 '<select class="form-control form-control-sm selectpicker calcularLinea impuestos" cont="'+nro+'" name="impuesto[]" id="impuesto'+nro+'" title="Impuesto" required>' +

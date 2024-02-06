@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 	<form method="POST" action="{{ route('numeraciones.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeracion" >
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
    <input type="hidden" name="tipo" value="1">
   <div class="row">
     <div class="col-md-3 form-group">
@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-3 form-group">
       <label class="control-label">Número final </label>
-      <input type="text" class="form-control nro"  id="final" name="final"   value="{{old('final')}}" maxlength="8">
+      <input type="text" class="form-control"  id="final" name="final"   value="{{old('final')}}" maxlength="15">
       <span class="help-block error">
         <strong>{{ $errors->first('final') }}</strong>
       </span>
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    
+
 
   </div>
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 	<form method="POST" action="{{ route('numeraciones_dian.update', $numeracion->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeracion" >
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
   <input type="hidden" name="tipo" value="1">
   <div class="row">
     <div class="col-md-3 form-group">
@@ -18,7 +18,7 @@
         <strong>{{ $errors->first('prefijo') }}</strong>
       </span>
     </div>
-    
+
     <div class="col-md-2 form-group">
       <label class="control-label">Número inicial <span class="text-danger">*</span></label>
       <input type="text" class="form-control nro"  id="inicioverdadero" name="inicioverdadero"  required="" value="{{$numeracion->inicioverdadero}}" maxlength="8">
@@ -26,7 +26,7 @@
         <strong>{{ $errors->first('inicioverdadero') }}</strong>
       </span>
     </div>
-    
+
     <div class="col-md-2 form-group">
       <label class="control-label">Próximo número<span class="text-danger">*</span></label>
       <input type="text" class="form-control nro"  id="inicio" name="inicio"  required="" value="{{$numeracion->inicio}}" maxlength="8">
@@ -34,10 +34,10 @@
         <strong>{{ $errors->first('inicio') }}</strong>
       </span>
     </div>
-    
+
     <div class="col-md-2 form-group">
       <label class="control-label">Número final </label>
-      <input type="text" class="form-control nro"  id="final" name="final"   value="{{$numeracion->final}}" maxlength="8">
+      <input type="text" class="form-control"  id="final" name="final"   value="{{$numeracion->final}}" maxlength="15">
       <span class="help-block error">
         <strong>{{ $errors->first('final') }}</strong>
       </span>
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    
+
 
   </div>
 

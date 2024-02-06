@@ -2,54 +2,54 @@
 @section('content')
   @if(Session::has('error'))
     <div class="alert alert-danger" >
-      {{Session::get('error')}} 
+      {{Session::get('error')}}
     </div>
   @endif
 
 	<form method="POST" action="{{ route('configuracion.numeraciones') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-numeros" >
 
 	<p>Indica el número con el cual vas a crear tus próximos documentos.</p>
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
   <div class="row">
   	<div class="col-sm-7 form-group">
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de recibos de caja <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="caja" name="caja"  required="" value="{{$numeracion->caja}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="caja" name="caja"  required="" value="{{$numeracion->caja}}" maxlength="15" disabled>
   			</div>
   		</div>
       <div class="row">
         <label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de recibos de caja para remisiones <span class="text-danger">*</span></label>
         <div class="col-sm-4">
-          <input type="text" class="form-control form-control-sm"  id="cajar" name="cajar"  required="" value="{{$numeracion->cajar}}" maxlength="5" disabled>
+          <input type="text" class="form-control form-control-sm"  id="cajar" name="cajar"  required="" value="{{$numeracion->cajar}}" maxlength="10" disabled>
         </div>
       </div>
 
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de comprobantes de pago <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="pago" name="pago"  required="" value="{{$numeracion->pago}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="pago" name="pago"  required="" value="{{$numeracion->pago}}" maxlength="10" disabled>
   			</div>
   		</div>
 
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de nota crédito <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="credito" name="credito"  required="" value="{{$numeracion->credito}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="credito" name="credito"  required="" value="{{$numeracion->credito}}" maxlength="10" disabled>
   			</div>
   		</div>
 
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de remisiones <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="remision" name="remision"  required="" value="{{$numeracion->remision}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="remision" name="remision"  required="" value="{{$numeracion->remision}}" maxlength="10" disabled>
   			</div>
   		</div>
 
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de cotizaciones <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="cotizacion" name="cotizacion"  required="" value="{{$numeracion->cotizacion}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="cotizacion" name="cotizacion"  required="" value="{{$numeracion->cotizacion}}" maxlength="10" disabled>
   			</div>
   		</div>
 
@@ -57,12 +57,12 @@
   		<div class="row">
   			<label class="col-sm-8 col-form-label" style="text-align: right;">Siguiente número de órdenes de compra <span class="text-danger">*</span></label>
   			<div class="col-sm-4">
-  				<input type="text" class="form-control form-control-sm"  id="orden" name="orden"  required="" value="{{$numeracion->orden}}" maxlength="5" disabled>
+  				<input type="text" class="form-control form-control-sm"  id="orden" name="orden"  required="" value="{{$numeracion->orden}}" maxlength="10" disabled>
   			</div>
   		</div>
   	</div>
   </div>
-  
+
 	<hr>
 	<div class="row" style="display: none;" id="modificar" >
     <div class="col-sm-12" style="text-align: right;">
@@ -90,11 +90,11 @@
 <p style=" padding-left:2%">Indica el prefijo y número con el cual deben crearse tus facturas de venta. Puedes configurar múltiples numeraciones.</p>
 @if(Session::has('success'))
 		<div class="alert alert-success" >
-			{{Session::get('success')}} 
+			{{Session::get('success')}}
 		</div>
 
 		<script type="text/javascript">
-			setTimeout(function(){ 
+			setTimeout(function(){
 			    $('.alert').hide();
 			    $('.active_table').attr('class', ' ');
 			}, 5000);

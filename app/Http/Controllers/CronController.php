@@ -246,7 +246,7 @@ class CronController extends Controller
                                         if($contrato->factura_individual == 0){
                                             $contratos_multiples = Contrato::where('client_id',$factura->cliente)->where('factura_individual', 0)->get();
                                         }else {
-                                            $contratos_multiples = Contrato::where('client_id',$factura->cliente)->get();
+                                            $contratos_multiples = Contrato::where('nro',$contrato->nro)->where('client_id',$factura->cliente)->get();
                                         }
 
                                         foreach($contratos_multiples as $cm){
@@ -2428,6 +2428,7 @@ class CronController extends Controller
         foreach($facturas as $f){
 
             if($f->pagado() == 0){
+            DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
             $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
         DB::table('crm')->where('factura',$f->id)->delete();
             $eliminadas++;

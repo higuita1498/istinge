@@ -506,7 +506,7 @@
     <input type="number" class="form-control form-control-sm" id="precio${nro}" maxlength="24" min="0" name="precio[]" placeholder="Precio Unitario" onkeyup="total(${nro})" required="">
     </td>
     <td>
-    <input type="text" class="form-control form-control-sm" id="desc${nro}" name="desc[]" maxlength="5" placeholder="%" onkeypress="return event.charCode >= 46 && event.charCode <=57" onkeyup="total(${nro})" max="100" min="0">
+    <input type="text" class="form-control form-control-sm" id="desc${nro}" name="desc[]" maxlength="15" placeholder="%" onkeypress="return event.charCode >= 46 && event.charCode <=57" onkeyup="total(${nro})" max="100" min="0">
     </td>
     <td class="td-impuesto">
     <select class="form-control form-control-sm selectpicker" name="impuesto${nro}[]" id="impuesto${nro}" required title="Impuesto" onchange="impuestoFacturaDeVenta('impuesto${nro}'); total(${nro});checkImp(${nro});" multiple data-live-search="true" data-size="10">
