@@ -84,7 +84,7 @@ class RadicadosController extends Controller{
         $modoLectura = auth()->user()->modo_lectura();
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
-            ->select('radicados.*', 's.nombre as nombre_servicio')
+            ->select('radicados.*', 's.nombre as nombre_servicio','barrio')
             ->where('radicados.empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
