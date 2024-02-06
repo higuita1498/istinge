@@ -89,7 +89,7 @@ class ReportesController extends Controller
                 ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
                 ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
                 ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa',
                     'i.fecha as pagada','i.cuenta','ig.puc_banco')
                 ->whereIn('factura.tipo', [1,2])
                 ->where('factura.empresa',Auth::user()->empresa)
@@ -112,7 +112,7 @@ class ReportesController extends Controller
             if($request->grupo){
                 $facturas=$facturas->where('contracts.grupo_corte', $request->grupo);
             }
-            
+
             if($request->formapago){
                 $facturas=$facturas->where('ig.puc_banco', $request->formapago);
             }
@@ -2213,6 +2213,7 @@ class ReportesController extends Controller
         $movimientosTodos = $movimientosTodos->get();
 
         $tecnicos = User::whereIn('rol',[43,46])->get();
+        dd($tecnicos);
         $servicios = DB::table('servicios')->where('estatus',1)->get();
 
         return view('reportes.radicados.index')
