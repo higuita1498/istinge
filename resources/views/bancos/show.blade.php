@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('boton')
-	{{-- <input type="hidden" id="url_base" value="{{route('bancos.index')}}">
+	<input type="hidden" id="url_base" value="{{route('bancos.index')}}">
 
 	<div class="row">
 		<div class="col-md-12 nopadding">
@@ -47,7 +47,7 @@
 				</div>
 			@endif
 		</div>
-	</div> --}}
+	</div>
 @endsection
 
 @section('content')
