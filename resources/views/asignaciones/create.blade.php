@@ -146,7 +146,7 @@
                         <strong>{{ $errors->first('adjunto_audio') }}</strong>
                     </span>
                 </div>
-                <div class="col-md-4 form-group">
+                <div class="col-md-3 form-group">
                     <label class="control-label">Plan <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
@@ -160,8 +160,8 @@
                         <strong>{{ $errors->first('server_configuration_id') }}</strong>
                     </span>
                 </div>
-                <div class="col-md-4 form-group {{old('contrato_permanencia')==1?'':'d-none'}}" id="div_meses">
-                    <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
+                <div class="col-md-3 form-group" id="div_meses">
+                    <label class="control-label">Meses del contrato de permanencia</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
                             <option value="3" {{old('contrato_permanencia_meses')==3?'selected':''}}>3 meses</option>
