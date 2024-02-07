@@ -13,6 +13,7 @@ use App\Model\Inventario\ListaPrecios;
 use App\TipoEmpresa;
 use App\Contrato;
 use App\Funcion;
+use App\PlanesVelocidad;
 use Validator;
 use Auth;
 use DB;
@@ -50,6 +51,7 @@ class AsignacionesController extends Controller
     public function create()
     {
         $this->getAllPermissions(Auth::user()->id);
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $clientes = Contacto::where('fecha_isp', null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
         $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $empresa = Empresa::find(Auth::user()->empresa);
