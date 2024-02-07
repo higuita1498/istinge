@@ -151,7 +151,7 @@
                     <div class="input-group">
                         <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
                             @foreach($planes as $plan)
-                                <option value="{{$plan->id}}">{{$plan->nombre}}</option>
+                                <option value="{{$plan->id}}">{{$plan->name}}</option>
                             @endforeach
                         </select>
                         <input type="hidden" id="servidor" value="{{old('server_configuration_id')}}">
