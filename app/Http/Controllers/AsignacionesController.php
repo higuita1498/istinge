@@ -58,7 +58,7 @@ class AsignacionesController extends Controller
         $contrato = Contrato::where('id', request()->contrato)->where('empresa', Auth::user()->empresa)->first();
         $idCliente = $contrato->client_id ?? '';
         view()->share(['title' => 'Asignación de Contrato de Internet']);
-        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente'));
+        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente','planes'));
     }
 
     public function store(Request $request)
