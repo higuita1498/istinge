@@ -50,6 +50,7 @@ class AsignacionesController extends Controller
 
     public function create()
     {
+        dd("hola");
         $this->getAllPermissions(Auth::user()->id);
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $clientes = Contacto::where('fecha_isp', null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
