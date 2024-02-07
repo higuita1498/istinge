@@ -146,6 +146,22 @@
                         <strong>{{ $errors->first('adjunto_audio') }}</strong>
                     </span>
                 </div>
+                <div class="col-md-3 form-group">
+                    <label class="control-label" id="">Planes</label>
+                    <input type="file" class="form-control" name="adjunto_audio" accept="audio/*" id="adjunto_audio" >
+                    {{-- <input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required> --}}
+                    <span style="color: red;">
+                        <strong>{{ $errors->first('adjunto_audio') }}</strong>
+                    </span>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label class="control-label" id="">Clausula de permanecia</label>
+                    <input type="file" class="form-control" name="adjunto_audio" accept="audio/*" id="adjunto_audio" >
+                    {{-- <input type="file" class="form-control"  id="adjunto" name="adjunto4" value="{{$radicado->adjunto}}" accept=".jpg, .jpeg, .png, .pdf, .JPG, .JPEG, .PNG, .PDF" required> --}}
+                    <span style="color: red;">
+                        <strong>{{ $errors->first('adjunto_audio') }}</strong>
+                    </span>
+                </div>
 
         </div>
 
