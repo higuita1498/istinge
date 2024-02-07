@@ -2,16 +2,16 @@
 
 namespace App\Model\Ingresos;
 
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 use App\Contacto; use App\Banco;
 use App\Model\Ingresos\IngresosCategoria;
-use App\Model\Ingresos\IngresosRetenciones; 
-use App\Model\Ingresos\IngresosFactura; 
-use App\Model\Gastos\NotaDedito; 
-use App\Numeracion;  
-use App\Retencion; 
-use App\Impuesto; 
-use App\Movimiento; 
+use App\Model\Ingresos\IngresosRetenciones;
+use App\Model\Ingresos\IngresosFactura;
+use App\Model\Gastos\NotaDedito;
+use App\Numeracion;
+use App\Retencion;
+use App\Impuesto;
+use App\Movimiento;
 use DB; use Auth;
 use App\User;
 use App\Puc;
@@ -30,7 +30,7 @@ class Ingreso extends Model
     protected $fillable = [
         'nro', 'empresa', 'cliente', 'cuenta', 'metodo_pago', 'fecha', 'observaciones', 'notas', 'tipo', 'estatus', 'created_at', 'updated_at', 'nota_debito', 'total_debito', 'nro_devolucion', 'created_by', 'updated_by'
     ];
-    
+
     public function parsear($valor)
     {
         return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
@@ -44,19 +44,19 @@ class Ingreso extends Model
             return 'Anulado';
         }
     }
-    
+
     public function deta(){
         return Factura::where('id', $this->factura)->first();
     }
-    
+
     public function ingresofactura(){
         return IngresosFactura::where('ingreso', $this->id)->first();
     }
-    
+
     public function factura(){
         return Factura::where('ingreso', $this->factura)->first();
     }
-    
+
     public function tirilla(){
         $ingreso = IngresosFactura::where('ingreso', $this->id)->first();
         return Factura::find($ingreso->factura);
@@ -87,21 +87,23 @@ class Ingreso extends Model
                 $Factura.=" ".($gasto->categoria(true)).",";
             }
             return $pdf.'Categorías:'.substr($Factura, 0, -1);
-        } 
+        }
         else if($this->tipo==4){
             if ($pdf) {
                $mov1=Movimiento::where('modulo', 1)->where('id_modulo', $this->id)->first();
                 $mov2=Movimiento::where('transferencia', $mov1->id)->first();
                 return 'Transferencia bancaria de la cuenta '.$mov2->banco()->nombre.' a la cuenta '.$mov1->banco()->nombre;
-            }            
+            }
         }
         else{
             $nota=NotaDedito::where('empresa',Auth::user()->empresa)->where('id', $this->nota_debito)->first();
             if ($pdf) {
                 return $pdf.'Devolución en nota débito '.($nota->codigo?$nota->codigo:$nota->nro); die;
             }
-            return 'Nota de Débito: '.($nota->codigo?$nota->codigo:$nota->nro); 
-        }         
+            if($nota){
+                return 'Nota de Débito: '.($nota->codigo?$nota->codigo:$nota->nro);
+            }else return '';
+        }
     }
 
     public function cuenta(){
@@ -110,15 +112,15 @@ class Ingreso extends Model
 
     public function pago(){
         $totalAnticipo = 0;
-        
+
         if ($this->tipo==1) {
             $ingresos=IngresosFactura::where('ingreso',$this->id)->get();
             $total=0;
             foreach ($ingresos as $ingreso) {
                 $total+=$ingreso->pago;
-                /* Validamos si la factura tiene asociado un anticipo de cliente para hacerlo real 
-                    (se supone que se hace al momento de registrar un ingreso por que ya es un hecho verdadero y no en la forma de pago de 
-                    la factura por que no se ha asociado ningun pago) 
+                /* Validamos si la factura tiene asociado un anticipo de cliente para hacerlo real
+                    (se supone que se hace al momento de registrar un ingreso por que ya es un hecho verdadero y no en la forma de pago de
+                    la factura por que no se ha asociado ningun pago)
                 */
                 $totalAnticipo = PucMovimiento::
                     where('tipo_comprobante',1)->
@@ -134,7 +136,7 @@ class Ingreso extends Model
         else{
             return $this->total_debito;
         }
-        
+
 
     }
 
@@ -158,7 +160,7 @@ class Ingreso extends Model
                             if ($reten->id==$retencion->id_retencion) {
                                 if (!isset($totales["reten"][$key]->total)) {
                                     $totales["reten"][$key]->total=0;
-                                }      
+                                }
 
                                 $totales["reten"][$key]->total+=round($retencion->valor, 2);
                             }
@@ -171,8 +173,8 @@ class Ingreso extends Model
             foreach ($totales["reten"] as $key => $reten) {
                 if ($totales["reten"][$key]->total>0) {
                     $totales['subtotal']+=$totales["reten"][$key]->total;
-                }  
-            }     
+                }
+            }
 
 
         }
@@ -206,8 +208,8 @@ class Ingreso extends Model
                 $totales['total']+=$imp->total;
             }
 
-             
-            
+
+
 
             if (IngresosRetenciones::where('ingreso',$this->id)->count()>0) {
                 $items=IngresosRetenciones::where('ingreso',$this->id)->get();
@@ -217,7 +219,7 @@ class Ingreso extends Model
                         if ($reten->id==$item->id_retencion) {
                             if (!isset($totales["reten"][$key]->total)) {
                                 $totales["reten"][$key]->total=0;
-                            }                        
+                            }
                             $totales["reten"][$key]->total+=round($item->valor, 2);
                             $totales['total']-=round($item->valor, 2);
 
@@ -226,13 +228,13 @@ class Ingreso extends Model
                 }
             }
         }
-        
+
         return (object) $totales;
 
     }
 
     public function created_by(){
-        
+
         if(User::find($this->created_by)){
             return User::find($this->created_by);
         }
@@ -246,7 +248,7 @@ class Ingreso extends Model
     public function ingresosCategorias(){
         return IngresosCategoria::where('ingreso',$this->id)->get();
     }
-    
+
 
     public function ingresosFacturas(){
         return IngresosFactura::where('ingreso',$this->id)->get();
@@ -263,7 +265,7 @@ class Ingreso extends Model
             return $anticipo;
         }
     }
-    
+
     public function ingresoPuc(){
 
         if($this->tipo == 1){
@@ -273,7 +275,7 @@ class Ingreso extends Model
             $puc = IngresosCategoria::join('puc as p','p.id','=','ingresos_categoria.categoria')
             ->where('ingresos_categoria.ingreso',$this->id)->select('p.*')->first();
         }
-        
+
 
         if($puc){
             return $puc;
@@ -290,7 +292,7 @@ class Ingreso extends Model
             return $anticipo;
         }
     }
-    
+
     //la variable puc_banco de ingresos_categoria guarda el id de la forma de pago, entonces debemos obtener la cuenta_id del puc.
     public function ingresoPucBanco(){
         $puc = IngresosFactura::
@@ -318,15 +320,15 @@ class Ingreso extends Model
 
         if($idIngreso == null){
                 $forma = FormaPago::find($cuenta_id);
-        
+
                 if($forma){
-                    return Puc::find($forma->cuenta_id); 
+                    return Puc::find($forma->cuenta_id);
                 }
             //si es igual a cero es por que se trata de un anticipo.
             }else{
                 //buscamos la cuenta contable que tiene asociada el ingreso
                 $pm= PucMovimiento::where('documento_id',$idIngreso)->where('tipo_comprobante',1)->where('enlace_a',5)->first();
-    
+
                 if($pm){
                     return Puc::find($pm->cuenta_id);
                 }
