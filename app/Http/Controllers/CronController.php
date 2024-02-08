@@ -552,7 +552,7 @@ class CronController extends Controller
                 $facturaContratos = DB::table('facturas_contratos')
                 ->where('factura_id',$factura->id)->pluck('contrato_nro');
 
-                if(!$facturaContratos = DB::table('facturas_contratos')
+                if(!DB::table('facturas_contratos')
                 ->where('factura_id',$factura->id)->first()){
                     $facturaContratos = Contrato::where('id',$factura->contrato_id)->pluck('nro');
                 }
