@@ -26,11 +26,13 @@
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
-
+        @php
+            $dominio = {{$empresa->dominio}};
+        @endphp
         {{-- Imprime o debuggea las variables --}}
-        {{$empresa->dominio}}
+
             <div>
-                <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
+                <embed src="{{ $dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
 
             <center>
