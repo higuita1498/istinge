@@ -168,11 +168,11 @@
                         <select class="form-control selectpicker" name="plan_id" id="plan_id" required="" title="Seleccione" data-live-search="true" data-size="5">
 
                         </select>
-                        <div class="input-group-append">
+                        {{-- <div class="input-group-append">
                             <a href="#" data-toggle="modal" data-target="#planModal" class="btn btn-outline-success btn-sm">
                                 <i class="fas fa-plus" style="margin: 2px;"></i>
                             </a>
-                        </div>
+                        </div> --}}
                     </div>
                     <span class="help-block error">
                         <strong>{{ $errors->first('plan_id') }}</strong>
