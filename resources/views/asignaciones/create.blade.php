@@ -182,7 +182,7 @@
                 <div class="col-md-4 form-group">
                     <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                        <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="habilitar()">
                             <option value="1" {{old('contrato_permanencia')==1?'selected':''}}>Si</option>
                             <option value="0" {{old('contrato_permanencia')==0?'selected':''}}>No</option>
                         </select>
@@ -191,6 +191,7 @@
                         <strong>{{ $errors->first('contrato_permanencia') }}</strong>
                     </span>
                 </div>
+
                 <div class="col-md-4 form-group {{old('contrato_permanencia')==1?'':'d-none'}}" id="div_meses">
                     <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
                     <div class="input-group">
@@ -205,6 +206,7 @@
                         <strong>{{ $errors->first('contrato_permanencia_meses') }}</strong>
                     </span>
                 </div>
+
         </div>
 
         <center>
@@ -407,6 +409,19 @@
                 console.log('Select de contratos actualizado correctamente.');
             } else {
                 console.error('Elemento select no encontrado.');
+            }
+        }
+
+        function habilitar(){
+            var selectElement = document.getElementById('contrato_permanencia');
+            var botonElement = document.getElementById('contrato_permanencia_meses');
+
+            if (selectElement.value === '1') {
+                // Oculta el botón
+                botonElement.classList.remove('d-none');
+            } else {
+                // Muestra el botón
+                botonElement.classList.add('block');
             }
         }
     </script>
