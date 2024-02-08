@@ -1432,7 +1432,8 @@ class AsignacionesController extends Controller
     public function generar_link($id)
     {
         $contacto = Contacto::find($id);
-        $empresa = Empresa::find($id);
+        $empresa = Empresa::first();
+        dd($empresa);
         if($contacto) {
             $sw = 1;
             while ($sw == 1) {
