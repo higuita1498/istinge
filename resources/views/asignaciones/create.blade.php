@@ -418,9 +418,11 @@
             var botonElement = document.getElementById('div_meses');
 
             if (selectElement.value === '1') {
+                console-log("si");
                 // Oculta el botón
                 botonElement.classList.remove('block');
             } else {
+                console-log("no");
                 // Muestra el botón
                 botonElement.classList.add('d-none');
             }
