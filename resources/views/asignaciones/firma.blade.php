@@ -32,6 +32,7 @@
             $urlPdf = "{$appUrl}{$rutaPdf}";
         @endphp
         {{-- Imprime o debuggea las variables --}}
+       {{ auth()->user()->empresa()->dominio}}
             <div>
                 <embed src="{{ auth()->user()->empresa()->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
