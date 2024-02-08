@@ -75,6 +75,7 @@ class AsignacionesController extends Controller
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
             }else{
+
                 $contrato_nuevo = new Contrato();
                 $ultimoRegistro = Contrato::latest()->first();
 
