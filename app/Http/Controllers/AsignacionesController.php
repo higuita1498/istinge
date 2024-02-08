@@ -83,6 +83,7 @@ class AsignacionesController extends Controller
                 $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
                 $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses + 1;
                 $contrato_nuevo->plan_id = $request->plan;
+                $contrato_nuevo->server_configuration_id = 1;
                 $contrato_nuevo->servicio = $this->normaliza($servicio).'-'.($ultimoRegistro->nro + 1);
                 $contrato_nuevo->save();
             }
