@@ -413,7 +413,6 @@
         }
 
         function habilitar(){
-
             var selectElement = document.getElementById('contrato_permanencia');
             var botonElement = document.getElementById('div_meses');
 
