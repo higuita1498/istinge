@@ -149,15 +149,15 @@
                 <div class="col-md-3 form-group">
                     <label class="control-label">Plan <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5">
+                        <select class="form-control selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5">
                             @foreach($planes as $plan)
                                 <option value="{{$plan->id}}">{{$plan->name}}</option>
                             @endforeach
                         </select>
-                        <input type="hidden" id="servidor" value="{{old('server_configuration_id')}}">
+                        <input type="hidden" id="servidor" value="{{old('plan')}}">
                     </div>
                     <span class="help-block error">
-                        <strong>{{ $errors->first('server_configuration_id') }}</strong>
+                        <strong>{{ $errors->first('plan') }}</strong>
                     </span>
                 </div>
                 <div class="col-md-3 form-group" id="div_meses">

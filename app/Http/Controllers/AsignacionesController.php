@@ -76,9 +76,11 @@ class AsignacionesController extends Controller
             }else{
                 $contrato_nuevo = new Contrato();
                 $ultimoRegistro = Contrato::latest()->first();
-                dd($ultimoRegistro->nro);
                 $contrato_nuevo->client_id = $request->id;
-                $contrato_nuevo->nro = $ultimoRegistro->nro;
+                $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
+                $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses + 1;
+                $contrato_nuevo->plan_id = $request->plan;
+                $contrato_nuevo->save();
             }
 
             $ext_permitidas = array('jpeg','png','gif');
