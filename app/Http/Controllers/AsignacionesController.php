@@ -52,13 +52,14 @@ class AsignacionesController extends Controller
     {
         $this->getAllPermissions(Auth::user()->id);
         $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $clientes = Contacto::where('fecha_isp', null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
         $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $empresa = Empresa::find(Auth::user()->empresa);
         $contrato = Contrato::where('id', request()->contrato)->where('empresa', Auth::user()->empresa)->first();
         $idCliente = $contrato->client_id ?? '';
         view()->share(['title' => 'Asignación de Contrato de Internet']);
-        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente','planes'));
+        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente','servidores'));
     }
 
     public function store(Request $request)
