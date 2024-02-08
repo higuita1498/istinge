@@ -1433,7 +1433,7 @@ class AsignacionesController extends Controller
     {
         $contacto = Contacto::find($id);
         $empresa = Empresa::first();
-        dd($empresa);
+
         if($contacto) {
             $sw = 1;
             while ($sw == 1) {
