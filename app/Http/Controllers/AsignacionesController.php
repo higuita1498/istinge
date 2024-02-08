@@ -14,6 +14,7 @@ use App\TipoEmpresa;
 use App\Contrato;
 use App\Funcion;
 use App\PlanesVelocidad;
+use App\Mikrotik;
 use Validator;
 use Auth;
 use DB;
