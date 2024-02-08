@@ -136,7 +136,7 @@
             <div class="col-md-3 form-group">
                 <label class="control-label">Plan <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5">
+                    <select class="form-control selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5" value="{{ old($contrato->plan_id) }}">
                         @foreach($planes as $plan)
                             <option value="{{$plan->id}}">{{$plan->name}}</option>
                         @endforeach
