@@ -1451,7 +1451,7 @@ class AsignacionesController extends Controller
             return response()->json([
                 'success'  => true,
                 'contacto' => $contacto->id,
-                'empresa' => $empresa->dominio,
+                'empresa' => $empresa,
                 'text'     => "<a href='".config('app.url')."/api/contrato-digital/".$ref."' target='_blank'>".config('app.url')."/api/contrato-digital/".$ref."</a><br><br><button class='btn btn-primary btn-lg' data-clipboard-text='".$link."'>COPIAR URL</button>
                 ",
                 'link'     => config('app.url')."/api/contrato-digital/".$ref,
