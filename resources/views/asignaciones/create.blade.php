@@ -146,24 +146,55 @@
                         <strong>{{ $errors->first('adjunto_audio') }}</strong>
                     </span>
                 </div>
-                <div class="col-md-3 form-group">
-                    <label class="control-label">Plan <span class="text-danger">*</span></label>
+
+                <div class="col-md-4 form-group">
+                    <label class="control-label">Servidor <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5">
-                            @foreach($planes as $plan)
-                                <option value="{{$plan->id}}">{{$plan->name}}</option>
+                        <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
+                            @foreach($servidores as $servidor)
+                                <option value="{{$servidor->id}}" {{old('server_configuration_id')==$servidor->id?'selected':''}}>{{$servidor->nombre}} - {{$servidor->ip}}</option>
                             @endforeach
                         </select>
-                        <input type="hidden" id="servidor" value="{{old('plan')}}">
+                        <input type="hidden" id="servidor" value="{{old('server_configuration_id')}}">
                     </div>
                     <span class="help-block error">
-                        <strong>{{ $errors->first('plan') }}</strong>
+                        <strong>{{ $errors->first('server_configuration_id') }}</strong>
                     </span>
                 </div>
-                <div class="col-md-3 form-group" id="div_meses">
-                    <label class="control-label">Meses del contrato de permanencia</span></label>
+
+                <div class="col-md-4 form-group">
+                    <label class="control-label">Plan <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses" title="Seleccione" data-live-search="true" data-size="5">
+                        <select class="form-control selectpicker" name="plan_id" id="plan_id" required="" title="Seleccione" data-live-search="true" data-size="5">
+
+                        </select>
+                        <div class="input-group-append">
+                            <a href="#" data-toggle="modal" data-target="#planModal" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-plus" style="margin: 2px;"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('plan_id') }}</strong>
+                    </span>
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                            <option value="1" {{old('contrato_permanencia')==1?'selected':''}}>Si</option>
+                            <option value="0" {{old('contrato_permanencia')==0?'selected':''}}>No</option>
+                        </select>
+                    </div>
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('contrato_permanencia') }}</strong>
+                    </span>
+                </div>
+                <div class="col-md-4 form-group {{old('contrato_permanencia')==1?'':'d-none'}}" id="div_meses">
+                    <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
                             <option value="3" {{old('contrato_permanencia_meses')==3?'selected':''}}>3 meses</option>
                             <option value="6" {{old('contrato_permanencia_meses')==6?'selected':''}}>6 meses</option>
                             <option value="9" {{old('contrato_permanencia_meses')==9?'selected':''}}>9 meses</option>
@@ -174,7 +205,6 @@
                         <strong>{{ $errors->first('contrato_permanencia_meses') }}</strong>
                     </span>
                 </div>
-
         </div>
 
         <center>
