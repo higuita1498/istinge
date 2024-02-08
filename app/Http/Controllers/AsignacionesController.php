@@ -682,10 +682,12 @@ class AsignacionesController extends Controller
     public function edit($id)
     {
         $this->getAllPermissions(Auth::user()->id);
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $contacto = Contacto::find($id);
+        $contrato = Contrato::where('client_id',$id)->first();
         $empresa = Empresa::find(Auth::user()->empresa);
         view()->share(['title' => 'Editar Asignación de Contrato de Internet']);
-        return view('asignaciones.edit')->with(compact('contacto', 'empresa'));
+        return view('asignaciones.edit')->with(compact('contacto', 'empresa','planes','contrato'));
     }
 
     public function update(Request $request, $id)
