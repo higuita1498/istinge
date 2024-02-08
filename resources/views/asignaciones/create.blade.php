@@ -420,11 +420,11 @@
             if (selectElement.value === '1') {
                 console.log("si");
                 // Oculta el botón
-                botonElement.classList.remove('block');
+                botonElement.classList.remove('d-none');
             } else {
                 console.log("no");
                 // Muestra el botón
-                botonElement.classList.add('d-none');
+                botonElement.classList.add('block');
             }
         }
     </script>
