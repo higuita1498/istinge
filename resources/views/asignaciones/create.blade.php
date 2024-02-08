@@ -147,7 +147,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-4 form-group">
+                <div class="col-md-3 form-group">
                     <label class="control-label">Servidor <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
@@ -162,7 +162,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-4 form-group">
+                <div class="col-md-3 form-group">
                     <label class="control-label">Plan <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" name="plan_id" id="plan_id" required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -179,7 +179,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-4 form-group">
+                <div class="col-md-3 form-group">
                     <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="habilitar()">
@@ -192,7 +192,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-4 form-group d-none" id="div_meses">
+                <div class="col-md-3 form-group d-none" id="div_meses">
                     <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
