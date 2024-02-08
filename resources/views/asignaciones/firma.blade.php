@@ -27,7 +27,7 @@
         <input name="id" type="hidden" value="{{ $contacto->id }}">
         @csrf
         @php
-            $dominio = {{$empresa->dominio}};
+            $dominio = $empresa->dominio;
         @endphp
         {{-- Imprime o debuggea las variables --}}
 
