@@ -413,18 +413,18 @@
         }
 
         function habilitar(){
-            console.log("ingreso a la funcion");
+
             var selectElement = document.getElementById('contrato_permanencia');
             var botonElement = document.getElementById('div_meses');
 
             if (selectElement.value === '1') {
-                console.log("si");
+
                 // Oculta el botón
                 botonElement.classList.remove('d-none');
             } else {
-                console.log("no");
+
                 // Muestra el botón
-                botonElement.classList.add('block');
+                botonElement.classList.add('d-none');
             }
         }
     </script>
