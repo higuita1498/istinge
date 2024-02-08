@@ -138,7 +138,7 @@
                 <div class="input-group">
                     <select class="form-control selectpicker" name="plan" id="plan" required="" title="Seleccione" data-live-search="true" data-size="5" value="{{ old($contrato->plan_id) }}">
                         @foreach($planes as $plan)
-                            <option value="{{$plan->id}}">{{$plan->name}}</option>
+                            <option value="{{$plan->id}}" {{$plan->id==$contrato->plan_id?'selected':''}}>{{$plan->name}}</option>
                         @endforeach
                     </select>
                     <input type="hidden" id="servidor" value="{{old('plan')}}">
@@ -151,10 +151,10 @@
                 <label class="control-label">Meses del contrato de permanencia</span></label>
                 <div class="input-group">
                     <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses" title="Seleccione" data-live-search="true" data-size="5">
-                        <option value="3" {{old('contrato_permanencia_meses')==3?'selected':''}}>3 meses</option>
-                        <option value="6" {{old('contrato_permanencia_meses')==6?'selected':''}}>6 meses</option>
-                        <option value="9" {{old('contrato_permanencia_meses')==9?'selected':''}}>9 meses</option>
-                        <option value="12" {{old('contrato_permanencia_meses')==12?'selected':''}}>12 meses</option>
+                        <option value="3">3 meses</option>
+                        <option value="6">6 meses</option>
+                        <option value="9">9 meses</option>
+                        <option value="12">12 meses</option>
                     </select>
                 </div>
                 <span class="help-block error">
