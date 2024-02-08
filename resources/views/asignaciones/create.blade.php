@@ -192,7 +192,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-4 form-group {{old('contrato_permanencia')==1?'':'d-none'}}" id="div_meses">
+                <div class="col-md-4 form-group d-none" id="div_meses">
                     <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
@@ -413,15 +413,16 @@
         }
 
         function habilitar(){
+            console.log("ingreso a la funcion");
             var selectElement = document.getElementById('contrato_permanencia');
-            var botonElement = document.getElementById('contrato_permanencia_meses');
+            var botonElement = document.getElementById('div_meses');
 
             if (selectElement.value === '1') {
                 // Oculta el botón
-                botonElement.classList.remove('d-none');
+                botonElement.classList.remove('block');
             } else {
                 // Muestra el botón
-                botonElement.classList.add('block');
+                botonElement.classList.add('d-none');
             }
         }
     </script>
