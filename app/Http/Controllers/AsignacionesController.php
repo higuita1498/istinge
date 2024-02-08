@@ -66,16 +66,19 @@ class AsignacionesController extends Controller
 
         // $num = count(Contrato::where('client_id',$request->contrato)->get());
         $num = Contrato::where('client_id',$request->id)->first();
-        $contacto = Contacto::where('id',$request->id)->first();
 
         // if($num == 2){
             $idContrato = null;
             if(!empty($num)) {
-                dd("ingreso en el si");
+
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
             }else{
-                dd("ingreso en el sino");
+                $contrato_nuevo = new Contrato();
+                $ultimoRegistro = Contrato::latest()->first();
+                dd($ultimoRegistro->nro);
+                $contrato_nuevo->client_id = $request->id;
+                $contrato_nuevo->nro = $ultimoRegistro->nro;
             }
 
             $ext_permitidas = array('jpeg','png','gif');
