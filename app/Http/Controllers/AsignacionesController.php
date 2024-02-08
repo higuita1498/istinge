@@ -697,7 +697,7 @@ class AsignacionesController extends Controller
         $xmax = 1080;
         $ymax = 720;
         $contrato = Contacto::find($id);
-        dd($contrato);
+
         if ($contrato) {
             if($request->firma_isp) {
                 $contrato->firma_isp = $request->firma_isp;
