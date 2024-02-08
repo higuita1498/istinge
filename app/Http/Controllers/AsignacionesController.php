@@ -66,7 +66,8 @@ class AsignacionesController extends Controller
 
         // $num = count(Contrato::where('client_id',$request->contrato)->get());
         $num = Contrato::where('client_id',$request->id)->first();
-
+        $cliente = Contacto::where('id', $request->id)->where('empresa', Auth::user()->empresa)->first();
+        $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
         // if($num == 2){
             $idContrato = null;
             if(!empty($num)) {
@@ -76,10 +77,12 @@ class AsignacionesController extends Controller
             }else{
                 $contrato_nuevo = new Contrato();
                 $ultimoRegistro = Contrato::latest()->first();
+
                 $contrato_nuevo->client_id = $request->id;
                 $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
                 $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses + 1;
                 $contrato_nuevo->plan_id = $request->plan;
+                $contrato_nuevo->servicio = $this->normaliza($servicio).'-'.($ultimoRegistro->nro + 1);
                 $contrato_nuevo->save();
             }
 
