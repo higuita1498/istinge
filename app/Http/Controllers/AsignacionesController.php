@@ -69,6 +69,7 @@ class AsignacionesController extends Controller
         $contacto = Contacto::where('id',$request->id)->first();
         dd($contacto);
 
+
         // if($num == 2){
             $idContrato = null;
             if(!empty($num)) {
