@@ -28,7 +28,7 @@
         @csrf
 
         {{-- Imprime o debuggea las variables --}}
-
+        {{$empresa->dominio}}
             <div>
                 <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
             </div>
