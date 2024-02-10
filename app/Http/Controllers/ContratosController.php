@@ -1911,6 +1911,7 @@ class ContratosController extends Controller
     }
 
     public function exportar(Request $request){
+
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Contratos";
@@ -1937,8 +1938,9 @@ class ContratosController extends Controller
             'Costo Reconexion',
             'Municipio',
             'Tipo Contrato',
-
-
+            'Iva',
+            'Descuento',
+            'Tipo Factura'
         );
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
@@ -1952,13 +1954,13 @@ class ContratosController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:L1');
+            ->mergeCells('A1:O1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:L2');
+            ->mergeCells('A2:O2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
@@ -2141,7 +2143,7 @@ class ContratosController extends Controller
         $contratos = $contratos->where('contracts.status', 1)->get();
 
         foreach ($contratos as $contrato) {
-
+            return $contrato;
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contrato->nro)
                 ->setCellValue($letras[1].$i, $contrato->c_nombre.' '.$contrato->c_apellido1.' '.$contrato->c_apellido2)
@@ -2164,7 +2166,10 @@ class ContratosController extends Controller
                 ->setCellValue($letras[18].$i, $contrato->facturacion())
                 ->setCellValue($letras[19].$i, $contrato->costo_reconexion)
                 ->setCellValue($letras[21].$i, ucfirst($contrato->tipo_contrato))
-                ->setCellValue($letras[20].$i, $contrato->c_nombre_municipio);
+                ->setCellValue($letras[22].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
+                ->setCellValue($letras[23].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
+                ->setCellValue($letras[24].$i, $contrato->facturacion == 3 ? 'Electrónica' : 'Estandar')
+                ;
             $i++;
         }
 
