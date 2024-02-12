@@ -13,6 +13,7 @@ use App\Model\Inventario\ListaPrecios;
 use App\TipoEmpresa;
 use App\Contrato;
 use App\Funcion;
+use App\Empresa;
 use App\PlanesVelocidad;
 use App\Mikrotik;
 use Validator;
