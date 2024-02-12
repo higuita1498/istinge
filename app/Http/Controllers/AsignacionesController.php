@@ -1281,6 +1281,20 @@ class AsignacionesController extends Controller
         /** @var User $company */
         $company = ((object) FacadesAuth::user())->empresa();
 
+        if (!$company) {
+            $empresa = Empresa()->first();
+            // La variable es nula o evaluada como falsa, haz algo aquí
+            try {
+                /** @var Contacto $contact */
+                $contact = Contacto::where('id', $id)
+                    ->where('empresa', $empresa->id)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
+            }
+
+        }else{
+
         try {
             /** @var Contacto $contact */
             $contact = Contacto::where('id', $id)
@@ -1289,7 +1303,7 @@ class AsignacionesController extends Controller
         } catch (ModelNotFoundException $e) {
             return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
         }
-
+    }
         try {
             $contract = $contact->contrato();
             // TODO: This should be within the contract method, but right now it
