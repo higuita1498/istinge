@@ -193,9 +193,9 @@
                 </div>
 
                 <div class="col-md-3 form-group d-none" id="div_meses">
-                    <label class="control-label">Meses del contrato de permanencia <span class="text-danger">*</span></label>
+                    <label class="control-label">Meses del contrato de permanencia</span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses"  required="" title="Seleccione" data-live-search="true" data-size="5">
+                        <select class="form-control selectpicker" id="contrato_permanencia_meses" name="contrato_permanencia_meses" title="Seleccione" data-live-search="true" data-size="5">
                             <option value="3" {{old('contrato_permanencia_meses')==3?'selected':''}}>3 meses</option>
                             <option value="6" {{old('contrato_permanencia_meses')==6?'selected':''}}>6 meses</option>
                             <option value="9" {{old('contrato_permanencia_meses')==9?'selected':''}}>9 meses</option>
