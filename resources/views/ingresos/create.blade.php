@@ -466,7 +466,7 @@
         <div class="col-md-3">
           <div class="form-check form-check-flat">
             <label class="form-check-label">
-              <input type="checkbox" class="form-check-input" name="tirilla_wpp" value="1" checked>Enviar tirilla por whatsapp
+              <input type="checkbox" class="form-check-input" name="tirilla_wpp" value="1">Enviar tirilla por whatsapp
               <i class="input-helper"></i>
             </label>
           </div>
