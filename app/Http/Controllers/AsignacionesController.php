@@ -13,7 +13,6 @@ use App\Model\Inventario\ListaPrecios;
 use App\TipoEmpresa;
 use App\Contrato;
 use App\Funcion;
-use App\Empresa;
 use App\PlanesVelocidad;
 use App\Mikrotik;
 use Validator;
@@ -1283,7 +1282,7 @@ class AsignacionesController extends Controller
         $company = ((object) FacadesAuth::user())->empresa();
 
         if (!$company) {
-            $empresa = Empresa()->first();
+            $empresa = Empresa::first();
             // La variable es nula o evaluada como falsa, haz algo aquí
             try {
                 /** @var Contacto $contact */
