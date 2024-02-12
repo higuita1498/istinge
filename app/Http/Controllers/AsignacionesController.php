@@ -1280,7 +1280,7 @@ class AsignacionesController extends Controller
         // for now.
         /** @var User $company */
         $company = ((object) FacadesAuth::user())->empresa();
-
+        dd($company);
         try {
             /** @var Contacto $contact */
             $contact = Contacto::where('id', $id)
