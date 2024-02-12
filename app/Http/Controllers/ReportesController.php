@@ -2211,7 +2211,8 @@ class ReportesController extends Controller
 
         $movimientos=  $movimientos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
         $movimientosTodos = $movimientosTodos->get();
-        $tecnicosRoles = DB::table('roles1')->where('rol', 'Tecnico')->first();
+        $tecnicosRoles = DB::table('roles1')->where('rol', 'Técnico')->first();
+        dd($tecnicosRoles->id);
         // $tecnicos = User::whereIn('rol',[43,46])->get();
         $tecnicos = User::whereIn('rol',$tecnicosRoles->id)->get();
 
