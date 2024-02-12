@@ -573,7 +573,7 @@ class IngresosController extends Controller
             //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
             // if($saldoFavorUsado > 0){
             //     //la cuenta de anticipo es la 6
-            //     $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
+                 $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
             // }
 
             if ($ingreso->tipo == 1) {
