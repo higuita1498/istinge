@@ -64,7 +64,7 @@
             font-size: 10px;line-height: 10px;margin: 0;
         }
         .titulo-bg {
-            background-color: {{Auth::user()->empresa()->color}};
+            /* background-color: {{Auth::user()->empresa()->color}}; */
             color: white;
             padding: 5px;
             font-size: 12px;
