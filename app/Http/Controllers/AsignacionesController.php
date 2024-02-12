@@ -1304,6 +1304,19 @@ class AsignacionesController extends Controller
             return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
         }
     }
+    if (!$company) {
+        $empresa = Empresa::first();
+        // La variable es nula o evaluada como falsa, haz algo aquí
+        try {
+            /** @var Contacto $contact */
+            $contact = Contacto::where('id', $id)
+                ->where('empresa', $empresa->id)
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
+        }
+
+    }else{
         try {
             $contract = $contact->contrato();
             // TODO: This should be within the contract method, but right now it
@@ -1314,7 +1327,7 @@ class AsignacionesController extends Controller
         } catch (ModelNotFoundException $e) {
             return back()->with('danger', 'El contacto no tiene un contrato asociado.');
         }
-
+    }
         try {
             $contractDetails = $contact->details($contract->id);
         } catch (ModelNotFoundException $e) {
