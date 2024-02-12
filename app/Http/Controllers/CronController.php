@@ -1746,7 +1746,7 @@ class CronController extends Controller
         if($request->transaction_state == 'payment_approved'){
 
             $factura = Factura::where('codigo', substr($request->invoice_number, $empresa->caracter_combo_pay))->first();
-
+            return $factura;
             if($factura->estatus == 1){
 
                 $empresa = Empresa::find($factura->empresa);
