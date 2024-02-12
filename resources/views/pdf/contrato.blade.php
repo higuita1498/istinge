@@ -65,6 +65,7 @@
         }
         .titulo-bg {
             /* background-color: {{Auth::user()->empresa()->color}}; */
+            background-color:blue;
             color: white;
             padding: 5px;
             font-size: 12px;
