@@ -1280,11 +1280,11 @@ class AsignacionesController extends Controller
         // for now.
         /** @var User $company */
         $company = ((object) FacadesAuth::user())->empresa();
-        dd($company);
+
         try {
             /** @var Contacto $contact */
             $contact = Contacto::where('id', $id)
-                ->where('empresa', $company->id)
+               // ->where('empresa', $company->id)
                 ->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
