@@ -25,15 +25,14 @@
     <form method="POST" action="{{ route('asignaciones.store_firma', $contacto->referencia_asignacion) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-asignacion">
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
-        <div>
-            <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-       </div>
         @csrf
 
         {{-- Imprime o debuggea las variables --}}
 
-
-
+            <div>
+                 <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
+            </div>
+{{$empresa->dominio}}
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
