@@ -180,9 +180,9 @@
                 </div>
 
                 <div class="col-md-3 form-group">
-                    <label class="control-label">¿Aplicar contrato de permanencia? <span class="text-danger">*</span></label>
+                    <label class="control-label">¿Aplicar contrato de permanencia? </span></label>
                     <div class="input-group">
-                        <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia"  required="" title="Seleccione" data-live-search="true" data-size="5" onchange="habilitar()">
+                        <select class="form-control selectpicker" id="contrato_permanencia" name="contrato_permanencia" title="Seleccione" data-live-search="true" data-size="5" onchange="habilitar()">
                             <option value="1" {{old('contrato_permanencia')==1?'selected':''}}>Si</option>
                             <option value="0" {{old('contrato_permanencia')==0?'selected':''}}>No</option>
                         </select>
