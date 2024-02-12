@@ -2211,8 +2211,10 @@ class ReportesController extends Controller
 
         $movimientos=  $movimientos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
         $movimientosTodos = $movimientosTodos->get();
+        $tecnicosRoles = DB::table('roles1')->where('name', 'tecnicos')->first();
+        // $tecnicos = User::whereIn('rol',[43,46])->get();
+        $tecnicos = User::whereIn('rol',$tecnicosRoles->id)->get();
 
-        $tecnicos = User::whereIn('rol',[43,46])->get();
         $servicios = DB::table('servicios')->where('estatus',1)->get();
 
         return view('reportes.radicados.index')
