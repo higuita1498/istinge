@@ -216,6 +216,6 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
          return view('asignaciones.firma')->with(compact('contacto', 'title', 'empresa', 'formulario'));
      }
      abort(403, 'ACCIÓN NO AUTORIZADA');
- });
+ })->middleware('guest');
 
 
