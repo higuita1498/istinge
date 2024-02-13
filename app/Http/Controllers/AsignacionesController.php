@@ -83,7 +83,13 @@ class AsignacionesController extends Controller
 
                 $contrato_nuevo->client_id = $request->id;
                 $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
-                $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses;
+
+
+                if (!empty($request->contrato_permanencia_meses)) {
+                    $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses;
+                } else {
+                    $contrato_nuevo->contrato_permanencia_meses = 0;
+                }
                 dd($request->contrato_permanencia_meses);
                 $contrato_nuevo->plan_id = $request->plan_id;
                 $contrato_nuevo->server_configuration_id = $request->server_configuration_id;
