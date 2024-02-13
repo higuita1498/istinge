@@ -25,7 +25,7 @@
     <form method="POST" action="{{ route('asignaciones.store_firma', $contacto->referencia_asignacion) }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-asignacion">
         <input name="referencia_asignacion" type="hidden" value="{{ $contacto->referencia_asignacion }}">
         <input name="id" type="hidden" value="{{ $contacto->id }}">
-        @csrf
+        {{-- @csrf --}}
 
         {{-- Imprime o debuggea las variables --}}
 
