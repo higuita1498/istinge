@@ -102,10 +102,10 @@
                     <td>
 
                         <div style="margin-top: 10px; text-align:center;">
-                            <img src="{{asset('images/Empresas/Empresa'.$empresa->id'/'.$empresa->logo)}}" alt="" style="width: 130px !important;">
+                            <img src="{{asset('images/Empresas/Empresa'.{{$empresa->id}}'/'.{{$empresa->logo}})}}" alt="" style="width: 130px !important;">
                         </div>
 
-                        <div style="width: 100%; background-color: {{Auth::user()->empresa()->color}}; clear:both;  margin-top: 10px;">
+                        <div style="width: 100%; background-color: {{$empresa->color}}; clear:both;  margin-top: 10px;">
                             <p style="color: white; margin: 2px; text-align: justify; padding: 5px;" class="">
                                 Este contrato explica las condiciones para la prestación de los servicios entre usted y <b>{{Auth::user()->empresa()->nombre}}</b>, por el que pagará mínimo mensualmente <b>$ _______</b>. Este contrato tendrá vigencia de ____ meses, contados a partir del <b>__/__/____</b>. El plazo máximo de instalación es de 15 días hábiles. Acepto que mi contrato se renueve sucesiva y automáticamente por un plazo igual al inicial <input checked="checked" type="checkbox"> *
                             </p>
