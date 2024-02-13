@@ -64,7 +64,7 @@
             font-size: 10px;line-height: 10px;margin: 0;
         }
         .titulo-bg {
-            /* background-color: {{Auth::user()->empresa()->color}}; */
+            /* background-color: {{$empresa->color}}; */
             background-color: {{$empresa->color}};
 
             color: white;
@@ -106,7 +106,7 @@
                             <img src="{{asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo)}}" alt="" style="width: 130px !important;">
                         </div>
 
-                        <div style="width: 100%; background-color: {{Auth::user()->empresa()->color}}; clear:both;  margin-top: 10px;">
+                        <div style="width: 100%; background-color: {{$empresa->color}}; clear:both;  margin-top: 10px;">
                             <p style="color: white; margin: 2px; text-align: justify; padding: 5px;" class="">
                                 Este contrato explica las condiciones para la prestación de los servicios entre usted y <b>{{Auth::user()->empresa()->nombre}}</b>, por el que pagará mínimo mensualmente <b>$ _______</b>. Este contrato tendrá vigencia de ____ meses, contados a partir del <b>__/__/____</b>. El plazo máximo de instalación es de 15 días hábiles. Acepto que mi contrato se renueve sucesiva y automáticamente por un plazo igual al inicial <input checked="checked" type="checkbox"> *
                             </p>
@@ -116,7 +116,7 @@
                             <table width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="padding: 3px 6px;background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: left;border: 1px solid #000;">EL SERVICIO</th>
+                                        <th style="padding: 3px 6px;background-color: {{$empresa->color}}; color: white; text-align: left;border: 1px solid #000;">EL SERVICIO</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -153,7 +153,7 @@
                             @endif
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INTERNET</p>
                             <table style="width: 100%; text-align:center; padding:5px;">
-                                <tr style="background-color: {{Auth::user()->empresa()->color}}; color: #fff;">
+                                <tr style="background-color: {{$empresa->color}}; color: #fff;">
                                     <td colspan="2">Incluidos en el plan</td>
                                     <td colspan="2">Adicionales</td>
                                 </tr>
@@ -171,15 +171,15 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td>
+                                    <td style="font-size: 9px;"><b>{{$empresa->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{$empresa->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</td>
                                 </tr>
                             </table>
 
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">TELEVISIÓN</p>
                             <table style="width: 100%; text-align:center; padding:5px;">
-                                <tr style="background-color: {{Auth::user()->empresa()->color}}; color: #fff;">
+                                <tr style="background-color: {{$empresa->color}}; color: #fff;">
                                     <td colspan="2">Incluidos en el plan</td>
                                     <td colspan="2">Adicionales</td>
                                 </tr>
@@ -197,9 +197,9 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}}{{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{$empresa->moneda}}{{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td>
                                     <td style="font-size: 9px;">Total</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td>
+                                    <td style="font-size: 9px;">{{$empresa->moneda}} {{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td>
                                     @php
                                     $total_tv = 0; $total_internet = 0;
                                     if (isset($contract->servicio_tv)){
@@ -214,7 +214,7 @@
                         </div>
 
                         <div style="border: 1px  solid #000; margin-top: 5px; padding:2px; text-align: right;">
-                            VALOR TOTAL <span style="background-color:silver;">&nbsp;&nbsp;&nbsp;{{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear($total_tv + $total_internet) }}&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;
+                            VALOR TOTAL <span style="background-color:silver;">&nbsp;&nbsp;&nbsp;{{$empresa->moneda}} {{ App\Funcion::Parsear($total_tv + $total_internet) }}&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;
                         </div>
 
                         <br><p style="text-align: justify; color: blue;" class="small">* Espacio diligenciado por el usuario</p>
@@ -251,7 +251,7 @@
                         <table width="100%" style="margin: 0">
                             <tbody>
                                 <tr>
-                                    <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center;" width="5%">1</th>
+                                    <th style="background-color: {{$empresa->color}}; color: white; text-align: center;" width="5%">1</th>
                                     <td style="border: 1px solid #000;font-size:11px " width="95%">
                                         <p style="font-size: 9px; padding:0 5px; text-align: justify;">Nuestros medios de atención son: oficinas físicas, página web, redes sociales y líneas telefónicas gratuitas.</p>
                                     </td>
@@ -262,7 +262,7 @@
                         <table width="100%" style="margin: 0">
                             <tbody>
                                 <tr>
-                                    <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center;" width="5%">2</th>
+                                    <th style="background-color: {{$empresa->color}}; color: white; text-align: center;" width="5%">2</th>
                                     <td style="border: 1px solid #000;font-size:11px" width="95%">
                                     <p style="font-size: 9px; padding:0 5px; text-align: justify;">Presente cualquier queja, petición/reclamo o recurso a través de estos medios y le responderemos en máximo 15 días hábiles.</p>
                                     </td>
@@ -273,7 +273,7 @@
                         <table width="100%" style="margin: 0">
                             <tbody>
                                 <tr>
-                                    <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center;" width="5%">3</th>
+                                    <th style="background-color: {{$empresa->color}}; color: white; text-align: center;" width="5%">3</th>
                                     <td style="border: 1px solid #000;font-size:11px" width="95%">
                                     <p style="font-size: 9px; padding:0 5px; text-align: justify;">Si no respondemos es porque aceptamos su petición o reclamo. Esto se llama silencio administrativo positivo y aplica para internet y telefonía.</p>
                                     </td>
@@ -286,7 +286,7 @@
                         <table width="100%" style="margin: 0">
                             <tbody>
                                 <tr>
-                                    <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center;" width="5%">4</th>
+                                    <th style="background-color: {{$empresa->color}}; color: white; text-align: center;" width="5%">4</th>
                                     <td style="border: 1px solid #000;font-size:11px " width="95%">
                                     <p style="font-size: 9px; padding:0 5px; text-align: justify;">Cuando su queja o petición sea por los servicios de telefonía y/o internet, y esté relacionada con actos de negativa del contrato, suspensión del servicio, terminación del contrato, corte y facturación; usted puede insistir en su solicitud ante nosotros, dentro de los 10 días hábiles siguientes a la respuesta, y pedir que si no llegamos a una solución satisfactoria para usted, enviemos su reclamo directamente a la SIC (Superintendencia de Industria y Comercio) quien resolverá de manera definitiva su solicitud. Esto se llama recurso de reposición y en subsidio apelación. Cuando su queja o petición sea por el servicio de televisión, puede enviar la misma a la Autoridad Nacional de Televisión, para que esta Entidad resuelva su solicitud.</p>
                                     </td>
@@ -301,8 +301,8 @@
                         <table width="100%" style="font-size: 10px">
                             <tbody>
                                 <tr>
-                                    <th style="padding: 0px!important; background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65% pl-2">Valor total del cargo por conexión</th>
-                                    <td style="padding: 0px!important; border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
+                                    <th style="padding: 0px!important; background-color:{{$empresa->color}}; color: white; text-align: left; font-size: 10px;" width="65% pl-2">Valor total del cargo por conexión</th>
+                                    <td style="padding: 0px!important; border: 1px solid {{$empresa->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">$_______</p>
                                     </td>
                                 </tr>
@@ -312,8 +312,8 @@
                         <table width="100%" style="font-size: 10px">
                             <tbody>
                                 <tr>
-                                    <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Suma que le fue descontada o diferida del valor total del cargo por conexión</th>
-                                    <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
+                                    <th style="background-color:{{$empresa->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Suma que le fue descontada o diferida del valor total del cargo por conexión</th>
+                                    <td style="border: 1px solid {{$empresa->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">$_______</p>
                                     </td>
                                 </tr>
@@ -323,8 +323,8 @@
                         <table width="100%" style="font-size: 10px">
                             <tbody>
                                 <tr>
-                                    <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de inicio de la permanencia mínima</th>
-                                    <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
+                                    <th style="background-color:{{$empresa->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de inicio de la permanencia mínima</th>
+                                    <td style="border: 1px solid {{$empresa->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contractDetails->created_at)->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
@@ -334,8 +334,8 @@
                         <table width="100%" style="font-size: 10px">
                             <tbody>
                                 <tr>
-                                    <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de finalización de la permanencia mínima</th>
-                                    <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
+                                    <th style="background-color:{{$empresa->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de finalización de la permanencia mínima</th>
+                                    <td style="border: 1px solid {{$empresa->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contractDetails->created_at)->addYear()->format('d-m-Y')}}</p>
                                     </td>
                                 </tr>
@@ -345,42 +345,42 @@
                         <table width="100%" style="font-size: 10px;">
                             <thead>
                                 <tr>
-                                    <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center; font-size: 10px; padding: 0;margin:0;">Valor a pagar si termina el contrato anticipadamente según el mes</th>
+                                    <th style="background-color: {{$empresa->color}}; color: white; text-align: center; font-size: 10px; padding: 0;margin:0;">Valor a pagar si termina el contrato anticipadamente según el mes</th>
                                 </tr>
                             </thead>
                         </table>
 
                         <table width="100%">
                             <tbody>
-                                <tr style="background-color: {{Auth::user()->empresa()->color}}; border: solid 1px {{Auth::user()->empresa()->color}}; color: #fff; text-align: center;">
+                                <tr style="background-color: {{$empresa->color}}; border: solid 1px {{$empresa->color}}; color: #fff; text-align: center;">
                                     @for ($i = 1; $i <= 6; $i++)
                                         <td style="font-size: 8px;">MES {{ $i }}</td>
                                     @endfor
                                 </tr>
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
-                                    <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                    <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
                                         @if($contract)
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (12-$i)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (12-$i)) }}
                                         @else
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
                                         @endif
                                     </td>
                                     @endfor
                                 </tr>
 
-                                <tr style="background-color: {{Auth::user()->empresa()->color}}; border: solid 1px {{Auth::user()->empresa()->color}}; color: #fff; text-align: center;">
+                                <tr style="background-color: {{$empresa->color}}; border: solid 1px {{$empresa->color}}; color: #fff; text-align: center;">
                                     @for ($i = 7; $i <= 12; $i++)
                                         <td style="font-size: 8px;">MES {{ $i }}</td>
                                     @endfor
                                 </tr>
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
-                                    <td style="font-size: 7px; border: solid 1px {{Auth::user()->empresa()->color}}; text-align: center;">
+                                    <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
                                     @if($contract)
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (6-$i)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (6-$i)) }}
                                         @else
-                                        {{Auth::user()->empresa()->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
                                     @endif
                                     </td>
                                     @endfor
@@ -394,9 +394,9 @@
                         <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">LARGA DISTANCIA (TELEFONÍA)</p><br>
                         <p style="text-align: justify;" class="small">Nos comprometemos a usar el operador de larga distancia que usted nos indique, para lo cual debe marcar el código de larga distancia del operador que elija.</p><br>
                         <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">COBRO POR RECONEXIÓN DEL SERVICIO</p><br>
-                        <p style="text-align: justify;" class="small">En caso de suspensión del servicio por mora en el pago, podremos cobrarle un valor por reconexión que corresponderá estrictamente a los costos asociados a la operación de reconexión. En caso de servicios empaquetados procede máximo un cobro de reconexión por cada tipo de conexión empleado en la prestación de los servicios. @if($contract) <b>{{ $contract->costo_reconexion > 0 ? 'Costo reconexión: '.Auth::user()->empresa()->moneda.' '.App\Funcion::Parsear($contract->costo_reconexion) : '' }}</b> @endif </p><br>
-                        <p style="padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">El usuario es el ÚNICO responsable por el contenido y la información que se curse a través de la red y del uso que se haga de los equipos o de los servicios.</p>
-                        <p style="margin-top: 5px; padding: 5px; color: white; background-color: {{Auth::user()->empresa()->color}};text-align: justify;" class="small">Los equipos de comunicaciones que ya no use son desechos que no deben ser botados a la caneca, consulte nuestra política de recolección de aparatos en desuso.</p>
+                        <p style="text-align: justify;" class="small">En caso de suspensión del servicio por mora en el pago, podremos cobrarle un valor por reconexión que corresponderá estrictamente a los costos asociados a la operación de reconexión. En caso de servicios empaquetados procede máximo un cobro de reconexión por cada tipo de conexión empleado en la prestación de los servicios. @if($contract) <b>{{ $contract->costo_reconexion > 0 ? 'Costo reconexión: '.$empresa->moneda.' '.App\Funcion::Parsear($contract->costo_reconexion) : '' }}</b> @endif </p><br>
+                        <p style="padding: 5px; color: white; background-color: {{$empresa->color}};text-align: justify;" class="small">El usuario es el ÚNICO responsable por el contenido y la información que se curse a través de la red y del uso que se haga de los equipos o de los servicios.</p>
+                        <p style="margin-top: 5px; padding: 5px; color: white; background-color: {{$empresa->color}};text-align: justify;" class="small">Los equipos de comunicaciones que ya no use son desechos que no deben ser botados a la caneca, consulte nuestra política de recolección de aparatos en desuso.</p>
                         @if(Auth::user()->empresa()->contrato_digital && $contract)
                         <div style="border: 1px  solid #000; margin-top: 5px;">
                             <p style="font-size: 9px;text-align: justify; padding:5px;" class="small">
