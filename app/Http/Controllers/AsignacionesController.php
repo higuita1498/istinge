@@ -90,7 +90,7 @@ class AsignacionesController extends Controller
                 } else {
                     $contrato_nuevo->contrato_permanencia_meses = 0;
                 }
-                dd($contrato_nuevo->contrato_permanencia_meses);
+
                 $contrato_nuevo->plan_id = $request->plan_id;
                 $contrato_nuevo->server_configuration_id = $request->server_configuration_id;
                 $contrato_nuevo->contrato_permanencia = $request->contrato_permanencia;
