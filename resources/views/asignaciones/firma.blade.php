@@ -29,12 +29,12 @@
 
         {{-- Imprime o debuggea las variables --}}
 
-            {{-- <div>
+             <div>
                  <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-            </div> --}}
-            <div style="margin-bottom: 100px;">
-                <iframe src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" width="100%" height="800px" frameborder="0"></iframe>
             </div>
+            {{-- <div style="margin-bottom: 100px;">
+                <iframe src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir" width="100%" height="800px" frameborder="0"></iframe>
+            </div> --}}
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
