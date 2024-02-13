@@ -1280,9 +1280,9 @@ class AsignacionesController extends Controller
         // for now.
         /** @var User $company */
         $company = ((object) FacadesAuth::user())->empresa();
-
+        $empresa = Empresa::first();
         if (!$company) {
-            $empresa = Empresa::first();
+
             // La variable es nula o evaluada como falsa, haz algo aquí
             try {
                 /** @var Contacto $contact */
@@ -1332,6 +1332,7 @@ class AsignacionesController extends Controller
             'company',
             'contract',
             'contractDetails',
+            'empresa'
         ]));
         return response($pdf->stream())->withHeaders(['Content-Type' => 'application/pdf',]);
     }
