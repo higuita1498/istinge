@@ -361,9 +361,9 @@
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
                                         @if($contract)
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (12-$i)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clasula_permanencia / $contract->contrato_permanencia_meses) * (12-$i)) }}
                                         @else
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clasula_permanencia)) }}
                                         @endif
                                     </td>
                                     @endfor
@@ -378,9 +378,9 @@
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
                                     @if($contract)
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia / $contract->contrato_permanencia_meses) * (6-$i)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clasula_permanencia / $contract->contrato_permanencia_meses) * (6-$i)) }}
                                         @else
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear((Auth::user()->empresa()->clausula_permanencia)) }}
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clasula_permanencia)) }}
                                     @endif
                                     </td>
                                     @endfor
