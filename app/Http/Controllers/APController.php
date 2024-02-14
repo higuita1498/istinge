@@ -84,6 +84,7 @@ class APController extends Controller
     }
 
     public function create(){
+        dd("quieres crear un acces point");
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Access Point']);
         $nodos = Nodo::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
