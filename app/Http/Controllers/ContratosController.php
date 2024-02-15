@@ -345,9 +345,9 @@ class ContratosController extends Controller
                 return ($contrato->mac_address) ? $contrato->mac_address : 'N/A';
             })
             ->editColumn('ipformat', function (Contrato $contrato) {
-                // return ($contrato->ip) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
-                $puerto = $contrato->puerto ? ':'.$contrato->puerto->nombre : '';
-                return ($contrato->ipformat) ? '<a href="http://'.$contrato->ip.''.$puerto.'" target="_blank">'.$contrato->ip.''.$puerto.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
+                 return ($contrato->ip) ? '<a href="http://'.$contrato->ip.'" target="_blank">'.$contrato->ip.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
+                // $puerto = $contrato->puerto ? ':'.$contrato->puerto->nombre : '';
+                // return ($contrato->ipformat) ? '<a href="http://'.$contrato->ip.''.$puerto.'" target="_blank">'.$contrato->ip.''.$puerto.'  <i class="fas fa-external-link-alt"></i></a>' : 'N/A';
                     // return $contrato->ipformat;
             })
 			->editColumn('grupo_corte', function (Contrato $contrato) {

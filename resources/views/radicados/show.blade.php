@@ -335,27 +335,27 @@
     							<td>
                                     @if ($radicado->adjunto)
                                         {{-- Archivo 1 --}}
-    								    <a href="{{asset('empresa/adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>
+    								    <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{1}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto"><i class="fas fa-times"></i></a>
                                     @endif
                                     @if ($radicado->adjunto_1)
                                     {{-- Archivo 2 --}}
-                                        <a href="{{asset('../../adjuntos/documentos/'.$radicado->adjunto_1)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 1"><i class="fas fa-eye"></i>
+                                        <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_1)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 1"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{2}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 1"><i class="fas fa-times"></i></a>
                                     {{-- Archivo 3 --}}
                                     @endif
                                     @if ($radicado->adjunto_2)
-                                        <a href="{{asset('../../adjuntos/documentos/'.$radicado->adjunto_2)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 2"><i class="fas fa-eye"></i>
+                                        <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_2)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 2"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{3}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 2"><i class="fas fa-times"></i></a>
                                     {{-- Archivo 4 --}}
                                     @endif
                                     @if ($radicado->adjunto_3)
-                                        <a href="{{asset('../../adjuntos/documentos/'.$radicado->adjunto_3)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 3"><i class="fas fa-eye"></i>
+                                        <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_3)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 3"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{4}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 3"><i class="fas fa-times"></i></a>
                                     @endif
                                     {{-- Archivo 5 --}}
                                     @if ($radicado->adjunto_4)
-                                        <a href="{{asset('../../adjuntos/documentos/'.$radicado->adjunto_4)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 4"><i class="fas fa-eye"></i>
+                                        <a href="{{asset('adjuntos/documentos/'.$radicado->adjunto_4)}}" target="_blank" class="btn btn-outline-success btn-sm btn-icons" style="border-radius: 50%;" title="Ver Adjunto 4"><i class="fas fa-eye"></i>
                                         <a href="javascript:eliminar('{{$radicado->id}},{{5}}')" class="btn btn-outline-danger btn-sm btn-icons ml-1" style="border-radius: 50%;" title="Eliminar Adjunto 4"><i class="fas fa-times"></i></a>
                                     @endif
                                     {{-- @if ($radicado->adjunto_audio)
