@@ -115,7 +115,8 @@
                     <div class="col-md-12" style="background:#57c7d4;">
                         {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
                             {{-- @csrf  --}}
-                            <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Buenas tardes señor usuario, recuerde que hoy es la fecha límite de su factura, evite suspensión del sistema el día de mañana realizando su pago hoy a la siguiente cuenta bancaria 24900001066 y enviando el soporte aquí (3053652834).</p>
+                            {{-- <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Buenas tardes señor usuario, recuerde que hoy es la fecha límite de su factura, evite suspensión del sistema el día de mañana realizando su pago hoy a la siguiente cuenta bancaria 24900001066 y enviando el soporte aquí (3053652834).</p> --}}
+                            <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Señores de Globicnet integra no ha recibido su pago por favor realizar el pago para evitar la suspensión del servicio el día de hoy muchas gracias enviar comprobante a (3053652834).</p>
 
                             {{-- <div class="form-group">
                                 <label for="archivo">Adjuntar pago:</label>
