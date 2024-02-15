@@ -267,7 +267,7 @@
 										@if($mikrotik->created_by)
 										<tr>
 											<th width="15%">Registrado por</th>
-											<td>{{ $mikrotik->created_by()->nombres }}</td>
+											{{-- <td>{{ $mikrotik->created_by()->nombres }}</td> --}}
 										</tr>
 										@endif
 										@if($mikrotik->updated_by)
