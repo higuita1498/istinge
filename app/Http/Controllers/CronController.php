@@ -604,7 +604,7 @@ class CronController extends Controller
 
                             if($contrato->state != 'enabled'){
 
-                                if(isset($contrato->server_configuration_id)){
+                                if(isset($contrato->server_configuration_id) && $factura->estatus != 0){
 
                                     $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                                     $API = new RouterosAPI();

@@ -49,7 +49,9 @@ class Factura extends Model
     protected $appends = ['session'];
 
     public function getSessionAttribute(){
-        return $this->getAllPermissions(Auth::user()->id);
+        if(isset(Auth::user()->id)){
+            return $this->getAllPermissions(Auth::user()->id);
+        }
     }
 
     public function getAllPermissions($id){
