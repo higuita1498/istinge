@@ -968,7 +968,6 @@ class FacturasController extends Controller{
         $factura->nro_remision = $request->nro_remision;
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
-        $factura->cuenta_id    = $request->formapago;
         $factura->periodo_facturacion = $request->periodo_facturacion;
         $factura->created_by = $user->id;
 
