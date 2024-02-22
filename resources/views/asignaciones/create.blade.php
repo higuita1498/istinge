@@ -147,7 +147,7 @@
                     </span>
                 </div>
 
-                <div class="col-md-3 form-group">
+                {{-- <div class="col-md-3 form-group">
                     <label class="control-label">Servidor <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select class="form-control selectpicker" name="server_configuration_id" id="server_configuration_id" required="" title="Seleccione" data-live-search="true" data-size="5" onchange="getPlanes(this.value);">
@@ -173,7 +173,7 @@
                                 <i class="fas fa-plus" style="margin: 2px;"></i>
                             </a>
                         </div> --}}
-                    </div>
+                    {{-- </div>
                     <span class="help-block error">
                         <strong>{{ $errors->first('plan_id') }}</strong>
                     </span>
@@ -205,7 +205,7 @@
                     <span class="help-block error">
                         <strong>{{ $errors->first('contrato_permanencia_meses') }}</strong>
                     </span>
-                </div>
+                </div> --}}
 
         </div>
 
@@ -412,20 +412,20 @@
             }
         }
 
-        function habilitar(){
-            var selectElement = document.getElementById('contrato_permanencia');
-            var botonElement = document.getElementById('div_meses');
+        // function habilitar(){
+        //     var selectElement = document.getElementById('contrato_permanencia');
+        //     var botonElement = document.getElementById('div_meses');
 
-            if (selectElement.value === '1') {
+        //     if (selectElement.value === '1') {
 
-                // Oculta el botón
-                botonElement.classList.remove('d-none');
-            } else {
+        //         // Oculta el botón
+        //         botonElement.classList.remove('d-none');
+        //     } else {
 
-                // Muestra el botón
-                botonElement.classList.add('d-none');
-            }
-        }
+        //         // Muestra el botón
+        //         botonElement.classList.add('d-none');
+        //     }
+        // }
     </script>
 
 @endsection

@@ -52,15 +52,15 @@ class AsignacionesController extends Controller
     public function create()
     {
         $this->getAllPermissions(Auth::user()->id);
-        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
-        $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        // $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        // $servidores = Mikrotik::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $clientes = Contacto::where('fecha_isp', null)->where('empresa', Auth::user()->empresa)->OrderBy('nombre')->get();
         $clientes = (Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
         $empresa = Empresa::find(Auth::user()->empresa);
         $contrato = Contrato::where('id', request()->contrato)->where('empresa', Auth::user()->empresa)->first();
         $idCliente = $contrato->client_id ?? '';
         view()->share(['title' => 'Asignación de Contrato de Internet']);
-        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente','servidores'));
+        return view('asignaciones.create')->with(compact('clientes', 'empresa', 'contrato', 'idCliente'));
     }
 
     public function store(Request $request)
@@ -76,28 +76,28 @@ class AsignacionesController extends Controller
 
                 // $idContrato = $request->contrato;
                 $idContrato = $num->id;
-            }else{
+            // }else{
 
-                $contrato_nuevo = new Contrato();
-                $ultimoRegistro = Contrato::latest()->first();
+            //     $contrato_nuevo = new Contrato();
+            //     $ultimoRegistro = Contrato::latest()->first();
 
-                $contrato_nuevo->client_id = $request->id;
-                $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
+            //     $contrato_nuevo->client_id = $request->id;
+            //     $contrato_nuevo->nro = $ultimoRegistro->nro + 1;
 
 
-                if (!empty($request->contrato_permanencia_meses)) {
-                    $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses;
-                } else {
-                    $contrato_nuevo->contrato_permanencia_meses = 0;
-                }
+            //     if (!empty($request->contrato_permanencia_meses)) {
+            //         $contrato_nuevo->contrato_permanencia_meses = $request->contrato_permanencia_meses;
+            //     } else {
+            //         $contrato_nuevo->contrato_permanencia_meses = 0;
+            //     }
 
-                $contrato_nuevo->plan_id = $request->plan_id;
-                $contrato_nuevo->server_configuration_id = $request->server_configuration_id;
-                $contrato_nuevo->contrato_permanencia = $request->contrato_permanencia;
+            //     $contrato_nuevo->plan_id = $request->plan_id;
+            //     $contrato_nuevo->server_configuration_id = $request->server_configuration_id;
+            //     $contrato_nuevo->contrato_permanencia = $request->contrato_permanencia;
 
-                $contrato_nuevo->servicio = $this->normaliza($servicio).'-'.($ultimoRegistro->nro + 1);
-                $contrato_nuevo->save();
-            }
+            //     $contrato_nuevo->servicio = $this->normaliza($servicio).'-'.($ultimoRegistro->nro + 1);
+            //     $contrato_nuevo->save();
+             }
 
             $ext_permitidas = array('jpeg','png','gif');
             if (!$request->id) {

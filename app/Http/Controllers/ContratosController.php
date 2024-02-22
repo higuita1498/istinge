@@ -901,7 +901,7 @@ class ContratosController extends Controller
             $contrato->tipo_contrato        = $request->tipo_contrato;
             $contrato->observaciones           = $request->observaciones;
             $contrato->ip_receptora            = $request->ip_receptora;
-                $contrato->puerto_receptor         = $request->puerto_receptor;
+            $contrato->puerto_receptor         = $request->puerto_receptor;
 
 
             if($request->factura_individual){
