@@ -968,7 +968,6 @@ class FacturasController extends Controller{
         $factura->nro_remision = $request->nro_remision;
         $factura->tipo_operacion = $request->tipo_operacion;
         $factura->ordencompra    = $request->ordencompra;
-        $factura->cuenta_id    = $request->formapago;
         $factura->periodo_facturacion = $request->periodo_facturacion;
         $factura->created_by = $user->id;
 
@@ -1233,7 +1232,6 @@ class FacturasController extends Controller{
                 $factura->facnotas=$request->notas;
                 $factura->tipo_operacion = $request->tipo_operacion;
                 $factura->ordencompra    = $request->ordencompra;
-                $factura->cuenta_id    = $request->relacion;
                 $factura->periodo_facturacion = $request->periodo_facturacion;
                 $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
                 $factura->save();
