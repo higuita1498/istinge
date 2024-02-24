@@ -1294,7 +1294,6 @@ class FacturasController extends Controller{
                     //El descuneto no se debe aplicar sin ser aprobado.
                     if(isset($request->desc[$i])){
                         $desc=$request->desc[$i];
-                        // $items->desc=$desc;
                     }
                     $items->save();
                     $inner[]=$items->id;
