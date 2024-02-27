@@ -106,7 +106,7 @@
 
                         <div style="width: 100%; background-color: {{$empresa->color}}; clear:both;  margin-top: 10px;">
                             <p style="color: white; margin: 2px; text-align: justify; padding: 5px;" class="">
-                                Este contrato explica las condiciones para la prestación de los servicios entre usted y <b>{{$empresa->color->nombre}}</b>, por el que pagará mínimo mensualmente <b>$ _______</b>. Este contrato tendrá vigencia de ____ meses, contados a partir del <b>__/__/____</b>. El plazo máximo de instalación es de 15 días hábiles. Acepto que mi contrato se renueve sucesiva y automáticamente por un plazo igual al inicial <input checked="checked" type="checkbox"> *
+                                Este contrato explica las condiciones para la prestación de los servicios entre usted y <b>{{$empresa->nombre}}</b>, por el que pagará mínimo mensualmente <b>$ _______</b>. Este contrato tendrá vigencia de ____ meses, contados a partir del <b>__/__/____</b>. El plazo máximo de instalación es de 15 días hábiles. Acepto que mi contrato se renueve sucesiva y automáticamente por un plazo igual al inicial <input checked="checked" type="checkbox"> *
                             </p>
                         </div>
 
