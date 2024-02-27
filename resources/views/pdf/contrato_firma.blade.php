@@ -133,7 +133,7 @@
 
                         <div style="width: 100%;  margin-top: 10px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INFORMACIÓN DEL SUSCRIPTOR</p><br>
-                            <p style="text-align: justify;" class="small pl-2">Contrato No.: <b>{{ $contractDetails ? $contractDetails->nro : '' }}</b> </p>
+                            <p style="text-align: justify;" class="small pl-2">Contrato No.: <b></b> </p>
                             <p style="text-align: justify;" class="small pl-2">Nombre / Razón Social: <b>{{ $contact->nombre }} {{ $contact->apellidos() }}</b></p>
                             <p style="text-align: justify;" class="small pl-2">Identificación: <b>{{ $contact->tip_iden('corta') }} {{ $contact->nit }}@if($contact->dv != null || $contact->dv === 0)-{{$contact->dv}} @endif</b></p>
                             <p style="text-align: justify;" class="small pl-2">Correo electrónico: <b>{{ $contact->email }}</b></p>
@@ -146,9 +146,9 @@
                         <div style="width: 100%;  margin-top: 5px; border: 1px  solid #000;">
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">CONDICIONES COMERCIALES CARACTERÍSTICAS DEL PLAN</p><br>
                             <p style="text-align: justify;" class="small pl-2">Tipo de Cliente: Nuevo <input type="checkbox" /> Modificación <input type="checkbox" /></p>
-                            @if(isset($contract->tecnologia))
+
                             <p style="text-align: justify;" class="small pl-2">Tipo red: FTTH <input type="checkbox"> WIRELESS <input type="checkbox" ></p><br>
-                            @endif
+
                             <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">INTERNET</p>
                             <table style="width: 100%; text-align:center; padding:5px;">
                                 <tr style="background-color: {{$empresa->color}}; color: #fff;">
