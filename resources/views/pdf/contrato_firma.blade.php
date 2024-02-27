@@ -372,7 +372,7 @@
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
 
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia)) }}
+
 
                                     </td>
                                     @endfor
