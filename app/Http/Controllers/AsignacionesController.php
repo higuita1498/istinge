@@ -1344,6 +1344,35 @@ class AsignacionesController extends Controller
         return response($pdf->stream())->withHeaders(['Content-Type' => 'application/pdf',]);
     }
 
+    // funcion que permita imprimir el contrato en firma de asignaciones
+    public function imprimir_firma($id)
+    {
+        // TODO: we should really test this method, as the generation of the PDF
+        // can sometimes go wrong. Or make a better error. The following can be
+        // upgraded to use something like Go or Rust, but I feel this is fine
+        // for now.
+        /** @var User $company */
+
+            $company = Empresa::first();
+            // La variable es nula o evaluada como falsa, haz algo aquí
+                /** @var Contacto $contact */
+            $contact = Contacto::where('id', $id)
+            ->where('empresa', $empresa->id)
+            ->firstOrFail();
+            $company = $empresa;
+            /** @var Contacto $contact */
+            $contact = Contacto::where('id', $id)
+                ->where('empresa', $company->id)
+                ->firstOrFail();
+
+        view()->share(['title' => 'Contrato de Internet']);
+        $pdf = Pdf::loadView('pdf.contrato_firma', compact([
+            'contact',
+            'company',
+        ]));
+        return response($pdf->stream())->withHeaders(['Content-Type' => 'application/pdf',]);
+    }
+
     public function show_campos_asignacion()
     {
         $empresa = Empresa::find(Auth::user()->empresa);

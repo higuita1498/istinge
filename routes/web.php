@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('sendmail','Controller@sendmail');
-
+Route::get('{id}/imprimir/firma', 'AsignacionesController@imprimir_firma')->name('asignaciones.imprimir_firmar');
 Route::get('phpinfo', function(){phpinfo();});
 Route::get('/crear-nomina-eliminada', 'NominaController@generarNominaEliminada');
 
