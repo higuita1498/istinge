@@ -358,11 +358,7 @@
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
-                                        @if($contract)
-                                        {{$empresa->color->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia )) }}
-                                        @else
-                                        {{$empresa->color->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia)) }}
-                                        @endif
+                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia )) }}
                                     </td>
                                     @endfor
                                 </tr>
@@ -375,11 +371,9 @@
                                 <tr class="tr-precios">
                                     @for ($i = 0; $i < 6; $i++)
                                     <td style="font-size: 7px; border: solid 1px {{$empresa->color}}; text-align: center;">
-                                    @if($contract)
+
                                         {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia)) }}
-                                        @else
-                                        {{$empresa->moneda}} {{ App\Funcion::Parsear(($empresa->clausula_permanencia)) }}
-                                    @endif
+
                                     </td>
                                     @endfor
                                 </tr>
