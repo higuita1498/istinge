@@ -1354,6 +1354,7 @@ class AsignacionesController extends Controller
         /** @var User $company */
 
             $company = Empresa::first();
+            $empresa = Empresa::first();
             // La variable es nula o evaluada como falsa, haz algo aquí
                 /** @var Contacto $contact */
             $contact = Contacto::where('id', $id)
@@ -1369,6 +1370,7 @@ class AsignacionesController extends Controller
         $pdf = Pdf::loadView('pdf.contrato_firma', compact([
             'contact',
             'company',
+            'empresa'
         ]));
         return response($pdf->stream())->withHeaders(['Content-Type' => 'application/pdf',]);
     }
