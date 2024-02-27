@@ -399,9 +399,12 @@ class RadicadosController extends Controller{
         if ($radicado) {
             if($request->adjunto){
                 $radicado->adjunto = $request->adjunto;
+
                 $file = $request->file('adjunto');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
@@ -420,7 +423,9 @@ class RadicadosController extends Controller{
                 $radicado->adjunto_1 = $request->adjunto1;
                 $file = $request->file('adjunto1');
                 $nombre = $radicado->codigo.'-'.'1'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto_1 = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
@@ -440,7 +445,9 @@ class RadicadosController extends Controller{
                 $radicado->adjunto_2 = $request->adjunto2;
                 $file = $request->file('adjunto2');
                 $nombre = $radicado->codigo.'-'.'2'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto_2 = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
@@ -459,7 +466,9 @@ class RadicadosController extends Controller{
                 $radicado->adjunto_3 = $request->adjunto3;
                 $file = $request->file('adjunto3');
                 $nombre = $radicado->codigo.'-'.'3'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto_3 = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
@@ -478,7 +487,9 @@ class RadicadosController extends Controller{
                 $radicado->adjunto_4 = $request->adjunto4;
                 $file = $request->file('adjunto4');
                 $nombre = $radicado->codigo.'-'.'4'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto_4 = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
@@ -496,7 +507,9 @@ class RadicadosController extends Controller{
                 $radicado->adjunto_audio = $request->archivo_de_audio;
                 $file = $request->file('archivo_de_audio');
                 $nombre = $radicado->codigo.'-'.date('Ymd').'.'.$file->extension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
+                $ruta = public_path('/adjuntos/documentos/');
+                $file->move($ruta, $nombre);
+
                 $radicado->adjunto_audio = $nombre;
                 $radicado->update();
                 $mensaje='SE HA CARGADO EL ARCHIVO ADJUNTO SATISFACTORIAMENTE.';
