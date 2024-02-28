@@ -17,9 +17,9 @@ use App\Model\Ingresos\IngresosCategoria;
 use App\Model\Ingresos\IngresosRetenciones;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosCategoria;
-use Carbon\Carbon;  use Mail; use Auth;
+use Carbon\Carbon;  use Mail;
 use Validator; use Illuminate\Validation\Rule;
-use bcrypt; use DB;
+use bcrypt;
 use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
@@ -53,6 +53,8 @@ use PHPExcel_Style_NumberFormat;
 use PHPExcel_Shared_ZipArchive;
 
 use App\Producto;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class IngresosController extends Controller
 {
@@ -249,8 +251,13 @@ class IngresosController extends Controller
         //obtiene las formas de pago relacionadas con este modulo (Facturas)
         $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
 
+        $saldo_favor = 0;
+        if($cliente){
+            $saldo_favor = Contacto::Find($cliente)->saldo_favor;
+        }
+
         return view('ingresos.create')->with(compact('contrato','clientes', 'inventario', 'cliente', 'factura',
-        'bancos', 'metodos_pago', 'impuestos',
+        'bancos', 'metodos_pago', 'impuestos', 'saldo_favor',
         'retenciones',  'banco', 'numero','pers','bank','categorias','anticipos','formas','relaciones'));
     }
 
@@ -314,7 +321,12 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-        //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
+
+        try {
+            DB::beginTransaction();
+
+            $user = Auth::user();
+            //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
         if($request->realizar == 2){
             //Cuando se realiza el ingreso por categoría.
             $this->storeIngresoPucCategoria($request);
@@ -392,8 +404,8 @@ class IngresosController extends Controller
                 }
             }
 
-            if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
-                Session::put('posttimer', Ingreso::where('empresa', auth()->user()->empresa)->get()->last()->created_at);
+            if (Ingreso::where('empresa', $user->empresa)->count() > 0) {
+                Session::put('posttimer', Ingreso::where('empresa', $user->empresa)->get()->last()->created_at);
                 $sw = 1;
 
                 foreach (Session::get('posttimer') as $key) {
@@ -417,15 +429,19 @@ class IngresosController extends Controller
                 'cuenta' => 'required|numeric'
             ]);
 
-            $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+            $nro = Numeracion::where('empresa', $user->empresa)->first();
             $caja = $nro->caja;
 
             while (true) {
-                $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                $numero = Ingreso::where('empresa', $user->empresa)->where('nro', $caja)->count();
                 if ($numero == 0) {
                     break;
                 }
                 $caja++;
+            }
+
+            if(isset($request->uso_saldo) && $request->uso_saldo){
+                $request->cuenta = Banco::where('empresa',$user->empresa)->where('nombre','like','Saldos a favor')->first()->id;
             }
 
             $ingreso = new Ingreso;
@@ -444,333 +460,126 @@ class IngresosController extends Controller
             $ingreso->comprobante_pago = $request->comprobante_pago;
             $ingreso->save();
 
-            //Si el tipo de ingreso es de facturas
-            if ($ingreso->tipo == 1) {
-                $saldoFavorUsado = 0;
-                foreach ($request->factura_pendiente as $key => $value) {
-                    if ($request->precio[$key]) {
-                        $precio = $this->precision($request->precio[$key]);
-                        $factura = Factura::find($request->factura_pendiente[$key]);
+                //Si el tipo de ingreso es de facturas
+                if ($ingreso->tipo == 1) {
+                    $saldoFavorUsado = 0;
+                    foreach ($request->factura_pendiente as $key => $value) {
+                        if ($request->precio[$key]) {
+                            $precio = $this->precision($request->precio[$key]);
+                            $factura = Factura::find($request->factura_pendiente[$key]);
 
-                        /*
-                        vamos a sumar el total del anticipo usado sobre una factura
-                        (este se aplica cuando se crea la factura de venta en una forma de pago)
-                        */
-                        $saldoFavorUsado+=$factura->saldoFavorUsado();
+                            /*
+                            vamos a sumar el total del anticipo usado sobre una factura
+                            (este se aplica cuando se crea la factura de venta en una forma de pago)
+                            */
+                            $saldoFavorUsado+=$factura->saldoFavorUsado();
 
-                        $retencion = 'fact' . $factura->id . '_retencion';
-                        $precio_reten = 'fact' . $factura->id . '_precio_reten';
-                        if ($request->$retencion) {
-                            foreach ($request->$retencion as $key2 => $value2) {
-                                if ($request->$precio_reten[$key2]) {
-                                    $retencion = Retencion::where('id', $value2)->first();
-                                    $items = new IngresosRetenciones;
-                                    $items->ingreso = $ingreso->id;
-                                    $items->factura = $factura->id;
-                                    $items->valor = $this->precision($request->$precio_reten[$key2]);
-                                    $precio += $this->precision($request->$precio_reten[$key2]);
-                                    $items->retencion = $retencion->porcentaje;
-                                    $items->id_retencion = $retencion->id;
-                                    $items->save();
+                            $retencion = 'fact' . $factura->id . '_retencion';
+                            $precio_reten = 'fact' . $factura->id . '_precio_reten';
+                            if ($request->$retencion) {
+                                foreach ($request->$retencion as $key2 => $value2) {
+                                    if ($request->$precio_reten[$key2]) {
+                                        $retencion = Retencion::where('id', $value2)->first();
+                                        $items = new IngresosRetenciones;
+                                        $items->ingreso = $ingreso->id;
+                                        $items->factura = $factura->id;
+                                        $items->valor = $this->precision($request->$precio_reten[$key2]);
+                                        $precio += $this->precision($request->$precio_reten[$key2]);
+                                        $items->retencion = $retencion->porcentaje;
+                                        $items->id_retencion = $retencion->id;
+                                        $items->save();
+                                    }
                                 }
                             }
-                        }
 
-                        $items = new IngresosFactura;
-                        $items->ingreso = $ingreso->id;
-                        $items->factura = $factura->id;
-                        $items->pagado = $factura->pagado();
-                        $items->puc_factura = $factura->cuenta_id;
-                        $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
-                        $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
-
-                        /*
-                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
-                        sobre el total de la factura por que el resto es saldo a favor.
-                        */
-                        if($factura->total()->total < $request->precio[$key]){
-                            $items->pago = $factura->total()->total;
-                            $factura->estatus = 0;
-                            $factura->save();
-                        }else{
-                            $items->pago=$this->precision($request->precio[$key]);
-                        }
-
-                        if ($this->precision($precio) == $this->precision($factura->porpagar())) {
-                            $factura->estatus = 0;
-                            $factura->save();
-
-                            CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
-
-                            $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
-                            foreach ($crms as $crm) {
-                                $crm->delete();
-                            }
-                        }
-
-                        $items->save();
-                    }
-                }
-            } else { //Si el tipo de ingreso es de categorias
-                foreach ($request->categoria as $key => $value) {
-                    if ($request->precio_categoria[$key]) {
-                        $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
-                        if (!$impuesto) {
-                            $impuesto = Impuesto::where('id', 0)->first();
-                        }
-
-                        $items = new IngresosCategoria;
-                        $items->valor = $this->precision($request->precio_categoria[$key]);
-                        $items->id_impuesto = $request->impuesto_categoria[$key];
-                        $items->ingreso = $ingreso->id;
-                        $items->categoria = $request->categoria[$key];
-                        $items->cant = $request->cant_categoria[$key];
-                        $items->descripcion = $request->descripcion_categoria[$key];
-                        $items->impuesto = $impuesto->porcentaje;
-                        $items->save();
-                    }
-                }
-                if ($request->retencion) {
-                    foreach ($request->retencion as $key => $value) {
-                        if ($request->precio_reten[$key]) {
-                            $retencion = Retencion::where('id', $request->retencion[$key])->first();
-                            $items = new IngresosRetenciones;
+                            $items = new IngresosFactura;
                             $items->ingreso = $ingreso->id;
-                            $items->valor = $this->precision($request->precio_reten[$key]);
-                            $items->retencion = $retencion->porcentaje;
-                            $items->id_retencion = $retencion->id;
+                            $items->factura = $factura->id;
+                            $items->pagado = $factura->pagado();
+                            $items->puc_factura = $factura->cuenta_id;
+                            $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
+
+                            /*
+                            Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
+                            sobre el total de la factura por que el resto es saldo a favor.
+                            */
+                            if($factura->total()->total < $request->precio[$key]){
+                                $items->pago = $factura->total()->total;
+                                $factura->estatus = 0;
+                                $factura->save();
+                            }else{
+                                $items->pago=$this->precision($request->precio[$key]);
+                            }
+
+                            if ($this->precision($precio) == $this->precision($factura->porpagar())) {
+                                $factura->estatus = 0;
+                                $factura->save();
+
+                                CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->delete();
+
+                                $crms = CRM::where('cliente', $factura->cliente)->whereIn('estado', [0,2,3,6])->get();
+                                foreach ($crms as $crm) {
+                                    $crm->delete();
+                                }
+                            }
+
                             $items->save();
                         }
                     }
-                }
-            }
+                } else { //Si el tipo de ingreso es de categorias
+                    foreach ($request->categoria as $key => $value) {
+                        if ($request->precio_categoria[$key]) {
+                            $impuesto = Impuesto::where('id', $request->impuesto_categoria[$key])->first();
+                            if (!$impuesto) {
+                                $impuesto = Impuesto::where('id', 0)->first();
+                            }
 
-            //registramos el saldo a favor que se generó al pagar la factura
-            if($request->saldofavor > 0){
-                $contacto = Contacto::find($request->cliente);
-                $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
-                $contacto->save();
-
-                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
-
-                $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                PucMovimiento::ingreso($ingreso,1,1,$request);
-            }else{
-                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::ingreso($ingreso,1,2,$request);
-            }
-
-            //sumo a las numeraciones el recibo
-            $nro->caja = $caja + 1;
-            $nro->save();
-
-            //Registro el Movimiento
-            $ingreso = Ingreso::find($ingreso->id);
-            //ingresos
-            $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
-
-            //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
-            if(isset($saldoFavorUsado) && $saldoFavorUsado > 0){
-                //la cuenta de anticipo es la 6
-                $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
-            }
-
-            if ($ingreso->tipo == 1) {
-                if($factura->estatus == 0){
-                    $cliente = Contacto::where('id', $request->cliente)->first();
-                    $contrato = Contrato::where('id',$factura->contrato_id)->first();
-                    if($contrato){
-                        $contrato->state = "enabled";
-                        $contrato->save();
-                    }
-                    if(!$contrato){
-                        $contrato = Contrato::where('client_id', $cliente->id)->first();
-                        if($contrato){
-                            $contrato->state = "enabled";
-                            $contrato->save();
+                            $items = new IngresosCategoria;
+                            $items->valor = $this->precision($request->precio_categoria[$key]);
+                            $items->id_impuesto = $request->impuesto_categoria[$key];
+                            $items->ingreso = $ingreso->id;
+                            $items->categoria = $request->categoria[$key];
+                            $items->cant = $request->cant_categoria[$key];
+                            $items->descripcion = $request->descripcion_categoria[$key];
+                            $items->impuesto = $impuesto->porcentaje;
+                            $items->save();
                         }
                     }
 
-                    // return $contrato;
-
-                    /* * * API MK * * */
-
-                    if($contrato){
-                        $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-
-                        if ($asignacion) {
-                            $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
-                            $asignacion->cuotas_pendientes = $cuotas_pendientes;
-                            if ($cuotas_pendientes == 0) {
-                                $asignacion->status = 1;
-                            }
-                            $asignacion->save();
-                        }
-
-                        if($contrato->server_configuration_id){
-                            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                            $API = new RouterosAPI();
-                            $API->port = $mikrotik->puerto_api;
-
-                            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                                $API->write('/ip/firewall/address-list/print', TRUE);
-                                $ARRAYS = $API->read();
-
-                                #ELIMINAMOS DE MOROSOS#
-                                $API->write('/ip/firewall/address-list/print', false);
-                                $API->write('?address='.$contrato->ip, false);
-                                $API->write("?list=morosos",false);
-                                $API->write('=.proplist=.id');
-                                $ARRAYS = $API->read();
-
-                                if(count($ARRAYS)>0){
-                                    $API->write('/ip/firewall/address-list/remove', false);
-                                    $API->write('=.id='.$ARRAYS[0]['.id']);
-                                    $READ = $API->read();
-                                }
-                                #ELIMINAMOS DE MOROSOS#
-
-                                #AGREGAMOS A IP_AUTORIZADAS#
-                                $API->comm("/ip/firewall/address-list/add", array(
-                                    "address" => $contrato->ip,
-                                    "list" => 'ips_autorizadas'
-                                    )
-                                );
-                                #AGREGAMOS A IP_AUTORIZADAS#
-
-                                $API->disconnect();
-
-                                $contrato->state = 'enabled';
-                                $contrato->save();
+                    if ($request->retencion) {
+                        foreach ($request->retencion as $key => $value) {
+                            if ($request->precio_reten[$key]) {
+                                $retencion = Retencion::where('id', $request->retencion[$key])->first();
+                                $items = new IngresosRetenciones;
+                                $items->ingreso = $ingreso->id;
+                                $items->valor = $this->precision($request->precio_reten[$key]);
+                                $items->retencion = $retencion->porcentaje;
+                                $items->id_retencion = $retencion->id;
+                                $items->save();
                             }
                         }
                     }
-
-                    /* * * API MK * * */
-
-                    /* * * ENVÍO SMS * * */
-                    $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
-                    if($servicio){
-                        $numero = str_replace('+','',$cliente->celular);
-                        $numero = str_replace(' ','',$numero);
-                        $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
-                        if($servicio->nombre == 'Hablame SMS'){
-                            if($servicio->api_key && $servicio->user && $servicio->pass){
-                                $post['toNumber'] = $numero;
-                                $post['sms'] = $mensaje;
-
-                                $curl = curl_init();
-                                curl_setopt_array($curl, array(
-                                    CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING => '',
-                                    CURLOPT_MAXREDIRS => 10,
-                                    CURLOPT_TIMEOUT => 0,
-                                    CURLOPT_FOLLOWLOCATION => true,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
-                                    CURLOPT_HTTPHEADER => array(
-                                        'account: '.$servicio->user,
-                                        'apiKey: '.$servicio->api_key,
-                                        'token: '.$servicio->pass,
-                                        'Content-Type: application/json'
-                                    ),
-                                ));
-                                $result = curl_exec ($curl);
-                                $err  = curl_error($curl);
-                                curl_close($curl);
-                            }
-                        }elseif($servicio->nombre == 'SmsEasySms'){
-                            if($servicio->user && $servicio->pass){
-                                $post['to'] = array('57'.$numero);
-                                $post['text'] = $mensaje;
-                                $post['from'] = "SMS";
-                                $login = $servicio->user;
-                                $password = $servicio->pass;
-
-                                $ch = curl_init();
-                                curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
-                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                curl_setopt($ch, CURLOPT_POST, 1);
-                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                                curl_setopt($ch, CURLOPT_HTTPHEADER,
-                                    array(
-                                        "Accept: application/json",
-                                        "Authorization: Basic ".base64_encode($login.":".$password)));
-                                $result = curl_exec ($ch);
-                                $err  = curl_error($ch);
-                                curl_close($ch);
-                            }
-                        }else{
-                            if($servicio->user && $servicio->pass){
-                                $post['to'] = array('57'.$numero);
-                                $post['text'] = $mensaje;
-                                $post['from'] = "";
-                                $login = $servicio->user;
-                                $password = $servicio->pass;
-
-                                $ch = curl_init();
-                                curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
-                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                curl_setopt($ch, CURLOPT_POST, 1);
-                                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
-                                curl_setopt($ch, CURLOPT_HTTPHEADER,
-                                    array(
-                                        "Accept: application/json",
-                                        "Authorization: Basic ".base64_encode($login.":".$password)));
-                                $result = curl_exec ($ch);
-                                $err  = curl_error($ch);
-                                curl_close($ch);
-                            }
-                        }
-                    }
-                    /* * * ENVÍO SMS * * */
-                }
-            }
-
-            if(auth()->user()->rol == 8){
-                $user = User::find(auth()->user()->id);
-                $user->ganancia += 900;
-                $user->saldo -= $monto_pagar;
-                $user->save();
-            }
-
-            if($request->cant_facturas > 1){
-                $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
-                $caja = $nro->caja;
-
-                while (true) {
-                    $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
-                    if ($numero == 0) {
-                        break;
-                    }
-                    $caja++;
                 }
 
-                $ingreso = new Ingreso;
-                $ingreso->nro = $caja;
-                $ingreso->empresa = Auth::user()->empresa;
-                $ingreso->cliente = $request->cliente;
-                $ingreso->cuenta = $request->cuenta;
-                $ingreso->metodo_pago = $request->metodo_pago;
-                $ingreso->notas = $request->notas;
-                $ingreso->tipo = 2;
-                $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
-                $ingreso->observaciones = 'Ingreso por concepto de reconexión';
-                $ingreso->created_by = Auth::user()->id;
-                $ingreso->save();
+                //registramos el saldo a favor que se generó al pagar la factura
+                if($request->saldofavor > 0){
+                    $contacto = Contacto::find($request->cliente);
+                    $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
+                    $contacto->save();
 
-                $items = new IngresosCategoria;
-                $items->valor = $this->precision(10000);
-                $items->id_impuesto = 2;
-                $items->ingreso = $ingreso->id;
-                $items->categoria = 56;
-                $items->cant = 1;
-                $items->descripcion = 'Ingreso por concepto de reconexión';
-                $items->impuesto = 0;
-                $items->save();
+                    $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
+
+                    $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
+                    PucMovimiento::ingreso($ingreso,1,1,$request);
+                    //Nuevo desarrollo: reigtsramos en un banco llamado saldos a Favor el ingreso de dinero extra.
+
+                }else{
+                    PucMovimiento::ingreso($ingreso,1,2,$request);
+
+                    if(isset($request->uso_saldo) && $request->uso_saldo){
+                        $this->up_transaccion(7, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $ingreso->pago(), $ingreso->fecha, "Uso de saldo a favor");
+                    }
+                }
 
                 //sumo a las numeraciones el recibo
                 $nro->caja = $caja + 1;
@@ -779,145 +588,365 @@ class IngresosController extends Controller
                 //Registro el Movimiento
                 $ingreso = Ingreso::find($ingreso->id);
                 //ingresos
-                $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+                if(!isset($request->uso_saldo) || !$request->uso_saldo){
+                    $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+                }
 
-                $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
-                if ($facturas) {
-                    foreach ($facturas as $factura) {
-                        $factura->estatus = 0;
-                        $factura->save();
+                //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
+                if(isset($saldoFavorUsado) && $saldoFavorUsado > 0){
+                    //la cuenta de anticipo es la 6
+                    $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
+                }
+
+                if ($ingreso->tipo == 1) {
+                    if($factura->estatus == 0){
+                        $cliente = Contacto::where('id', $request->cliente)->first();
+                        $contrato = Contrato::where('id',$factura->contrato_id)->first();
+                        if($contrato){
+                            $contrato->state = "enabled";
+                            $contrato->save();
+                        }
+                        if(!$contrato){
+                            $contrato = Contrato::where('client_id', $cliente->id)->first();
+                            if($contrato){
+                                $contrato->state = "enabled";
+                                $contrato->save();
+                            }
+                        }
+
+                        /* * * API MK * * */
+
+                        if($contrato){
+                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                            if ($asignacion) {
+                                $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                                $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                                if ($cuotas_pendientes == 0) {
+                                    $asignacion->status = 1;
+                                }
+                                $asignacion->save();
+                            }
+
+                            if($contrato->server_configuration_id){
+                                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                                $API = new RouterosAPI();
+                                $API->port = $mikrotik->puerto_api;
+
+                                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                    $API->write('/ip/firewall/address-list/print', TRUE);
+                                    $ARRAYS = $API->read();
+
+                                    #ELIMINAMOS DE MOROSOS#
+                                    $API->write('/ip/firewall/address-list/print', false);
+                                    $API->write('?address='.$contrato->ip, false);
+                                    $API->write("?list=morosos",false);
+                                    $API->write('=.proplist=.id');
+                                    $ARRAYS = $API->read();
+
+                                    if(count($ARRAYS)>0){
+                                        $API->write('/ip/firewall/address-list/remove', false);
+                                        $API->write('=.id='.$ARRAYS[0]['.id']);
+                                        $READ = $API->read();
+                                    }
+                                    #ELIMINAMOS DE MOROSOS#
+
+                                    #AGREGAMOS A IP_AUTORIZADAS#
+                                    $API->comm("/ip/firewall/address-list/add", array(
+                                        "address" => $contrato->ip,
+                                        "list" => 'ips_autorizadas'
+                                        )
+                                    );
+                                    #AGREGAMOS A IP_AUTORIZADAS#
+
+                                    $API->disconnect();
+
+                                    $contrato->state = 'enabled';
+                                    $contrato->save();
+                                }
+                            }
+                        }
+
+                        /* * * API MK * * */
+
+                        /* * * ENVÍO SMS * * */
+                        $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
+                        if($servicio){
+                            $numero = str_replace('+','',$cliente->celular);
+                            $numero = str_replace(' ','',$numero);
+                            $mensaje = "Estimado Cliente, le informamos que hemos recibido el pago de su factura por valor de ".$factura->parsear($precio)." gracias por preferirnos. ".Auth::user()->empresa()->slogan;
+                            if($servicio->nombre == 'Hablame SMS'){
+                                if($servicio->api_key && $servicio->user && $servicio->pass){
+                                    $post['toNumber'] = $numero;
+                                    $post['sms'] = $mensaje;
+
+                                    $curl = curl_init();
+                                    curl_setopt_array($curl, array(
+                                        CURLOPT_URL => 'https://api103.hablame.co/api/sms/v3/send/marketing',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
+                                        CURLOPT_HTTPHEADER => array(
+                                            'account: '.$servicio->user,
+                                            'apiKey: '.$servicio->api_key,
+                                            'token: '.$servicio->pass,
+                                            'Content-Type: application/json'
+                                        ),
+                                    ));
+                                    $result = curl_exec ($curl);
+                                    $err  = curl_error($curl);
+                                    curl_close($curl);
+                                }
+                            }elseif($servicio->nombre == 'SmsEasySms'){
+                                if($servicio->user && $servicio->pass){
+                                    $post['to'] = array('57'.$numero);
+                                    $post['text'] = $mensaje;
+                                    $post['from'] = "SMS";
+                                    $login = $servicio->user;
+                                    $password = $servicio->pass;
+
+                                    $ch = curl_init();
+                                    curl_setopt($ch, CURLOPT_URL, "https://sms.istsas.com/Api/rest/message");
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                    curl_setopt($ch, CURLOPT_POST, 1);
+                                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                        array(
+                                            "Accept: application/json",
+                                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                                    $result = curl_exec ($ch);
+                                    $err  = curl_error($ch);
+                                    curl_close($ch);
+                                }
+                            }else{
+                                if($servicio->user && $servicio->pass){
+                                    $post['to'] = array('57'.$numero);
+                                    $post['text'] = $mensaje;
+                                    $post['from'] = "";
+                                    $login = $servicio->user;
+                                    $password = $servicio->pass;
+
+                                    $ch = curl_init();
+                                    curl_setopt($ch, CURLOPT_URL, "https://masivos.colombiared.com.co/Api/rest/message");
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                    curl_setopt($ch, CURLOPT_POST, 1);
+                                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+                                    curl_setopt($ch, CURLOPT_HTTPHEADER,
+                                        array(
+                                            "Accept: application/json",
+                                            "Authorization: Basic ".base64_encode($login.":".$password)));
+                                    $result = curl_exec ($ch);
+                                    $err  = curl_error($ch);
+                                    curl_close($ch);
+                                }
+                            }
+                        }
+                        /* * * ENVÍO SMS * * */
                     }
                 }
-            }
 
-            $tirilla = false;
-            if ($request->tirilla) {
-                $tirilla = true;
-            }
-
-            //Desarrollo para enviar tirilla por wpp.
-            if($request->tirilla_wpp){
-                $cliente = $ingreso->cliente();
-
-                if($cliente->celular){
-                    $numero = str_replace('+','',$cliente->celular);
-                    $numero = str_replace(' ','',$numero);
-                    $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
-                    $empresa = Empresa::find($ingreso->empresa);
-
-                    //Datos para tirilla.
-                    if ($ingreso->tipo==1) {
-                        $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
-                        $items = IngresosFactura::join('items_factura as itf','itf.factura','ingresos_factura.factura')->select('itf.*')->where('ingreso',$ingreso->id)->get();
-                    }else if ($ingreso->tipo==2){
-                        $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
-                        $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
-                    }else{
-                        $itemscount=1;
-                        $items = Ingreso::where('empresa',$empresa->id)->where('nro', $id)->get();
-                    }
-
-                    $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
-
-                    if($plantilla){
-                        $mensaje = str_replace('{{ $company }}', $empresa->nombre, $plantilla->contenido);
-                        $mensaje = str_replace('{{ $name }}', ucfirst($cliente->nombre), $mensaje);
-                        $mensaje = str_replace('{{ $factura->codigo }}', $ingreso->nro, $mensaje);
-                    }else{
-                        $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generad bajo el Nro. ".$ingreso->nro;
-                    }
-
-                    $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
-                    $resolucion = NumeracionFactura::where('empresa', $empresa->id)
-                    ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
-                    $paper_size = array(0,0,270,580);
-                    $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
-                     'itemscount','empresa', 'resolucion'));
-                    $pdf->setPaper($paper_size, 'portrait');
-                    $pdf->save(public_path() . "/convertidor/" . $ingreso->nro . ".pdf")->stream();
-                    $fields = [
-                        "action"=>"sendFile",
-                        "id"=>$numero."@c.us",
-                        "file"=>public_path() . "/convertidor/" . $ingreso->nro . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
-                        "mime"=>"application/pdf",
-                        "namefile"=>"Recibo ".$ingreso->nro,
-                        "mensaje"=>$mensaje,
-                        "cron"=>"true"
-                    ];
-
-                    $request = new Request();
-                    $request->merge($fields);
-                    $controller = new CRMController();
-                    $respuesta = $controller->whatsappActions($request);
+                if(auth()->user()->rol == 8){
+                    $user = User::find(auth()->user()->id);
+                    $user->ganancia += 900;
+                    $user->saldo -= $monto_pagar;
+                    $user->save();
                 }
-            }
 
-            ### ADJUNTO DE PAGO ###
+                if($request->cant_facturas > 1){
+                    $nro = Numeracion::where('empresa', Auth::user()->empresa)->first();
+                    $caja = $nro->caja;
 
-            $xmax = 1080; $ymax = 720;
-            if($request->file('adjunto_pago')){
-                $ext_permitidas = array('image/jpeg','image/png','image/gif');
-                $file = $request->file('adjunto_pago');
-                $nombre =  'adjunto_pago_'.$ingreso->nro.'.'.$file->getClientOriginalExtension();
-                Storage::disk('documentos')->put($nombre, \File::get($file));
-                $ingreso->adjunto_pago = $nombre;
-
-                if(in_array($file->getMimeType(), $ext_permitidas)){
-                    switch($file->getMimeType()){
-                        case 'image/jpeg':
-                        $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
-                        break;
-                        case 'image/png':
-                        $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
-                        break;
-                        case 'image/gif':
-                        $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
-                        break;
-                    }
-                    $x = imagesx($imagen);
-                    $y = imagesy($imagen);
-
-                    if($x <= $xmax && $y <= $ymax){
-                        switch($file->getMimeType()){
-                            case 'image/jpeg':
-                            imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
-                            break;
-                            case 'image/png':
-                            imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
-                            break;
-                            case 'image/gif':
-                            imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
+                    while (true) {
+                        $numero = Ingreso::where('empresa', Auth::user()->empresa)->where('nro', $caja)->count();
+                        if ($numero == 0) {
                             break;
                         }
-                    }else{
-                        if($x >= $y) {
-                            $nuevax = $xmax;
-                            $nuevay = $nuevax * $y / $x;
+                        $caja++;
+                    }
+
+                    $ingreso = new Ingreso;
+                    $ingreso->nro = $caja;
+                    $ingreso->empresa = Auth::user()->empresa;
+                    $ingreso->cliente = $request->cliente;
+                    $ingreso->cuenta = $request->cuenta;
+                    $ingreso->metodo_pago = $request->metodo_pago;
+                    $ingreso->notas = $request->notas;
+                    $ingreso->tipo = 2;
+                    $ingreso->fecha = Carbon::parse($request->fecha)->format('Y-m-d');
+                    $ingreso->observaciones = 'Ingreso por concepto de reconexión';
+                    $ingreso->created_by = Auth::user()->id;
+                    $ingreso->save();
+
+                    $items = new IngresosCategoria;
+                    $items->valor = $this->precision(10000);
+                    $items->id_impuesto = 2;
+                    $items->ingreso = $ingreso->id;
+                    $items->categoria = 56;
+                    $items->cant = 1;
+                    $items->descripcion = 'Ingreso por concepto de reconexión';
+                    $items->impuesto = 0;
+                    $items->save();
+
+                    //sumo a las numeraciones el recibo
+                    $nro->caja = $caja + 1;
+                    $nro->save();
+
+                    //Registro el Movimiento
+                    $ingreso = Ingreso::find($ingreso->id);
+                    //ingresos
+                    if(!isset($request->uso_saldo) || $request->uso_saldo){
+                    $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, 'Ingreso por concepto de reconexión');
+                    }
+
+                    $facturas = Factura::where('cliente', $ingreso->cliente)->where('estatus', 1)->get();
+                    if ($facturas) {
+                        foreach ($facturas as $factura) {
+                            $factura->estatus = 0;
+                            $factura->save();
+                        }
+                    }
+                }
+
+                $tirilla = false;
+                if ($request->tirilla) {
+                    $tirilla = true;
+                }
+
+                //Desarrollo para enviar tirilla por wpp.
+                if($request->tirilla_wpp){
+                    $cliente = $ingreso->cliente();
+
+                    if($cliente->celular){
+                        $numero = str_replace('+','',$cliente->celular);
+                        $numero = str_replace(' ','',$numero);
+                        $numero = (substr($numero, 0, 2) == 57) ? $numero : '57'.$numero;
+                        $empresa = Empresa::find($ingreso->empresa);
+
+                        //Datos para tirilla.
+                        if ($ingreso->tipo==1) {
+                            $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
+                            $items = IngresosFactura::join('items_factura as itf','itf.factura','ingresos_factura.factura')->select('itf.*')->where('ingreso',$ingreso->id)->get();
+                        }else if ($ingreso->tipo==2){
+                            $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
+                            $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
                         }else{
-                            $nuevay = $ymax;
-                            $nuevax = $x / $y * $nuevay;
+                            $itemscount=1;
+                            $items = Ingreso::where('empresa',$empresa->id)->where('nro', $id)->get();
                         }
-                        $img2 = imagecreatetruecolor($nuevax, $nuevay);
-                        imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
-                        switch($file->getMimeType()){
-                            case 'image/jpeg':
-                            imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
-                            break;
-                            case 'image/png':
-                            imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
-                            break;
-                            case 'image/gif':
-                            imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
-                            break;
+
+                        $plantilla = Plantilla::where('empresa', Auth::user()->empresa)->where('clasificacion', 'Facturacion')->where('tipo', 2)->where('status', 1)->get()->last();
+
+                        if($plantilla){
+                            $mensaje = str_replace('{{ $company }}', $empresa->nombre, $plantilla->contenido);
+                            $mensaje = str_replace('{{ $name }}', ucfirst($cliente->nombre), $mensaje);
+                            $mensaje = str_replace('{{ $factura->codigo }}', $ingreso->nro, $mensaje);
+                        }else{
+                            $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generad bajo el Nro. ".$ingreso->nro;
                         }
+
+                        $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+                        $resolucion = NumeracionFactura::where('empresa', $empresa->id)
+                        ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
+                        $paper_size = array(0,0,270,580);
+                        $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
+                        'itemscount','empresa', 'resolucion'));
+                        $pdf->setPaper($paper_size, 'portrait');
+                        $pdf->save(public_path() . "/convertidor/" . $ingreso->nro . ".pdf")->stream();
+                        $fields = [
+                            "action"=>"sendFile",
+                            "id"=>$numero."@c.us",
+                            "file"=>public_path() . "/convertidor/" . $ingreso->nro . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                            "mime"=>"application/pdf",
+                            "namefile"=>"Recibo ".$ingreso->nro,
+                            "mensaje"=>$mensaje,
+                            "cron"=>"true"
+                        ];
+
+                        $request = new Request();
+                        $request->merge($fields);
+                        $controller = new CRMController();
+                        $respuesta = $controller->whatsappActions($request);
                     }
                 }
 
-                $ingreso->save();
+                ### ADJUNTO DE PAGO ###
+
+                $xmax = 1080; $ymax = 720;
+                if($request->file('adjunto_pago')){
+                    $ext_permitidas = array('image/jpeg','image/png','image/gif');
+                    $file = $request->file('adjunto_pago');
+                    $nombre =  'adjunto_pago_'.$ingreso->nro.'.'.$file->getClientOriginalExtension();
+                    Storage::disk('documentos')->put($nombre, \File::get($file));
+                    $ingreso->adjunto_pago = $nombre;
+
+                    if(in_array($file->getMimeType(), $ext_permitidas)){
+                        switch($file->getMimeType()){
+                            case 'image/jpeg':
+                            $imagen = imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre);
+                            break;
+                            case 'image/png':
+                            $imagen = imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre);
+                            break;
+                            case 'image/gif':
+                            $imagen = imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre);
+                            break;
+                        }
+                        $x = imagesx($imagen);
+                        $y = imagesy($imagen);
+
+                        if($x <= $xmax && $y <= $ymax){
+                            switch($file->getMimeType()){
+                                case 'image/jpeg':
+                                imagejpeg(imagecreatefromjpeg(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
+                                break;
+                                case 'image/png':
+                                imagepng(imagecreatefrompng(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
+                                break;
+                                case 'image/gif':
+                                imagegif(imagecreatefromgif(public_path('/adjuntos/documentos').'/'.$nombre), public_path('/adjuntos/documentos').'/'.$nombre, 5);
+                                break;
+                            }
+                        }else{
+                            if($x >= $y) {
+                                $nuevax = $xmax;
+                                $nuevay = $nuevax * $y / $x;
+                            }else{
+                                $nuevay = $ymax;
+                                $nuevax = $x / $y * $nuevay;
+                            }
+                            $img2 = imagecreatetruecolor($nuevax, $nuevay);
+                            imagecopyresized($img2, $imagen, 0, 0, 0, 0, floor($nuevax), floor($nuevay), $x, $y);
+                            switch($file->getMimeType()){
+                                case 'image/jpeg':
+                                imagejpeg($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
+                                break;
+                                case 'image/png':
+                                imagepng($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
+                                break;
+                                case 'image/gif':
+                                imagegif($img2, public_path('/adjuntos/documentos').'/'.$nombre, 100);
+                                break;
+                            }
+                        }
+                    }
+
+                    $ingreso->save();
+                }
+
+                DB::commit();
+
+                $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+                return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
             }
 
-            $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', $th->getMessage());
         }
     }
 
@@ -1108,11 +1137,11 @@ class IngresosController extends Controller
 
             //obtiene las formas de pago relacionadas con este modulo (Facturas)
             $relaciones = FormaPago::where('relacion',1)->orWhere('relacion',3)->get();
-
+            $banco = Banco::Find($ingreso->cuenta);
 
             return view('ingresos.edit')->with(compact('ingreso', 'items', 'clientes', 'retencionesIngreso',
             'categorias', 'bancos', 'metodos_pago', 'impuestos','items', 'retenciones','formasPago','anticipos','formas'
-            ,'cuentaIngresoDinero','cuentaAnticipo','valorAnticipo','relaciones'));
+            ,'cuentaIngresoDinero','cuentaAnticipo','valorAnticipo','relaciones','banco'));
         }
         return redirect('empresa/ingresos')->with('error', 'No existe un registro con ese id');
     }
@@ -1287,13 +1316,11 @@ class IngresosController extends Controller
                 $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
                 $contacto->save();
 
-                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
                 PucMovimiento::ingreso($ingreso,2,1,$request);
             }else{
-                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 PucMovimiento::ingreso($ingreso,2,2,$request);
             }
 

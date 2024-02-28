@@ -10,6 +10,7 @@
 				<p>Si desea seguir disfrutando de nuestros servicios adquiera alguno de nuestros planes.</p>
 			</div>
 			@else
+                @if($banco->nombre != 'Saldos a favor')
 				@if($banco->estatus==1)
 				    @if(isset($_SESSION['permisos']['732']))
 					<a href="{{route('ingresos.create_cuenta',['0','0',$banco->nro])}}" class="btn btn-outline-primary btn-sm "title="Agregar Dinero" target="_blank"><i class="fas fa-plus"></i>Agregar Dinero</a>
@@ -45,16 +46,17 @@
 					</div>
 				  </div>
 				</div>
+                @endif
 			@endif
 		</div>
 	</div>
 @endsection
 
 @section('content')
-<div class="row card-description">
-    <a class="btn btn-success text-right" style="position: absolute; margin-left: 500px; margin-top:7px;" href="{{route('pagos.index')}}">Ir a Pagos</a>
+<div class="row card-description text-right">
+    <a class="btn btn-success text-right" style="position: absolute; margin-left: 10px; margin-top:7px;" href="{{route('pagos.index')}}">Ir a Pagos</a>
     @if($banco->estatus==1)
-		<a href="{{route('ingresos.create_cuenta',['3624','0',$banco->nro])}}" class="btn btn-primary" title="Agregar Base" target="_blank" style="position: absolute; margin-left: 620px; margin-top:7px;" >Agregar Base</a>
+		<a href="{{route('ingresos.create_cuenta',['3624','0',$banco->nro])}}" class="btn btn-primary" title="Agregar Base" target="_blank" style="margin-left: 150px; margin-top:7px;" >Agregar Base</a>
 	@endif
 	<div class="offset-md-9 col-md-3" style="background: #80808061;border: 1px solid #80808061;">
 		<div class="row">

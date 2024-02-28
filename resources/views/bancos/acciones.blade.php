@@ -10,15 +10,17 @@
     </form>
 
     <a href="{{route('bancos.show',$nro)}}" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
-    @if(isset($session['284']) && $lectura==0)
+    @if(isset($session['284']) && $lectura==0 && $nombre !== 'Saldos a favor')
         <a href="{{route('bancos.edit',$nro)}}" class="btn btn-outline-primary btn-icons"><i class="fas fa-edit"></i></a>
     @endif
 
     @if(!$uso)
-        @if($lectura==0)
+        @if($lectura==0 && $nombre !== 'Saldos a favor')
             <button class="btn btn-outline-danger  btn-icons" type="submit" title="Eliminar" onclick="confirmar('eliminar-banco-{{$id}}', '¿Está seguro que desea eliminar el banco?', 'Se borrara de forma permanente');"><i class="fas fa-times"></i></button>
         @endif
     @endif
 
+    @if($nombre !== 'Saldos a favor')
     <button class="btn {{ ($oculto==0) ? 'btn-outline-success' : 'btn-outline-danger' }} btn-icons" type="button" title="{{ ($oculto==0) ? 'Mover a Ocultos' : 'Mover a Disponibles' }}" onclick="confirmar('ocultar-{{$id}}', '¿Está seguro de que desea {{ ($oculto==0) ? 'mover a ocultos' : 'mover a disponibles' }} el banco?', ' ');"><i class="fas fa-power-off"></i></button>
+    @endif
 @endif

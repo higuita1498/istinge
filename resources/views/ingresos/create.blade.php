@@ -21,6 +21,9 @@
     @if($factura)
     <input type="hidden" id="factura" value="{{$factura}}">
     @endif
+    {{-- Cliente que se escoge dinamicamente --}}
+    <input type="hidden" id="clienteseleccionado" value={{ $cliente }}>
+    <input type="hidden" id="saldofavorcliente" value={{ $saldo_favor }}>
     <h5>INFORMACIÓN GENERAL DEL INGRESO </h5>
   		{{ csrf_field() }}
   		<div class="row" style=" text-align: right; margin-top: 5%">
@@ -90,22 +93,7 @@
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
     </div>
-    <div class="cls-realizar-inv">
-    <div class="form-group row">
-      <label class="col-sm-4 col-form-label">Forma de pago</label>
-      <div class="col-sm-8">
-        <select class="form-control selectpicker" name="forma_pago" id="forma_pago" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
-          @foreach($formas as $f)
-          <option value="{{$f->id}}">{{$f->codigo}} - {{$f->nombre}}</option>
-          @endforeach
-        </select>
-      </div>
 
-    <span class="help-block error">
-          <strong>{{ $errors->first('realizar') }}</strong>
-    </span>
-  </div>
-</div>
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
       <label class="col-sm-4 col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
@@ -157,32 +145,32 @@
         </div>
       </div>
 
-                <div class="form-group row d-none">
-                    <label class="col-sm-4 col-form-label">¿utilizar saldo a favor del ciente? <a><i
-                                    data-tippy-content="Si está opcion te aparece es por que el cliente escogido tiene un saldo a favor y puedes pagar las facturas con ese saldo."
-                                    class="icono far fa-question-circle"></i></a></label>
-                    <div class="col-sm-8">
-                        <div class="form-group row">
-                            <div class="col-sm-4">
-                                <div class="form-radio">
-                                    <label class="form-check-label">
-                                        <input type="radio" class="form-check-input" name="saldo" id="publico1"
-                                               value="1" onchange="hidedivtwo('occultrd');"> Si
-                                        <i class="input-helper"></i><i class="input-helper"></i></label>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div class="form-radio">
-                                    <label class="form-check-label">
-                                        <input type="radio" class="form-check-input" name="saldo" id="publico"
-                                               value="0" onchange="showdivtwo('occultrd');" checked=""> No
-                                        <i class="input-helper"></i><i class="input-helper"></i></label>
-                                </div>
-                            </div>
-                        </div>
+    <div class="form-group row d-none" id="divusarsaldo">
+        <label class="col-sm-4 col-form-label">¿utilizar saldo a favor del ciente? <a><i
+                        data-tippy-content="Si está opcion te aparece es por que el cliente escogido tiene un saldo a favor y puedes pagar las facturas con ese saldo."
+                        class="icono far fa-question-circle"></i></a></label>
+        <div class="col-sm-8">
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    <div class="form-radio">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="uso_saldo" id="publico1"
+                                    value="1" onchange="hidedivtwo('occultrd');"> Si
+                            <i class="input-helper"></i><i class="input-helper"></i></label>
                     </div>
                 </div>
+
+                <div class="col-sm-4">
+                    <div class="form-radio">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="uso_saldo" id="publico"
+                                    value="0" onchange="showdivtwo('occultrd');" checked=""> No
+                            <i class="input-helper"></i><i class="input-helper"></i></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
         <style type="text/css">
           .form-radio label input + .input-helper:before{
@@ -191,10 +179,10 @@
         </style>
 
 
-<div class="col-md-12" style="background: #80808061;border: 1px solid #80808061; display: none;" id="saldo123">
+<input type="hidden" >
+<div class="col-md-12 d-none" style="background: #80808061;border: 1px solid #80808061;" id="saldo123">
     <div class="row">
-      <div class="col-md-4 text-right" style="    padding: 4%; font-weight: bold; color:#808080 ">Saldo</div>
-      {{--<div class="col-md-8 text-left text-danger" style="padding: 4%; font-weight: bold;">$-9,104,265</div>--}}
+      <div class="col-md-4 text-right" style="    padding: 4%; font-weight: bold; color:#808080 ">Saldo Favor</div>
         <input class="col-md-8 text-left text-danger" style="padding: 4%; font-weight: bold" name="total_saldo" id="total_saldo" type="text" value="0" disabled>
     </div>
   </div>
@@ -223,9 +211,6 @@
         </div>
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   		</div>
-
-
-
   		</div>
 
     <h5>TIPO DE TRANSACCIÓN</h5>
@@ -279,23 +264,7 @@
               				@foreach($categorias as $categoria)
                               <option value="{{$categoria->id}}">{{$categoria->nombre}}</option>
 
-                        {{-- <optgroup label="{{$categoria->nombre}}">
-                            @foreach($categoria->hijos(true) as $categoria1)
-                              <option {{old('categoria')==$categoria1->id?'selected':''}} value="{{$categoria1->id}}" {{$categoria1->estatus==0?'disabled':''}}>{{$categoria1->nombre}}</option>
-                              @foreach($categoria1->hijos(true) as $categoria2)
-                                  <option class="hijo" {{old('categoria')==$categoria2->id?'selected':''}} value="{{$categoria2->id}}" {{$categoria2->estatus==0?'disabled':''}}>{{$categoria2->nombre}}</option>
-                                @foreach($categoria2->hijos(true) as $categoria3)
-                                  <option class="nieto" {{old('categoria')==$categoria3->id?'selected':''}} value="{{$categoria3->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria3->nombre}}</option>
-                                  @foreach($categoria3->hijos(true) as $categoria4)
-                                    <option class="bisnieto" {{old('categoria')==$categoria4->id?'selected':''}} value="{{$categoria4->id}}" {{$categoria3->estatus==0?'disabled':''}}>{{$categoria4->nombre}}</option>
 
-                                  @endforeach
-
-                                @endforeach
-
-                              @endforeach
-                            @endforeach
-                        </optgroup> --}}
                       @endforeach
               			</select>
               			</div>
@@ -548,7 +517,15 @@
 <script src="{{asset('lowerScripts/ingreso/ingreso.js')}}"></script>
 <script>
   $(document).ready(function(){
-      //validacion
+    //validacion
+    let cliente = $("#clienteseleccionado").val();
+    let saldoFavor = $("#saldofavorcliente").val();
+    if(cliente && saldoFavor > 0){
+        $("#divusarsaldo").removeClass('d-none');
+        $("#saldo123").removeClass('d-none');
+        $("#total_saldo").val(saldoFavor);
+    }
+
       let opcion = $("#input-ingresos-electronica").val();
 
       if(opcion == 0){
