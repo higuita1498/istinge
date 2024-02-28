@@ -321,7 +321,6 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
-
         try {
             DB::beginTransaction();
 
@@ -561,26 +560,6 @@ class IngresosController extends Controller
                     }
                 }
 
-                //registramos el saldo a favor que se generó al pagar la factura
-                if($request->saldofavor > 0){
-                    $contacto = Contacto::find($request->cliente);
-                    $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
-                    $contacto->save();
-
-                    $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
-
-                    $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
-                    PucMovimiento::ingreso($ingreso,1,1,$request);
-                    //Nuevo desarrollo: reigtsramos en un banco llamado saldos a Favor el ingreso de dinero extra.
-
-                }else{
-                    PucMovimiento::ingreso($ingreso,1,2,$request);
-
-                    if(isset($request->uso_saldo) && $request->uso_saldo){
-                        $this->up_transaccion(7, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $ingreso->pago(), $ingreso->fecha, "Uso de saldo a favor");
-                    }
-                }
-
                 //sumo a las numeraciones el recibo
                 $nro->caja = $caja + 1;
                 $nro->save();
@@ -596,6 +575,30 @@ class IngresosController extends Controller
                 if(isset($saldoFavorUsado) && $saldoFavorUsado > 0){
                     //la cuenta de anticipo es la 6
                     $this->up_transaccion(6, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $saldoFavorUsado, $ingreso->fecha, $ingreso->descripcion);
+                }
+
+
+                //registramos el saldo a favor que se generó al pagar la factura
+                if($request->saldofavor > 0){
+                    $contacto = Contacto::find($request->cliente);
+                    $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
+                    $contacto->save();
+
+                    $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
+
+                    $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
+                    PucMovimiento::ingreso($ingreso,1,1,$request);
+
+                    //Nuevo desarrollo: reigtsramos en un banco llamado saldos a Favor el ingreso de dinero extra.
+                    $bancoId = Banco::where('empresa',$user->empresa)->where('nombre','like','Saldos a favor')->first()->id;
+                    $this->up_transaccion(7, $ingreso->id, $bancoId, $ingreso->cliente, 1, $request->saldofavor, $ingreso->fecha, "Ingreso de saldo a favor",$request->saldofavor);
+
+                }else{
+                    PucMovimiento::ingreso($ingreso,1,2,$request);
+
+                    if(isset($request->uso_saldo) && $request->uso_saldo){
+                        $this->up_transaccion(7, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $ingreso->pago(), $ingreso->fecha, "Uso de saldo a favor");
+                    }
                 }
 
                 if ($ingreso->tipo == 1) {
@@ -1775,6 +1778,7 @@ class IngresosController extends Controller
         if(!isset($request->recibo) || $request->recibo == 0){
             $ingresos = Ingreso::where('cliente',$request->cliente)
             ->where('anticipo',1)
+            ->where('estatus','!=',2)
             ->where('valor_anticipo','>',0)
             ->get();
         }else{

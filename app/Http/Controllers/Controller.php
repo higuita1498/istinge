@@ -111,17 +111,18 @@ class Controller extends BaseController
     $id = id de pagos recibidos, pgremisiones... etc
     $banco = 123 (solo el id del banco)
     $tipo = 1 Entrada, 2 salida
+    $generoSaldoFavor = con esto podemos identificar si una factura recibio mas dinero y tiene saldo a favor.
     */
-    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion){
+    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion,$generoSaldoFavor=null){
 
         $empresa = Auth::user()->empresa;
         $movimiento=new Movimiento;
-        $probableMovimiento = Movimiento::where('modulo', 7)->where('id_modulo', $id)->first();
+        $probableMovimiento = Movimiento::where('modulo', 7)->where('id_modulo', $id)->where('estatus',1)->first();
 
         //Caso1: Cuando cambiamos de un saldo a favor a un pago normal, necesitamos buscarlo por el modulo.
-        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
+        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->where('estatus',1)->first();
 
-        if(!$regis && $probableMovimiento){
+        if(!$regis && $probableMovimiento && $generoSaldoFavor == null){
             $movimiento=$probableMovimiento;
         }
 
@@ -148,7 +149,7 @@ class Controller extends BaseController
         $movimiento->fecha=$fecha;
         $movimiento->modulo=$modulo;
         $movimiento->id_modulo=$id;
-        $movimiento->descripcion=$id;
+        $movimiento->descripcion=$id . " " . $descripcion;
         $movimiento->save();
     }
 
