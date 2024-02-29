@@ -44,7 +44,7 @@
               <strong>{{ $errors->first('cuenta') }}</strong>
         </span>
       </div>
-      <div class="form-group row">
+      <div class="form-group row  occultrd {{strtolower($banco->nombre) == "saldos a favor" ? 'd-none' : ''}}">
           <label class="col-sm-4 col-form-label">Método de pago </label>
           <div class="col-sm-8">
             <select class="form-control selectpicker" name="metodo_pago" id="metodo_pago" title="Seleccione" data-live-search="true" data-size="5">
@@ -409,6 +409,7 @@
 <script>
   $(document).ready(function(){
     showAnti();
+
     //validacion
     let opcion = $("#input-ingresos-electronica").val();
 

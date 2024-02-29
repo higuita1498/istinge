@@ -849,7 +849,7 @@ class IngresosController extends Controller
                             $mensaje = str_replace('{{ $name }}', ucfirst($cliente->nombre), $mensaje);
                             $mensaje = str_replace('{{ $factura->codigo }}', $ingreso->nro, $mensaje);
                         }else{
-                            $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generad bajo el Nro. ".$ingreso->nro;
+                            $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generado bajo el Nro. ".$ingreso->nro;
                         }
 
                         $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
