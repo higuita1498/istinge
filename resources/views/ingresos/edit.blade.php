@@ -2,7 +2,7 @@
 @section('content')
 	<form method="POST" action="{{ route('ingresos.update', $ingreso->nro) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-ingreso" >
     <h5>INFORMACIÓN GENERAL DEL INGRESO </h5>
-  		{{ csrf_field() }} 
+  		{{ csrf_field() }}
       <input name="_method" type="hidden" value="PATCH">
       <input type="hidden" id="ingreso" value="{{$ingreso->nro}}">
   		<div class="row" style=" text-align: right; margin-top: 5%">
@@ -16,11 +16,11 @@
 		  				@endforeach
 		            	</select>
 		  			</div>
-		  			
+
 					<span class="help-block error">
 			        	<strong>{{ $errors->first('cliente') }}</strong>
 			    </span>
-	  		</div>  	
+	  		</div>
 
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">Cuenta <span class="text-danger">*</span></label>
@@ -33,18 +33,18 @@
                   @foreach($bancos as $cuenta)
                     @if($cuenta->tipo_cta==$tipo_cuenta['nro'])
                       <option value="{{$cuenta->id}}" {{$ingreso->cuenta==$cuenta->id?'selected':''}}>{{$cuenta->nombre}}</option>
-                    @endif  
+                    @endif
                   @endforeach
                 </optgroup>
               @endforeach
             </select>
           </div>
-          
+
         <span class="help-block error">
               <strong>{{ $errors->first('cuenta') }}</strong>
         </span>
-      </div> 
-      <div class="form-group row">
+      </div>
+      <div class="form-group row  occultrd {{strtolower($banco->nombre) == "saldos a favor" ? 'd-none' : ''}}">
           <label class="col-sm-4 col-form-label">Método de pago </label>
           <div class="col-sm-8">
             <select class="form-control selectpicker" name="metodo_pago" id="metodo_pago" title="Seleccione" data-live-search="true" data-size="5">
@@ -53,11 +53,11 @@
                 @endforeach
             </select>
           </div>
-          
+
         <span class="help-block error">
               <strong>{{ $errors->first('metodo_pago') }}</strong>
         </span>
-      </div> 
+      </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Realizar un</label>
         <div class="col-sm-8">
@@ -66,27 +66,12 @@
               <option value="2" {{$ingreso->anticipo == 1 ? 'selected' : ''}}>Anticipo</option>
           </select>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
-    </div> 
-    <div class="cls-realizar-inv"> 
-      <div class="form-group row">
-        <label class="col-sm-4 col-form-label">Forma de pago</label>
-        <div class="col-sm-8">
-          <select class="form-control selectpicker" name="forma_pago" id="forma_pago" title="Seleccione" data-live-search="true" data-size="5" onchange="showAnti()">
-            @foreach($formas as $f)
-            <option value="{{$f->id}}">{{$f->codigo}} - {{$f->nombre}}</option>
-            @endforeach
-          </select>
-        </div>
-        
-      <span class="help-block error">
-            <strong>{{ $errors->first('realizar') }}</strong>
-      </span>
-    </div> 
-  </div>
+    </div>
+
     <div class="form-group row cls-realizar d-none" >
        <div class="form-group row ">
       <label class="col-sm-4 col-form-label">Donde ingresa el dinero</label>
@@ -98,12 +83,12 @@
           @endforeach
         </select>
       </div>
-      
+
     <span class="help-block error">
           <strong>{{ $errors->first('puc') }}</strong>
     </span>
        </div>
-  </div> 
+  </div>
   <div class="form-group row cls-realizar d-none" >
     <div class="form-group row ">
   <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
@@ -114,31 +99,67 @@
       @endforeach
     </select>
   </div>
-  
+
     <span class="help-block error">
           <strong>{{ $errors->first('anticipo') }}</strong>
     </span>
     </div>
-  </div> 
+  </div>
     <div class="cls-realizar d-none" >
       <div class="form-group row ">
         <label class="col-sm-4 col-form-label">Valor Recibido <span class="text-danger">*</span></label>
         <div class="col-sm-8">
           <input type="number" class="form-control" name="valor_recibido" id="valor_recibido"  value="{{isset($valorAnticipo) ? $valorAnticipo : ''}}" required>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('valor_recibido') }}</strong>
       </span>
       </div>
-    </div> 
+    </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
           <input type="text" class="form-control datepicker"  id="fecha" value="{{date('d-m-Y', strtotime($ingreso->fecha))}}" name="fecha" disabled=""  >
         </div>
       </div>
-		</div>
+
+      <div class="form-group row {{strtolower($banco->nombre) == "saldos a favor" ? '' : 'd-none'}}" id="divusarsaldo">
+        <label class="col-sm-4 col-form-label">¿utilizar saldo a favor del ciente? <a><i
+                        data-tippy-content="Si está opcion te aparece es por que el cliente escogido tiene un saldo a favor y puedes pagar las facturas con ese saldo."
+                        class="icono far fa-question-circle"></i></a></label>
+            <div class="col-sm-8">
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <div class="form-radio">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="uso_saldo" id="publico1"
+                                {{strtolower($banco->nombre) == "saldos a favor" ? 'checked' : ''}}
+                                        value="1" onchange="hidedivtwo('occultrd');"> Si
+                                <i class="input-helper"></i><i class="input-helper"></i></label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-radio">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="uso_saldo" id="publico"
+                                {{strtolower($banco->nombre) != "saldos a favor" ? 'checked' : ''}}
+                                        value="0" onchange="showdivtwo('occultrd');"> No
+                                <i class="input-helper"></i><i class="input-helper"></i></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 {{strtolower($banco->nombre) == "saldos a favor" ? '' : 'd-none'}}" style="background: #80808061;border: 1px solid #80808061; margin-bottom:30px" id="saldo123">
+            <div class="row">
+              <div class="col-md-4 text-right" style="    padding: 4%; font-weight: bold; color:#808080 ">Saldo Favor</div>
+                <input class="col-md-8 text-left text-danger" style="padding: 4%; font-weight: bold" name="total_saldo" id="total_saldo" type="text" value="{{ $ingreso->cliente()->saldo_favor }}" disabled>
+            </div>
+          </div>
+
+    </div>
 		<div class="col-md-6 offset-md-1">
   			<div class="form-group row">
           <label class="col-sm-4 col-form-label text-right">Recibo de caja #</label>
@@ -162,7 +183,7 @@
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   		</div>
 
-  
+
 
   		</div>
 
@@ -197,7 +218,7 @@
           <div id="factura_pendiente"></div>
         </div>
   			<div class="col-md-12 fact-table" id="no" @if($ingreso->tipo!=2) style="display: none;"@endif >
-          <h5>¿A QUÉ CATEGORÍA(S) PERTENECE ESTE INGRESO?</h5>  
+          <h5>¿A QUÉ CATEGORÍA(S) PERTENECE ESTE INGRESO?</h5>
           <div id="div-categoria">
             <table class="table table-striped table-sm" id="table-form" width="100%">
               <thead class="thead-dark">
@@ -210,14 +231,14 @@
                   <th width="10%">Total</th>
                   <th width="2%"></th>
                 </tr>
-              </thead> 
+              </thead>
               <tbody>
                 @if($ingreso->tipo==2)
                 @php $cont=0; @endphp
                 @foreach($items as $item)
                 @php $cont+=1; @endphp
                   <tr id="{{$cont}}">
-                    <td  class="no-padding">                          
+                    <td  class="no-padding">
                       <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria{{$cont}}" required="" onchange="enabled({{$cont}});" >
                         @foreach($categorias as $categoria)
                           <option value="{{$categoria->id}}" {{$item->categoria == $categoria->id ? 'selected' : ''}}>{{$categoria->nombre}} - {{$categoria->codigo}}</option>
@@ -237,16 +258,16 @@
                     <td width="5%">
                       <input type="number" class="form-control form-control-sm" id="cant_categoria{{$cont}}" name="cant_categoria[]" placeholder="Cantidad" onchange="total_linea({{$cont}});" min="1" required="" value="{{round($item->cant,4)}}">
                     </td>
-                    <td  style="padding-top: 1% !important;">                           
+                    <td  style="padding-top: 1% !important;">
                       <textarea  class="form-control form-control-sm" id="descripcion_categoria{{$cont}}" name="descripcion_categoria[]" placeholder="Observaciones">{{$item->descripcion}}</textarea>
                     </td>
                     <td>
-                      <input type="text" class="form-control form-control-sm text-right" id="total_categoria{{$cont}}" value="{{App\Funcion::Parsear($item->total())}}" disabled="">  
+                      <input type="text" class="form-control form-control-sm text-right" id="total_categoria{{$cont}}" value="{{App\Funcion::Parsear($item->total())}}" disabled="">
                     </td>
-                  <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar({{$cont}}); total_categorias(); ">X</button></td> 
+                  <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar({{$cont}}); total_categorias(); ">X</button></td>
                 </tr>
                 @endforeach
-               @endif 
+               @endif
             </tbody>
           </table>
           <button class="btn btn-outline-primary" onclick="CrearFilaCategorias();" type="button" style="margin-top: 5%; margin-bottom: 1%;">Agregar línea</button>
@@ -260,10 +281,10 @@
                 <th width="5%"></th>
               </thead>
               <tbody>
-                @php $total=$cont=0; @endphp 
+                @php $total=$cont=0; @endphp
                 @foreach($retencionesIngreso as $retenido)
-                <tr  id="reten{{$cont}}"> 
-                  <td  class="no-padding">                          
+                <tr  id="reten{{$cont}}">
+                  <td  class="no-padding">
                     <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="retencion[]" id="retencion{{$cont}}" required="" onchange="retencion_calculate({{$cont}}, this.value);" >
 
                         @foreach($retenciones as $retencion)
@@ -272,7 +293,7 @@
                     </select>
                   </td>
                   <td class="monetario">
-                    @php $block=(App\Funcion::precision($retenido->retencion*$ingreso->total()->subtotal/100)==$retenido->valor?0:1); @endphp 
+                    @php $block=(App\Funcion::precision($retenido->retencion*$ingreso->total()->subtotal/100)==$retenido->valor?0:1); @endphp
                     <input type="hidden" name="reten{{$cont}}" value="{{$retenido->id}}">
                     <input type="hidden" value='{{$block}}' id="lock_reten{{$cont}}">
                     <input type="monetario" style="display: inline-block; width: 80%;" class="form-control form-control-sm" onkeyup="total_categorias()" id="precio_reten{{$cont}}" name="precio_reten[]" placeholder="Valor retenido" onkeyup="total_linea({{$cont}})" required="" value="{{$retenido->valor}}" @if($block==0) disabled="" @endif>
@@ -302,7 +323,7 @@
             @php $cont=0; @endphp
             @if($ingreso->total()->imp)
             @foreach($ingreso->total()->imp as $imp)
-                @if(isset($imp->total))                
+                @if(isset($imp->total))
                   @php $cont+=1; @endphp
                   <tr id="imp{{$cont}}">
                     <td>{{$imp->nombre}} ({{$imp->porcentaje}}%)</td>
@@ -314,17 +335,17 @@
           </table>
           <table style="text-align: right; width: 100%;" id="totalesreten">
             <tbody>
-              
+
               @php $cont=0; @endphp
               @if($ingreso->total()->reten)
               @foreach($ingreso->total()->reten as $reten)
-                  @if(isset($reten->total))  
-                     <tr id="retentotal{{$cont}}"><td width="40%" style="font-size: 0.8em;">{{$reten->nombre}} ({{$reten->porcentaje}}%)</td><td id="retentotalvalue{{$cont}}">-{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($reten->total)}}</td></tr>               
+                  @if(isset($reten->total))
+                     <tr id="retentotal{{$cont}}"><td width="40%" style="font-size: 0.8em;">{{$reten->nombre}} ({{$reten->porcentaje}}%)</td><td id="retentotalvalue{{$cont}}">-{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($reten->total)}}</td></tr>
                     @php $cont+=1; @endphp
                   @endif
               @endforeach
               @endif
-             
+
 
             </tbody>
           </table>
@@ -338,15 +359,15 @@
           </table>
           <p id="p_rentencion" class="text-danger"></p>
         </div>
-        </div> 
+        </div>
       </div>
   		</div>
 </div>
 @endif
-  		
+
   		<hr>
   		<div class="row" >
-        
+
         <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 
           <a href="{{route('ingresos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
@@ -388,6 +409,7 @@
 <script>
   $(document).ready(function(){
     showAnti();
+
     //validacion
     let opcion = $("#input-ingresos-electronica").val();
 

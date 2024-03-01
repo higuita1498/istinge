@@ -1,6 +1,6 @@
 function showAnti(){
     let opcionShow = $("#realizar").val();
-    
+
     if(opcionShow == 2){
         $(".cls-realizar").addClass('d-block');
         $(".cls-realizar").removeClass('d-none');
@@ -29,13 +29,21 @@ function saldoContacto(id){
 
     $.ajax({
         url: url,
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },  
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'get',
         success: function(data) {
             data = JSON.parse(data);
-            
+
             $('#total_saldo').val(data[0]['saldo_favor']);
             $("#saldofavorcliente").val(data[0]['saldo_favor']);
+
+            if(data[0]['saldo_favor']){
+                $("#saldo123").removeClass('d-none');
+                $("#total_saldo").val(data[0]['saldo_favor']);
+                $("#divusarsaldo").removeClass('d-none');
+            }else{
+                $("#divusarsaldo").addClass('d-none');
+            }
             let opcion = data[0]['contrato'];
             let opcionEmision = data[0]['boton_emision'];
             if(opcionEmision == 0){

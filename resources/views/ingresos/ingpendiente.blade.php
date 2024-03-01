@@ -12,19 +12,19 @@
   </thead>
   <tbody>
     @php $id=$pagar=0; $porpagar=0; $entro=false; $retenciones=array();
-    $total=0; 
+    $total=0;
     @endphp
 
     @foreach($facturas as $factura)
 
     @php $pagar=$factura->porpagar(); $value=''; $entro=false; $retenciones=array(); $porpagar=$id=0; @endphp
       @foreach($items as $item)
-        @if ($factura->id==$item->factura) 
+        @if ($factura->id==$item->factura)
           @php  $id=$factura->id; $pagar=(float)$factura->porpagar()+(float)$item->pago;
-          $value=$item->pago;  $entro=true; 
+          $value=$item->pago;  $entro=true;
           $porpagar=(float)$item->pago+$item->retencion();
           $retenciones=$item->retenciones();
-          break; 
+          break;
           @endphp
         @endif
 
@@ -35,7 +35,7 @@
         <input type="hidden" id="retencion_previas_{{$factura->id}}" value="{{$factura->retenciones_previas_actual($id)}}">
         <input type="hidden" id="impuestos_factura_{{$factura->id}}" value="{{$factura->impuestos_totales()}}">
 
-        <td><input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}"><a href="{{route('facturas.show',$factura->nro)}}" target="_blank">{{$factura->codigo}}</a></td>
+        <td><input type="hidden" name="factura_pendiente[]" value="{{$factura->id}}"><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->codigo}}</a></td>
         <!--TOTAL-->
         <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
         <!--PAGADO-->
@@ -43,7 +43,7 @@
 
           {{Auth::user()->empresa()->moneda}}
 
-          {{$entro?App\Funcion::Parsear($factura->pagado()+$factura->retenido()-$porpagar):App\Funcion::Parsear($factura->pagado()+$factura->retenido())}} 
+          {{$entro?App\Funcion::Parsear($factura->pagado()+$factura->retenido()-$porpagar):App\Funcion::Parsear($factura->pagado()+$factura->retenido())}}
         </td>
         <!--Por pagar-->
         <td>
@@ -53,7 +53,7 @@
         <input type="hidden" id="descuento{{$factura->id}}" value="{{$factura->total()->descuento}}">
         <input type="hidden" id="totalfact{{$factura->id}}" value="{{$entro?$factura->porpagar()+$porpagar:$factura->porpagar()}}">
         </td>
-        <td> 
+        <td>
           @php $total=$cont=0; @endphp
             <div id="retenciones_factura_{{$factura->id}}">
             @foreach($retenciones as $retencion)
@@ -72,7 +72,7 @@
                   </div>
                   <div class="col-md-1 no-padding "><button type="button" class="btn btn-link btn-icons" onclick="Eliminar('div_reten{{$factura->id}}_{{$cont}}'); totales_ingreso();">X</button>
                   </div>
-              </div>    
+              </div>
             @endforeach
           </div>
             @if($factura->retenido() == 0)
@@ -80,10 +80,10 @@
             @endif
 
 
-        </td> 
+        </td>
         <td class="monetario" style="vertical-align: text-bottom;">
           <input type="hidden" id="editmonto{{$factura->id}}" value="1">
-          <input type="text" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" value="{{$value}}" onkeyup="totales_ingreso();"> 
+          <input type="text" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" value="{{$value}}" onkeyup="totales_ingreso();">
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>
 
         </td>
@@ -109,7 +109,7 @@
       </thead>
       <tbody>
         @php $cont=0; $totalformas= 0; @endphp
-          @foreach($formasPago as $forma) 
+          @foreach($formasPago as $forma)
 
         @php $cont+=1; $totalformas+=$forma->debito; @endphp
           <tr id="forma{{$cont}}" fila="{{$cont}}">
@@ -137,7 +137,7 @@
                 <input type="hidden" value='0' id="lock_forma{{$cont}}">
                 <input type="number" required="" style="display: inline-block; width: 100%;" class="form-control form-control-sm"  value="{{$forma->debito}}" maxlength="24" id="precioformapago{{$cont}}" name="precioformapago[]" placeholder="valor forma de pago" onkeyup="total_linea_formapago({{$cont}})" required="" min="0">
               </td>
-            <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>                          
+            <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar_forma('forma{{$cont}}');">X</button></td>
           </tr>
           @endforeach
       </tbody>
@@ -148,7 +148,7 @@
       </div>
       <div class="col-md-6 d-flex justify-content-between pt-3">
         <h5>Total:</h5>
-        <span>$</span><span id="anticipototal">{{$totalformas}}</span>  
+        <span>$</span><span id="anticipototal">{{$totalformas}}</span>
       </div>
       <div class="col-md-12">
         <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
@@ -157,7 +157,7 @@
 </div>
 </div>
 
- 
+
  <div class="row" style="margin-top: 1%;">
       <div class="col-md-4 offset-md-8">
         <table class="text-right ingresos" id="totales-ingreso">
@@ -165,7 +165,7 @@
             <td width="40%">Subtotal</td>
 
               <input type="hidden" id="subtotal_facturas_js" value="{{$ingreso->total()->total}}">
-            <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal">{{App\Funcion::Parsear($ingreso->total()->subtotal)}}</span></td> 
+            <td>{{Auth::user()->empresa()->moneda}} <span id="subtotal">{{App\Funcion::Parsear($ingreso->total()->subtotal)}}</span></td>
           </tr>
         </table>
         <table class="text-right ingresos" style="text-align: right; width: 100%;" id="fact_totalesreten">
@@ -173,19 +173,19 @@
             @php $cont=0; @endphp
               @if($ingreso->total()->reten)
               @foreach($ingreso->total()->reten as $reten)
-                  @if(isset($reten->total))  
-                     <tr id="fact_retentotal{{$cont}}"><td width="40%" style="font-size: 0.8em;">{{$reten->nombre}} ({{$reten->porcentaje}}%)</td><td id="fact_retentotalvalue{{$cont}}">-{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($reten->total)}}</td></tr>               
+                  @if(isset($reten->total))
+                     <tr id="fact_retentotal{{$cont}}"><td width="40%" style="font-size: 0.8em;">{{$reten->nombre}} ({{$reten->porcentaje}}%)</td><td id="fact_retentotalvalue{{$cont}}">-{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($reten->total)}}</td></tr>
                     @php $cont+=1; @endphp
                   @endif
               @endforeach
               @endif
 
-            
+
 
           </tbody>
         </table>
         <table class="text-right ingresos">
-          <tr> 
+          <tr>
             <td width="40%">TOTAL</td>
             <td>{{Auth::user()->empresa()->moneda}} <span id="total">{{App\Funcion::Parsear($ingreso->total()->total)}}</span></td>
           </tr>

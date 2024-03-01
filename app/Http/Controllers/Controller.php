@@ -106,13 +106,42 @@ class Controller extends BaseController
             return $cadena;
     }
 
-    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion){
+    /*
+    $modulo = Pagos recibidos, PG Remisiones.. etc
+    $id = id de pagos recibidos, pgremisiones... etc
+    $banco = 123 (solo el id del banco)
+    $tipo = 1 Entrada, 2 salida
+    $generoSaldoFavor = con esto podemos identificar si una factura recibio mas dinero y tiene saldo a favor.
+    */
+    public function up_transaccion($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion,$generoSaldoFavor=null){
+
+        $empresa = Auth::user()->empresa;
         $movimiento=new Movimiento;
-        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
+        $probableMovimiento = Movimiento::where('modulo', 7)->where('id_modulo', $id)->where('estatus',1)->first();
+
+        //Caso1: Cuando cambiamos de un saldo a favor a un pago normal, necesitamos buscarlo por el modulo.
+        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->where('estatus',1)->first();
+
+        if(!$regis && $probableMovimiento && $generoSaldoFavor == null){
+            $movimiento=$probableMovimiento;
+        }
+
         if ($regis) {
             $movimiento=$regis;
         }
-        $movimiento->empresa=Auth::user()->empresa;
+
+        //Caso1: Se esta pasando de un saldo a favor a un movimiento normal, se devuelve el dinero al cliente de saldo a favor.
+        if($probableMovimiento && $probableMovimiento->tipo == 2 && $modulo != 7){
+            $conta = Contacto::Find($probableMovimiento->contacto);
+            $conta->saldo_favor = $conta->saldo_favor + $probableMovimiento->saldo;
+            $conta->save();
+        }
+
+        if($modulo == 7){
+            $banco = Banco::where('empresa',$empresa)->where('nombre','like','Saldos a favor')->first()->id;
+        }
+
+        $movimiento->empresa=$empresa;
         $movimiento->banco=$banco;
         $movimiento->contacto=$contacto;
         $movimiento->tipo=$tipo;
@@ -120,16 +149,74 @@ class Controller extends BaseController
         $movimiento->fecha=$fecha;
         $movimiento->modulo=$modulo;
         $movimiento->id_modulo=$id;
-        $movimiento->descripcion=$id;
+        $movimiento->descripcion=$id . " " . $descripcion;
         $movimiento->save();
     }
 
     public function destroy_transaccion($modulo, $id){
+
+         //Eliminando el saldo a favor que se genero con el recibo.
+         if(Movimiento::where('id_modulo', $id)->where('modulo', 7)->first()){
+            $MovimientoSaldoFavor = Movimiento::where('id_modulo', $id)->where('modulo', 7)->first();
+            $ingreso = Ingreso::Find($id);
+
+            //Tambien restamos este valor de la tabla de contactos.
+            $contacto = Contacto::find($MovimientoSaldoFavor->contacto);
+            //si el movimiento es una salida del banco de saldos a favor entonces debe volver a sumar.
+            if($MovimientoSaldoFavor->tipo == 2 && $MovimientoSaldoFavor->estatus != 2){
+                $contacto->saldo_favor = $contacto->saldo_favor + $MovimientoSaldoFavor->saldo;
+                $ingreso->valor_anticipo = $ingreso->valor_anticipo + $MovimientoSaldoFavor->saldo;
+            }else{
+                $contacto->saldo_favor = $contacto->saldo_favor - $MovimientoSaldoFavor->saldo;
+                $ingreso->valor_anticipo = $ingreso->valor_anticipo - $MovimientoSaldoFavor->saldo;
+            }
+            $MovimientoSaldoFavor->delete();
+            $contacto->save();
+        }
+
         Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->delete();
     }
 
     public function chage_status_transaccion($modulo, $id, $estatus){
         $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
+
+        //Cuando el pago tambien tiene saldo a favor y requerimos anularlo.
+        if(Movimiento::where('id_modulo', $id)->where('modulo', 7)->first()){
+            $MovimientoSaldoFavor = Movimiento::where('id_modulo', $id)->where('modulo', 7)->first();
+            $MovimientoSaldoFavor->estatus=$estatus;
+            $MovimientoSaldoFavor->save();
+
+            $ingreso = Ingreso::Find($id);
+
+            //Tambien restamos este valor de la tabla de contactos.
+            $contacto = Contacto::find($MovimientoSaldoFavor->contacto);
+            if($estatus == 2){
+                //si el movimiento es una salida del banco de saldos a favor entonces debe volver a sumar.
+                if($MovimientoSaldoFavor->tipo == 2){
+                    $contacto->saldo_favor = $contacto->saldo_favor + $MovimientoSaldoFavor->saldo;
+                    $ingreso->valor_anticipo = $ingreso->valor_anticipo + $MovimientoSaldoFavor->saldo;
+                }else{
+                    $contacto->saldo_favor = $contacto->saldo_favor - $MovimientoSaldoFavor->saldo;
+                    $ingreso->valor_anticipo = $ingreso->valor_anticipo - $MovimientoSaldoFavor->saldo;
+                }
+                //Tambien debe sumar sobre el recibo de caja que tenia el saldo a favor.
+                // PucMovimiento::where('consecutivo_comprobante',$ingreso->nro)->update([
+                //     ''
+                // ]);
+
+            }else{
+                if($MovimientoSaldoFavor->tipo == 2){
+                    $contacto->saldo_favor = $contacto->saldo_favor - $MovimientoSaldoFavor->saldo;
+                    $ingreso->valor_anticipo = $ingreso->valor_anticipo - $MovimientoSaldoFavor->saldo;
+                }else{
+                    $contacto->saldo_favor = $contacto->saldo_favor + $MovimientoSaldoFavor->saldo;
+                    $ingreso->valor_anticipo = $ingreso->valor_anticipo + $MovimientoSaldoFavor->saldo;
+                }
+            }
+            $contacto->save();
+            $ingreso->save();
+        }
+
         if ($regis) {
             $movimiento=$regis;
             $movimiento->estatus=$estatus;
