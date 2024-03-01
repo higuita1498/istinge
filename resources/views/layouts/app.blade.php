@@ -536,7 +536,7 @@
                     </footer>
                 </div>
                 <div class="whatsapp text-left">
-                    <a href="https://api.whatsapp.com/send?phone=+573135774747&text=Hola Integra Colombia, necesito soporte para la empresa {{Auth::user()->rol > 1 ? Auth::user()->empresa()->nombre:''}}" target="_blank" title="Soporte vía Whatsapp">
+                    <a href="https://api.whatsapp.com/send?phone=+573053652834&text=Hola Integra Colombia, necesito soporte para la empresa {{Auth::user()->rol > 1 ? Auth::user()->empresa()->nombre:''}}" target="_blank" title="Soporte vía Whatsapp">
                         <img src="{{asset('images/whatsapp.png')}}" alt="WhatsApp" />
                     </a>
                 </div>
