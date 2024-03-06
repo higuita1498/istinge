@@ -321,6 +321,7 @@ class IngresosController extends Controller
     }
 
     public function store(Request $request){
+
         try {
             DB::beginTransaction();
 
@@ -460,11 +461,12 @@ class IngresosController extends Controller
             $ingreso->save();
 
                 //Si el tipo de ingreso es de facturas
+                $totalIngreso=0;
                 if ($ingreso->tipo == 1) {
                     $saldoFavorUsado = 0;
                     foreach ($request->factura_pendiente as $key => $value) {
                         if ($request->precio[$key]) {
-                            $precio = $this->precision($request->precio[$key]);
+                            $totalIngreso+=$precio = $this->precision($request->precio[$key]);
                             $factura = Factura::find($request->factura_pendiente[$key]);
 
                             /*
@@ -494,7 +496,7 @@ class IngresosController extends Controller
                             $items = new IngresosFactura;
                             $items->ingreso = $ingreso->id;
                             $items->factura = $factura->id;
-                            $items->pagado = $factura->pagado();
+                            $items->pagado = $precio; //asi exista mas dinero del  pagado ese se debe usar.
                             $items->puc_factura = $factura->cuenta_id;
                             $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
 
@@ -503,7 +505,8 @@ class IngresosController extends Controller
                             sobre el total de la factura por que el resto es saldo a favor.
                             */
                             if($factura->total()->total < $request->precio[$key]){
-                                $items->pago = $factura->total()->total;
+                                // $items->pago = $factura->total()->total; ya no se desea asi, ahora quieren que aparezca el total asi sobrepase
+                                $items->pago = $this->precision($request->precio[$key]);
                                 $factura->estatus = 0;
                                 $factura->save();
                             }else{
@@ -566,9 +569,10 @@ class IngresosController extends Controller
 
                 //Registro el Movimiento
                 $ingreso = Ingreso::find($ingreso->id);
-                //ingresos
+
+                //aqui va a entrar cuando no se use saldo a favor en una factura.
                 if(!isset($request->uso_saldo) || !$request->uso_saldo){
-                    $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion);
+                    $this->up_transaccion(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $totalIngreso, $ingreso->fecha, $ingreso->descripcion);
                 }
 
                 //Necesitamos obtener el valor que usamos de saldo a favor para descontarlo del banco, ya que se guardó. (obtener todo el total)
