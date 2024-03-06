@@ -122,11 +122,12 @@ class Ingreso extends Model
                     (se supone que se hace al momento de registrar un ingreso por que ya es un hecho verdadero y no en la forma de pago de
                     la factura por que no se ha asociado ningun pago)
                 */
-                $totalAnticipo = PucMovimiento::
-                    where('tipo_comprobante',1)->
-                    where('enlace_a','=',5)->
-                    where('documento_id',$ingreso->ingreso)->
-                    sum('credito');
+                $totalAnticipo = 0;
+                // $totalAnticipo = PucMovimiento::
+                //     where('tipo_comprobante',1)->
+                //     where('enlace_a','=',5)->
+                //     where('documento_id',$ingreso->ingreso)->
+                //     sum('credito');
             }
             return $total + $totalAnticipo;
         }
