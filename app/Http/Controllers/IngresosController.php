@@ -498,6 +498,7 @@ class IngresosController extends Controller
                             $items->factura = $factura->id;
                             $items->pagado = $precio; //asi exista mas dinero del  pagado ese se debe usar.
                             $items->puc_factura = $factura->cuenta_id;
+                            $items->puc_banco = $request->saldofavor > 0 ? $request->forma_pago : $request->forma_pago;
                             $items->anticipo = $request->saldofavor > 0 ? $request->anticipo_factura : null;
 
                             /*
@@ -588,6 +589,7 @@ class IngresosController extends Controller
                     $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
                     $contacto->save();
 
+                    $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                     $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                     $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
@@ -598,6 +600,7 @@ class IngresosController extends Controller
                     $this->up_transaccion(7, $ingreso->id, $bancoId, $ingreso->cliente, 1, $request->saldofavor, $ingreso->fecha, "Ingreso de saldo a favor",$request->saldofavor);
 
                 }else{
+                    $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                     PucMovimiento::ingreso($ingreso,1,2,$request);
 
                     if(isset($request->uso_saldo) && $request->uso_saldo){
@@ -1323,11 +1326,13 @@ class IngresosController extends Controller
                 $contacto->saldo_favor = $contacto->saldo_favor+$request->saldofavor;
                 $contacto->save();
 
+                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 $ingreso->anticipo = $request->anticipo_factura; //cuenta de anticipo genérico del ingreso. (en memoria)
 
                 $ingreso->saldoFavorIngreso = $request->saldofavor; //Variable en memoria, no creada.
                 PucMovimiento::ingreso($ingreso,2,1,$request);
             }else{
+                $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
                 PucMovimiento::ingreso($ingreso,2,2,$request);
             }
 
