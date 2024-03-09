@@ -612,7 +612,6 @@
         			if (window.location.pathname.split("/")[1] === "software") {
         				var url = '/software/empresa/radicados/'+id+'/eliminarAdjunto';
         			}else{
-        			    alert(id);
         				var url = '/empresa/radicados/'+id+'/'+num+'/eliminarAdjunto';
         			}
 
