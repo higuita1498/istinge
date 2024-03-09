@@ -36,7 +36,11 @@ class CamposController extends Controller{
                      ->whereColumn('campos_usuarios.id_campo', 'campos.id');
            })
            ->get();
-        view()->share(['title' => 'Organizar Tabla '.$visibles[0]->modulo()]);
+           $visiblesFin = '';
+           if(isset($visibles[0])){
+               $visiblesFin = $visibles[0]->modulo();
+           }
+        view()->share(['title' => 'Organizar Tabla '.$visiblesFin]);
         return view('configuracion.campos_tabla.organizar')->with(compact('ocultos', 'visibles', 'id'));
     }
 
