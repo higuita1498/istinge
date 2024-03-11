@@ -695,6 +695,7 @@ class CronController extends Controller
                                     $API->disconnect();
                                 }
                                 $contrato->state = 'disabled';
+                                $contrato->observaciones = $contrato->observaciones. " - Contrato deshabilitado automaticamente";
                                 $contrato->save();
                             }
                         }
