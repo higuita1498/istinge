@@ -2377,6 +2377,32 @@ class CronController extends Controller
         //  $this->sendInvoices($fechaInvoice);
         //  return "ok";
 
+
+        // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
+
+        $contratos = Contrato::where('state','disabled')->get();
+        $i = 0;
+        foreach($contratos as $contrato){
+
+            $facturaContratos = DB::table('facturas_contratos')
+                ->where('contrato_nro',$contrato->nro)->orderBy('id','DESC')->first();
+
+            if($facturaContratos){
+                $ultFactura = Factura::Find($facturaContratos->factura_id);
+                if($ultFactura->estatus == 0){
+                    $i = $i+1;
+                    echo $contrato->nro . "<br>";
+                    // return $contrato;
+                    // return $ultFactura;
+                }
+            }
+
+
+        }
+
+        return "Deshabilitaods mal hay: " . $i;
+        // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
+
         //--------- enviar facturas por wpp segun una fecha ------- ///
 
             return $facturas = Factura::
