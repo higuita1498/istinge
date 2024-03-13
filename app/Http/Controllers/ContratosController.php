@@ -120,14 +120,21 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
 
         $modoLectura = auth()->user()->modo_lectura();
-        $contratos = Contrato::query()
-			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion', 'contactos.celular as c_celular','contactos.fk_idmunicipio', 'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp', 'contactos.estrato as c_estrato', DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
+        $contratosql = $contratos = Contrato::query()
+			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
+             'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
+             'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
+             'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
+              'contactos.celular as c_celular','contactos.fk_idmunicipio',
+               'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp',
+               'contactos.estrato as c_estrato',
+               DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
-            // ->orderByDesc('ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
-        // return $contratos->get();
+
         if ($request->filtro == true) {
+
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.client_id', $request->cliente_id);
@@ -188,8 +195,6 @@ class ContratosController extends Controller
                 foreach($direccion as $dir){
                     $dir = strtolower($dir);
                     $dir = str_replace("#","",$dir);
-                    //$dir = str_replace("-","",$dir);
-                    //$dir = str_replace("/","",$dir);
 
                     $contratos->where(function ($query) use ($dir) {
                         $query->orWhere('contactos.direccion', 'like', "%{$dir}%");
@@ -306,6 +311,32 @@ class ContratosController extends Controller
             if(auth()->user()->oficina){
                 $contratos->where('contracts.oficina', auth()->user()->oficina);
             }
+        }
+
+        //Esta opcion es para mirar los contratos deshabilitados con su ultima factura pagada.
+        if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
+            $contratos = Contrato::
+            select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
+             'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
+             'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
+             'contactos.barrio as c_barrio', 'contactos.direccion',
+              'contactos.celular as c_celular','contactos.fk_idmunicipio',
+               'contactos.email as c_email', 'contactos.firma_isp',
+               'contactos.estrato as c_estrato',
+               DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
+            ->selectRaw('INET_ATON(contracts.ip) as ipformat')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->where('contracts.state', 'disabled')
+            ->join('facturas_contratos', 'contracts.nro', '=', 'facturas_contratos.contrato_nro')
+            ->leftJoin('factura', function ($join) {
+                $join->on('factura.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE
+                 facturas_contratos.contrato_nro = contracts.nro ORDER BY factura.id DESC LIMIT 1)'
+                ));
+                })->where(function ($query) {
+                    $query->where('factura.estatus', 0);
+                })
+            ->distinct();
         }
 
         return datatables()->eloquent($contratos)

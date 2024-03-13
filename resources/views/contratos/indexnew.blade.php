@@ -190,6 +190,11 @@
                                 <option value="reconexion">Reconexión</option>
                             </select>
                         </div>
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
+                                <option value="opcion_1">Contratos deshabilitados con última factura pagada</option>
+                            </select>
+                        </div>
 
                         <div class="col-md-8 pl-1 pt-1">
                             <div class="row">
@@ -438,6 +443,7 @@
             data.desde = $("#desde").val();
             data.hasta = $("#hasta").val();
             data.tipo_contrato = $("#tipo_contrato").val();
+            data.otra_opcion = $("#otra_opcion").val();
             data.fecha_corte = $("#fecha-corte").val();
             data.filtro = true;
         });

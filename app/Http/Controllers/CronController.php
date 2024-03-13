@@ -2380,6 +2380,19 @@ class CronController extends Controller
 
         // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
 
+        $contratos = DB::table('contracts as cont')
+        ->where('state', 'disabled')
+        ->join('facturas_contratos', 'cont.nro', '=', 'facturas_contratos.contrato_nro')
+        ->leftJoin('factura as fac', function ($join) {
+            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = cont.nro ORDER BY id DESC LIMIT 1)'));
+        })
+        ->where(function ($query) {
+            $query->whereNull('fac.estatus')->orWhere('fac.estatus', 0);
+        })
+        ->select('cont.*')
+        ->distinct()
+        ->get();
+
         $contratos = Contrato::where('state','disabled')->get();
         $i = 0;
         foreach($contratos as $contrato){
