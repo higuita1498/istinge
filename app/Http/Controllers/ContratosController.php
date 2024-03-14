@@ -343,7 +343,7 @@ class ContratosController extends Controller
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
-            ->whereIn('id',$arrayContratos);
+            ->whereIn('contracts.id',$arrayContratos);
         }
 
         return datatables()->eloquent($contratos)
