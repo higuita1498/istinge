@@ -326,7 +326,7 @@ class ContratosController extends Controller
 
                 if($facturaContratos){
                     $ultFactura = Factura::Find($facturaContratos->factura_id);
-                    if($ultFactura->estatus == 0){
+                    if(isset($ultFactura->estatus) && $ultFactura->estatus == 0){
                         array_push($arrayContratos,$contrato->id);
                     }
                 }
