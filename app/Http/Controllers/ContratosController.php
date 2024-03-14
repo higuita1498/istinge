@@ -44,6 +44,7 @@ use App\Campos;
 use App\Puerto;
 use App\Oficina;
 use App\CRM;
+use App\Model\Ingresos\Factura;
 use App\Model\Ingresos\ItemsFactura;
 use Illuminate\Support\Facades\Auth as Auth;
 use Illuminate\Support\Facades\DB as DB;
@@ -313,30 +314,36 @@ class ContratosController extends Controller
             }
         }
 
-        //Esta opcion es para mirar los contratos deshabilitados con su ultima factura pagada.
+        //Esta opción es para mirar los contratos deshabilitados con su ultima factura pagada.
         if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
+                $contratos = Contrato::where('state','disabled')->get();
+                $i = 0;
+                $arrayContratos = array();
+                foreach($contratos as $contrato){
+
+                $facturaContratos = DB::table('facturas_contratos')
+                    ->where('contrato_nro',$contrato->nro)->orderBy('id','DESC')->first();
+
+                if($facturaContratos){
+                    $ultFactura = Factura::Find($facturaContratos->factura_id);
+                    if($ultFactura->estatus == 0){
+                        array_push($arrayContratos,$contrato->id);
+                    }
+                }
+            }
             $contratos = Contrato::
             select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
              'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
-             'contactos.barrio as c_barrio', 'contactos.direccion',
+             'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
               'contactos.celular as c_celular','contactos.fk_idmunicipio',
-               'contactos.email as c_email', 'contactos.firma_isp',
+               'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp',
                'contactos.estrato as c_estrato',
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
-            ->where('contracts.state', 'disabled')
-            ->join('facturas_contratos', 'contracts.nro', '=', 'facturas_contratos.contrato_nro')
-            ->leftJoin('factura', function ($join) {
-                $join->on('factura.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE
-                 facturas_contratos.contrato_nro = contracts.nro ORDER BY factura.id DESC LIMIT 1)'
-                ));
-                })->where(function ($query) {
-                    $query->where('factura.estatus', 0);
-                })
-            ->distinct();
+            ->whereIn('id',$arrayContratos);
         }
 
         return datatables()->eloquent($contratos)

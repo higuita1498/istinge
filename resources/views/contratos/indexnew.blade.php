@@ -467,7 +467,7 @@
             }
         });
 
-        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato').on('change',function() {
+        $('#client_id, #plan, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
             getDataTable();
             return false;
         });
@@ -539,6 +539,7 @@
         $("#hasta").val('');
         $("#fecha-corte").val('');
         $("#tipo_contrato").val('').selectpicker('refresh');
+        $("#otra_opcion").val('').selectpicker('refresh');
 
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
