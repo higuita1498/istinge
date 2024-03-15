@@ -323,7 +323,7 @@ class IngresosController extends Controller
     public function store(Request $request){
 
         try {
-            DB::beginTransaction();
+            // DB::beginTransaction();
 
             $user = Auth::user();
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
@@ -948,14 +948,14 @@ class IngresosController extends Controller
                     $ingreso->save();
                 }
 
-                DB::commit();
+                // DB::commit();
 
                 $mensaje = 'SE HA CREADO SATISFACTORIAMENTE EL PAGO';
                 return redirect('empresa/ingresos/'.$ingreso->id)->with('success', $mensaje)->with('factura_id', $ingreso->id)->with('tirilla', $tirilla);
             }
 
         } catch (\Throwable $th) {
-            DB::rollBack();
+            // DB::rollBack();
             return back()->with('error', $th->getMessage());
         }
     }
