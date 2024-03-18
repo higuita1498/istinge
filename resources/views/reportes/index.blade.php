@@ -32,7 +32,7 @@
                 <div class="col-md-5 offset-md-1 reportes">
                     <h3><i class="fa-solid fa-gavel"></i> MINTIC</h3>
                     <ul class="list-report">
-                        <li><a href="{{route('reportes.balance')}}">Reporte 1.2</a></li>
+                        <li><a href="{{route('reportes.mintic.1.2')}}">Reporte 1.2</a></li>
                     </ul>
                 </div>
                 <div class="col-md-5 offset-md-1 reportes">
