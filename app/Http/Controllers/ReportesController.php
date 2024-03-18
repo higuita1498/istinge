@@ -2089,6 +2089,61 @@ class ReportesController extends Controller
             ->with('cajas', $cajas);
     }
 
+    //repórtes para crc reporte 1.2
+    public function reporte_1_2(Request $request) {
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Contratos con Instalación', 'icon' =>'fas fa-chart-line']);
+        $this->getAllPermissions(Auth::user()->id);
+        $dates = $this->setDateRequest($request);
+        if($request->fecha == 8)
+            $dates = $this->setDateRequest($request, true);
+
+        //Código base tomado de datatable_movimientos
+
+        $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
+            ->where('movimientos.empresa',Auth::user()->empresa);
+
+        $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
+            ->where('movimientos.empresa',Auth::user()->empresa);
+        $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
+
+        if($request->fecha){
+            $appends['fecha']=$request->fecha;
+        }
+        if($request->fecha){
+            $appends['hasta']=$request->hasta;
+        }
+
+        $movimientos=  $movimientos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
+        $movimientosTodos = $movimientosTodos->get();
+
+        $totales = array(
+            'salida'    => 0,
+            'entrada'   => 0
+        );
+
+        foreach ($movimientosTodos as $movimiento){
+            $totales['salida']  += $movimiento->tipo==2?$movimiento->saldo:0;
+            $totales['entrada']  += $movimiento->tipo==1?$movimiento->saldo:0;
+        }
+
+        $cajas = Banco::where('estatus',1)->get();
+
+        return view('reportes.instalacion.index')
+            ->with('movimientos', $movimientos)
+            ->with('request', $request)
+            ->with('example', $example)
+            ->with('totales', $totales)
+            ->with('cajas', $cajas);
+    }
+
     public function facturasImpagas(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         DB::enableQueryLog();

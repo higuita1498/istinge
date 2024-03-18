@@ -1168,6 +1168,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/reportecontactos', 'ReportesController@getReporteContactos')->name('reportes.contactos');
 		Route::get('/cajas', 'ReportesController@cajas')->name('reportes.cajas');
 		Route::get('/instalacion', 'ReportesController@instalacion')->name('reportes.instalacion');
+        Route::get('/reporte/1/2', 'ReportesController@reporte_1_2')->name('reportes.mintic.1.2');
 		Route::get('/facturas-impagas', 'ReportesController@facturasImpagas')->name('reportes.facturasImpagas');
 		Route::get('/radicados', 'ReportesController@radicados')->name('reportes.radicados');
 		Route::get('/recargas', 'ReportesController@recargas')->name('reportes.recargas');
@@ -1176,8 +1177,6 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/facturas-electronicas', 'ReportesController@facturasElectronicas')->name('reportes.facturasElectronicas');
 		Route::get('/facturas-estandar', 'ReportesController@facturasEstandar')->name('reportes.facturasEstandar');
 		Route::get('/notas-credito', 'ReportesController@notasCredito')->name('reportes.notasCredito');
-        Route::get('/mintic-1-2', 'ReportesController@recargas')->name('reportes.mintic.1.2');
-
 
 		//Rutas para modulo estado de cuenta cliente
 		Route::get('/estadoCliente', 'ReportesController@estadoCliente')->name('reportes.estadoCliente');
