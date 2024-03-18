@@ -1176,7 +1176,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/facturas-electronicas', 'ReportesController@facturasElectronicas')->name('reportes.facturasElectronicas');
 		Route::get('/facturas-estandar', 'ReportesController@facturasEstandar')->name('reportes.facturasEstandar');
 		Route::get('/notas-credito', 'ReportesController@notasCredito')->name('reportes.notasCredito');
-        Route::get('/recargas', 'ReportesController@recargas')->name('reportes.mintic.1.2');
+        Route::get('/mintic-1-2', 'ReportesController@recargas')->name('reportes.mintic.1.2');
 
 
 		//Rutas para modulo estado de cuenta cliente
