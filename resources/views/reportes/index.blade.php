@@ -39,19 +39,19 @@
 
                 </div>
             </div>
-            <div class="col-md-5 offset-md-1 reportes">
-                <h3><i class="fas fa-store-alt"></i> Puntos de Ventas</h3>
-                <ul class="list-report">
-                    @if(auth()->user()->rol <> 8)
-                    <li><a href="{{route('reportes.recargas')}}" >Reporte de Recargas</a></li>
-                    <li><a href="{{route('reportes.puntoVenta')}}" >Reporte de Puntos de Ventas (Ganancias)</a></li>
-                    <li><a href="{{route('reportes.puntoVentaRecaudo')}}" >Reporte de Puntos de Ventas (Recaudos)</a></li>
-                    @endif
-                </ul>
-            </div>
+
         </div>
 
-
+        <div class="col-md-5 offset-md-1 reportes">
+            <h3><i class="fas fa-store-alt"></i> Puntos de Ventas</h3>
+            <ul class="list-report">
+                @if(auth()->user()->rol <> 8)
+                <li><a href="{{route('reportes.recargas')}}" >Reporte de Recargas</a></li>
+                <li><a href="{{route('reportes.puntoVenta')}}" >Reporte de Puntos de Ventas (Ganancias)</a></li>
+                <li><a href="{{route('reportes.puntoVentaRecaudo')}}" >Reporte de Puntos de Ventas (Recaudos)</a></li>
+                @endif
+            </ul>
+        </div>
         <div class="row">
             <div class="col-md-5 offset-md-1 reportes">
                 <h3><i class="fas fa-chart-line"></i> Contables</h3>
