@@ -133,6 +133,7 @@ Route::get('qrcode', function () {
      return QrCode::generate('Make me into a QrCode!');
  });
 Route::post('configuracion_facturacionAutomatica', 'ConfiguracionController@facturacionAutomatica');
+Route::post('configuracion_aplicacionsaldosfavor', 'ConfiguracionController@aplicacionSaldosFavor');
 Route::post('configuracion_facturacionSmsAutomatica', 'ConfiguracionController@facturacionSmsAutomatica');
 Route::post('configuracion_limpiarCache', 'ConfiguracionController@limpiarCache');
 Route::post('configuracion_olt', 'ConfiguracionController@configurarOLT');

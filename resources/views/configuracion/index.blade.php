@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    .enlaces a {
+    margin-bottom: 1px; /* Espacio entre cada enlace */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Línea ligeramente transparente */
+    padding-bottom: 1px; /* Espacio entre el enlace y la línea */
+}
+</style>
 <div class="row card-description">
 	<div class="col-sm-4" style="text-align: center;">
 		<img class="img-responsive" src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa()->id.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-width: 200px;">
@@ -38,7 +46,7 @@
 	@endif
 
 	<div class="row card-description configuracion">
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Empresa</h4>
 			<p>Completa la información de tu empresa.</p>
 			<a href="{{route('configuracion.create')}}">Empresa</a> <br>
@@ -50,7 +58,7 @@
 		</div>
 
 		@if(isset($_SESSION['permisos']['40']) || isset($_SESSION['permisos']['258']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Facturación</h4>
 			<p>Configura la información que se mostrará en tus facturas de venta.</p>
 			<a href="{{route('configuracion.terminos')}}">Términos de pago</a> <br>
@@ -65,7 +73,9 @@
 			<a href="#" data-toggle="modal" data-target="#formato_impresion">Formato de Impresión</a><br>
 			<a href="javascript:facturacionAutomatica()">{{ Auth::user()->empresa()->factura_auto == 0 ? 'Habilitar':'Deshabilitar' }} Facturación Automática</a><br>
 			<input type="hidden" id="facturaAuto" value="{{Auth::user()->empresa()->factura_auto}}">
-			<a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
+            <a href="javascript:saldoFavorAutomatico()">{{ Auth::user()->empresa()->aplicar_saldofavor == 0 ? 'Habilitar':'Deshabilitar' }} aplicación de saldos a favor automático</a><br>
+			<input type="hidden" id="saldofavAuto" value="{{Auth::user()->empresa()->aplicar_saldofavor}}">
+            <a href="javascript:prorrateo()">{{ Auth::user()->empresa()->prorrateo == 0 ? 'Habilitar':'Deshabilitar' }} Prorrateo</a><br>
 			<input type="hidden" id="prorrateoid" value="{{Auth::user()->empresa()->prorrateo}}">
 			<a href="javascript:actDescEfecty()">{{ Auth::user()->empresa()->efecty == 0 ? 'Habilitar':'Deshabilitar' }} Efecty</a><br>
 			<input type="hidden" id="efectyid" value="{{Auth::user()->empresa()->efecty}}">
@@ -73,7 +83,7 @@
 			<input type="hidden" id="facturaSmsAuto" value="{{Auth::user()->empresa()->factura_sms_auto}}">
 		</div>
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Impuestos</h4>
 			<p>Define aquí los tipos de impuestos y retenciones que aplicas a tus facturas de venta.</p>
 			<a href="{{route('impuestos.index')}}">Impuestos</a> <br>
@@ -81,14 +91,14 @@
 			<a href="{{route('autoretenciones.index')}}">Autoretenciones</a><br>
 		</div>
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Contactos</h4>
 			<p>Registra aqui referencias para tus contactos.</p>
 			<a href="{{route('tiposempresa.index')}}">Tipos de Contactos</a> <br>
 		</div>
 
         {{-- Agregando campos adicionales a contactos --}}
-        <div class="col-sm-3">
+        <div class="col-sm-3 enlaces">
 			<h4 class="card-title">campos adicionales a Contactos</h4>
 			<p>Añade aqui campos adicionales para el registro de tus contactos.</p>
 			<a href="{{route('contact.new')}}">Añadir campos</a> <br>
@@ -96,7 +106,7 @@
         {{-- fin del codigo --}}
 
 		@if(isset($_SESSION['permisos']['845']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Contratos</h4>
 			<p>Gestiona y organiza las configuraciones de contratos.</p>
 			<a href="#" data-toggle="modal" data-target="#config_clausula">Definir Monto de Clausula de Permanencia</a><br>
@@ -106,7 +116,7 @@
 		</div>
 		@endif
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Documentos Soporte</h4>
 			<p>Configura la información de los documentos soporte por las compras que realices a sujetos no obligados a expedir factura.</p>
 			@if($empresa->equivalente == 0)
@@ -119,7 +129,7 @@
 			@endif
 		</div>
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Categorias</h4>
 			<p>Organice a su medida el plan único de cuentas.</p>
 			{{-- <a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br> --}}
@@ -132,7 +142,7 @@
 		@endif
 
 		@if(isset($_SESSION['permisos']['737']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Tipos de Gastos</h4>
 			<p>Organice los tipos de gastos que utilizará su empresa.</p>
 			@if(isset($_SESSION['permisos']['737']))
@@ -141,21 +151,21 @@
 		</div>
 		@endif
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Gestión de Puertos</h4>
 			<p>Configura y organiza los puertos de conexión.</p>
 			<a href="{{route('puertos-conexion.index')}}">Puertos de Conexión</a><br>
 		</div>
 
 		@if(isset($_SESSION['permisos']['752']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Gestión Servidor de Correo</h4>
 			<p>Configura y organiza el servidor de correo externo para el envío de email y notificaciones.</p>
 			<a href="{{route('servidor-correo.index')}}">Servidor de Correo</a><br>
 		</div>
 		@endif
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Nómina</h4>
 			<p>Gestione la nómina electrónicamente de los empleados que trabajan en su empresa.</p>
 			<input type="hidden" name="estado_nomina" id="estado_nomina" value="{{$empresa->nomina}}">
@@ -171,7 +181,7 @@
 		</div>
 
 		@if(isset($_SESSION['permisos']['759']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Administración OLT</h4>
 			<p>Completa la información de la OLT de tu empresa.</p>
 			<a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
@@ -179,7 +189,7 @@
 		@endif
 
 		@if(isset($_SESSION['permisos']['762']) || isset($_SESSION['permisos']['763']) || isset($_SESSION['permisos']['764']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Integraciones de Servicios</h4>
 			<p>Configure cada uno de los servicios disponibles para darle uso en NetworkSoft</p>
 			@if(isset($_SESSION['permisos']['762']))
@@ -200,7 +210,7 @@
 		</div>
 		@endif
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Oficinas</h4>
 			<p>Configura la información relacionada a las oficinas de tu empresa.</p>
 			<a href="javascript:actDescOficina()">{{ Auth::user()->empresa()->oficina == 0 ? 'Habilitar':'Deshabilitar' }} uso de oficinas en NetworkSoft</a><br>
@@ -208,7 +218,7 @@
 		</div>
 
 		@if(!Auth::user()->empresa()->suscripcion()->ilimitado)
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Planes</h4>
 			<p>Elige el plan que quieres tener y configura cómo quieres pagarlo.</p>
 			<a href="{{route('listadoPagos.index')}}">Pagos de Suscripcion</a> <br>
@@ -221,7 +231,7 @@
 		@endif
 
 		@if(isset($_SESSION['permisos']['750']))
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Organización de Tablas</h4>
 			<p>Configura y organiza los campos de las tablas.</p>
 			<a href="#" data-toggle="modal" data-target="#config_modulos">Organización de Tablas</a><br>
@@ -232,14 +242,14 @@
 		</div>
 		@endif
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Documentación</h4>
 			<p>Documentos y guías de uso NetworkSoft.</p>
 			<a href="https://networksoft.online/software/images/Empresas/Empresa1/contabilidad.pdf" target="_blank">Contabilidad</a> <br>
 			<a href="{{asset('images/Empresas/Empresa1/Gestión Servidor De Correo.pdf')}}" target="_blank">Servidor De Correo</a> <br>
 		</div>
 
-		<div class="col-sm-3">
+		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Limpieza del Sistema</h4>
 			<p>Limpia los archivos temporales y caché del sistema.</p>
 			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
@@ -834,6 +844,67 @@
 		                            timer: 5000
 		                        })
 		                        $("#facturaAuto").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+		}
+
+        function saldoFavorAutomatico() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_aplicacionsaldosfavor';
+			}else{
+				var url = '/configuracion_aplicacionsaldosfavor';
+			}
+
+		    if ($("#saldofavAuto").val() == 0) {
+		        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
+		    }
+
+		    if ($("#saldofavAuto").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar la facturación automática de los contratos?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { status: $("#saldofavAuto").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Aplicación de saldos a favor automáticamente habilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#saldofavAuto").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Aplicación de saldos a favor automáticamente deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#saldofavAuto").val(0);
 		                    }
 		                    setTimeout(function(){
 		                    	var a = document.createElement("a");

@@ -415,7 +415,7 @@ class CronController extends Controller
                                         //>>>>Fin posible aplicación prorrateo al total<<<<//
 
                                         /* Creacion de pagos automaticamente */
-                                        if($contrato->saldo_favor >= $factura->total()->total){
+                                        if($contrato->saldo_favor >= $factura->totalAPI($empresa->id)->total){
                                             self::pagoFacturaAutomatico($factura);
                                         }
 
