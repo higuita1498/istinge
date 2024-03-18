@@ -2091,7 +2091,7 @@ class ReportesController extends Controller
 
     //repórtes para crc reporte 1.2
     public function reporte_1_2(Request $request) {
-        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Contratos con Instalación', 'icon' =>'fas fa-chart-line']);
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
         $dates = $this->setDateRequest($request);
         if($request->fecha == 8)
