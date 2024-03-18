@@ -28,7 +28,7 @@
                     {{-- <li><a href="{{route('reportes.planes')}}" >Reporte de Planes</a></li> --}}
                 </ul>
             </div>
-            <div class="row">
+
                 <div class="col-md-5 offset-md-1 reportes">
                     <h3><i class="fa-solid fa-gavel"></i> MINTIC</h3>
                     <ul class="list-report">
@@ -38,7 +38,7 @@
                 <div class="col-md-5 offset-md-1 reportes">
 
                 </div>
-            </div>
+
 
         </div>
 
