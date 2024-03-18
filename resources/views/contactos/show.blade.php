@@ -428,13 +428,13 @@
 							<td>
 								<div style="display:inline-flex;float;left;">
 									<p id="textsaldofavor">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($contacto->saldo_favor)}}</p>
-									{{-- @if(isset($_SESSION['permisos']['856']))
+									@if(isset($_SESSION['permisos']['856']))
 									<a href="javascript:modificarSaldo({{$contacto->id}})" style="font-size: 0.8em;margin-left: 10px;">
 										<i class="fas fa-pencil-alt"></i></a>
-									<a href="javascript:historialSaldos({{$contacto->id}})" style="font-size: 0.8em;margin-left: 10px;">
+									{{-- <a href="javascript:historialSaldos({{$contacto->id}})" style="font-size: 0.8em;margin-left: 10px;">
 										<i class="far fa-eye"></i>
-									</a>
-									@endif --}}
+									</a> --}}
+									@endif
 								</div>
 							</td>
 						</tr>
@@ -1025,7 +1025,10 @@
 									  </button>
 								  </div>
 								  <div class="modal-body">
-									<p>Ingrese el saldo a favor sin puntos.</p>
+									<p>
+                                        Ingrese el saldo a favor sin puntos,
+                                        recuerde que al modificar le saldo a favor de esta manera no afectará ningun otro modulo.
+                                    </p>
 									  <div class="form-group">
 										<label for="ancho">saldo</label>
 					  					<input type="text" name="saldo_favor" id="saldo_favor" class="form-control" value="${contacto.saldo_favor}">

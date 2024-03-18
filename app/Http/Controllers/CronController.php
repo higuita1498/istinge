@@ -48,6 +48,7 @@ use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresosFactura;
 use App\Banco;
 use App\Movimiento;
+use App\PucMovimiento;
 use Illuminate\Support\Facades\DB;
 
 class CronController extends Controller
@@ -57,12 +58,32 @@ class CronController extends Controller
         return round($valor, $empresa->precision);
     }
 
-    public function up_transaccion_($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion, $empresa){
+    public static function up_transaccion_($modulo, $id, $banco, $contacto, $tipo, $saldo, $fecha, $descripcion, $generoSaldoFavor=null,$empresa=null){
         $movimiento=new Movimiento;
-        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->first();
+        $probableMovimiento = Movimiento::where('modulo', 7)->where('id_modulo', $id)->where('estatus',1)->first();
+
+        //Caso1: Cuando cambiamos de un saldo a favor a un pago normal, necesitamos buscarlo por el modulo.
+        $regis=Movimiento::where('modulo', $modulo)->where('id_modulo', $id)->where('estatus',1)->first();
+
+        if(!$regis && $probableMovimiento && $generoSaldoFavor == null){
+            $movimiento=$probableMovimiento;
+        }
+
         if ($regis) {
             $movimiento=$regis;
         }
+
+        //Caso1: Se esta pasando de un saldo a favor a un movimiento normal, se devuelve el dinero al cliente de saldo a favor.
+        if($probableMovimiento && $probableMovimiento->tipo == 2 && $modulo != 7){
+            $conta = Contacto::Find($probableMovimiento->contacto);
+            $conta->saldo_favor = $conta->saldo_favor + $probableMovimiento->saldo;
+            $conta->save();
+        }
+
+        if($modulo == 7){
+            $banco = Banco::where('empresa',$empresa)->where('nombre','like','Saldos a favor')->first()->id;
+        }
+
         $movimiento->empresa=$empresa;
         $movimiento->banco=$banco;
         $movimiento->contacto=$contacto;
@@ -71,7 +92,7 @@ class CronController extends Controller
         $movimiento->fecha=$fecha;
         $movimiento->modulo=$modulo;
         $movimiento->id_modulo=$id;
-        $movimiento->descripcion=$id;
+        $movimiento->descripcion=$id . " " . $descripcion;
         $movimiento->save();
     }
 
@@ -106,11 +127,15 @@ class CronController extends Controller
                 ->select('contracts.id', 'contracts.iva_factura', 'contracts.public_id', 'c.id as cliente',
                 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion',
                 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1',
+                'c.saldo_favor',
                 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv', 'contracts.factura_individual','contracts.nro')
                 ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
                 // whereIn('contracts.id',[1932])->
-                where('contracts.state','enabled')->get();
+                // where('c.saldo_favor','>',80000)->//rc
+                where('contracts.state','enabled')
+                // ->limit(1)->skip(7)
+                ->get();
 
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
                 if($num){
@@ -119,7 +144,7 @@ class CronController extends Controller
                     $numero = 0;
                 }
 
-            //Calculo fecha pago oportuno.
+                //Calculo fecha pago oportuno.
                 $y = Carbon::now()->format('Y');
                 $m = Carbon::now()->format('m');
                 $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
@@ -132,10 +157,10 @@ class CronController extends Controller
                     $y = $y+1;
                     $m = 01;
                 }
-            $date_pagooportuno = $y . "-" . $m . "-" . $d;
-            //Fin calculo fecha de pago oportuno
+                $date_pagooportuno = $y . "-" . $m . "-" . $d;
+                //Fin calculo fecha de pago oportuno
 
-            //calculo fecha suspension
+                //calculo fecha suspension
                 $y = Carbon::now()->format('Y');
                 $m = Carbon::now()->format('m');
                 $ds = substr(str_repeat(0, 2).$grupo_corte->fecha_suspension, - 2);
@@ -152,10 +177,11 @@ class CronController extends Controller
                     $y = $y+1;
                 }
                 $date_suspension = $y . "-" . $m . "-" . $ds;
-            //Fin calculo fecha suspension
+                //Fin calculo fecha suspension
 
                 foreach ($contratos as $contrato) {
-
+                    DB::table('factura')->where('estatus','<>',2)
+                    ->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count();
                     if(DB::table('factura')->where('estatus','<>',2)
                     ->where('contrato_id',$contrato->id)->where('fecha',$fecha)->count() == 0){
 
@@ -171,21 +197,20 @@ class CronController extends Controller
 
                         //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
                         if(isset($fac->vencimiento) && $fac->vencimiento > $fecha || isset($fac->estatus) && $fac->estatus == 0 || !$fac || isset($fac->estatus) && $fac->estatus == 2){
-
                             if(!$fac || isset($fac) && $fecha != $fac->fecha){
-                            $numero=round($numero)+1;
+                                $numero=round($numero)+1;
 
-                            //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                            $nro = NumeracionFactura::tipoNumeracion($contrato);
+                                //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                                $nro = NumeracionFactura::tipoNumeracion($contrato);
 
-                            if(is_null($nro)){
-                            }else{
+                                if(is_null($nro)){
+                                }else{ //aca empieza la verdadera creacion de la factura despues de pasar las validaciones.
 
-                                $hoy = Carbon::now()->toDateString();
+                                    $hoy = Carbon::now()->toDateString();
 
-                                if(!DB::table('facturas_contratos')
-                                ->whereDate('created_at',$hoy)
-                                ->where('contrato_nro',$contrato->nro)->where('is_cron',1)->first())
+                                    if(!DB::table('facturas_contratos')
+                                    ->whereDate('created_at',$hoy)
+                                    ->where('contrato_nro',$contrato->nro)->where('is_cron',1)->first())
                                 {
 
                                 if($contrato->fecha_suspension){
@@ -389,6 +414,11 @@ class CronController extends Controller
                                         }
                                         //>>>>Fin posible aplicación prorrateo al total<<<<//
 
+                                        /* Creacion de pagos automaticamente */
+                                        if($contrato->saldo_favor >= $factura->totalAPI($empresa->id)->total){
+                                            self::pagoFacturaAutomatico($factura);
+                                        }
+
                                     }// fin de validacion factura doble.
 
                                 } //Validacion facturas_contratos
@@ -397,11 +427,12 @@ class CronController extends Controller
                             }//validacion que no se creen dos el mismo dia
                         }
                     } //Comentando factura abierta del mes pasado
-                    }
+
+                 }
+
 
                 }// fin foreach contratos.
             }
-
 
              /* Enviar correo funcional */
              foreach($grupos_corte as $grupo_corte){
@@ -489,6 +520,62 @@ class CronController extends Controller
             }
             ## ENVIO SMS ##
         }
+    }
+
+    //Pago automatico que se genera cuando el cliente tiene saldo a favor.
+    public static function pagoFacturaAutomatico($factura){
+
+            $empresa = $factura->empresa;
+            $precio = $factura->totalAPI($empresa->id)->total;
+
+            //obtencion de numeración de el recibo de caja.
+            $nro = Numeracion::where('empresa', $empresa)->first();
+            $caja = $nro->caja;
+
+            while (true) {
+                $numero = Ingreso::where('empresa', $empresa)->where('nro', $caja)->count();
+                if ($numero == 0) {
+                    break;
+                }
+                $caja++;
+            }
+
+            $request = new StdClass;
+            $request->cuenta = Banco::where('empresa',$empresa)->where('nombre','like','Saldos a favor')->first()->id;
+            $request->metodo_pago = 1;
+            $request->notas = "Recibo de caja generado automáticamente por saldo a favor.";
+            $request->observaciones = "Recibo de caja generado automáticamente por saldo a favor.";
+            $request->tipo = 1;
+            $request->fecha = Carbon::now()->format('Y-m-d');
+
+            $ingreso = new Ingreso;
+            $ingreso->nro = $caja;
+            $ingreso->empresa = $empresa;
+            $ingreso->cliente = $factura->cliente;
+            $ingreso->cuenta = $request->cuenta;
+            $ingreso->metodo_pago = $request->metodo_pago;
+            $ingreso->notas = $request->notas;
+            $ingreso->tipo = $request->tipo;
+            $ingreso->fecha = $request->fecha;
+            $ingreso->observaciones = mb_strtolower($request->observaciones);
+            $ingreso->save();
+
+            $items = new IngresosFactura;
+            $items->ingreso = $ingreso->id;
+            $items->factura = $factura->id;
+            $items->pagado = $precio; //asi exista mas dinero del  pagado ese se debe usar.
+            $items->puc_factura = $factura->cuenta_id;
+            $items->pago = self::precisionAPI($precio, $empresa);
+            $items->save();
+
+            $factura->estatus = 0;
+            $factura->save();
+
+            //No vamos a regisrtrar por el momento un movimiento del puc ya que no sabemos esta informacion.
+            // $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
+            // PucMovimiento::ingreso($ingreso,1,2,$request);
+
+            self::up_transaccion_(7, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 2, $precio, $ingreso->fecha, "Uso de saldo a favor automatico.",null,$empresa);
     }
 
     public static function CortarFacturas(){
@@ -1280,7 +1367,7 @@ class CronController extends Controller
                     # REGISTRAMOS EL MOVIMIENTO
                     $ingreso = Ingreso::find($ingreso->id);
 
-                    $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+                    $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion,null, $empresa->id);
 
                     if($factura->estatus == 0){
                         # EJECUTAMOS COMANDOS EN MIKROTIK
@@ -1514,7 +1601,7 @@ class CronController extends Controller
                     # REGISTRAMOS EL MOVIMIENTO
                     $ingreso = Ingreso::find($ingreso->id);
 
-                    $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+                    $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion,null, $empresa->id);
 
                     if($factura->estatus == 0){
                         # EJECUTAMOS COMANDOS EN MIKROTIK
@@ -1808,7 +1895,7 @@ class CronController extends Controller
                 # REGISTRAMOS EL MOVIMIENTO
                 $ingreso = Ingreso::find($ingreso->id);
 
-                $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+                $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, null, $empresa->id);
 
                 if($factura->estatus == 0){
                     # EJECUTAMOS COMANDOS EN MIKROTIK
@@ -2040,7 +2127,7 @@ class CronController extends Controller
                 # REGISTRAMOS EL MOVIMIENTO
                 $ingreso = Ingreso::find($ingreso->id);
 
-                $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion, $empresa->id);
+                $this->up_transaccion_(1, $ingreso->id, $ingreso->cuenta, $ingreso->cliente, 1, $ingreso->pago(), $ingreso->fecha, $ingreso->descripcion,null, $empresa->id);
 
                 if($factura->estatus == 0){
                     # EJECUTAMOS COMANDOS EN MIKROTIK
@@ -2379,6 +2466,19 @@ class CronController extends Controller
 
 
         // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
+
+        $contratos = DB::table('contracts as cont')
+        ->where('state', 'disabled')
+        ->join('facturas_contratos', 'cont.nro', '=', 'facturas_contratos.contrato_nro')
+        ->leftJoin('factura as fac', function ($join) {
+            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = cont.nro ORDER BY id DESC LIMIT 1)'));
+        })
+        ->where(function ($query) {
+            $query->whereNull('fac.estatus')->orWhere('fac.estatus', 0);
+        })
+        ->select('cont.*')
+        ->distinct()
+        ->get();
 
         $contratos = Contrato::where('state','disabled')->get();
         $i = 0;

@@ -142,6 +142,11 @@ class ContactosController extends Controller
                     $query->orWhere('estrato', 'like', "%{$request->estrato}%");
                 });
             }
+            if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('saldo_favor', '>', 0);
+                });
+            }
             if ($request->t_contrato == 1) {
                 $contactos->whereNotExists(function ($query) {
                     $query->select(DB::raw(1))

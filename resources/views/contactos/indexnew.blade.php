@@ -126,6 +126,11 @@
 							</select>
 						</div>
 						@endif
+                        <div class="col-md-3 pl-1 pt-1">
+                            <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
+                                <option value="opcion_1">Clientes con saldo a favor</option>
+                            </select>
+                        </div>
 					</div>
 					<div class="row mt-3">
 						<div class="col-md-12 pl-1 pt-1 text-center">
@@ -214,6 +219,7 @@
             data.municipio = $('#municipio').val();
             data.t_contrato = $('#t_contrato').val();
             data.serial_onu = $('#serial_onu').val();
+            data.otra_opcion = $("#otra_opcion").val();
             data.estrato = $('#estrato').val();
             data.filtro = true;
         });
@@ -237,7 +243,7 @@
         	}
         });
 
-        $('#t_contrato, #estrato').on('change',function() {
+        $('#t_contrato, #estrato, #otra_opcion').on('change',function() {
         	getDataTable();
         	return false;
         });
@@ -269,6 +275,7 @@
 		$('#email').val('');
 		$('#t_contrato').val('').selectpicker('refresh');
 		$('#serial_onu').val('');
+        $("#otra_opcion").val('');
 		$('#estrato').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
