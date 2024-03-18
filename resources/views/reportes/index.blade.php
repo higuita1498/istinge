@@ -39,6 +39,17 @@
                 </ul>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-5 offset-md-1 reportes">
+                <h3><i class="fa-thin fa-gavel"></i> MINTIC</h3>
+                <ul class="list-report">
+                    <li><a href="{{route('reportes.balance')}}">Reporte 1.2</a></li>
+                </ul>
+            </div>
+            <div class="col-md-5 offset-md-1 reportes">
+
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-5 offset-md-1 reportes">
@@ -48,7 +59,7 @@
                 </ul>
             </div>
             <div class="col-md-5 offset-md-1 reportes">
-           
+
             </div>
         </div>
     </div>
