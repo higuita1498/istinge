@@ -2136,7 +2136,7 @@ class ReportesController extends Controller
 
         $cajas = Banco::where('estatus',1)->get();
 
-        return view('reportes.instalacion.index')
+        return view('reportes.mintic.index')
             ->with('movimientos', $movimientos)
             ->with('request', $request)
             ->with('example', $example)
