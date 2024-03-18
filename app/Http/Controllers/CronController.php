@@ -526,7 +526,7 @@ class CronController extends Controller
     public static function pagoFacturaAutomatico($factura){
 
             $empresa = $factura->empresa;
-            $precio = $factura->total()->total;
+            $precio = $factura->totalAPI($empresa->id)->total;
 
             //obtencion de numeración de el recibo de caja.
             $nro = Numeracion::where('empresa', $empresa)->first();
