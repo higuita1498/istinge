@@ -109,10 +109,10 @@
                     </tr>
                 @endforeach
                 </tbody>
-                {{-- <tfoot class="thead-dark">
+                <tfoot class="thead-dark">
                     <td colspan="5"></td>
-                    <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
-                </tfoot> --}}
+                    <th></th>
+                </tfoot>
                 </table>
                 <div class="text-right">
                     {{$movimientos->links()}}
