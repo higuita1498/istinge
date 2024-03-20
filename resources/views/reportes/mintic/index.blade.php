@@ -68,16 +68,16 @@
                     <th>Valor minuto inlcuido telefonia</th>
                     <th>Valor minuto adicional telefonia</th>
                     <th>Tiene internet fijo</th>
-                    <th style="text-transform: capitalize !important;">NOMBRE PLAN INT FI</th>
-                    <th style="text-transform: capitalize !important;">TARIFA MENSUAL INTERNET</th>
-                    <th style="text-transform: capitalize !important;">VELOCIDAD OFRECIDA BAJADA</th>
-                    <th style="text-transform: capitalize !important;">NVELOCIDAD OFRECIDA SUBIDA</th>
-                    <th style="text-transform: capitalize !important;">ID TECNOLOGIA</th>
-                    <th style="text-transform: capitalize !important;">CANALES PREMIUM TV</th>
-                    <th style="text-transform: capitalize !important;">CANALES HD TV</th>
-                    <th style="text-transform: capitalize !important;">VIDEO DEMANDA</th>
-                    <th style="text-transform: capitalize !important;">COSTO DECO ADICION</th>
-                    <th style="text-transform: capitalize !important;">OTRAS CARACTERISTICAS</th>
+                    <th>Nombre Plan Int FI</th>
+                    <th>Tarifa Mensual Internet</th>
+                    <th>Velocidad Ofrecida Bajada</th>
+                    <th>Velocidad Ofrecida Subida</th>
+                    <th>Id Tecnologia</th>
+                    <th>Canales Premium TV</th>
+                    <th>Canales HD TV</th>
+                    <th>Video Demanda</th>
+                    <th>Costo Deco Adición</th>
+                    <th>Otras Caracteristicas</th>
 
 
                 </tr>
@@ -109,10 +109,10 @@
                     </tr>
                 @endforeach
                 </tbody>
-                <tfoot class="thead-dark">
+                {{-- <tfoot class="thead-dark">
                     <td colspan="5"></td>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($totales['entrada'])}}</th>
-                </tfoot>
+                </tfoot> --}}
                 </table>
                 <div class="text-right">
                     {{$movimientos->links()}}
