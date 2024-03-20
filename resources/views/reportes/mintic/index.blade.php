@@ -110,7 +110,7 @@
                 @endforeach
                 </tbody>
                 <tfoot class="thead-dark">
-
+                    <td colspan="5"></td>
                 </tfoot>
                 </table>
                 <div class="text-right">
