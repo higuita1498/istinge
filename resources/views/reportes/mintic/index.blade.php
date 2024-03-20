@@ -68,16 +68,16 @@
                     <th>Valor minuto inlcuido telefonia</th>
                     <th>Valor minuto adicional telefonia</th>
                     <th>Tiene internet fijo</th>
-                    <th>NOMBRE PLAN INT FI</th>
-                    <th>TARIFA MENSUAL INTERNET</th>
-                    <th>VELOCIDAD OFRECIDA BAJADA</th>
-                    <th>NVELOCIDAD OFRECIDA SUBIDA</th>
-                    <th>ID TECNOLOGIA</th>
-                    <th>CANALES PREMIUM TV</th>
-                    <th>CANALES HD TV</th>
-                    <th>VIDEO DEMANDA</th>
-                    <th>COSTO DECO ADICION</th>
-                    <th>OTRAS CARACTERISTICAS</th>
+                    <th style="text-transform: capitalize;">NOMBRE PLAN INT FI</th>
+                    <th style="text-transform: capitalize;">TARIFA MENSUAL INTERNET</th>
+                    <th style="text-transform: capitalize;">VELOCIDAD OFRECIDA BAJADA</th>
+                    <th style="text-transform: capitalize;">NVELOCIDAD OFRECIDA SUBIDA</th>
+                    <th style="text-transform: capitalize;">ID TECNOLOGIA</th>
+                    <th style="text-transform: capitalize;">CANALES PREMIUM TV</th>
+                    <th style="text-transform: capitalize;">CANALES HD TV</th>
+                    <th style="text-transform: capitalize;">VIDEO DEMANDA</th>
+                    <th style="text-transform: capitalize;">COSTO DECO ADICION</th>
+                    <th style="text-transform: capitalize;">OTRAS CARACTERISTICAS</th>
 
 
                 </tr>
