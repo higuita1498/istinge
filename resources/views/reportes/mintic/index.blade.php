@@ -111,7 +111,6 @@
                 </tbody>
                 <tfoot class="thead-dark">
                     <td colspan="5"></td>
-                    <th></th>
                 </tfoot>
                 </table>
                 <div class="text-right">
