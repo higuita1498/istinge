@@ -51,11 +51,35 @@
                 <thead class="thead-dark">
                 <tr>
                     <th>Fecha</th>
-                    <th>Comprobante</th>
-                    <th>Cuenta</th>
-                    <th>Categoría</th>
-                    <th>Estado</th>
-                    <th>Entrada</th>
+                    <th>Trimestre</th>
+                    <th>Id municipio</th>
+                    <th>Id segemento planes</th>
+                    <th>Cantidad de suscriptores</th>
+                    <th>Nombre del plan</th>
+                    <th>Valor plan iva</th>
+                    <th>Valor plan</th>
+                    <th>Id modalidad plan</th>
+                    <th>Fecha inicio</th>
+                    <th>Fecha fin</th>
+                    <th>Id tipo plan</th>
+                    <th>Tiene telefonia fija</th>
+                    <th>Tarifa telefonia fija</th>
+                    <th>Cantidad minutos</th>
+                    <th>Valor minuto inlcuido telefonia</th>
+                    <th>Valor minuto adicional telefonia</th>
+                    <th>Tiene internet fijo</th>
+                    <th>NOMBRE PLAN INT FI</th>
+                    <th>TARIFA MENSUAL INTERNET</th>
+                    <th>VELOCIDAD OFRECIDA BAJADA</th>
+                    <th>NVELOCIDAD OFRECIDA SUBIDA</th>
+                    <th>ID TECNOLOGIA</th>
+                    <th>CANALES PREMIUM TV</th>
+                    <th>CANALES HD TV</th>
+                    <th>VIDEO DEMANDA</th>
+                    <th>COSTO DECO ADICION</th>
+                    <th>OTRAS CARACTERISTICAS</th>
+
+
                 </tr>
                 </thead>
                 <tbody>
