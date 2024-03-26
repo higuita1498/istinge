@@ -865,7 +865,7 @@
 			}
 
 		    if ($("#saldofavAuto").val() == 0) {
-		        $titleswal = "¿Desea habilitar la facturación automática de los contratos?";
+		        $titleswal = "¿Desea habilitar la aplicacion de saldos a favor automaticamente?";
 		    }
 
 		    if ($("#saldofavAuto").val() == 1) {
