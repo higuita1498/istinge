@@ -1284,6 +1284,15 @@ class ContratosController extends Controller
                                 )
                             );
                         }
+
+                        if (!empty($plan->queue_type_subida) && !empty($plan->queue_type_bajada)) {
+                            // Si tienen datos, asignar "queue" con los valores de subida y bajada
+                            $queue = $plan->queue_type_subida.'/'.$plan->queue_type_bajada;
+                        } else {
+                            // Si no tienen datos, asignar "queue" con los valores predeterminados
+                            $queue = "default-small/default-small";
+                        }
+
                         if($queue){
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
@@ -1295,6 +1304,7 @@ class ContratosController extends Controller
                                 "burst-time"      => $burst_time,
                                 "priority"        => $priority,
                                 "limit-at"        => $limit_at
+                                "queue"           => $queue
                                 )
                             );
                         }else{
@@ -1306,7 +1316,8 @@ class ContratosController extends Controller
                                 "burst-threshold" => $burst_threshold,
                                 "burst-time"      => $burst_time,
                                 "priority"        => $priority,
-                                "limit-at"        => $limit_at
+                                "limit-at"        => $limit_at,
+                                "queue"           => $queue
                                 )
                             );
                         }
