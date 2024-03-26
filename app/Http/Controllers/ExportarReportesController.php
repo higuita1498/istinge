@@ -582,7 +582,7 @@ class ExportarReportesController extends Controller
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus',
                     'municipio.nombre as municipioNombre', 'c.vereda',
-                    'factura.empresa', 'i.fecha as pagada', 'i.cuenta')
+                    'factura.empresa', 'i.fecha as pagada', 'i.cuenta', 'ig.pago as pagadoTotal')
             ->whereIn('factura.tipo', [1,2])
             ->where('factura.estatus','<>',2);
             $dates = $this->setDateRequest($request);
