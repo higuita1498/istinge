@@ -508,9 +508,7 @@ class ExportarReportesController extends Controller
         //Si es remisones se ejecuta el metodo remisiones
         if ($request->nro == 'remisiones'){
 
-
             $this->remisiones($request);
-
 
         }else{
 
@@ -523,7 +521,7 @@ class ExportarReportesController extends Controller
             ->join('municipios as municipio','municipio.id','=','c.fk_idmunicipio')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'i.fecha as pagada',
-                    'municipio.nombre as municipioNombre', 'c.vereda')
+                    'municipio.nombre as municipioNombre', 'c.vereda', 'ig.pago as pagadoTotal')
             ->whereIn('factura.tipo', [1,2])
             ->where('factura.estatus',0);
             $dates = $this->setDateRequest($request);
@@ -654,7 +652,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[16].$i, $factura->total()->valImpuesto)
                 ->setCellValue($letras[17].$i, $factura->total()->subtotal)
                 ->setCellValue($letras[18].$i, $factura->total()->descuento)
-                ->setCellValue($letras[19].$i, $factura->pagado())
+                ->setCellValue($letras[19].$i, $factura->pagadoTotal)
                 ->setCellValue($letras[20].$i,$factura->total()->total
             );
                 $i++;
