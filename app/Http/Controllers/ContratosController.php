@@ -694,6 +694,14 @@ class ContratosController extends Controller
                         );
                     }
 
+                    if (!empty($plan->queue_type_subida) && !empty($plan->queue_type_bajada)) {
+                        // Si tienen datos, asignar "queue" con los valores de subida y bajada
+                        $queue = $plan->queue_type_subida.'/'.$plan->queue_type_bajada;
+                    } else {
+                        // Si no tienen datos, asignar "queue" con los valores predeterminados
+                        $queue = "default-small/default-small";
+                    }
+
                     $API->comm("/queue/simple/add", array(
                         "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
                         "target"          => $request->ip,
@@ -704,6 +712,7 @@ class ContratosController extends Controller
                         "priority"        => $priority,
                         "limit-at"        => $limit_at,
                         // "queue"           => $plan->queue_type_subida.'/'.$plan->queue_type_bajada
+                        "queue"           => $queue
                         )
                     );
 
