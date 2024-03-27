@@ -653,7 +653,7 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[17].$i, $factura->total()->subtotal)
                 ->setCellValue($letras[18].$i, $factura->total()->descuento)
                 ->setCellValue($letras[19].$i, $factura->pagadoTotal)
-                ->setCellValue($letras[20].$i,$factura->total()->total
+                ->setCellValue($letras[20].$i, $factura->pagadoTotal
             );
                 $i++;
             }
