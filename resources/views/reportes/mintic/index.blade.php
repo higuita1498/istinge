@@ -20,6 +20,18 @@
 
                 </div>
             </div>
+            <div class="form-group col-md-4">
+                <div class="row">
+                    <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
+                    <select class="form-control" id="trimestre" name="trimestre" required="">
+                        <option value="1">Trimestre 1</option>
+                        <option value="2">Trimestre 2</option>
+                        <option value="3">Trimestre 3</option>
+                        <option value="4">Trimestre 4</option>
+                    </select>
+
+                </div>
+            </div>
             <div class="form-group col-md-4 text-center offset-md-4">
                 <center><button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
                 <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button></center>
