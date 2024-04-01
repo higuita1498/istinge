@@ -7,40 +7,20 @@
         <div class="row card-description">
             <div class="form-group col-md-2 offset-md-3">
                 <div class="form-group col-md-4">
-                    <label for="fechas">Fechas</label>
-                    <select class="form-control selectpicker" name="fechas" id="fechas">
-                        <optgroup label="Año y Trimestre">
-                            <option value="0">Este Año</option>
-                            <option value="1">Trimestre Actual</option>
-                            <option value="2">Año Anterior</option>
-                        </optgroup>
+                    <label>Seleccione el Año<span class="text-danger">*</span></label>
+                    <select class="form-control" id="anio" name="anio" required="">
+                        @php
+                            $anioActual = date('Y');
+                            $cantidadAnios = 10; // Cantidad de años hacia atrás desde el año actual
+                        @endphp
+                        @for ($i = $anioActual; $i >= $anioActual - $cantidadAnios; $i--)
+                            <option value="{{$i}}">{{$i}}</option>
+                        @endfor
                     </select>
                 </div>
-                <div class="form-group col-md-4">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Seleccione el Año<span class="text-danger">*</span></label>
-                            <select class="form-control" id="anio" name="anio" required="">
-                                <!-- Opciones de años -->
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
-                            <select class="form-control" id="trimestre" name="trimestre" required="">
-                                <option value="1">Trimestre 1</option>
-                                <option value="2">Trimestre 2</option>
-                                <option value="3">Trimestre 3</option>
-                                <option value="4">Trimestre 4</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
                 <label></label>
                 <select class="form-control selectpicker" name="fechas" id="fechas">
                     <optgroup label="Presente">
-                        <option value="0">Hoy</option>
-                        <option value="1">Este Mes</option>
                         <option value="2">Este Año</option>
                     </optgroup>
                     <optgroup label="Anterior">
