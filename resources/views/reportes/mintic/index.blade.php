@@ -20,7 +20,7 @@
 
                 </div>
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-4 ml-5">
                 <div class="row">
                     <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
                     <select class="form-control" id="trimestre" name="trimestre" required="">
@@ -31,6 +31,9 @@
                     </select>
 
                 </div>
+            </div>
+            <div class="form-group col-md-4">
+
             </div>
             <div class="form-group col-md-4 text-center offset-md-4">
                 <center><button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
