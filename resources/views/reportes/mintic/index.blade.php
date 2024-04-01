@@ -11,7 +11,7 @@
                     <select class="form-control" id="anio" name="anio" required="">
                         @php
                             $anioActual = date('Y');
-                            $cantidadAnios = 10; // Cantidad de años hacia atrás desde el año actual
+                            $cantidadAnios = 20; // Cantidad de años hacia atrás desde el año actual
                         @endphp
                         @for ($i = $anioActual; $i >= $anioActual - $cantidadAnios; $i--)
                             <option value="{{$i}}">{{$i}}</option>
@@ -73,8 +73,6 @@
                     <th>Video Demanda</th>
                     <th>Costo Deco Adición</th>
                     <th>Otras Caracteristicas</th>
-
-
                 </tr>
                 </thead>
                 <tbody>
