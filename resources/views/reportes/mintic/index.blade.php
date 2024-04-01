@@ -5,7 +5,6 @@
     <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
     <form id="form-reporte">
         <div class="row card-description">
-            <div class="form-group col-md-2 offset-md-3">
             <div class="form-group col-md-4">
                 <div class="row">
                     <label>Seleccione el Año<span class="text-danger">*</span></label>
