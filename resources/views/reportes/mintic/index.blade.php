@@ -6,40 +6,36 @@
     <form id="form-reporte">
         <div class="row card-description">
             <div class="form-group col-md-2 offset-md-3">
-                <label></label>
-                <select class="form-control selectpicker" name="fechas" id="fechas">
-                    <optgroup label="Presente">
-                        <option value="0">Hoy</option>
-                        <option value="1">Este Mes</option>
-                        <option value="2">Este Año</option>
-                    </optgroup>
-                    <optgroup label="Anterior">
-                        <option value="3">Ayer</option>
-                        <option value="4">Semana Pasada</option>
-                        <option value="5">Mes Anterior</option>
-                        <option value="6">Año Anterior</option>
-                    </optgroup>
-                    <optgroup label="Manual">
-                        <option value="7">Manual</option>
-                    </optgroup>
-                    <optgroup label="Todas">
-                        <option value="8">Todas</option>
-                    </optgroup>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Desde <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control"  id="desde" value="{{$request->fecha}}" name="fecha" required="" >
-                    </div>
-                    <div class="col-md-6">
-                        <label >Hasta <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="hasta" value="{{$request->hasta}}" name="hasta" required="">
-                    </div>
-
+                <div class="form-group col-md-4">
+                    <label for="fechas">Fechas</label>
+                    <select class="form-control selectpicker" name="fechas" id="fechas">
+                        <optgroup label="Año y Trimestre">
+                            <option value="0">Este Año</option>
+                            <option value="1">Trimestre Actual</option>
+                            <option value="2">Año Anterior</option>
+                        </optgroup>
+                    </select>
                 </div>
-            </div>
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Seleccione el Año<span class="text-danger">*</span></label>
+                            <select class="form-control" id="anio" name="anio" required="">
+                                <!-- Opciones de años -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
+                            <select class="form-control" id="trimestre" name="trimestre" required="">
+                                <option value="1">Trimestre 1</option>
+                                <option value="2">Trimestre 2</option>
+                                <option value="3">Trimestre 3</option>
+                                <option value="4">Trimestre 4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
             <div class="form-group col-md-4 text-center offset-md-4">
                 <center><button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
                 <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button></center>
