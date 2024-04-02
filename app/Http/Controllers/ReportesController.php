@@ -2095,27 +2095,27 @@ class ReportesController extends Controller
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
         // Obtener el trimestre actual
-    $trimestreActual = Carbon::now()->quarter;
+        $trimestreActual = Carbon::now()->quarter;
 
-    // Obtener el año actual
-    $anioActual = Carbon::now()->year;
+        // Obtener el año actual
+        $anioActual = Carbon::now()->year;
 
-    // Obtener la fecha de inicio del trimestre actual
-    $inicioTrimestre = Carbon::now()->startOfQuarter()->toDateString();
+        // Obtener la fecha de inicio del trimestre actual
+        $inicioTrimestre = Carbon::now()->startOfQuarter()->toDateString();
 
-    // Obtener la fecha de fin del trimestre actual
-    $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
+        // Obtener la fecha de fin del trimestre actual
+        $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
-    // Obtener los contratos del trimestre actual
-    $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-    ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-    ->whereYear('contracts.created_at', $anioActual)
-    ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
-    ->paginate(25);
+        // Obtener los contratos del trimestre actual
+        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+        ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+        ->whereYear('contracts.created_at', $anioActual)
+        ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
+        ->paginate(25);
 
-        return view('reportes.mintic.index')
-            ->with('contratos', $contratos)
-            ->with('trimestre', $trimestreActual);
+            return view('reportes.mintic.index')
+                ->with('contratos', $contratos)
+                ->with('trimestre', $trimestreActual);
     }
 
     public function facturasImpagas(Request $request){
@@ -2820,29 +2820,28 @@ class ReportesController extends Controller
     }
 
     public function reporte_1_2_mostrar(Request $request) {
-        // Obtener los datos enviados desde el formulario
+          // Obtener el año y el trimestre de la solicitud
             $anioActual = $request->input('anio');
             $trimestreActual = $request->input('trimestre');
 
-            view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
-            $this->getAllPermissions(Auth::user()->id);
-            // Obtener el trimestre actual
-            $trimestreActual = Carbon::now()->quarter;
+            // Obtener la fecha de inicio del trimestre actual
+            $inicioTrimestre = Carbon::now()->startOfQuarter()->toDateString();
 
-        // Obtener la fecha de fin del trimestre actual
-        $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
+            // Obtener la fecha de fin del trimestre actual
+            $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
-        // Obtener los contratos del trimestre actual
-        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-        ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-        ->whereYear('contracts.created_at', $anioActual)
-        ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
-        ->paginate(25);
+            // Obtener los contratos del año y trimestre especificados
+            $contratos = Contrato::join('contactos', 'contratos.client_id', '=', 'contactos.id')
+                                ->join('planes_velocidad', 'contratos.plan_id', '=', 'planes_velocidad.id')
+                                ->whereYear('contratos.created_at', $anioActual)
+                                ->whereBetween('contratos.created_at', [$inicioTrimestre, $finTrimestre])
+                                ->paginate(25);
 
-        return response()->json([
-            'contratos' => $contratos,
-            'trimestre' => $trimestreActual
-        ]);
+            // Retornar los contratos y el trimestre como JSON
+            return response()->json([
+                'contratos' => $contratos,
+                'trimestre' => $trimestreActual
+            ]);
     }
 
 }
