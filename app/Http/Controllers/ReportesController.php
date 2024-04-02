@@ -2821,17 +2821,27 @@ class ReportesController extends Controller
 
     public function reporte_1_2_mostrar(Request $request) {
         // Obtener los datos enviados desde el formulario
-            $anio = $request->input('anio');
-            $trimestre = $request->input('trimestre');
+            $anioActual = $request->input('anio');
+            $trimestreActual = $request->input('trimestre');
 
-            // Realizar la consulta para obtener los contratos en el rango de año y trimestre
-            $contratos = Contrato::whereYear('created_at', $anio)
-                                ->whereRaw('QUARTER(created_at) = ?', [$trimestre])
-                                ->get();
+            view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
+            $this->getAllPermissions(Auth::user()->id);
+            // Obtener el trimestre actual
+            $trimestreActual = Carbon::now()->quarter;
 
-            // Puedes hacer las operaciones necesarias con los datos si es necesario
+        // Obtener la fecha de fin del trimestre actual
+        $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
-            // Retornar la respuesta con los datos filtrados
+        // Obtener los contratos del trimestre actual
+        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+        ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+        ->whereYear('contracts.created_at', $anioActual)
+        ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
+        ->paginate(25);
+
+            return view('reportes.mintic.index')
+                ->with('contratos', $contratos)
+                ->with('trimestre', $trimestreActual);
             return response()->json($contratos);
     }
 
