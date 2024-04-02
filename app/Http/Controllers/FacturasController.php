@@ -2046,7 +2046,7 @@ class FacturasController extends Controller{
             }
 
             // ** Obtencion de los contratos
-            if(isset($factura->relationContracts)){
+            if(isset($factura->relationContracts) && count($factura->relationContracts) > 0){
                 $textContratos="";
                 $ti = 0;
                 foreach($factura->relationContracts as $contrato){
