@@ -1294,7 +1294,6 @@ class ContratosController extends Controller
                         }
 
                         if($queue){
-
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
@@ -1308,9 +1307,7 @@ class ContratosController extends Controller
                                 "queue"           => $queue_edit
                                 )
                             );
-
                         }else{
-
                             $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
@@ -3940,60 +3937,60 @@ class ContratosController extends Controller
 
     //Metodo para obtener los items de los contratos que tienen la opcion de facturar agruapada
     public function rowItem(Request $request){
-        if ($request->trimestre == 1) {
-            $inicioTrimestre = Carbon::now()->startOfYear();
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
-        } else if ($request->trimestre == 2) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
-        } else if ($request->trimestre == 3) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
-        } else if ($request->trimestre == 4) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
-            $finTrimestre = Carbon::now()->endOfYear();
+        //No se que significa item pendiente de asignacion en el cron controller, este es otor motivo de creacion de item.
+
+        try {
+            if(isset($request->contrato_id) && isset($request->cliente_id)){
+
+                $contrato = Contrato::find($request->contrato_id);
+
+                /* Preguntamos primero si el contrato seleccionado tiene facturacion agrupada,
+                 si es asi entonces tenemos que investigar los demas contratos asociados para saber si son agrupados tambien.
+                */
+                if($contrato->factura_individual == 0){
+                    $contratos = Contrato::where('client_id',$request->cliente_id)->where('factura_individual', 0)->get();
+                }
+                else {
+                    $contratos = Contrato::where('id',$request->contrato_id)->get();
+                }
+
+                $items = [];
+                foreach($contratos as $co){
+
+                    //Buscamos los items del contrato y los vamos almecenando en items.
+                    if($co->plan_id){
+                        $plan = PlanesVelocidad::find($co->plan_id);
+                        $item = Inventario::find($plan->item);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+
+                    if($co->servicio_tv){
+                        $item = Inventario::find($co->servicio_tv);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+
+                    if($co->servicio_otro){
+                        $item = Inventario::find($co->servicio_otro);
+                        $item->contrato_nro = $co->nro;
+                        $items[] = $item;
+                    }
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'code' => 200,
+                    'message' => "Items obtenidos correctamente.",
+                    'data' => $items
+                ]);
+
+            }
+        } catch (\Throwable $th) {
+            $errorData = json_decode($th->getMessage(), true);
+            return response()->json(['code' => 422, 'message' => $errorData]);
         }
 
-        // Obtener los contratos del trimestre actual
-        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-            ->whereYear('contracts.created_at', $request->anio)
-            ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
-            ->paginate(25);
-
-        // Crear un nuevo objeto PHPExcel
-        $objPHPExcel = new PHPExcel();
-
-        // Agregar datos al archivo Excel
-        $objPHPExcel->setActiveSheetIndex(0);
-        $sheet = $objPHPExcel->getActiveSheet();
-
-        // Agregar encabezados de columna
-        $columnas = ['Nro', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Barrio', 'Corregimiento/Vereda', 'Estrato', 'Plan TV', 'Plan Internet', 'Servidor', 'Direccion IP', 'Direccion MAC', 'Interfaz', 'Serial ONU', 'Estado', 'Grupo de Corte', 'Facturacion', 'Costo Reconexion', 'Municipio', 'Tipo Contrato', 'Iva', 'Descuento'];
-        foreach ($columnas as $key => $value) {
-            $sheet->setCellValueByColumnAndRow($key + 1, 1, $value);
-        }
-
-        // Agregar datos de contratos
-        $row = 2;
-        foreach ($contratos as $contrato) {
-            // Agregar los datos de cada contrato en cada fila
-            // Por ejemplo:
-            $sheet->setCellValueByColumnAndRow(1, $row, $contrato->nro);
-            $sheet->setCellValueByColumnAndRow(2, $row, $contrato->c_nombre . ' ' . $contrato->c_apellido1 . ' ' . $contrato->c_apellido2);
-            // Agregar más datos según sea necesario
-            $row++;
-        }
-
-        // Configurar el estilo de las celdas, si es necesario
-
-        // Guardar el archivo Excel
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $filename = 'Reporte_Contratos.xlsx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
 
     }
 

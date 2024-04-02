@@ -2858,43 +2858,61 @@ class ReportesController extends Controller
 
     public function generarExcel(Request $request)
     {
-            if ($request->trimestre == 1) {
-                $inicioTrimestre = Carbon::now()->startOfYear();
-                $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
-            } else if ($request->trimestre == 2) {
-                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
-                $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
-            } else if ($request->trimestre == 3) {
-                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
-                $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
-            } else if ($request->trimestre == 4) {
-                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
-                $finTrimestre = Carbon::now()->endOfYear();
-            }
+            // Definir las fechas de inicio y fin del trimestre en función del trimestre proporcionado
+if ($request->trimestre == 1) {
+    $inicioTrimestre = Carbon::now()->startOfYear();
+    $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
+} else if ($request->trimestre == 2) {
+    $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
+    $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
+} else if ($request->trimestre == 3) {
+    $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
+    $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
+} else if ($request->trimestre == 4) {
+    $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
+    $finTrimestre = Carbon::now()->endOfYear();
+}
 
-            // Obtener los contratos del trimestre actual
-            $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-                ->whereYear('contracts.created_at', $request->anio)
-                ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
-                ->paginate(25);
+// Obtener los contratos del trimestre actual
+$contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+    ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+    ->whereYear('contracts.created_at', $request->anio)
+    ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+    ->paginate(25);
 
-            // Crear un nuevo objeto de PhpSpreadsheet
-            $spreadsheet = new Spreadsheet();
+// Crear un nuevo objeto PHPExcel
+$objPHPExcel = new PHPExcel();
 
-            // Agregar datos al archivo de Excel
-            // Aquí debes agregar los datos de los contratos al archivo de Excel utilizando las funciones proporcionadas por PhpSpreadsheet
+// Agregar datos al archivo Excel
+$objPHPExcel->setActiveSheetIndex(0);
+$sheet = $objPHPExcel->getActiveSheet();
 
-            // Crear un objeto Writer para exportar el archivo
-            $writer = new Xlsx($spreadsheet);
+// Agregar encabezados de columna
+$columnas = ['Nro', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Barrio', 'Corregimiento/Vereda', 'Estrato', 'Plan TV', 'Plan Internet', 'Servidor', 'Direccion IP', 'Direccion MAC', 'Interfaz', 'Serial ONU', 'Estado', 'Grupo de Corte', 'Facturacion', 'Costo Reconexion', 'Municipio', 'Tipo Contrato', 'Iva', 'Descuento'];
+foreach ($columnas as $key => $value) {
+    $sheet->setCellValueByColumnAndRow($key + 1, 1, $value);
+}
 
-            // Establecer las cabeceras para descargar el archivo
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="Reporte_Contratos.xlsx"');
-            header('Cache-Control: max-age=0');
+// Agregar datos de contratos
+$row = 2;
+foreach ($contratos as $contrato) {
+    // Agregar los datos de cada contrato en cada fila
+    // Por ejemplo:
+    $sheet->setCellValueByColumnAndRow(1, $row, $contrato->nro);
+    $sheet->setCellValueByColumnAndRow(2, $row, $contrato->c_nombre . ' ' . $contrato->c_apellido1 . ' ' . $contrato->c_apellido2);
+    // Agregar más datos según sea necesario
+    $row++;
+}
 
-            // Escribir el archivo de Excel en la salida
-            $writer->save('php://output');
+// Configurar el estilo de las celdas, si es necesario
+
+// Guardar el archivo Excel
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+$filename = 'Reporte_Contratos.xlsx';
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+$objWriter->save('php://output');
     }
 
 }
