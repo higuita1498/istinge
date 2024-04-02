@@ -38,7 +38,7 @@
             <div class="form-group col-md-4 text-center offset-md-4">
                 <center>
                     <button type="submit" class="btn btn-outline-primary">Filtrar</button>
-                    <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
+                    <a href="{{ route('exportar.contratos') }}" class="btn btn-outline-success">Exportar a Excel</a>
                 </center>
             </div>
         </div>

@@ -2110,7 +2110,7 @@ class ReportesController extends Controller
         $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
         ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
         ->whereYear('contracts.created_at', $anioActual)
-        ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
+        ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
         ->paginate(25);
 
             return view('reportes.mintic.index')
@@ -2841,6 +2841,11 @@ class ReportesController extends Controller
             return view('reportes.mintic.index')
             ->with('contratos', $contratos)
             ->with('trimestre', $trimestreActual);
+    }
+
+    public function exportarExcel()
+    {
+        return Excel::download(new ContratosExport, 'contratos.xlsx');
     }
 
 }
