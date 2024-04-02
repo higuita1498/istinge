@@ -1310,7 +1310,7 @@ class ContratosController extends Controller
                             );
 
                         }else{
-                            dd("sino");
+
                             $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
