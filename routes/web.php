@@ -1544,4 +1544,5 @@ Route::get('/list/morosos', 'ContratosController@morosos');
 //redirecciona clientes al CRM
 Route::get('/clientes/cambiar/{id}','ContactosController@cambiares')->name('cliente.cambiares');
 
-
+//Ruta para poder generar reportes crc mintic
+Route::post('/generar-reporte', [ReportesController::class, 'reporte_1_2'])->name('reportes.generar.1.2');

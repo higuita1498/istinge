@@ -115,4 +115,27 @@
     </form>
     <input type="hidden" id="urlgenerar" value="{{route('reportes.instalacion')}}">
     <input type="hidden" id="urlexportar" value="{{route('exportar.cajas')}}">
+
+   {{-- Agregando el script para poder enviar fecha y trimestre  --}}
+    <script>
+        document.getElementById('generar').addEventListener('click', function() {
+            var anio = document.getElementById('anio').value;
+            var trimestre = document.getElementById('trimestre').value;
+            var url = document.getElementById('urlgenerar').value;
+            var csrfToken = '{{ csrf_token() }}';
+
+            // Enviar datos al controlador utilizando AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    // Procesar la respuesta si es necesario
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send(JSON.stringify({anio: anio, trimestre: trimestre}));
+        });
+    </script>
 @endsection
