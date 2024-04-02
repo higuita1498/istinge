@@ -2855,7 +2855,6 @@ class ReportesController extends Controller
             $contratos = Contrato::whereYear('created_at', $anio)
                                 ->whereRaw('QUARTER(created_at) = ?', [$trimestre])
                                 ->get();
-            dd($contratos);
 
             // Puedes hacer las operaciones necesarias con los datos si es necesario
 
