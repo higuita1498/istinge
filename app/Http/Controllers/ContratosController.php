@@ -3940,7 +3940,7 @@ class ContratosController extends Controller
 
     //Metodo para obtener los items de los contratos que tienen la opcion de facturar agruapada
     public function rowItem(Request $request){
-        //No se que significa item pendiente de asignacion en el cron controller, este es otor motivo de creacion de item.
+        // Definir las fechas de inicio y fin del trimestre en función del trimestre proporcionado
         if ($request->trimestre == 1) {
             $inicioTrimestre = Carbon::now()->startOfYear();
             $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
