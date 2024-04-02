@@ -2848,7 +2848,7 @@ class ReportesController extends Controller
         return Excel::download(new ContratosExport, 'contratos.xlsx');
     }
 
-    public function generarExcel($contratos)
+    public function generarExcel()
     {
 
             // Obtener los contratos del trimestre actual
