@@ -3941,59 +3941,41 @@ class ContratosController extends Controller
     //Metodo para obtener los items de los contratos que tienen la opcion de facturar agruapada
     public function rowItem(Request $request){
         //No se que significa item pendiente de asignacion en el cron controller, este es otor motivo de creacion de item.
-
-        try {
-            if(isset($request->contrato_id) && isset($request->cliente_id)){
-
-                $contrato = Contrato::find($request->contrato_id);
-
-                /* Preguntamos primero si el contrato seleccionado tiene facturacion agrupada,
-                 si es asi entonces tenemos que investigar los demas contratos asociados para saber si son agrupados tambien.
-                */
-                if($contrato->factura_individual == 0){
-                    $contratos = Contrato::where('client_id',$request->cliente_id)->where('factura_individual', 0)->get();
-                }
-                else {
-                    $contratos = Contrato::where('id',$request->contrato_id)->get();
-                }
-
-                $items = [];
-                foreach($contratos as $co){
-
-                    //Buscamos los items del contrato y los vamos almecenando en items.
-                    if($co->plan_id){
-                        $plan = PlanesVelocidad::find($co->plan_id);
-                        $item = Inventario::find($plan->item);
-                        $item->contrato_nro = $co->nro;
-                        $items[] = $item;
-                    }
-
-                    if($co->servicio_tv){
-                        $item = Inventario::find($co->servicio_tv);
-                        $item->contrato_nro = $co->nro;
-                        $items[] = $item;
-                    }
-
-                    if($co->servicio_otro){
-                        $item = Inventario::find($co->servicio_otro);
-                        $item->contrato_nro = $co->nro;
-                        $items[] = $item;
-                    }
-                }
-
-                return response()->json([
-                    'status' => true,
-                    'code' => 200,
-                    'message' => "Items obtenidos correctamente.",
-                    'data' => $items
-                ]);
-
-            }
-        } catch (\Throwable $th) {
-            $errorData = json_decode($th->getMessage(), true);
-            return response()->json(['code' => 422, 'message' => $errorData]);
+        if ($request->trimestre == 1) {
+            $inicioTrimestre = Carbon::now()->startOfYear();
+            $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
+        } else if ($request->trimestre == 2) {
+            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
+            $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
+        } else if ($request->trimestre == 3) {
+            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
+            $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
+        } else if ($request->trimestre == 4) {
+            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
+            $finTrimestre = Carbon::now()->endOfYear();
         }
 
+        // Obtener los contratos del trimestre actual
+        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+            ->whereYear('contracts.created_at', $request->anio)
+            ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+            ->paginate(25);
+
+        // Crear un nuevo objeto de PHPExcel
+        $objPHPExcel = new PHPExcel();
+
+        // Agregar datos al archivo de Excel
+        // Aquí debes agregar los datos de los contratos al archivo de Excel utilizando las funciones proporcionadas por PHPExcel
+
+        // Establecer el tipo de contenido y el nombre del archivo
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Contratos.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        // Escribir el archivo de Excel en la salida
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
 
     }
 
