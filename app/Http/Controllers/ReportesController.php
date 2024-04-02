@@ -39,6 +39,8 @@ use App\PucMovimiento;
 use App\Servidor;
 use App\FormaPago;
 use App\Contrato;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportesController extends Controller
 {
