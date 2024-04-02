@@ -1295,7 +1295,7 @@ class ContratosController extends Controller
 
                         if($queue){
 
-                            $debug=$API->comm("/queue/simple/set", array(
+                            $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
