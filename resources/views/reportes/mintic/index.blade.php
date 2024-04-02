@@ -82,13 +82,13 @@
                         <td>{{ $contrato->fk_idmunicipio?? '0' }}</td>
                         <td>{{ $contrato->id_segmento_planes ?? '0' }}</td>
                         <td>{{ $contrato->cantidad_suscriptores ?? '0' }}</td>
-                        <td>{{ $contrato->nombre_plan ?? '0' }}</td>
-                        <td>{{ $contrato->valor_plan_iva ?? '0' }}</td>
-                        <td>{{ $contrato->valor_plan ?? '0' }}</td>
+                        <td>{{ $contrato->name ?? '0' }}</td>
+                        <td>{{ $contrato->price ?? '0' }}</td>
+                        <td>{{ $contrato->price?? '0' }}</td>
                         <td>{{ $contrato->id_modalidad_plan ?? '0' }}</td>
-                        <td>{{ $contrato->fecha_inicio ?? '0' }}</td>
-                        <td>{{ $contrato->fecha_fin ?? '0' }}</td>
-                        <td>{{ $contrato->id_tipo_plan ?? '0' }}</td>
+                        <td>{{ $contrato->created_at ?? '0' }}</td>
+                        <td>{{ $contrato->created_at ?? '0' }}</td>
+                        <td>{{ $contrato->type ?? '0' }}</td>
                         <td>{{ $contrato->tiene_telefonia_fija ?? '0' }}</td>
                         <td>{{ $contrato->tarifa_telefonia_fija ?? '0' }}</td>
                         <td>{{ $contrato->cantidad_minutos ?? '0' }}</td>
@@ -97,8 +97,8 @@
                         <td>{{ $contrato->tiene_internet_fijo ?? '0' }}</td>
                         <td>{{ $contrato->nombre_plan_int_fi ?? '0' }}</td>
                         <td>{{ $contrato->tarifa_mensual_internet ?? '0' }}</td>
-                        <td>{{ $contrato->velocidad_ofrecida_bajada ?? '0' }}</td>
-                        <td>{{ $contrato->velocidad_ofrecida_subida ?? '0' }}</td>
+                        <td>{{ $contrato->burst_limit_bajada ?? '0' }}</td>
+                        <td>{{ $contrato->burst_limit_subida ?? '0' }}</td>
                         <td>{{ $contrato->id_tecnologia ?? '0' }}</td>
                         <td>{{ $contrato->canales_premium_tv ?? '0' }}</td>
                         <td>{{ $contrato->canales_hd_tv ?? '0' }}</td>
