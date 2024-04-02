@@ -20,7 +20,6 @@ use App\Model\Gastos\GastosCategoria;
 use Carbon\Carbon;  use Mail;
 use Validator; use Illuminate\Validation\Rule;
 use bcrypt;
-use Session;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Contrato;
 use App\Mikrotik;
@@ -55,58 +54,13 @@ use PHPExcel_Shared_ZipArchive;
 use App\Producto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class IngresosController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
         view()->share(['seccion' => 'facturas', 'subseccion' => 'ingresos', 'title' => 'Pagos / Ingresos', 'icon' =>'fas fa-plus']);
-    }
-
-    public function indexOLD(Request $request){
-        $this->getAllPermissions(Auth::user()->id);
-        $busqueda=false;
-        $campos=array('', 'ingresos.nro', 'nombrecliente', 'detalle', 'ingresos.fecha', 'banco', 'ingresos.estatus', 'monto');
-        if (!$request->orderby) {
-            $request->orderby=1; $request->order=1;
-        }
-        $orderby=$campos[$request->orderby];
-        $order=$request->order==1?'DESC':'ASC';
-        $bancos = Banco::where('empresa',Auth::user()->empresa)->where('estatus', 1)->get();
-
-        $ingresos = Ingreso::leftjoin('contactos as c', 'c.id', '=', 'ingresos.cliente')
-        ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
-        ->join('bancos as b', 'b.id', '=', 'ingresos.cuenta')
-        ->select('ingresos.*', DB::raw('if(ingresos.tipo=1, group_concat(if.factura), "")
-        as detalle'), 'c.nombre as nombrecliente', 'b.nombre as banco',
-        DB::raw('
-        (if(ingresos.tipo=1,
-        (SUM(if.pago)+(Select if(SUM(valor), SUM(valor),0) from ingresos_retenciones where ingreso=ingresos.id)),
-        if(ingresos.tipo=3, ingresos.total_debito, ((Select SUM((cant*valor)+(valor*(impuesto/100)*cant)) from ingresos_categoria where ingreso=ingresos.id)-(Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where ingreso=ingresos.id))))
-        ) as monto'))
-        ->where('ingresos.empresa',Auth::user()->empresa)->groupBy( 'ingresos.id');
-
-
-        $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
-        if ($request->name_1) {
-            $busqueda=true; $appends['name_1']=$request->name_1; $ingresos=$ingresos->where('ingresos.nro', 'like', '%' .$request->name_1.'%');
-        }
-        if ($request->name_2) {
-            $busqueda=true; $appends['name_2']=$request->name_2; $ingresos=$ingresos->where('c.nombre', 'like', '%' .$request->name_2.'%');
-        }
-        if ($request->name_3) {
-            $busqueda=true; $appends['name_3']=$request->name_3; $ingresos=$ingresos->where('ingresos.fecha', date('Y-m-d', strtotime($request->name_3)));
-        }
-        if ($request->name_4) {
-            $busqueda=true; $appends['name_4']=$request->name_4; $ingresos=$ingresos->where('ingresos.cuenta', $request->name_4);
-        }
-        if ($request->name_5) {
-            $busqueda=true; $appends['name_5']=$request->name_5; $ingresos=$ingresos->where('ingresos.metodo_pago', $request->name_5);
-        }
-
-        $ingresos=$ingresos->OrderBy($orderby, $order)->paginate(25)->appends($appends);
-        $metodos_pago = DB::table('metodos_pago')->get();
-        return view('ingresos.index')->with(compact('ingresos', 'request', 'busqueda','bancos','metodos_pago'));
     }
 
     public function index(Request $request){
@@ -323,11 +277,25 @@ class IngresosController extends Controller
     public function store(Request $request){
 
         try {
-            // DB::beginTransaction();
+
+            // ** Validar el formulario para no reenviarlo varias veces.
+                if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
+               // Verificar si hay una marca de tiempo en la sesión
+                if (Session::has('ultimo_envio')) {
+
+                    $ultimoEnvio = Session::get('ultimo_envio');
+                    $tiempoTranscurrido = Carbon::now()->diffInSeconds($ultimoEnvio);
+
+                    if ($tiempoTranscurrido < 10) {
+                        return redirect('empresa/ingresos')->with('danger', 'Por favor, espera al menos 10 segundos antes de registrar otro ingreso.');
+                    }
+                }
+                Session::put('ultimo_envio', Carbon::now());
+            }
 
             $user = Auth::user();
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
-        if($request->realizar == 2){
+            if($request->realizar == 2){
             //Cuando se realiza el ingreso por categoría.
             $this->storeIngresoPucCategoria($request);
 
@@ -340,7 +308,7 @@ class IngresosController extends Controller
                 }
             }
 
-            if(auth()->user()->rol == 8){
+            if($user->rol == 8){
                 $monto_pagar = 0;
                 foreach ($request->factura_pendiente as $key => $value) {
                     if ($request->precio[$key]) {
