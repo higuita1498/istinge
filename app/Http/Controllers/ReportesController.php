@@ -38,6 +38,7 @@ use App\Mikrotik;
 use App\PucMovimiento;
 use App\Servidor;
 use App\FormaPago;
+use App\Contrato;
 
 class ReportesController extends Controller
 {
@@ -2099,12 +2100,8 @@ class ReportesController extends Controller
 
         //Código base tomado de datatable_movimientos
 
-        $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
-            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
-            ->where('movimientos.empresa',Auth::user()->empresa);
+        $contratos = Contrato::where('movimientos.empresa',Auth::user()->empresa);
+        dd($contratos);
 
         $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
