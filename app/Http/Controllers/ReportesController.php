@@ -2109,8 +2109,8 @@ class ReportesController extends Controller
     // Obtener los contratos del trimestre actual
     $contratos = Contrato::whereYear('created_at', $anioActual)
                          ->whereBetween('created_at', [$inicioTrimestre, $finTrimestre])
-                         ->paginate(25)
-                         ->get();
+                         ->paginate(25);
+
         return view('reportes.mintic.index')
             ->with('contratos', $contratos);
     }
