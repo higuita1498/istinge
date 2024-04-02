@@ -26,6 +26,7 @@ use App\PucMovimiento;
 use App\FormaPago;
 use stdClass;
 use App\User;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
 class Factura extends Model
@@ -95,6 +96,10 @@ class Factura extends Model
             return $contratos = DB::table('facturas_contratos')->where('factura_id',$this->id)->get();
         }
         else return false;
+    }
+
+    public function relationContracts(){
+        return $this->belongsToMany('App\Contrato','facturas_contratos','factura_id','contrato_nro');
     }
 
     public function contratoAsociado(){
