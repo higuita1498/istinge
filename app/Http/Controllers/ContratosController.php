@@ -1292,7 +1292,7 @@ class ContratosController extends Controller
                             // Si no tienen datos, asignar "queue" con los valores predeterminados
                             $queue_edit = "default-small/default-small";
                         }
-
+                        dd("hola");
                         if($queue){
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
@@ -1317,7 +1317,7 @@ class ContratosController extends Controller
                                 "burst-time"      => $burst_time,
                                 "priority"        => $priority,
                                 "limit-at"        => $limit_at,
-
+                                "queue"           => $queue_edit
                                 )
                             );
                         }
