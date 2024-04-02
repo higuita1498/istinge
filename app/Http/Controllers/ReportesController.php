@@ -2110,7 +2110,7 @@ class ReportesController extends Controller
     $contratos = Contrato::whereYear('created_at', $anioActual)
                          ->whereBetween('created_at', [$inicioTrimestre, $finTrimestre])
                          ->paginate(25);
-
+    dd($contratos);
         return view('reportes.mintic.index')
             ->with('contratos', $contratos);
     }
