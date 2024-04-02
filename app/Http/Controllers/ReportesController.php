@@ -2096,7 +2096,6 @@ class ReportesController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         // Obtener el trimestre actual
     $trimestreActual = Carbon::now()->quarter;
-        dd($trimestreActual);
 
     // Obtener el año actual
     $anioActual = Carbon::now()->year;
@@ -2108,12 +2107,14 @@ class ReportesController extends Controller
     $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
     // Obtener los contratos del trimestre actual
-    $contratos = Contrato::whereYear('created_at', $anioActual)
-                         ->whereBetween('created_at', [$inicioTrimestre, $finTrimestre])
-                         ->paginate(25);
-    dd($contratos);
+    $contratos = Contrato::join('contacto', 'contrato.id_contacto', '=', 'contacto.id')
+        ->whereYear('contrato.created_at', $anioActual)
+        ->whereBetween('contrato.created_at', [$inicioTrimestre, $finTrimestre])
+        ->paginate(25);
+        dd($contratos);
         return view('reportes.mintic.index')
-            ->with('contratos', $contratos);
+            ->with('contratos', $contratos)
+            ->with('trimestre', $trimestreActual);
     }
 
     public function facturasImpagas(Request $request){

@@ -77,8 +77,8 @@
                 <tbody>
                     @forelse($contratos as $contrato)
                     <tr>
-                        <td>{{ $contrato->fecha ?? '0' }}</td>
-                        <td>{{ $contrato->trimestre ?? '0' }}</td>
+                        <td>{{ $contrato->created_at ?? '0' }}</td>
+                        <td>{{ $trimestre ?? '0' }}</td>
                         <td>{{ $contrato->id_municipio ?? '0' }}</td>
                         <td>{{ $contrato->id_segmento_planes ?? '0' }}</td>
                         <td>{{ $contrato->cantidad_suscriptores ?? '0' }}</td>
