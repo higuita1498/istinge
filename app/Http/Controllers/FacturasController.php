@@ -1997,26 +1997,30 @@ class FacturasController extends Controller{
     public function datatable_cliente(Request $request, $contacto){
         // storing  request (ie, get/post) global array to a variable
         $requestData =  $request;
+        $empresa = Auth::user()->empresa();
         $columns = array(
         // datatable column index  => database column name
             0 => 'factura.codigo',
             1 => 'nombrecliente',
-            2 => 'factura.fecha',
-            3 => 'factura.vencimiento',
-            4 => 'total',
-            5 => 'pagado',
-            6 => 'porpagar',
-            7 => 'factura.estatus',
-            8 => 'acciones'
+            2 => 'contratos',
+            3 => 'factura.fecha',
+            4 => 'factura.vencimiento',
+            5 => 'total',
+            6 => 'pagado',
+            7 => 'porpagar',
+            8 => 'factura.estatus',
+            9 => 'acciones'
         );
-        $facturas = Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')
+        $facturas = Factura::with('relationContracts')
+            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.*', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),
                 DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
                 DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-                DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) ) as porpagar'))
-            ->where('factura.empresa',Auth::user()->empresa)
+                DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant)-((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id) ) as porpagar'),
+                )
+            ->where('factura.empresa',$empresa->id)
             ->whereIn('factura.tipo',[1,2])
             ->where('factura.cliente',$contacto)
             ->groupBy('if.factura');
@@ -2041,18 +2045,33 @@ class FacturasController extends Controller{
                 $factura->save();
             }
 
+            // ** Obtencion de los contratos
+            if(isset($factura->relationContracts)){
+                $textContratos="";
+                $ti = 0;
+                foreach($factura->relationContracts as $contrato){
+                    if($ti == 0){
+                        $ti=1;
+                        $textContratos.= $contrato->nro;
+                    }else{
+                        $textContratos.= "-" . $contrato->nro;
+                    }
+                }
+            }
+
             $nestedData = array();
             $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
             $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
+            $nestedData[] = $textContratos;
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
             if(date('Y-m-d') > $factura->vencimiento && $factura->estatus==1){
                 $nestedData[] = '<spam class="text-danger">'.date('d-m-Y', strtotime($factura->vencimiento)).'</spam>';
             }else{
                 $nestedData[] = date('d-m-Y', strtotime($factura->vencimiento));
             }
-            $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->total()->total);
-            $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->pagado());
-            $nestedData[] = Auth::user()->empresa()->moneda.Funcion::Parsear($factura->porpagar());
+            $nestedData[] = $empresa->moneda.Funcion::Parsear($factura->total()->total);
+            $nestedData[] = $empresa->moneda.Funcion::Parsear($factura->pagado());
+            $nestedData[] = $empresa->moneda.Funcion::Parsear($factura->porpagar());
             $nestedData[] = '<spam class="text-'.$factura->estatus(true).'">'.$factura->estatus().'</spam>';
             $boton = '<a href="'.route('facturas.show',$factura->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
             <a href="'.route('facturas.imprimir',['id' => $factura->id, 'name'=> 'Factura No. '.$factura->codigo.'.pdf']).'" target="_blank" class="btn btn-outline-primary btn-icons"title="Imprimir"><i class="fas fa-print"></i></a> ';
