@@ -2838,10 +2838,9 @@ class ReportesController extends Controller
                                 ->paginate(25);
 
             // Retornar los contratos y el trimestre como JSON
-            return response()->json([
-                'contratos' => $contratos,
-                'trimestre' => $trimestreActual
-            ]);
+            return view('reportes.mintic.index')
+            ->with('contratos', $contratos)
+            ->with('trimestre', $trimestreActual);
     }
 
 }
