@@ -1294,8 +1294,8 @@ class ContratosController extends Controller
                         }
 
                         if($queue){
-                            dd("si");
-                            $API->comm("/queue/simple/set", array(
+
+                            $debug=$API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
@@ -1308,6 +1308,7 @@ class ContratosController extends Controller
                                 "queue"           => $queue_edit
                                 )
                             );
+                            dd($debug);
                         }else{
                             dd("sino");
                             $API->comm("/queue/simple/add", array(
