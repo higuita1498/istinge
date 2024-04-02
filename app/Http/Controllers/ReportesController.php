@@ -2848,14 +2848,18 @@ class ReportesController extends Controller
 
     public function reporte_1_2_mostrar(Request $request) {
         // Obtener los datos enviados desde el formulario
-        $anio = $request->input('anio');
-        $trimestre = $request->input('trimestre');
-        dd($anio);
+            $anio = $request->input('anio');
+            $trimestre = $request->input('trimestre');
 
-        // Realizar las operaciones necesarias con los datos
+            // Realizar la consulta para obtener los contratos en el rango de año y trimestre
+            $contratos = Contrato::whereYear('fecha_contrato', $anio)
+                                ->whereRaw('QUARTER(fecha_contrato) = ?', [$trimestre])
+                                ->get();
 
-        // Retornar la respuesta (puedes adaptar según tus necesidades)
-        return response()->json(['message' => 'Reporte generado con éxito']);
+            // Puedes hacer las operaciones necesarias con los datos si es necesario
+
+            // Retornar la respuesta con los datos filtrados
+            return response()->json($contratos);
     }
 
 }
