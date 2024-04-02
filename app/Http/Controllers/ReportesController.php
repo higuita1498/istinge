@@ -39,8 +39,14 @@ use App\PucMovimiento;
 use App\Servidor;
 use App\FormaPago;
 use App\Contrato;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
+use PHPExcel_Style_Border;
+use PHPExcel_Style_NumberFormat;
+use PHPExcel_Shared_ZipArchive;
 
 class ReportesController extends Controller
 {
