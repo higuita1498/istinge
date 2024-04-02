@@ -2091,9 +2091,6 @@ class ReportesController extends Controller
 
     //repórtes para crc reporte 1.2
     public function reporte_1_2(Request $request) {
-        $anio = $request->input('anio');
-        $trimestre = $request->input('trimestre');
-        dd($anio);
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
         $dates = $this->setDateRequest($request);
@@ -2848,5 +2845,16 @@ class ReportesController extends Controller
         'request'));
     }
 
+    public function reporte_1_2_mostrar(Request $request) {
+        // Obtener los datos enviados desde el formulario
+        $anio = $request->input('anio');
+        $trimestre = $request->input('trimestre');
+        dd($anio);
+
+        // Realizar las operaciones necesarias con los datos
+
+        // Retornar la respuesta (puedes adaptar según tus necesidades)
+        return response()->json(['message' => 'Reporte generado con éxito']);
+    }
 
 }
