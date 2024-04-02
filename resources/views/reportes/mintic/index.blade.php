@@ -121,7 +121,7 @@
         document.getElementById('filtrar').addEventListener('click', function() {
             var anio = document.getElementById('anio').value;
             var trimestre = document.getElementById('trimestre').value;
-            var url = document.getElementById('urlGenerar').value;
+            var url = document.getElementById('urlgenerar').value;
 
             // Realizar la solicitud AJAX para filtrar los datos
             $.ajax({
