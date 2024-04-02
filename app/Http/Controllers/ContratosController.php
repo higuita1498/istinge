@@ -1292,8 +1292,9 @@ class ContratosController extends Controller
                             // Si no tienen datos, asignar "queue" con los valores predeterminados
                             $queue_edit = "default-small/default-small";
                         }
-                        dd($request);
+
                         if($queue){
+                            dd("si");
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
@@ -1308,6 +1309,7 @@ class ContratosController extends Controller
                                 )
                             );
                         }else{
+                            dd("sino");
                             $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
