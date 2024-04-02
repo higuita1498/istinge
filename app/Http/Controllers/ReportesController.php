@@ -2856,6 +2856,7 @@ class ReportesController extends Controller
                                 ->whereRaw('QUARTER(fecha_contrato) = ?', [$trimestre])
                                 ->get();
             dd($contratos);
+
             // Puedes hacer las operaciones necesarias con los datos si es necesario
 
             // Retornar la respuesta con los datos filtrados
