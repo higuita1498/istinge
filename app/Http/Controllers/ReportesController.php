@@ -2851,16 +2851,16 @@ class ReportesController extends Controller
     public function generarExcel(Request $request)
     {
             // Definir las fechas de inicio y fin del trimestre en función del trimestre proporcionado
-            if ($trimestre == 1) {
+            if ($request->trimestre == 1) {
                 $inicioTrimestre = Carbon::now()->startOfYear();
                 $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
-            } else if ($trimestre == 2) {
+            } else if ($request->trimestre == 2) {
                 $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
                 $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
-            } else if ($trimestre == 3) {
+            } else if ($request->trimestre == 3) {
                 $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
                 $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
-            } else if ($trimestre == 4) {
+            } else if ($request->trimestre == 4) {
                 $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
                 $finTrimestre = Carbon::now()->endOfYear();
             }
