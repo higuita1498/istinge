@@ -117,23 +117,25 @@
 
    {{-- Agregando el script para poder enviar fecha y trimestre  --}}
    <script>
-    document.getElementById('filtrar').addEventListener('click', function() {
-        var anio = document.getElementById('anio').value;
-        var trimestre = document.getElementById('trimestre').value;
-        var url = document.getElementById('urlGenerar').value;
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('filtrar').addEventListener('click', function() {
+            var anio = document.getElementById('anio').value;
+            var trimestre = document.getElementById('trimestre').value;
+            var url = document.getElementById('urlGenerar').value;
 
-        // Realizar la solicitud AJAX para filtrar los datos
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {anio: anio, trimestre: trimestre, _token: '{{ csrf_token() }}'},
-            success: function(response) {
-                // Actualizar la tabla con los datos filtrados
-                $('#table-facturas').html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
+            // Realizar la solicitud AJAX para filtrar los datos
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {anio: anio, trimestre: trimestre, _token: '{{ csrf_token() }}'},
+                success: function(response) {
+                    // Actualizar la tabla con los datos filtrados
+                    $('#table-facturas').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
         });
     });
 </script>
