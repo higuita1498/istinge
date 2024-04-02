@@ -3,7 +3,7 @@
     {{-- <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
     <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
     <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}"> --}}
-    <form id="form-filtrar" method="POST" action="{{ route('reporte_1_2_mostrar') }}">
+    <form id="form-filtrar" method="POST" action="{{ route('reportes.generar.mostrar') }}">
         @csrf
         <div class="row card-description">
             <div class="form-group col-md-4">
