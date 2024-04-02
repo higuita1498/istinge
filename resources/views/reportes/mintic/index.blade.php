@@ -79,7 +79,7 @@
                     <tr>
                         <td>{{ $contrato->created_at ?? '0' }}</td>
                         <td>{{ $trimestre ?? '0' }}</td>
-                        <td>{{ $contrato->id_municipio ?? '0' }}</td>
+                        <td>{{ $contrato->fk_idmunicipio?? '0' }}</td>
                         <td>{{ $contrato->id_segmento_planes ?? '0' }}</td>
                         <td>{{ $contrato->cantidad_suscriptores ?? '0' }}</td>
                         <td>{{ $contrato->nombre_plan ?? '0' }}</td>
