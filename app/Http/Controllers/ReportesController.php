@@ -2094,55 +2094,24 @@ class ReportesController extends Controller
     public function reporte_1_2(Request $request) {
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte de CRC 1.2', 'icon' =>'fas fa-chart-line']);
         $this->getAllPermissions(Auth::user()->id);
-        $dates = $this->setDateRequest($request);
-        if($request->fecha == 8)
-            $dates = $this->setDateRequest($request, true);
+        // Obtener el trimestre actual
+    $trimestreActual = Carbon::now()->quarter;
 
-        //Código base tomado de datatable_movimientos
+    // Obtener el año actual
+    $anioActual = Carbon::now()->year;
 
-        $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
-            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
-            ->where('movimientos.empresa',Auth::user()->empresa);
+    // Obtener la fecha de inicio del trimestre actual
+    $inicioTrimestre = Carbon::now()->startOfQuarter()->toDateString();
 
-        $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
-            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
-            ->where('movimientos.empresa',Auth::user()->empresa);
-        $example = Movimiento::where('empresa', Auth::user()->empresa)->get()->last();
+    // Obtener la fecha de fin del trimestre actual
+    $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
-        if($request->fecha){
-            $appends['fecha']=$request->fecha;
-        }
-        if($request->fecha){
-            $appends['hasta']=$request->hasta;
-        }
-
-        $movimientos=  $movimientos->orderBy('fecha', 'DESC')->paginate(25)->appends($appends);
-        $movimientosTodos = $movimientosTodos->get();
-
-        $totales = array(
-            'salida'    => 0,
-            'entrada'   => 0
-        );
-
-        foreach ($movimientosTodos as $movimiento){
-            $totales['salida']  += $movimiento->tipo==2?$movimiento->saldo:0;
-            $totales['entrada']  += $movimiento->tipo==1?$movimiento->saldo:0;
-        }
-
-        $cajas = Banco::where('estatus',1)->get();
-
+    // Obtener los contratos del trimestre actual
+    $contratos = Contrato::whereYear('fecha', $anioActual)
+                         ->whereBetween('fecha', [$inicioTrimestre, $finTrimestre])
+                         ->get();
         return view('reportes.mintic.index')
-            ->with('movimientos', $movimientos)
-            ->with('request', $request)
-            ->with('example', $example)
-            ->with('totales', $totales)
-            ->with('cajas', $cajas);
+            ->with('contratos', $contratos);
     }
 
     public function facturasImpagas(Request $request){
