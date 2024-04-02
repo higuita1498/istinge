@@ -2100,7 +2100,12 @@ class ReportesController extends Controller
 
         //Código base tomado de datatable_movimientos
 
-        $movimientos= Contrato::where('movimientos.empresa',Auth::user()->empresa);
+        $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->where('fecha', '>=', $dates['inicio'])
+            ->where('fecha', '<=', $dates['fin'])
+            ->where('movimientos.descripcion','Pago de Instalación de Servicio')
+            ->where('movimientos.empresa',Auth::user()->empresa);
 
         $movimientosTodos = Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
