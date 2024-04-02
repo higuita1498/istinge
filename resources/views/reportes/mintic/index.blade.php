@@ -3,43 +3,42 @@
     <input type="hidden" id="valuefecha" value="{{$request->fechas}}">
     <input type="hidden" id="primera" value="{{$request->date ? $request->date['primera'] : ''}}">
     <input type="hidden" id="ultima" value="{{$request->date ? $request->date['ultima'] : ''}}">
-    <form id="form-reporte">
-        <div class="row card-description">
-            <div class="form-group col-md-4">
-                <div class="row">
-                    <label>Seleccione el Año<span class="text-danger">*</span></label>
-                    <select class="form-control" id="anio" name="anio" required="">
-                        @php
-                            $anioActual = date('Y');
-                            $cantidadAnios = 5; // Cantidad de años hacia atrás desde el año actual
-                        @endphp
-                        @for ($i = $anioActual; $i >= $anioActual - $cantidadAnios; $i--)
-                            <option value="{{$i}}">{{$i}}</option>
-                        @endfor
-                    </select>
-
-                </div>
-            </div>
-            <div class="form-group col-md-4 ml-5">
-                <div class="row">
-                    <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
-                    <select class="form-control" id="trimestre" name="trimestre" required="">
-                        <option value="1">Trimestre 1</option>
-                        <option value="2">Trimestre 2</option>
-                        <option value="3">Trimestre 3</option>
-                        <option value="4">Trimestre 4</option>
-                    </select>
-
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-
-            </div>
-            <div class="form-group col-md-4 text-center offset-md-4">
-                <center><button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
-                <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button></center>
+    <div class="row card-description">
+        <div class="form-group col-md-4">
+            <div class="row">
+                <label>Seleccione el Año<span class="text-danger">*</span></label>
+                <select class="form-control" id="anio" name="anio" required="">
+                    @php
+                        $anioActual = date('Y');
+                        $cantidadAnios = 20; // Cantidad de años hacia atrás desde el año actual
+                    @endphp
+                    @for ($i = $anioActual; $i >= $anioActual - $cantidadAnios; $i--)
+                        <option value="{{$i}}">{{$i}}</option>
+                    @endfor
+                </select>
             </div>
         </div>
+        <div class="form-group col-md-4 ml-5">
+            <div class="row">
+                <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
+                <select class="form-control" id="trimestre" name="trimestre" required="">
+                    <option value="1">Trimestre 1</option>
+                    <option value="2">Trimestre 2</option>
+                    <option value="3">Trimestre 3</option>
+                    <option value="4">Trimestre 4</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <!-- Otros campos de filtrado si es necesario -->
+        </div>
+        <div class="form-group col-md-4 text-center offset-md-4">
+            <center>
+                <button type="button" id="filtrar" class="btn btn-outline-primary">Filtrar</button>
+                <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
+            </center>
+        </div>
+    </div>
         <div class="row card-description">
             <div class="col-md-12 table-responsive">
                 <table class="table" id="table-facturas">
@@ -113,29 +112,29 @@
             </div>
         </div>
     </form>
-    <input type="hidden" id="urlgenerar" value="{{route('reportes.instalacion')}}">
+    <input type="hidden" id="urlgenerar" value="{{route('reportes.generar.1.2')}}">
     <input type="hidden" id="urlexportar" value="{{route('exportar.cajas')}}">
 
    {{-- Agregando el script para poder enviar fecha y trimestre  --}}
-    <script>
-        document.getElementById('generar').addEventListener('click', function() {
-            var anio = document.getElementById('anio').value;
-            var trimestre = document.getElementById('trimestre').value;
-            var url = document.getElementById('urlgenerar').value;
-            var csrfToken = '{{ csrf_token() }}';
+   <script>
+    document.getElementById('filtrar').addEventListener('click', function() {
+        var anio = document.getElementById('anio').value;
+        var trimestre = document.getElementById('trimestre').value;
+        var url = document.getElementById('urlGenerar').value;
 
-            // Enviar datos al controlador utilizando AJAX
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', url, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-CSRF-Token', csrfToken);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    // Procesar la respuesta si es necesario
-                    console.log(xhr.responseText);
-                }
-            };
-            xhr.send(JSON.stringify({anio: anio, trimestre: trimestre}));
+        // Realizar la solicitud AJAX para filtrar los datos
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {anio: anio, trimestre: trimestre, _token: '{{ csrf_token() }}'},
+            success: function(response) {
+                // Actualizar la tabla con los datos filtrados
+                $('#table-facturas').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
         });
-    </script>
+    });
+</script>
 @endsection
