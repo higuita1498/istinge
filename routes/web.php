@@ -1546,5 +1546,5 @@ Route::get('/clientes/cambiar/{id}','ContactosController@cambiares')->name('clie
 
 //Ruta para poder generar reportes crc mintic
 Route::post('/generar-reporte', 'ReportesController@reporte_1_2_mostrar')->name('reportes.generar.mostrar');
-Route::get('/exportar-contratos', 'ReportesController@generarExcel')->name('exportar.reportes.contratos.excel');
+Route::get('/exportar-contratos/anio/trimestre', 'ReportesController@generarExcel')->name('exportar.reportes.contratos.excel');
 
