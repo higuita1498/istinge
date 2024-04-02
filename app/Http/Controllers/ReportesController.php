@@ -2850,7 +2850,7 @@ class ReportesController extends Controller
 
     public function generarExcel(Request $request)
     {
-            dd($request->anio);
+
             // Obtener los contratos del trimestre actual
             $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
