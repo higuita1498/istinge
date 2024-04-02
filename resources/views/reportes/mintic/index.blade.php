@@ -48,7 +48,7 @@
                 <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
             </center>
         </div> --}}
-    </div>
+
     <div class="row card-description">
         <div class="col-md-12 table-responsive">
             <table class="table" id="table-facturas">
