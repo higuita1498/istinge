@@ -2107,7 +2107,7 @@ class ReportesController extends Controller
     $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
     // Obtener los contratos del trimestre actual
-    $contratos = Contrato::join('contacto', 'contrato.id_contacto', '=', 'contacto.id')
+    $contratos = Contrato::join('contactos', 'contrato.client_id', '=', 'contactos.id')
         ->whereYear('contrato.created_at', $anioActual)
         ->whereBetween('contrato.created_at', [$inicioTrimestre, $finTrimestre])
         ->paginate(25);
