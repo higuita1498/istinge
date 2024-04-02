@@ -2848,4 +2848,30 @@ class ReportesController extends Controller
         return Excel::download(new ContratosExport, 'contratos.xlsx');
     }
 
+    public function generarExcel($contratos)
+    {
+
+            // Obtener los contratos del trimestre actual
+            $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+            ->whereYear('contracts.created_at', $anioActual)
+            ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+            ->paginate(25);
+
+        // Generar y descargar el archivo de Excel
+        $objPHPExcel = new PHPExcel();
+        // Configurar el archivo de Excel según tu lógica existente
+
+        foreach ($contratos as $key => $contrato) {
+            // Agregar los datos de los contratos al archivo de Excel
+        }
+
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header("Content-Disposition: attachment;filename='Reporte_Contratos.xlsx'");
+        header("Cache-Control: max-age=0");
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+            }
+
 }
