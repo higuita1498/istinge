@@ -1317,7 +1317,7 @@ class ContratosController extends Controller
                                 "burst-time"      => $burst_time,
                                 "priority"        => $priority,
                                 "limit-at"        => $limit_at,
-                                "queue"           => $queue_edit
+
                                 )
                             );
                         }
