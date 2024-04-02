@@ -1308,7 +1308,7 @@ class ContratosController extends Controller
                                 "queue"           => $queue_edit
                                 )
                             );
-                            dd($debug);
+
                         }else{
                             dd("sino");
                             $API->comm("/queue/simple/add", array(
