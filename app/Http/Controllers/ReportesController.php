@@ -2107,8 +2107,8 @@ class ReportesController extends Controller
     $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
     // Obtener los contratos del trimestre actual
-    $contratos = Contrato::whereYear('fecha', $anioActual)
-                         ->whereBetween('fecha', [$inicioTrimestre, $finTrimestre])
+    $contratos = Contrato::whereYear('created_at', $anioActual)
+                         ->whereBetween('created_at', [$inicioTrimestre, $finTrimestre])
                          ->get();
         return view('reportes.mintic.index')
             ->with('contratos', $contratos);
