@@ -2839,7 +2839,10 @@ class ReportesController extends Controller
         ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
         ->paginate(25);
 
-            return response()->json($contratos);
+        return response()->json([
+            'contratos' => $contratos,
+            'trimestre' => $trimestreActual
+        ]);
     }
 
 }
