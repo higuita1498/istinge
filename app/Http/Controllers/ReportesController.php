@@ -2928,7 +2928,7 @@ class ReportesController extends Controller
 
         // Crear el archivo Excel
         header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        header("Content-Disposition: attachment;filename='Reporte_Contratos.xlsx'");
+        header("Content-Disposition: attachment;filename=Reporte_Contratos.xlsx");
         header("Cache-Control: max-age=0");
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
