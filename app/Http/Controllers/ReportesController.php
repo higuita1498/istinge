@@ -2858,43 +2858,43 @@ class ReportesController extends Controller
 
     public function generarExcel(Request $request)
     {
-        if ($request->trimestre == 1) {
-            $inicioTrimestre = Carbon::now()->startOfYear();
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
-        } else if ($request->trimestre == 2) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
-        } else if ($request->trimestre == 3) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
-            $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
-        } else if ($request->trimestre == 4) {
-            $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
-            $finTrimestre = Carbon::now()->endOfYear();
-        }
-
-        // Obtener los contratos del trimestre actual
-        $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-            ->whereYear('contracts.created_at', $request->anio)
-            ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
-            ->paginate(25);
-
-        // Crear un nuevo objeto de PhpSpreadsheet
-        $spreadsheet = new Spreadsheet();
-
-        // Agregar datos al archivo de Excel
-        // Aquí debes agregar los datos de los contratos al archivo de Excel utilizando las funciones proporcionadas por PhpSpreadsheet
-
-        // Crear un objeto Writer para exportar el archivo
-        $writer = new Xlsx($spreadsheet);
-
-        // Establecer las cabeceras para descargar el archivo
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Reporte_Contratos.xlsx"');
-        header('Cache-Control: max-age=0');
-
-        // Escribir el archivo de Excel en la salida
-        $writer->save('php://output');
+            if ($request->trimestre == 1) {
+                $inicioTrimestre = Carbon::now()->startOfYear();
+                $finTrimestre = Carbon::now()->startOfYear()->addMonths(3)->subDay();
+            } else if ($request->trimestre == 2) {
+                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(3);
+                $finTrimestre = Carbon::now()->startOfYear()->addMonths(6)->subDay();
+            } else if ($request->trimestre == 3) {
+                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(6);
+                $finTrimestre = Carbon::now()->startOfYear()->addMonths(9)->subDay();
+            } else if ($request->trimestre == 4) {
+                $inicioTrimestre = Carbon::now()->startOfYear()->addMonths(9);
+                $finTrimestre = Carbon::now()->endOfYear();
             }
+
+            // Obtener los contratos del trimestre actual
+            $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                ->whereYear('contracts.created_at', $request->anio)
+                ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+                ->paginate(25);
+
+            // Crear un nuevo objeto de PhpSpreadsheet
+            $spreadsheet = new Spreadsheet();
+
+            // Agregar datos al archivo de Excel
+            // Aquí debes agregar los datos de los contratos al archivo de Excel utilizando las funciones proporcionadas por PhpSpreadsheet
+
+            // Crear un objeto Writer para exportar el archivo
+            $writer = new Xlsx($spreadsheet);
+
+            // Establecer las cabeceras para descargar el archivo
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="Reporte_Contratos.xlsx"');
+            header('Cache-Control: max-age=0');
+
+            // Escribir el archivo de Excel en la salida
+            $writer->save('php://output');
+    }
 
 }
