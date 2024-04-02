@@ -2057,6 +2057,8 @@ class FacturasController extends Controller{
                         $textContratos.= "-" . $contrato->nro;
                     }
                 }
+            }else{
+                $textContratos="No";
             }
 
             $nestedData = array();
