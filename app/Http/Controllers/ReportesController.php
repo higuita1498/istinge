@@ -2096,6 +2096,7 @@ class ReportesController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         // Obtener el trimestre actual
     $trimestreActual = Carbon::now()->quarter;
+        dd($trimestreActual);
 
     // Obtener el año actual
     $anioActual = Carbon::now()->year;
