@@ -2831,10 +2831,10 @@ class ReportesController extends Controller
             $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
             // Obtener los contratos del año y trimestre especificados
-            $contratos = Contrato::join('contactos', 'contratos.client_id', '=', 'contactos.id')
-                                ->join('planes_velocidad', 'contratos.plan_id', '=', 'planes_velocidad.id')
-                                ->whereYear('contratos.created_at', $anioActual)
-                                ->whereBetween('contratos.created_at', [$inicioTrimestre, $finTrimestre])
+            $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+                                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                                ->whereYear('contracts.created_at', $anioActual)
+                                ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
                                 ->paginate(25);
 
             // Retornar los contratos y el trimestre como JSON
