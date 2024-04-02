@@ -39,78 +39,88 @@
             </center>
         </div>
     </div>
-        <div class="row card-description">
-            <div class="col-md-12 table-responsive">
-                <table class="table" id="table-facturas">
+    <div class="row card-description">
+        <div class="col-md-12 table-responsive">
+            <table class="table" id="table-facturas">
                 <thead class="thead-dark">
-                <tr>
-                    <th>Fecha</th>
-                    <th>Trimestre</th>
-                    <th>Id municipio</th>
-                    <th>Id segemento planes</th>
-                    <th>Cantidad de suscriptores</th>
-                    <th>Nombre del plan</th>
-                    <th>Valor plan iva</th>
-                    <th>Valor plan</th>
-                    <th>Id modalidad plan</th>
-                    <th>Fecha inicio</th>
-                    <th>Fecha fin</th>
-                    <th>Id tipo plan</th>
-                    <th>Tiene telefonia fija</th>
-                    <th>Tarifa telefonia fija</th>
-                    <th>Cantidad minutos</th>
-                    <th>Valor minuto inlcuido telefonia</th>
-                    <th>Valor minuto adicional telefonia</th>
-                    <th>Tiene internet fijo</th>
-                    <th>Nombre Plan Int FI</th>
-                    <th>Tarifa Mensual Internet</th>
-                    <th>Velocidad Ofrecida Bajada</th>
-                    <th>Velocidad Ofrecida Subida</th>
-                    <th>Id Tecnologia</th>
-                    <th>Canales Premium TV</th>
-                    <th>Canales HD TV</th>
-                    <th>Video Demanda</th>
-                    <th>Costo Deco Adición</th>
-                    <th>Otras Caracteristicas</th>
-                </tr>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Trimestre</th>
+                        <th>Id municipio</th>
+                        <th>Id segemento planes</th>
+                        <th>Cantidad de suscriptores</th>
+                        <th>Nombre del plan</th>
+                        <th>Valor plan iva</th>
+                        <th>Valor plan</th>
+                        <th>Id modalidad plan</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th>Id tipo plan</th>
+                        <th>Tiene telefonia fija</th>
+                        <th>Tarifa telefonia fija</th>
+                        <th>Cantidad minutos</th>
+                        <th>Valor minuto inlcuido telefonia</th>
+                        <th>Valor minuto adicional telefonia</th>
+                        <th>Tiene internet fijo</th>
+                        <th>Nombre Plan Int FI</th>
+                        <th>Tarifa Mensual Internet</th>
+                        <th>Velocidad Ofrecida Bajada</th>
+                        <th>Velocidad Ofrecida Subida</th>
+                        <th>Id Tecnologia</th>
+                        <th>Canales Premium TV</th>
+                        <th>Canales HD TV</th>
+                        <th>Video Demanda</th>
+                        <th>Costo Deco Adición</th>
+                        <th>Otras Caracteristicas</th>
+                    </tr>
                 </thead>
                 <tbody>
-
-                @foreach($movimientos as $movimiento)
+                    @forelse($contratos as $contrato)
                     <tr>
-                        <td><a href="{{$movimiento->show_url()}}">{{date('d-m-Y', strtotime($movimiento->fecha))}}</a></td>
-                        <td>
-                            <a href="{{$movimiento->show_url()}}">
-                                {{$movimiento->id}}
-                            </a>
-                        </td>
-                        <td>
-                            {{$movimiento->banco()->nombre}}
-                        </td>
-                        <td>
-                            {{$movimiento->categoria()}}
-                        </td>
-                        <td>
-                            <spam class="text-{{$movimiento->estatus(true)}}">
-                                {{$movimiento->estatus()}}
-                            </spam>
-                        </td>
-                        <td>
-                            {{$movimiento->tipo==1?Auth::user()->empresa()->moneda.\App\Funcion::Parsear($movimiento->saldo):''}}
-                        </td>
+                        <td>{{ $contrato->fecha ?? '0' }}</td>
+                        <td>{{ $contrato->trimestre ?? '0' }}</td>
+                        <td>{{ $contrato->id_municipio ?? '0' }}</td>
+                        <td>{{ $contrato->id_segmento_planes ?? '0' }}</td>
+                        <td>{{ $contrato->cantidad_suscriptores ?? '0' }}</td>
+                        <td>{{ $contrato->nombre_plan ?? '0' }}</td>
+                        <td>{{ $contrato->valor_plan_iva ?? '0' }}</td>
+                        <td>{{ $contrato->valor_plan ?? '0' }}</td>
+                        <td>{{ $contrato->id_modalidad_plan ?? '0' }}</td>
+                        <td>{{ $contrato->fecha_inicio ?? '0' }}</td>
+                        <td>{{ $contrato->fecha_fin ?? '0' }}</td>
+                        <td>{{ $contrato->id_tipo_plan ?? '0' }}</td>
+                        <td>{{ $contrato->tiene_telefonia_fija ?? '0' }}</td>
+                        <td>{{ $contrato->tarifa_telefonia_fija ?? '0' }}</td>
+                        <td>{{ $contrato->cantidad_minutos ?? '0' }}</td>
+                        <td>{{ $contrato->valor_minuto_incluido_telefonia ?? '0' }}</td>
+                        <td>{{ $contrato->valor_minuto_adicional_telefonia ?? '0' }}</td>
+                        <td>{{ $contrato->tiene_internet_fijo ?? '0' }}</td>
+                        <td>{{ $contrato->nombre_plan_int_fi ?? '0' }}</td>
+                        <td>{{ $contrato->tarifa_mensual_internet ?? '0' }}</td>
+                        <td>{{ $contrato->velocidad_ofrecida_bajada ?? '0' }}</td>
+                        <td>{{ $contrato->velocidad_ofrecida_subida ?? '0' }}</td>
+                        <td>{{ $contrato->id_tecnologia ?? '0' }}</td>
+                        <td>{{ $contrato->canales_premium_tv ?? '0' }}</td>
+                        <td>{{ $contrato->canales_hd_tv ?? '0' }}</td>
+                        <td>{{ $contrato->video_demanda ?? '0' }}</td>
+                        <td>{{ $contrato->costo_deco_adicion ?? '0' }}</td>
+                        <td>{{ $contrato->otras_caracteristicas ?? '0' }}</td>
                     </tr>
-                @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="28">No se encontraron contratos.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
                 <tfoot class="thead-dark">
-                    <td colspan="5"></td>
+                    <td colspan="28"></td>
                 </tfoot>
-                </table>
-                <div class="text-right">
-                    {{$movimientos->links()}}
-                </div>
-
+            </table>
+            <div class="text-right">
+                {{ $contratos->links() }}
             </div>
         </div>
+    </div>
     </form>
     <input type="hidden" id="urlgenerar" value="{{route('reportes.generar.mostrar')}}">
     <input type="hidden" id="urlexportar" value="{{route('exportar.cajas')}}">
