@@ -2839,9 +2839,6 @@ class ReportesController extends Controller
         ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
         ->paginate(25);
 
-            return view('reportes.mintic.index')
-                ->with('contratos', $contratos)
-                ->with('trimestre', $trimestreActual);
             return response()->json($contratos);
     }
 
