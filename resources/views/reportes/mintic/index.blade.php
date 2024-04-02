@@ -112,7 +112,7 @@
             </div>
         </div>
     </form>
-    <input type="hidden" id="urlgenerar" value="{{route('reportes.generar.1.2')}}">
+    <input type="hidden" id="urlgenerar" value="{{route('reportes.generar.mostrar')}}">
     <input type="hidden" id="urlexportar" value="{{route('exportar.cajas')}}">
 
    {{-- Agregando el script para poder enviar fecha y trimestre  --}}
