@@ -131,6 +131,7 @@
                 success: function(response) {
                     // Actualizar la tabla con los datos filtrados
                     $('#table-facturas').html(response);
+                    console.log(response);
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
