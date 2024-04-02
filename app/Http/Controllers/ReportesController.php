@@ -2852,8 +2852,8 @@ class ReportesController extends Controller
             $trimestre = $request->input('trimestre');
 
             // Realizar la consulta para obtener los contratos en el rango de año y trimestre
-            $contratos = Contrato::whereYear('fecha_contrato', $anio)
-                                ->whereRaw('QUARTER(fecha_contrato) = ?', [$trimestre])
+            $contratos = Contrato::whereYear('created_at', $anio)
+                                ->whereRaw('QUARTER(created_at) = ?', [$trimestre])
                                 ->get();
             dd($contratos);
 
