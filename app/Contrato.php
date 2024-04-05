@@ -19,6 +19,7 @@ use App\Model\Inventario\Inventario;
 use App\Vendedor;
 use App\Canal;
 use App\Oficina;
+use stdClass;
 
 class Contrato extends Model
 {
@@ -232,16 +233,27 @@ class Contrato extends Model
 
     // Este metodo devuelve al exportar de contratos los item segun la estructura pedida.
     public function producto_exportar($name){
+
+        $coleccion = new stdClass;
+
         if($name == "plan_id" && $this->plan_id != null ){
             $plan = PlanesVelocidad::Find($this->plan_id);
             $item = Inventario::Find($plan->item);
 
-            return $plan->name . " - $" . number_format($item->precio, 0, ',', '.');
+            $coleccion->nombre =  $plan->name;
+            $coleccion->precio = $item->precio;
+
+            // return $plan->name . " - $" . number_format($item->precio, 0, ',', '.');
         }
         else if($name == "servicio_tv" && $this->servicio_tv != null){
             $item = Inventario::Find($this->servicio_tv);
 
-            return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
+            $coleccion->nombre =  $item->producto;
+            $coleccion->precio = $item->precio;
+
+            // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
         }
+
+        return $coleccion;
     }
 }

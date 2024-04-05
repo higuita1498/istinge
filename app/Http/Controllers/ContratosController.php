@@ -2201,7 +2201,15 @@ class ContratosController extends Controller
 
         $contratos = $contratos->where('contracts.status', 1)->get();
 
+        $totalPlan = 0;
+        $totalServicio = 0;
         foreach ($contratos as $contrato) {
+
+            $plan = $contrato->producto_exportar('plan_id');
+            $servicio = $contrato->producto_exportar('servicio_tv');
+
+            isset($plan->precio) ? $totalPlan+=$plan->precio : '';
+            isset($servicio->precio) ? $totalServicio+=$servicio->precio : '';
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contrato->nro)
@@ -2227,11 +2235,15 @@ class ContratosController extends Controller
                 ->setCellValue($letras[21].$i, ucfirst($contrato->tipo_contrato))
                 ->setCellValue($letras[22].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
                 ->setCellValue($letras[23].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
-                ->setCellValue($letras[24].$i, $contrato->producto_exportar('plan_id') )
-                ->setCellValue($letras[25].$i, $contrato->producto_exportar('servicio_tv') )
+                ->setCellValue($letras[24].$i, isset($plan->nombre) ? $plan->nombre . " - $" . number_format($plan->precio, 0, ',', '.') : '')
+                ->setCellValue($letras[25].$i, isset($servicio->nombre) ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
                 ;
             $i++;
         }
+
+        $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue($letras[24].$i, number_format($totalPlan, 0, ',', '.'))
+        ->setCellValue($letras[25].$i, number_format($totalServicio, 0, ',', '.'));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
