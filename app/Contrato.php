@@ -254,6 +254,15 @@ class Contrato extends Model
             // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
         }
 
+        else if($name == "servicio_otro" && $this->servicio_otro != null){
+            $item = Inventario::Find($this->servicio_otro);
+
+            $coleccion->nombre =  $item->producto;
+            $coleccion->precio = $item->precio;
+
+            // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
+        }
+
         return $coleccion;
     }
 }
