@@ -235,13 +235,17 @@ class Contrato extends Model
     public function producto_exportar($name){
 
         $coleccion = new stdClass;
+        $coleccion->precio = 0;
+        $coleccion->nombre = "";
 
         if($name == "plan_id" && $this->plan_id != null ){
             $plan = PlanesVelocidad::Find($this->plan_id);
-            $item = Inventario::Find($plan->item);
 
-            $coleccion->nombre =  $plan->name;
-            $coleccion->precio = $item->precio;
+            if(isset($plan->item)){
+                $item = Inventario::Find($plan->item);
+                $coleccion->precio = $item->precio;
+                $coleccion->nombre =  $plan->name;
+            }
 
             // return $plan->name . " - $" . number_format($item->precio, 0, ',', '.');
         }
