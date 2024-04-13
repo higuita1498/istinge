@@ -715,7 +715,9 @@ function rowItemsContrato(contrato){
                 let arrayContratos = []
                 eliminarTodaFila()
                 data.data.map(item => {
+                    alert("okoko1");
                     createRow()
+
                     $('#item' + it).val(item.id).selectpicker('refresh')
                     rellenar(it, item.id)
                     it=it+1
@@ -894,6 +896,11 @@ function contacto(selected, modificar = false, type = 1) {
                             createRow();
                             $('#item' + it).val(data.servicio_tv).selectpicker('refresh');
                             rellenar(it, data.servicio_tv);
+                        }
+                        if (data.servicio_otro) {
+                            createRow();
+                            $('#item' + it).val(data.servicio_otro).selectpicker('refresh');
+                            rellenar(it, data.servicio_otro);
                         }
                     }
 
@@ -1582,6 +1589,7 @@ function cambiar_bodega() {
                 Eliminar(id);
             });
             for (var i = 1; i <= count; i++) {
+                alert("okoko3");
                 createRow();
             }
             totalall();
