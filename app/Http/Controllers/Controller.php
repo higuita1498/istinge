@@ -1664,7 +1664,7 @@ class Controller extends BaseController
 
     public function getIps($mikrotik){
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
-        dd($ips);
+
         $mikrotik = Mikrotik::find($mikrotik);
         if ($mikrotik) {
             $API = new RouterosAPI();
