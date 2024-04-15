@@ -1675,13 +1675,29 @@ class Controller extends BaseController
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
+                $sanitizedArray = [];
 
-                foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
+                foreach ($ARRAY as $item) {
+                    $sanitizedItem = [];
+
+                    foreach ($item as $key => $value) {
+                        // Verificar si $value es una cadena antes de intentar convertirla
+                        if (is_string($value)) {
+                            $sanitizedItem[$key] = mb_convert_encoding($value, "UTF-8", "auto");
+                        } else {
+                            $sanitizedItem[$key] = $value; // Si no es una cadena, mantener el valor original
+                        }
+                    }
+
+                    // Agregar el item sanitizado al array resultante
+                    $sanitizedArray[] = $sanitizedItem;
+                }
+               /* foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
 
                 // Se estaba generando el problema de que la codificación del
                 // arreglo y de los valores no llegaba correctamente, por eso
                 // es necesario convertir nuevamente el arreglo a UTF-8.
-                $sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", "auto");
+                $sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", "auto");*/
                 return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
             }
         }
