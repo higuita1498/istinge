@@ -1675,7 +1675,7 @@ class Controller extends BaseController
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
-
+                dd($ARRAY);
                 foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
 
                 // Se estaba generando el problema de que la codificación del
