@@ -1681,7 +1681,11 @@ class Controller extends BaseController
                 // Se estaba generando el problema de que la codificación del
                 // arreglo y de los valores no llegaba correctamente, por eso
                 // es necesario convertir nuevamente el arreglo a UTF-8.
-                $sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", mb_detect_encoding($ARRAY));
+                $sanitizedArray = [];
+
+                foreach ($ARRAY as $string) {
+                    $sanitizedArray[] = mb_convert_encoding($string, "UTF-8", mb_detect_encoding($string));
+                }
                 //$sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", "auto");
                 return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
             }
