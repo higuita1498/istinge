@@ -3309,21 +3309,21 @@ class FacturasController extends Controller{
 
                 // return response()->json($factura->estadoCuenta()->saldoMesAnterior);
 
-                $codqr = "NumFac:" . $factura->codigo . "\n" .
-                "NitFac:"  . "121234234"   . "\n" .
-                "DocAdq:" .  "121234234" . "\n" .
-                "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-                "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-                "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
-                "ValorIVA:" .  number_format(12000, 2, '.', '') . "\n" .
-                "ValorOtrosImpuestos:" .  0.00 . "\n" .
-                "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n";
+                // $codqr = "NumFac:" . $factura->codigo . "\n" .
+                // "NitFac:"  . "121234234"   . "\n" .
+                // "DocAdq:" .  "121234234" . "\n" .
+                // "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
+                // "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
+                // "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
+                // "ValorIVA:" .  number_format(12000, 2, '.', '') . "\n" .
+                // "ValorOtrosImpuestos:" .  0.00 . "\n" .
+                // "ValorTotalFactura:" .  number_format($factura->total()->subtotal + $factura->impuestos_totales(), 2, '.', '') . "\n";
                 //   return view('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr'));
 
                 if($empresa->formato_impresion == 1){
-                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
+                    $pdf = PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'));
                 }else{
-                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','ingreso'));
+                    $pdf = PDF::loadView('pdf.factura', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'));
                 }
             }
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);

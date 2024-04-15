@@ -69,6 +69,8 @@
     @include('facturas.includes.comment-descuento', ['comentario2' => null ])
 
         <input type="hidden" value="1" name="fact_vent" id="fact_vent">
+        <input type="hidden" value="1" name="cliente_contrato" id="cliente_contrato" value={{$cliente != false ? $cliente : 0}}>
+
 		<div class="row text-right">
 			<div class="col-md-5">
   			<div class="form-group row">
@@ -564,12 +566,7 @@
       </div>
   </div>
   {{--/Modal Nuevo producto  --}}
+
 @endsection
 
 @section('scripts')
-
-    <script>
-        $(document).ready(function() {
-        });
-    </script>
-@endsection

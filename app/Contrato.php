@@ -19,6 +19,7 @@ use App\Model\Inventario\Inventario;
 use App\Vendedor;
 use App\Canal;
 use App\Oficina;
+use stdClass;
 
 class Contrato extends Model
 {
@@ -31,12 +32,12 @@ class Contrato extends Model
      */
     public $timestamps = false;
     protected $fillable = [
-        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension', 
-        'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at', 
-        'updated_at', 'puerto_conexion', 'factura_individual', 'contrato_permanencia', 'contrato_permanencia_meses', 
+        'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension',
+        'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at',
+        'updated_at', 'puerto_conexion', 'factura_individual', 'contrato_permanencia', 'contrato_permanencia_meses',
         'costo_reconexion', 'tipo_contrato', 'observaciones','tipo_nosuspension','fecha_hasta_nosuspension','fecha_desde_nosuspension'
     ];
-    
+
     protected $appends = ['status'];
 
     public function getStatusAttribute()
@@ -50,28 +51,28 @@ class Contrato extends Model
         }
         return $this->state == 'enabled' ? 'Habilitado' : 'Deshabilitado';
     }
-    
+
     public function cliente(){
         return Contacto::where('id', $this->client_id)->first();
     }
-	
+
 	public function plan($tv = false){
         if($tv){
             return Inventario::find($this->servicio_tv);
         }
 		return PlanesVelocidad::where('id', $this->plan_id)->first();
 	}
-    
+
     public function usado(){
         $tmp        = 0;
         $tmp        += Factura::where('cliente', $this->id)->count();
         return $tmp;
     }
-    
+
     public function servidor(){
         return Mikrotik::find($this->server_configuration_id);
     }
-    
+
     public function conexion(){
         if($this->conexion == 1){
             return 'PPPOE';
@@ -83,7 +84,7 @@ class Contrato extends Model
             return 'VLAN';
         }
     }
-    
+
     public function corte(){
         if($this->fecha_corte == 0 || $this->fecha_corte == '' || $this->fecha_corte == null){
             return 'No Asignada';
@@ -93,11 +94,11 @@ class Contrato extends Model
             return $this->fecha_corte.' de cada mes';
         }
     }
-    
+
     public function pago($id){
         return Ingreso::where('cliente', $id)->where('tipo', 1)->get()->last();
     }
-    
+
     public static function tipos()
     {
         $tipos = array(array('state'=>'enabled', 'nombre'=>'CLIENTES HABILITADOS'), array('state'=>'disabled', 'nombre'=>'CLIENTES DESHABILITADOS'));
@@ -111,29 +112,29 @@ class Contrato extends Model
         }
         return (object) $nuevos;
     }
-    
+
     public function nodo(){
         if($this->nodo){
             return Nodo::find($this->nodo);
         }
         return 'N/A';
     }
-    
+
     public function ap(){
         if($this->ap){
             return AP::find($this->ap);
         }
         return 'N/A';
     }
-    
+
     public function marca_antena(){
         return DB::table('marcas')->where('id', $this->marca_antena)->first();
     }
-    
+
     public function marca_router(){
         return DB::table('marcas')->where('id', $this->marca_router)->first();
     }
-    
+
     public function grupo_corte($class=false){
         if($class){
             $grupo = GrupoCorte::find($this->grupo_corte);
@@ -145,7 +146,7 @@ class Contrato extends Model
         }
         return GrupoCorte::find($this->grupo_corte);
     }
-    
+
     public function plug($class=false){
         if($this->ip){
             $ping = Ping::where('ip', $this->ip)->first();
@@ -228,5 +229,44 @@ class Contrato extends Model
             }
         }
         return $this->contrato_permanencia == 1 ? 'Si' : 'No';
+    }
+
+    // Este metodo devuelve al exportar de contratos los item segun la estructura pedida.
+    public function producto_exportar($name){
+
+        $coleccion = new stdClass;
+        $coleccion->precio = 0;
+        $coleccion->nombre = "";
+
+        if($name == "plan_id" && $this->plan_id != null ){
+            $plan = PlanesVelocidad::Find($this->plan_id);
+
+            if(isset($plan->item)){
+                $item = Inventario::Find($plan->item);
+                $coleccion->precio = $item->precio;
+                $coleccion->nombre =  $plan->name;
+            }
+
+            // return $plan->name . " - $" . number_format($item->precio, 0, ',', '.');
+        }
+        else if($name == "servicio_tv" && $this->servicio_tv != null){
+            $item = Inventario::Find($this->servicio_tv);
+
+            $coleccion->nombre =  $item->producto;
+            $coleccion->precio = $item->precio;
+
+            // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
+        }
+
+        else if($name == "servicio_otro" && $this->servicio_otro != null){
+            $item = Inventario::Find($this->servicio_otro);
+
+            $coleccion->nombre =  $item->producto;
+            $coleccion->precio = $item->precio;
+
+            // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
+        }
+
+        return $coleccion;
     }
 }

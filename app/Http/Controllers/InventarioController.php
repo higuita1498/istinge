@@ -5,15 +5,15 @@ use App\Contacto;
 use App\Empresa;
 use App\Retencion;
 use Illuminate\Http\Request;
-use App\Categoria;  use App\Impuesto;  
+use App\Categoria;  use App\Impuesto;
 use App\CamposExtra;
-use App\Model\Inventario\Inventario; 
+use App\Model\Inventario\Inventario;
 use App\Model\Inventario\Bodega;
-use App\Model\Inventario\ListaPrecios; 
-use App\Model\Inventario\ProductosBodega; 
+use App\Model\Inventario\ListaPrecios;
+use App\Model\Inventario\ProductosBodega;
 use App\Model\Inventario\ProductosPrecios;
 use App\TipoEmpresa;
-use App\TipoIdentificacion; 
+use App\TipoIdentificacion;
 use App\Vendedor;
 use Carbon\Carbon;
 use Image; use File;
@@ -21,26 +21,26 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 use Validator;
 use App\Funcion;
-use Illuminate\Validation\Rule; 
-use Auth; use DB;   
+use Illuminate\Validation\Rule;
+use Auth; use DB;
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel; use PHPExcel_IOFactory; use PHPExcel_Style_Alignment; use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
 use PHPExcel_Style_NumberFormat;
 use ZipArchive;
-use PHPExcel_Shared_ZipArchive; 
+use PHPExcel_Shared_ZipArchive;
 use App\Puc;
 use App\ProductoServicio;
 use App\ProductoCuenta;
 
 class InventarioController extends Controller{
     public $id;
-    
+
     public function __construct() {
         $this->middleware('auth');
         view()->share(['inicio' => 'master', 'seccion' => 'inventario', 'title' => 'Inventario', 'icon' =>'fas fa-boxes', 'subseccion'=>'items_venta']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['invert'=>true]);
@@ -49,26 +49,26 @@ class InventarioController extends Controller{
         $campos=array('', 'ref', 'producto', 'precio', 'disp', 'publico');
         $tabla = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->orderBy('tabla')->get();
         $pagination = 25;
-        
+
         if($request->itemsPage == 2 || $request->itemsPage == 3){
             $pagination = $request->itemsPage == 2 ? 50 : 100;
         }
-        
+
         //Tomo los campos extra
         foreach ($tabla as $key => $value) {
             $campos[]="extr_".$value->campo;
         }
-        
+
         //Si no hay datos registrados
         if (!$request->orderby) {
             $request->orderby=1; $request->order=1;
         }
-        
+
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
-        
+
         $select=array('inventario.*', DB::raw('(SELECT sum(nro) from productos_bodegas WHERE producto=inventario.id) as disp'));
-        
+
         if ($request->lista && $request->lista>1) {
             $precio=ListaPrecios::where('empresa', Auth::user()->empresa)->where('nro', $request->lista)->first();
             $select[]='pp.precio as precio';
@@ -77,10 +77,10 @@ class InventarioController extends Controller{
         }else{
             $productos = Inventario::select($select);
         }
-        
+
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
         $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->whereIn('type',['MATERIAL','MODEMS']);
-        
+
         if ($request->name_1) {
             $busqueda=true; $appends['name_1']=$request->name_1; $productos=$productos->where('inventario.ref', 'like', '%' .$request->name_1.'%');
         }
@@ -96,7 +96,7 @@ class InventarioController extends Controller{
         if ($request->name_5) {
             $busqueda=true; $appends['name_5']=$request->name_5; $productos=$productos->where('publico', $request->name_5);
         }
-        
+
         $cont=6;
         foreach ($tabla as $key => $value) {
             $tite='name_'.$cont;
@@ -107,19 +107,19 @@ class InventarioController extends Controller{
             }
             $cont++;
         }
-        
+
         if(!($request->name_1 || $request->name_2 || $request->name_3 || $request->name_4 || $request->name_5)){
             $productos = $productos->OrderBy('id', 'DESC')->paginate($pagination)->appends($appends);
         }else{
             $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
         }
-        
+
         $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->whereIn('type',['MATERIAL','MODEMS'])->count();
         view()->share(['title' => 'Productos']);
         $type = '';
         return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
-    
+
     public function modems(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['invert'=>true]);
@@ -140,7 +140,7 @@ class InventarioController extends Controller{
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
         $select=array('inventario.*',DB::raw('(SELECT sum(nro) from productos_bodegas WHERE producto=inventario.id) as disp'));
-        
+
         if ($request->lista && $request->lista>1) {
             $precio=ListaPrecios::where('empresa', Auth::user()->empresa)->where('nro', $request->lista)->first();
             $select[]='pp.precio as precio';
@@ -149,7 +149,7 @@ class InventarioController extends Controller{
         }else{
             $productos = Inventario::select($select);
         }
-        
+
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
         $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->where('type','MODEMS');
         if ($request->name_1) {
@@ -167,7 +167,7 @@ class InventarioController extends Controller{
         if ($request->name_5) {
             $busqueda=true; $appends['name_5']=$request->name_5; $productos=$productos->where('publico', $request->name_5);
         }
-        
+
         $cont=6;
         foreach ($tabla as $key => $value) {
             $tite='name_'.$cont;
@@ -183,13 +183,13 @@ class InventarioController extends Controller{
         }else{
             $productos = $productos->OrderBy($orderby, $order)->paginate($pagination)->appends($appends);
         }
-        
+
         $totalProductos= Inventario::where('empresa',Auth::user()->empresa)->where('status',1)->where('type','MODEMS')->count();
         view()->share(['seccion' => 'inventario', 'title' => 'Módems', 'icon' =>'fas fa-boxes', 'subseccion'=>'modems']);
         $type = 'MODEMS';
         return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
-    
+
     public function material(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['invert'=>true]);
@@ -210,7 +210,7 @@ class InventarioController extends Controller{
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
         $select=array('inventario.*',DB::raw('(SELECT sum(nro) from productos_bodegas WHERE producto=inventario.id) as disp'));
-        
+
         if ($request->lista && $request->lista>1) {
             $precio=ListaPrecios::where('empresa', Auth::user()->empresa)->where('nro', $request->lista)->first();
             $select[]='pp.precio as precio';
@@ -219,7 +219,7 @@ class InventarioController extends Controller{
         }else{
             $productos = Inventario::select($select);
         }
-        
+
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
         $productos = $productos->where('inventario.empresa',Auth::user()->empresa)->whereIn('type',['MATERIAL','MODEMS']);
         if ($request->name_1) {
@@ -237,7 +237,7 @@ class InventarioController extends Controller{
         if ($request->name_5) {
             $busqueda=true; $appends['name_5']=$request->name_5; $productos=$productos->where('publico', $request->name_5);
         }
-        
+
         $cont=6;
         foreach ($tabla as $key => $value) {
             $tite='name_'.$cont;
@@ -327,7 +327,7 @@ class InventarioController extends Controller{
         view()->share(['seccion' => 'inventario', 'title' => 'Planes de Televisión', 'icon' =>'fas fa-boxes', 'subseccion'=>'planes_tv']);
         return view('inventario.index1')->with(compact('totalProductos','productos', 'tabla', 'request', 'listas', 'busqueda', 'type'));
     }
-    
+
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
@@ -338,14 +338,14 @@ class InventarioController extends Controller{
         $unidades=DB::table('unidades_medida')->get();
         view()->share(['icon' =>'', 'title' => 'Nuevo Producto']);
         $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
-        
+
         $identificaciones=TipoIdentificacion::all();
         $vendedores = Vendedor::where('empresa',$empresa)->where('estado', 1)->get();
         $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->get();
         $tipos_empresa=TipoEmpresa::where('empresa',$empresa)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         // $cuentas = Puc::where('empresa',$empresa)->where('estatus',1)->get();
-        
+
         //Tomar las categorias del puc que no son transaccionables.
         $cuentas = Puc::where('empresa',$empresa)
         ->where('estatus',1)
@@ -383,7 +383,7 @@ class InventarioController extends Controller{
         $autoRetenciones = Retencion::where('empresa',$empresa)->where('estado',1)->where('modulo',2)->get();
         return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type', 'autoRetenciones'));
     }
-    
+
     public function store(Request $request){
 
         $request->validate([
@@ -391,7 +391,7 @@ class InventarioController extends Controller{
             'impuesto' => 'required|numeric',
             'tipo_producto' => 'required|numeric'
         ]);
-        
+
         if ($request->imagen) {
             $request->validate([
                 //'imagen'=>'mimes:jpeg,jpg,png| max:1000'
@@ -399,7 +399,7 @@ class InventarioController extends Controller{
                 //'imagen.max' => 'El peso máximo para el imagen es de 1000KB',
             ]);
         }
-        
+
         $errors= (object) array();
         if ($request->ref) {
             $error =Inventario::where('ref', $request->ref)->where('empresa',Auth::user()->empresa)->count();
@@ -429,7 +429,7 @@ class InventarioController extends Controller{
         $inventario->link = $request->link;
         $inventario->type_autoretencion = $request->tipo_autoretencion;
         $inventario->save();
-        
+
         if ($request->tipo_producto==1) {
             $request->validate([
                 'unidad' => 'required|exists:unidades_medida,id',
@@ -452,7 +452,7 @@ class InventarioController extends Controller{
             $inventario->costo_unidad=$this->precision($request->costo_unidad);
             $inventario->save();
         }
-        
+
         if ($request->preciolista) {
             foreach ($request->preciolista as $key => $value) {
                 if ($request->preciolistavalor[$key]) {
@@ -484,7 +484,7 @@ class InventarioController extends Controller{
             $pr->tipo = 1;
             $pr->save();
         }
-       
+
         if(isset($request->costo)){
             $pr = new ProductoCuenta;
             $pr->cuenta_id = $request->costo;
@@ -518,7 +518,7 @@ class InventarioController extends Controller{
         }
 
 
-        
+
         $inserts=array();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         foreach ($extras as $campo) {
@@ -531,13 +531,13 @@ class InventarioController extends Controller{
                 $inserts[]=$insert;
             }
         }
-        
+
         if (count($inserts)>0) {
             DB::table('inventario_meta')->insert($inserts);
         }
-        
+
         //-----------------------LIBRERIA INVENTORY IMAGE-------------------------------//
-        if($request->imagen) {       
+        if($request->imagen) {
             $imagen = $request->file('imagen');
             $nombre_imagen = $inventario->id.'.'.$imagen->getClientOriginalExtension();
             $imagen = Image::make($imagen);
@@ -554,18 +554,18 @@ class InventarioController extends Controller{
                 $imagen->resize(1000,1000,function($constraint){$constraint->aspectRatio();})->save($path.'/'.$nombre_imagen);
                 $inventario->imagen=$nombre_imagen;
                 $inventario->save();
-            }else{ 
+            }else{
                 $imagen->save($path.'/'.$nombre_imagen);
                 $inventario->imagen=$nombre_imagen;
                 $inventario->save();
             }
         }
-        
+
         if ($request->imagenes_extra) {
             foreach ($request->file('imagenes_extra') as $key => $imagen_ex) {
                 $nombre_imagen = time().random_int(1000, 99999).'.'.$imagen_ex->getClientOriginalExtension();
                 $imagen_extra = Image::make($imagen_ex);
-                $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa.'/inventario/'.$inventario->id; 
+                $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa.'/inventario/'.$inventario->id;
                 if(!File::exists($path)) {
                     File::makeDirectory($path);
                 }
@@ -575,14 +575,14 @@ class InventarioController extends Controller{
                 }else{
                     $imagen_extra->save($path.'/'.$nombre_imagen);
                 }
-                
+
                 DB::table('imagenesxinventario')->insert(
                     ['producto' => $inventario->id, 'imagen' => $nombre_imagen, 'created_at'=>Carbon::now()]
                 );
-            }   
+            }
         }
         //----------------------/LIBRERIA INVENTORY IMAGE-------------------------------//
-        
+
         $mensaje='Registro creado satisfactoriamente el producto';
         if($inventario->type == 'TV'){
             return redirect('empresa/inventario/television')->with('success', 'Se ha registrado satisfactoriamente el plan de televisión')->with('producto_id', $inventario->id);
@@ -596,10 +596,10 @@ class InventarioController extends Controller{
             return redirect('empresa/inventario/modem')->with('success', $mensaje)->with('producto_id', $inventario->id);
         }
     }
-  
+
     public function storeBack(Request $request){
         $preApp = $request->toUrl != '' ? $request->toUrl : false;
-        
+
         $request->validate([
             'producto' => 'required',
             'categoria' => 'required|exists:categorias,id',
@@ -613,9 +613,9 @@ class InventarioController extends Controller{
                 //'imagen.max' => 'El peso máximo para el imagen es de 1000KB',
             ]);
         }
-        
+
         $errors= (object) array();
-        
+
         if ($request->ref) {
             $error =Inventario::where('ref', $request->ref)->where('empresa',Auth::user()->empresa)->count();
             if ($error>0) {
@@ -625,7 +625,7 @@ class InventarioController extends Controller{
                 exit;
             }
         }
-        
+
         $impuesto = Impuesto::where('id', $request->impuesto)->first();
         $inventario = new Inventario;
         $inventario->empresa=Auth::user()->empresa;
@@ -644,7 +644,7 @@ class InventarioController extends Controller{
         $inventario->categoria=$request->categoria;
         $inventario->lista = 0;
         $inventario->save();
-        
+
         if ($request->tipo_producto==1) {
             $request->validate([
                 'unidad' => 'required|exists:unidades_medida,id',
@@ -665,7 +665,7 @@ class InventarioController extends Controller{
             $inventario->costo_unidad=$this->precision($request->costo_unidad);
             $inventario->save();
         }
-        
+
         if ($request->preciolista) {
             foreach ($request->preciolista as $key => $value) {
                 if ($request->preciolistavalor[$key]) {
@@ -678,7 +678,7 @@ class InventarioController extends Controller{
                 }
             }
         }
-        
+
         $inserts=array();
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         foreach ($extras as $campo) {
@@ -688,14 +688,14 @@ class InventarioController extends Controller{
                 $inserts[]=$insert;
             }
         }
-        
+
         if (count($inserts)>0) {
             DB::table('inventario_meta')->insert($inserts);
         }
-        
+
         $productId = Inventario::all()->last()->id;
         $product   = Inventario::all()->last()->producto;
-        
+
         if($preApp != false){
             //return redirect()->to($preApp.'?'.http_build_query(['pro' => $product]));
             $arrayPost['status']  = 'error';
@@ -721,7 +721,7 @@ class InventarioController extends Controller{
         ->where('empresa',Auth::user()->empresa)
         ->where('status', 1)->get();
         $bodegas = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        
+
         $retenciones = Retencion::where('empresa',Auth::user()->empresa)->where('modulo',1)->get();
         $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
@@ -745,14 +745,14 @@ class InventarioController extends Controller{
         $vendedores2 = $dataPro->vendedores;
         $producto = Inventario::where('id',$item)->where('empresa',Auth::user()->empresa)->first();
         $proveedor=false;
-        
+
         view()->share(['icon' =>'', 'title' => 'Nueva Factura de Compra', 'subseccion' => 'facturas_proveedores']);
         return view('facturasp.create')->with(compact('inventario', 'bodegas', 'clientes', 'impuestos', 'categorias', 'retenciones',
         'proveedor', 'producto','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas',
         'categorias2', 'unidades2','medidas2', 'impuestos2', 'extras2', 'listas2', 'bodegas2', 'identificaciones2',
         'tipos_empresa2', 'prefijos2', 'vendedores2'));
     }
-    
+
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
@@ -763,7 +763,7 @@ class InventarioController extends Controller{
         }
         return redirect('empresa/inventario')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
@@ -779,7 +779,7 @@ class InventarioController extends Controller{
         ->get();
 
         $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
-        
+
         if ($inventario) {
             $categorias=Categoria::where('empresa',$empresa)->whereNull('asociado')->get();
             $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
@@ -790,7 +790,7 @@ class InventarioController extends Controller{
         }
         return redirect('empresa/inventario')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function update(Request $request, $id){
 
         $inventario =Inventario::find($id);
@@ -808,7 +808,7 @@ class InventarioController extends Controller{
                     return back()->withErrors($errors)->withInput();
                 }
             }
-            
+
             //----------------------LIBRERIA INVENTORY IMAGE-------------------------------//
             if ($request->file('imagen')) {
                 $request->validate([
@@ -831,14 +831,14 @@ class InventarioController extends Controller{
                     $imagen = $request->file('imagen');
                     $nombre_imagen = $inventario->id.'.'.$imagen->getClientOriginalExtension();
                     $imagen = Image::make($imagen);
-                    
+
                     $request->imagen=$nombre_imagen;
                     $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa.'/inventario';
-                    
+
                     if (!File::exists($path)) {
                         File::makeDirectory($path);
                     }
-                    
+
                     if ($imagen->filesize() > 200000) {
                         $request->imagen = $nombre_imagen;
                         $path = public_path() . '/images/Empresas/Empresa' . Auth::user()->empresa . '/inventario';
@@ -856,11 +856,11 @@ class InventarioController extends Controller{
                 }
             }
             //----------------------/LIBRERIA INVENTORY IMAGE-------------------------------//
-            
+
             if(isset($request->publico)){
                 $inventario->publico=$request->publico;
             }
-            
+
             $monto = str_replace('.','',$request->precio);
             $monto = str_replace(',','.',$monto);
             $impuesto = Impuesto::where('id', $request->impuesto)->first();
@@ -878,7 +878,7 @@ class InventarioController extends Controller{
             $inventario->type = $request->type;
             $inventario->type_autoretencion = $request->tipo_autoretencion;
             $inventario->save();
-            
+
             if ($request->tipo_producto==1) {
                 $request->validate([
                     'unidad' => 'required|exists:unidades_medida,id',
@@ -912,9 +912,9 @@ class InventarioController extends Controller{
             }else{
                 ProductosPrecios::where('empresa', Auth::user()->empresa)->where('producto', $inventario->id)->delete();
             }
-            
+
             $services = array();
-            
+
             if(isset($request->inventario)){
                 array_push($services,$request->inventario);
             }
@@ -926,7 +926,7 @@ class InventarioController extends Controller{
             if(isset($request->venta)){
                 array_push($services,$request->venta);
             }
-            
+
             if(isset($request->devolucion)){
                 array_push($services,$request->devolucion);
             }
@@ -949,7 +949,7 @@ class InventarioController extends Controller{
                     if(!DB::table('producto_cuentas')->
                     where('cuenta_id',$key)->
                     where('inventario_id',$inventario->id)->first()){
-                        
+
                         $idCuentaPro = DB::table('producto_cuentas')->insertGetId([
                             'cuenta_id' => $key,
                             'inventario_id' => $inventario->id
@@ -1018,7 +1018,7 @@ class InventarioController extends Controller{
                     }
                 }
             }
-            
+
             if ($request->tipo_producto==1) {
                 $request->validate([
                     'unidad' => 'required|exists:unidades_medida,id',
@@ -1041,7 +1041,7 @@ class InventarioController extends Controller{
                 $inventario->costo_unidad=$this->precision($request->costo_unidad);
                 $inventario->save();
             }
-            
+
             $inserts=array();
             if ($request->tipo_producto==1) {
                 $request->validate([
@@ -1075,7 +1075,7 @@ class InventarioController extends Controller{
                     ProductosBodega::where('empresa', Auth::user()->empresa)->where('producto', $inventario->id)->delete();
                 }
             }
-            
+
             $inserts=array();
             $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
             foreach ($extras as $campo) {
@@ -1088,7 +1088,7 @@ class InventarioController extends Controller{
                     $inserts[]=$insert;
                 }
             }
-            
+
             if (count($inserts)>0) {
                 DB::table('inventario_meta')->insert($inserts);
             }
@@ -1098,7 +1098,7 @@ class InventarioController extends Controller{
         }
         return redirect('empresa/inventario/')->with('success', 'Se ha modificado satisfactoriamente el producto');
     }
-    
+
     public function json($id=false, Request $request){
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
         if (!$bodega) {
@@ -1113,13 +1113,13 @@ class InventarioController extends Controller{
                 }
             }
         }
-        
+
         if (!$id) {
             $inventario =Inventario::select($select)->where('status',1)->where('empresa',Auth::user()->empresa);
             if ($request->inventariables) {
-                $inventario=$inventario->where('inventario.tipo_producto', 1);
+                $inventario=$inventario->whereIn('inventario.tipo_producto', [1,2]);
             }
-            $inventario=$inventario->havingRaw('if(inventario.tipo_producto=1, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')->orderBy('id','DESC')->get();
+            $inventario=$inventario->havingRaw('if(inventario.tipo_producto=1 or inventario.tipo_producto=2, id in (Select producto from productos_bodegas where bodega='.$bodega->id.'), true)')->orderBy('id','DESC')->get();
             if ($inventario) {
                 foreach ($inventario as $key => $item) {
                     $item->precio=$this->precision($item->precio);
@@ -1141,19 +1141,19 @@ class InventarioController extends Controller{
             }
         }
     }
-    
+
     public function importar(){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Importar Inventario desde Excel']);
         return view('inventario.importar');
     }
-    
+
     public function actualizar(){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Actualizar Inventario desde Excel']);
         return view('inventario.actualizar');
     }
-    
+
     public function imagenes(Request $request, $id){
         //----------------------LIBRERIA INVENTORY IMAGE-------------------------------//
         $inventario =Inventario::find($id);
@@ -1162,20 +1162,20 @@ class InventarioController extends Controller{
                 $imagen = $request->file('file');
                 $nombre_imagen = time().random_int(1000, 99999).'.'.$imagen->getClientOriginalExtension();
                 $imagen_extra = Image::make($imagen);
-                
+
                 $request->imagen=$nombre_imagen;
                 $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa.'/inventario/'.$id;
-                
+
                 if ($imagen_extra->filesize() > 200000) {
                     $imagen_extra->resize(1000,1000,function($constraint){$constraint->aspectRatio();})->save($path.'/'.$nombre_imagen);
                     $imagen_extra->save($path.'/'.$nombre_imagen);
-                }else{ 
+                }else{
                     $imagen->move($path,$nombre_imagen);
                     //$imagen_extra->save($path.'/'.$nombre_imagen);
                 }
-                
+
                 //$imagen->move($path,$nombre_imagen);
-                
+
                 DB::table('imagenesxinventario')->insert(
                     ['producto' => $id, 'imagen' => $nombre_imagen, 'created_at'=>Carbon::now()]);
             }else{
@@ -1189,7 +1189,7 @@ class InventarioController extends Controller{
         }
         //----------------------/LIBRERIA INVENTORY IMAGE-------------------------------//
     }
-    
+
     public function ejemplo(){
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Inventario de ".Auth::user()->empresa()->nombre;
@@ -1201,7 +1201,7 @@ class InventarioController extends Controller{
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $totalcolumnas = count($titulosColumnas);
         $totalcolumnas = $letras[$totalcolumnas-1];
-        
+
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
         ->setTitle("Reporte Excel Inventario") // Titulo
@@ -1219,16 +1219,16 @@ class InventarioController extends Controller{
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
         $objPHPExcel->getActiveSheet()->getStyle('A1:'.$totalcolumnas.'3')->applyFromArray($estilo);
-        
+
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
         $objPHPExcel->getActiveSheet()->getStyle('A3:'.$totalcolumnas.'3')->applyFromArray($estilo);
-        
+
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
         }
-        
+
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
                 'allborders' => array(
@@ -1236,11 +1236,11 @@ class InventarioController extends Controller{
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
         $objPHPExcel->getActiveSheet()->getStyle('A3:'.$totalcolumnas.$i)->applyFromArray($estilo);
-        
+
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
         }
-        
+
         // Se asigna el nombre a la hoja
         $objPHPExcel->getActiveSheet()->setTitle('Reporte de Inventario');
         // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
@@ -1258,14 +1258,14 @@ class InventarioController extends Controller{
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function cargando(Request $request){
         $request->validate([
             'archivo' => 'required',
         ],[
             'archivo.mimes' => 'El archivo debe ser de extensión xlsx'
         ]);
-        
+
         if(isset($request->publico)){
             $publico=$request->publico;
         }
@@ -1284,7 +1284,7 @@ class InventarioController extends Controller{
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $lista = '';
-        
+
         for ($row = 4; $row <= $highestRow; $row++){
             $request= (object) array();
             $error= (object) array();
@@ -1301,7 +1301,7 @@ class InventarioController extends Controller{
                     $error->ref='El código de referencia ya se encuentra registrado para otro producto';
                 }
             }
-            
+
             $request->categoria=$sheet->getCell("C".$row)->getValue();
             if (!$request->categoria) {
                 $error->categoria="El campo Categoria es obligatorio";
@@ -1311,7 +1311,7 @@ class InventarioController extends Controller{
                     $error->categoria='La categoria '.$request->categoria.' no esta registrada en sus categorias';
                 }
             }
-            
+
             $request->precio=$sheet->getCell("E".$row)->getValue();
             $request->costo_unidad=$sheet->getCell("F".$row)->getValue();
             $request->cant=$sheet->getCell("G".$row)->getValue();
@@ -1321,7 +1321,7 @@ class InventarioController extends Controller{
             if ($request->costo_unidad && (!$request->cant && $request->cant != 0 )) {
                 $error->cant="Agregaste Costo Unitario pero no Cantidad Inicial";
             }
-            
+
             $request->bodega=$sheet->getCell("J".$row)->getValue();
             if ($request->bodega){
                 $bodega = Bodega::where('bodega','like', '%' . $request->bodega.'%'  )->where('empresa',Auth::user()->empresa)->where('status', 1)->first();
@@ -1329,7 +1329,7 @@ class InventarioController extends Controller{
                     $error->bodegas="No hay una bodega registrada para guadar los productos inventariables";
                 }
             }
-            
+
             $letra=10;
             foreach ($extras as $campo) {
                 $letra=$letra+1;
@@ -1339,7 +1339,7 @@ class InventarioController extends Controller{
                     $error->$campo="El campo ".$campo->nombre." es obligatorio";
                 }
             }
-            
+
             if (count((array) $error)>0) {
                 $fila["error"]='FILA '.$row;
                 $error=(array) $error;
@@ -1351,7 +1351,7 @@ class InventarioController extends Controller{
                 return back()->withErrors($result)->withInput();
             }
         }
-        
+
         for ($row = 4; $row <= $highestRow; $row++){
             $nombre=$sheet->getCell("A".$row)->getValue();
             if (empty($nombre)) {
@@ -1373,21 +1373,21 @@ class InventarioController extends Controller{
                     }
                 }
             }
-            
+
             $nombreLista = mb_strtolower($request->lista=$sheet->getCell("K".$row)->getValue());
-            
+
             if($nombreLista == 'mas vendidos'){$lista = 1;}
             elseif($nombreLista == 'recientes'){$lista = 2;}
             elseif($nombreLista == 'oferta'){$lista = 3;}
             else{$lista = 0;}
-            
+
             if (!$impuesto) {
                 $impuesto = Impuesto::where('id', 0)->first();
             }
-            
+
             $request->categoria=$sheet->getCell("C".$row)->getValue();
             $categoria=Categoria::where('empresa',Auth::user()->empresa)->where('nombre', 'like', $request->categoria)->first();
-            
+
             $inventario = new Inventario;
             $inventario->empresa=Auth::user()->empresa;
             $inventario->producto=ucwords(mb_strtolower($nombre));
@@ -1406,7 +1406,7 @@ class InventarioController extends Controller{
             }
             $inventario->type='MATERIAL';
             $inventario->save();
-            
+
             if ($costo_unidad && $cant) {
                 $registro = new ProductosBodega;
                 $registro->empresa=Auth::user()->empresa;
@@ -1420,7 +1420,7 @@ class InventarioController extends Controller{
                 $inventario->tipo_producto=1;
                 $inventario->save();
             }
-            
+
             $letra=10;
             $inserts=array();
             foreach ($extras as $campo) {
@@ -1430,14 +1430,14 @@ class InventarioController extends Controller{
                 $insert=array('empresa'=>Auth::user()->empresa, 'id_producto'=>$inventario->id, 'meta_key'=>$campo->campo, 'meta_value'=>$request->$extra);
                 $inserts[]=$insert;
             }
-            
+
             if (count($inserts)>0) {
                 DB::table('inventario_meta')->insert($inserts);
             }
         }
         return redirect('empresa/inventario/importar')->with('success', 'Se ha cargado satisfactoriamente los productos');
     }
-    
+
     public function exportar(){
         error_reporting(E_ALL);
         ini_set('display_errors', '1');
@@ -1496,11 +1496,11 @@ class InventarioController extends Controller{
                             meta.meta_key,
                             meta.meta_value,
                             (
-                              SELECT 
-                                SUM(nro) 
-                              FROM 
-                                productos_bodegas 
-                              where 
+                              SELECT
+                                SUM(nro)
+                              FROM
+                                productos_bodegas
+                              where
                                 empresa= inv.empresa AND producto = inv.id
                             ) AS inventario,
                             catg.nombre AS catg,
@@ -1564,7 +1564,7 @@ class InventarioController extends Controller{
             }
             $i++;
         }
-        
+
         $estilo = array('font' => array('size' => 12, 'name' => 'Times New Roman'),
             'borders' => array(
                 'allborders' => array(
@@ -1572,7 +1572,7 @@ class InventarioController extends Controller{
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
         $objPHPExcel->getActiveSheet()->getStyle('A3:' . $totalcolumnas . $i)->applyFromArray($estilo);
-        
+
         for ($i = 'A'; $i <= $letras[20]; $i++) {
             if ($i == 'B' || $i == 'E') {
                 $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(80);
@@ -1580,13 +1580,13 @@ class InventarioController extends Controller{
                 $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
             }
         }
-        
+
         // Se asigna el nombre a la hoja
         $objPHPExcel->getActiveSheet()->setTitle('Reporte de Inventario');
-        
+
         // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
         $objPHPExcel->setActiveSheetIndex(0);
-        
+
         // Inmovilizar paneles
         $objPHPExcel->getActiveSheet(0)->freezePane('A4');
         $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 5);
@@ -1600,7 +1600,7 @@ class InventarioController extends Controller{
         $objWriter->save('php://output');
         exit;
     }
-    
+
     public function actualizando(Request $request){
         $request->validate([
             'archivo' => 'required',
@@ -1612,7 +1612,7 @@ class InventarioController extends Controller{
                 $publico=$request->publico;
             }
         }
-        
+
         $imagen = $request->file('archivo');
         $nombre_imagen = 'archivo.'.$imagen->getClientOriginalExtension();
         $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa;
@@ -1628,7 +1628,7 @@ class InventarioController extends Controller{
         $extras = CamposExtra::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $cont = 0;
-        
+
         for ($row = 4; $row <= $highestRow; $row++){
             $cont++;
             $request= (object) array();
@@ -1641,16 +1641,16 @@ class InventarioController extends Controller{
             if (!$inv) {
                 $error->codigo='El campo Código no coincide con los registros';
             }
-            
+
             if($cont == 500){
                 $erro = "Solo puede actualizar 500 items por archivo";
             }
-            
+
             $request->producto=$sheet->getCell("B".$row)->getValue();
             if (!$request->producto) {
                 $error->producto="El campo Nombre es obligatorio";
             }
-            
+
             $request->ref=$sheet->getCell("C".$row)->getValue();
             if (!$request->ref) {
                 $error->ref="El campo Referencia es obligatorio";
@@ -1660,7 +1660,7 @@ class InventarioController extends Controller{
                     $error->ref='El código de referencia ya se encuentra registrado para otro producto';
                 }
             }
-            
+
             $request->categoria=$sheet->getCell("D".$row)->getValue();
             if (!$request->categoria) {
                 $error->categoria="El campo Categoria es obligatorio";
@@ -1670,12 +1670,12 @@ class InventarioController extends Controller{
                     $error->categoria='La categoria '.$request->categoria.' no esta registrada en sus categorias';
                 }
             }
-            
+
             $request->precio=$sheet->getCell("F".$row)->getValue();
             if (!$request->precio) {
                 $error->precio="El campo Precio es obligatorio";
             }
-            
+
             $request->costo_unidad=$sheet->getCell("G".$row)->getValue();
             $request->cant=$sheet->getCell("H".$row)->getValue();
             if (!$request->costo_unidad && (!$request->cant && $request->cant != 0 )) {
@@ -1690,7 +1690,7 @@ class InventarioController extends Controller{
                     $error->bodegas="No hay una bodega registrada para guadar los productos inventariables";
                 }
             }
-            
+
             $letra=9;
             foreach ($extras as $campo) {
                 $letra=$letra+1;
@@ -1700,7 +1700,7 @@ class InventarioController extends Controller{
                     $error->$campo="El campo ".$campo->nombre." es obligatorio";
                 }
             }
-            
+
             if (count((array) $error)>0) {
                 $fila["error"]='FILA '.$row;
                 $error=(array) $error;
@@ -1712,9 +1712,9 @@ class InventarioController extends Controller{
                 return back()->withErrors($result)->withInput();
             }
         }
-        
+
         $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
-        
+
         for ($row = 4; $row <= $highestRow; $row++){
             $codigo=$sheet->getCell("A".$row)->getValue();
             if (empty($codigo)) {
@@ -1739,7 +1739,7 @@ class InventarioController extends Controller{
             if (!$impuesto) {
                 $impuesto = Impuesto::where('id', 0)->first();
             }
-            
+
             $request->categoria=$sheet->getCell("D".$row)->getValue();
             $categoria=Categoria::where('empresa',Auth::user()->empresa)->where('nombre', 'like', $request->categoria)->first();
             $inventario =Inventario::find($codigo);
@@ -1774,7 +1774,7 @@ class InventarioController extends Controller{
                 $registro->inicial=$cant;
                 $registro->nro=$cant;
                 $registro->save();
-                
+
                 $inventario->costo_unidad=$this->precision($costo_unidad);
                 $inventario->unidad=1;
                 $inventario->tipo_producto=1;
@@ -1807,7 +1807,7 @@ class InventarioController extends Controller{
         }
         return redirect('empresa/inventario/actualizar')->with('success', 'Se ha modificado satisfactoriamente los productos');
     }
-    
+
     public function destroy($id, Request $request){
         $inventario =Inventario::find($id);
         if ($inventario) {
@@ -1818,14 +1818,14 @@ class InventarioController extends Controller{
                         unlink($path);
                     }
                 }
-                
+
                 ProductosBodega::where('empresa', Auth::user()->empresa)->where('producto', $inventario->id)->delete();
                 $inventario->delete();
             }
         }
         return back()->with('success', 'Se ha eliminado el producto');
     }
-    
+
     public function publicar($id){
         $inventario =Inventario::find($id);
         if ($inventario) {
@@ -1841,7 +1841,7 @@ class InventarioController extends Controller{
         }
         about(404);
     }
-    
+
     public function act_desc($id){
         $inventario =Inventario::where('id',$id)->where('empresa',Auth::user()->empresa)->first();
         if ($inventario) {
@@ -1873,7 +1873,7 @@ class InventarioController extends Controller{
             h.empresa = 1 or p.id IS NULL
             GROUP BY
             h.id_producto");
-        
+
         foreach($metas as $meta){
             $cont++;
             if($meta->id == null){
@@ -1882,7 +1882,7 @@ class InventarioController extends Controller{
             }else{
                 $nombre = $meta->producto;
             }
-            echo $cont.'----'.$meta->id_producto.'---'. $nombre .'</br>';  
+            echo $cont.'----'.$meta->id_producto.'---'. $nombre .'</br>';
         }
     }
 

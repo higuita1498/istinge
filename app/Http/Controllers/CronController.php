@@ -275,6 +275,7 @@ class CronController extends Controller
                                         }
 
                                         foreach($contratos_multiples as $cm){
+
                                             ## Se carga el item a la factura (Plan de Internet) ##
                                             if($contrato->plan_id){
                                                 $plan = PlanesVelocidad::find($cm->plan_id);

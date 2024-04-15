@@ -554,7 +554,7 @@
 
         <!-- plugins:js -->
         <script src="{{asset('vendors/js/vendor.bundle.base.js')}}"></script>
-        <script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script>
+        {{-- <script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script> --}}
         <!-- endinject -->
         <!-- Plugin js for this page-->
         <!-- End plugin js for this page-->
