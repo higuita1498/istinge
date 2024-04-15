@@ -1663,6 +1663,7 @@ class Controller extends BaseController
     }
 
     public function getIps($mikrotik){
+        dd("hola estoy pidiendo las ips");
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
 
         $mikrotik = Mikrotik::find($mikrotik);
