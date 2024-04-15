@@ -1664,7 +1664,7 @@ class Controller extends BaseController
 
     public function getIps($mikrotik){
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
-
+        dd($ips);
         $mikrotik = Mikrotik::find($mikrotik);
         if ($mikrotik) {
             $API = new RouterosAPI();
@@ -1675,7 +1675,7 @@ class Controller extends BaseController
                 $READ = $API->read(false);
                 $ARRAY = $API->parseResponse($READ);
                 $API->disconnect();
-                dd($ARRAY);
+
                 foreach ($ARRAY as $i => $value) { unset($ARRAY[$i]['name']); }
 
                 // Se estaba generando el problema de que la codificación del
