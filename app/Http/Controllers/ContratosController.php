@@ -2243,7 +2243,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[22].$i, $contrato->iva_factura == null || $contrato->iva_factura == 0 ? 'No' : 'Si')
                 ->setCellValue($letras[23].$i, $contrato->descuento != null ? $contrato->descuento . '%' : '0%' )
                 ->setCellValue($letras[24].$i, isset($plan->nombre) ? $plan->nombre : '')
-                ->setCellValue($letras[25].$i, isset($plan->nombre) ? number_format($plan->precio, 3, ',', '.') : '')
+                ->setCellValue($letras[25].$i, isset($plan->nombre) ? number_format($plan->precio, 0, ',', '.') : '')
                 ->setCellValue($letras[26].$i, isset($servicio->nombre) ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
                 ->setCellValue($letras[27].$i, isset($servicio_otro->nombre) ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
                 ;
