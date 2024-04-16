@@ -2215,6 +2215,7 @@ class ContratosController extends Controller
             $servicio_otro = $contrato->producto_exportar('servicio_otro');
 
             isset($plan->precio) ? $totalPlan+=$plan->precio : '';
+            $plan->precio=  round($plan->precio);
             isset($servicio->precio) ? $totalServicio+=$servicio->precio : '';
             isset($servicio_otro->precio) ? $totalServicioOtro+=$servicio_otro->precio : '';
 
