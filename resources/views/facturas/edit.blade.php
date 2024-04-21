@@ -56,12 +56,12 @@
                     </div>
 
             {{-- Nuevo desarrollo de contratos. --}}
-            @if(count($contratos) > 0 && isset($contratosFacturas))
+            @if(count($contratos) > 0)
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Contrato <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
                 <div class="input-group">
-                    <select class="form-control selectpicker" name="contratos_json" id="contratos_json" required=""
+                    <select class="form-control selectpicker" name="contratos_json" id="contratos_json"
                     title="Seleccione un contrato" data-live-search="true" data-size="5"
                     onchange="rowItemsContrato(this.value)"
                     >

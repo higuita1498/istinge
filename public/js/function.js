@@ -715,7 +715,6 @@ function rowItemsContrato(contrato){
                 let arrayContratos = []
                 eliminarTodaFila()
                 data.data.map(item => {
-                    alert("okoko1");
                     createRow()
 
                     $('#item' + it).val(item.id).selectpicker('refresh')
@@ -1589,7 +1588,6 @@ function cambiar_bodega() {
                 Eliminar(id);
             });
             for (var i = 1; i <= count; i++) {
-                alert("okoko3");
                 createRow();
             }
             totalall();
