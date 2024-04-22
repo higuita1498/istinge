@@ -534,11 +534,10 @@
                 </tr>
                 <tr class="tr-estadocuenta-precio">
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                {{-- <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td> --}}
-                <td><li>$0</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
-                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->total)}}</li></td>
                 </tr>
                 </tbody>
                 </table>
@@ -614,24 +613,21 @@
 
            <div class="div-content-border">
             <div>
-                <table style="width:100%;margin:5px;">
+               <table style="width:100%;margin:5px;">
                 <tbody>
                 <tr class="tr-estadocuenta">
                 <td><li style="background-color:#f6c009;">SALDO MES ANTERIOR</li></td>
                 <td><li style="background-color:#6cad40;">SALDO MES ACTUAL</li></td>
                 <td><li style="background-color:#589cdc;">EQUIPO / CUOTA </li></td>
                 <td><li style="background-color:#ccc;">SERVICIO ADICIONAL</li></td>
-                <td><li style="background-color:#fb0404;">RECONEXION</li></td>
                 <td><li style="background-color:#6cad40;">TOTAL</li></td>
                 </tr>
                 <tr class="tr-estadocuenta-precio">
                 <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesAnterior)}}</li></td>
-                {{-- <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td> --}}
-                <td><li>$0</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->saldoMesActual)}}</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
                 <td><li>{{$empresa->moneda}} 0</li></td>
-                <td><li>{{$empresa->moneda}} 0</li></td>
-                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</li></td>
+                <td><li>{{$empresa->moneda}} {{App\Funcion::Parsear($factura->estadoCuenta()->total)}}</li></td>
                 </tr>
                 </tbody>
                 </table>

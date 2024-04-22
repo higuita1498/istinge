@@ -32,9 +32,9 @@
 		    	<optgroup label="Manual">
 				    <option value="7">Manual</option>
 			  	</optgroup>
-               <optgroup label="Todas">
+               {{-- <optgroup label="Todas">
                     <option value="8">Todas</option>
-                </optgroup>
+                </optgroup> --}}
 		    </select>
 	  	</div>
 	  	<div class="form-group col-md-4">

@@ -864,9 +864,10 @@ public function forma_pago()
 
         $estadoCuenta = array('saldoMesAnterior' => 0, 'saldoMesActual' => 0, 'equipoCuota' => 0, 'servicioAdicional' => 0, 'total' => 0);
 
-        $fechaActual = date("Y-m-d", strtotime(Carbon::now()));
+        $fechaActual = $this->fecha;
         $saldoMesAnterior=0;
         $saldoMesActual=0;
+        $total = 0;
 
         /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Anterior <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -881,8 +882,8 @@ public function forma_pago()
         $estadoCuenta['saldoMesAnterior'] = $saldoMesAnterior;
 
         /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Actual <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-
-        $facturasActuales = Factura::where('cliente',$this->cliente)->where('vencimiento','>',$fechaActual)->where('estatus','!=',2)->get();
+        $facturasActuales = Factura::where('id',$this->id)->get();
+        // $facturasActuales = Factura::where('cliente',$this->cliente)->where('vencimiento','>',$fechaActual)->where('estatus','!=',2)->get();
 
         //sumamos todo lo que deba el cliente despues de la fecha de vencimiento
         foreach($facturasActuales as $actual){
@@ -890,6 +891,7 @@ public function forma_pago()
         }
 
         $estadoCuenta['saldoMesActual'] = $saldoMesActual;
+        $estadoCuenta['total'] = $saldoMesActual + $saldoMesAnterior;
 
         return (object) $estadoCuenta;
     }

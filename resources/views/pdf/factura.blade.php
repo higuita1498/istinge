@@ -168,7 +168,7 @@
                         - {{$factura->cliente()->dv }}
                     @endif</td>
                 <td class="center" style="border-right: 2px solid #ccc;">{{--{{date('d/m/Y', strtotime($factura->fecha))}}--}}{{Carbon\Carbon::parse($factura->fecha)->format('d/m/Y')}}</td>
-                
+
             </tr>
             <tr>
                 <th class="right smalltd">CIUDAD</th>
@@ -277,9 +277,9 @@
                 </tr>
             </tfoot>
         </table>
-        
+
         @if(isset($codqr))
-    <p style="font-size:7px;margin-top:-20px;"><strong>cufe: </strong>{{$CUFEvr}}</p> 
+    <p style="font-size:7px;margin-top:-20px;"><strong>cufe: </strong>{{$CUFEvr}}</p>
     @endif
 
         <p style="text-align: justify;" class="small">{{$resolucion->resolucion}}</p>
@@ -300,7 +300,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <div id="watermark">{{$factura->estatus==2?'ANULADA':''}}</div>
 @endsection

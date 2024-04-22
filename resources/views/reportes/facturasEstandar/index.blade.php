@@ -8,7 +8,7 @@
 
 
 	<div class="row card-description">
-	
+
 		<div class="form-group col-md-2">
 		    <label></label>
 		    <select class="form-control selectpicker" name="fechas" id="fechas">
@@ -26,9 +26,9 @@
 		    	<optgroup label="Manual">
 				    <option value="7">Manual</option>
 			  	</optgroup>
-               <optgroup label="Todas">
+               {{-- <optgroup label="Todas">
                     <option value="8">Todas</option>
-                </optgroup>
+                </optgroup> --}}
 		    </select>
 	  	</div>
           <div class="form-group col-md-2">
