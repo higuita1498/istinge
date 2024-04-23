@@ -284,7 +284,7 @@ class CRMController extends Controller
         ));
 
         $response = curl_exec($curl);
-        dd($response);
+
         curl_close($curl);
 
        /* $unique = uniqid();
@@ -655,6 +655,7 @@ class CRMController extends Controller
                 # code...
                 break;
         }*/
+        dd("has enviado el mensaje");
     }
 
     public function carteraContacto($contacto, Request $request){
