@@ -285,9 +285,26 @@ class CRMController extends Controller
             ),
         ));
 
-        $response = curl_exec($curl);
-        dd($response);
-        curl_close($curl);
+        // Ejecuta la solicitud cURL
+            $response = curl_exec($curl);
+
+            // Verifica el cÃ³digo de respuesta HTTP
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+
+            // Maneja la respuesta (puedes hacer mÃ¡s aquÃ­ segÃºn tus necesidades)
+            $result = array(
+                'success' => $httpCode == 201,
+                'message' => $httpCode == 201 ? 'Mensaje enviado correctamente' : 'Error al enviar el mensaje. CÃ³digo de respuesta: ' . $httpCode
+            );
+
+            // EnvÃ­a la respuesta como JSON
+            echo json_encode($result);
+
+            // Detiene la ejecuciÃ³n del script despuÃ©s de enviar la respuesta JSON
+            exit();
+
 
        /* $unique = uniqid();
         DB::table("instancia")
