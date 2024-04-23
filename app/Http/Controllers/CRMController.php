@@ -286,7 +286,7 @@ class CRMController extends Controller
         ));
 
         $response = curl_exec($curl);
-
+        dd($response);
         curl_close($curl);
 
        /* $unique = uniqid();
