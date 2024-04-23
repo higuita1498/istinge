@@ -239,7 +239,7 @@ class CRMController extends Controller
         return [$chats,$users];
     }
     public function whatsapp(Request $request){
-        dd("hola quieres enviar factura");
+
         $this->getAllPermissions(Auth::user()->id);
         $instancia = DB::table("instancia")
                             ->first();
