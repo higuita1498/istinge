@@ -239,7 +239,6 @@ class CRMController extends Controller
         return [$chats,$users];
     }
     public function whatsapp(Request $request){
-
         $this->getAllPermissions(Auth::user()->id);
         $instancia = DB::table("instancia")
                             ->first();
@@ -255,6 +254,7 @@ class CRMController extends Controller
 
     }
     public function whatsappActions(Request $request){
+        dd($request);
         $unique = uniqid();
         DB::table("instancia")
                         ->update(["unique"=>$unique]);
