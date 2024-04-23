@@ -254,8 +254,32 @@ class CRMController extends Controller
 
     }
     public function whatsappActions(Request $request){
-        dd($request);
-        $unique = uniqid();
+        array(
+            "number" => "573022232209",
+            "message" => "In publishing and graphic design, Lorem ipsum",
+        );
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://automatizadovip.com/api/whatsapp/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>json_encode($postdata),
+            CURLOPT_HTTPHEADER => array(
+                'Api-key:c47f0efb-6949-4e2c-a65b-160cf3d5e332',
+                'Content-Type: application/json',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        dd($response);
+        curl_close($curl);
+
+       /* $unique = uniqid();
         DB::table("instancia")
                         ->update(["unique"=>$unique]);
 
@@ -622,7 +646,7 @@ class CRMController extends Controller
             default:
                 # code...
                 break;
-        }
+        }*/
     }
 
     public function carteraContacto($contacto, Request $request){
