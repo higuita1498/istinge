@@ -254,7 +254,7 @@ class CRMController extends Controller
 
     }
     public function whatsappActions(Request $request){
-        dd("hola quieres enviar un mensaje de ws");
+
         array(
             "number" => "573022232209",
             "message" => "In publishing and graphic design, Lorem ipsum",
