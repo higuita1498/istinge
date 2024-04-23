@@ -146,7 +146,7 @@ class Factura extends Model
             }
         }
 
-        if ($this->notas_credito()) {
+        if (count($this->notas_credito()) > 0) {
             $precioNotas = 0;
 
             foreach ($this->notas_credito() as $notas) {
