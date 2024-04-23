@@ -255,10 +255,17 @@ class CRMController extends Controller
     }
     public function whatsappActions(Request $request){
 
-        array(
-            "number" => "573022232209",
-            "message" => "In publishing and graphic design, Lorem ipsum",
-        );
+         // Configura los datos para la API
+         $telefono =573022232209;
+         $mensaje = "Ahora si estamos enviando desde integra";
+            $postdata = array(
+                "contact" => array(
+                    array(
+                        "number" => $telefono,
+                        "message" => $mensaje
+                    )
+                )
+            );
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://automatizadovip.com/api/whatsapp/send',
