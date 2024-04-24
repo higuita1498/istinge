@@ -263,8 +263,8 @@ class CRMController extends Controller
                     array(
                         "number" => $telefono,
                         "message" => $mensaje,
-                        "media" => "image",
-                        "url" => "https://www.vivecomunicaciones.com/adjuntos/documentos/82135-20230302.jpg"
+                        "media" => "document",
+                        "url" => "https://www.vivecomunicaciones.com/adjuntos/documentos/1931-20230525.pdf
                     )
                 )
             );
