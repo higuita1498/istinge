@@ -2661,7 +2661,7 @@ class CronController extends Controller
             ->where('factura.whatsapp',0)
             ->select('factura.*')
             ->limit(45)->get();
-            dd( $facturas);
+
 
         /* $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
