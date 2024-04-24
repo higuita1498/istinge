@@ -263,8 +263,8 @@ class CRMController extends Controller
                     array(
                         "number" => $telefono,
                         "message" => $mensaje,
-                        "media" => "image",
-                        "url" => asset('adjuntos/documentos/nombre_de_tu_imagen.jpg'),
+                        "media" => "document",
+                        "url" => "https://developers.automatizadovip.com/isp/venta.pdf"
                     )
                 )
             );
