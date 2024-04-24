@@ -254,7 +254,7 @@ class CRMController extends Controller
 
     }
     public function whatsappActions(Request $request){
-        dd($request->id);
+        dd($request->mensaje);
          // Configura los datos para la API
          $telefono =573022232209;
          $mensaje = "Ahora si estamos enviando desde integra";
@@ -300,7 +300,7 @@ class CRMController extends Controller
             );
 
             // EnvÃ­a la respuesta como JSON
-            echo json_encode($result);
+            return json_encode($result);
 
             // Detiene la ejecuciÃ³n del script despuÃ©s de enviar la respuesta JSON
             exit();
