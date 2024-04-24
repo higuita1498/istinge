@@ -2736,12 +2736,11 @@ class CronController extends Controller
                 $fields = [
                     "action"=>"sendFile",
                     "id"=>$numero."@c.us",
-                    "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                    "file"=> "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
                     "mime"=>"application/pdf",
                     "namefile"=>$factura->codigo,
                     "mensaje"=>$mensaje,
                     "cron"=>"true",
-                    "pdf" =>$pdf,
                 ];
 
                 $request = new Request();
