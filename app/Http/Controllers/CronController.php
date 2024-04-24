@@ -2741,6 +2741,7 @@ class CronController extends Controller
                     "namefile"=>$factura->codigo,
                     "mensaje"=>$mensaje,
                     "cron"=>"true",
+                    "numero" =>$numero,
                 ];
 
                 $request = new Request();

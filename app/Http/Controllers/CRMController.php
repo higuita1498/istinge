@@ -256,7 +256,7 @@ class CRMController extends Controller
     public function whatsappActions(Request $request){
 
          // Configura los datos para la API
-         $telefono =573022232209;
+         $telefono =$request->$numero;
          $mensaje = $request->mensaje;
          $pdf = $request->file;
             $postdata = array(
@@ -265,7 +265,7 @@ class CRMController extends Controller
                         "number" => $telefono,
                         "message" => $mensaje,
                         "media" => "document",
-                        "url" => "https://vivecomunicaciones.com/software/".$pdf
+                        "url" => "https://enternet.site/software".$pdf
                     )
                 )
             );
