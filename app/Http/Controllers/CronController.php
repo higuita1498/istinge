@@ -2663,7 +2663,7 @@ class CronController extends Controller
             // ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
             ->limit(1)->get();
-
+            dd($facturas);
             foreach($facturas as $factura){
 
                 view()->share(['title' => 'Imprimir Factura']);
