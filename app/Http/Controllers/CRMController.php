@@ -264,7 +264,7 @@ class CRMController extends Controller
                         "number" => $telefono,
                         "message" => $request->mensaje,
                         "media" => "document",
-                        "url" => "https://vivecomunicaciones.com/software/empresa/facturas/pdf/42827/Factura%20No.%20EST23177.pdf"
+                        "url" => "https://vivecomunicaciones.com/software/adjuntos/documentos/10854-20230306.pdf"
                     )
                 )
             );
