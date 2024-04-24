@@ -2646,7 +2646,7 @@ class CronController extends Controller
             $dia = 1;
         }else $dia = getdate()['mday'];
 
-        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->where('id',1)->get();
 
         if($grupos_corte->count() > 0){
 
@@ -2660,10 +2660,10 @@ class CronController extends Controller
             join('contracts as c','c.id','=','factura.contrato_id')
             // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
             // ->where('factura.whatsapp',0)
-            // ->whereIn('c.grupo_corte',$grupos_corte_array)
+            ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
             ->limit(1)->get();
-            dd($facturas);
+        dd($facturas);
             foreach($facturas as $factura){
 
                 view()->share(['title' => 'Imprimir Factura']);
