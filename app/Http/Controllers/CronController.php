@@ -2754,7 +2754,7 @@ class CronController extends Controller
                     if($instancia->status == "1"){
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
                         $response = json_decode($response,true);
-
+                        dd($response);
                         if($response['salida'] == 'success'){
                             $factura->whatsapp = 1;
                             $factura->correo_sendinblue = 1;
@@ -2766,8 +2766,6 @@ class CronController extends Controller
                         $factura->save();
                     }else{
                         $factura->correo_sendinblue = 0;
-
-
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }
