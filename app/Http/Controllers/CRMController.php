@@ -263,8 +263,8 @@ class CRMController extends Controller
                     array(
                         "number" => $telefono,
                         "message" => $mensaje,
-                        "media" => "document",
-                        "url" => "https://vivecomunicaciones.com/software/empresa/facturas/pdf/42827/Factura%20No.%20EST23177.pdf"
+                        "media" => "image",
+                        "url" => asset('adjuntos/documentos/nombre_de_tu_imagen.jpg'),
                     )
                 )
             );
