@@ -2749,12 +2749,14 @@ class CronController extends Controller
 
                 $instancia = DB::table("instancia")
                                         ->first();
-                $response;
+                $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
+                $response = json_decode($response,true);
+                dd($response);
                 if(!is_null($instancia) && !empty($instancia)){
                     if($instancia->status == "1"){
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
                         $response = json_decode($response,true);
-                        dd($response);
+
                         if($response['salida'] == 'success'){
                             $factura->whatsapp = 1;
                             $factura->correo_sendinblue = 1;
