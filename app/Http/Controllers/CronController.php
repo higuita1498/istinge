@@ -2655,6 +2655,7 @@ class CronController extends Controller
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
             }
+
             $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
             ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha','2024-04-22')
@@ -2672,7 +2673,7 @@ class CronController extends Controller
             ->limit(1)->get();*/
 
             foreach($facturas as $factura){
-
+                dd($factura);
                 view()->share(['title' => 'Imprimir Factura']);
                 $empresa = Empresa::find($factura->empresa);
                 $items = ItemsFactura::where('factura',$factura->id)->get();
