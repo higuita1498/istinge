@@ -2662,8 +2662,8 @@ class CronController extends Controller
             ->where('factura.whatsapp',0)
             ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
-            ->limit(45)->get();
-
+            ->limit(1)->get();
+            dd($facturas);
             foreach($facturas as $factura){
 
                 view()->share(['title' => 'Imprimir Factura']);

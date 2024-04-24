@@ -255,7 +255,58 @@ class CRMController extends Controller
     }
     public function whatsappActions(Request $request){
 
-        $unique = uniqid();
+         // Configura los datos para la API
+         $telefono =573022232209;
+         $mensaje = "Ahora si estamos enviando desde integra";
+            $postdata = array(
+                "contact" => array(
+                    array(
+                        "number" => $telefono,
+                        "message" => $mensaje,
+                        "media" => "document",
+                        "url" => "https://vivecomunicaciones.com/software/empresa/facturas/pdf/42827/Factura%20No.%20EST23177.pdf"
+                    )
+                )
+            );
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://automatizadovip.com/api/whatsapp/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>json_encode($postdata),
+            CURLOPT_HTTPHEADER => array(
+                'Api-key:c47f0efb-6949-4e2c-a65b-160cf3d5e332',
+                'Content-Type: application/json',
+            ),
+        ));
+
+        // Ejecuta la solicitud cURL
+            $response = curl_exec($curl);
+
+            // Verifica el cÃ³digo de respuesta HTTP
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+
+            // Maneja la respuesta (puedes hacer mÃ¡s aquÃ­ segÃºn tus necesidades)
+            $result = array(
+                'success' => $httpCode == 201,
+                'message' => $httpCode == 201 ? 'Mensaje enviado correctamente' : 'Error al enviar el mensaje. CÃ³digo de respuesta: ' . $httpCode
+            );
+
+            // EnvÃ­a la respuesta como JSON
+            echo json_encode($result);
+
+            // Detiene la ejecuciÃ³n del script despuÃ©s de enviar la respuesta JSON
+            exit();
+
+
+       /* $unique = uniqid();
         DB::table("instancia")
                         ->update(["unique"=>$unique]);
 
@@ -622,7 +673,7 @@ class CRMController extends Controller
             default:
                 # code...
                 break;
-        }
+        }*/
         dd("has enviado el mensaje");
     }
 
