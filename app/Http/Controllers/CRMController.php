@@ -254,7 +254,7 @@ class CRMController extends Controller
 
     }
     public function whatsappActions(Request $request){
-        dd($request);
+        dd($request->id);
          // Configura los datos para la API
          $telefono =573022232209;
          $mensaje = "Ahora si estamos enviando desde integra";
