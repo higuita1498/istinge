@@ -285,7 +285,7 @@ class CRMController extends Controller
 
         // Ejecuta la solicitud cURL
             $response = curl_exec($curl);
-
+            dd($response);
             // Verifica el cÃ³digo de respuesta HTTP
             $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
