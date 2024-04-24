@@ -2740,7 +2740,8 @@ class CronController extends Controller
                     "mime"=>"application/pdf",
                     "namefile"=>$factura->codigo,
                     "mensaje"=>$mensaje,
-                    "cron"=>"true"
+                    "cron"=>"true",
+                    "pdf" =>$pdf,
                 ];
 
                 $request = new Request();
