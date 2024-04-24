@@ -2673,7 +2673,7 @@ class CronController extends Controller
             ->limit(1)->get();*/
 
             foreach($facturas as $factura){
-                dd($factura);
+
                 view()->share(['title' => 'Imprimir Factura']);
                 $empresa = Empresa::find($factura->empresa);
                 $items = ItemsFactura::where('factura',$factura->id)->get();
