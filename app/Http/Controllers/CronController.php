@@ -2785,7 +2785,9 @@ class CronController extends Controller
                     }
                 }else{
                     $factura->correo_sendinblue = 0;
-
+                    $factura->whatsapp = 1;
+                    $factura->correo_sendinblue = 1;
+                    $factura->save();
 
                     $factura->response_sendinblue = $response;
                     $factura->save();
