@@ -299,6 +299,7 @@ class CRMController extends Controller
                 'message' => $httpCode == 201 ? 'Mensaje enviado correctamente' : 'Error al enviar el mensaje. CÃ³digo de respuesta: ' . $httpCode
             );
 
+
             // EnvÃ­a la respuesta como JSON
             echo json_encode($result);
 
