@@ -257,12 +257,12 @@ class CRMController extends Controller
 
          // Configura los datos para la API
          $telefono =573022232209;
-         $mensaje = "Ahora si estamos enviando desde integra";
+         $mensaje = $request->mensaje;
             $postdata = array(
                 "contact" => array(
                     array(
                         "number" => $telefono,
-                        "message" => $request->mensaje,
+                        "message" => $mensaje,
                         "media" => "document",
                         "url" => "https://vivecomunicaciones.com/software/adjuntos/documentos/10854-20230306.pdf"
                     )
