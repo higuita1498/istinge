@@ -263,7 +263,6 @@ class CRMController extends Controller
                     array(
                         "number" => $telefono,
                         "message" => $mensaje,
-
                     )
                 )
             );
