@@ -2655,14 +2655,21 @@ class CronController extends Controller
             foreach($grupos_corte as $grupo){
                 array_push($grupos_corte_array,$grupo->id);
             }
+            $facturas = Factura::
+            join('contracts as c','c.id','=','factura.contrato_id')
+            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha','2024-04-22')
+            ->where('factura.whatsapp',0)
+            ->select('factura.*')
+            ->limit(45)->get();
 
-         $facturas = Factura::
+            dd($facturas);
+        /* $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
             // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
             // ->where('factura.whatsapp',0)
             ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
-            ->limit(1)->get();
+            ->limit(1)->get();*/
 
             foreach($facturas as $factura){
 
