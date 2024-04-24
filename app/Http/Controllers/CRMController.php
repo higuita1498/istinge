@@ -300,11 +300,11 @@ class CRMController extends Controller
             );
 
             // EnvÃ­a la respuesta como JSON
-            return json_encode($result);
+
 
             // Detiene la ejecuciÃ³n del script despuÃ©s de enviar la respuesta JSON
             exit();
-
+            return json_encode(["salida"=>"success","message"=>"No se pudo enviar el mensaje"]);
 
        /* $unique = uniqid();
         DB::table("instancia")
