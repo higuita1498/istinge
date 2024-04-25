@@ -15,6 +15,7 @@ yarn-error.log
 /resources/views/emails/plantillas
 /bootstrap/cache/services.php
 /bootstrap/cache/config.php
+/public/convertidor/*
 
 # cache files
 .php-cs-fixer.cache
