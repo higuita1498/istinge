@@ -113,10 +113,9 @@ class CronController extends Controller
             $horaFin = now()->addMinutes(5)->format('H:i');
 
             $grupos_corte = GrupoCorte::
-            // where('hora_creacion_factura','>=', $horaInicio)
-            // ->where('hora_creacion_factura','<=', $horaFin)
-            // ->where('fecha_factura', $date)
-            where('id',1)
+            where('hora_creacion_factura','>=', $horaInicio)
+            ->where('hora_creacion_factura','<=', $horaFin)
+            ->where('fecha_factura', $date)
             ->where('status', 1)->get();
 
             $fecha = Carbon::now()->format('Y-m-d');
@@ -132,7 +131,7 @@ class CronController extends Controller
                 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv', 'contracts.factura_individual','contracts.nro')
                 ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
-                whereIn('contracts.id',[1944])->
+                // whereIn('contracts.id',[1944])->
                 // where('c.saldo_favor','>',80000)->//rc
                 where('contracts.state','enabled')
                 // ->limit(1)->skip(7)
@@ -2646,7 +2645,7 @@ class CronController extends Controller
             $dia = 1;
         }else $dia = getdate()['mday'];
 
-        $grupos_corte = GrupoCorte::where('status', 1)->where('id',1)->get();
+        $grupos_corte = GrupoCorte::where('status', 1)->where('fecha_factura',$dia)->get();
 
         if($grupos_corte->count() > 0){
 
@@ -2656,21 +2655,13 @@ class CronController extends Controller
                 array_push($grupos_corte_array,$grupo->id);
             }
 
-            $facturas = Factura::
+         $facturas = Factura::
             join('contracts as c','c.id','=','factura.contrato_id')
-            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha','2024-04-22')
+            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
             ->where('factura.whatsapp',0)
-            ->select('factura.*')
-            ->limit(45)->get();
-
-
-        /* $facturas = Factura::
-            join('contracts as c','c.id','=','factura.contrato_id')
-            // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',date('Y-m-d'))
-            // ->where('factura.whatsapp',0)
             ->whereIn('c.grupo_corte',$grupos_corte_array)
             ->select('factura.*')
-            ->limit(1)->get();*/
+            ->limit(45)->get();
 
             foreach($facturas as $factura){
 
@@ -2744,12 +2735,11 @@ class CronController extends Controller
                 $fields = [
                     "action"=>"sendFile",
                     "id"=>$numero."@c.us",
-                    "file"=> "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
+                    "file"=>public_path() . "/convertidor/" . $factura->codigo . ".pdf", // debe existir el archivo en la ubicacion que se indica aqui
                     "mime"=>"application/pdf",
                     "namefile"=>$factura->codigo,
                     "mensaje"=>$mensaje,
-                    "cron"=>"true",
-                    "numero" =>$numero,
+                    "cron"=>"true"
                 ];
 
                 $request = new Request();
@@ -2758,11 +2748,6 @@ class CronController extends Controller
 
                 $instancia = DB::table("instancia")
                                         ->first();
-                $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
-                $response = json_decode($response,true);
-                $factura->whatsapp = 1;
-                $factura->correo_sendinblue = 1;
-                $factura->save();
 
                 if(!is_null($instancia) && !empty($instancia)){
                     if($instancia->status == "1"){
@@ -2780,14 +2765,14 @@ class CronController extends Controller
                         $factura->save();
                     }else{
                         $factura->correo_sendinblue = 0;
+
+
                         $factura->response_sendinblue = $response;
                         $factura->save();
                     }
                 }else{
                     $factura->correo_sendinblue = 0;
-                    $factura->whatsapp = 1;
-                    $factura->correo_sendinblue = 1;
-                    $factura->save();
+
 
                     $factura->response_sendinblue = $response;
                     $factura->save();

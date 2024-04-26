@@ -143,7 +143,6 @@ class FacturasController extends Controller{
                     }elseif (date('d-m-Y', strtotime($search)) == $search){
 
                         if(preg_match('/-vto/i', $search)){
-                            dd("d");
                             $facturas  = $facturas->where('factura.vencimiento', date('Y-m-d', strtotime($search)));
                         }else{
                             $facturas  = $facturas->where('factura.fecha', date('Y-m-d', strtotime($search)));
