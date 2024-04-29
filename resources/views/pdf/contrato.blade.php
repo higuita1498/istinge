@@ -320,35 +320,35 @@
 
                         <table width="100%" style="font-size: 10px">
                             <tbody>
-                                <tr>
+                                {{-- <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de inicio de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contractDetails->created_at)->format('d-m-Y')}}</p>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
 
                         <table width="100%" style="font-size: 10px">
                             <tbody>
-                                <tr>
+                                {{-- <tr>
                                     <th style="background-color:{{Auth::user()->empresa()->color}}; color: white; text-align: left; font-size: 10px;" width="65%">Fecha de finalización de la permanencia mínima</th>
                                     <td style="border: 1px solid {{Auth::user()->empresa()->color}}; font-size: 10px" width="35%">
                                         <p style="padding: 0;margin:0;">{{Carbon\Carbon::parse($contractDetails->created_at)->addYear()->format('d-m-Y')}}</p>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
 
                         <table width="100%" style="font-size: 10px;">
-                            <thead>
+                            {{-- <thead>
                                 <tr>
                                     <th style="background-color: {{Auth::user()->empresa()->color}}; color: white; text-align: center; font-size: 10px; padding: 0;margin:0;">Valor a pagar si termina el contrato anticipadamente según el mes</th>
                                 </tr>
-                            </thead>
+                            </thead> --}}
                         </table>
 
-                        <table width="100%">
+                        {{-- <table width="100%">
                             <tbody>
                                 <tr style="background-color: {{Auth::user()->empresa()->color}}; border: solid 1px {{Auth::user()->empresa()->color}}; color: #fff; text-align: center;">
                                     @for ($i = 1; $i <= 6; $i++)
@@ -384,7 +384,7 @@
                                     @endfor
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> --}}
                     </td>
                     <td style="vertical-align:top;" width="50%">
                         <p style="text-align: justify;font-weight: bold;" class="small titulo-bg">CAMBIO DE DOMICILIO</p><br>
