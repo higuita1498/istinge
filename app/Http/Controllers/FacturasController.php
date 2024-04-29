@@ -145,7 +145,6 @@ class FacturasController extends Controller{
                     }elseif (date('d-m-Y', strtotime($search)) == $search){
 
                         if(preg_match('/-vto/i', $search)){
-                            dd("d");
                             $facturas  = $facturas->where('factura.vencimiento', date('Y-m-d', strtotime($search)));
                         }else{
                             $facturas  = $facturas->where('factura.fecha', date('Y-m-d', strtotime($search)));
@@ -1202,7 +1201,6 @@ class FacturasController extends Controller{
   */
     public function update(Request $request, $id){
 
-        $desc=0;
         $factura =Factura::find($id);
         $user = Auth::user();
         if ($factura) {
@@ -1267,6 +1265,7 @@ class FacturasController extends Controller{
                     $bodega = Bodega::where('empresa',$user->empresa)->where('status', 1)->first();
                 }
                 //Ciclo para registrar y/o modificar los itemas de la factura
+                $desc = 0;
                 for ($i=0; $i < count($request->ref) ; $i++) {
                     $cat='id_item'.($i+1);
                     if($request->$cat){
@@ -1292,10 +1291,10 @@ class FacturasController extends Controller{
                     $items->id_impuesto=$request->impuesto[$i];
                     $items->impuesto=$impuesto->porcentaje;
                     $items->cant=$request->cant[$i];
-                    $desc = 0;
+
                     //El descuneto no se debe aplicar sin ser aprobado.
                     if(isset($request->desc[$i])){
-                        $desc=$request->desc[$i];
+                        $desc+=$request->desc[$i];
                     }
                     $items->save();
                     $inner[]=$items->id;

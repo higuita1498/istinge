@@ -131,7 +131,7 @@ class CronController extends Controller
                 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv', 'contracts.factura_individual','contracts.nro')
                 ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
-                // whereIn('contracts.id',[1932])->
+                // whereIn('contracts.id',[1944])->
                 // where('c.saldo_favor','>',80000)->//rc
                 where('contracts.state','enabled')
                 // ->limit(1)->skip(7)
@@ -2748,7 +2748,7 @@ class CronController extends Controller
 
                 $instancia = DB::table("instancia")
                                         ->first();
-                $response;
+
                 if(!is_null($instancia) && !empty($instancia)){
                     if($instancia->status == "1"){
                         $response = $controller->whatsappActions($request); //ENVIA EL MENSAJE
