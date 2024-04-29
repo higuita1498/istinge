@@ -308,6 +308,8 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
 });
 
 Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
+    Route::resource('instances', 'InstanceController');
+    Route::get('instances/{id}/pair', 'InstanceController@pair')->name('instances.pair');
 	Route::get('/', 'HomeController@index')->name('empresa');
 	Route::group(['prefix' => 'contactos'], function() {
 		Route::get('clientes', 'ContactosController@clientes')->name('contactos.clientes');

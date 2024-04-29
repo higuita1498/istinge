@@ -1116,8 +1116,10 @@ class ContratosController extends Controller
              ## Otro tipo de servicio ingresa tenga o no tenga mk ##
              if($request->servicio_otro){
                 $contrato->servicio_otro = $request->servicio_otro;
-                $contrato->save();
+            }else{
+                $contrato->servicio_otro = null;
             }
+            $contrato->save();
 
             $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
             $mikrotik = ($plan) ? Mikrotik::where('id', $plan->mikrotik)->first() : false;

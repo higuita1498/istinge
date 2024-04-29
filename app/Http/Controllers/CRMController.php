@@ -35,6 +35,7 @@ use App\GrupoCorte;
 use App\Mikrotik;
 use App\Integracion;
 use App\CRMLOG;
+use App\Instance;
 use App\PromesaPago;
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -238,7 +239,16 @@ class CRMController extends Controller
 
         return [$chats,$users];
     }
-    public function whatsapp(Request $request){
+
+    public function whatsapp(Request $request)
+    {
+        $this->getAllPermissions(auth()->user()->id);
+        $instance = Instance::where('company_id', auth()->user()->empresa)->first();
+
+        return view('crm.whatsapp')->with(compact('instance'));
+    }
+
+    public function whatsapp2(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $instancia = DB::table("instancia")
                             ->first();
