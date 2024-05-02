@@ -3958,7 +3958,7 @@ class FacturasController extends Controller{
             set_time_limit(0);
 
             for ($i=0; $i < count($facturas) ; $i++) {
-                $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('modificado', 0)->where('id', $facturas[$i])->first();
+                $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('id', $facturas[$i])->first();
 
                 if(isset($factura)){
                     $factura->modificado = 1;
