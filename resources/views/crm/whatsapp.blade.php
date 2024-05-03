@@ -187,7 +187,7 @@
                 return;
             }
             setLoading(getQr);
-            const response = await fetch("/empresa/instances");
+            const response = await fetch("/software/empresa/instances");
             const instance = await response.json();
 
             if (instance.id) {
