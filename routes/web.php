@@ -1470,8 +1470,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 	//CRM
 	    Route::group(['prefix' => 'crm'], function() {
-	        Route::get('/cartera', 'CRMController@cartera')->name('crm.cartera');
-			Route::get('/cartera', 'CRMController@whatsapp')->name('crm.whatsapp.post');
+	        Route::get('/cartera', 'CRMController@whatsapp')->name('crm.cartera');
+			//Route::get('/cartera', 'CRMController@whatsapp')->name('crm.whatsapp.post');
 			//Route::post('/cartera/{action?}', 'CRMController@whatsappActions')->name('crm.whatsapp.api');
             Route::get('/cartera/whatsapp/action', 'CRMController@whatsappActions')->name('crm.whatsapp');
 	        Route::get('{id}/{crm}/contacto', 'CRMController@contacto')->name('crm.contacto');
