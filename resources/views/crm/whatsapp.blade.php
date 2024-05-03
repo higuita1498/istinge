@@ -182,7 +182,7 @@
         const qrContainer = document.querySelector('#qr-container');
         const qrCode = document.querySelector('#qrcode');
 
-        getQr.addEventListener('click', async () => {
+        getQr?.addEventListener('click', async () => {
             if (getQr.classList.contains('button--loading')) {
                 return;
             }

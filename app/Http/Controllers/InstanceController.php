@@ -46,16 +46,13 @@ class InstanceController extends Controller
             'instance_id' => 'required|regex:/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/'
         ]);
 
-        try {
-            $response = $wapiService->getInstance($validated['instance_id']);
-        } catch (ClientException $e) {
-            if($e->getResponse()->getStatusCode() === 404) {
-                return back()->withErrors([
-                    'instance_id' => 'Esta instancia no existe, valida el identificador con tu proveedor.'
-                ])->withInput($request->input());
-            }
+        $response = $wapiService->getInstance($validated['instance_id']);
+        if($response["statusCode"] ?? 0 === 400) {
+            return back()->withErrors([
+                'instance_id' => 'Esta instancia no existe, valida el identificador con tu proveedor.'
+            ])->withInput($request->input());
         }
-        $responseInstance = (object) json_decode($response)->data;
+        $responseInstance = json_decode($response)->data;
         try {
 
             $instance = Instance::create([
