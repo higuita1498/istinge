@@ -190,8 +190,8 @@
 
                 @php $cont++; @endphp
                 <tr>
-                    <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->producto()}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
-                    <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->ref}}</td>
+                    <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{strtolower($item->producto())}} @if($item->descripcion) ({{strtolower($item->producto())}}) @endif</td>
+                    <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{strtolower($item->ref)}}</td>
                     <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->cant}}</td>
                     <td class="right padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::ParsearAPI($item->precio, $empresa->id)}}</td>
                     <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->desc?$item->desc:0}}%</td>

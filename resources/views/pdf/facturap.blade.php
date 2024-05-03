@@ -228,9 +228,9 @@
 
             @php $cont++; @endphp
             <tr>
-                <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->producto()}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
+                <td class="left padding-left border_left @if($cont==$itemscount && $cont>6) border_bottom @endif">{{strtolower($item->producto())}} @if($item->descripcion) ({{$item->descripcion}}) @endif</td>
 
-                <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->ref}}</td>
+                <td class="center @if($cont==$itemscount && $cont>6) border_bottom @endif">{{strtolower($item->ref)}}</td>
                 <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{round($item->cant,4)}}</td>
                 <td class="right padding-right  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 <td class="center  @if($cont==$itemscount && $cont>6) border_bottom @endif">{{$item->desc == 0 ? '' :  $item->desc . "%"}}</td>

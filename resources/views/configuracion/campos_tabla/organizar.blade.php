@@ -1,5 +1,5 @@
  @extends('layouts.app')
-    
+
 @section('content')
     @if(Session::has('success'))
         <div class="alert alert-success" >
@@ -54,4 +54,4 @@
         </div>
     </div>
 
-@endsection     
+@endsection

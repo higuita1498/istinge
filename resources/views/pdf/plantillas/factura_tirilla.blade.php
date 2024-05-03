@@ -133,13 +133,13 @@
             @if($factura->cliente()->nit) {{ $factura->cliente()->tip_iden('mini')}}: {{$factura->cliente()->nit}}<br>@endif<br>
         </div>
     </div>
-    
+
     <div style="width: 100%; text-align: center; display: inline-block;">
         @if($factura->tipo == 1 || $factura->tipo == 2) Factura de Venta: @elseif($factura->tipo == 3) Cuenta de Cobro: @endif No. {{$factura->codigo}}<br>
         Fecha Expedición: {{date('d/m/Y', strtotime($factura->fecha))}}<br>
         Fecha Vencimiento: {{date('d/m/Y', strtotime($factura->vencimiento))}}<br>
         Estado: @if($factura->estatus == 0) Cerrada @endif @if($factura->estatus == 1) Abierta @endif @if($factura->estatus == 2) Anulada @endif<br><br>
-        
+
         @if($ingreso != null)
             Recibo de Caja: No. {{ $ingreso->nro }}<br>
             Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->ingreso()->fecha)) }}<br>
@@ -148,9 +148,9 @@
             Periodo: {{$factura->periodoCobrado('true')}}<br>
             @if($ingreso->ingreso()->notas) Notas: {{ $ingreso->ingreso()->notas }} @endif
         @endif
-       
+
     </div>
-    
+
     <br>
 
     <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
@@ -164,7 +164,7 @@
             <tbody>
             @foreach($items as $item)
                 <tr>
-                    <td >{{$item->producto()}}</td>
+                    <td >{{strtolower($item->producto())}}</td>
                     <td >{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($item->total())}}</td>
                 </tr>
             @endforeach
@@ -221,7 +221,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <br>
 
     <div style="width: 100%; text-align: center; display: inline-block;">
