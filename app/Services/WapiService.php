@@ -34,7 +34,7 @@ class WapiService
     {
         return $this->makeRequest(
             "GET",
-            "/instance/" . $uuid,
+            $this->baseUri . "/instance/" . $uuid,
             [],
             [],
             $this->headers,
@@ -47,7 +47,7 @@ class WapiService
         $this->headers['Authorization'] = 'Bearer ' . $apiKey;
         return $this->makeRequest(
             "POST",
-            "/session/" . $uuid,
+            $this->baseUri . "/session/" . $uuid,
             [],
             [],
             $this->headers,
@@ -60,7 +60,7 @@ class WapiService
         $this->headers['Authorization'] = 'Bearer ' . $apiKey;
         return $this->makeRequest(
             "POST",
-            "/message/send/" . $uuid,
+            $this->baseUri . "/message/send/" . $uuid,
             [],
             $body,
             $this->headers,
