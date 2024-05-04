@@ -3775,7 +3775,7 @@ class FacturasController extends Controller{
         ];
 
         $contact = [
-            "phone" => "57" . $contacto->telefono1,
+            "phone" => "57" . $contacto->celular,
             "name" => $contacto->nombre . " " . $contacto->apellido1
         ];
 
