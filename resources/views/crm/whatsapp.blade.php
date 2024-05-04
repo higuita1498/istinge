@@ -191,7 +191,7 @@
             const instance = await response.json();
 
             if (instance.id) {
-                const session = await fetch(`/empresa/instances/${instance.id}/pair`);
+                const session = await fetch(`/software/empresa/instances/${instance.id}/pair`);
                 const sessionData = await session.json();
                 if (sessionData.status == "error") {
                     removeLoading(getQr);
