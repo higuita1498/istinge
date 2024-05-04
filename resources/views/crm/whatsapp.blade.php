@@ -246,7 +246,7 @@
             }
 
             if (session.status == "PAIRED") {
-                fetch(`/empresa/instances/${session.instanceId}`, {
+                fetch(`/software/empresa/instances/${session.instanceId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
