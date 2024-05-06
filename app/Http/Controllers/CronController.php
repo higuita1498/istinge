@@ -2683,7 +2683,7 @@ class CronController extends Controller
                 ];
 
                 $contact = [
-                    "phone" =>  $contacto->celular,
+                    "phone" =>  "57" . $contacto->celular,
                     "name" => $contacto->nombre . " " . $contacto->apellido1
                 ];
 
