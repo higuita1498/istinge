@@ -3698,61 +3698,6 @@ class FacturasController extends Controller{
         exit;
     }
 
-
-
-    public function getPdfFactura($id)
-    {
-
-        $factura = Factura::find($id);
-        $empresa = Empresa::find($factura->empresa);
-        $items = ItemsFactura::where('factura',$factura->id)->get();
-        $itemscount=ItemsFactura::where('factura',$factura->id)->count();
-        $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
-        $resolucion = NumeracionFactura::where('id',$factura->numeracion)->first();
-        $tipo = $factura->tipo;
-
-        if($factura->emitida == 1){
-            $impTotal = 0;
-            foreach ($factura->totalAPI($empresa->id)->imp as $totalImp){
-                if(isset($totalImp->total)){
-                    $impTotal = $totalImp->total;
-                }
-            }
-
-            $CUFEvr = $factura->info_cufeAPI($factura->id, $impTotal, $empresa->id);
-            $infoEmpresa = Empresa::find($empresa->id);
-            $data['Empresa'] = $infoEmpresa->toArray();
-            $infoCliente = Contacto::find($factura->cliente);
-            $data['Cliente'] = $infoCliente->toArray();
-            /*..............................
-            Construcción del código qr a la factura
-            ................................*/
-            $impuesto = 0;
-            foreach ($factura->totalAPI($empresa->id)->imp as $key => $imp) {
-                if(isset($imp->total)){
-                    $impuesto = $imp->total;
-                }
-            }
-
-            $codqr = "NumFac:" . $factura->codigo . "\n" .
-            "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-            "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
-            "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
-            "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
-            "ValorFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal, 2, '.', '') . "\n" .
-            "ValorIVA:" .  number_format($impuesto, 2, '.', '') . "\n" .
-            "ValorOtrosImpuestos:" .  0.00 . "\n" .
-            "ValorTotalFactura:" .  number_format($factura->totalAPI($empresa->id)->subtotal + $factura->impuestos_totalesFe(), 2, '.', '') . "\n" .
-            "CUFE:" . $CUFEvr;
-            /*..............................
-            Construcción del código qr a la factura
-            ................................*/
-            return PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion','codqr','CUFEvr', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->output();
-        }else{
-            return PDF::loadView('pdf.electronica', compact('items', 'factura', 'itemscount', 'tipo', 'retenciones','resolucion', 'empresa'))->save(public_path() . "/convertidor/" . $factura->codigo . ".pdf")->output();
-        }
-    }
-
     public function whatsapp($id, Request $request, WapiService $wapiService)
     {
         $factura = Factura::find($id);
@@ -3775,7 +3720,7 @@ class FacturasController extends Controller{
         ];
 
         $contact = [
-            "phone" =>  $contacto->telefono1,
+            "phone" => "57" . $contacto->celular,
             "name" => $contacto->nombre . " " . $contacto->apellido1
         ];
 
@@ -3958,7 +3903,7 @@ class FacturasController extends Controller{
             set_time_limit(0);
 
             for ($i=0; $i < count($facturas) ; $i++) {
-                $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('modificado', 0)->where('id', $facturas[$i])->first();
+                $factura = Factura::where('empresa', $empresa)->where('emitida', 0)->where('tipo',2)->where('id', $facturas[$i])->first();
 
                 if(isset($factura)){
                     $factura->modificado = 1;

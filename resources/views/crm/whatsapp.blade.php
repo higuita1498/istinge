@@ -98,7 +98,7 @@
         @if (!$instance)
             <section class="not_instance">
                 <h2>
-                    No tienes una instancia por favor comunicate con tu administrador.
+                    No se encontró una instancia.
                 </h2>
                 <form action="{{ route('instances.store') }}" method="POST"
                     style="display: flex; flex-direction: column; gap: 1em;">
@@ -121,13 +121,34 @@
             </section>
         @endif
 
+        @if($instance)
+            <input type="hidden" name="instance-key" id="instance-key" value="{{ $instance->api_key }}">
+        @endif
+
         @if ($instance && !$instance->isPaired())
+
             @csrf
             <section class="row">
                 <div style="flex: 1;max-width: 24em;display: flex;flex-direction: column;justify-content: center;">
                     <h1>Whatsapp</h1>
-                    <p>Whatsapp is a messaging app that allows you to send messages, photos, videos and files to your
-                        contacts. It is a free app that you can download on your phone, tablet or computer.</p>
+                    <ul class="ml-4">
+                        <li>
+                            <p>Abre WhatsApp en tu teléfono</p>
+                        </li>
+                        <li>
+                            <p>
+                                Toca Menú <i class="fas fa-ellipsis-v"></i> o configuración
+                                <i class="fa fa-cog" aria-hidden="true"></i> y selecciona
+                                "Dispositivos vinculados"
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Toca "Vincular un dispositivo y apunta tu teléfono hacía el
+                                código qr que se muestra en pantalla para escanearlo"
+                            </p>
+                        </li>
+                    </ul>
                 </div>
                 <div id="qrcode"
                     style="min-width: 17em;min-height: 17em;display: grid;place-items: center;padding: 0em; flex: 2;">
@@ -144,10 +165,10 @@
         @endif
 
         @if ($instance && $instance->isPaired())
+
             <section>
                 <h1>Whatsapp</h1>
-                <p>Whatsapp is a messaging app that allows you to send messages, photos, videos and files to your
-                    contacts. It is a free app that you can download on your phone, tablet or computer.</p>
+                <p>Tu cuenta ya se encuntra vinculada, ya puedes enviar facturas por whatsapp!</p>
             </section>
         @endif
     </div>
@@ -161,16 +182,16 @@
         const qrContainer = document.querySelector('#qr-container');
         const qrCode = document.querySelector('#qrcode');
 
-        getQr.addEventListener('click', async () => {
+        getQr?.addEventListener('click', async () => {
             if (getQr.classList.contains('button--loading')) {
                 return;
             }
             setLoading(getQr);
-            const response = await fetch("/empresa/instances");
+            const response = await fetch("/software/empresa/instances");
             const instance = await response.json();
 
             if (instance.id) {
-                const session = await fetch(`/empresa/instances/${instance.id}/pair`);
+                const session = await fetch(`/software/empresa/instances/${instance.id}/pair`);
                 const sessionData = await session.json();
                 if (sessionData.status == "error") {
                     removeLoading(getQr);
@@ -200,7 +221,13 @@
     </script>
 
     <script defer>
-        const socket = io("http://localhost:8080");
+
+        const apiKey = document.querySelector('#instance-key').value || "";
+        const socket = io("{{ env('WAPI_URL') }}", {
+            extraHeaders: {
+                "Authorization": `Bearer ${apiKey}`
+            }
+        });
 
         socket.on("whatsappSession", (arg) => {
             const {
@@ -219,7 +246,7 @@
             }
 
             if (session.status == "PAIRED") {
-                fetch(`/empresa/instances/${session.instanceId}`, {
+                fetch(`/software/empresa/instances/${session.instanceId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
