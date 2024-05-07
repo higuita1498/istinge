@@ -1416,7 +1416,10 @@ class Controller extends BaseController
         $mikrotik = Mikrotik::find($mikrotik);
 
         $API = new RouterosAPI();
-        $profile = $API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
+            $API->port = $mikrotik->puerto_api;
+            $registro = false;
+            $getall = '';
+            $profile = $API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
         //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
         //     return "hola";
         //      $API->write('/ppp/profile/getall');
