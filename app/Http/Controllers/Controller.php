@@ -1415,17 +1415,17 @@ class Controller extends BaseController
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
         $mikrotik = Mikrotik::find($mikrotik);
         $profile = "hola es importane";
-        // $API = new RouterosAPI();
+        $API = new RouterosAPI();
 
-        //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-        //     return "hola";
-        //      $API->write('/ppp/profile/getall');
-        //      $READ = $API->read(false);
-        //      $ARRAY = $API->parseResponse($READ);
+           if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+             return "hola";
+             $profile = $API->write('/ppp/profile/getall');
+              $READ = $API->read(false);
+              $ARRAY = $API->parseResponse($READ);
 
-        //      $API->disconnect();
-        //   }
-        //   return "";
+              $API->disconnect();
+           }
+
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
     }
 
