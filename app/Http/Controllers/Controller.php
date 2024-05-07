@@ -1419,15 +1419,15 @@ class Controller extends BaseController
             $API->port = $mikrotik->puerto_api;
             $registro = false;
             $getall = '';
-            $profile = $API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
-        //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-        //     return "hola";
-        //      $API->write('/ppp/profile/getall');
-        //      $READ = $API->read(false);
-        //      $ARRAY = $API->parseResponse($READ);
 
-        //      $API->disconnect();
-        //   }
+           if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+             $profile = "ingreso en el si ";
+              $API->write('/ppp/profile/getall');
+              $READ = $API->read(false);
+              $ARRAY = $API->parseResponse($READ);
+
+              $API->disconnect();
+           }
         //   return "";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
     }
