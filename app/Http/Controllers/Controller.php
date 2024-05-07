@@ -1414,18 +1414,17 @@ class Controller extends BaseController
     public function getPlanes($mikrotik){
         $planes = PlanesVelocidad::where('mikrotik', $mikrotik)->where('status', 1)->get();
         $mikrotik = Mikrotik::find($mikrotik);
-        $profile = $API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
-        $API = new RouterosAPI();
 
-           if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                $profile = "Se conecto a la api";
+        $API = new RouterosAPI();
+        $profile = $API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave);
+        //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
         //     return "hola";
         //      $API->write('/ppp/profile/getall');
         //      $READ = $API->read(false);
         //      $ARRAY = $API->parseResponse($READ);
 
         //      $API->disconnect();
-           }
+        //   }
         //   return "";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
     }
