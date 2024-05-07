@@ -4317,7 +4317,9 @@ function getPlanes(mikrotik) {
             cargando(false);
 
             $("#plan_id").empty();
+
             var $select = $('#plan_id');
+
             $.each(data.planes, function(key, value) {
 
                 if (value.type == 0) {
@@ -4329,10 +4331,25 @@ function getPlanes(mikrotik) {
                 $select.append('<option value=' + value.id + '>' + type + ': ' + value.name + '</option>');
             });
 
+
             $select.selectpicker('refresh');
             getInterfaces(mikrotik);
             $("#amarre_mac").val(data.mikrotik.amarre_mac);
             $('#conexion').val('').selectpicker('refresh');
+
+              // Vaciar el select para evitar duplicados
+            $("#div_profile_select").empty();
+
+            // Iterar sobre los perfiles y agregar cada uno como una opción al select
+            $.each(data.profile, function(key, value) {
+                $("#div_profile_select").append($('<option>', {
+                    value: value.name,
+                    text: value.name
+                }));
+            });
+
+            // Refrescar el selectpicker después de agregar las opciones
+            $('#div_profile_select').selectpicker('refresh');
         },
         error: function(data) {
             cargando(false);
