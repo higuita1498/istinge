@@ -1420,14 +1420,10 @@ class Controller extends BaseController
         $getall = '';
 
         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-           /* $profile =  $API->write('/ppp/profile/getall');
+            $profile =  $API->write('/ppp/profile/getall');
             $READ = $API->read(false);
             $ARRAY = $API->parseResponse($READ);
-            $API->disconnect();*/
-            $sentence = new SentenceUtil();
-            $sentence->fromCommand("/ppp/profile/getall");
-            $this->talker->send($sentence);
-            $profile = $this->talker->getResult();
+            $API->disconnect();
            }
         //   return "";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
