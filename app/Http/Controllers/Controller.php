@@ -1417,15 +1417,15 @@ class Controller extends BaseController
         $profile = "hola es importane";
         $API = new RouterosAPI();
 
-           if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-             return "hola";
-             $profile = $API->write('/ppp/profile/getall');
-              $READ = $API->read(false);
-              $ARRAY = $API->parseResponse($READ);
+        //   if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+        //     return "hola";
+        //      $API->write('/ppp/profile/getall');
+        //      $READ = $API->read(false);
+        //      $ARRAY = $API->parseResponse($READ);
 
-              $API->disconnect();
-           }
-
+        //      $API->disconnect();
+        //   }
+        //   return "";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
     }
 
