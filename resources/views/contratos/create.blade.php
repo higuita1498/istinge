@@ -382,13 +382,14 @@
                                 <label class="control-label">Profile</label>
                                 <input type="text" class="form-control" name="profile" id="div_profile" >
                             </div> --}}
-                            <div class="col-md-4 form-group d-none" id="profile_container">
+                            <div class="col-md-4 form-group d-none" id="div_profile">
                                 <label class="control-label">Profile<span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-control selectpicker" name="profile" id="div_profile_select" required="" title="Seleccione" data-live-search="true" data-size="5">
+                                    <select class="form-control selectpicker" name="profile" id="div_profile" required="" title="Seleccione" data-live-search="true" data-size="5">
+
                                     </select>
                                     {{-- <div class="input-group-append">
-                                        <a href="#" data-toggle="modal" data-target="#planModal" class="btn btn-outline-success btn-sm">
+                                       <a href="#" data-toggle="modal" data-target="#planModal" class="btn btn-outline-success btn-sm">
                                             <i class="fas fa-plus" style="margin: 2px;"></i>
                                         </a>
                                     </div> --}}
