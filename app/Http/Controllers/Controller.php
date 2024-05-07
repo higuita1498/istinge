@@ -1420,9 +1420,9 @@ class Controller extends BaseController
         $getall = '';
 
         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-            $profile =  $API->write('/ppp/profile/getall');
+            $API->write('/ppp/profile/getall');
             $READ = $API->read(false);
-            $ARRAY = $API->parseResponse($READ);
+            $profile = $API->parseResponse($READ);
             $API->disconnect();
            }
         //   return "";
