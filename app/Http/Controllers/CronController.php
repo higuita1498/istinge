@@ -2712,7 +2712,10 @@ class CronController extends Controller
                     // break;
                 }
 
-                unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
+                $archivo = public_path() . "/convertidor/" . $factura->codigo . ".pdf";
+                if (file_exists($archivo)) {
+                    unlink($archivo);
+                }
                 $factura->whatsapp = 1;
                 $factura->save();
             }
