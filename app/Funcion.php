@@ -6,7 +6,7 @@ use Auth;
 class Funcion
 {
     public static function Parsear($valor){
-        if(!isset(Auth::user())){
+        if(!Auth::user()){
             $empresa = Empresa::Find(1);
         }
         else{
@@ -25,7 +25,7 @@ class Funcion
 
     public static function precision($valor){
 
-        if(!isset(Auth::user())){
+        if(!Auth::user()){
             $empresa = Empresa::Find(1);
         }
         else{
