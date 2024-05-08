@@ -1,7 +1,14 @@
 @extends('layouts.pdf')
 
 @section('content')
-@php $empresa = Auth::user()->empresa(); @endphp
+@php
+    if(!Auth::user())
+    {
+        $empresa = App\Empresa::Find(1);
+    }else{
+        $empresa = Auth::user()->empresa();
+    }
+@endphp
     <style type="text/css">
         /**
         * Define the width, height, margins and position of the watermark.
