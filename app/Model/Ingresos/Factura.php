@@ -186,9 +186,7 @@ class Factura extends Model
 
     public function total()
     {
-
-        // Personalizado para a la hora de ver o descargar pdf que involucran totalidades de facturass... empresa importadora y gestor de partes
-        $idEmpresas = [0];
+        $idEmpresas = [1];
         if(isset(Auth::user()->empresaObj)){
                 if(Auth::user()->empresaObj->id == 1){
                 if(Auth::user()->empresaObj->nit == 1128464945){

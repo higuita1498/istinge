@@ -6,10 +6,17 @@ use Auth;
 class Funcion
 {
     public static function Parsear($valor){
-    	return number_format($valor, Auth::user()->empresa()->precision, Auth::user()->empresa()->sep_dec, (Auth::user()->empresa()->sep_dec=='.'?',':'.'));
+        if(!isset(Auth::user())){
+            $empresa = Empresa::Find(1);
+        }
+        else{
+            $empresa = Auth::user()->empresa();
+        }
+
+    	return number_format($valor, $empresa->precision, $empresa->sep_dec, ($empresa->sep_dec=='.'?',':'.'));
 
     }
-    
+
     public static function ParsearAPI($valor, $id){
         $empresa = Empresa::find($id);
         return number_format($valor, $empresa->precision, $empresa->sep_dec, ($empresa->sep_dec=='.'?',':'.'));
@@ -17,7 +24,14 @@ class Funcion
     }
 
     public static function precision($valor){
-        return round($valor, Auth::user()->empresa()->precision);
+
+        if(!isset(Auth::user())){
+            $empresa = Empresa::Find(1);
+        }
+        else{
+            $empresa = Auth::user()->empresa();
+        }
+        return round($valor, $empresa->precision);
     }
 
     public static function precisionAPI($valor, $id){
