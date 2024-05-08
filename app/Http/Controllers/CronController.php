@@ -2711,6 +2711,8 @@ class CronController extends Controller
                 }
 
                 // unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
+                $factura->whatsapp = 1;
+                $factura->save();
             }
             Log::info("Lote de facturas enviadas por whatsapp correctamente.");
         }
