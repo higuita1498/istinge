@@ -307,7 +307,7 @@
 
     <div class="divheader-pr">
         <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
-            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.$empresa->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+            <img src="{{asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
         </div>
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
             <br><br>
