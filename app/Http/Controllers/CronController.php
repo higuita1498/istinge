@@ -2699,21 +2699,22 @@ class CronController extends Controller
 
                 $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
                 if(isset($response->statusCode)) {
-                    Log::error('No se pudo enviar el mensaje, por favor intente nuevamente.');
-                    return;
+                    Log::error('No se pudo enviar el mensaje, por favor intente nuevamente.' . $contacto->nit);
+                    // break;
                 }
 
+                if(isset($response->scalar)){
                 $response = json_decode($response->scalar);
+                }
 
-                if($response->status != "success") {
-                    Log::error('No se pudo enviar el mensaje, por favor intente nuevamente.');
-                    return;
+                if(isset($response->status) && $response->status != "success") {
+                    Log::error('No se pudo enviar el mensaje, por favor intente nuevamente. ' . $contacto->nit);
+                    // break;
                 }
 
                 unlink(public_path() . "/convertidor/" . $factura->codigo . ".pdf");
                 $factura->whatsapp = 1;
                 $factura->save();
-                //
             }
             Log::info("Lote de facturas enviadas por whatsapp correctamente.");
         }
