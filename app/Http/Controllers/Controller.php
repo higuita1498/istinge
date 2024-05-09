@@ -1418,6 +1418,7 @@ class Controller extends BaseController
         $API->port = $mikrotik->puerto_api;
         $registro = false;
         $getall = '';
+        $profile = "";
 
         if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
             $API->write('/ppp/profile/getall');
@@ -1425,7 +1426,7 @@ class Controller extends BaseController
             $profile = $API->parseResponse($READ);
             $API->disconnect();
            }
-           
+
         //   return "";
         return response()->json(['planes' => $planes, 'mikrotik' => $mikrotik,'profile' => $profile]);
     }
