@@ -488,6 +488,24 @@
                                 </span>
                             </div>
                             <div class="col-md-4 form-group">
+                                <label class="control-label">Serial Moden</label>
+                                  <div class="input-group">
+                                    <input type="text" class="form-control" name="serial_moden" id="serial_moden" value="{{$contrato->serial_moden}}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('serial_moden') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Tipo Moden</label>
+                                  <div class="input-group">
+                                    <input type="text" class="form-control" name="tipo_moden" id="tipo_moden" value="{{$contrato->tipo_moden}}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('tipo_moden') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
                                 <label class="control-label">Serial ONU</label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="serial_onu" id="serial_onu" value="{{$contrato->serial_onu}}">
