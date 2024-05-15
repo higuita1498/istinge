@@ -1498,6 +1498,8 @@ class ContratosController extends Controller
                     $contrato->contrasena_wifi         = $request->contrasena_wifi;
                     $contrato->ip_receptora            = $request->ip_receptora;
                     $contrato->puerto_receptor         = $request->puerto_receptor;
+                    $contrato->tipo_moden              = $request->tipo_moden;
+                    $contrato->serial_moden            = $request->serial_moden;
 
                     if(isset($request->factura_individual)){
                         $contrato->factura_individual = $request->factura_individual;

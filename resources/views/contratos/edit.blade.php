@@ -488,7 +488,7 @@
                                 </span>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Serial Moden</label>
+                                <label class="control-label">Serial Modem</label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="serial_moden" id="serial_moden" value="{{$contrato->serial_moden}}">
                                     <span class="help-block error">
@@ -497,7 +497,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label class="control-label">Tipo Moden</label>
+                                <label class="control-label">Tipo Modem</label>
                                   <div class="input-group">
                                     <input type="text" class="form-control" name="tipo_moden" id="tipo_moden" value="{{$contrato->tipo_moden}}">
                                     <span class="help-block error">
