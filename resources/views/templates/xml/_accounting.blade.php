@@ -8,7 +8,7 @@
         </cac:PartyIdentification>
             {{-- @endif --}}
         <cac:PartyName>
-            <cbc:Name>{{$data['nombre']}}</cbc:Name>
+            <cbc:Name>{{$data['nombre'] . " " . (isset($data['apellido1']) ? $data['apellido1'] : '') . " " . (isset($data['apellido2']) ? $data['apellido2'] : '') }}</cbc:Name>
         </cac:PartyName>
         @isset($Empresa)
         <cac:PhysicalLocation>
@@ -92,7 +92,7 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 @if(isset($nc))
 @if(auth()->user()->empresa != 22 && auth()->user()->empresa != 80 && auth()->user()->empresa != 50 && auth()->user()->empresa != 77 && auth()->user()->empresa != 14 && auth()->user()->empresa != 101 && auth()->user()->empresa != 71 && auth()->user()->empresa != 70 && auth()->user()->empresa != 73 && auth()->user()->empresa != 72 && auth()->user()->empresa != 65 && auth()->user()->empresa != 64
 && auth()->user()->empresa != 63 && auth()->user()->empresa != 62 && auth()->user()->empresa != 64 && auth()->user()->empresa != 52 && auth()->user()->empresa != 274
-&& auth()->user()->empresa != 26 && auth()->user()->empresa != 15 && auth()->user()->empresa != 25 && auth()->user()->empresaObj->id != 12 && auth()->user()->empresaObj->id != 255 
+&& auth()->user()->empresa != 26 && auth()->user()->empresa != 15 && auth()->user()->empresa != 25 && auth()->user()->empresaObj->id != 12 && auth()->user()->empresaObj->id != 255
 && auth()->user()->empresaObj->id != 90 && auth()->user()->empresaObj->id != 111 && auth()->user()->empresaObj->id != 42 && auth()->user()->empresaObj->id != 102
 && auth()->user()->empresaObj->id != 1 && auth()->user()->empresaObj->id != 112 && auth()->user()->empresaObj->id != 113 && auth()->user()->empresaObj->id != 200
 && auth()->user()->empresaObj->id != 37 && auth()->user()->empresaObj->id != 61 && auth()->user()->empresaObj->id != 216 && auth()->user()->empresaObj->id != 270 && auth()->user()->empresaObj->id != 4  && auth()->user()->empresaObj->id != 240 && auth()->user()->empresaObj->id != 43)
@@ -122,8 +122,8 @@ if($contresp != $cont) {echo ";";}?>@endforeach</cbc:TaxLevelCode>
 <cbc:Telephone>@if(isset($data['celular'])){{$data['celular']}}@endif</cbc:Telephone>
 @endif
 
-@php 
-$cont = 0;  
+@php
+$cont = 0;
     if(is_array($emails))
     {
         $max = count($emails);
