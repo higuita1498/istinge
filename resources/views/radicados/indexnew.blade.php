@@ -377,6 +377,25 @@
 <script>
 	var tabla = null;
 	var tablaG = null;
+
+		$(document).ready(function() {
+		// Inicializa tu DataTable
+		/*$('#example').DataTable({
+			// Configura tus opciones de DataTables aquí
+		});*/
+
+		// Intercepta los mensajes de advertencia de DataTables
+		$.fn.dataTable.ext.errMode = 'none';
+
+		// Opcional: Maneja el evento 'error' de la tabla para realizar acciones adicionales
+		/*$('#example').on('error.dt', function(e, settings, techNote, message) {
+			// Aquí puedes registrar el error en la consola o manejarlo de otra forma
+			console.log('DataTables error:', message);
+			// Opcionalmente puedes ocultar cualquier mensaje de error visual que ya se haya mostrado
+			$('.dataTables_wrapper .dataTables_info').hide();
+		});*/
+	});
+
 	window.addEventListener('load', function() {
 		tabla = $('#table_sin_gestionar').DataTable({
 			responsive: true,
