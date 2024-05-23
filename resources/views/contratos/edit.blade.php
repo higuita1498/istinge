@@ -690,7 +690,7 @@
                             <div class="col-md-4 form-group">
                                 <label class="control-label">Descuento $<a><i data-tippy-content="El descuento que se indique, se reflejará en la facturación recurrente del contrato pero en pesos" class="icono far fa-question-circle"></i></a></label>
                                 <div class="input-group mb-2">
-                                    <input type="number" class="form-control" id="descuento_pesos" name="descuento_pesos"  required="" value="{{$contrato->descuento_pesos}}" min='0'>
+                                    <input type="number" class="form-control" id="descuento_pesos" name="descuento_pesos" value="{{$contrato->descuento_pesos}}" min='0'>
                                     <div class="input-group-prepend">
                                         <div class="input-group-text font-weight-bold"><i class="far fa-money-bill-alt"></i></div>
                                     </div>
