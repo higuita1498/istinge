@@ -285,6 +285,9 @@ class CronController extends Controller
                                                 }
                                                 $item_reg->cant        = 1;
                                                 $item_reg->desc        = $cm->descuento;
+                                                if($cm->descuento_pesos != null){
+                                                    $item->precio      = $item->precio - $cm->descuento_pesos;
+                                                }
                                                 $item_reg->save();
                                             }
 

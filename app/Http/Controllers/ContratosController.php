@@ -841,6 +841,7 @@ class ContratosController extends Controller
                 $contrato->puerto_receptor         = $request->puerto_receptor;
                 $contrato->serial_moden            = $request->serial_moden;
                 $contrato->tipo_moden              = $request->tipo_moden;
+                $contrato->descuento_pesos         = $request->descuento_pesos;
 
 
                 if($request->tipo_suspension_no == 1){
@@ -1038,7 +1039,7 @@ class ContratosController extends Controller
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu','contracts.iva_factura',
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
           'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
-          'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension','contracts.serial_moden','contracts.tipo_moden')
+          'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension','contracts.serial_moden','contracts.tipo_moden','contracts.descuento_pesos')
           ->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
 
 
@@ -1500,6 +1501,7 @@ class ContratosController extends Controller
                     $contrato->puerto_receptor         = $request->puerto_receptor;
                     $contrato->tipo_moden              = $request->tipo_moden;
                     $contrato->serial_moden            = $request->serial_moden;
+                    $contrato->descuento_pesos         = $request->descuento_pesos;
 
                     if(isset($request->factura_individual)){
                         $contrato->factura_individual = $request->factura_individual;
