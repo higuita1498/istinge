@@ -599,7 +599,7 @@ class CronController extends Controller
                 where('cs.state','enabled')->
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null)->
-                where('cs.server_configuration_id','!=',null)->
+                // where('cs.server_configuration_id','!=',null)-> se comenta por que tambien se peuden canclear planes de tv que no estan con servidor
                 whereDate('f.vencimiento', '<=', now())->
                 orderBy('f.id', 'desc')->
                 take(20)->
