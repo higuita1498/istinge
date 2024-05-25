@@ -182,7 +182,10 @@ class Movimiento extends Model
 
     public function notas(){
         if ($this->modulo==1) {
-            return Ingreso::find($this->id_modulo)->notas;
+            $notas = Ingreso::find($this->id_modulo);
+            if($notas){
+                return $notas->notas;
+            }
         }else if ($this->modulo==3) {
             return Gastos::find($this->id_modulo)->notas;
         }
