@@ -3,8 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Modulo; use App\Banco; 
-use App\Model\Ingresos\Ingreso; 
+use App\Modulo; use App\Banco;
+use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresoR;
 use App\Model\Gastos\Gastos;
 use App\Model\Gastos\GastosRecurrentes;
@@ -22,7 +22,7 @@ class Movimiento extends Model
      * @var array
      */
     protected $fillable = [
-       'empresa', 'banco', 'contacto', 'tipo', 'saldo', 'fecha', 'estatus', 'conciliado', 'modulo', 'id_modulo', 'transferencia', 'descripcion', 'created_at', 'updated_at'    
+       'empresa', 'banco', 'contacto', 'tipo', 'saldo', 'fecha', 'estatus', 'conciliado', 'modulo', 'id_modulo', 'transferencia', 'descripcion', 'created_at', 'updated_at'
     ];
 
     public function banco(){
@@ -79,7 +79,7 @@ class Movimiento extends Model
             }
         }
         if (GastosRecurrentes::find($this->id_modulo)) {
-                return GastosRecurrentes::find($this->id_modulo)->detalle();    
+                return GastosRecurrentes::find($this->id_modulo)->detalle();
             }
     }
 
@@ -98,7 +98,7 @@ class Movimiento extends Model
         elseif ($this->modulo==2 || $this->modulo==4) { $modulo=IngresoR::find($this->id_modulo); }
         elseif ($this->modulo==3) { $modulo=Gastos::find($this->id_modulo); }
         else if($this->modulo==5) {
-         $gasto=Gastos::where('empresa',Auth::user()->empresa)->where('nro',$this->id_modulo)->first(); 
+         $gasto=Gastos::where('empresa',Auth::user()->empresa)->where('nro',$this->id_modulo)->first();
          if ($gasto) {
              $boton.= '<a  href="'.route('pagos.show',$gasto->id).'" class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
                 <a href="'.route('pagos.edit',$gasto->id).'"  class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
@@ -111,8 +111,8 @@ class Movimiento extends Model
             <button class="btn btn-outline-danger  btn-icons negative_paging" type="submit" title="Eliminar" onclick="confirmar('."'eliminar-gasto".$gasto->id."', '¿Estas seguro que deseas eliminar el gasto?', 'Se borrara de forma permanente');".'"><i class="fas fa-times"></i></button>
                  ';
          }
-         
-            return $boton;   
+
+            return $boton;
     }
 
 
@@ -130,7 +130,7 @@ class Movimiento extends Model
             }
             else{
                 $boton.='<button class="btn btn-outline-success  btn-icons" type="button" title="Abrir" onclick="confirmar('."'anular-ingreso'".$modulo->id."', '¿Está seguro de que desea abrir el ingreso?', ' ');".'><i class="fas fa-unlock-alt"></i></button>';
-            }   
+            }
         }
         if ($modulo->tipo!=3) {
            $boton.='<form action="'.route($this->modulo()->modulo.'.destroy', $modulo->nro).'" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-ingreso'.$modulo->id.'">'.csrf_field().'<input name="_method" type="hidden" value="DELETE"></form>
@@ -139,7 +139,7 @@ class Movimiento extends Model
         }
         return $boton;
     }
-    
+
     public function getDateAttribute()
     {
         return [
@@ -155,7 +155,7 @@ class Movimiento extends Model
                 ->fecha,
         ];
     }
-    
+
     public function saldo($recaudo = false){
         $movimientos = Movimiento::where('fecha', $this->fecha)->where('banco', $this->banco)->get();
         $saldo = 0;
@@ -171,7 +171,10 @@ class Movimiento extends Model
 
     public function observaciones(){
         if ($this->modulo==1) {
-            return Ingreso::find($this->id_modulo)->observaciones;
+            $obs = Ingreso::find($this->id_modulo);
+            if($obs){
+                return $obs->observaciones;
+            }
         }else if ($this->modulo==3) {
             return Gastos::find($this->id_modulo)->observaciones;
         }
