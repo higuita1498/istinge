@@ -230,13 +230,13 @@ class RadicadosController extends Controller{
             return  $radicado->creado();
         })
         ->editColumn('responsable', function (Radicado $radicado) {
-            return $radicado->responsable;
+            return $radicado->responsable ? $radicado->responsable()->nombres : 'N/A';
         })
         ->editColumn('prioridad', function (Radicado $radicado) {
             return '<span class="font-weight-bold text-'.$radicado->prioridad(true).'">'.$radicado->prioridad().'</span>';
         })
         ->editColumn('tecnico', function (Radicado $radicado) {
-            return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
+            return ($radicado->tecnico) ? 'N/A' : 'N/A' ;
         })
         ->editColumn('ip', function (Radicado $radicado) {
             if($radicado->ip){
