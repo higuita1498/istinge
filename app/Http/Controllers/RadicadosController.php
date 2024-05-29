@@ -194,7 +194,7 @@ class RadicadosController extends Controller{
                 $query->whereIn('radicados.estatus', [0,2]);
             });
         }elseif($estado == 1){
-            dd("ingreso en el sino si");
+
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [1,3]);
             });
