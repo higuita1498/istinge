@@ -187,7 +187,6 @@ class RadicadosController extends Controller{
         }
 
         if($estado == 0){
-
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
@@ -210,7 +209,7 @@ class RadicadosController extends Controller{
             return  $radicado->contrato;
         })
         ->editColumn('cliente', function (Radicado $radicado) {
-            return  $radicado->nombre;
+            return  $radicado->cliente;
         })
         ->editColumn('telefono', function (Radicado $radicado) {
             return  $radicado->telefono;
