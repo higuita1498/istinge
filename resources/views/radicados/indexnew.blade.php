@@ -385,7 +385,7 @@
 		});*/
 
 		// Intercepta los mensajes de advertencia de DataTables
-
+		$.fn.dataTable.ext.errMode = 'none';
 
 		// Opcional: Maneja el evento 'error' de la tabla para realizar acciones adicionales
 		/*$('#example').on('error.dt', function(e, settings, techNote, message) {
@@ -533,7 +533,7 @@
                 @endforeach
 				{data: 'acciones'}
 			],
-			@if(isset($_SESSION['permisos']['841']))
+			// @if(isset($_SESSION['permisos']['841']))
 			select: true,
             select: {
                 style: 'multi',
