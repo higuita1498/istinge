@@ -48,7 +48,6 @@ class RadicadosController extends Controller{
     }
 
     public function index(Request $request){
-
         $this->getAllPermissions(Auth::user()->id);
 
         $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
@@ -62,7 +61,6 @@ class RadicadosController extends Controller{
     }
 
     public function indexNew(Request $request, $tipo){
-
         $this->getAllPermissions(Auth::user()->id);
 
         $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
@@ -83,7 +81,6 @@ class RadicadosController extends Controller{
     }
 
     public function radicados(Request $request, $estado){
-
         $modoLectura = auth()->user()->modo_lectura();
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
@@ -190,17 +187,17 @@ class RadicadosController extends Controller{
         }
 
         if($estado == 0){
+            dd("ingreso solventados");
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
         }elseif($estado == 1){
-
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [1,3]);
             });
         }
 
-        $radicados = $radicados->orderby('radicados.created_at', 'desc');
+        $radicados = $radicados->orderby('radicados.creado', 'desc');
 
         return datatables()->eloquent($radicados)
         ->editColumn('codigo', function (Radicado $radicado) {
