@@ -14,7 +14,7 @@
 		    	@foreach($numeraciones as $nro)
 		    		<option value="{{$nro->id}}" {{$nro->id==$request->nro?'selected':''}}>{{$nro->nombre}}</option>
 					@endforeach
-		    		<option value="0">Todas</option>
+		    		<option value="0" {{0==$request->nro?'selected':''}}>Todas</option>
 		    </select>
 	  	</div>
 		@if(isset($mikrotiks))
