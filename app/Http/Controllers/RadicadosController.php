@@ -186,12 +186,12 @@ class RadicadosController extends Controller{
             $radicados = $radicados->where('radicados.tecnico',Auth::user()->id)->orderby('radicados.id','ASC');
         }
 
-        if($estado == 1){
+        if($estado == 0){
 
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
-        }elseif($estado == 0){
+        }elseif($estado == 1){
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [1,3]);
             });
