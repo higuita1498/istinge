@@ -189,11 +189,11 @@ class RadicadosController extends Controller{
         if($estado == 0){
 
             $radicados->where(function ($query) use ($estado) {
-                $query->whereIn('radicados.estatus', [1,3]);
+                $query->whereIn('radicados.estatus', [0,2]);
             });
         }elseif($estado == 1){
             $radicados->where(function ($query) use ($estado) {
-                $query->whereIn('radicados.estatus', [0,2]);
+                $query->whereIn('radicados.estatus', [1,3]);
             });
         }
 
