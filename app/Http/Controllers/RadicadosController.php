@@ -209,7 +209,7 @@ class RadicadosController extends Controller{
             return  $radicado->contrato;
         })
         ->editColumn('cliente', function (Radicado $radicado) {
-            return  $radicado->cliente;
+            return  $radicado->nombre;
         })
         ->editColumn('telefono', function (Radicado $radicado) {
             return  $radicado->telefono;
@@ -221,7 +221,8 @@ class RadicadosController extends Controller{
             return  $radicado->direccion;
         })
         ->addColumn('estatus', function (Radicado $radicado) {
-            return   '<span class="font-weight-bold text-' . $radicado->estatus(true) . '">' . $radicado->estatus() . '</span>';
+            // return   '<span class="font-weight-bold text-' . $radicado->estatus(true) . '">' . $radicado->estatus() . '</span>';
+            return $radicado->estatus;
         })
         ->addColumn('nro_radicados', function (Radicado $radicado) {
             return $radicado->nro_radicados();
