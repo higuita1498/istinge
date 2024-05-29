@@ -221,8 +221,7 @@ class RadicadosController extends Controller{
             return  $radicado->direccion;
         })
         ->addColumn('estatus', function (Radicado $radicado) {
-            // return   '<span class="font-weight-bold text-' . $radicado->estatus(true) . '">' . $radicado->estatus() . '</span>';
-            return $radicado->estatus;
+            return   '<span class="font-weight-bold text-' . $radicado->estatus(true) . '">' . $radicado->estatus() . '</span>';
         })
         ->addColumn('nro_radicados', function (Radicado $radicado) {
             return $radicado->nro_radicados();
