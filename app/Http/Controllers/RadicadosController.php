@@ -187,7 +187,7 @@ class RadicadosController extends Controller{
         }
 
         if($estado == 0){
-            dd("ingreso solventados");
+
             $radicados->where(function ($query) use ($estado) {
                 $query->whereIn('radicados.estatus', [0,2]);
             });
@@ -197,7 +197,7 @@ class RadicadosController extends Controller{
             });
         }
 
-        $radicados = $radicados->orderby('radicados.creado', 'desc');
+       // $radicados = $radicados->orderby('radicados.creado', 'desc');
 
         return datatables()->eloquent($radicados)
         ->editColumn('codigo', function (Radicado $radicado) {
