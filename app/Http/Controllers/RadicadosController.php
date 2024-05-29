@@ -236,7 +236,7 @@ class RadicadosController extends Controller{
             return '<span class="font-weight-bold text-'.$radicado->prioridad(true).'">'.$radicado->prioridad().'</span>';
         })
         ->editColumn('tecnico', function (Radicado $radicado) {
-            return ($radicado->tecnico && $radicado->tecnico()->nombres) ? $radicado->tecnico()->nombres : 'N/A' ;
+            return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
         })
         ->editColumn('ip', function (Radicado $radicado) {
             if($radicado->ip){
