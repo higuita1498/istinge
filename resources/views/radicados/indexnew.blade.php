@@ -77,7 +77,7 @@
 	    </div>
 	@else
         @if(isset($_SESSION['permisos']['5']))
-	        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
+	        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Client1e</a>
 	    @endif
 	    @if(isset($_SESSION['permisos']['411']))
 	        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
