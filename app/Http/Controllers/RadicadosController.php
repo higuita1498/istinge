@@ -230,7 +230,7 @@ class RadicadosController extends Controller{
             return  $radicado->creado();
         })
         ->editColumn('responsable', function (Radicado $radicado) {
-            return $radicado->responsable ? $radicado->responsable()->nombres : 'N/A';
+            return $radicado->responsable;
         })
         ->editColumn('prioridad', function (Radicado $radicado) {
             return '<span class="font-weight-bold text-'.$radicado->prioridad(true).'">'.$radicado->prioridad().'</span>';
