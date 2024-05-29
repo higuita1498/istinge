@@ -77,7 +77,7 @@
 	    </div>
 	@else
         @if(isset($_SESSION['permisos']['5']))
-	        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Client1e</a>
+	        <a href="{{route('contactos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Cliente</a>
 	    @endif
 	    @if(isset($_SESSION['permisos']['411']))
 	        <a href="{{route('contratos.create')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Nuevo Contrato</a>
@@ -385,7 +385,7 @@
 		});*/
 
 		// Intercepta los mensajes de advertencia de DataTables
-		$.fn.dataTable.ext.errMode = 'none';
+
 
 		// Opcional: Maneja el evento 'error' de la tabla para realizar acciones adicionales
 		/*$('#example').on('error.dt', function(e, settings, techNote, message) {
