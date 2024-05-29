@@ -205,14 +205,14 @@
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Técnico" class="form-control rounded selectpicker" id="tecnico" data-size="5" data-live-search="true">
 												@foreach ($tecnicos as $tecnico)
-													{{-- <option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option> --}}
+													<option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option>
 												@endforeach
 											</select>
 										</div>
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Creado por" class="form-control rounded selectpicker" id="responsable" data-size="5" data-live-search="true">
 												@foreach ($responsables as $responsable)
-													{{-- <option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option> --}}
+													<option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option>
 												@endforeach
 											</select>
 										</div>
@@ -323,14 +323,14 @@
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Técnico" class="form-control rounded selectpicker" id="tecnicoG" data-size="5" data-live-search="true">
 												@foreach ($tecnicos as $tecnico)
-													{{-- <option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option> --}}
+													<option value="{{ $tecnico->id}}">{{ $tecnico->nombres}}</option>
 												@endforeach
 											</select>
 										</div>
 										<div class="col-md-2 pl-1 pt-1">
 											<select title="Creado por" class="form-control rounded selectpicker" id="responsableG" data-size="5" data-live-search="true">
 												@foreach ($responsables as $responsable)
-													{{-- <option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option> --}}
+													<option value="{{ $responsable->id}}">{{ $responsable->nombres}}</option>
 												@endforeach
 											</select>
 										</div>
@@ -385,7 +385,7 @@
 		});*/
 
 		// Intercepta los mensajes de advertencia de DataTables
-
+		// $.fn.dataTable.ext.errMode = 'none';
 
 		// Opcional: Maneja el evento 'error' de la tabla para realizar acciones adicionales
 		/*$('#example').on('error.dt', function(e, settings, techNote, message) {
