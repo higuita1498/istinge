@@ -239,7 +239,18 @@ class RadicadosController extends Controller{
         ->editColumn('tecnico', function (Radicado $radicado) {
             return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
         })
-
+        ->editColumn('ip', function (Radicado $radicado) {
+            if($radicado->ip){
+                if($radicado->contrato()){
+                    if(isset($radicado->contrato()->puerto_conexion)){
+                        return "<a href='http://".$radicado->ip.":".$radicado->cliente()->contrato()->puerto->nombre."' target='_blank'>{$radicado->ip}:{$radicado->cliente()->contrato()->puerto->nombre} <i class='fas fa-external-link-square-alt'></i></a>";
+                    }
+                }
+              //  return "<a href='http://".$radicado->ip."' target='_blank'>{$radicado->ip} <i class='fas fa-external-link-square-alt'></i></a>";
+            }else{
+                return 'N/A' ;
+            }
+        })
         ->editColumn('mac_address', function (Radicado $radicado) {
             return ($radicado->mac_address) ? $radicado->mac_address : 'N/A' ;
         })
