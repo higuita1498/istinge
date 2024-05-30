@@ -141,7 +141,9 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
+            dd($request->linea);
             if($request->linea){
+
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
                 });
