@@ -141,13 +141,6 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
-            dd($request->ip);
-            if($request->linea){
-
-                $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
-                });
-            }
             if($request->plan){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.plan_id', $request->plan);
@@ -297,7 +290,11 @@ class ContratosController extends Controller
                     $query->orWhere('contactos.estrato', 'like', "%{$request->c_estrato}%");
                 });
             }
-
+            if($request->linea){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
+                });
+            }
         }
 
         $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
