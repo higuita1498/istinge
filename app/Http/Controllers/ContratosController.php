@@ -291,9 +291,9 @@ class ContratosController extends Controller
                 });
             }
             if($request->linea){
-                dd($request->linea);
+
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
+                    $query->whereIn('contracts.linea', 'like', "%{$request->linea}%");
                 });
             }
         }
