@@ -237,7 +237,7 @@ class RadicadosController extends Controller{
         })
         ->editColumn('tecnico', function (Radicado $radicado) {
             // return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
-            return ($radicado->tecnico) ? 'N/A' : 'N/A' ;
+            return ($radicado->tecnico) ? $radicado->tecnico()->nombres : 'N/A' ;
 
         })
         ->editColumn('ip', function (Radicado $radicado) {
