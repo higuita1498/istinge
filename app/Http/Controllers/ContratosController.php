@@ -141,7 +141,7 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
-            dd($request->linea);
+            dd($request->ip);
             if($request->linea){
 
                 $contratos->where(function ($query) use ($request) {
