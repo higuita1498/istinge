@@ -290,6 +290,7 @@ class ContratosController extends Controller
                     $query->orWhere('contactos.estrato', 'like', "%{$request->c_estrato}%");
                 });
             }
+            dd($request);
             if($request->linea){
                 dd("hola");
                 $contratos->where(function ($query) use ($request) {
