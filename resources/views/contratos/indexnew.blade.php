@@ -429,7 +429,7 @@
 			data.grupo_corte = $('#grupo_cort').val();
 			data.ip = $('#ip').val();
 			data.mac = $('#mac').val();
-            data.mac = $('#linea').val();
+            data.linea = $('#linea').val();
             data.conexion = $("#conexion_s").val();
             data.server_configuration_id = $("#server_configuration_id_s").val();
             data.interfaz = $("#interfaz_s").val();
@@ -464,7 +464,7 @@
             }
         });
 
-        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac,#linea').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
