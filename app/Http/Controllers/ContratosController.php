@@ -135,7 +135,7 @@ class ContratosController extends Controller
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
 
         if ($request->filtro == true) {
-
+            dd("filtro");
             if($request->cliente_id){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.client_id', $request->cliente_id);
@@ -291,7 +291,6 @@ class ContratosController extends Controller
                 });
             }
             if($request->linea){
-
                 $contratos->where(function ($query) use ($request) {
                     $query->whereIn('contracts.linea', 'like', "%{$request->linea}%");
                 });
