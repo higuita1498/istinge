@@ -1667,6 +1667,47 @@ class Controller extends BaseController
     public function getIps($mikrotik){
         $ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
 
+$mikrotik = Mikrotik::find($mikrotik);
+if ($mikrotik) {
+    $API = new RouterosAPI();
+    $API->port = $mikrotik->puerto_api;
+
+    if ($API->connect($mikrotik->ip, $mikrotik->usuario, $mikrotik->clave)) {
+        $API->write("/queue/simple/getall");
+        $READ = $API->read(false);
+        $ARRAY = $API->parseResponse($READ);
+        $API->disconnect();
+        $sanitizedArray = [];
+
+        foreach ($ARRAY as $item) {
+            $sanitizedItem = [];
+
+            foreach ($item as $key => $value) {
+                // Verificar si $value es una cadena antes de intentar convertirla
+                if (is_string($value)) {
+                    // Detectar la codificación
+                    $encoding = mb_detect_encoding($value, mb_list_encodings(), true);
+                    if ($encoding) {
+                        // Convertir a UTF-8 si se detecta la codificación
+                        $sanitizedItem[$key] = mb_convert_encoding($value, "UTF-8", $encoding);
+                    } else {
+                        // Sanitizar la cadena si la codificación no se detecta
+                        $sanitizedItem[$key] = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+                    }
+                } else {
+                    $sanitizedItem[$key] = $value; // Si no es una cadena, mantener el valor original
+                }
+            }
+
+            // Agregar el item sanitizado al array resultante
+            $sanitizedArray[] = $sanitizedItem;
+        }
+
+        return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
+    }
+}
+        /*$ips = Contrato::where('status', 1)->select('ip', 'state')->orderBy('ip', 'asc')->get();
+
         $mikrotik = Mikrotik::find($mikrotik);
         if ($mikrotik) {
             $API = new RouterosAPI();
@@ -1700,9 +1741,9 @@ class Controller extends BaseController
                 // arreglo y de los valores no llegaba correctamente, por eso
                 // es necesario convertir nuevamente el arreglo a UTF-8.
                 $sanitizedArray = mb_convert_encoding($ARRAY, "UTF-8", "auto");*/
-                return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
+              /*  return response()->json(['software' => $ips, 'mikrotik' => $sanitizedArray]);
             }
-        }
+        }*/
     }
 
     public function getSegmentos($mikrotik){
