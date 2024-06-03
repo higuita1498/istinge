@@ -29,8 +29,7 @@ use App\Vendedor;
 use App\Model\Ingresos\NotaCredito;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request; use Carbon\Carbon;
-use Auth; use App\NumeracionFactura;
-use DB;
+use App\NumeracionFactura;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
@@ -39,6 +38,10 @@ use App\PucMovimiento;
 use App\Servidor;
 use App\FormaPago;
 use App\Contrato;
+use App\Empresa;
+use Illuminate\Support\Facades\Auth as Auth;
+use Illuminate\Support\Facades\DB as DB;
+
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 use PHPExcel;
 use PHPExcel_IOFactory;
@@ -2933,6 +2936,85 @@ class ReportesController extends Controller
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
+    }
+
+    public function exogena(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        DB::enableQueryLog();
+        if ($request->nro == 'remisiones'){
+            return $this->remisiones($request);
+        }else{
+
+            $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
+            $cajas = Banco::where('estatus',1)->get();
+            $cajasUsuario = auth()->user()->cuentas();
+
+            if(Auth::user()->rol > 1 && auth()->user()->rol == 8){
+                $cajas = Banco::whereIn('id', $cajasUsuario)->get();
+            }
+
+            view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Exógena', 'icon' =>'fas fa-chart-line']);
+            $campos=array( '','nombre', 'f.fecha', 'f.vencimiento', 'nro', 'nro', 'nro', 'nro');
+            if (!$request->orderby) {
+                $request->orderby=1; $request->order=1;
+            }
+            $orderby=$campos[$request->orderby];
+            $order=$request->order==1?'DESC':'ASC';
+
+            $contactos = Contacto::join('factura as f', 'f.cliente', '=', 'contactos.id')
+            ->join('ingresos_factura as ig', 'f.id', '=', 'ig.factura')
+            ->whereIn('f.tipo', [2])
+            // ->where('contactos.id',1518)
+            ->select('contactos.id as idContacto','contactos.nombre','contactos.apellido1','contactos.apellido2','contactos.nit',
+            'contactos.tip_iden')
+            ->selectRaw('SUM(ig.pago) as ingresosBrutos')
+            ->groupBy('contactos.id')
+            ;
+
+            $dates = $this->setDateRequest($request);
+
+            if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+                $contactos=$contactos->where('f.fecha','>=', $dates['inicio'])->where('f.fecha','<=', $dates['fin']);
+            }
+
+            $ides=array();
+            $contactos=$contactos->OrderBy($orderby, $order)->get();
+
+            // foreach ($facturas as $factura) {
+            //     $ides[]=$factura->id;
+            // }
+
+            if($request->orderby == 4 || $request->orderby == 5  || $request->orderby == 6 || $request->orderby == 7 ){
+                switch ($request->orderby){
+                    case 4:
+                        $contactos = $request->order  ? $contactos->sortBy('subtotal') : $contactos = $contactos->sortByDesc('subtotal');
+                        break;
+                    case 5:
+                        $contactos = $request->order ? $contactos->sortBy('iva') : $contactos = $contactos->sortByDesc('iva');
+                        break;
+                    case 6:
+                        $contactos = $request->order ? $contactos->sortBy('retenido') : $contactos = $contactos->sortByDesc('retenido');
+                        break;
+                    case 7:
+                        $contactos = $request->order ? $contactos->sortBy('total') : $contactos = $contactos->sortByDesc('total');
+                        break;
+                }
+            }
+            $contactos = $this->paginate($contactos, 15, $request->page, $request);
+
+            $subtotal=$total=0;
+            // if ($ides) {
+            //     $result=DB::table('items_factura')->whereIn('factura', $ides)->select(DB::raw("SUM((`cant`*`precio`)) as 'total', SUM((precio*(`desc`/100)*`cant`)+0)  as 'descuento', SUM((precio-(precio*(if(`desc`,`desc`,0)/100)))*(`impuesto`/100)*cant) as 'impuesto'  "))->first();
+            //     $subtotal=$this->precision($result->total-$result->descuento);
+            //     $total=$this->precision((float)$subtotal+$result->impuesto);
+            // }
+
+            $empresa = Empresa::Find(1);
+
+            return view('reportes.exogena.index')->with(compact('contactos', 'request','empresa'));
+
+        }
+
     }
 
 }

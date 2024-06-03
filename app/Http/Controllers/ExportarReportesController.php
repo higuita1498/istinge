@@ -661,7 +661,6 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[19].$i, "TOTAL: ")
                 ->setCellValue($letras[20].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
 
-
             $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
                 'borders' => array(
                     'allborders' => array(
@@ -4911,6 +4910,176 @@ class ExportarReportesController extends Controller
         header('Content-type: application/vnd.ms-excel');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Reporte_Contactos.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function exogena(Request $request){
+        $objPHPExcel = new PHPExcel();
+
+        $tituloReporte = "Reporte Exógena " . Auth::user()->empresaObj->nombre;
+
+        $titulosColumnas = array(
+            'Concepto',
+            'tipo Doc.',
+            'Nro Identifiacion',
+            'Primer Apellido',
+            'Segundo Apellido',
+            'Primer Nombre',
+            'Otros Nombres',
+            'Razon Social',
+            'Pais Residencia',
+            'Ingresos Brutos',
+            'Dev, Reb, Desc'
+        );
+
+        $letras = array(
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z'
+        );
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte Excel Exógena") // Titulo
+        ->setSubject("Reporte Excel Exógena") //Asunto
+        ->setDescription("Reporte Excel Exógena") //Descripci���n
+        ->setKeywords("Reporte Excel Exógena") //Etiquetas
+        ->setCategory("Reporte Excel Exógena"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:K1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', $tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A2:K2');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'Reporte Exógena'); // Titulo del reporte
+
+        $estilo = array(
+            'font' => array('bold' => true, 'size' => 12, 'name' => 'Times New Roman'),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A1:K1')->applyFromArray($estilo);
+
+        $estilo = array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => 'c6c8cc')
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:K3')->applyFromArray($estilo);
+
+
+        for ($i = 0; $i < count($titulosColumnas); $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $i = 4;
+        $letra = 0;
+        $dates = $this->setDateRequest($request);
+
+        $contactos = Contacto::join('factura as f', 'f.cliente', '=', 'contactos.id')
+        ->join('ingresos_factura as ig', 'f.id', '=', 'ig.factura')
+        ->whereIn('f.tipo', [2])
+        // ->where('contactos.id',1518)
+        ->select('contactos.id as idContacto','contactos.nombre','contactos.apellido1','contactos.apellido2','contactos.nit',
+        'contactos.tip_iden')
+        ->selectRaw('SUM(ig.pago) as ingresosBrutos')
+        ->groupBy('contactos.id')
+        ;
+
+        $dates = $this->setDateRequest($request);
+
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $contactos=$contactos->where('f.fecha','>=', $dates['inicio'])->where('f.fecha','<=', $dates['fin']);
+        }
+
+        $contactos = $contactos->get();
+
+        $empresa = Empresa::find(Auth::user()->empresa);
+        $totalIngresos = 0;
+        foreach ($contactos as $cont) {
+            $swIngresos = $cont->ingresosBrutos >= 500000 ? 1 : 0;
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0] . $i, '')
+                ->setCellValue($letras[1] . $i, $swIngresos == 1 ? 13 : 31)
+                ->setCellValue($letras[2] . $i, $swIngresos == 1 ? $cont->nit : '222222222')
+                ->setCellValue($letras[3] . $i, $swIngresos == 1 ? $cont->apellido1 : '')
+                ->setCellValue($letras[4] . $i, $swIngresos == 1 ? $cont->apellido2 : '')
+                ->setCellValue($letras[5] . $i, $swIngresos == 1 ? $cont->nombre : '')
+                ->setCellValue($letras[6] . $i, '')
+                ->setCellValue($letras[7] . $i, $swIngresos == 0 ? $empresa->nombre : '')
+                ->setCellValue($letras[8] . $i, 169)
+                ->setCellValue($letras[9] . $i, $cont->ingresosBrutos)
+                ->setCellValue($letras[10] . $i, 0);
+            $i++;
+            $totalIngresos+= $cont->ingresosBrutos;
+        }
+
+        $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[8].$i, "TOTAL: ")
+                ->setCellValue($letras[9].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totalIngresos));
+
+        $estilo = array(
+            'font' => array('size' => 12, 'name' => 'Times New Roman'),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:K' . $i)->applyFromArray($estilo);
+
+        for ($i = 'A'; $i <= $letras[20]; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle("Reporte Exogena");
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Exogena.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
