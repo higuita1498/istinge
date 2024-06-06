@@ -1301,6 +1301,12 @@ public function forma_pago()
                 $finCorte = Carbon::parse($finCorte)->subMonth();
                 $inicioCorte =  $inicioCorte->subMonth();
             }
+            else{
+                if($empresa->periodo_facturacion == 1){
+                    $finCorte = Carbon::parse($finCorte)->addMonth();
+                    $inicioCorte =  $inicioCorte->addMonth();
+                }
+            }
             //se comenta por que etsaba creando conflicto
 
             /* Validacion de mes anticipado o mes vencido */

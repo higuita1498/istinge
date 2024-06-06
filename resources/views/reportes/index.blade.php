@@ -38,6 +38,7 @@
                         <li><a href="{{route('reportes.mintic.1.2')}}">Res.6333 T.1.3</a></li>
                         <li><a href="{{route('reportes.mintic.1.2')}}">Res.6755 Formato T.4.2</a></li>
                         <li><a href="{{route('reportes.mintic.1.2')}}">Res.6755 Formato T.4.3</a></li>
+                        <li><a href="{{route('reportes.exogena')}}">Reporte Exógena</a></li>
 
                     </ul>
                 </div>
