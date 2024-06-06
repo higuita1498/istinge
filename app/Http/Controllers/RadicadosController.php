@@ -85,7 +85,8 @@ class RadicadosController extends Controller{
         $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
             ->select('radicados.*', 's.nombre as nombre_servicio')
-            ->where('radicados.empresa', Auth::user()->empresa);
+            ->where('radicados.empresa', Auth::user()->empresa)
+            ->orderBy('radicados.codigo', 'desc');
 
         if ($request->filtro == true) {
             if($request->codigo){
