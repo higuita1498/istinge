@@ -82,16 +82,10 @@ class RadicadosController extends Controller{
 
     public function radicados(Request $request, $estado){
         $modoLectura = auth()->user()->modo_lectura();
-        /*$radicados = Radicado::query()
+        $radicados = Radicado::query()
             ->join('servicios as s', 's.id','=','radicados.servicio')
             ->select('radicados.*', 's.nombre as nombre_servicio')
-            ->where('radicados.empresa', Auth::user()->empresa);*/
-        $radicados = Radicado::query()
-        ->join('servicios as s', 's.id', '=', 'radicados.servicio')
-        ->select('radicados.*', 's.nombre as nombre_servicio')
-        ->where('radicados.empresa', Auth::user()->empresa)
-        ->orderBy('radicados.codigo', 'desc')
-        ->get();
+            ->where('radicados.empresa', Auth::user()->empresa);
 
         if ($request->filtro == true) {
             if($request->codigo){
