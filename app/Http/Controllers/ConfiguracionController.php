@@ -1884,6 +1884,20 @@ class ConfiguracionController extends Controller
     }
   }
 
+  public function factCronAbiertas(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->status == 0) {
+      $empresa->cron_fact_abiertas = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->cron_fact_abiertas = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
+
   public function facturacionSmsAutomatica(Request $request){
     $empresa = Empresa::find(auth()->user()->empresa);
 
