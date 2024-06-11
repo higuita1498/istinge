@@ -171,7 +171,7 @@
                                     <td style="font-size: 9px;">Valor</td>
                                     <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total + IVA</td>
-                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) + App\Funcion::Parsear(($contractDetails->plan()->price * 19) / 100), 3, '.', '000' : '________' }}</td>
+                                    <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) + App\Funcion::Parsear(($contractDetails->plan()->price * 19) / 100), 3, '.', '000') : '________' }}</td>
                                 </tr>
                             </table>
 
