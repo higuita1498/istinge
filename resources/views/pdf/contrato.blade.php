@@ -203,8 +203,8 @@
                                     if (isset($contract->servicio_tv)){
                                         $total_tv = (($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio;
                                     }
-                                    if (isset($contract->server_configuration_id)){
-                                        $total_internet = $contract->plan()->price;
+                                    if (isset($contract->server_configuration_id) && $contract->iva_factura){
+                                        $total_internet = $contract->plan()->price + (($contract->plan()->price *19)/100);
                                     }
                                     @endphp
                                 </tr>
