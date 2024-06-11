@@ -3512,9 +3512,9 @@ class ContratosController extends Controller
             // if (!$request->interfaz) {
             //     $error->interfaz = "El campo interfaz es obligatorio";
             // }
-            if (!$request->local_address) {
+            /*if (!$request->local_address) {
                 $error->local_address = "El campo segmento es obligatorio";
-            }
+            }*/
 
             if($request->grupo_corte != ""){
                 if(GrupoCorte::where('nombre', $request->grupo_corte)->where('status', 1)->count() == 0){
