@@ -168,7 +168,7 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td style="font-size: 9px;">Valor12</td>
+                                    <td style="font-size: 9px;">Valor</td>
                                     {{-- <td style="font-size: 9px;"><b>{{$empresa->color->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td> --}}
                                     <td style="font-size: 9px;">Total</td>
                                     {{-- <td style="font-size: 9px;">{{$empresa->color->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</td> --}}
@@ -194,7 +194,7 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td style="font-size: 9px;">Valor12</td>
+                                    <td style="font-size: 9px;">Valor</td>
                                     {{-- <td style="font-size: 9px;">{{$empresa->color->moneda}}{{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td> --}}
                                     <td style="font-size: 9px;">Total</td>
                                     {{-- <td style="font-size: 9px;">{{$empresa->color->moneda}} {{ isset($contract->servicio_tv) ? App\Funcion::Parsear((($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio) : '________' }}</td> --}}
@@ -203,9 +203,9 @@
                                     if (isset($contract->servicio_tv)){
                                         $total_tv = (($contract->plan('true')->precio * $contract->plan('true')->impuesto)/100)+$contract->plan('true')->precio;
                                     }
-                                    if (isset($contract->server_configuration_id)){
-                                        $total_internet = $contract->plan()->price;
-                                    }
+                                    // if (isset($contract->server_configuration_id)){
+                                    //     $total_internet = $contract->plan()->price;
+                                    // }
                                     @endphp
                                 </tr>
                             </table>
