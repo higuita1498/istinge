@@ -171,14 +171,31 @@
                                     <td style="font-size: 9px;">Valor</td>
                                     <td style="font-size: 9px;"><b>{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td>
                                     <td style="font-size: 9px;">Total + IVA</td>
-                                    @php
+                                    {{-- @php
                                     if (isset($contract->server_configuration_id) && $contract->iva_factura){
                                         <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) + App\Funcion::Parsear(($contractDetails->plan()->price *19)/100).'.'.'000' : '________' }}</td>
 
                                     }else{
                                         <td style="font-size: 9px;">{{Auth::user()->empresa()->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</td>
                                     }
+                                    @endphp --}}
+                                    @php
+                                        $moneda = Auth::user()->empresa()->moneda;
+                                        $priceWithIva = isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) + App\Funcion::Parsear(($contractDetails->plan()->price * 19) / 100) : null;
+                                        $priceWithoutIva = isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : null;
                                     @endphp
+
+                                    @if (isset($contract->server_configuration_id) && $contract->iva_factura)
+                                        <td style="font-size: 9px;">
+                                            {{ $moneda }}
+                                            {{ $priceWithIva !== null ? number_format($priceWithIva, 3, '.', '') : '________' }}
+                                        </td>
+                                    @else
+                                        <td style="font-size: 9px;">
+                                            {{ $moneda }}
+                                            {{ $priceWithoutIva !== null ? number_format($priceWithoutIva, 3, '.', '') : '________' }}
+                                        </td>
+                                    @endif
                                 </tr>
                             </table>
 
