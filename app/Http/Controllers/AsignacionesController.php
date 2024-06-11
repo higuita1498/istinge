@@ -1347,7 +1347,6 @@ class AsignacionesController extends Controller
     // funcion que permita imprimir el contrato en firma de asignaciones
     public function imprimir_firma($id)
     {
-        dd("hola");
         // TODO: we should really test this method, as the generation of the PDF
         // can sometimes go wrong. Or make a better error. The following can be
         // upgraded to use something like Go or Rust, but I feel this is fine
