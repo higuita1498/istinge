@@ -170,7 +170,7 @@
                                 <tr>
                                     <td style="font-size: 9px;">Valor</td>
                                     {{-- <td style="font-size: 9px;"><b>{{$empresa->color->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</b></td> --}}
-                                    <td style="font-size: 9px;">Total</td>
+                                    <td style="font-size: 9px;">Total mas IVA</td>
                                     {{-- <td style="font-size: 9px;">{{$empresa->color->moneda}} {{ isset($contractDetails->server_configuration_id) ? App\Funcion::Parsear($contractDetails->plan()->price) : '________' }}</td> --}}
                                 </tr>
                             </table>
