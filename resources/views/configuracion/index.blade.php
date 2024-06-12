@@ -424,7 +424,7 @@
 					<div class="col-sm-6 offset-sm-3">
 						<select class="form-control selectpicker" name="periodo_facturacion" id="val_periodo_facturacion" required="" title="Seleccione" data-live-search="true" data-size="5">
 							<option value="1" {{ Auth::user()->empresa()->periodo_facturacion == 1 ? 'selected' : '' }}>Mes Anticipado</option>
-							<option value="1" {{ Auth::user()->empresa()->periodo_facturacion == 3 ? 'selected' : '' }}>Mes Actual</option>
+							<option value="3" {{ Auth::user()->empresa()->periodo_facturacion == 3 ? 'selected' : '' }}>Mes Actual</option>
 							<option value="2" {{ Auth::user()->empresa()->periodo_facturacion == 2 ? 'selected' : '' }}>Mes Vencido</option>
 						</select>
 					</div>
