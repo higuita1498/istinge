@@ -655,6 +655,7 @@ class CronController extends Controller
 
                 $ultimaFacturaRegistrada = Factura::
                 where('cliente',$factura->cliente)
+                ->where('estatus','<>',2)
                 ->whereIn('contrato_id',$contratosId)
                 ->orderBy('created_at', 'desc')
                 ->value('id');
