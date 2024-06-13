@@ -96,6 +96,7 @@ class IngresosController extends Controller
                 });
             }
             if($request->status){
+                dd("ingreso para el filtro de status");
                 $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.estatus', 'like', "%{$request->status}%");
                 });
