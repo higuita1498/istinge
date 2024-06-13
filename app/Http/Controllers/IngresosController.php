@@ -75,6 +75,7 @@ class IngresosController extends Controller
     }
 
     public function ingresos(Request $request){
+        dd("goak");
         $this->getAllPermissions(Auth::user()->id);
         $empresa = auth()->user()->empresa;
         $modoLectura = auth()->user()->modo_lectura();
