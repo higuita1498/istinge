@@ -75,7 +75,6 @@ class IngresosController extends Controller
     }
 
     public function ingresos(Request $request){
-
         $this->getAllPermissions(Auth::user()->id);
         $empresa = auth()->user()->empresa;
         $modoLectura = auth()->user()->modo_lectura();
@@ -97,7 +96,7 @@ class IngresosController extends Controller
                 });
             }
             if($request->status){
-                dd("ingreso para el filtro de status");
+
                 $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.estatus', 'like', "%{$request->status}%");
                 });
