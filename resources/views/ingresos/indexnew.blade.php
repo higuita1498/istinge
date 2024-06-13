@@ -51,7 +51,7 @@
 						</div>
                         <div class="col-md-2 pl-1 pt-1">
                             <select class="form-control rounded selectpicker" id="status" title="Anulados" data-size="5" data-live-search="true">
-                                <option value="1">Anulados</option>
+                                <option value="2">Anulados</option>
                                 <!-- Añade más opciones aquí según sea necesario -->
                             </select>
                         </div>

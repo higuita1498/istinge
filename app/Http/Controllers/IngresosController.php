@@ -95,6 +95,11 @@ class IngresosController extends Controller
                     $query->orWhere('ingresos.comprobante_pago', 'like', "%{$request->comprobante_pago}%");
                 });
             }
+            if($request->status){
+                $ingresos->where(function ($query) use ($request) {
+                    $query->orWhere('ingresos.estatus', 'like', "%{$request->status}%");
+                });
+            }
             if($request->cliente){
                 $ingresos->where(function ($query) use ($request) {
                     $query->orWhere('ingresos.cliente', $request->cliente);
