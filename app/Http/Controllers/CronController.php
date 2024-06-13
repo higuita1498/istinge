@@ -127,8 +127,6 @@ class CronController extends Controller
                 // ->limit(1)->skip(7)
                 ->get();
 
-                $factura = Factura::where('id',$factrua->id)->get();
-
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
                 if($num){
                     $numero = $num->nro;
