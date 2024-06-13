@@ -161,6 +161,7 @@
 				tabla.on('preXhr.dt', function(e, settings, data) {
 					data.numero = $('#numero').val();
 					data.comprobante_pago = $('#comprobante_pago').val();
+                    data.status = $('#status').val();
 					data.cliente = $('#cliente').val();
 					data.fecha = $('#fecha-pago-dp').val();
 					data.estado = $('#estado').val();
@@ -224,6 +225,7 @@
 		function cerrarFiltrador() {
 		    $('#numero').val('');
 		    $('#comprobante_pago').val('');
+            $('#status').val('');
 			$('#cliente').val('').selectpicker('refresh');
 			$('#fecha-pago-dp').val('');
 			$('#estado').val('').selectpicker('refresh');
