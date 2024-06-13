@@ -49,6 +49,15 @@
 						<div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Comprobante Pago" id="comprobante_pago" class="form-control rounded">
 						</div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <select class="form-control rounded selectpicker" id="status" title="Anulados" data-size="5" data-live-search="true">
+                                <option value="1">Anulados</option>
+                                <!-- Añade más opciones aquí según sea necesario -->
+                            </select>
+                        </div>
+                        <div class="col-md-2 pl-1 pt-1">
+							<input type="text" placeholder="Estado" id="comprobante_pago" class="form-control rounded">
+						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select class="form-control rounded selectpicker" id="cliente" title="Cliente" data-size="5" data-live-search="true">
 								@foreach ($clientes as $cliente)
