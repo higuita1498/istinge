@@ -3932,7 +3932,7 @@ class ContratosController extends Controller
        public function forzarCrm($idContrato){
 
         $contrato = Contrato::find($idContrato);
-
+        dd($contrato);
         //crm registro
         $crm = new CRM();
         $crm->cliente = $contrato->cliente()->id;
