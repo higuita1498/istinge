@@ -1031,6 +1031,10 @@ class IngresosController extends Controller
 
             $cliente = $ingreso->cliente();
 
+            if($cliente->celular == null){
+                $cliente->celular = $cliente->telefono;
+            }
+
             $contact = [
                 "phone" => "57" . $cliente->celular,
                 "name" => $cliente->nombre . " " . $cliente->apellido1
