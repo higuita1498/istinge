@@ -1011,11 +1011,11 @@ class IngresosController extends Controller
             $empresa = Empresa::find($ingreso->empresa);
             $paper_size = array(0,0,270,580);
 
-            $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
+             $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
             'itemscount','empresa', 'resolucion'));
-            $pdf->setPaper($paper_size, 'portrait');
-            $pdf->save(public_path() . "/convertidor/recibo" . $ingreso->nro . ".pdf")->output();
-             $pdf64 = base64_encode($pdf);
+             $pdf->setPaper($paper_size, 'portrait');
+             $pdf->save(public_path() . "/convertidor/recibo" . $ingreso->nro . ".pdf")->output();
+             $pdf64 = base64_encode($pdf->stream());
              $instance = Instance::where('company_id', auth()->user()->empresa)->first();
 
              if(is_null($instance) || empty($instance)){
