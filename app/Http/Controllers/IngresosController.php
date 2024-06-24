@@ -1012,7 +1012,9 @@ class IngresosController extends Controller
             $paper_size = array(0,0,270,580);
 
             $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
-             'itemscount','empresa', 'resolucion'))->save(public_path() . "/convertidor/recibo" . $ingreso->nro . ".pdf")->output();
+            'itemscount','empresa', 'resolucion'));
+            $pdf->setPaper($paper_size, 'portrait');
+            $pdf->save(public_path() . "/convertidor/recibo" . $ingreso->nro . ".pdf")->output();
              $pdf64 = base64_encode($pdf);
              $instance = Instance::where('company_id', auth()->user()->empresa)->first();
 
@@ -1042,7 +1044,7 @@ class IngresosController extends Controller
 
             $nameEmpresa = auth()->user()->empresa()->nombre;
             $total = $ingreso->total()->total;
-            $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
+            $message = "$nameEmpresa Le informa que su recibo de caja ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
 
             $body = [
                 "contact" => $contact,
