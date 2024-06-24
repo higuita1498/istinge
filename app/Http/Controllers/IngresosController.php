@@ -35,7 +35,9 @@ use App\Anticipo;
 use App\FormaPago;
 use App\NumeracionFactura;
 use App\Funcion;
+use App\Instance;
 use App\Plantilla;
+use App\Services\WapiService;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -988,6 +990,74 @@ class IngresosController extends Controller
 
         //mandamos por parametro el ingreso y el 1 (guardar)
         PucMovimiento::ingreso($ingreso,1,0);
+    }
+
+    function tirillaWpp($nro, WapiService $wapiService){
+        $ingreso = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $nro)->first();
+        if ($ingreso) {
+            if ($ingreso->tipo==1) {
+                $itemscount=IngresosFactura::where('ingreso',$ingreso->id)->count();
+                $items = IngresosFactura::join('items_factura as itf','itf.factura','ingresos_factura.factura')->select('itf.*')->where('ingreso',$ingreso->id)->get();
+            }else if ($ingreso->tipo==2){
+                $itemscount=IngresosCategoria::where('ingreso',$ingreso->id)->count();
+                $items = IngresosCategoria::where('ingreso',$ingreso->id)->get();
+            }else{
+                $itemscount=1;
+                $items = Ingreso::where('empresa',Auth::user()->empresa)->where('nro', $id)->get();
+            }
+            $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
+            $resolucion = NumeracionFactura::where('empresa', Auth::user()->empresa)
+            ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
+            $empresa = Empresa::find($ingreso->empresa);
+            $paper_size = array(0,0,270,580);
+
+            $pdf = PDF::loadView('pdf.plantillas.ingreso_tirilla', compact('ingreso', 'items', 'retenciones',
+             'itemscount','empresa', 'resolucion'))->save(public_path() . "/convertidor/recibo" . $ingreso->nro . ".pdf")->output();
+             $pdf64 = base64_encode($pdf);
+             $instance = Instance::where('company_id', auth()->user()->empresa)->first();
+
+             if(is_null($instance) || empty($instance)){
+                return back()->with('danger', 'Aún no ha creado una instancia, por favor pongase en contacto con el administrador.');
+            }
+
+            if($instance->status !== "PAIRED") {
+                return back()->with('danger', 'La instancia de whatsapp no está conectada, por favor conectese a whatsapp y vuelva a intentarlo.');
+            }
+
+            $file = [
+                "mime" => "@file/pdf",
+                "data" => $pdf64,
+            ];
+
+            $cliente = $ingreso->cliente();
+
+            $contact = [
+                "phone" => "57" . $cliente->celular,
+                "name" => $cliente->nombre . " " . $cliente->apellido1
+            ];
+
+            $nameEmpresa = auth()->user()->empresa()->nombre;
+            $total = $ingreso->total()->total;
+            $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
+
+            $body = [
+                "contact" => $contact,
+                "body" => $message,
+                "file" => $file
+            ];
+
+            $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
+            if(isset($response->statusCode)) {
+                return back()->with('danger', 'No se pudo enviar el mensaje, por favor intente nuevamente.');
+            }
+            $response = json_decode($response->scalar);
+
+            if($response->status != "success") {
+                return back()->with('danger', 'No se pudo enviar el mensaje, por favor intente nuevamente.');
+            }
+
+            return back()->with('success', 'Mensaje enviado correctamente.');
+        }
     }
 
     public function updateIngresoPucCategoria($request,$id){

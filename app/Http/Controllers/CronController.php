@@ -433,6 +433,11 @@ class CronController extends Controller
                 }// fin foreach contratos.
             }
 
+            if(isset($nro)){
+                $nro->inicio = $nro->inicio+1;
+                $nro->save();
+            }
+
              /* Enviar correo funcional */
              foreach($grupos_corte as $grupo_corte){
                 $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2).$grupo_corte->fecha_factura, - 2);
