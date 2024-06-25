@@ -3781,10 +3781,10 @@ class ExportarReportesController extends Controller
                         'style' => PHPExcel_Style_Border::BORDER_THIN
                     )
                 ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:L'.$i)->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:N'.$i)->applyFromArray($estilo);
 
 
-            for($i = 'A'; $i <= $letras[22]; $i++){
+            for($i = 'A'; $i <= $letras[20]; $i++){
                 $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
             }
 
