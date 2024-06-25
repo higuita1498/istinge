@@ -3784,7 +3784,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel->getActiveSheet()->getStyle('A3:L'.$i)->applyFromArray($estilo);
 
 
-            for($i = 'A'; $i <= $letras[20]; $i++){
+            for($i = 'A'; $i <= $letras[22]; $i++){
                 $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
             }
 
