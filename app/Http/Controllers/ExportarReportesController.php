@@ -3695,7 +3695,7 @@ class ExportarReportesController extends Controller
             $estilo =array('fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array('rgb' => 'd08f50')));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:L3')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->applyFromArray($estilo);
 
 
             for ($i=0; $i <count($titulosColumnas) ; $i++) {
