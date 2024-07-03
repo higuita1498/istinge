@@ -1011,7 +1011,7 @@ class ContactosController extends Controller
                         }
                     }
 
-                   /* if ($request->fk_iddepartamento != '') {
+                    if ($request->fk_iddepartamento != '') {
                         if (DB::table('departamentos')->where('nombre', $request->fk_iddepartamento)->count() == 0) {
                             $error->fk_iddepartamento = 'El nombre del departamento ingresado no se encuentra en nuestra base de datos';
                         }
@@ -1021,7 +1021,7 @@ class ContactosController extends Controller
                         if (DB::table('municipios')->where('nombre', $request->fk_idmunicipio)->count() == 0) {
                             $error->fk_idmunicipio = 'El nombre del municipio ingresado no se encuentra en nuestra base de datos';
                         }
-                    }*/
+                    }
                 }
 
                 if (count((array) $error) > 0) {
