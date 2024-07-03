@@ -1082,10 +1082,10 @@ class ContactosController extends Controller
                 if ($request->fk_idpais != '') {
                     $request->fk_idpais = DB::table('pais')->where('nombre', $request->fk_idpais)->first()->codigo;
                 }
-
-                if ($request->fk_iddepartamento != '') {
-                    $request->fk_iddepartamento = DB::table('departamentos')->where('nombre', $request->fk_iddepartamento)->first()->id;
-                }
+                $request->fk_iddepartamento= 11;
+                // if ($request->fk_iddepartamento != '') {
+                //     $request->fk_iddepartamento = DB::table('departamentos')->where('nombre', $request->fk_iddepartamento)->first()->id;
+                // }
 
                 if ($request->fk_idmunicipio != '') {
                     $request->fk_idmunicipio = DB::table('municipios')->where('nombre', $request->fk_idmunicipio)->first()->id;
