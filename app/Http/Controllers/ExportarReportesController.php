@@ -3647,7 +3647,7 @@ class ExportarReportesController extends Controller
             ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion','c.barrios','c.vereda', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
             ->where('c.status',1);
@@ -3674,7 +3674,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel = new PHPExcel();
             $tituloReporte = "Reporte de Facturas Impagas desde ".$request->fecha." hasta ".$request->hasta;
 
-            $titulosColumnas = array('Nro. Factura', 'Creacion', 'Vencimiento', 'Monto', 'Cliente', 'Celular', 'Identificacion', 'Direccion', 'Corte', 'Servidor', 'IP', 'MAC');
+            $titulosColumnas = array('Nro. Factura', 'Creacion', 'Vencimiento', 'Monto', 'Cliente', 'Celular', 'Identificacion', 'Direccion', 'Corte', 'Servidor', 'IP', 'MAC','BARRIO','VEREDA');
             $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
             $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
             ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -3695,7 +3695,7 @@ class ExportarReportesController extends Controller
             $estilo =array('fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array('rgb' => 'd08f50')));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:L3')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->applyFromArray($estilo);
 
 
             for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -3765,8 +3765,10 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
                     ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? ($factura->cliente()->contrato()->servidor()->nombre ?? '') : '')
                     ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->ip : '')
-                    ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '');
-                $i++;
+                    ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '')
+                    ->setCellValue($letras[12].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->barrio : '')
+                    ->setCellValue($letras[13].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->vereda : '');
+                    $i++;
             }
             /*$objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[2].$i, "TOTAL: ")
@@ -3779,7 +3781,7 @@ class ExportarReportesController extends Controller
                         'style' => PHPExcel_Style_Border::BORDER_THIN
                     )
                 ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:L'.$i)->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:N'.$i)->applyFromArray($estilo);
 
 
             for($i = 'A'; $i <= $letras[20]; $i++){

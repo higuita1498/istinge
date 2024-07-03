@@ -750,6 +750,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::post('efecty_store_xlsx', 'IngresosController@efecty_store_xlsx')->name('ingresos.efecty_store_xlsx');
 
 		Route::get('/movimiento/{id}', 'IngresosController@showMovimiento')->name('ingresos.showmovimiento');
+		Route::get('/tirillawpp/{id}', 'IngresosController@tirillaWpp')->name('ingresos.tirillawpp');
 	});
 
 	Route::resource('recurrentes', 'RecurrentesController');
