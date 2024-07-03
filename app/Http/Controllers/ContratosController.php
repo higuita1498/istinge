@@ -3478,14 +3478,14 @@ class ContratosController extends Controller
             if (!$request->servicio) {
                 $error->servicio="El campo Servicio es obligatorio";
             }
-            if($request->mikrotik != ""){
+           /* if($request->mikrotik != ""){
                 if(Mikrotik::where('nombre', $request->mikrotik)->count() == 0){
                     $error->mikrotik = "El mikrotik ingresado no se encuentra en nuestra base de datos";
                 }
                 $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
                 $mikoId = $miko->id;
 
-            }
+            }*/
             $mikoId=1;
             if($request->plan != ""){
                 // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
