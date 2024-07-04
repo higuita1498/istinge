@@ -110,6 +110,7 @@ class UsuariosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $roles = Roles::where('id','>',1)->where('id_empresa', Auth::user()->empresa)->where('id', '<>', 3)->get();
         $usuario = User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
+        dd($usuario);
         $cuentas = DB::table('bancos')->where('empresa',Auth::user()->empresa)->get();
         $oficinas = Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
         if ($usuario) {
