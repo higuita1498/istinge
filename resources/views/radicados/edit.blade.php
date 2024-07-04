@@ -126,13 +126,12 @@
         <label class="control-label">Medio de atencion </span></label>
         <select class="form-control selectpicker" name="medio" id="prioridad" required="" title="Seleccione">
             <option value="Oficina" {{ old('medio', $radicado->medio) == 'Oficina' ? 'selected' : '' }}>Oficina</option>
-            <option value="Oficina">Oficina</option>
-            <option value="Línea Telefónica">Línea Telefónica</option>
-            <option value="Página Web">Página Web</option>
-            <option value="Red social">Red social</option>
-            <option value="Otros">Otros</option>
-            <option value="Aplicación móvil">Aplicación móvil</option>
-            <option value="Servicios de mensajería instantánea">Servicios de mensajería instantánea</option>
+            <option value="Línea Telefónica" {{ old('medio', $radicado->medio) == 'Línea Telefónica' ? 'selected' : '' }}>Línea Telefónica</option>
+            <option value="Página Web" {{ old('medio', $radicado->medio) == 'Página Web' ? 'selected' : '' }}>Página Web</option>
+            <option value="Red social" {{ old('medio', $radicado->medio) == 'Red social' ? 'selected' : '' }}>Red social</option>
+            <option value="Otros" {{ old('medio', $radicado->medio) == 'Otros' ? 'selected' : '' }}>Otros</option>
+            <option value="Aplicación móvil" {{ old('medio', $radicado->medio) == 'Aplicación móvil' ? 'selected' : '' }}>Aplicación móvil</option>
+            <option value="Servicios de mensajería instantánea" {{ old('medio', $radicado->medio) == 'Servicios de mensajería instantánea' ? 'selected' : '' }}>Servicios de mensajería instantánea</option>
         </select>
         <span class="help-block error">
             <strong>{{ $errors->first('prioridad') }}</strong>
@@ -141,11 +140,12 @@
     <div class="col-md-3 form-group">
         <label class="control-label">Grado de satifacción </span></label>
         <select class="form-control selectpicker" name="grado" id="prioridad" required="" title="Seleccione">
-            <option value="USUARIOS_NS_MUY_INSATISFECHO	">USUARIOS_NS_MUY_INSATISFECHO	</option>
-            <option value="USUARIOS_NS_INSATISFECHO">USUARIOS_NS_INSATISFECHO</option>
-            <option value="USUAR_NS_NI_INSATISF_NI_SATISF">USUAR_NS_NI_INSATISF_NI_SATISF</option>
-            <option value="USUARIOS_NS_SATISFECHO	">USUARIOS_NS_SATISFECHO</option>
-            <option value="USUARIOS_NS_MUY_SATISFECHO">USUARIOS_NS_MUY_SATISFECHO</option>
+            <option value="USUARIOS_NS_MUY_INSATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_MUY_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_INSATISFECHO</option>
+            <option value="USUARIOS_NS_INSATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_INSATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_INSATISFECHO</option>
+            <option value="USUAR_NS_NI_INSATISF_NI_SATISF" {{ old('medio', $radicado->medio) == 'USUAR_NS_NI_INSATISF_NI_SATISF' ? 'selected' : '' }}>USUAR_NS_NI_INSATISF_NI_SATISF</option>
+            <option value="USUARIOS_NS_SATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_SATISFECHO</option>
+            <option value="USUARIOS_NS_MUY_SATISFECHO" {{ old('medio', $radicado->medio) == 'USUARIOS_NS_MUY_SATISFECHO' ? 'selected' : '' }}>USUARIOS_NS_MUY_SATISFECHO</option>
+
         </select>
         <span class="help-block error">
             <strong>{{ $errors->first('prioridad') }}</strong>
