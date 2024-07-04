@@ -103,7 +103,7 @@
   </div>
   <div class="col-md-6 form-group">
     <label class="control-label">Observaciones</label>
-    <textarea class="form-control" id="observaciones" name="observaciones" value="{{$usuario->observaciones}}" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones') }}</textarea>
+    <textarea class="form-control" id="observaciones" name="observaciones" value="{{$usuario->observaciones}}" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones', $usuario->observaciones) }}</textarea>
     <span class="help-block error">
         <strong>{{ $errors->first('observaciones') }}</strong>
     </span>
