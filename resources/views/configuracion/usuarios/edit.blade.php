@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 	<form method="POST" action="{{ route('usuarios.update', $usuario->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-usuarios" >
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
       <input name="_method" type="hidden" value="PATCH">
   <div class="row">
     <div class="col-md-4 form-group">
@@ -17,7 +17,7 @@
       <input type="email" class="form-control" name="email" id="email" required=""   value="{{$usuario->email}}" maxlength="200" >
       <span class="help-block error">
         <strong>{{ $errors->first('email') }}</strong>
-      </span> 
+      </span>
     </div>
 
 
@@ -32,7 +32,7 @@
         <strong>{{ $errors->first('rol') }}</strong>
       </span>
     </div>
-    
+
     <div class="col-md-3 form-group">
       <label class="control-label">Cuenta Asociada</label>
       <select class="form-control selectpicker"  id="cuenta" name="cuenta[]"  title="Seleccione" multiple data-max-options="5">
@@ -77,7 +77,7 @@
           <input type="checkbox" class="form-check-input" name="changepass" id="changepass" value="1"> Cambiar
         </label>
       </div>
-    </div> 
+    </div>
     <input type="hidden" id="cambiar" value="0">
   </div>
 
@@ -101,7 +101,13 @@
       <div class="help-block error with-errors"></div>
     </div>
   </div>
-
+  <div class="col-md-6 form-group">
+    <label class="control-label">Observaciones</label>
+    <textarea class="form-control" id="observaciones" name="observaciones" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones') }}</textarea>
+    <span class="help-block error">
+        <strong>{{ $errors->first('observaciones') }}</strong>
+    </span>
+</div>
 
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>

@@ -168,6 +168,7 @@ class UsuariosController extends Controller
 
             $usuario->nombres  = $request->nombres;
             $usuario->email    = $request->email;
+            $usuario->observaciones = $request->observaciones;
             $usuario->username = $request->username=strtolower($request->username);
             $usuario->rol      = $request->rol;
             if(isset($request->cuenta[0])){ $usuario->cuenta = $request->cuenta[0]; }else{ $usuario->cuenta = null; }
