@@ -44,13 +44,7 @@
       </span>
     </div>
 
-    <div class="col-md-6 form-group">
-        <label class="control-label">Observaciones</label>
-        <textarea class="form-control" id="observaciones" name="observaciones" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones') }}</textarea>
-        <span class="help-block error">
-            <strong>{{ $errors->first('observaciones') }}</strong>
-        </span>
-    </div>
+
 
     @if(Auth::user()->empresa()->oficina)
     <div class="col-md-3 form-group">
@@ -87,7 +81,13 @@
         <div class="help-block error with-errors"></div>
       </div>
       </div>
-
+      <div class="col-md-6 form-group">
+        <label class="control-label">Observaciones</label>
+        <textarea class="form-control" id="observaciones" name="observaciones" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones') }}</textarea>
+        <span class="help-block error">
+            <strong>{{ $errors->first('observaciones') }}</strong>
+        </span>
+    </div>
   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
   <hr>
 	<div class="row" >
