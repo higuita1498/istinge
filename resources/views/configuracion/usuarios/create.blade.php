@@ -44,7 +44,7 @@
       </span>
     </div>
 
-    <div class="col-md-3 form-group">
+    <div class="col-md-6 form-group">
         <label class="control-label">Observaciones</label>
         <textarea class="form-control" id="observaciones" name="observaciones" rows="4" placeholder="Agregue sus observaciones aquí...">{{ old('observaciones') }}</textarea>
         <span class="help-block error">
