@@ -125,6 +125,7 @@
     <div class="col-md-3 form-group">
         <label class="control-label">Medio de atencion </span></label>
         <select class="form-control selectpicker" name="medio" id="prioridad" required="" title="Seleccione">
+            <option value="Oficina" {{ old('medio', $radicado->medio) == 'Oficina' ? 'selected' : '' }}>Oficina</option>
             <option value="Oficina">Oficina</option>
             <option value="Línea Telefónica">Línea Telefónica</option>
             <option value="Página Web">Página Web</option>
