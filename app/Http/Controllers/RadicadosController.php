@@ -349,6 +349,8 @@ class RadicadosController extends Controller{
         $radicado->contrato = $request->contrato;
         $radicado->desconocido = $request->desconocido;
         $radicado->servicio = $request->servicio;
+        $radicado->medio = $request->medio;
+        $radicado->grado = $request->grado;
         $radicado->tecnico = $request->tecnico;
         $radicado->estatus = $request->estatus;
         $radicado->codigo = Radicado::getNextConsecutiveCodeNumber();

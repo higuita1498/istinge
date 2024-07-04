@@ -179,6 +179,34 @@
                     <strong>{{ $errors->first('prioridad') }}</strong>
                 </span>
             </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Medio de atencion </span></label>
+                <select class="form-control selectpicker" name="medio" id="prioridad" required="" title="Seleccione">
+                    <option value="Oficina">Oficina</option>
+                    <option value="Línea Telefónica">Línea Telefónica</option>
+                    <option value="Página Web">Página Web</option>
+                    <option value="Red social">Red social</option>
+                    <option value="Otros">Otros</option>
+                    <option value="Aplicación móvil">Aplicación móvil</option>
+                    <option value="Servicios de mensajería instantánea">Servicios de mensajería instantánea</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('prioridad') }}</strong>
+                </span>
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Grado de satifacción </span></label>
+                <select class="form-control selectpicker" name="grado" id="prioridad" required="" title="Seleccione">
+                    <option value="USUARIOS_NS_MUY_INSATISFECHO	">USUARIOS_NS_MUY_INSATISFECHO	</option>
+                    <option value="USUARIOS_NS_INSATISFECHO">USUARIOS_NS_INSATISFECHO</option>
+                    <option value="USUAR_NS_NI_INSATISF_NI_SATISF">USUAR_NS_NI_INSATISF_NI_SATISF</option>
+                    <option value="USUARIOS_NS_SATISFECHO	">USUARIOS_NS_SATISFECHO</option>
+                    <option value="USUARIOS_NS_MUY_SATISFECHO">USUARIOS_NS_MUY_SATISFECHO</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('prioridad') }}</strong>
+                </span>
+            </div>
             @if(Auth::user()->empresa()->oficina)
             <div class="form-group col-md-3">
                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
