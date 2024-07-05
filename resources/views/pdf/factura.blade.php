@@ -120,6 +120,7 @@
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
             <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
                 {{Auth::user()->empresa()->direccion}} <br>
+                {{Auth::user()->empresa()->barrio}} <br>
                 {{Auth::user()->empresa()->telefono}}
                 @if(Auth::user()->empresa()->web)
                     <br>{{Auth::user()->empresa()->web}}
