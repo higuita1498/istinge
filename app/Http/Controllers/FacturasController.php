@@ -1435,7 +1435,6 @@ class FacturasController extends Controller{
     }
 
     public function pdf($id, $tipo='original'){
-        dd("hola quieres imprimir");
         $tipo1=$tipo;
         /**
          * * toma en cuenta que para ver los mismos
@@ -1523,6 +1522,7 @@ class FacturasController extends Controller{
     }
 
     public function Imprimir($id, $tipo='original', $especialFe = false){
+        dd("hola");
         $tipo1=$tipo;
 
         /**
