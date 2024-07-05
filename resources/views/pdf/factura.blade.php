@@ -119,7 +119,7 @@
         <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;">
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
             <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
-
+                {{Auth::user()->empresa()->direccion}} <br>
                 {{Auth::user()->empresa()->telefono}}
                 @if(Auth::user()->empresa()->web)
                     <br>{{Auth::user()->empresa()->web}}
@@ -162,6 +162,17 @@
             <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
                 <td colspan="">{{$factura->cliente()->direccion}}</td>
+                <th class="right smalltd" width="15%" style="padding-right: 2px;">{{$factura->cliente()->tip_iden('mini')}}</th>
+                <td style="border-bottom: 2px solid #ccc;" width="20%" >{{$factura->cliente()->nit }}
+                    @if($factura->cliente()->dv != null)
+                        - {{$factura->cliente()->dv }}
+                    @endif</td>
+                <td class="center" style="border-right: 2px solid #ccc;">{{--{{date('d/m/Y', strtotime($factura->fecha))}}--}}{{Carbon\Carbon::parse($factura->fecha)->format('d/m/Y')}}</td>
+
+            </tr>
+            <tr>
+                <th class="right smalltd" width="10%">BARRIO</th>
+                <td colspan="">{{$factura->cliente()->barrio}}</td>
                 <th class="right smalltd" width="15%" style="padding-right: 2px;">{{$factura->cliente()->tip_iden('mini')}}</th>
                 <td style="border-bottom: 2px solid #ccc;" width="20%" >{{$factura->cliente()->nit }}
                     @if($factura->cliente()->dv != null)
