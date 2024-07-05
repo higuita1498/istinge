@@ -353,6 +353,10 @@
                 <td colspan="">{{isset($factura->contract()->address_street) ? $factura->contract()->address_street : $factura->cliente()->direccion}}</td>
             </tr>
             <tr>
+                <th class="right smalltd" width="10%">BARRIO</th>
+                <td colspan="">{{isset($factura->contract()->barrio) ? $factura->contract()->barrio : $factura->cliente()->barrio}}</td>
+            </tr>
+            <tr>
                 <th class="right smalltd">CIUDAD/DEP</th>
                 <td colspan="">{{$factura->cliente()->municipio()->nombre}}</td>
             </tr>

@@ -3217,7 +3217,7 @@ class FacturasController extends Controller{
     }
 
     public function ImprimirElec($id, $tipo='original', $especialFe = false){
-        dd("hola");
+
         $tipo1=$tipo;
 
         /**

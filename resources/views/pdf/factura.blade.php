@@ -184,6 +184,13 @@
                 <td style="border-bottom: 2px solid #ccc;" >{{$factura->cliente()->email}}</td>
                 <td class="center" style="border-right: 2px solid #ccc; border-bottom: 2px solid #ccc;">{{date('d/m/Y', strtotime($factura->vencimiento))}}</td>
             </tr>
+            <tr>
+                <th class="right smalltd">TELÉFONO</th>
+                <td style="border-bottom: 2px solid #ccc;">{{$factura->cliente()->celular}}</td>
+                <th class="right smalltd" style="padding-right: 2px;">EMAIL</th>
+                <td style="border-bottom: 2px solid #ccc;" >{{$factura->cliente()->email}}</td>
+                <td class="center" style="border-right: 2px solid #ccc; border-bottom: 2px solid #ccc;">{{date('d/m/Y', strtotime($factura->vencimiento))}}</td>
+            </tr>
 
         </table>
     </div>
