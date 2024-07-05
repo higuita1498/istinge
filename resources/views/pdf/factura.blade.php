@@ -171,17 +171,6 @@
 
             </tr>
             <tr>
-                <th class="right smalltd" width="10%">BARRIO</th>
-                <td colspan="">{{$factura->cliente()->barrio}}</td>
-                <th class="right smalltd" width="15%" style="padding-right: 2px;">{{$factura->cliente()->tip_iden('mini')}}</th>
-                <td style="border-bottom: 2px solid #ccc;" width="20%" >{{$factura->cliente()->nit }}
-                    @if($factura->cliente()->dv != null)
-                        - {{$factura->cliente()->dv }}
-                    @endif</td>
-                <td class="center" style="border-right: 2px solid #ccc;">{{--{{date('d/m/Y', strtotime($factura->fecha))}}--}}{{Carbon\Carbon::parse($factura->fecha)->format('d/m/Y')}}</td>
-
-            </tr>
-            <tr>
                 <th class="right smalltd">CIUDAD</th>
                 <td colspan="">{{$factura->cliente()->municipio()->nombre}}</td>
                 <th class="right" style="padding-right: 2px; font-size: 9px">FECHA DE SUSPENSIÓN</th>
