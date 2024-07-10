@@ -3639,7 +3639,7 @@ class ContratosController extends Controller
                 $contrato = new Contrato;
                 $contrato->empresa   = Auth::user()->empresa;
                 $contrato->servicio  = $this->normaliza($request->servicio).'-'.$nro_contrato;
-                $contrato->nro       = $nro_contrato;
+                $contrato->nro       = intval($request->created_at);
                 $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
                 $create = $create+1;
 
