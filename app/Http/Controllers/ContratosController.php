@@ -3460,7 +3460,7 @@ class ContratosController extends Controller
             $request->canal         = $sheet->getCell("Q".$row)->getValue();
             $request->oficina       = $sheet->getCell("R".$row)->getValue();
             $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
-            $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->nro   = $sheet->getCell("T".$row)->getValue();
             $request->mk            = $sheet->getCell("U".$row)->getValue();
             $request->profle        = $sheet->getCell("W".$row)->getValue();
             $request->local_address = $sheet->getCell("X".$row)->getValue();
@@ -3486,7 +3486,7 @@ class ContratosController extends Controller
                 $mikoId = $miko->id;
 
             }
-          
+
             if($request->plan != ""){
                 // $miko = Mikrotik::where('nombre', $request->mikrotik)->first();
 
