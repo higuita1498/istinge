@@ -3649,7 +3649,7 @@ class ContratosController extends Controller
                 $modf = $modf+1;
                 $contrato->servicio  = $this->normaliza($request->servicio).'-'.$contrato->nro;
             }
-            dd( intval($request->created_at));
+
             $contrato->plan_id                 = $request->plan;
             $contrato->server_configuration_id = $request->mikrotik;
             $contrato->state                   = $request->state;
@@ -3661,7 +3661,7 @@ class ContratosController extends Controller
             $contrato->facturacion             = $request->facturacion;
             $contrato->tecnologia              = $request->tecnologia;
             $contrato->profile                 = $request->profile;
-            $contrato->nro                     = $request->created_at;
+            $contrato->nro                     = intval($request->created_at);
 
             $contrato->descuento               = $request->descuento;
             $contrato->canal                   = $request->canal;
