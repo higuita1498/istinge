@@ -3574,8 +3574,8 @@ class ContratosController extends Controller
             $request->profile        = $sheet->getCell("W".$row)->getValue();
             $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
-            $request->clave         = $sheet->getCell("Z".$row)->getValue();
-
+            $request->nro         = $sheet->getCell("Z".$row)->getValue();
+dd($request->nro);
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
             }elseif($request->conexion ==  'DHCP'){
@@ -3639,11 +3639,11 @@ class ContratosController extends Controller
                 $contrato = new Contrato;
                 $contrato->empresa   = Auth::user()->empresa;
                 $contrato->servicio  = $this->normaliza($request->servicio).'-'.$nro_contrato;
-                $contrato->nro       = intval($request->created_at);
+                $contrato->nro       = $nro_contrato;
                 $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
                 $create = $create+1;
 
-                $nro->contrato = intval($request->created_at);
+                $nro->contrato = $nro_contrato + 1;
                 $nro->save();
             }else{
                 $modf = $modf+1;
@@ -3661,7 +3661,6 @@ class ContratosController extends Controller
             $contrato->facturacion             = $request->facturacion;
             $contrato->tecnologia              = $request->tecnologia;
             $contrato->profile                 = $request->profile;
-            $contrato->nro                     = intval($request->created_at);
 
             $contrato->descuento               = $request->descuento;
             $contrato->canal                   = $request->canal;
