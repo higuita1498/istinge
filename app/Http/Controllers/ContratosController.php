@@ -3574,8 +3574,8 @@ class ContratosController extends Controller
             $request->profile        = $sheet->getCell("W".$row)->getValue();
             $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
-            $request->nro         = $sheet->getCell("Z".$row)->getValue();
-dd($request->nro);
+            $request->nro           = $sheet->getCell("Z".$row)->getValue();
+            $request->nro = intval($request->nro);
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
             }elseif($request->conexion ==  'DHCP'){
@@ -3625,29 +3625,29 @@ dd($request->nro);
             $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->where('contracts.status', 1)->where('c.status', 1)->first();
 
             if (!$contrato) {
-                $nro = Numeracion::where('empresa', 1)->first();
-                $nro_contrato = $nro->contrato;
+                // $nro = Numeracion::where('empresa', 1)->first();
+                // $nro_contrato = $nro->contrato;
 
-                while (true) {
-                    $numero = Contrato::where('nro', $nro_contrato)->count();
-                    if ($numero == 0) {
-                        break;
-                    }
-                    $nro_contrato++;
-                }
+                // while (true) {
+                //     $numero = Contrato::where('nro', $nro_contrato)->count();
+                //     if ($numero == 0) {
+                //         break;
+                //     }
+                //     $nro_contrato++;
+                // }
 
                 $contrato = new Contrato;
                 $contrato->empresa   = Auth::user()->empresa;
-                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$nro_contrato;
-                $contrato->nro       = $nro_contrato;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$request->nro;
+                $contrato->nro       = $request->nro;
                 $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
                 $create = $create+1;
 
-                $nro->contrato = $nro_contrato + 1;
-                $nro->save();
+               // $nro->contrato = $nro_contrato + 1;
+              //  $nro->save();
             }else{
-                $modf = $modf+1;
-                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$contrato->nro;
+                //$modf = $modf+1;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$request->nro;
             }
 
             $contrato->plan_id                 = $request->plan;
