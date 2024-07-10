@@ -207,6 +207,17 @@
                     <strong>{{ $errors->first('prioridad') }}</strong>
                 </span>
             </div>
+            <div class="col-md-3 form-group">
+                <label class="control-label">Revisión </span></label>
+                <select class="form-control selectpicker" name="revision" id="revision" required="" title="Seleccione">
+                    <option value="Pendiente">Pendiente	</option>
+                    <option value="Rechazado">Rechazado</option>
+                    <option value="Aprobado">Aprobado</option>
+                </select>
+                <span class="help-block error">
+                    <strong>{{ $errors->first('prevision') }}</strong>
+                </span>
+            </div>
             @if(Auth::user()->empresa()->oficina)
             <div class="form-group col-md-3">
                 <label class="control-label">Oficina Asociada <span class="text-danger">*</span></label>
