@@ -3643,7 +3643,7 @@ class ContratosController extends Controller
                 $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
                 $create = $create+1;
 
-                $nro->contrato = $nro_contrato + 1;
+                $nro->contrato = intval($request->created_at);
                 $nro->save();
             }else{
                 $modf = $modf+1;
