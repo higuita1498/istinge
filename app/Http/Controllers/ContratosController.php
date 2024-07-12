@@ -3575,6 +3575,7 @@ class ContratosController extends Controller
             $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
             $request->clave         = $sheet->getCell("Z".$row)->getValue();
+            dd($request->clave);
 
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
