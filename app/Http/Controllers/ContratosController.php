@@ -3576,7 +3576,7 @@ class ContratosController extends Controller
             $request->usuario       = $sheet->getCell("Y".$row)->getValue();
             $request->clave         = $sheet->getCell("Z".$row)->getValue();
             $request->clave = $request->usuario;
-
+            dd( $request->clave);
             if($request->conexion ==  'PPPOE'){
                 $request->conexion = 1;
             }elseif($request->conexion ==  'DHCP'){
