@@ -72,8 +72,7 @@ Route::post('pagos/epayco', 'CronController@eventosEpayco');
 Route::post('pagos/combopay', 'CronController@eventosCombopay');
 
 /** EVENTOS TOPPAY **/
-Route::get('pagos/toppay', 'CronController@eventosTopPay');
-
+Route::post('pagos/toppay', 'CronController@eventosTopPay');
 
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
