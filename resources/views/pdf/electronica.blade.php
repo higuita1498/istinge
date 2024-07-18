@@ -374,11 +374,11 @@
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">PLAZO</th>
-                <td colspan="">
+                < colspan="">
                     @if($factura->plazo == 'CON')
-                    <td colspan="">CONTADO</td>
+                         CONTADO
                     @else
-                    <td colspan="">{{$factura->ordenservicio}} DIAS</td>
+                        {{$factura->ordenservicio}} DIAS
                     @endif
                 </td>
             </tr>
