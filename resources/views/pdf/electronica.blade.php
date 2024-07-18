@@ -382,10 +382,6 @@
                     @endif
                 </td>
             </tr>
-            <tr>
-                <th class="right smalltd" width="10%">PLAZO</th>
-                <td colspan="">{{$factura->plazo}} DIAS</td>
-            </tr>
 
         </table>
     </div>
