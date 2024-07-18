@@ -368,6 +368,14 @@
                 <th class="right smalltd" width="10%">ORDEN DE COMPRA</th>
                 <td colspan="">{{$factura->ordencompra}}</td>
             </tr>
+            <tr>
+                <th class="right smalltd" width="10%">ORDEN DE SERVICIO</th>
+                <td colspan="">{{$factura->ordenservicio}}</td>
+            </tr>
+            <tr>
+                <th class="right smalltd" width="10%">PLAZO</th>
+                <td colspan="">{{$factura->plazo}}</td>
+            </tr>
 
         </table>
     </div>
