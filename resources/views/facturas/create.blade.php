@@ -221,6 +221,12 @@
               </div>
             </div>
         @endif
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Orden de servicio<a><i data-tippy-content="Número de  servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="ordenservicio" id="ordenservicio" value="">
+            </div>
+          </div>
   		</div>
     </div>
 
