@@ -364,6 +364,11 @@
                 <th class="right smalltd" width="10%">EMAIL</th>
                 <td colspan="">{{$factura->cliente()->email}}</td>
             </tr>
+            <tr>
+                <th class="right smalltd" width="10%">ORDEN DE COMPRA</th>
+                <td colspan="">{{$factura->ordencompra}}</td>
+            </tr>
+
         </table>
     </div>
 
