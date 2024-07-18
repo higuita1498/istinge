@@ -74,6 +74,7 @@ Route::post('pagos/combopay', 'CronController@eventosCombopay');
 /** EVENTOS TOPPAY **/
 Route::get('pagos/toppay', 'CronController@eventosTopPay');
 
+
 /**
  * Mostrar los datos de la factura mediante la llave unica asignada en el método
  * facturasController@enviar
