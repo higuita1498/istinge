@@ -214,15 +214,14 @@
         @endif
 
   		</div>
-
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Orden de servicio<a><i data-tippy-content="Número de  servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" name="ordenservicio" id="ordenservicio" value="">
+        </div>
     </div>
-    <div class="form-group row">
-      <label class="col-sm-4 col-form-label">Orden de servicio<a><i data-tippy-content="Número de  servicio (dejar vacio si no tiene número)" class="icono far fa-question-circle"></i></a></label>
-      <div class="col-sm-8">
-        <input type="text" class="form-control" name="ordenservicio" id="ordenservicio" value="">
-      </div>
+  		</div>
     </div>
-</div>
     <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong><small><i class="fas fa-angle-double-left"></i> Deslice <i class="fas fa-angle-double-right"></i></small></strong>
