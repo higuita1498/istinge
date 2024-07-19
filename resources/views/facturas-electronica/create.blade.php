@@ -212,7 +212,7 @@
               </div>
             </div>
         @endif
-  		</div>
+
   		</div>
     </div>
     <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
