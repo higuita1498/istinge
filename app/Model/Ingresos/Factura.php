@@ -86,7 +86,7 @@ class Factura extends Model
     }
 
     public function plazos(){
-        return TerminosPago::where('id',$this->cuenta)->first();
+        return TerminosPago::where('id',$this->plazo)->first();
    }
 
 
