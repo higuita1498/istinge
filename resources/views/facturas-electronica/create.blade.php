@@ -214,6 +214,7 @@
         @endif
 
   		</div>
+  		</div>
     </div>
     <div class="alert alert-warning nopadding onlymovil" style="text-align: center;">
 			<button type="button" class="close" data-dismiss="alert">×</button>
