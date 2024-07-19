@@ -1010,9 +1010,8 @@ class FacturasController extends Controller{
         if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
             $bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->first();
         }
-
         //Ciclo para registrar los itemas de la factura
-        for ($i=0; $i < count($request->ref[]) ; $i++) {
+        for ($i=0; $i < count($request->ref) ; $i++) {
             $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
             if($impuesto){
                 $impuesto->porcentaje = $impuesto->porcentaje;
