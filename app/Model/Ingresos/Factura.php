@@ -85,11 +85,6 @@ class Factura extends Model
          return Banco::where('id',$this->cuenta)->first();
     }
 
-    public function plazos(){
-        return TerminosPago::where('id',$this->plazo)->first();
-   }
-
-
     public function contrato(){
         if($this->contrato_id){
         return $contrato = Contrato::where('id',$this->contrato_id)->first();
