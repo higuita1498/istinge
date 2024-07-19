@@ -378,7 +378,7 @@
                     @if($factura->plazo == 'CON')
                         CONTADO
                     @else
-                        {{$factura->plazo}} DIAS
+                        {{$factura->plazo()->nombre}} DIAS
                     @endif
                 </td>
             </tr>
