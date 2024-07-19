@@ -1012,7 +1012,7 @@ class FacturasController extends Controller{
         }
 
         //Ciclo para registrar los itemas de la factura
-        for ($i=0; $i < count($request->ref[]) ; $i++) {
+        for ($i=0; $i < count($request->ref) ; $i++) {
             $impuesto = Impuesto::where('id', $request->impuesto[$i])->first();
             if($impuesto){
                 $impuesto->porcentaje = $impuesto->porcentaje;
