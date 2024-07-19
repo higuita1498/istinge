@@ -96,16 +96,11 @@ class CronController extends Controller
             $date = getdate()['mday'] * 1;
             $numeros = [];
             $bulk = '';
-            $fail = 0;
-            $succ = 0;
-
-            $horaInicio = now()->subMinutes(5)->format('H:i');
-            $horaFin = now()->addMinutes(5)->format('H:i');
+            $horaActual = date('H:i');
 
             $grupos_corte = GrupoCorte::
-            // where('hora_creacion_factura','>=', $horaInicio)
-            // ->where('hora_creacion_factura','<=', $horaFin)
             where('fecha_factura', $date)
+            ->where('hora_creacion_factura','<=',$horaActual)
             ->where('status', 1)->get();
 
             $fecha = Carbon::now()->format('Y-m-d');
@@ -589,13 +584,12 @@ class CronController extends Controller
         if(request()->fechaCorte){
             $fecha = request()->fechaCorte;
         }
-
         $swGrupo = 1; //masivo
+        $horaActual = date('H:i');
 
         $grupos_corte = DB::table('grupos_corte')
-        // ->where('hora_suspension','<=', date('H:i'))
-        // ->where('hora_suspension_limit','>=', date('H:i'))
         ->where('status', 1)
+        ->where('hora_creacion_factura','<=',$horaActual)
         ->where('fecha_suspension','!=',0)
         ->get();
 
@@ -826,7 +820,7 @@ class CronController extends Controller
     public static function CortarPromesas(){
         $i=0;
         $fecha = date('Y-m-d');
-        $hora = date('G:i');
+        // $hora = date('G:i');
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
@@ -837,7 +831,7 @@ class CronController extends Controller
             where('f.promesa_pago', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            where('p.hora_pago', $hora)->
+            // where('p.hora_pago', $hora)->
             get();
 
         //dd($contactos);

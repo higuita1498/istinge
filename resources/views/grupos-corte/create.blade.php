@@ -60,14 +60,20 @@
 	            </span>
 	        </div>
 	        <div class="col-md-3 form-group">
-	            <label class="control-label">Hora de Suspensión <span class="text-danger">*</span></label>
+	            <label class="control-label">Hora de Suspensión desde:
+                    <span class="text-danger">*</span>
+                    <a><i data-tippy-content="Hora desde la que comienza la suspension en el sistema. (Se hara en intervalos de 15 min por lotes de clientes)" class="icono far fa-question-circle"></i></a>
+                </label>
 	            <input type="text" class="timepicker form-control" id="hora_suspension" name="hora_suspension"  required="" value="{{old('hora_suspension', '00:00')}}">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('hora_suspension') }}</strong>
 	            </span>
 	        </div>
             <div class="col-md-3 form-group">
-	            <label class="control-label">Hora de Crecion de factura <span class="text-danger">*</span></label>
+	            <label class="control-label">Hora creción de factura desde:
+                    <span class="text-danger">*</span>
+                    <a><i data-tippy-content="Hora desde la que comienza la creación de facturas en el sistema. (Se hará en intervalos de 15 min por lotes de clientes)" class="icono far fa-question-circle"></i></a>
+                </label>
 	            <input type="text" class="timepicker-2 form-control" id="hora_creacion_factura" name="hora_creacion_factura"  required="" value="{{old('hora_crecion_factura', '00:00')}}">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('hora_creacion_factura') }}</strong>
