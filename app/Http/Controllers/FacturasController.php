@@ -971,7 +971,7 @@ class FacturasController extends Controller{
         $factura->ordencompra    = $request->ordencompra;
         $factura->periodo_facturacion = $request->periodo_facturacion;
         $factura->created_by = $user->id;
-        $factura->ordenservicio = $request->ordenservicio;
+      //  $factura->ordenservicio = $request->ordenservicio;
 
         if($contrato){
             $factura->contrato_id = $contrato->id;
