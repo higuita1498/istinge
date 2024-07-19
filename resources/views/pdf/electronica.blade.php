@@ -376,7 +376,7 @@
                 <th class="right smalltd" width="10%">PLAZO</th>
                 <td colspan="">
                     @if($factura->plazo == 31)
-                        CONTADO
+                        {{$factura->plazos()->nombre}}
                     @else
                         {{$factura->plazos()->nombre}} DIAS
                     @endif
