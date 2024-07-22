@@ -57,6 +57,7 @@ Route::get('/CortarCRM','CronController@CortarCRM')->name('CortarCRM');
 Route::get('disabledAndCRM/{ip}','CronController@disabledAndCRM')->name('disabledAndCRM');
 Route::get('sendInvoices/{fecha}','CronController@sendInvoices')->name('sendInvoices');
 Route::get('/enviofacturawpp','CronController@envioFacturaWpp');
+Route::get('/estatus-emision-dian','CronController@validateEmisionApi');
 /*PAYU*/
 
 Route::get('/respuestapayu', 'Controller@respuestapayu')->name('respuestapayu');

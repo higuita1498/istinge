@@ -50,7 +50,7 @@ class NotascreditoController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth'); 
+        $this->middleware('auth');
         view()->share(['seccion' => 'facturas', 'title' => 'Notas de Crédito', 'icon' =>'fas fa-plus', 'subseccion' => 'credito']);
     }
 
@@ -74,7 +74,7 @@ class NotascreditoController extends Controller
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
         DB::raw('(SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - if(
-          (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id), 
+          (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id),
           (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id), 0)) as por_aplicar'))->where('notas_credito.empresa',Auth::user()->empresa);
 
         $appends=array('orderby'=>$request->orderby, 'order'=>$request->order);
@@ -167,7 +167,7 @@ class NotascreditoController extends Controller
      * Formulario para crear un nueva nota de credito
      * @return view
      */
-    public function create($producto=false){ 
+    public function create($producto=false){
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['icon' =>'', 'title' => 'Nueva Nota de Crédito', 'subseccion' => 'credito']);
         $numero = Numeracion::where('empresa',Auth::user()->empresa)->first()->credito;
@@ -209,7 +209,7 @@ class NotascreditoController extends Controller
             }
         }
 
-        
+
 
         if ($request->factura) {
             $total = 0;
@@ -269,7 +269,7 @@ class NotascreditoController extends Controller
                 //Acumulado de total en notas creditos de la factura.
                 $precioNotas += $notas->nota()->total()->total;
             }
-            
+
             if (round($precioNotas) > round($fc->total()->total)) {
                 return redirect()->back()->with('error', "La nota crédito supera el valor de la factura de venta");
             }
@@ -604,7 +604,7 @@ class NotascreditoController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         //Validaciones con respecto a la nueva programacion del cda.
         if ($request->tipo_operacion == 3) {
             if (count($request->item) > 1) {
@@ -635,7 +635,7 @@ class NotascreditoController extends Controller
                 }
 
                 $data  = $request->all();
-                
+
                 if (isset($data['impuesto' . $z])) {
                     if ($data['impuesto' . $z]) {
                         for ($x = 0; $x < count($data['impuesto' . $z]); $x++) {
@@ -747,7 +747,7 @@ class NotascreditoController extends Controller
             }
 
             $nota->save();
-    
+
             //Compruebo que existe la bodega y la uso
             //$bodega = Bodega::where('empresa',Auth::user()->empresa)->where('status', 1)->where('id', $request->bodega)->first();
             if (!$bodega) { //Si el valor seleccionado para bodega no existe, tomara la primera activa registrada
@@ -949,7 +949,7 @@ class NotascreditoController extends Controller
                 $cliente->save();
 
             }
-            
+
             foreach($nota->itemsNota as $item){
                 foreach($item->cuentasContable() as $cuentaItem){
                     $nota->modelDetalle()->factura()->formaPagoRequest(1);
@@ -1038,14 +1038,14 @@ class NotascreditoController extends Controller
             $items = ItemsNotaCredito::where('nota',$nota->id)->get();
             $itemscount = ItemsNotaCredito::where('nota',$nota->id)->count();
             $facturas = NotaCreditoFactura::where('nota',$nota->id)->get();
-            
+
             if($nota->emitida == 1){
                 $infoEmpresa = Empresa::find(Auth::user()->empresa);
                 $data['Empresa'] = $infoEmpresa->toArray();
 
                 $infoCliente = Contacto::find($nota->cliente);
                 $data['Cliente'] = $infoCliente->toArray();
-                
+
                 $impTotal = 0;
 
                 foreach ($nota->total()->imp as $totalImp){
@@ -1053,7 +1053,7 @@ class NotascreditoController extends Controller
                         $impTotal = $totalImp->total;
                     }
                 }
-                
+
                 $infoCude = [
                   'Numfac' => $nota->nro,
                   'FecFac' => Carbon::parse($nota->created_at)->format('Y-m-d'),
@@ -1074,7 +1074,7 @@ class NotascreditoController extends Controller
 
               $CUDE = $infoCude['Numfac'].$infoCude['FecFac'].$infoCude['HorFac'].$infoCude['ValFac'].$infoCude['CodImp'].$infoCude['ValImp'].$infoCude['CodImp2'].$infoCude['ValImp2'].$infoCude['CodImp3'].$infoCude['ValImp3'].$infoCude['ValTot'].$infoCude['NitFE'].$infoCude['NumAdq'].$infoCude['pin'].$infoCude['TipoAmb'];
               $CUDEvr = hash('sha384',$CUDE);
-              
+
               $codqr = "NumFac:" . $nota->codigo . "\n" .
               "NitFac:"  . $data['Empresa']['nit']   . "\n" .
               "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
@@ -1085,9 +1085,9 @@ class NotascreditoController extends Controller
               "ValorOtrosImpuestos:" .  0.00 . "\n" .
               "ValorTotalFactura:" .  number_format($nota->total()->subtotal + $nota->impuestos_totales(), 2, '.', '') . "\n" .
               "CUDE:" . $CUDEvr;
-              
-              
-              
+
+
+
               $pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones','itemscount','codqr','CUDEvr'));
               return  response ($pdf->stream())->withHeaders([ 'Content-Type' =>'application/pdf',]);
           }
@@ -1159,26 +1159,26 @@ public function facturas_retenciones($id){
                 }
                 return false;
             }
-            
-        
+
+
             $total = Funcion::Parsear($nota->total()->total);
             $items = ItemsNotaCredito::where('nota',$nota->id)->get();
-            
+
             $itemscount= $items->count();
             $facturas = NotaCreditoFactura::where('nota',$nota->id)->get();
             $retenciones = FacturaRetencion::join('notas_factura as nf','nf.factura','=','factura_retenciones.factura')
             ->join('retenciones','retenciones.id','=','factura_retenciones.id_retencion')
             ->where('nf.nota',$nota->id)->get();
-    
-            
+
+
             if($nota->emitida == 1){
-        
+
                 $infoEmpresa = Empresa::find(Auth::user()->empresa);
                 $data['Empresa'] = $infoEmpresa->toArray();
 
                 $infoCliente = Contacto::find($nota->cliente);
                 $data['Cliente'] = $infoCliente->toArray();
-                
+
                 $impTotal = 0;
 
                 foreach ($nota->total()->imp as $totalImp){
@@ -1186,8 +1186,8 @@ public function facturas_retenciones($id){
                         $impTotal = $totalImp->total;
                     }
                 }
-            
-                
+
+
                 $infoCude = [
                   'Numfac' => $nota->nro,
                   'FecFac' => Carbon::parse($nota->created_at)->format('Y-m-d'),
@@ -1208,7 +1208,7 @@ public function facturas_retenciones($id){
 
               $CUDE = $infoCude['Numfac'].$infoCude['FecFac'].$infoCude['HorFac'].$infoCude['ValFac'].$infoCude['CodImp'].$infoCude['ValImp'].$infoCude['CodImp2'].$infoCude['ValImp2'].$infoCude['CodImp3'].$infoCude['ValImp3'].$infoCude['ValTot'].$infoCude['NitFE'].$infoCude['NumAdq'].$infoCude['pin'].$infoCude['TipoAmb'];
               $CUDEvr = hash('sha384',$CUDE);
-              
+
               $codqr = "NumFac:" . $nota->codigo . "\n" .
               "NitFac:"  . $data['Empresa']['nit']   . "\n" .
               "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
@@ -1219,7 +1219,7 @@ public function facturas_retenciones($id){
               "ValorOtrosImpuestos:" .  0.00 . "\n" .
               "ValorTotalFactura:" .  number_format($nota->total()->subtotal + $nota->impuestos_totales(), 2, '.', '') . "\n" .
               "CUDE:" . $CUDEvr;
-              
+
               //$pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones','itemscount','codqr','CUDEvr'));
 
               $pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones','itemscount','codqr','CUDEvr'))->stream();
@@ -1257,23 +1257,23 @@ public function facturas_retenciones($id){
     self::sendMail('emails.notascredito', compact('nota','total','cliente'), compact('pdf', 'emails','nota','xmlPath'), function($message) use ($pdf, $emails,$nota,$xmlPath)
     {
       $message->attachData($pdf, 'NotaCredito.pdf', ['mime' => 'application/pdf']);
-      
+
       if(file_exists($xmlPath)){
         $message->attach($xmlPath, ['as' => 'NotaCredito.xml', 'mime' => 'text/plain']);
-        }    
-      
+        }
+
       $message->from('info@gestordepartes.net', Auth::user()->empresa()->nombre);
       $message->to($emails)->subject(Auth::user()->empresa()->nombre . " Nota Crédito Electrónica " . $nota->nro);
   });
           }
       else{
         $pdf = PDF::loadView('pdf.credito', compact('nota', 'items', 'facturas', 'retenciones','itemscount'))->stream();
-        
-        
+
+
             $empresa = Empresa::find($nota->empresa);
             $cliente = $nota->cliente()->nombre;
             $tituloCorreo = "NOTA CREDITO: $nota->nro PROVEEDOR: $empresa->nombre ";
-            
+
              $total = Funcion::Parsear($nota->total()->total);
              $cliente = $nota->cliente()->nombre;
 
@@ -1283,7 +1283,7 @@ public function facturas_retenciones($id){
                 $message->to($emails)->subject($tituloCorreo);
                 $message->attachData($pdf, 'credito.pdf', ['mime' => 'application/pdf']);
             });
-            
+
     }
         }
         if ($redireccionar) {
@@ -1368,7 +1368,7 @@ public function facturas_retenciones($id){
       (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
                 DB::raw('(SUM(
       (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - if(
-        (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id), 
+        (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id),
         (Select SUM(monto) from notas_devolucion_dinero where nota=notas_credito.id), 0)) as por_aplicar'))
             ->where('notas_credito.empresa',Auth::user()->empresa)
             ->where('notas_credito.cliente', $contacto)
@@ -1422,7 +1422,7 @@ public function facturas_retenciones($id){
     {
         $NotaCredito = NotaCredito::find($id);
 
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('preferida', 1)->where('tipo',2)->first(); 
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('preferida', 1)->where('tipo',2)->first();
 
         $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
@@ -1463,7 +1463,7 @@ public function facturas_retenciones($id){
                     //dd($CufeFactRelacionada);
         }
         */
-        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true); 
+        $CufeFactRelacionada  = json_decode($this->validateStatusDian($infoEmpresa->nit, $FacturaRelacionada->codigo, "01", $ResolucionNumeracion->prefijo),true);
         if(!isset($CufeFactRelacionada['uuid'])){
             return redirect('empresa/notascredito')->with('message_denied', 'No existe el uuid de la factura a la que esta relacionada la nota crédito.');
         }else{
@@ -1598,7 +1598,7 @@ public function facturas_retenciones($id){
         if ($statusCode != 200) {
             $message = $res['errorMessage'];
             $errorReason = $res['errorReason'];
-            $statusCode =  $res['statusCode']; 
+            $statusCode =  $res['statusCode'];
 
             //Validamos si depronto la nota crédito fue emitida pero no quedamos con ningun registro de ella.
             $saveNoJson = $statusJson = $this->validateStatusDianNota(auth()->user()->empresaObj->nit, $NotaCredito->nro, "91");

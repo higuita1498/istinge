@@ -36,6 +36,10 @@ use App\Model\Ingresos\Ingreso;
 use App\Model\Ingresos\IngresosFactura;
 use App\Banco;
 use App\Instance;
+use App\Model\Gastos\FacturaProveedores;
+use App\Model\Gastos\NotaDedito;
+use App\Model\Ingresos\NotaCredito;
+use App\Model\Nomina\Nomina;
 use App\Movimiento;
 use App\Services\WapiService;
 use Illuminate\Support\Facades\DB;
@@ -2927,5 +2931,86 @@ class CronController extends Controller
         }
 
         return $facturas;
+    }
+
+    public function validateEmisionApi(){
+
+        $bearerToken = env('EMISION_TOKEN');
+        $urlEmision = env('URL_EMISION_DIAN');
+
+        $mesInicio = Carbon::now()->startOfMonth()->toDateString();
+        $finMes = Carbon::now()->endOfMonth()->toDateString();
+
+        $facturas = Factura::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        ->where('emitida',1)
+        ->where('tipo',2)
+        ->where('dian_service',0);
+
+        $pos = Factura::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        ->where('emitida',1)
+        ->where('tipo',6)
+        ->where('dian_service',0);
+
+        $documentoSoporte = FacturaProveedores::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        ->where('emitida',1)
+        ->where('dian_service',0);
+
+        $notasCredito = NotaCredito::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        ->where('emitida',1)
+        ->where('dian_service',0);
+
+        $notasDebito = NotaDedito::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        ->where('emitida',1)
+        ->where('dian_service',0);
+
+        $nominas = Nomina::where('fecha_emision','>=',$mesInicio)->where('fecha_emision','<=',$finMes)
+        ->where('emitida',1)
+        ->where('dian_service',0);
+
+        $data = [
+            'facturas' => $facturas->count(),
+            'pos' => $pos->count(),
+            'documentosoporte' => $documentoSoporte->count(),
+            'notascredito' => $notasCredito->count(),
+            'notasdebito' => $notasDebito->count(),
+            'nomina' => $nominas->count(),
+        ];
+
+        $jsonData = json_encode($data);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $urlEmision . 'estatus-emision-dian',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_POSTFIELDS => $jsonData,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Accept: */*',
+                'Authorization: ' . $bearerToken,
+                ],
+        ]);
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        $response = json_decode($response);
+
+        if($response['status'] == 200){
+            $facturas->update(['dian_service'=> 1]);
+            $pos->update(['dian_service'=> 1]);
+            $documentoSoporte->update(['dian_service'=> 1]);
+            $notasCredito->update(['dian_service'=> 1]);
+            $notasDebito->update(['dian_service'=> 1]);
+            $nominas->update(['dian_service'=> 1]);
+        }
+
+        Log::info('Finalizado con exito el informe de emisiones del dia: ' . Carbon::parse('Y-m-d'));
+
     }
 }
