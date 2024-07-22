@@ -2941,25 +2941,25 @@ class CronController extends Controller
         $mesInicio = Carbon::now()->startOfMonth()->toDateString();
         $finMes = Carbon::now()->endOfMonth()->toDateString();
 
-        $facturas = Factura::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        $facturas = Factura::where('fecha','>=',$mesInicio)->where('fecha','<=',$finMes)
         ->where('emitida',1)
         ->where('tipo',2)
         ->where('dian_service',0);
 
-        $pos = Factura::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        $pos = Factura::where('fecha','>=',$mesInicio)->where('fecha','<=',$finMes)
         ->where('emitida',1)
         ->where('tipo',6)
         ->where('dian_service',0);
 
-        $documentoSoporte = FacturaProveedores::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        $documentoSoporte = FacturaProveedores::where('fecha','>=',$mesInicio)->where('fecha','<=',$finMes)
         ->where('emitida',1)
         ->where('dian_service',0);
 
-        $notasCredito = NotaCredito::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        $notasCredito = NotaCredito::where('fecha','>=',$mesInicio)->where('fecha','<=',$finMes)
         ->where('emitida',1)
         ->where('dian_service',0);
 
-        $notasDebito = NotaDedito::where('fecha','>',$mesInicio)->where('fecha','<',$finMes)
+        $notasDebito = NotaDedito::where('fecha','>=',$mesInicio)->where('fecha','<=',$finMes)
         ->where('emitida',1)
         ->where('dian_service',0);
 
