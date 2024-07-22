@@ -27,6 +27,7 @@ use App\PlanesVelocidad;
 use App\Model\Ingresos\FacturaRetencion;
 use App\Producto;
 use Auth;
+use App\Services\EmisionesService;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 use RouterosAPI;
@@ -42,6 +43,7 @@ use App\Model\Ingresos\NotaCredito;
 use App\Model\Nomina\Nomina;
 use App\Movimiento;
 use App\Services\WapiService;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -2976,30 +2978,14 @@ class CronController extends Controller
             'nomina' => $nominas->count(),
         ];
 
-        $jsonData = json_encode($data);
-
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $urlEmision . 'estatus-emision-dian',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_POSTFIELDS => $jsonData,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Accept: */*',
-                'Authorization: ' . $bearerToken,
-                ],
-        ]);
-
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        curl_close($curl);
-
-        $response = json_decode($response);
+        try {
+            $emisionService = new EmisionesService();
+            $response = $emisionService->sendEmisionsEmpresa($data);
+        } catch (ClientException $e) {
+            if($e->getResponse()->getStatusCode() === 404) {
+                return $e;
+            }
+        }
 
         if($response['status'] == 200){
             $facturas->update(['dian_service'=> 1]);
