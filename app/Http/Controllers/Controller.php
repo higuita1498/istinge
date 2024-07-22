@@ -1092,7 +1092,7 @@ class Controller extends BaseController
         where('f.estatus',1)->
         where('contracts.status',1)->
         groupBy('f.id', 'contracts.id')->
-        get()->last();
+        get();
 
         if(is_null($contrato)){
             $contrato = Contacto::join('factura as f','f.cliente','contactos.id')->
