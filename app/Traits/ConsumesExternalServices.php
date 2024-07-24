@@ -17,11 +17,11 @@ trait ConsumesExternalServices
         $client = new Client(array_merge($this->options, [
             'base_uri' => $this->baseUri,
         ]));
-        
+
         if (method_exists($this, 'resolveAuthorization')) {
             $this->resolveAuthorization($queryParams, $formParams, $headers);
         }
-                
+
         // if($isJsonRequest){
         //     dd($this->baseUri,$queryParams,$formParams,$headers,$requestUrl);
         // }
@@ -33,7 +33,7 @@ trait ConsumesExternalServices
                 'headers' => $headers,
                 'query' => $queryParams,
             ]);
-        } catch (\Throwable $th) { 
+        } catch (\Throwable $th) {
             Log::error($th);
             return $response = array(
                 'statusCode' => 400,
@@ -42,14 +42,14 @@ trait ConsumesExternalServices
             );
             // return $this->decodeResponse($response);
         }
-    
+
         $response = $response->getBody()->getContents();
-          
+
         if (method_exists($this, 'decodeResponse')) {
             $response =  $this->decodeResponse($response);
         }
-        
-        
+
+
         return $response;
     }
 
@@ -63,13 +63,13 @@ trait ConsumesExternalServices
         $client = new Client(array_merge($this->options, [
             'base_uri' => $this->baseUri,
         ]));
-        
+
         // dd($formParams);
-        
+
         if (method_exists($this, 'resolveAuthorization')) {
             $this->resolveAuthorization($queryParams, $formParams, $headers);
         }
-                
+
         // if($isJsonRequest){
         //     dd($this->baseUri,$queryParams,$formParams,$headers,$requestUrl);
         // }
@@ -81,7 +81,7 @@ trait ConsumesExternalServices
                 'headers' => $headers,
                 'query' => $queryParams,
             ]);
-        } catch (\Throwable $th) { 
+        } catch (\Throwable $th) {
             Log::error($th);
             return $response = array(
                 'statusCode' => 400,
@@ -90,14 +90,14 @@ trait ConsumesExternalServices
             );
             // return $this->decodeResponse($response);
         }
-    
+
         $response = $response->getBody()->getContents();
-          
+
         if (method_exists($this, 'decodeResponse')) {
             $response =  $this->decodeResponse($response);
         }
-        
-        
+
+
         return $response;
     }
 }

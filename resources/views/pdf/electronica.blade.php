@@ -16,7 +16,7 @@
             position: fixed; top: 25%;
             width: 100%; text-align:
             center; opacity: .6;
-            transform: rotate(-30deg);
+            transform: rotate(-30deg);T
             transform-origin: 50% 50%;
             z-index: 1000;
             font-size: 130px;
@@ -701,7 +701,7 @@
                     <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;"> {{$empresa->moneda}} {{App\Funcion::Parsear($factura->impuestos_totales())}}</td>
                     </tr>
                     <tr>
-                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;">{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}</td>
+                    <td style="border:1px solid {{$empresa->color}}; border-radius:5px;padding:4px;">{{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total + $factura->estadoCuenta()->saldoMesAnterior)}}</td>
                     </tr>
                     </tbody>
 
@@ -886,7 +886,7 @@
                     </div>
                 </td>
                 <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:30%;">
-                    {{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total)}}
+                    {{$empresa->moneda}} {{App\Funcion::Parsear($factura->total()->total + $factura->estadoCuenta()->saldoMesAnterior)}}
                 </td>
                 </tr>
             </tbody>
