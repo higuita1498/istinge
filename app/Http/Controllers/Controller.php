@@ -1093,8 +1093,8 @@ class Controller extends BaseController
         where('contracts.status',1)->
         groupBy('f.id', 'contracts.id')->
         get();
-        dd(count($contrato));
-        if (count($contrato->factura) == 1){
+
+        if (count($contrato) == 1){
             $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
             join('factura as f','f.cliente','c.id')->
             join('items_factura as if','f.id','if.factura')->
