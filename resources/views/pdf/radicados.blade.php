@@ -136,8 +136,10 @@
             </p>
         </div>
         <div style="width: 28%; display: inline-block; text-align: left; vertical-align: top; margin-top: 2%;">
-            <p class="medium" style="text-align: center;"> Radicado</p>
-            <h4 style="text-align: center;">No. #{{$radicado->codigo}}</h4>
+            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo)}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+
+            {{-- <p class="medium" style="text-align: center;"> Radicado</p>
+            <h4 style="text-align: center;">No. #{{$radicado->codigo}}</h4> --}}
         </div>
     </div>
 
