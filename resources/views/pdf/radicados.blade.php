@@ -300,9 +300,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-
-                </tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <!-- Puedes agregar más filas según sea necesario -->
             </tbody>
         </table>
