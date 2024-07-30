@@ -293,7 +293,7 @@
         </div>
     </div>
     <div style="margin-bottom:20px !important;">
-        <h2>Información de Equipos</h2>
+        <h5>DETALLES DE EQUIPOS (instalación – retiro)</h5>
         <table class="tabla-manual">
             <thead>
                 <tr>
@@ -339,6 +339,14 @@
                     <td> </td>
                     <td> </td>
                 </tr>
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                </tr>
 
                 <!-- Puedes agregar más filas según sea necesario -->
             </tbody>
@@ -346,7 +354,7 @@
 
     </div>
 
-    <div style="width: 70%; margin-top: 3%;">
+    <div style="width: 70%; margin-top: 5%;">
         <div style="padding-top: 8%; text-align: center;">
             <div style="display: inline-block; width: 45%;">
                 <p class="small"></p>
