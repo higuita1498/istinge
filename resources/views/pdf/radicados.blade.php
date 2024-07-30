@@ -303,21 +303,6 @@
                 <tr>
 
                 </tr>
-                <tr>
-
-                </tr>
-                <tr>
-
-                </tr>
-                <tr>
-
-                </tr>
-                <tr>
-
-                </tr>
-                <tr>
-
-                </tr>
                 <!-- Puedes agregar más filas según sea necesario -->
             </tbody>
         </table>
