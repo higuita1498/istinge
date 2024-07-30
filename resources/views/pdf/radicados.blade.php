@@ -300,7 +300,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr style="padding:25px;">
                     <td> </td>
                     <td> </td>
                     <td> </td>
@@ -308,7 +308,7 @@
                     <td> </td>
                     <td> </td>
                 </tr>
-                <tr>
+                <tr style="padding:25px;">
                     <td> </td>
                     <td> </td>
                     <td> </td>
