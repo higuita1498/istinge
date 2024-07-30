@@ -111,6 +111,7 @@
         }
         .tabla-manual td{
             padding: 25px !important;
+            width: calc(100% / 12);
         }
     </style>
 
