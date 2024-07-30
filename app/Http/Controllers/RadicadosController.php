@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Radicado;
 use App\Servicio;
+use App\Contrato;
 use App\User;
 use App\Contacto;
 use App\TipoIdentificacion;
@@ -720,7 +721,8 @@ class RadicadosController extends Controller{
 
     public function imprimir($id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id',$id)->first();
-        dd($radicado);
+        $contrato = Contrato::where('empresa',Auth::user()->empresa)->where('id',$radicado->contrato)->first();
+        dd($contrato);
         if($radicado) {
             view()->share(['title' => 'Caso Radicado N° '.$radicado->codigo]);
             $pdf = PDF::loadView('pdf.radicados', compact('radicado'));
