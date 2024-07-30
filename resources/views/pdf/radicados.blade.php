@@ -179,11 +179,11 @@
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Nodo</th>
-                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                            <td style="padding-left: 9px;">{{$contrato->nodo}}</td>
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">IP</th>
-                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                            <td style="padding-left: 9px;">{{$contrato->ip}}</td>
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Tipo de Servicio</th>
@@ -191,7 +191,7 @@
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Punto de Acceso</th>
-                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                            <td style="padding-left: 9px;">{{$radicado->ap}}</td>
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Estatus</th>
