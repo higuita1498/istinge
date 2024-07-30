@@ -66,7 +66,6 @@
         }
         td {
             border: 1px  solid #9e9b9b;
-            padding:35px !important;
         }
 
         th {
@@ -110,7 +109,9 @@
         .padding-left{
             padding-left: 1%;
         }
-
+        .tabla-manual td{
+            padding: 25px !important;
+        }
     </style>
 
     <div style="width: 100%;height:auto;">
@@ -288,7 +289,7 @@
     </div>
     <div style="margin-bottom:50px !important;">
         <h2>Información de Equipos</h2>
-        <table>
+        <table class="tabla-manual">
             <thead>
                 <tr>
                     <th>MARCA</th>
