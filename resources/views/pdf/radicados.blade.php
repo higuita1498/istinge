@@ -184,14 +184,19 @@
                             <th style="text-align: left; padding-left: 9px;">Dirección</th>
                             <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
                         </tr>
+                        @if($contrato)
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Nodo</th>
                             <td style="padding-left: 9px;">{{$contrato->nodo}}</td>
                         </tr>
+                        @endif
+                        @if($contrato)
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">IP</th>
                             <td style="padding-left: 9px;">{{$contrato->ip}}</td>
                         </tr>
+                        @endif
+
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Tipo de Servicio</th>
                             @if ($radicado->servicio == 2)
