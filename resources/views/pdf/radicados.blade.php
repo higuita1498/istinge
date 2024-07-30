@@ -354,7 +354,7 @@
 
     </div>
 
-    <div style="width: 70%; margin-top: 5%;">
+    <div style="width: 70%; margin-top: 7%;">
         <div style="padding-top: 8%; text-align: center;">
             <div style="display: inline-block; width: 45%;">
                 <p class="small"></p>
