@@ -66,6 +66,7 @@
         }
         td {
             border: 1px  solid #9e9b9b;
+            padding:35px !important;
         }
 
         th {
