@@ -113,6 +113,10 @@
             padding: 25px !important;
             width: calc(100% / 12);
         }
+        .tabla-manual {
+            width: 100%;
+            border-collapse: collapse;
+        }
     </style>
 
     <div style="width: 100%;height:auto;">
@@ -288,7 +292,7 @@
             </div>
         </div>
     </div>
-    <div style="margin-bottom:50px !important;">
+    <div style="margin-bottom:20px !important;">
         <h2>Información de Equipos</h2>
         <table class="tabla-manual">
             <thead>
