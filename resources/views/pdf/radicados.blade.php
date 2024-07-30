@@ -293,7 +293,7 @@
         </div>
     </div>
     <div style="margin-bottom:20px !important;">
-        <h5>DETALLES DE EQUIPOS (instalación – retiro)</h5>
+        <h4>DETALLES DE EQUIPOS (instalación – retiro)</h4>
         <table class="tabla-manual">
             <thead>
                 <tr>
