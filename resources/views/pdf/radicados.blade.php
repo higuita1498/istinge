@@ -110,7 +110,7 @@
             padding-left: 1%;
         }
         .tabla-manual td{
-            padding: 25px !important;
+            padding: 15px !important;
             width: calc(100% / 12);
         }
         .tabla-manual {
@@ -339,14 +339,7 @@
                     <td> </td>
                     <td> </td>
                 </tr>
-                <tr>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
+
                 <!-- Puedes agregar más filas según sea necesario -->
             </tbody>
         </table>
