@@ -187,6 +187,61 @@
                         </tr>
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Tipo de Servicio</th>
+                            @if ($radicado->servicio == 2)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 4)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 5)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 6)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 8)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 9)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 10)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 11)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 12)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 13)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 14)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 15)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 16)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 17)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 18)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 20)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 23)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+                            @if ($radicado->servicio == 24)
+                            <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
+                            @endif
+
                             <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
                         </tr>
                         <tr>
