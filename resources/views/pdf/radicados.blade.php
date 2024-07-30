@@ -137,7 +137,7 @@
         </div>
         <div style="width: 28%; display: inline-block; text-align: left; vertical-align: top; margin-top: 2%;">
             {{Auth::user()->empresa}}
-            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.Auth::user()->empresa()->logo.'1')}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+            <img src="{{asset('images/Empresas/Empresa'.Auth::user()->empresa.'/'.'logo1.png')}}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
 
             {{-- <p class="medium" style="text-align: center;"> Radicado</p>
             <h4 style="text-align: center;">No. #{{$radicado->codigo}}</h4> --}}
