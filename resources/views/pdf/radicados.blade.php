@@ -292,7 +292,7 @@
             </div>
         </div>
     </div>
-    <div style="margin-bottom:20px !important;margin-top: 7% !important;">
+    <div style="margin-bottom:20px !important;margin-top: 3% !important;">
         <h4>DETALLES DE EQUIPOS (instalación – retiro)</h4>
         <table class="tabla-manual">
             <thead>
