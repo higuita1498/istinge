@@ -722,10 +722,10 @@ class RadicadosController extends Controller{
     public function imprimir($id){
         $radicado = Radicado::where('empresa',Auth::user()->empresa)->where('id',$id)->first();
         $contrato = Contrato::where('empresa',Auth::user()->empresa)->where('id',$radicado->contrato)->first();
-        dd($contrato);
+
         if($radicado) {
             view()->share(['title' => 'Caso Radicado N° '.$radicado->codigo]);
-            $pdf = PDF::loadView('pdf.radicados', compact('radicado'));
+            $pdf = PDF::loadView('pdf.radicados', compact('radicado','contrato'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
     }
