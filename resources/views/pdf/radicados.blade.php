@@ -178,6 +178,22 @@
                             <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
                         </tr>
                         <tr>
+                            <th style="text-align: left; padding-left: 9px;">Nodo</th>
+                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">IP</th>
+                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">Tipo de Servicio</th>
+                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left; padding-left: 9px;">Punto de Acceso</th>
+                            <td style="padding-left: 9px;">{{$radicado->direccion}}</td>
+                        </tr>
+                        <tr>
                             <th style="text-align: left; padding-left: 9px;">Estatus</th>
                             <td style="padding-left: 9px;">
                                 @if ($radicado->estatus == 0)
