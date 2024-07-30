@@ -285,6 +285,45 @@
             </div>
         </div>
     </div>
+    <div>
+        <h2>Información de Equipos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>MARCA</th>
+                    <th>MARCA O MODELO TV</th>
+                    <th>SERIAL</th>
+                    <th>MAC</th>
+                    <th>SEÑAL O POTENCIA</th>
+                    <th>CANTIDAD DE PUNTOS</th>
+                    <th>MARCA</th>
+                    <th>MARCA O MODELO TV</th>
+                    <th>SERIAL</th>
+                    <th>MAC</th>
+                    <th>SEÑAL O POTENCIA</th>
+                    <th>CANTIDAD DE PUNTOS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Marca 1</td>
+                    <td>Modelo TV 1</td>
+                    <td>Serial 1</td>
+                    <td>MAC 1</td>
+                    <td>Señal 1</td>
+                    <td>3</td>
+                    <td>Marca 2</td>
+                    <td>Modelo TV 2</td>
+                    <td>Serial 2</td>
+                    <td>MAC 2</td>
+                    <td>Señal 2</td>
+                    <td>4</td>
+                </tr>
+                <!-- Puedes agregar más filas según sea necesario -->
+            </tbody>
+        </table>
+
+    </div>
 
     <div style="width: 70%; margin-top: 3%;">
         <div style="padding-top: 8%; text-align: center;">
