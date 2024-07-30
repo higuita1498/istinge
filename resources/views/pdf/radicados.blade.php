@@ -198,6 +198,7 @@
                         @endif
 
                         <tr>
+
                             <th style="text-align: left; padding-left: 9px;">Tipo de Servicio</th>
                             @if ($radicado->servicio == 2)
                             <td style="padding-left: 9px;"><span class="text-danger font-weight-bold">No tiene internet</span></td>
