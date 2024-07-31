@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Carbon\Carbon;  
-use Mail; 
+use Carbon\Carbon;
+use Mail;
 use Validator;
-use Illuminate\Validation\Rule;  
-use Auth; 
+use Illuminate\Validation\Rule;
+use Auth;
 use DB;
 use Session;
 
@@ -23,7 +23,7 @@ class BlacklistController extends Controller
         set_time_limit(300);
         view()->share(['seccion' => 'mikrotik', 'subseccion' => 'gestion_blacklist', 'title' => 'Monitor Blacklist', 'icon' =>'fas fa-server']);
     }
-    
+
     public function index(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 13)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
@@ -80,7 +80,7 @@ class BlacklistController extends Controller
         view()->share(['title' => 'Nuevo Monitor Blacklist']);
         return view('monitor-blacklist.create');
     }
-    
+
     public function store(Request $request){
         $request->validate([
             'nombre' => 'required|max:250',
@@ -105,6 +105,7 @@ class BlacklistController extends Controller
         curl_close($curl);
 
         $response = json_decode($result, true);
+        dd($response);
         if($response['status'] == 'ERROR'){
             if($response['error_message'] == 'you are already monitoring this ip address'){
                 $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
@@ -136,11 +137,11 @@ class BlacklistController extends Controller
         }
         return redirect('empresa/monitor-blacklist')->with('danger', 'MONITOR BLACKLIST NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $blacklist = Blacklist::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($blacklist) {
             view()->share(['title' => 'Editar: '.$blacklist->nombre]);
             return view('monitor-blacklist.edit')->with(compact('blacklist'));
@@ -153,9 +154,9 @@ class BlacklistController extends Controller
             'nombre' => 'required|max:250',
             'ip' => 'required|max:250',
         ]);
-        
+
         $blacklist = Blacklist::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($blacklist) {
             $empresa = Empresa::find(Auth::user()->empresa);
             $api_key = $empresa->api_key_hetrixtools;
@@ -195,10 +196,10 @@ class BlacklistController extends Controller
         }
         return redirect('empresa/monitor-blacklist')->with('danger', 'MONITOR BLACKLIST NO ENCONTRADO, INTENTE NUEVAMENTE');
     }
-    
+
     public function destroy($id){
         $blacklist = Blacklist::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
-        
+
         if ($blacklist) {
             $empresa = Empresa::find(Auth::user()->empresa);
             $api_key = $empresa->api_key_hetrixtools;
