@@ -208,13 +208,20 @@ class AvisosController extends Controller
                     $contacto = $contrato->cliente();
 
                     $contact = [
-                        "phone" =>  "57" . $contacto->celular,
+                        "phone" =>  "57" . '3002457118',
                         "name" => $contacto->nombre . " " . $contacto->apellido1
                     ];
 
                     $nameEmpresa = $empresa->nombre;
-                    $total = $factura->total()->total;
-                    $message = $plantilla->title . "\r\n" . $plantilla->contenido;
+
+                    // Reemplazar los placeholders en el contenido de la plantilla
+                    $contenido = $plantilla->contenido;
+                    $contenido = str_replace('{{$name}}', $contacto->nombre, $contenido);
+                    $contenido = str_replace('{{$company}}', $nameEmpresa, $contenido);
+                    $contenido = str_replace('{{$nit}}', $empresa->nit, $contenido);
+                    $contenido = str_replace('{{$date}}', date('Y-m-d'), $contenido);
+
+                    $message = $plantilla->title . "\r\n" . $contenido;
 
                     $body = [
                         "contact" => $contact,
@@ -301,6 +308,10 @@ class AvisosController extends Controller
                     }
                 }
             }
+        }
+
+        if($request->type == 'whatsapp'){
+            return redirect('empresa/avisos')->with('success', 'Proceso de envío realizado con exito notificaciones de email');
         }
 
         if($request->type == 'EMAIL'){
