@@ -105,7 +105,6 @@ class BlacklistController extends Controller
         curl_close($curl);
 
         $response = json_decode($result, true);
-        dd($response);
         if($response['status'] == 'ERROR'){
             if($response['error_message'] == 'you are already monitoring this ip address'){
                 $error = 'ERROR API: YA ESTÁS MONITOREANDO ESTA DIRECCIÓN IP';
