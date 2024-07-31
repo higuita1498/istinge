@@ -20,6 +20,9 @@ use App\Integracion;
 use App\Contacto;
 use App\Mikrotik;
 use App\GrupoCorte;
+use App\Instance;
+use App\Services\WapiService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class AvisosController extends Controller
@@ -105,6 +108,39 @@ class AvisosController extends Controller
         return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id', 'servidores', 'gruposCorte'));
     }
 
+    public function whatsapp($id = false)
+    {
+        $this->getAllPermissions(Auth::user()->id);
+        $opcion = 'whatsapp';
+
+        view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
+        $plantillas = Plantilla::where('status', 1)->where('tipo', 2)->get();
+        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
+			/* ->where('contracts.status', 1) */
+            ->where('contracts.empresa', Auth::user()->empresa)
+            ->whereNotNull('contactos.celular');
+
+        if($id){
+            $contratos = $contratos->where('contactos.id', $id);
+        }
+
+        if(request()->vencimiento){
+            $contratos->join('factura', 'factura.contrato_id', '=', 'contracts.id')
+                      ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
+                      ->groupBy('contracts.id');
+        }
+
+
+        $contratos = $contratos->get();
+
+        $servidores = Mikrotik::where('empresa', auth()->user()->empresa)->get();
+        $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
+
+        return view('avisos.envio')->with(compact('plantillas','contratos','opcion','id', 'servidores', 'gruposCorte'));
+    }
+
+
     public function email($id = false)
     {
         $this->getAllPermissions(Auth::user()->id);
@@ -155,9 +191,41 @@ class AvisosController extends Controller
             }
 
             if ($contrato) {
-                $plantilla = Plantilla::find($request->plantilla);
+                return $plantilla = Plantilla::find($request->plantilla);
 
-                if($request->type == 'SMS'){
+                if($request->type == 'whatsapp'){
+
+                    $wapiService = new WapiService();
+                    $instance = Instance::where('company_id', $empresa->id)->first();
+                    if(is_null($instance) || empty($instance)){
+                        Log::error('Instancia no está creada.');
+                        return;
+                    }
+                    if($instance->status !== "PAIRED") {
+                        Log::error('La instancia de whatsapp no está conectada, por favor conectese a whatsapp y vuelva a intentarlo.');
+                        return;
+                    }
+                    $contacto = $contrato->cliente();
+
+                    $contact = [
+                        "phone" =>  "57" . $contacto->celular,
+                        "name" => $contacto->nombre . " " . $contacto->apellido1
+                    ];
+
+                    $nameEmpresa = $empresa->nombre;
+                    $total = $factura->total()->total;
+                    $message = $plantilla->title . "\r\n" . $plantilla->contenido;
+
+                    $body = [
+                        "contact" => $contact,
+                        "body" => $message,
+                        "file" => ''
+                    ];
+
+                $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
+
+                }
+                else if($request->type == 'SMS'){
                     $numero = str_replace('+','',$contrato->cliente()->celular);
                     $numero = str_replace(' ','',$numero);
                     array_push($numeros, '57'.$numero);

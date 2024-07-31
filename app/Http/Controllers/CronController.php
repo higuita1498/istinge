@@ -2722,7 +2722,6 @@ class CronController extends Controller
                 $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
                 if(isset($response->statusCode)) {
                     Log::error('No se pudo enviar el mensaje, por favor intente nuevamente.' . $contacto->nit);
-                    // break;
                 }
 
                 if(isset($response->scalar)){

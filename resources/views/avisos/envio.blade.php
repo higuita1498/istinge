@@ -29,7 +29,7 @@
 	    <input type="hidden" value="{{$opcion}}" name="type">
 	    <div class="row">
 
-			<div class="col-md-2 form-group">
+			<div class="col-md-3 form-group">
 				@if(!request()->vencimiento)
 					<label>Facturas vencidas (opcional)</label>
 					<input type="text" class="form-control datepicker"  id="vencimiento" value="" name="vencimiento">
@@ -92,8 +92,20 @@
         	        <strong>{{ $errors->first('barrio') }}</strong>
         	    </span>
         	</div>
-        	
-        	<div class="col-md-5 form-group {{ $id ? 'd-none':'' }}">
+
+            <div class="col-md-3 form-group">
+	            <label class="control-label">ESTADO CLIENTE<span class="text-danger"></span></label>
+        	    <select name="options" id="options" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
+        	        <option {{old('options')==1?'selected':''}} value="1" >HABILITADOS</option>
+        	        <option {{old('options')==2?'selected':''}} value="2">DESHABILITADOS</option>
+        	        <option {{old('options')==3?'selected':''}} value="3">MANUAL</option>
+        	    </select>
+        	    <span class="help-block error">
+        	        <strong>{{ $errors->first('options') }}</strong>
+        	    </span>
+        	</div>
+
+        	{{-- <div class="col-md-5 form-group {{ $id ? 'd-none':'' }}">
         	    <label class="control-label">Clientes <span class="text-danger">*</span></label>
         	    <div class="btn-group btn-group-toggle" data-toggle="buttons">
         	        <label class="btn btn-success">
@@ -106,8 +118,8 @@
         	            <input type="radio" name="options" id="radio_3" onchange="chequeo();"> Manual
         	        </label>
         	    </div>
-        	</div>
-        	
+        	</div> --}}
+
         	<div class="col-md-3 form-group" id="seleccion_manual">
 	            <label class="control-label">Selección manual de clientes</label>
         	    <select name="contrato[]" id="contrato_sms" class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" required multiple data-actions-box="true" data-select-all-text="Todos" data-deselect-all-text="Ninguno">
@@ -136,11 +148,11 @@
 			</div>
 
        </div>
-	    
+
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
-	   
+
 	   <hr>
-	   
+
 	   <div class="row" >
 	       <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 	           <a href="{{route('avisos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
@@ -160,7 +172,7 @@
 
 		$('#vencimiento').on('change', function(){
 			if($(this).val() == ultimoVencimiento){
-				
+
 			}else{
 				ultimoVencimiento = $(this).val();
 				window.location.href =  window.location.pathname + '?' + 'vencimiento=' + ultimoVencimiento;
@@ -243,7 +255,6 @@
 		let grupoCorte = $('#corte').val();
 		let servidor = $('#servidor').val();
 
-
 		if(estadoCliente){
 
 			if(grupoCorte && servidor){
@@ -269,7 +280,7 @@
 				}
 			}
 		}
-		
+
 		$("#contrato_sms option:selected").prop("selected", false);
 		$("#contrato_sms option:selected").removeAttr("selected");
 

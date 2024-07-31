@@ -72,6 +72,16 @@
 		        </div>
 		    </a>
 		</div>
+
+        <div class="col-md-4 mt-2">
+		    <a href="{{ route('avisos.envio_whatsapp') }}">
+		        <div class="card text-center card-notificacion">
+		            <div class="card-body">
+		                <h5 class="card-title">NOTIFICACIÓN WHATSAPP<br><i class="fab fa-whatsapp fa-5x mt-4"></i></h5>
+		            </div>
+		        </div>
+		    </a>
+		</div>
 	</div>
 
 	<div class="modal fade" id="modalSMS" tabindex="-1" role="dialog" aria-labelledby="modalSMSLabel" aria-hidden="true">
