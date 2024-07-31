@@ -1404,6 +1404,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	    Route::group(['prefix' => 'avisos'], function (){
 	        Route::get('/envio/sms', 'AvisosController@sms')->name('avisos.envio.sms');
 	        Route::get('/envio/email', 'AvisosController@email')->name('avisos.envio.email');
+	        Route::get('/envio/whatsapp', 'AvisosController@whatsapp')->name('avisos.envio_whatsapp');
 	        Route::post('/envio_aviso', 'AvisosController@envio_aviso')->name('avisos.envio_aviso');
 	        Route::get('/envio/{id}/email', 'AvisosController@email')->name('avisos.envio.email.cliente');
 	        Route::get('/envio/{id}/sms', 'AvisosController@sms')->name('avisos.envio.sms.cliente');
