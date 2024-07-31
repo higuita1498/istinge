@@ -208,7 +208,7 @@ class AvisosController extends Controller
                     $contacto = $contrato->cliente();
 
                     $contact = [
-                        "phone" =>  "57" . '3002457118',
+                        "phone" =>  "57" . $contacto->celular,
                         "name" => $contacto->nombre . " " . $contacto->apellido1
                     ];
 
