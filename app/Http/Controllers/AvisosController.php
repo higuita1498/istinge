@@ -191,7 +191,7 @@ class AvisosController extends Controller
             }
 
             if ($contrato) {
-                return $plantilla = Plantilla::find($request->plantilla);
+                $plantilla = Plantilla::find($request->plantilla);
 
                 if($request->type == 'whatsapp'){
 
