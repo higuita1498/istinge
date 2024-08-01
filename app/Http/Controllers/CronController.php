@@ -383,7 +383,7 @@ class CronController extends Controller
 
                                         $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
 
-                                        }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772'){
+                                        }else if($empresa->nombre == 'FIBRACONEXION S.A.S.' || $empresa->nit == '900822955' || $empresa->nombre == 'Almeidas Comunicaciones S.A.S' ||  $empresa->nit == '901044772' || $empresa->nombre == 'Telecomunicaciones Por Redes Pon Tele Pon S.A.S' ||  $empresa->nit == '901346829' ){
                                             $fullname = $factura->cliente()->nombre.' '.$factura->cliente()->apellidos();
                                             $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
                                             $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
