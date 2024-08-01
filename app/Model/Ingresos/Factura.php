@@ -875,7 +875,11 @@ public function forma_pago()
         /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Anterior <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
         //traemos todas las facturas que el vencimiento haya pasado la fecha actual.
-        $facturasVencidas = Factura::where('cliente',$this->cliente)->where('vencimiento','<',$fechaActual)->where('estatus','=',1)->get();
+        $facturasVencidas = Factura::where('cliente',$this->cliente)
+        ->where('vencimiento','<=',$fechaActual)
+        ->where('id','!=',$this->id)
+        ->where('estatus','=',1)
+        ->get();
 
         //sumamos todo lo que deba el cliente despues de la fecha de vencimiento
         foreach($facturasVencidas as $vencida){
