@@ -981,6 +981,7 @@ class RadicadosController extends Controller{
     }
 
     public function exportar(Request $request){
+        dd("quieres exportar radicados");
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Radicados";
