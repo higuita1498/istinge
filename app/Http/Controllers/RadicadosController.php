@@ -1143,7 +1143,7 @@ class RadicadosController extends Controller{
                 ->setCellValue($letras[17].$i, $radicado->estatus())
                 ->setCellValue($letras[18].$i, $radicado->desconocido)
                 ->setCellValue($letras[19].$i, $radicado->reporte)
-                ->setCellValue($letras[20].$i, $radicado->responsable()->nombre);
+                ->setCellValue($letras[20].$i, $radicado->responsable()->nombres);
             $i++;
         }
 
