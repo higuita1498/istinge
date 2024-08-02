@@ -1121,6 +1121,7 @@ class RadicadosController extends Controller{
         $radicados = $radicados->get();
 
         foreach ($radicados as $radicado) {
+            dd($radicado);
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $radicado->codigo)
                 ->setCellValue($letras[1].$i, $radicado->fecha)
