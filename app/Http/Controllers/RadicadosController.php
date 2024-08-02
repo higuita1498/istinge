@@ -985,7 +985,7 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Radicados";
-        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado', 'Observaciones', 'Reporte Tecnico','Creado por');
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado','Creado por', 'Observaciones', 'Reporte Tecnico');
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','AA');
 
@@ -998,13 +998,13 @@ class RadicadosController extends Controller{
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AA');
+            ->mergeCells('A1:T1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:AA');
+            ->mergeCells('A2:T2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
