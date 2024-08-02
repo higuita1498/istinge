@@ -114,6 +114,13 @@
 
         				<div class="col-md-3 pl-1 pt-1">
         					<select title="Planes" class="form-control selectpicker" id="plan" name="plan" data-size="5" data-live-search="true">
+        						@foreach ($planestv as $plan)
+        						<option value="{{ $plan->id }}">{{ $plan->name }}</option>
+        						@endforeach
+        					</select>
+        				</div>
+                        <div class="col-md-3 pl-1 pt-1">
+        					<select title="Planes" class="form-control selectpicker" id="plan" name="plan" data-size="5" data-live-search="true">
         						@foreach ($planes as $plan)
         						<option value="{{ $plan->id }}">{{ $plan->name }}</option>
         						@endforeach
