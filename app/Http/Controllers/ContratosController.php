@@ -143,7 +143,7 @@ class ContratosController extends Controller
                 });
             }
             if($request->plan){
-                dd($request);
+
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.plan_id', $request->plan);
                 });
@@ -184,9 +184,9 @@ class ContratosController extends Controller
                 });
             }
             if($request->plan_tv){
-                dd("hola filtras polan tv");
+
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.client_id', $request->cliente_id);
+                    $query->orWhere('contracts.servicio_tv', $request->plan_tv);
                 });
             }
             if($request->ap){
