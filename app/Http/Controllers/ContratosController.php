@@ -182,6 +182,12 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.nodo', $request->nodo);
                 });
             }
+            if($request->plan_tv){
+                dd("hola filtras polan tv");
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.client_id', $request->cliente_id);
+                });
+            }
             if($request->ap){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.ap', $request->ap);
