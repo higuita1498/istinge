@@ -997,13 +997,13 @@ class RadicadosController extends Controller{
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:T1');
+            ->mergeCells('A1:U1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:T2');
+            ->mergeCells('A2:U2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
@@ -1035,7 +1035,7 @@ class RadicadosController extends Controller{
             )
         );
 
-        $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:U3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
