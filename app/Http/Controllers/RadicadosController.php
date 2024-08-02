@@ -981,13 +981,12 @@ class RadicadosController extends Controller{
     }
 
     public function exportar(Request $request){
-
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Radicados";
-        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado','Creado por', 'Observaciones', 'Reporte Tecnico');
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado', 'Observaciones', 'Reporte Tecnico');
 
-        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','AA');
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific�1�7�1�7�1�7
@@ -1142,8 +1141,7 @@ class RadicadosController extends Controller{
                 ->setCellValue($letras[16].$i, $radicado->prioridad())
                 ->setCellValue($letras[17].$i, $radicado->estatus())
                 ->setCellValue($letras[18].$i, $radicado->desconocido)
-                ->setCellValue($letras[19].$i, $radicado->reporte)
-                ->setCellValue($letras[20].$i, $radicado->responsable);
+                ->setCellValue($letras[19].$i, $radicado->reporte);
             $i++;
         }
 
