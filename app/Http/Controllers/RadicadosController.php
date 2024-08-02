@@ -984,7 +984,7 @@ class RadicadosController extends Controller{
         $this->getAllPermissions(Auth::user()->id);
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Radicados";
-        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado', 'Reporte Tecnico','Creado por');
+        $titulosColumnas = array('Codigo', 'Fecha', 'Cliente', 'Identificacion', 'Celular', 'Correo Electronico', 'Direccion', 'Contrato', 'Direccion IP', 'Direccion MAC', 'Servicio', 'Tecnico', 'Estimado', 'Iniciado', 'Finalizado', 'Duracion', 'Prioridad', 'Estado', 'Reporte Tecnico','Observaciones','Creado por');
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
@@ -1143,7 +1143,7 @@ class RadicadosController extends Controller{
                 ->setCellValue($letras[17].$i, $radicado->estatus())
                 ->setCellValue($letras[18].$i, $radicado->desconocido)
                 ->setCellValue($letras[19].$i, $radicado->reporte)
-                ->setCellValue($letras[20].$i, $radicado->responsable);
+                ->setCellValue($letras[20].$i, $radicado->responsable());
             $i++;
         }
 
