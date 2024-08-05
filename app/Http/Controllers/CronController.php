@@ -756,7 +756,7 @@ class CronController extends Controller
                         }
 
                         if($diasHabilesNocobro == 0){
-                            if(isset($contrato->server_configuration_id)){
+                            if(isset($contrato->server_configuration_id) || $promesaExtendida == 0){
 
                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                                 $API = new RouterosAPI();
