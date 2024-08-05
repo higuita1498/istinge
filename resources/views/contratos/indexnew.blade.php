@@ -119,6 +119,7 @@
         						@endforeach
         					</select>
         				</div>
+                        @if($planestv && $planestv->isNotEmpty())
                         <div class="col-md-3 pl-1 pt-1">
         					<select title="Planes de TV" class="form-control selectpicker" id="plan_tv" name="plan_tv" data-size="5" data-live-search="true">
         						@foreach ($planestv as $plan)
@@ -126,6 +127,7 @@
         						@endforeach
         					</select>
         				</div>
+                        @endif
         				<div class="col-md-3 pl-1 pt-1">
         					<select title="Estado" class="form-control selectpicker" id="state" name="state">
         						<option value="enabled">Habilitado</option>
