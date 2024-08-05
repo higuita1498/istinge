@@ -756,7 +756,7 @@ class CronController extends Controller
                         }
 
                         if($diasHabilesNocobro == 0){
-                            if(isset($contrato->server_configuration_id)){
+                            if(isset($contrato->server_configuration_id) || $promesaExtendida == 0){
 
                                 $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
                                 $API = new RouterosAPI();
@@ -826,7 +826,7 @@ class CronController extends Controller
     public static function CortarPromesas(){
         $i=0;
         $fecha = date('Y-m-d');
-        // $hora = date('G:i');
+        $hora = date('G:i');
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
@@ -837,7 +837,7 @@ class CronController extends Controller
             where('f.promesa_pago', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            // where('p.hora_pago', $hora)->
+            where('p.hora_pago','<',$hora)->
             get();
 
         //dd($contactos);

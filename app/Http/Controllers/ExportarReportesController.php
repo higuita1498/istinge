@@ -5087,4 +5087,126 @@ class ExportarReportesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
+
+    public function importarEmpresa(Request $request){
+        $request->validate([
+            'archivo' => 'required|mimes:xlsx',
+        ],[
+            'archivo.mimes' => 'El archivo debe ser de extensión xlsx'
+        ]);
+
+        $imagen = $request->file('archivo');
+        $nombre_imagen = 'archivo.'.$imagen->getClientOriginalExtension();
+        $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa;
+        $imagen->move($path,$nombre_imagen);
+        Ini_set ('max_execution_time', 500);
+        $fileWithPath=$path."/".$nombre_imagen;
+        //Identificando el tipo de archivo
+        $inputFileType = PHPExcel_IOFactory::identify($fileWithPath);
+        //Creando el lector.
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        //Cargando al lector de excel el archivo, le pasamos la ubicacion
+        $objPHPExcel = $objReader->load($fileWithPath);
+        //obtengo la hoja 0
+        $sheet = $objPHPExcel->getSheet(0);
+        //obtiene el tamaño de filas
+        $highestRow = $sheet->getHighestRow();
+        //obtiene el tamaño de columnas
+        $highestColumn = $sheet->getHighestColumn();
+
+
+        for ($row = 4; $row <= $highestRow; $row++){
+            $request= (object) array();
+            //obtengo el A2 desde donde empieza la data
+            $nit=$sheet->getCell("A".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+
+            $request->nit           = $sheet->getCell("B".$row)->getValue();
+            $request->precio           = $sheet->getCell("L".$row)->getValue();
+
+            $contrato = Contrato::join('contactos as c', 'c.id', 'contracts.client_id')
+            ->where('c.nit',$request->nit)
+            ->first();
+
+            if($contrato){
+                $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
+                if($num){
+                    $numero = $num->nro;
+                }else{
+                    $numero = 0;
+                }
+
+                $numero=round($numero)+1;
+
+                //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                $nro = NumeracionFactura::tipoNumeracion($contrato);
+
+                $inicio = $nro->inicio;
+
+                // Validacion para que solo asigne numero consecutivo si no existe.
+                while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                    $nro->save();
+                    $inicio=$nro->inicio;
+                    $nro->inicio += 1;
+                }
+
+                $tipo = 1; //1= normal, 2=Electrónica.
+                $electronica = Factura::booleanFacturaElectronica($contrato->client_id);
+
+                if($contrato->facturacion == 3 && !$electronica){
+                    $tipo = 1;
+                    // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                }elseif($contrato->facturacion == 3 && $electronica){
+                    $tipo = 2;
+                }
+
+                $factura = new Factura;
+                $factura->nro           = $numero;
+                $factura->codigo        = $nro->prefijo.$inicio;
+                $factura->numeracion    = $nro->id;
+                $factura->plazo         = 30;
+                $factura->term_cond     = $contrato->terminos_cond;
+                $factura->facnotas      = $contrato->notas_fact;
+                $factura->empresa       = 1;
+                $factura->cliente       = $contrato->client_id;
+                $factura->fecha         = "2024-08-01";
+                $factura->tipo          = $tipo;
+                $factura->vencimiento   = "2024-09-30";
+                $factura->suspension    = "2024-09-30";
+                $factura->pago_oportuno = "2024-09-30";
+                $factura->observaciones = 'Facturación para saldos de migracion';
+                $factura->bodega        = 1;
+                $factura->vendedor      = 2;
+                $factura->prorrateo_aplicado = 0;
+                $factura->facturacion_automatica = 1;
+                $factura->save();
+
+                //Creacion del item
+                $item = Inventario::find(28);
+
+                $item_reg = new ItemsFactura;
+                $item_reg->factura     = $factura->id;
+                $item_reg->producto    = $item->id;
+                $item_reg->ref         = $item->ref;
+                $item_reg->precio      = $request->precio;
+                $item_reg->id_impuesto = $item->id_impuesto;
+                $item_reg->impuesto    = $item->impuesto;
+                if($contrato->iva_factura == 1){
+                    $item_reg->id_impuesto = 1;
+                    $item_reg->impuesto = 19;
+                }
+                $item_reg->cant        = 1;
+                $item_reg->desc        = $contrato->descuento;
+                if($contrato->descuento_pesos != null){
+                    $item->precio      = $item->precio - $contrato->descuento_pesos;
+                }
+                $nro->save();
+                $item_reg->save();
+            }
+        }
+
+        return redirect('empresa/contratos')->with('success', "Importacion completada correctamente.");
+    }
 }

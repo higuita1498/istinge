@@ -12,7 +12,6 @@
 */
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 Route::get('sendmail','Controller@sendmail');
 
