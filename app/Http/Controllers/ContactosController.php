@@ -213,11 +213,12 @@ class ContactosController extends Controller
                 return $contacto->radicados();
             })
             ->editColumn('ip', function (Contacto $contacto) {
-                if ($contacto->contract('true') != 'N/A') {
-                    $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
-                }
+                // if ($contacto->contract('true') != 'N/A') {
+                //     $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
+                // }
                 $puerto = '';
-                return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
+                return $puerto;
+                // return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
             })
             ->editColumn('estrato', function (Contacto $contacto) {
                 return ($contacto->estrato) ? $contacto->estrato : 'N/A';
