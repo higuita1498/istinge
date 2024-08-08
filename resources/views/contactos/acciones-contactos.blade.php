@@ -21,7 +21,7 @@
         <a href="{{ route('contratos.grafica',$details['id'] )}}" target="_blank" class="btn btn-outline-dark btn-icons" title="Ver Gráfica de Conexión"><i class="fas fa-chart-area"></i></a>
         <a href="{{ route('contratos.grafica_consumo',$details['id'] )}}" target="_blank" class="btn btn-outline-info btn-icons" title="Ver Gráfica de Consumo"><i class="fas fa-chart-line"></i></a>
         <a href="{{ route('contratos.conexion',$details['id'] )}}" target="_blank" class="btn btn-outline-success btn-icons" title="Ping de Conexión"><i class="fas fa-plug"></i></a>
-        <a href="{{ route('contratos.log',$details['id'] )}}" target="_blank" class="btn btn-outline-info btn-icons" title="Log de Contrato"><i class="fas fa-clipboard-list"></i></a>
+        {{-- <a href="{{ route('contratos.log',$details['id'] )}}" target="_blank" class="btn btn-outline-info btn-icons" title="Log de Contrato"><i class="fas fa-clipboard-list"></i></a> --}}
     @endif
 @endif
 
