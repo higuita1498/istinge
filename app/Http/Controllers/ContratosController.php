@@ -133,7 +133,7 @@ class ContratosController extends Controller
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->leftjoin('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
 
         if ($request->filtro == true) {
 

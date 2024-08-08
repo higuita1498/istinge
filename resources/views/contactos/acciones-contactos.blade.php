@@ -4,9 +4,10 @@
 	<input name="_method" type="hidden" value="DELETE">
 </form>
 @endif
+@if($contract)
 <a href="{{route('contactos.show',$id)}}" class="btn btn-outline-info btn-icons"><i class="far fa-eye"></i></i></a>
 <a href="{{route('contactos.edit',$id)}}" class="btn btn-outline-primary btn-icons" title="Editar"><i class="fas fa-edit"></i></a>
-
+@endif
 @if ($email && $contract != 'N/A')
 <a href="{{route('avisos.envio.email.cliente',$id)}}" target="_blank" class="btn btn-outline-success btn-icons" title="Enviar Notificación por EMAIL"><i class="fas fa-envelope-open-text"></i></a>
 @endif
