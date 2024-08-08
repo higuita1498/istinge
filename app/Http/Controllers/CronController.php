@@ -827,20 +827,19 @@ class CronController extends Controller
         $i=0;
         $fecha = date('Y-m-d');
         $hora = date('G:i');
+        $hora_24 = date('H:i', strtotime($hora));
 
         $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
             join('contracts as cs','cs.client_id','=','contactos.id')->
             join('promesa_pago as p', 'p.factura', '=', 'f.id')->
-            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state')->
+            select('contactos.id','p.hora_pago')->
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('f.promesa_pago', $fecha)->
             where('contactos.status',1)->
             where('cs.state','enabled')->
-            where('p.hora_pago','<',$hora)->
+            whereRaw('TIME_FORMAT(p.hora_pago, "%H:%i") < ?', [$hora_24])->
             get();
-
-        //dd($contactos);
 
         $empresa = Empresa::find(1);
         foreach ($contactos as $contacto) {

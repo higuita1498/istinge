@@ -1220,7 +1220,7 @@ $(document).ready(function() {
                 }
             },
             "order": [
-                [0, "desc"]
+                [1, "desc"]
             ],
             "columnDefs": [{
                 "targets": [8],
