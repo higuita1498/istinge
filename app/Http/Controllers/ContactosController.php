@@ -211,6 +211,7 @@ class ContactosController extends Controller
             })
             ->editColumn('radicado', function (Contacto $contacto) {
                 return $contacto->radicados();
+
             })
             // ->editColumn('ip', function (Contacto $contacto) {
             //     /*if ($contacto->contract('true') != 'N/A') {
