@@ -2025,7 +2025,8 @@ class FacturasController extends Controller{
             ->where('factura.empresa',$empresa->id)
             ->whereIn('factura.tipo',[1,2])
             ->where('factura.cliente',$contacto)
-            ->groupBy('if.factura');
+            ->groupBy('if.factura')
+            ->orderBy('factura.id','DESC');
 
         if (isset($requestData->search['value'])) {
           // if there is a search parameter, $requestData['search']['value'] contains search parameter

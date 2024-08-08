@@ -518,7 +518,7 @@ class ExportarReportesController extends Controller
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->join('ingresos_factura as ig', 'factura.id', '=', 'ig.factura')
             ->join('ingresos as i', 'ig.ingreso', '=', 'i.id')
-            ->join('municipios as municipio','municipio.id','=','c.fk_idmunicipio')
+            ->leftjoin('municipios as municipio','municipio.id','=','c.fk_idmunicipio')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'i.fecha as pagada',
                     'municipio.nombre as municipioNombre', 'c.vereda', 'ig.pago as pagadoTotal')
