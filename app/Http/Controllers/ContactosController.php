@@ -60,7 +60,6 @@ class ContactosController extends Controller
 
     public function contactos(Request $request, $tipo_usuario)
     {
-        dd($request);
         $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
         $modoLectura = auth()->user()->modo_lectura();
         $contactos = Contacto::query();
