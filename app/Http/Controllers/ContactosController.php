@@ -213,7 +213,6 @@ class ContactosController extends Controller
                 return $contacto->radicados();
             })
             ->editColumn('ip', function (Contacto $contacto) {
-
                 if ($contacto->contract('true') != 'N/A') {
                     $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
                 }
