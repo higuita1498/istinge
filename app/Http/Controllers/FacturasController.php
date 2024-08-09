@@ -2876,7 +2876,7 @@ class FacturasController extends Controller{
 
         $factura = Factura::find($id);
         $hora = date('G');
-        $mensaje = $empresa->nombre." Se le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+        $mensaje = $empresa->nombre." Le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
 
         $numero = str_replace('+','',$factura->cliente()->celular);
         $numero = str_replace(' ','',$numero);

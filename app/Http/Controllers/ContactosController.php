@@ -58,6 +58,175 @@ class ContactosController extends Controller
         return view('contactos.indexnew');
     }
 
+    /*public function contactos(Request $request, $tipo_usuario)
+    {
+        $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
+        $modoLectura = auth()->user()->modo_lectura();
+        $contactos = Contacto::query();
+
+
+        if ($request->filtro == true) {
+            if ($request->identificacion) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('nit', 'like', "%{$request->identificacion}%");
+                });
+            }
+            if ($request->nombre) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
+                });
+            }
+            if ($request->municipio) {
+
+                $contactos->where(function ($query) use ($municipio) {
+                    $query->orWhere('fk_idmunicipio', 'like', "%{$municipio->id}%");
+                });
+            }
+            if ($request->apellido) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('apellido1', 'like', "%{$request->apellido}%");
+                    $query->orWhere('apellido2', 'like', "%{$request->apellido}%");
+                    $query->orWhere('nombre', 'like', "%{$request->apellido}%");
+                });
+            }
+            if ($request->celular) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('celular', 'like', "%{$request->celular}%");
+                });
+            }
+            if ($request->direccion) {
+
+                $direccion = $request->direccion;
+                $direccion = explode(' ', $direccion);
+                $direccion = array_reverse($direccion);
+
+                foreach ($direccion as $dir) {
+                    $dir = strtolower($dir);
+                    $dir = str_replace('#', '', $dir);
+                    //$dir = str_replace("-","",$dir);
+                    //$dir = str_replace("/","",$dir);
+
+                    $contactos->where(function ($query) use ($dir) {
+                        $query->orWhere('direccion', 'like', "%{$dir}%");
+                    });
+                }
+
+                /*
+                $contactos->where(function ($query) use ($request) {
+                   // $query->orWhere('direccion', 'like', "%{$request->direccion}%");
+                });
+                */
+           /* }
+            if ($request->barrio) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('barrio', 'like', "%{$request->barrio}%");
+                });
+            }
+            if ($request->vereda) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('vereda', 'like', "%{$request->vereda}%");
+                });
+            }
+            if ($request->email) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('email', 'like', "%{$request->email}%");
+                });
+            }
+            if ($request->serial_onu) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('serial_onu', 'like', "%{$request->serial_onu}%");
+                });
+            }
+            if ($request->estrato) {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('estrato', 'like', "%{$request->estrato}%");
+                });
+            }
+            if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('saldo_favor', '>', 0);
+                });
+            }
+            if ($request->t_contrato == 1) {
+                $contactos->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('contracts')
+                        ->whereRaw('contactos.id = contracts.client_id');
+                });
+            } elseif ($request->t_contrato == 2) {
+                $contactos->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('contracts')
+                        ->whereRaw('contactos.id = contracts.client_id');
+                });
+            }
+        }
+
+        $contactos->where('contactos.empresa', auth()->user()->empresa);
+        $contactos->whereIn('tipo_contacto', [$tipo_usuario, 2]);
+        $contactos->where('contactos.status', 1);
+
+
+
+        // if (Auth::user()->empresa()->oficina) {
+        //     if (auth()->user()->oficina) {
+        //         $contactos->where('contactos.oficina', auth()->user()->oficina);
+        //     }
+        // }
+
+        return datatables()->eloquent($contactos)
+             ->editColumn('serial_onu', function (Contacto $contacto) {
+
+                 return $contacto->serial_onu;
+             })
+            ->editColumn('nombre', function (Contacto $contacto) {
+                return '<a href='.route('contactos.show', $contacto->id).">{$contacto->nombre} {$contacto->apellidos()}</div></a>";
+            })
+            ->editColumn('nit', function (Contacto $contacto) {
+                return "{$contacto->tip_iden('mini')} {$contacto->nit}";
+            })
+            ->editColumn('telefono1', function (Contacto $contacto) {
+                return $contacto->celular ? $contacto->celular : $contacto->telefono1;
+            })
+            ->editColumn('email', function (Contacto $contacto) {
+                return $contacto->email;
+            })
+            ->editColumn('direccion', function (Contacto $contacto) {
+                return $contacto->direccion;
+            })
+            ->editColumn('barrio', function (Contacto $contacto) {
+                return $contacto->barrio;
+            })
+            ->editColumn('vereda', function (Contacto $contacto) {
+                return $contacto->vereda;
+            })
+            ->editColumn('contrato', function (Contacto $contacto) {
+                return $contacto->contract();
+            })
+            ->editColumn('fecha_contrato', function (Contacto $contacto) {
+                return ($contacto->fecha_contrato) ? date('d-m-Y g:i:s A', strtotime($contacto->fecha_contrato)) : '- - - -';
+            })
+            ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
+                return $contacto->municipio()->nombre;
+            })
+            ->editColumn('radicado', function (Contacto $contacto) {
+                return $contacto->radicados();
+            })
+            ->editColumn('ip', function (Contacto $contacto) {
+                if ($contacto->contract('true') != 'N/A') {
+                    $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
+                }
+
+                return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
+            })
+            ->editColumn('estrato', function (Contacto $contacto) {
+                return ($contacto->estrato) ? $contacto->estrato : 'N/A';
+            })
+
+            ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
+            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
+            ->toJson();
+    }*/
     public function contactos(Request $request, $tipo_usuario)
     {
         $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
@@ -227,7 +396,6 @@ class ContactosController extends Controller
             ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
             ->toJson();
     }
-
     public function clientes(Request $request)
     {
 
