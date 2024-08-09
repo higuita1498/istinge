@@ -235,8 +235,8 @@ class ContactosController extends Controller
                 return ($contacto->estrato) ? $contacto->estrato : 'N/A';
             })
 
-            ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
-            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
+            // ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
+            // ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
             ->toJson();
     }
 
