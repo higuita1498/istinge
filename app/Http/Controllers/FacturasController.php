@@ -2872,6 +2872,7 @@ class FacturasController extends Controller{
     }
 
     public function mensaje($id){
+        $empresa = auth()->user()->empresaObj;
 
         $factura = Factura::find($id);
         $hora = date('G');
