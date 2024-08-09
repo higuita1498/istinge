@@ -213,24 +213,13 @@ class ContactosController extends Controller
                 return $contacto->radicados();
             })
             ->editColumn('ip', function (Contacto $contacto) {
-                $contrato = $contacto->contract(); // Asigna el resultado de la relación
-
-                if ($contrato) { // Verifica si $contrato no es nulo
-                    $contractTrue = $contacto->contract('true');
-                    $puerto = $contrato->puerto ? ':' . $contrato->puerto->nombre : '';
-
-                    return '<a href="http://' . $contractTrue . $puerto . '" target="_blank">' . $contractTrue . $puerto . ' <i class="fas fa-external-link-alt"></i></a>';
+                dd($contacto->contract('true'));
+                if ($contacto->contract('true') != 'N/A') {
+                    $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
                 }
 
-                return 'N/A'; // Retorna 'N/A' si $contrato es nulo
+                return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
             })
-            // ->editColumn('ip', function (Contacto $contacto) {
-            //     if ($contacto->contract('true') != 'N/A') {
-            //         $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
-            //     }
-
-            //     return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
-            // })
             ->editColumn('estrato', function (Contacto $contacto) {
                 return ($contacto->estrato) ? $contacto->estrato : 'N/A';
             })
