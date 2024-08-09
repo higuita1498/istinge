@@ -213,7 +213,7 @@ class ContactosController extends Controller
                 return $contacto->radicados();
             })
             ->editColumn('ip', function (Contacto $contacto) {
-                $contrato = $contacto->contrato(); // Asigna el resultado de la relación
+                $contrato = $contacto->contract(); // Asigna el resultado de la relación
 
                 if ($contrato) { // Verifica si $contrato no es nulo
                     $contractTrue = $contacto->contract('true');
