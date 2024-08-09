@@ -337,6 +337,7 @@ class Contacto extends Model
 
     public function contract($details=false){
         $contrato = Contrato::where('client_id', $this->id)->where('status', 1)->first();
+        dd($contrato);
         if($contrato){
             if($details){
                 return $contrato->ip;
