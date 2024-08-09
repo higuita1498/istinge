@@ -213,9 +213,9 @@ class ContactosController extends Controller
             })
             ->editColumn('ip', function (Contacto $contacto) {
 
-                if ($contacto->contract('true') != 'N/A') {
-                    $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
-                }
+                // if ($contacto->contract('true') != 'N/A') {
+                //     $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
+                // }
 
                 return 'N/A';
 
