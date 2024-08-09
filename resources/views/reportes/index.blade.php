@@ -54,12 +54,15 @@
                 @endif
             </ul>
         </div>
-        <div class="col-md-5 offset-md-1 reportes">
-            <h3><i class="fa fa-gavel" aria-hidden="true"></i> REPORTES PASARELA DE PAGO</h3>
-            <ul class="list-report">
-                <li><a href="{{route('reportes.mintic.1.2')}}">Reporte Pasarela Combo pay</a></li>
-            </ul>
+        <div class="row">
+            <div class="col-md-5 offset-md-1 reportes">
+                <h3><i class="fa fa-gavel" aria-hidden="true"></i> REPORTES PASARELA DE PAGO</h3>
+                <ul class="list-report">
+                    <li><a href="{{route('reportes.mintic.1.2')}}">Reporte Pasarela Combo pay</a></li>
+                </ul>
+            </div>
         </div>
+
 
         <div class="row">
             <div class="col-md-5 offset-md-1 reportes">
