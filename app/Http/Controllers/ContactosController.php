@@ -236,7 +236,7 @@ class ContactosController extends Controller
             })
 
             ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
-            ->rawColumns(['acciones', 'nombre', 'contrato'])
+            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
             ->toJson();
     }
 
