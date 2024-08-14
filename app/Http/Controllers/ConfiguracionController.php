@@ -1930,10 +1930,36 @@ class ConfiguracionController extends Controller
     $empresa = Empresa::find(Auth::user()->empresa);
 
     if ($empresa) {
-      $empresa->adminOLT = $request->adminOLT;
-      $empresa->smartOLT = $request->smartOLT;
-      $empresa->save();
-      return 1;
+      //Probando conexion de la api.
+      $curl = curl_init();
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $request->adminOLT.'/api/system/get_olts',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+          'X-Token: ' . $request->smartOLT
+        ),
+      ));
+
+      $response = curl_exec($curl);
+      curl_close($curl);
+      $response = json_decode($response);
+
+      if(isset($response->status) && $response->status == true){
+        $empresa->smartOLT = $request->smartOLT;
+        $empresa->adminOLT = $request->adminOLT;
+        $empresa->save();
+        return 1;
+      }
+
+      return 0;
+      // dd($response->response[0]->name);
     }
   }
 

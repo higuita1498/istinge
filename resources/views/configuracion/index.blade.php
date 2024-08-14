@@ -348,7 +348,7 @@
 	{{-- /SEGURIDAD --}}
 
 	{{-- CONFIGURACION OLT --}}
-	<div class="modal fade" id="config_olt" role="dialog">
+    <div class="modal fade" id="config_olt" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -360,17 +360,17 @@
 						{{ csrf_field() }}
 						<div class="row">
 							<div class="col-md-12 form-group">
-								<label class="control-label">Smart OLT</label>
-								<input type="text" class="form-control"  id="smartOLT" name="smartOLT"  required="" value="{{Auth::user()->empresa()->smartOLT}}" maxlength="200">
-								<span class="help-block error">
-									<strong>{{ $errors->first('smartOLT') }}</strong>
-								</span>
-							</div>
-							<div class="col-md-12 form-group">
-								<label class="control-label">Admin OLT</label>
+								<label class="control-label">URL (ejemplo: https://dominio.smartolt.com)</label>
 								<input type="text" class="form-control"  id="adminOLT" name="adminOLT" value="{{Auth::user()->empresa()->adminOLT}}"  maxlength="200">
 								<span class="help-block error">
 									<strong>{{ $errors->first('adminOLT') }}</strong>
+								</span>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="control-label">ApiKey Smart OLT</label>
+								<input type="text" class="form-control"  id="smartOLT" name="smartOLT"  required="" value="{{Auth::user()->empresa()->smartOLT}}" maxlength="200">
+								<span class="help-block error">
+									<strong>{{ $errors->first('smartOLT') }}</strong>
 								</span>
 							</div>
 						</div>
@@ -1099,20 +1099,31 @@
             $.ajax({
                 url: url,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                method: 'post',
+                method: 'get',
                 data: {
                 	smartOLT: $("#smartOLT").val(),
                 	adminOLT: $("#adminOLT").val()
                 },
                 success: function (data) {
                 	$("#config_olt").modal('hide');
-                	Swal.fire({
+					if(data == 1){
+						Swal.fire({
                 		type: 'success',
                 		title: 'La configuración de la OLT ha sido registrada con éxito',
                 		text: 'Recargando la página',
                 		showConfirmButton: false,
                 		timer: 5000
-                	})
+                		})
+					}else{
+						Swal.fire({
+                		type: 'error',
+                		title: 'Error en la conexión, revise la ApiKey',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}
+
                     setTimeout(function(){
                     	var a = document.createElement("a");
                     	a.href = window.location.pathname;

@@ -74,7 +74,7 @@
     </div>
 
 
-	@if($tipo_usuario == 1 && isset($_SESSION['permisos']['3']) || $tipo_usuario == 0 && isset($_SESSION['permisos']['2']))
+	@if(isset($tipo_usuario) && $tipo_usuario == 1 && isset($_SESSION['permisos']['3']) || $tipo_usuario == 0 && isset($_SESSION['permisos']['2']))
 	<div class="container-fluid d-none" id="form-filter">
 		<fieldset>
 			<legend>Filtro de Búsqueda</legend>
@@ -99,7 +99,7 @@
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="text" placeholder="Dirección" id="direccion" class="form-control rounded">
 						</div>
-						@if($tipo_usuario == 0)
+						@if(isset($tipo_usuario) && $tipo_usuario == 0)
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="text" placeholder="Corregimiento/Vereda" id="vereda" class="form-control rounded">
 						</div>
@@ -149,7 +149,7 @@
 				<thead class="thead-dark">
 					<tr>
 						@foreach($tabla as $campo)
-						    @if($tipo_usuario == 1)
+						    @if(isset($tipo_usuario) && $tipo_usuario == 1)
 						        @if($campo->nombre != 'Contrato')
 						            <th>{{$campo->nombre}}</th>
 						        @endif
