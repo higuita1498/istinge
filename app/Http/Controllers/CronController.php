@@ -3064,7 +3064,6 @@ class CronController extends Controller
 
         $bearerToken = env('EMISION_TOKEN');
         $urlEmision = env('URL_EMISION_DIAN');
-
         $mesInicio = Carbon::now()->startOfMonth()->toDateString();
         $finMes = Carbon::now()->endOfMonth()->toDateString();
 
@@ -3124,11 +3123,82 @@ class CronController extends Controller
             } catch (ClientException $e) {
                 if($e->getResponse()->getStatusCode() === 404) {
                     Log::error('Hay un error en la importacion de la informacion: ' . Carbon::now()->format('Y-m-d'));
-                    return $e;
+                    // return $e;
                 }
             }
         }else{
             Log::error('No hay credenciales para registrar las emisiones: ' . Carbon::now()->format('Y-m-d'));
         }
+
+        //REVISION RECONEXION GENERAL//.
+        $empresa = Empresa::Find(1);
+        if($empresa->reconexion_generica == 1 && $empresa->dias_reconexion_generica != null){
+            $diasMas = $empresa->dias_reconexion_generica;
+
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.id','=','f.contrato_id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+            where('f.estatus',1)->
+            whereIn('f.tipo', [1,2])->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.fecha_suspension', null)->
+            where('f.id',191)->
+            whereDate(DB::raw("DATE_ADD(f.vencimiento, INTERVAL $diasMas DAY)"), '<=', now())->
+            orderBy('f.id', 'desc')->
+            get();
+
+            foreach ($contactos as $contacto) {
+
+                $factura = Factura::find($contacto->factura);
+
+                //ESto es lo que hay que refactorizar.
+                $facturaContratos = DB::table('facturas_contratos')
+                ->where('factura_id',$factura->id)->pluck('contrato_nro');
+
+                if(!DB::table('facturas_contratos')
+                ->where('factura_id',$factura->id)->first()){
+                    $facturaContratos = Contrato::where('id',$factura->contrato_id)->pluck('nro');
+                }
+
+                $contratosId = Contrato::whereIn('nro',$facturaContratos)
+                ->pluck('id');
+
+                $ultimaFacturaRegistrada = Factura::
+                where('cliente',$factura->cliente)
+                ->where('estatus','<>',2)
+                ->whereIn('contrato_id',$contratosId)
+                ->orderBy('created_at', 'desc')
+                ->value('id');
+
+                //manera antigua de buscar el contrato.
+                if(!$ultimaFacturaRegistrada){
+                      $ultimaFacturaRegistrada = Factura::
+                        where('cliente',$factura->cliente)
+                        ->where('contrato_id',$factura->contrato_id)
+                        ->orderBy('created_at', 'desc')
+                        ->value('id');
+                }
+
+                if($factura->id == $ultimaFacturaRegistrada){
+                    $itemReconexion = Inventario::where('type','RECONEXION')->first();
+                    $itemExiste = ItemsFactura::where('factura',$factura->id)->where('ref','RECONEXION')->first();
+                    if($itemReconexion && !$itemExiste){
+                        $item = new ItemsFactura();
+                        $item->factura     = $factura->id;
+                        $item->producto    = $itemReconexion->id;
+                        $item->ref         = $itemReconexion->ref;
+                        $item->precio      = $itemReconexion->precio;
+                        $item->descripcion = $itemReconexion->descripcion;
+                        $item->id_impuesto = $itemReconexion->id_impuesto;
+                        $item->impuesto    = $itemReconexion->impuesto;
+                        $item->cant        = 1;
+                        $item->desc        = $itemReconexion->descuento;
+                        $item->save();
+                    }
+                }
+            }
+        }
+        //Fin REVISION RECONEXION GENERAL//.
     }
 }

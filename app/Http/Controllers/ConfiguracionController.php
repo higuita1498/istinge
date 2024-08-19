@@ -27,6 +27,7 @@ use App\SuscripcionNomina;
 use App\Model\Nomina\NominaConfiguracionCalculos;
 use App\Model\Nomina\Persona;
 use App\Http\Controllers\Nomina\PersonasController;
+use App\Model\Inventario\Inventario;
 
 include_once(app_path() .'/../public/routeros_api.class.php');
 include_once(app_path() .'/../public/api_mt_include2.php');
@@ -1868,6 +1869,56 @@ class ConfiguracionController extends Controller
       $empresa->save();
       return 0;
     }
+  }
+
+  public function reconexionGenerica(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->status == 0) {
+      $empresa->reconexion_generica = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->reconexion_generica = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
+
+  public function updateReconexionGenerica(Request $request){
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    try {
+
+        //Creacion del item por defecto para reconexion generica.
+        $item = new Inventario();
+
+        if(!Inventario::where('type','RECONEXION')->first()){
+            $item->empresa = 1;
+            $item->producto = "RECONEXION";
+            $item->type = "RECONEXION";
+            $item->ref = "RECONEXION";
+            $item->precio = $empresa->precio_reconexion_generica;
+            $item->tipo_producto = 2;
+            $item->id_impuesto = 2;
+            $item->impuesto = 0;
+            $item->unidad = 1;
+            $item->save();
+        }else{
+            $item = Inventario::where('type','RECONEXION')->first();
+            $item->precio = $empresa->precio_reconexion_generica;
+            $item->save();
+        }
+
+        $empresa->precio_reconexion_generica = $request->precio_reconexion_generica;
+        $empresa->dias_reconexion_generica = $request->dias_reconexion_generica;
+        $empresa->save();
+
+        return 1;
+    } catch (\Throwable $th) {
+        return 0;
+    }
+
   }
 
   public function aplicacionSaldosFavor(Request $request){
