@@ -349,7 +349,7 @@ class FacturasController extends Controller{
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro','factura.dian_response',
             'mk.nombre as servidor','cs.server_configuration_id',
-            DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),
+            DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),  DB::raw('c.direccion as direccioncliente'),
             DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'),
             DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
@@ -446,6 +446,9 @@ class FacturasController extends Controller{
         ->editColumn('cliente', function (Factura $factura) {
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
         })
+        ->editColumn('direccion', function (Factura $factura) {
+            return  $factura->direccioncliente;
+        })
         ->editColumn('fecha', function (Factura $factura) {
             return date('d-m-Y', strtotime($factura->fecha));
         })
@@ -514,7 +517,7 @@ class FacturasController extends Controller{
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo',
              'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'),
              DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'),
-             DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'),
+             DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), DB::raw('c.direccion as direccioncliente'),
              'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',
              DB::raw('v.nombre as nombrevendedor'),
@@ -606,6 +609,9 @@ class FacturasController extends Controller{
         })
         ->editColumn('cliente', function (Factura $factura) {
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
+        })
+        ->editColumn('direccion', function (Factura $factura) {
+            return  $factura->direccioncliente;
         })
         ->editColumn('fecha', function (Factura $factura) {
             return date('d-m-Y', strtotime($factura->fecha));
