@@ -1898,7 +1898,7 @@ class ConfiguracionController extends Controller
             $item->producto = "RECONEXION";
             $item->type = "RECONEXION";
             $item->ref = "RECONEXION";
-            $item->precio = $empresa->precio_reconexion_generica;
+            $item->precio = $request->precio_reconexion_generica;
             $item->tipo_producto = 2;
             $item->id_impuesto = 2;
             $item->impuesto = 0;
@@ -1906,7 +1906,7 @@ class ConfiguracionController extends Controller
             $item->save();
         }else{
             $item = Inventario::where('type','RECONEXION')->first();
-            $item->precio = $empresa->precio_reconexion_generica;
+            $item->precio = $request->precio_reconexion_generica;
             $item->save();
         }
 
@@ -1916,6 +1916,7 @@ class ConfiguracionController extends Controller
 
         return 1;
     } catch (\Throwable $th) {
+        Log::error($th);
         return 0;
     }
 
