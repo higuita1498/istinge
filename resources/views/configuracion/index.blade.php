@@ -114,6 +114,13 @@
 			<a href="javascript:parametrosContratoDigital();">Parámetros Contrato Digital</a><br>
 			<a href="javascript:facturacionCronAbiertas()">{{ Auth::user()->empresa()->cron_fact_abiertas == 0 ? 'Habilitar':'Deshabilitar' }} facturacion automatica fact. abiertas</a><br>
 			<input type="hidden" id="cronAbierta" value="{{Auth::user()->empresa()->cron_fact_abiertas}}">
+
+            {{-- Valor de reconexion generico --}}
+            <a href="javascript:reconexionGenerica()">{{ Auth::user()->empresa()->reconexion_generica == 0 ? 'Habilitar':'Deshabilitar' }} Valor de reconexión genérico</a><br>
+			<input type="hidden" id="reconexionGenerica" value="{{Auth::user()->empresa()->reconexion_generica}}">
+            @if(Auth::user()->empresa()->reconexion_generica == 1)
+            <a href="#" data-toggle="modal" data-target="#config_reconexion">Configurar reconexion genérica</a><br>
+            @endif
             @endif
 		</div>
 		@endif
@@ -347,8 +354,46 @@
 	</div>
 	{{-- /SEGURIDAD --}}
 
+    	{{-- CONFIGURACION RECONEXION GENERICA --}}
+        <div class="modal fade" id="config_reconexion" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route('configuracion.updatereconexiongenerica') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form" >
+                            {{ csrf_field() }}
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label class="control-label">Días para cobro adicional</label>
+                                    <input type="number" class="form-control"  id="dias_reconexion_generica" name="dias_reconexion_generica" value="{{Auth::user()->empresa()->dias_reconexion_generica}}"  maxlength="200">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('dias_reconexion_generica') }}</strong>
+                                    </span>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label class="control-label">Precio del cobro adicional</label>
+                                    <input type="text" class="form-control"  id="precio_reconexion_generica" name="precio_reconexion_generica"  required="" value="{{Auth::user()->empresa()->precio_reconexion_generica}}" maxlength="200">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('precio_reconexion_generica') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <a href="javascript:updateReconexionGenerica()" class="btn btn-success">Guardar</A>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- CONFIGURACION RECONEXION GENERICA --}}
+
 	{{-- CONFIGURACION OLT --}}
-	<div class="modal fade" id="config_olt" role="dialog">
+    <div class="modal fade" id="config_olt" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -360,17 +405,17 @@
 						{{ csrf_field() }}
 						<div class="row">
 							<div class="col-md-12 form-group">
-								<label class="control-label">Smart OLT</label>
-								<input type="text" class="form-control"  id="smartOLT" name="smartOLT"  required="" value="{{Auth::user()->empresa()->smartOLT}}" maxlength="200">
-								<span class="help-block error">
-									<strong>{{ $errors->first('smartOLT') }}</strong>
-								</span>
-							</div>
-							<div class="col-md-12 form-group">
-								<label class="control-label">Admin OLT</label>
+								<label class="control-label">URL (ejemplo: https://dominio.smartolt.com)</label>
 								<input type="text" class="form-control"  id="adminOLT" name="adminOLT" value="{{Auth::user()->empresa()->adminOLT}}"  maxlength="200">
 								<span class="help-block error">
 									<strong>{{ $errors->first('adminOLT') }}</strong>
+								</span>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="control-label">ApiKey Smart OLT</label>
+								<input type="text" class="form-control"  id="smartOLT" name="smartOLT"  required="" value="{{Auth::user()->empresa()->smartOLT}}" maxlength="200">
+								<span class="help-block error">
+									<strong>{{ $errors->first('smartOLT') }}</strong>
 								</span>
 							</div>
 						</div>
@@ -860,6 +905,111 @@
 		    })
 		}
 
+        function reconexionGenerica(){
+            if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/configuracion_reconexiongenerica';
+			}else{
+				var url = '/configuracion_reconexiongenerica';
+			}
+
+		    if ($("#reconexionGenerica").val() == 0) {
+		        $titleswal = "¿Desea habilitar la reconexión genérica?";
+		    }
+
+		    if ($("#reconexionGenerica").val() == 1) {
+		        $titleswal = "¿Desea deshabilitar la reconexión genérica?";
+		    }
+
+		    Swal.fire({
+		        title: $titleswal,
+		        type: 'warning',
+		        showCancelButton: true,
+		        confirmButtonColor: '#3085d6',
+		        cancelButtonColor: '#d33',
+		        cancelButtonText: 'Cancelar',
+		        confirmButtonText: 'Aceptar',
+		    }).then((result) => {
+		        if (result.value) {
+		            $.ajax({
+		                url: url,
+		                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+		                method: 'post',
+		                data: { status: $("#reconexionGenerica").val() },
+		                success: function (data) {
+		                    console.log(data);
+		                    if (data == 1) {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Reconexión Genérica para los contratos habilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#reconexionGenerica").val(1);
+		                    } else {
+		                        Swal.fire({
+		                            type: 'success',
+		                            title: 'Reconexión Genérica para los contratos deshabilitada',
+		                            showConfirmButton: false,
+		                            timer: 5000
+		                        })
+		                        $("#reconexionGenerica").val(0);
+		                    }
+		                    setTimeout(function(){
+		                    	var a = document.createElement("a");
+		                    	a.href = window.location.pathname;
+		                    	a.click();
+		                    }, 1000);
+		                }
+		            });
+
+		        }
+		    })
+        }
+
+        function updateReconexionGenerica() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/updatereconexiongenerica';
+			}else{
+				var url = '/updatereconexiongenerica';
+			}
+
+            $.ajax({
+                url: url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                method: 'post',
+                data: {
+                	dias_reconexion_generica: $("#dias_reconexion_generica").val(),
+                	precio_reconexion_generica: $("#precio_reconexion_generica").val()
+                },
+                success: function (data) {
+                	$("#config_reconexion").modal('hide');
+					if(data == 1){
+						Swal.fire({
+                		type: 'success',
+                		title: 'La configuración de la reconexión genérica ha sido registrada.',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}else{
+						Swal.fire({
+                		type: 'error',
+                		title: 'Error al actualizar la reconexión genérica',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}
+
+                    setTimeout(function(){
+                    	var a = document.createElement("a");
+                    	a.href = window.location.pathname;
+                    	a.click();
+                    }, 2000);
+                }
+            });
+		}
+
         function saldoFavorAutomatico() {
 			if (window.location.pathname.split("/")[1] === "software") {
 				var url='/software/configuracion_aplicacionsaldosfavor';
@@ -1099,20 +1249,31 @@
             $.ajax({
                 url: url,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                method: 'post',
+                method: 'get',
                 data: {
                 	smartOLT: $("#smartOLT").val(),
                 	adminOLT: $("#adminOLT").val()
                 },
                 success: function (data) {
                 	$("#config_olt").modal('hide');
-                	Swal.fire({
+					if(data == 1){
+						Swal.fire({
                 		type: 'success',
                 		title: 'La configuración de la OLT ha sido registrada con éxito',
                 		text: 'Recargando la página',
                 		showConfirmButton: false,
                 		timer: 5000
-                	})
+                		})
+					}else{
+						Swal.fire({
+                		type: 'error',
+                		title: 'Error en la conexión, revise la ApiKey',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}
+
                     setTimeout(function(){
                     	var a = document.createElement("a");
                     	a.href = window.location.pathname;

@@ -566,6 +566,7 @@ class ContratosController extends Controller
         $ppoe_local_adress = "";
         $mikrotik = Mikrotik::where('id', $request->server_configuration_id)->first();
         $plan = PlanesVelocidad::where('id', $request->plan_id)->first();
+        $empresa = Empresa::Find(Auth::user()->empresa);
         $cliente = Contacto::find($request->client_id);
         $servicio = $cliente->nombre.' '.$cliente->apellido1.' '.$cliente->apellido2;
 
@@ -625,17 +626,7 @@ class ContratosController extends Controller
                         "?local-address" => $request->ip
                         )
                     );
-                    //  $API->comm("/queue/simple/add", array(
-                    //      "name"            => $this->normaliza($servicio).'-'.$nro_contrato,
-                    //      "target"          => $request->ip,
-                    //      "max-limit"       => $plan->upload.'/'.$plan->download,
-                    //      "burst-limit"     => $burst_limit,
-                    //      "burst-threshold" => $burst_threshold,
-                    //      "burst-time"      => $burst_time,
-                    //      "priority"        => $priority,
-                    //      "limit-at"        => $limit_at
-                    //      )
-                    //  );
+
                 }
 
                 /*DHCP*/
@@ -853,6 +844,60 @@ class ContratosController extends Controller
                 $contrato->tipo_moden              = $request->tipo_moden;
                 $contrato->descuento_pesos         = $request->descuento_pesos;
 
+                if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
+
+                    $contrato->olt_sn_mac          = $request->olt_sn_mac;
+                    $curl = curl_init();
+
+                    if($request->state_olt_catv == 1){
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_HTTPHEADER => array(
+                                'X-token: '.$empresa->smartOLT
+                            ),
+                            ));
+
+                    }else if($request->state_olt_catv == 0){
+                        $curl = curl_init();
+
+                        curl_setopt_array($curl, array(
+                        CURLOPT_URL => $empresa->adminOLT.'/api/onu/disable_catv/'.$contrato->olt_sn_mac,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_HTTPHEADER => array(
+                            'X-token: '.$empresa->smartOLT
+                        ),
+                        ));
+                    }
+                    //
+
+                    $response = curl_exec($curl);
+                    $response = json_decode($response);
+
+                    if(isset($response->status) && $response->status == false){
+                        return redirect('empresa/contratos')->with('danger', 'EL CONTRATO NO HA SIDO ACTUALIZADO POR QUE FALLÓ LA HABILITACIÓN DEL CATV');
+                    }else{
+                        if($response->status == true && $request->state_olt_catv == 0){
+                            $contrato->state_olt_catv = 0;
+                        }else{
+                            $contrato->state_olt_catv = 1;
+                        }
+                    }
+
+                }
+
 
                 if($request->tipo_suspension_no == 1){
                     $contrato->tipo_nosuspension = 1;
@@ -968,6 +1013,59 @@ class ContratosController extends Controller
             $contrato->ip_receptora            = $request->ip_receptora;
             $contrato->puerto_receptor         = $request->puerto_receptor;
 
+            if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
+
+                $contrato->olt_sn_mac          = $request->olt_sn_mac;
+                $curl = curl_init();
+
+                if($request->state_olt_catv == 1){
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_HTTPHEADER => array(
+                            'X-token: '.$empresa->smartOLT
+                        ),
+                        ));
+
+                }else if($request->state_olt_catv == 0){
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                    CURLOPT_URL => $empresa->adminOLT.'/api/onu/disable_catv/'.$contrato->olt_sn_mac,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_HTTPHEADER => array(
+                        'X-token: '.$empresa->smartOLT
+                    ),
+                    ));
+                }
+
+                $response = curl_exec($curl);
+                $response = json_decode($response);
+
+                if(isset($response->status) && $response->status == false){
+                    return redirect('empresa/contratos')->with('danger', 'EL CONTRATO NO HA SIDO ACTUALIZADO POR QUE FALLÓ LA HABILITACIÓN DEL CATV');
+                }else{
+                    if($response->status == true && $request->state_olt_catv == 0){
+                        $contrato->state_olt_catv = 0;
+                    }else{
+                        $contrato->state_olt_catv = 1;
+                    }
+                }
+
+            }
+
 
             if($request->factura_individual){
                 $contrato->factura_individual   = $request->factura_individual;
@@ -1049,7 +1147,8 @@ class ContratosController extends Controller
          'contracts.contrato_permanencia', 'contracts.contrato_permanencia_meses', 'contracts.serial_onu','contracts.iva_factura',
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
           'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
-          'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension','contracts.serial_moden','contracts.tipo_moden','contracts.descuento_pesos')
+          'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension','contracts.serial_moden','contracts.tipo_moden','contracts.descuento_pesos',
+          'contracts.olt_sn_mac','contracts.state_olt_catv')
           ->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
 
 
@@ -1125,6 +1224,7 @@ class ContratosController extends Controller
         }
 
         $contrato = Contrato::find($id);
+        $empresa = Empresa::Find(Auth::user()->empresa);
         $ppoe_local_adress = "";
         $descripcion = '';
         $registro = false;
@@ -1201,12 +1301,6 @@ class ContratosController extends Controller
                         )
                     );
 
-                    // if($queue){
-                    //     $API->comm("/queue/simple/remove", array(
-                    //         ".id" => $queue[0][".id"],
-                    //         )
-                    //     );
-                    // }
                     #ELMINAMOS DEL QUEUE#
 
                     #ELIMINAMOS DE IP_AUTORIZADAS#
@@ -1361,32 +1455,7 @@ class ContratosController extends Controller
                             )
                         );
 
-                        // if($queue){
-                        //     $API->comm("/queue/simple/set", array(
-                        //         ".id"             => $queue[0][".id"],
-                        //         "target"          => $request->ip,
-                        //         "max-limit"       => $plan->upload.'/'.$plan->download,
-                        //         "burst-limit"     => $burst_limit,
-                        //         "burst-threshold" => $burst_threshold,
-                        //         "burst-time"      => $burst_time,
-                        //         "priority"        => $priority,
-                        //         "limit-at"        => $limit_at
-                        //         )
-                        //     );
-                        // }else{
-                        //     $API->comm("/queue/simple/add", array(
-                        //         "name"            => $this->normaliza($servicio).'-'.$request->nro,
-                        //         "target"          => $request->ip,
-                        //         "max-limit"       => $plan->upload.'/'.$plan->download,
-                        //         "burst-limit"     => $burst_limit,
-                        //         "burst-threshold" => $burst_threshold,
-                        //         "burst-time"      => $burst_time,
-                        //         "priority"        => $priority,
-                        //         "limit-at"        => $limit_at
-                        //         )
-                        //     );
-                        // }
-                    //}
+
                     #AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
                         "address" => $request->ip,
@@ -1513,6 +1582,59 @@ class ContratosController extends Controller
                     $contrato->serial_moden            = $request->serial_moden;
                     $contrato->descuento_pesos         = $request->descuento_pesos;
 
+                    if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
+
+                        $contrato->olt_sn_mac          = $request->olt_sn_mac;
+                        $curl = curl_init();
+
+                        if($request->state_olt_catv == 1){
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_HTTPHEADER => array(
+                                    'X-token: '.$empresa->smartOLT
+                                ),
+                                ));
+
+                        }else if($request->state_olt_catv == 0){
+                            $curl = curl_init();
+
+                            curl_setopt_array($curl, array(
+                            CURLOPT_URL => $empresa->adminOLT.'/api/onu/disable_catv/'.$contrato->olt_sn_mac,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_HTTPHEADER => array(
+                                'X-token: '.$empresa->smartOLT
+                            ),
+                            ));
+                        }
+
+                        $response = curl_exec($curl);
+                        $response = json_decode($response);
+
+                        if(isset($response->status) && $response->status == false){
+                            return redirect('empresa/contratos')->with('danger', 'EL CONTRATO NO HA SIDO ACTUALIZADO POR QUE FALLÓ LA HABILITACIÓN DEL CATV');
+                        }else{
+                            if($response->status == true && $request->state_olt_catv == 0){
+                                $contrato->state_olt_catv = 0;
+                            }else{
+                                $contrato->state_olt_catv = 1;
+                            }
+                        }
+
+                    }
+
                     if(isset($request->factura_individual)){
                         $contrato->factura_individual = $request->factura_individual;
                     }
@@ -1616,6 +1738,59 @@ class ContratosController extends Controller
                 $contrato->contrasena_wifi         = $request->contrasena_wifi;
                 $contrato->ip_receptora            = $request->ip_receptora;
                 $contrato->puerto_receptor         = $request->puerto_receptor;
+
+                if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
+
+                    $contrato->olt_sn_mac          = $request->olt_sn_mac;
+                    $curl = curl_init();
+
+                    if($request->state_olt_catv == 1){
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_HTTPHEADER => array(
+                                'X-token: '.$empresa->smartOLT
+                            ),
+                            ));
+
+                    }else if($request->state_olt_catv == 0){
+                        $curl = curl_init();
+
+                        curl_setopt_array($curl, array(
+                        CURLOPT_URL => $empresa->adminOLT.'/api/onu/disable_catv/'.$contrato->olt_sn_mac,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_HTTPHEADER => array(
+                            'X-token: '.$empresa->smartOLT
+                        ),
+                        ));
+                    }
+
+                    $response = curl_exec($curl);
+                    $response = json_decode($response);
+
+                    if(isset($response->status) && $response->status == false){
+                        return redirect('empresa/contratos')->with('danger', 'EL CONTRATO NO HA SIDO ACTUALIZADO POR QUE FALLÓ LA HABILITACIÓN DEL CATV');
+                    }else{
+                        if($response->status == true && $request->state_olt_catv == 0){
+                            $contrato->state_olt_catv = 0;
+                        }else{
+                            $contrato->state_olt_catv = 1;
+                        }
+                    }
+
+                }
 
                 if($request->factura_individual){
                     $contrato->factura_individual   = $request->factura_individual;

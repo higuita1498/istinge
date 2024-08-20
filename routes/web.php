@@ -45,6 +45,7 @@ Route::get('/generarfactura','CronController@CrearFactura')->name('CrearFactura'
 Route::get('/deleteAll','CronController@deleteFactura');
 Route::get('/aplicateProrrateo','CronController@aplicateProrrateo');
 Route::get('/cortarfacturas','CronController@CortarFacturas')->name('CortarFacturas');
+Route::get('/cortartelevision','CronController@CortarTelevision');
 Route::get('/enviarsms','CronController@EnviarSMS')->name('EnviarSMS');
 Route::get('/migrarCRM','CronController@migrarCRM')->name('migrarCRM');
 Route::get('monitorBlacklist','CronController@monitorBlacklist')->name('monitorBlacklist');
@@ -134,6 +135,8 @@ Route::get('qrcode', function () {
      return QrCode::generate('Make me into a QrCode!');
  });
 Route::post('configuracion_facturacionAutomatica', 'ConfiguracionController@facturacionAutomatica');
+Route::post('configuracion_reconexiongenerica', 'ConfiguracionController@reconexionGenerica');
+Route::post('updatereconexiongenerica', 'ConfiguracionController@updateReconexionGenerica')->name('configuracion.updatereconexiongenerica');
 Route::post('configuracion_aplicacionsaldosfavor', 'ConfiguracionController@aplicacionSaldosFavor');
 Route::post('configuracion_factcronabiertas', 'ConfiguracionController@factCronAbiertas');
 Route::post('configuracion_facturacionSmsAutomatica', 'ConfiguracionController@facturacionSmsAutomatica');

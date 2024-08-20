@@ -823,6 +823,133 @@ class CronController extends Controller
         }
     }
 
+    public function cortarTelevision(){
+        $i=0;
+        $fecha = date('Y-m-d');
+        $empresa = Empresa::find(1);
+
+        if(request()->fechaCorte){
+            $fecha = request()->fechaCorte;
+        }
+        $swGrupo = 1; //masivo
+        $horaActual = date('H:i');
+
+        $grupos_corte = DB::table('grupos_corte')
+        ->where('status', 1)
+        ->where('hora_suspension','<=',$horaActual)
+        ->where('fecha_suspension','!=',0)
+        ->where('id',1)
+        ->get();
+
+        if($grupos_corte->count() > 0 && $empresa->smartOLT != null){
+
+            $grupos_corte_array = array();
+
+            foreach($grupos_corte as $grupo){
+                array_push($grupos_corte_array,$grupo->id);
+            }
+
+            //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+                join('contracts as cs','cs.id','=','f.contrato_id')->
+                select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+                where('f.estatus',1)->
+                whereIn('f.tipo', [1,2])->
+                where('contactos.status',1)->
+                where('cs.state','enabled')->
+                whereIn('cs.grupo_corte',$grupos_corte_array)->
+                where('cs.fecha_suspension', null)->
+                where('cs.state_olt_catv',true)->
+                whereDate('f.vencimiento', '<=', now())->
+                orderBy('f.id', 'desc')->
+                take(45)->
+                get();
+                $swGrupo = 1; //masivo
+
+            if($contactos){
+                foreach ($contactos as $contacto) {
+
+                    $factura = Factura::find($contacto->factura);
+
+                    //ESto es lo que hay que refactorizar.
+                    $facturaContratos = DB::table('facturas_contratos')
+                    ->where('factura_id',$factura->id)->pluck('contrato_nro');
+
+                    if(!DB::table('facturas_contratos')
+                    ->where('factura_id',$factura->id)->first()){
+                        $facturaContratos = Contrato::where('id',$factura->contrato_id)->pluck('nro');
+                    }
+
+                    $contratosId = Contrato::whereIn('nro',$facturaContratos)
+                    ->pluck('id');
+
+                    $ultimaFacturaRegistrada = Factura::
+                    where('cliente',$factura->cliente)
+                    ->where('estatus','<>',2)
+                    ->whereIn('contrato_id',$contratosId)
+                    ->orderBy('created_at', 'desc')
+                    ->value('id');
+
+                    //manera antigua de buscar el contrato.
+                    if(!$ultimaFacturaRegistrada){
+                        $ultimaFacturaRegistrada = Factura::
+                        where('cliente',$factura->cliente)
+                        ->where('contrato_id',$factura->contrato_id)
+                        ->orderBy('created_at', 'desc')
+                        ->value('id');
+                }
+
+                if($factura->id == $ultimaFacturaRegistrada){
+
+                    //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
+                    $contratos = Contrato::whereIn('nro',$facturaContratos)->get();
+                    if(!$contratos){
+                        if($factura->contrato_id != null){
+                            $contratos = Contrato::where('id',$factura->contrato_id)->get();
+                        }else{
+                            $contratos = Contrato::where('id',$contacto->contrato_id)->get();
+                        }
+                    }
+
+                    //2. Debemos recorrer el o los contratos para que haga el disabled.
+                        foreach($contratos as $contrato){
+
+                                if($contrato->olt_sn_mac != null){
+                                    $curl = curl_init();
+
+                                curl_setopt_array($curl, array(
+                                CURLOPT_URL => $empresa->adminOLT.'/api/onu/disable_catv/'.$contrato->olt_sn_mac,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_HTTPHEADER => array(
+                                    'X-token: '.$empresa->smartOLT
+                                ),
+                                ));
+
+                                $response = curl_exec($curl);
+                                $response = json_decode($response);
+
+                                curl_close($curl);
+
+                                if(isset($response->status) && $response->status == true){
+                                    $contrato->state_olt_catv = false;
+                                    $contrato->save();
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     public static function CortarPromesas(){
         $i=0;
         $fecha = date('Y-m-d');
@@ -2937,7 +3064,6 @@ class CronController extends Controller
 
         $bearerToken = env('EMISION_TOKEN');
         $urlEmision = env('URL_EMISION_DIAN');
-
         $mesInicio = Carbon::now()->startOfMonth()->toDateString();
         $finMes = Carbon::now()->endOfMonth()->toDateString();
 
@@ -2997,11 +3123,82 @@ class CronController extends Controller
             } catch (ClientException $e) {
                 if($e->getResponse()->getStatusCode() === 404) {
                     Log::error('Hay un error en la importacion de la informacion: ' . Carbon::now()->format('Y-m-d'));
-                    return $e;
+                    // return $e;
                 }
             }
         }else{
             Log::error('No hay credenciales para registrar las emisiones: ' . Carbon::now()->format('Y-m-d'));
         }
+
+        //REVISION RECONEXION GENERAL//.
+        $empresa = Empresa::Find(1);
+        if($empresa->reconexion_generica == 1 && $empresa->dias_reconexion_generica != null){
+            $diasMas = $empresa->dias_reconexion_generica;
+
+            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
+            join('contracts as cs','cs.id','=','f.contrato_id')->
+            select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
+            where('f.estatus',1)->
+            whereIn('f.tipo', [1,2])->
+            where('contactos.status',1)->
+            where('cs.state','enabled')->
+            where('cs.fecha_suspension', null)->
+            where('f.id',191)->
+            whereDate(DB::raw("DATE_ADD(f.vencimiento, INTERVAL $diasMas DAY)"), '<=', now())->
+            orderBy('f.id', 'desc')->
+            get();
+
+            foreach ($contactos as $contacto) {
+
+                $factura = Factura::find($contacto->factura);
+
+                //ESto es lo que hay que refactorizar.
+                $facturaContratos = DB::table('facturas_contratos')
+                ->where('factura_id',$factura->id)->pluck('contrato_nro');
+
+                if(!DB::table('facturas_contratos')
+                ->where('factura_id',$factura->id)->first()){
+                    $facturaContratos = Contrato::where('id',$factura->contrato_id)->pluck('nro');
+                }
+
+                $contratosId = Contrato::whereIn('nro',$facturaContratos)
+                ->pluck('id');
+
+                $ultimaFacturaRegistrada = Factura::
+                where('cliente',$factura->cliente)
+                ->where('estatus','<>',2)
+                ->whereIn('contrato_id',$contratosId)
+                ->orderBy('created_at', 'desc')
+                ->value('id');
+
+                //manera antigua de buscar el contrato.
+                if(!$ultimaFacturaRegistrada){
+                      $ultimaFacturaRegistrada = Factura::
+                        where('cliente',$factura->cliente)
+                        ->where('contrato_id',$factura->contrato_id)
+                        ->orderBy('created_at', 'desc')
+                        ->value('id');
+                }
+
+                if($factura->id == $ultimaFacturaRegistrada){
+                    $itemReconexion = Inventario::where('type','RECONEXION')->first();
+                    $itemExiste = ItemsFactura::where('factura',$factura->id)->where('ref','RECONEXION')->first();
+                    if($itemReconexion && !$itemExiste){
+                        $item = new ItemsFactura();
+                        $item->factura     = $factura->id;
+                        $item->producto    = $itemReconexion->id;
+                        $item->ref         = $itemReconexion->ref;
+                        $item->precio      = $itemReconexion->precio;
+                        $item->descripcion = $itemReconexion->descripcion;
+                        $item->id_impuesto = $itemReconexion->id_impuesto;
+                        $item->impuesto    = $itemReconexion->impuesto;
+                        $item->cant        = 1;
+                        $item->desc        = $itemReconexion->descuento;
+                        $item->save();
+                    }
+                }
+            }
+        }
+        //Fin REVISION RECONEXION GENERAL//.
     }
 }
