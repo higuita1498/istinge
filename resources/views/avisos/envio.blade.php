@@ -95,10 +95,10 @@
 
             <div class="col-md-3 form-group">
 	            <label class="control-label">ESTADO CLIENTE<span class="text-danger"></span></label>
-        	    <select name="options" id="options" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
-        	        <option {{old('options')==1?'selected':''}} value="1" >HABILITADOS</option>
-        	        <option {{old('options')==2?'selected':''}} value="2">DESHABILITADOS</option>
-        	        <option {{old('options')==3?'selected':''}} value="3">MANUAL</option>
+        	    <select name="options" id="options" class="form-control selectpicker" onchange="chequeo()" title="Seleccione" data-live-search="true" data-size="5">
+        	        <option {{old('options')==1?'selected':''}} value="1" id='radio_1'>HABILITADOS</option>
+        	        <option {{old('options')==2?'selected':''}} value="2" id='radio_2'>DESHABILITADOS</option>
+        	        <option {{old('options')==3?'selected':''}} value="3" id='radio_3'>MANUAL</option>
         	    </select>
         	    <span class="help-block error">
         	        <strong>{{ $errors->first('options') }}</strong>
@@ -129,6 +129,10 @@
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
         	                    <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }} {{ $contrato->c_apellido2 }} - {{$contrato->c_nit}} (contrato: {{ $contrato->nro }})</option>
+        	                    {{-- <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}}
+                                    {{ isset($contrato->grupo_corte()->nombre) ? " -- " .  $contrato->grupo_corte()->nombre : ''  }}
+                                    {{ isset($contrato->servidor()->nombre) ? " -- " .  $contrato->servidor()->nombre : ''  }}
+                                </option> --}}
         	                @endif
         	            @endforeach
         	        </optgroup>
@@ -225,17 +229,17 @@
     });
 
     function chequeo(){
-        if($("#radio_1").is(":checked")){
+        if($("#radio_1").is(":selected")){
             $(".enabled").attr('selected','selected');
             $(".disabled").removeAttr("selected");
             //$("#seleccion_manual").addClass('d-none');
 			refreshClient('enabled');
-        }else if($("#radio_2").is(":checked")){
+        }else if($("#radio_2").is(":selected")){
             $(".disabled").attr('selected','selected');
             $(".enabled").removeAttr("selected");
             //$("#seleccion_manual").addClass('d-none');
 			refreshClient('disabled');
-        }else if($("#radio_3").is(":checked")){
+        }else if($("#radio_3").is(":selected")){
             //$("#seleccion_manual").removeClass('d-none');
         }
         $("#contrato").selectpicker('refresh');
