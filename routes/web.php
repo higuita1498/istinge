@@ -409,10 +409,14 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::resource('logistica', 'LogisticaController');
 
     // Rutas asignacion de material
-    Route::get('asignacion_material', 'AsignacionMaterialController@index')->name('asignacionmaterial.index-electronica');
+    Route::get('asignacion_material', 'AsignacionMaterialController@index')->name('asignacionmaterial.index');
     Route::get('asignacion_material/create', 'AsignacionMaterialController@create')->name('asignacionmaterial.create');
     Route::post('asignacion_material/store', 'AsignacionMaterialController@store')->name('asignacionmaterial.store');
-    Route::get('materialindex', 'AsignacionMaterialController@materialindex')->name('materialindex');
+    Route::get('asignacion_material/edit/{asignar_materia}','AsignacionMaterialController@edit')->name('asignacionmaterial.edit');
+    Route::post('asignacion_material/update/{asignar_materia}','AsignacionMaterialController@update')->name('asignacionmaterial.update');
+    Route::delete('asignacion_material/delete-item/{id}','AsignacionMaterialController@delete_item')->name('asignacionmaterial.deleteItem');
+    Route::delete('asignacion_material/delete/{id}','AsignacionMaterialController@delete')->name('asignacionmaterial.delete');
+    Route::get('asignacion_material/show/{id}','AsignacionMaterialController@show')->name('asignacionmaterial.show');
 
 
 
