@@ -1022,6 +1022,7 @@ public function forma_pago()
         }
         return '';
     }
+
     public function periodoCobrado($tirilla=false){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
@@ -1331,19 +1332,19 @@ public function forma_pago()
     public function diasCobradosProrrateo(){
 
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
-    where('contracts.id',$this->contrato_id)
-    ->select('gc.*')->first();
+        where('contracts.id',$this->contrato_id)
+        ->select('gc.*')->first();
 
-    if(!$grupo){
+        if(!$grupo){
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('client_id',$this->cliente)
         ->select('gc.*')->first();
-    }
+        }
 
-    $empresa = Empresa::find($this->empresa);
+        $empresa = Empresa::find($this->empresa);
 
 
-    if($grupo){
+        if($grupo){
         $empresa = Empresa::find($this->empresa);
         $mesInicioCorte = $mesFinCorte = Carbon::parse($this->fecha)->format('m');
         $yearInicioCorte = $yearFinCorte = Carbon::parse($this->fecha)->format('Y');
@@ -1518,10 +1519,10 @@ public function forma_pago()
                 if($diasCobrados >= 27){$diasCobrados=30;}
                 $diasCobrados=$diasCobrados;
             }
+            }
+            return $diasCobrados;
         }
-        return $diasCobrados;
     }
-}
 
     public function numeracionFactura(){
         return $this->belongsTo('App\NumeracionFactura','numeracion');
