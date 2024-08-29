@@ -252,6 +252,15 @@
                                     <input type="text" class="form-control" id="us2-lat" name="contrasena_wifi" value="">
                                 </div>
                             </div>
+                            <div class="col-md-4 form-group">
+                                <label class="control-label">Linea</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="linea" id="linea" value="{{old('linea')}}">
+                                    <span class="help-block error">
+                                        <strong>{{ $errors->first('linea') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="internet" role="tabpanel" aria-labelledby="internet-tab">
@@ -572,35 +581,25 @@
                                     </span>
                                 </div>
                             </div>
+                            <!--
                              <div class="col-md-4 form-group">
                                 <label class="control-label">Serial Modem</label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="serial_moden" id="serial_moden" value="{{old('serial_moden')}}">
+                                    <input type="text" class="form-control" name="serial_moden" id="serial_moden" value="">
                                     <span class="help-block error">
-                                        <strong>{{ $errors->first('serial_moden') }}</strong>
+                                        <strong></strong>
                                     </span>
                                 </div>
                             </div>
                              <div class="col-md-4 form-group">
                                 <label class="control-label">Tipo Modem</label>
                                   <div class="input-group">
-                                    <input type="text" class="form-control" name="tipo_moden" id="tipo_moden" value="{{old('tipo_moden')}}">
+                                    <input type="text" class="form-control" name="tipo_moden" id="tipo_moden" value="">
                                     <span class="help-block error">
-                                        <strong>{{ $errors->first('tipo_moden') }}</strong>
+                                        <strong></strong>
                                     </span>
                                 </div>
-                            </div>
-
-
-                            <div class="col-md-4 form-group">
-                                <label class="control-label">Linea</label>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" name="linea" id="linea" value="{{old('linea')}}">
-                                    <span class="help-block error">
-                                        <strong>{{ $errors->first('linea') }}</strong>
-                                    </span>
-                                </div>
-                            </div>
+                            </div>-->
 
                             <div class="form-group col-md-4">
                                 <label class="control-label">¿Agregar iva al servicio de internet?  <a><i data-tippy-content="Decida si la factura que genere este contrato llevará iva" class="icono far fa-question-circle"></i></a></label>
