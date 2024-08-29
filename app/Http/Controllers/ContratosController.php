@@ -1003,6 +1003,7 @@ class ContratosController extends Controller
             $contrato->latitude             = $request->latitude;
             $contrato->longitude            = $request->longitude;
             $contrato->contrato_permanencia = $request->contrato_permanencia;
+            $contrato->linea                   = $request->linea;
             $contrato->servicio_tv          = $request->servicio_tv;
             $contrato->descuento            = $request->descuento;
             $contrato->vendedor             = $request->vendedor;
@@ -1729,6 +1730,7 @@ class ContratosController extends Controller
                 $contrato->fecha_suspension     = $request->fecha_suspension;
                 $contrato->descuento            = $request->descuento;
                 $contrato->vendedor             = $request->vendedor;
+                $contrato->linea                   = $request->linea;
                 $contrato->canal                = $request->canal;
                 $contrato->nro                  = $request->nro;
                 $contrato->address_street       = $request->address_street;
