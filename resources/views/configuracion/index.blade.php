@@ -1249,7 +1249,7 @@
             $.ajax({
                 url: url,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                method: 'get',
+                method: 'post',
                 data: {
                 	smartOLT: $("#smartOLT").val(),
                 	adminOLT: $("#adminOLT").val()
