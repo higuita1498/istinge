@@ -184,10 +184,12 @@ class AvisosController extends Controller
             if($request->isAbierta){
                 $factura =  Factura::where('contrato_id')->latest()
                                              ->first();
-
-                if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
-                    continue;
+                if($factura){
+                    if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
+                        continue;
+                    }
                 }
+
             }
 
             if ($contrato) {
