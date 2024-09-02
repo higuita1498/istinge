@@ -1282,6 +1282,7 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 	Route::group(['prefix' => 'contratos'], function() {
 		Route::post('{id}/state', 'ContratosController@state')->name('contratos.state');
 		Route::get('corte/{corte}', 'ContratosController@index')->name('contratos.corte');
+        Route::post('{id}/statecatv', 'ContratosController@state_oltcatv')->name('contratos.state_oltcatv');
 		Route::get('exportar', 'ContratosController@exportar')->name('contratos.exportar');
 		Route::get('{id}/grafica', 'ContratosController@grafica')->name('contratos.grafica');
 		Route::get('{id}/graficajson', 'ContratosController@graficajson')->name('contratos.graficajson');

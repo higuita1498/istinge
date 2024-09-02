@@ -11,6 +11,10 @@
 </form>
 @endif
 
+<form action="{{ route('contratos.state_oltcatv',$id) }}" method="post" class="delete_form" style="margin:0;display: inline-block;" id="cambiar-statecatv{{$id}}">
+    @csrf
+</form>
+
 <a href="{{ route('contratos.show',$id )}}"  class="btn btn-outline-info btn-icons" title="Ver"><i class="far fa-eye"></i></a>
 @if($state == 'enabled' && $plan_id)
     <a href="{{ route('contratos.grafica',$id )}}" class="btn btn-outline-dark btn-icons" title="Gráfica de Conexión"><i class="fas fa-chart-area"></i></a>
@@ -34,3 +38,10 @@
 @endif
 
 <a href="{{route('factura.create.cliente', $c_id)}}" class="btn btn-outline-warning btn-icons" title="Crear una factura" target="_blank"><i class="fas fa-file-invoice-dollar"></i></a>
+
+@if($olt_sn_mac != null)
+<a href="#" class="btn {{$state_olt_catv == true ? 'btn-outline-success' : 'btn-outline-danger'}} btn-icons" title="{{$state_olt_catv == true ? 'Deshabilitar Catv?' : 'Habilitar Catv?'}}'"
+onclick="confirmar('cambiar-statecatv{{$id}}',
+'¿Está seguro que desea cambiar el estado del catv a {{$state_olt_catv == true ? 'deshabilitado?' : 'habilitado?'}}',
+'Se actualizará su estado');"><i class="fas fa-tv"></i></a>
+@endif
