@@ -115,7 +115,7 @@
                     <div class="col-md-12" style="background:#57c7d4;">
                         {{-- <form action="{{ route('subir-archivo') }}" method="POST" enctype="multipart/form-data"> --}}
                             {{-- @csrf  --}}
-                             <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Buenas tardes señor usuario, recuerde que hoy es la fecha límite de su factura, evite suspensión del sistema el día de mañana realizando su pago hoy a la siguiente cuenta bancaria 24900001066 y enviando el soporte aquí (3053652834).</p> 
+                             <p style="color:white;padding-top:25px;text-align:center;padding-left:50px;font-size:16px;">Buenas tardes señor usuario, recuerde que hoy es la fecha límite de su factura, evite suspensión del sistema el día de mañana realizando su pago hoy a la siguiente cuenta bancaria 24900001066 y enviando el soporte aquí (3053652834).</p>
 
                             {{-- <div class="form-group">
                                 <label for="archivo">Adjuntar pago:</label>
@@ -238,6 +238,49 @@
                     			<div class="card-counter danger">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contra_disa }}</span>
+                    			    <span class="count-name">Deshabilitados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="notice notice-info">
+                        <h4 class="float-left">TELEVISIÓN CATV</h4>
+                        <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeCatv" role="button" aria-expanded="false" aria-controls="welcomeContratos" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                            <i class="fas fa-angle-double-up"></i>
+                        </a>
+                        <hr class="mt-4">
+                    </div>
+                    <div class="collapse show" id="welcomeCatv">
+                        <div class="row">
+                            <div class="col-md-3 offset-md-1">
+                                <a href="javascript:void">
+                    			<div class="btn btn-danger">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contratosCatv }}</span>
+                    			    <span class="count-name">Registrados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                                <a href="javascript:void">
+                    			<div class="btn btn-danger">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contratosCatvEnabled }}</span>
+                    			    <span class="count-name">Habilitados</span>
+                    			</div>
+                    			</a>
+                    		</div>
+                    		<div class="col-md-3">
+                                <a href="javascript:void">
+                    			<div class="btn btn-danger">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span class="count-numbers">{{ $contratosCatvDisabled }}</span>
                     			    <span class="count-name">Deshabilitados</span>
                     			</div>
                     			</a>
