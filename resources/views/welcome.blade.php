@@ -260,7 +260,7 @@
                         <div class="row">
                             <div class="col-md-3 offset-md-1">
                                 <a href="javascript:void">
-                    			<div class="btn btn-danger">
+                    			<div class="card-counter primary">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contratosCatv }}</span>
                     			    <span class="count-name">Registrados</span>
@@ -269,7 +269,7 @@
                     		</div>
                     		<div class="col-md-3">
                                 <a href="javascript:void">
-                    			<div class="btn btn-danger">
+                    			<div class="card-counter success">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contratosCatvEnabled }}</span>
                     			    <span class="count-name">Habilitados</span>
@@ -278,7 +278,7 @@
                     		</div>
                     		<div class="col-md-3">
                                 <a href="javascript:void">
-                    			<div class="btn btn-danger">
+                    			<div class="card-counter danger">
                                     <i class="fas fa-file-contract"></i>
                                     <span class="count-numbers">{{ $contratosCatvDisabled }}</span>
                     			    <span class="count-name">Deshabilitados</span>
