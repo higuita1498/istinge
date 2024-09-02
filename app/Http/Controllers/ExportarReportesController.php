@@ -3674,7 +3674,7 @@ class ExportarReportesController extends Controller
             $objPHPExcel = new PHPExcel();
             $tituloReporte = "Reporte de Facturas Impagas desde ".$request->fecha." hasta ".$request->hasta;
 
-            $titulosColumnas = array('Nro. Factura', 'Creacion', 'Vencimiento', 'Monto', 'Cliente', 'Celular', 'Identificacion', 'Direccion', 'Corte', 'Servidor', 'IP', 'MAC','BARRIO','VEREDA');
+            $titulosColumnas = array('Nro. Factura', 'Creacion', 'Vencimiento', 'Monto', 'Cliente', 'Celular', 'Identificacion', 'Direccion', 'Estado Contrato', 'Corte', 'Servidor', 'IP', 'MAC','BARRIO','VEREDA');
             $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
             $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
             ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -3685,17 +3685,17 @@ class ExportarReportesController extends Controller
             ->setCategory("Reporte excel"); //Categorias
             // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
             $objPHPExcel->setActiveSheetIndex(0)
-                ->mergeCells('A1:L1');
+                ->mergeCells('A1:N1');
             // Se agregan los titulos del reporte
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A1',$tituloReporte);
             $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
             ));
-            $objPHPExcel->getActiveSheet()->getStyle('A1:L1')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A1:O1')->applyFromArray($estilo);
             $estilo =array('fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array('rgb' => 'd08f50')));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:O3')->applyFromArray($estilo);
 
 
             for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -3762,12 +3762,13 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                     ->setCellValue($letras[6].$i, $factura->cliente()->nit)
                     ->setCellValue($letras[7].$i, $factura->cliente()->direccion)
-                    ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
-                    ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? ($factura->cliente()->contrato()->servidor()->nombre ?? '') : '')
-                    ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->ip : '')
-                    ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '')
-                    ->setCellValue($letras[12].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->barrio : '')
-                    ->setCellValue($letras[13].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->vereda : '');
+                    ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->state=='enabled'?'Habilitado':'Deshabilitado' : '')
+                    ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
+                    ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? ($factura->cliente()->contrato()->servidor()->nombre ?? '') : '')
+                    ->setCellValue($letras[11].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->ip : '')
+                    ->setCellValue($letras[12].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->mac : '')
+                    ->setCellValue($letras[13].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->barrio : '')
+                    ->setCellValue($letras[14].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->vereda : '');
                     $i++;
             }
             /*$objPHPExcel->setActiveSheetIndex(0)
@@ -3781,7 +3782,7 @@ class ExportarReportesController extends Controller
                         'style' => PHPExcel_Style_Border::BORDER_THIN
                     )
                 ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-            $objPHPExcel->getActiveSheet()->getStyle('A3:N'.$i)->applyFromArray($estilo);
+            $objPHPExcel->getActiveSheet()->getStyle('A3:O'.$i)->applyFromArray($estilo);
 
 
             for($i = 'A'; $i <= $letras[20]; $i++){
