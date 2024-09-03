@@ -128,7 +128,14 @@
         	        <optgroup label="{{$estado['nombre']}}">
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
-        	                    <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }} {{ $contrato->c_apellido2 }} - {{$contrato->c_nit}} (contrato: {{ $contrato->nro }})</option>
+        	                    <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }}
+									servidor-{{ $contrato->servidor()->id ?? 'no' }}
+									factura-{{ $contrato->factura_id != null ?  'si' : 'no'}}"
+									value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>
+									{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }}
+									{{ $contrato->c_apellido2 }} - {{$contrato->c_nit}}
+									(contrato: {{ $contrato->nro }})
+								</option>
         	                    {{-- <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}}
                                     {{ isset($contrato->grupo_corte()->nombre) ? " -- " .  $contrato->grupo_corte()->nombre : ''  }}
                                     {{ isset($contrato->servidor()->nombre) ? " -- " .  $contrato->servidor()->nombre : ''  }}
@@ -146,7 +153,7 @@
 
 			<div class="col-md-3">
 				<div class="form-check form-check-inline d-flex p-3">
-					<input class="form-check-input" type="checkbox" id="isAbierta" name="isAbierta" value="true">
+					<input class="form-check-input" type="checkbox" id="isAbierta" name="isAbierta" value="true" onclick="refreshClient()">
 					<label class="form-check-label" for="isAbierta"  style="font-weight:bold">Solo facturas abiertas</label>
 				</div>
 			</div>
@@ -258,6 +265,7 @@
 
 		let grupoCorte = $('#corte').val();
 		let servidor = $('#servidor').val();
+		let factAbierta = $('#isAbierta').is(":checked");
 
 		if(estadoCliente){
 
@@ -272,6 +280,16 @@
 				}
 			}
 
+			if(factAbierta && grupoCorte && servidor){
+			options=$(`.servidor-${servidor}.grupo-${grupoCorte}.${estadoCliente}.factura-si`);
+			}else if(factAbierta && grupoCorte){
+				options=$(`.grupo-${grupoCorte}.${estadoCliente}.factura-si`);
+			}else if(factAbierta && servidor){
+				options=$(`.servidor-${servidor}.${estadoCliente}.factura-si`);
+			}else if(factAbierta){
+				options=`${estadoCliente}.factura-si`;
+			}
+
 		}else{
 			if(grupoCorte && servidor){
 				options = $(`.servidor-${servidor}.grupo-${grupoCorte}`);
@@ -282,6 +300,16 @@
 				if(grupoCorte){
 					 options = $(`#contrato_sms option[class*="grupo-${grupoCorte}"]`);
 				}
+			}
+
+			if(factAbierta && grupoCorte && servidor){
+			options=$(`.servidor-${servidor}.grupo-${grupoCorte}.factura-si`);
+			}else if(factAbierta && grupoCorte){
+				options=$(`.grupo-${grupoCorte}.factura-si`);
+			}else if(factAbierta && servidor){
+				options=$(`.servidor-${servidor}.factura-si`);
+			}else if(factAbierta){
+				options=`.factura-si`;
 			}
 		}
 
