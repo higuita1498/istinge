@@ -3757,7 +3757,7 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[0].$i, $factura->codigo)
                     ->setCellValue($letras[1].$i, date('d-m-Y', strtotime($factura->fecha)))
                     ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($factura->vencimiento)))
-                    ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total))
+                    ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total - $factura->pagado()))
                     ->setCellValue($letras[4].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
                     ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                     ->setCellValue($letras[6].$i, $factura->cliente()->nit)
