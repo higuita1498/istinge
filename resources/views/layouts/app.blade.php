@@ -587,7 +587,8 @@
         <script src="{{asset('js/function.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script src="{{asset('js/custom.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
         <script src="{{asset('js/dian.js')}}?v={{ Auth::user()->rol == 1 ? '1' : Auth::user()->empresa()->cache }}"></script>
-        <script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+        <!--<script type="text/javascript" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>-->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVzQ60oKcfkrLPOs8rwYzAd2zBR-WcNfI"></script>
         <script type="text/javascript" src="{{asset('js/locationpicker.jquery.js')}}"></script>
 
         <script src="//cdn.datatables.net/plug-ins/1.12.1/sorting/ip-address.js"></script>
@@ -770,6 +771,52 @@
                 }
             });
         </script>
+        @if(\Illuminate\Support\Facades\Auth::user()->rol == 4)
+            <script>
+
+
+                function errorCallback(error) {
+                    console.log("Error al obtener la ubicación: ", error);
+                }
+
+                function sendPosition(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    console.log({
+                        latitude: lat,
+                        longitude: lon,
+                    })
+
+                    // Enviar la posición al servidor con AJAX
+                    $.ajax({
+                        url: '{{ route('tecnico.saveLocation') }}',  // Ruta en Laravel que maneja la localización
+                        type: 'POST',
+                        data: {
+                            latitude: lat,
+                            longitude: lon,
+                            _token: '{{ csrf_token() }}'  // Incluye el token CSRF para la validación
+                        },
+                        error: function(error) {
+                            console.log("Error al guardar la localización:", error);
+                        }
+                    });
+                }
+
+                $(document).ready(function () {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.watchPosition(sendPosition, errorCallback, {
+                            enableHighAccuracy: false,
+                            maximumAge: 0,
+                            timeout: 30000
+                        });
+                    } else {
+                        console.log("Geolocalización no es soportada por este navegador.");
+                    }
+                });
+
+            </script>
+        @endif
         @yield('scripts')
     </body>
 </html>

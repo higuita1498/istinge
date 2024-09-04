@@ -32,6 +32,12 @@
                 <span class="menu-title">Ventas Externas</span>
             </a>
         </li>
+        <li class="nav-item" id="tecnicos">
+            <a class="nav-link" href="{{route('tecnico.index')}}">
+                <i class="menu-icon fas fa-id-card"></i>
+                <span class="menu-title">Técnicos</span>
+            </a>
+        </li>
     @endif
 
     @if(isset($_SESSION['permisos']['1']) || isset($_SESSION['permisos']['2']) || isset($_SESSION['permisos']['3']) || isset($_SESSION['permisos']['4']) || isset($_SESSION['permisos']['5']) || isset($_SESSION['permisos']['6']) || isset($_SESSION['permisos']['7']))

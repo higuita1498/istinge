@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use App\Http\Controllers\TecnicoController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -310,6 +312,13 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
         Route::get('ingresar/{email}','UsuariosController@ingresar')->name('usuario.ingresar');
 	});
 	Route::resource('usuarios', 'UsuariosController');
+});
+
+Route::group(['prefix' => 'tecnico', 'middleware' => ['auth']], function() {
+
+    Route::get('/', [TecnicoController::class, 'index'])->name('tecnico.index');
+    Route::post('save-location', [TecnicoController::class, 'saveLocation'])->name('tecnico.saveLocation');
+    Route::get('get-location/{tecnico}', [TecnicoController::class, 'getLocation'])->name('tecnico.getLocation');
 });
 
 Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
