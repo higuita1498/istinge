@@ -115,9 +115,13 @@ class AvisosController extends Controller
 
         view()->share(['title' => 'Envío de Notificaciones por '.$opcion, 'icon' => 'fas fa-paper-plane']);
         $plantillas = Plantilla::where('status', 1)->where('tipo', 2)->get();
-        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
+
+        $contratos = Contrato::select('contracts.*', 'contactos.id as c_id',
+        'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1',
+        'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit',
+        'contactos.telefono1 as c_telefono', 'contactos.email as c_email',
+        'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-			/* ->where('contracts.status', 1) */
             ->where('contracts.empresa', Auth::user()->empresa)
             ->whereNotNull('contactos.celular');
 
@@ -131,8 +135,22 @@ class AvisosController extends Controller
                       ->groupBy('contracts.id');
         }
 
-
         $contratos = $contratos->get();
+
+        foreach($contratos as $contrato){
+
+            $facturaContrato = Factura::join('facturas_contratos as fc','fc.factura_id','factura.id')
+            ->where('fc.contrato_nro',$contrato->nro)
+            ->where('estatus',1)
+            ->orderBy('fc.id','desc')
+            ->first();
+
+            if($facturaContrato){
+                $contrato->factura_id = $facturaContrato->id;
+            }else{
+                $contrato->factura_id = null;
+            }
+        }
 
         $servidores = Mikrotik::where('empresa', auth()->user()->empresa)->get();
         $gruposCorte = GrupoCorte::where('empresa', Auth::user()->empresa)->get();
