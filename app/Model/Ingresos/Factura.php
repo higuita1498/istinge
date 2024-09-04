@@ -521,7 +521,14 @@ class Factura extends Model
         if (!$this->vendedor) {
             return '';
         }
-        return Vendedor::where('id',$this->vendedor)->first()->nombre;
+
+        $vendedor = Vendedor::where('id',$this->vendedor)->first();
+
+        if($vendedor){
+            return $vendedor->nombre;
+        }
+
+        return "";
     }
 
     public function pagado($sumarRetencion = true){
