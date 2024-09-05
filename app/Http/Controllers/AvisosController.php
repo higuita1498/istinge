@@ -195,22 +195,16 @@ class AvisosController extends Controller
         $cor = 0;
         $numeros = [];
         $bulk = '';
-
+        $factura = false;
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
 
             if($request->isAbierta){
                 $factura =  Factura::where('contrato_id')->latest()
                                              ->first();
-                if($factura){
-                    if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
-                        continue;
-                    }
                 }
 
-            }
-
-            if ($contrato) {
+            if ($contrato || $contrato && $request->isAbierta && $factura) {
                 $plantilla = Plantilla::find($request->plantilla);
 
                 if($request->type == 'whatsapp'){
