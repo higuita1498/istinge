@@ -269,4 +269,24 @@ class Contrato extends Model
 
         return $coleccion;
     }
+
+    public function deudaFacturas(){
+
+        $facturasAbiertas = Factura::leftJoin('facturas_contratos as fc','fc.factura_id','factura.id')
+        ->leftJoin('contracts as c','c.nro','fc.contrato_nro')
+        ->select('factura.*')
+        ->where(function ($query) {
+            $query->where('factura.contrato_id', $this->nro)
+                  ->orWhere('fc.contrato_nro', $this->nro);
+        })
+        ->where('factura.estatus',1)
+        ->get();
+
+        $totalDebe = 0;
+        foreach($facturasAbiertas as $fa){
+            $totalDebe+=$fa->total()->total - $fa->pagado();
+        }
+
+        return $totalDebe;
+    }
 }

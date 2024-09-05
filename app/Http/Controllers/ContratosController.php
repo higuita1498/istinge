@@ -2276,7 +2276,8 @@ class ContratosController extends Controller
             'Plan Internet',
             'Valor Plan Internet',
             'Plan TV',
-            'Otros Items'
+            'Otros Items',
+            'Deuda Facturas'
         );
 
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','AA','AB');
@@ -2290,25 +2291,25 @@ class ContratosController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AA1');
+            ->mergeCells('A1:AB1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:AA2');
+            ->mergeCells('A2:AB2');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:AA3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:AB3')->applyFromArray($estilo);
 
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AA3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AB3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2327,7 +2328,7 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AA3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AB3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -2521,6 +2522,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[25].$i, isset($plan->precio) ? $plan->precio : '')
                 ->setCellValue($letras[26].$i, isset($servicio->nombre) ? $servicio->nombre . " - $" . number_format($servicio->precio, 0, ',', '.') : '' )
                 ->setCellValue($letras[27].$i, isset($servicio_otro->nombre) ? $servicio_otro->nombre . " - $" . number_format($servicio_otro->precio, 0, ',', '.') : '' )
+                ->setCellValue($letras[28].$i, "$" . number_format($contrato->deudaFacturas(), 0, ',', '.'))
                 ;
             $i++;
         }
