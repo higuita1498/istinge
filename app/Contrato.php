@@ -272,19 +272,23 @@ class Contrato extends Model
 
     public function deudaFacturas(){
 
-        $facturasAbiertas = Factura::leftJoin('facturas_contratos as fc','fc.factura_id','factura.id')
-        ->leftJoin('contracts as c','c.nro','fc.contrato_nro')
-        ->select('factura.*')
-        ->where(function ($query) {
-            $query->where('factura.contrato_id', $this->nro)
-                  ->orWhere('fc.contrato_nro', $this->nro);
-        })
-        ->where('factura.estatus',1)
-        ->get();
+    $facturasAbiertas = Factura::leftJoin('facturas_contratos as fc', 'fc.factura_id', 'factura.id')
+    ->leftJoin('contracts as c', 'c.nro', 'fc.contrato_nro')
+    ->leftJoin('ingresos_factura as if', 'if.factura', 'factura.id')
+    ->leftJoin('ingresos as i', 'i.id', 'if.ingreso')
+    ->select('factura.id')
+    ->selectRaw('COALESCE(SUM(if.pago), 0) as totalIngreso') // Usa COALESCE para manejar los nulos
+    ->where(function ($query) {
+        $query->where('factura.contrato_id', $this->nro)
+              ->orWhere('fc.contrato_nro', $this->nro);
+    })
+    ->where('factura.estatus', 1)
+    ->groupBy('factura.id') // Agrupar por ID de factura
+    ->get();
 
         $totalDebe = 0;
         foreach($facturasAbiertas as $fa){
-            $totalDebe+=$fa->total()->total - $fa->pagado();
+            $totalDebe+=$fa->total()->total - $fa->totalIngreso;
         }
 
         return $totalDebe;
