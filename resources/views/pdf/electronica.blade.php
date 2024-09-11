@@ -330,9 +330,32 @@
         </div>
     </div>
 
-    <div class="divheader-datoscli">
-        <p>DATOS DEL CLIENTE</p>
+        <div class="margin-docpdf">
+         <table style="width:100%;margin:5px 0px;margin-left: -3px;">
+            <tbody>
+                <tr>
+                <td style="width:14%;border:none;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                        DATOS DEL CLIENTE
+                    </div>
+                </td>
+                @if($factura->contratos() != false)
+                <td style="width:27%;border:none;padding-left:30%;">
+                    <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
+                        CONTRATO(S)
+                    </div>
+                </td>
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">
+                    @foreach ( $factura->contratos() as $detalleContrato )
+                    No. {{$detalleContrato->contrato_nro}}
+                    @endforeach
+                </td>
+                @endif
+                </tr>
+            </tbody>
+        </table>
     </div>
+
 
     <div style="">
         <table border="0" class="titulo">
@@ -435,16 +458,6 @@
             <tr>
                 <th class="right smalltd">ESTADO FACTURA</th>
                 <td style="border-bottom: 2px solid #ccc; text-transform: uppercase;">{{$factura->estatus()}}</td>
-            </tr>
-            <tr>
-                <th class="right smalltd">CONTRATO(S)</th>
-                <td style="border-bottom: 2px solid #ccc; text-transform: uppercase;">
-                     @if($factura->contratos() != false)
-                            @foreach ( $factura->contratos() as $detalleContrato )
-                            No. {{$detalleContrato->contrato_nro}}
-                            @endforeach
-                        @endif
-                </td>
             </tr>
         </table>
     </div>
