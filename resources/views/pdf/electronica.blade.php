@@ -436,6 +436,16 @@
                 <th class="right smalltd">ESTADO FACTURA</th>
                 <td style="border-bottom: 2px solid #ccc; text-transform: uppercase;">{{$factura->estatus()}}</td>
             </tr>
+            <tr>
+                <th class="right smalltd">CONTRATO(S)</th>
+                <td style="border-bottom: 2px solid #ccc; text-transform: uppercase;">
+                     @if($factura->contratos() != false)
+                            @foreach ( $factura->contratos() as $detalleContrato )
+                            No. {{$detalleContrato->contrato_nro}}
+                            @endforeach
+                        @endif
+                </td>
+            </tr>
         </table>
     </div>
 

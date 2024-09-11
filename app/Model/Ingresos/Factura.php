@@ -747,7 +747,7 @@ class Factura extends Model
             'HorFac' => Carbon::parse($horaFac)->format('H:i:s') . '-05:00',
             'ValFac' => number_format($factura->total()->subtotal - $factura->total()->descuento, 2, '.', ''),
             'CodImp' => '01',
-            'ValImp' => number_format($totalIva, 2, '.', ''),
+            'ValImp' => number_format(round($totalIva), 2, '.', ''),
             'CodImp2' => '04',
             'ValImp2' => number_format($totalInc, 2, '.', ''),
             'CodImp3' => '03',
