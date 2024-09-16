@@ -4,8 +4,8 @@ namespace App\Model\Ingresos;
 
 use App\Categoria;
 use Illuminate\Database\Eloquent\Model;
-use App\Model\Inventario\Inventario;  
-use App\Impuesto;  use App\CamposExtra; 
+use App\Model\Inventario\Inventario;
+use App\Impuesto;  use App\CamposExtra;
 use DB; use Auth;
 use App\ProductoCuenta;
 class ItemsFactura extends Model
@@ -19,7 +19,7 @@ class ItemsFactura extends Model
      */
     protected $fillable = [
         'factura', 'producto', 'ref', 'precio', 'descripcion', 'impuesto', 'id_impuesto', 'cant', 'desc', 'created_at', 'updated_at', 'tipo_inventario'
-    ]; 
+    ];
 
     public function total(){
 
@@ -35,7 +35,7 @@ class ItemsFactura extends Model
     }
 
     public function totalCompra(){
-        
+
         if($this->inventario->tipo_producto == 1){
             $result=$this->inventario->costo_unidad*$this->cant;
             $result = round($result);
@@ -87,7 +87,7 @@ class ItemsFactura extends Model
                 foreach ($meta as $value) {
                     $id=0;
                     $titulo=CamposExtra::where('empresa', Auth::user()->empresa)->where('id', $value->meta_key)->Orwhere('campo', $value->meta_key)->first();
-                   
+
                     if ($titulo) {
                        $value->meta_key=$titulo->nombre;
                        $id=$titulo->id;
@@ -99,8 +99,8 @@ class ItemsFactura extends Model
             }
             return $producto->producto;
         }
-         
-        
+
+
     }
 
     public function impuesto($fe = false){
@@ -112,7 +112,7 @@ class ItemsFactura extends Model
             return $impuesto->nombre;
         }
         return '';
-        
+
     }
 
     public function productoTotal($largo=false)
@@ -124,7 +124,7 @@ class ItemsFactura extends Model
         return null;
 
     }
-    
+
     public function itemImpDescuento(){
        return $imp = $this->total() * $this->impuesto / 100;
     }
@@ -164,13 +164,13 @@ class ItemsFactura extends Model
         if ($impuesto) {
             $text .= $impuesto->nombre;
         }
-     
+
         if ($impuesto) {
-            
+
             if($text == "Ninguno" || $text == "NINGUNO" || $text == "N/A"){
                 $text = "IVA";
             }
-            
+
             return $text;
         }
         return '';
@@ -185,7 +185,7 @@ class ItemsFactura extends Model
         if ($impuesto) {
             array_push($ivas, ["imp0" => $impuesto->porcentaje]);
         }
-     
+
         if ($impuesto) {
             return $ivas;
         }
@@ -201,7 +201,7 @@ class ItemsFactura extends Model
         if ($impuesto) {
             array_push($ivas, ["imp0" => $impuesto->nombre."(".$impuesto->porcentaje."%)"]);
         }
-     
+
         if ($impuesto) {
             return $ivas;
         }
@@ -217,7 +217,7 @@ class ItemsFactura extends Model
         if ($impuesto) {
             array_push($ivas, ["imp0" => $impuesto->nombre]);
         }
-      
+
         if ($impuesto) {
             return $ivas;
         }
