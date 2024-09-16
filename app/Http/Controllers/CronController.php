@@ -3141,7 +3141,6 @@ class CronController extends Controller
             where('f.estatus',1)->
             whereIn('f.tipo', [1,2])->
             where('contactos.status',1)->
-            where('cs.state','enabled')->
             where('cs.fecha_suspension', null)->
             // where('f.id',191)->
             whereDate(DB::raw("DATE_ADD(f.vencimiento, INTERVAL $diasMas DAY)"), '<=', now())->
