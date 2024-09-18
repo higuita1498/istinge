@@ -133,21 +133,21 @@
             @if($ingreso->cliente()->nit) {{ $ingreso->cliente()->tip_iden('mini')}}: {{$ingreso->cliente()->nit}}<br>@endif<br>
         </div>
     </div>
-    
+
     <div style="width: 100%; text-align: center; display: inline-block;">
         @if($ingreso->tipo == 1 || $ingreso->tipo == 2) Ingreso: @elseif($ingreso->tipo == 3) Cuenta de Cobro: @endif No. {{$ingreso->nro}}<br>
         Fecha Expedición: {{date('d/m/Y', strtotime($ingreso->fecha))}}<br>
         Fecha Vencimiento: {{date('d/m/Y', strtotime($ingreso->ingresofactura()->factura()->vencimiento))}}<br>
         Estado: @if($ingreso->ingresofactura()->factura()->estatus == 0) Cerrada @endif @if($ingreso->ingresofactura()->factura()->estatus == 1) Abierta @endif @if($ingreso->ingresofactura()->factura()->estatus == 2) Anulada @endif<br><br>
-        
+
         Recibo de Caja: No. {{ $ingreso->nro }}<br>
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->fecha)) }}<br>
         Cuenta: {{ $ingreso->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->metodo_pago() }}<br>
-        Periodo: {{$ingreso->ingresofactura()->factura()->periodoCobrado('true')}}<br> 
+        Periodo: {{$ingreso->ingresofactura()->factura()->periodoCobradoTexto()}}<br>
         @if($ingreso->notas) Notas: {{ $ingreso->notas }} @endif
     </div>
-    
+
     <br>
     <div style="width: 100%; text-align: center; display: inline-block; border-top: solid 1px #000; margin-top: 10px;">
         <table style="width: 100%;text-align: center;">
@@ -166,7 +166,7 @@
                     <td>{{$empresa->moneda}}{{App\Funcion::Parsear($item->precio)}}</td>
                 </tr>
             @endforeach
-            
+
             <!-- calculando impuesto -->
             @foreach($items as $item)
                 @if($item->impuesto != 0)
@@ -179,8 +179,8 @@
                 </tr>
                 @endif
             @endforeach
-            
-            
+
+
             </tbody>
         </table>
     </div>
@@ -227,7 +227,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <br>
 
     <div style="width: 100%; text-align: center; display: inline-block;">
