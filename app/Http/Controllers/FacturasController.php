@@ -476,7 +476,7 @@ class FacturasController extends Controller{
                 else if($factura->emitida == 0 && $factura->dian_response != 409){
                     $msj = '- No Emitida';
                 }
-                else if($factura->emitida == 0 && $factura->dian_response == 409){
+                else if($factura->emitida == 0 && $factura->dian_response == 409 || $factura->dian_response == 504){
                     $msj = '- Error';
                 }
             }

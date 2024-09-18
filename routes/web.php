@@ -1209,6 +1209,9 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		//Reportes contables
 		Route::get('/balances', 'ReportesController@balance')->name('reportes.balance');
 		Route::get('/exogena', 'ReportesController@exogena')->name('reportes.exogena');
+
+
+        Route::get('/contratoperiodo', 'ReportesController@contratoPeriodo')->name('reportes.contratoperiodo');
 	});
 	//Exportar
 	Route::group(['prefix' => 'exportar'], function() {

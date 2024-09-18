@@ -25,7 +25,7 @@
                     <li><a href="{{route('reportes.instalacion')}}" >Reporte de Contratos con Instalación</a></li>
                     <li><a href="{{route('reportes.radicados')}}" >Reporte de Radicados</a></li>
                     <li><a href="{{route('reportes.ivas')}}" >Reporte de ivas</a></li>
-                    {{-- <li><a href="{{route('reportes.planes')}}" >Reporte de Planes</a></li> --}}
+                    <li><a href="{{route('reportes.contratoperiodo')}}" >Reporte de Periodo</a></li>
                 </ul>
             </div>
 
