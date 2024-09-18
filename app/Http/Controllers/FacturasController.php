@@ -412,7 +412,7 @@ class FacturasController extends Controller{
                         $query->orWhere('factura.emitida', 0)->where('factura.dian_response',null);
                     }
                     else{
-                        $query->orWhere('factura.emitida', 0)->where('factura.dian_response',409);
+                        $query->orWhere('factura.emitida', 0)->whereIn('factura.dian_response',[409,504]);
                     }
                 });
             }
@@ -473,10 +473,10 @@ class FacturasController extends Controller{
                 if($factura->emitida == 1){
                     $msj = '- Emitida';
                 }
-                else if($factura->emitida == 0 && $factura->dian_response != 409){
+                else if($factura->emitida == 0 && $factura->dian_response != 409 && $factura->dian_response != 504){
                     $msj = '- No Emitida';
                 }
-                else if($factura->emitida == 0 && $factura->dian_response == 409 || $factura->dian_response == 504){
+                else if($factura->emitida == 0 && $factura->dian_response == 409 || $factura->emitida == 0 && $factura->dian_response == 504){
                     $msj = '- Error';
                 }
             }
