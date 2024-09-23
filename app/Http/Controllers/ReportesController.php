@@ -3037,7 +3037,8 @@ class ReportesController extends Controller
             $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = contracts.nro ORDER BY id DESC LIMIT 1)'));
         })
         ->select('contracts.*','fac.codigo','fac.id as factura_id',DB::raw("DATE_FORMAT(fac.fecha, '%M') as mes_factura"),
-        DB::raw("DATE_FORMAT(fac.fecha, '%Y%m%d') as fecha_concatenada"));
+        DB::raw("DATE_FORMAT(fac.fecha, '%Y%m%d') as fecha_concatenada"))
+        ->groupBy('contracts.id');
         // ->get();
 
         if($request->month && $request->year){
