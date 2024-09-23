@@ -105,21 +105,6 @@
         	    </span>
         	</div>
 
-        	{{-- <div class="col-md-5 form-group {{ $id ? 'd-none':'' }}">
-        	    <label class="control-label">Clientes <span class="text-danger">*</span></label>
-        	    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        	        <label class="btn btn-success">
-        	            <input type="radio" name="options" id="radio_1" onchange="chequeo();"> Habilitados
-        	        </label>
-        	        <label class="btn btn-danger">
-        	            <input type="radio" name="options" id="radio_2" onchange="chequeo();"> Deshabilitados
-        	        </label>
-        	        <label class="btn btn-secondary">
-        	            <input type="radio" name="options" id="radio_3" onchange="chequeo();"> Manual
-        	        </label>
-        	    </div>
-        	</div> --}}
-
         	<div class="col-md-3 form-group" id="seleccion_manual">
 	            <label class="control-label">Selección manual de clientes</label>
         	    <select name="contrato[]" id="contrato_sms" class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" required multiple data-actions-box="true" data-select-all-text="Todos" data-deselect-all-text="Ninguno">
@@ -239,15 +224,15 @@
         if($("#radio_1").is(":selected")){
             $(".enabled").attr('selected','selected');
             $(".disabled").removeAttr("selected");
-            //$("#seleccion_manual").addClass('d-none');
-			refreshClient('enabled');
+
+			refreshClient('enabled',1);
         }else if($("#radio_2").is(":selected")){
             $(".disabled").attr('selected','selected');
             $(".enabled").removeAttr("selected");
-            //$("#seleccion_manual").addClass('d-none');
-			refreshClient('disabled');
+
+			refreshClient('disabled',1);
         }else if($("#radio_3").is(":selected")){
-            //$("#seleccion_manual").removeClass('d-none');
+
         }
         $("#contrato").selectpicker('refresh');
     }
@@ -261,7 +246,7 @@
     	})
     }
 
-	function refreshClient(estadoCliente = null){
+	function refreshClient(estadoCliente = null, disabledEstado = null){
 
 		let grupoCorte = $('#corte').val();
 		let servidor = $('#servidor').val();
@@ -291,6 +276,7 @@
 			}
 
 		}else{
+
 			if(grupoCorte && servidor){
 				options = $(`.servidor-${servidor}.grupo-${grupoCorte}`);
 			}else{
@@ -312,6 +298,11 @@
 				options=`.factura-si`;
 			}
 		}
+
+        if((grupoCorte || servidor) && disabledEstado == null ){
+            $("#options option:selected").prop("selected", false);
+            $("#options").selectpicker('refresh');
+        }
 
 		$("#contrato_sms option:selected").prop("selected", false);
 		$("#contrato_sms option:selected").removeAttr("selected");
