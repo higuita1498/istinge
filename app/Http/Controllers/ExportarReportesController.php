@@ -33,7 +33,6 @@ use App\Model\Nomina\PrestacionSocial;
 use stdClass;
 use App\Model\Nomina\Persona;
 use App\Model\Nomina\NominaPeriodos;
-use DB;
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
 include_once(app_path() .'/../public/Spout/Autoloader/autoload.php');
 use Box\Spout\Common\Entity\Style\Border;
@@ -44,6 +43,7 @@ use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB as DB;
 use Illuminate\Support\Facades\Log;
 use PHPExcel; use PHPExcel_IOFactory; use PHPExcel_Style_Alignment; use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
@@ -5209,5 +5209,164 @@ class ExportarReportesController extends Controller
         }
 
         return redirect('empresa/contratos')->with('success', "Importacion completada correctamente.");
+    }
+
+    public function contratoPeriodo(Request $request){
+
+        $objPHPExcel = new PHPExcel();
+        $empresa = Auth::user()->empresaObj;
+        $tituloReporte = "Reporte Contrato Periodo " . $empresa->nombre;
+        DB::statement("SET lc_time_names = 'es_ES'");
+
+        $titulosColumnas = array(
+            'Nro contrato',
+            'Cliente',
+            'Consumo',
+            'Periodo',
+            'Deuda',
+            'Periodo',
+            'Deuda'
+        );
+
+        $letras = array(
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z'
+        );
+
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte Contrato Periodo") // Titulo
+        ->setSubject("Reporte Contrato Periodo") //Asunto
+        ->setDescription("Reporte Contrato Periodo") //Descripcion
+        ->setKeywords("Reporte Contrato Periodo") //Etiquetas
+        ->setCategory("Reporte Contrato Periodo"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ahi el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:G1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', $tituloReporte);
+        // Titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A2:G2');
+
+        $estilo = array(
+            'font' => array('bold' => true, 'size' => 12, 'name' => 'Times New Roman'),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($estilo);
+
+        $estilo = array(
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array('rgb' => 'c6c8cc')
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:G3')->applyFromArray($estilo);
+
+
+        for ($i = 0; $i < count($titulosColumnas); $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i] . '3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $i = 4;
+        $letra = 0;
+
+        $contratos = Contrato::
+        join('facturas_contratos', 'contracts.nro', '=', 'facturas_contratos.contrato_nro')
+        ->leftJoin('factura as fac', function ($join) {
+            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = contracts.nro ORDER BY id DESC LIMIT 1)'));
+        })
+        ->select('contracts.*','fac.codigo','fac.id as factura_id',DB::raw("DATE_FORMAT(fac.fecha, '%M') as mes_factura"),
+        DB::raw("DATE_FORMAT(fac.fecha, '%Y%m%d') as fecha_concatenada"));
+
+        if($request->month && $request->year){
+            $contratos=$contratos->whereMonth('fac.fecha','=', $request->month)->whereYear('fac.fecha','=', $request->year);
+        }else{
+            $request->month = date('m');
+            $request->year = date('Y');
+            $contratos=$contratos->whereMonth('fac.fecha','=', $request->month)->whereYear('fac.fecha','=', $request->year);
+        }
+
+        $contratos = $contratos->get();
+
+        $empresa = Empresa::find(Auth::user()->empresa);
+        $totalIngresos = 0;
+        foreach ($contratos as $contrato) {
+            $cliente = $contrato->cliente();
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0] . $i, $contrato->nro)
+                ->setCellValue($letras[1] . $i, strtoupper($cliente->nombre . " " . $cliente->apellido1 . " " . $cliente->apellido2))
+                ->setCellValue($letras[2] . $i, strtoupper("CONSUMO " . $contrato->mes_factura))
+                ->setCellValue($letras[3] . $i, $contrato->fecha_concatenada)
+                ->setCellValue($letras[4] . $i, $contrato->facturaAsociada()->porpagar())
+                ->setCellValue($letras[5] . $i, $contrato->fecha_concatenada)
+                ->setCellValue($letras[6] . $i, $contrato->facturaAsociada()->porpagar());
+            $i++;
+        }
+
+        // $objPHPExcel->setActiveSheetIndex(0)
+        //         ->setCellValue($letras[8].$i, "TOTAL: ")
+        //         ->setCellValue($letras[9].$i, $empresa->moneda." ".Funcion::Parsear($totalIngresos));
+
+        $estilo = array(
+            'font' => array('size' => 12, 'name' => 'Times New Roman'),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+        $objPHPExcel->getActiveSheet()->getStyle('A3:G' . $i)->applyFromArray($estilo);
+
+        for ($i = 'A'; $i <= $letras[20]; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(true);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle("Reporte Contrato Periodo");
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A5');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0, 4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Contrato_Periodo.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
     }
 }

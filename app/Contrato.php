@@ -293,4 +293,9 @@ class Contrato extends Model
 
         return $totalDebe;
     }
+
+    //Metodo para consultar la factura asociada a un reporte que me obtiene una factura por contrato
+    public function facturaAsociada(){
+        return Factura::find($this->factura_id);
+    }
 }

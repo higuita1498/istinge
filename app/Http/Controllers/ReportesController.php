@@ -3018,33 +3018,41 @@ class ReportesController extends Controller
     }
 
     public function contratoPeriodo(Request $request){
+
         $this->getAllPermissions(Auth::user()->id);
+        DB::statement("SET lc_time_names = 'es_ES'");
 
         view()->share(['seccion' => 'reportes', 'title' => 'Reporte Periodo Contratos', 'icon' =>'fas fa-chart-line']);
-        $campos=array( 'nro','', 'f.fecha', 'f.vencimiento', 'nro', 'nro', 'nro', 'nro');
+        $campos=array( 'nro','fac.id', 'f.fecha', 'f.vencimiento', 'nro', 'nro', 'nro', 'nro');
+
         if (!$request->orderby) {
             $request->orderby=1; $request->order=1;
         }
-
         $orderby=$campos[$request->orderby];
         $order=$request->order==1?'DESC':'ASC';
 
-        $contratos = DB::table('contracts as cont')
-        ->join('facturas_contratos', 'cont.nro', '=', 'facturas_contratos.contrato_nro')
+        $contratos = Contrato::
+        join('facturas_contratos', 'contracts.nro', '=', 'facturas_contratos.contrato_nro')
         ->leftJoin('factura as fac', function ($join) {
-            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = cont.nro ORDER BY id DESC LIMIT 1)'));
+            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = contracts.nro ORDER BY id DESC LIMIT 1)'));
         })
-        ->select('cont.*','fac.codigo')
-        ->get();
+        ->select('contracts.*','fac.codigo','fac.id as factura_id',DB::raw("DATE_FORMAT(fac.fecha, '%M') as mes_factura"),
+        DB::raw("DATE_FORMAT(fac.fecha, '%Y%m%d') as fecha_concatenada"));
+        // ->get();
 
-        $dates = $this->setDateRequest($request);
-
-        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
-            $contratos=$contratos->where('fac.fecha','>=', $dates['inicio'])->where('fac.fecha','<=', $dates['fin']);
+        if($request->month && $request->year){
+            $contratos=$contratos->whereMonth('fac.fecha','=', $request->month)->whereYear('fac.fecha','=', $request->year);
+        }else{
+            $request->month = date('m');
+            $request->year = date('Y');
+            $contratos=$contratos->whereMonth('fac.fecha','=', $request->month)->whereYear('fac.fecha','=', $request->year);
         }
+
+        $contratos=$contratos->OrderBy($orderby, $order)->get();
 
         $contratos = $this->paginate($contratos, 15, $request->page, $request);
 
+        return view('reportes.contratos.periodo')->with(compact('contratos', 'request'));
     }
 
 }

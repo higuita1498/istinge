@@ -7,36 +7,40 @@
         <div class="row card-description">
             <div class="form-group col-md-2">
                 <label></label>
-                <select class="form-control selectpicker" name="fechas" id="fechas">
-                    <optgroup label="Presente">
-                        <option value="0">Hoy</option>
-                        <option value="1">Este Mes</option>
-                        <option value="2">Este Año</option>
-                    </optgroup>
-                    <optgroup label="Anterior">
-                        <option value="3">Ayer</option>
-                        <option value="4">Semana Pasada</option>
-                        <option value="5">Mes Anterior</option>
-                        <option value="6">Año Anterior</option>
-                    </optgroup>
-                    <optgroup label="Manual">
-                        <option value="7">Manual</option>
-                    </optgroup>
+                <select class="form-control selectpicker" name="month" id="month" placeholder="Seleccione mes">
+                <option value='0' disabled selected>Seleccione mes</option>
+                <option value='1' {{ isset($request->month) && $request->month == 1 ? 'selected' : '' }}>Enero</option>
+                <option value='2' {{ isset($request->month) && $request->month == 2 ? 'selected' : '' }}>Febrero</option>
+                <option value='3' {{ isset($request->month) && $request->month == 3 ? 'selected' : '' }}>Marzo</option>
+                <option value='4' {{ isset($request->month) && $request->month == 4 ? 'selected' : '' }}>Abril</option>
+                <option value='5' {{ isset($request->month) && $request->month == 5 ? 'selected' : '' }}>Mayo</option>
+                <option value='6' {{ isset($request->month) && $request->month == 6 ? 'selected' : '' }}>Junio</option>
+                <option value='7' {{ isset($request->month) && $request->month == 7 ? 'selected' : '' }}>Julio</option>
+                <option value='8' {{ isset($request->month) && $request->month == 8 ? 'selected' : '' }}>Agosto</option>
+                <option value='9' {{ isset($request->month) && $request->month == 9 ? 'selected' : '' }}>Septiembre</option>
+                <option value='10' {{ isset($request->month) && $request->month == 10 ? 'selected' : '' }}>Octubre</option>
+                <option value='11' {{ isset($request->month) && $request->month == 11 ? 'selected' : '' }}>Noviembre</option>
+                <option value='12' {{ isset($request->month) && $request->month == 12 ? 'selected' : '' }}>Diciembre</option>
                 </select>
             </div>
-            <div class="form-group col-md-4">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Desde <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control"  id="desde" value="{{$request->fecha}}" name="fecha" required="" >
-                    </div>
-                    <div class="col-md-6">
-                        <label >Hasta <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="hasta" value="{{$request->hasta}}" name="hasta" required="">
-                    </div>
 
-                </div>
+            <div class="form-group col-md-2">
+                <label></label>
+                <select class="form-control selectpicker" name="year" id="year" placeholder="Seleccione Año">
+                <option value='0' disabled selected>Seleccione año</option>
+                <option value='2022' {{ isset($request->year) && $request->year == 2022 ? 'selected' : '' }}>2022</option>
+                <option value='2023' {{ isset($request->year) && $request->year == 2023 ? 'selected' : '' }}>2023</option>
+                <option value='2024' {{ isset($request->year) && $request->year == 2024 ? 'selected' : '' }}>2024</option>
+                <option value='2025' {{ isset($request->year) && $request->year == 2025 ? 'selected' : '' }}>2025</option>
+                <option value='2026' {{ isset($request->year) && $request->year == 2026 ? 'selected' : '' }}>2026</option>
+                <option value='2027' {{ isset($request->year) && $request->year == 2027 ? 'selected' : '' }}>2027</option>
+                <option value='2028' {{ isset($request->year) && $request->year == 2028 ? 'selected' : '' }}>2028</option>
+                <option value='2029' {{ isset($request->year) && $request->year == 2029 ? 'selected' : '' }}>2029</option>
+                <option value='2030' {{ isset($request->year) && $request->year == 2030 ? 'selected' : '' }}>2030</option>
+                </select>
             </div>
+
+
             <div class="form-group col-md-4" style="    padding-top: 2%;">
                 <button type="button" id="generar" class="btn btn-outline-secondary">Generar Reporte</button>
                 <button type="button" id="exportar" class="btn btn-outline-secondary">Exportar a Excel</button>
@@ -62,22 +66,22 @@
                         <tr>
                             <td><a href="{{route('contratos.show', $contrato->id)}}" target="_blanck">{{ $contrato->nro }}</a> </td>
                             <td>{{ $contrato->servicio }}</td>
-                            <td>CONSUMO AGOSTO</td>
-                            <td>20240901</td>
-                            <td>30000</td>
-                            <td>20240901</td>
-                            <td>30000</td>
+                            <td>Consumo {{ $contrato->mes_factura }}</td>
+                            <td>{{ $contrato->fecha_concatenada }}</td>
+                            <td>{{ $contrato->facturaAsociada()->porpagar() }}</td>
+                            <td>{{ $contrato->fecha_concatenada }}</td>
+                            <td>{{ $contrato->facturaAsociada()->porpagar() }}</td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
                 <div class="text-right">
-                   {{-- {{$contactos->links()}}--}}
+                   {{$contratos->links()}}
 
                 </div>
             </div>
         </div>
     </form>
-    <input type="hidden" id="urlgenerar" value="{{route('reportes.contactos')}}">
-    <input type="hidden" id="urlexportar" value="{{route('exportar.contactos')}}">
+    <input type="hidden" id="urlgenerar" value="{{route('reportes.contratoperiodo')}}">
+    <input type="hidden" id="urlexportar" value="{{route('exportar.contratoperiodo')}}">
 @endsection
