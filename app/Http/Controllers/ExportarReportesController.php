@@ -5326,9 +5326,9 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[1] . $i, strtoupper($cliente->nombre . " " . $cliente->apellido1 . " " . $cliente->apellido2))
                 ->setCellValue($letras[2] . $i, strtoupper("CONSUMO " . $contrato->mes_factura))
                 ->setCellValue($letras[3] . $i, $contrato->fecha_concatenada)
-                ->setCellValue($letras[4] . $i, $contrato->facturaAsociada()->porpagar())
+                ->setCellValue($letras[4] . $i, $contrato->deudaFacturas())
                 ->setCellValue($letras[5] . $i, $contrato->fecha_concatenada)
-                ->setCellValue($letras[6] . $i, $contrato->facturaAsociada()->porpagar());
+                ->setCellValue($letras[6] . $i, $contrato->deudaFacturas());
             $i++;
         }
 

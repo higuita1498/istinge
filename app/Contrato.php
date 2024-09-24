@@ -270,6 +270,7 @@ class Contrato extends Model
         return $coleccion;
     }
 
+    //Obtiene la deuda total de las facturas asociadas a un contrato.
     public function deudaFacturas(){
 
     $facturasAbiertas = Factura::leftJoin('facturas_contratos as fc', 'fc.factura_id', 'factura.id')
