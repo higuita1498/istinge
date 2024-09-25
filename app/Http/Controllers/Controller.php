@@ -2246,5 +2246,11 @@ if ($mikrotik) {
         }
     }
 
+    public static function caracteres($cadena){
+        $search = ['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú', 'ñ', 'Ñ'];
+        $replace = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U', 'n', 'N'];
+
+        return strtr($cadena, array_combine($search, $replace));
+    }
 
 }

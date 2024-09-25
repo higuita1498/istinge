@@ -65,7 +65,9 @@
                     @foreach($contratos as $contrato)
                         <tr>
                             <td><a href="{{route('contratos.show', $contrato->id)}}" target="_blanck">{{ $contrato->nro }}</a> </td>
-                            <td><a href="{{ route('contactos.show', $contrato->client_id) }}">{{ $contrato->servicio }}</a></td>
+                            <td><a href="{{ route('contactos.show', $contrato->client_id) }}">
+                                {{ App\Http\Controllers\Controller::caracteres($contrato->servicio) }}
+                            </a></td>
                             <td>Consumo {{ $contrato->mes_factura }}</td>
                             <td>{{ $contrato->fecha_concatenada }}</td>
                             <td>{{ $contrato->deudaFacturas() }}</td>
