@@ -5321,14 +5321,16 @@ class ExportarReportesController extends Controller
         $totalIngresos = 0;
         foreach ($contratos as $contrato) {
             $cliente = $contrato->cliente();
+            $deudaFactura = $contrato->deudaFacturas();
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0] . $i, $contrato->nro)
                 ->setCellValue($letras[1] . $i, Controller::caracteres(strtoupper($cliente->nombre . " " . $cliente->apellido1 . " " . $cliente->apellido2)))
                 ->setCellValue($letras[2] . $i, strtoupper("CONSUMO " . $contrato->mes_factura))
                 ->setCellValue($letras[3] . $i, $contrato->fecha_concatenada)
-                ->setCellValue($letras[4] . $i, $contrato->deudaFacturas())
+                ->setCellValue($letras[4] . $i, $deudaFactura)
                 ->setCellValue($letras[5] . $i, $contrato->fecha_concatenada)
-                ->setCellValue($letras[6] . $i, $contrato->deudaFacturas());
+                ->setCellValue($letras[6] . $i, $deudaFactura);
             $i++;
         }
 
