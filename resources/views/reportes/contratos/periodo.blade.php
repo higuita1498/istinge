@@ -63,6 +63,7 @@
                     <tbody>
 
                     @foreach($contratos as $contrato)
+                    @php $deudaFacturas =  $contrato->deudaFacturas(); @endphp
                         <tr>
                             <td><a href="{{route('contratos.show', $contrato->id)}}" target="_blanck">{{ $contrato->nro }}</a> </td>
                             <td><a href="{{ route('contactos.show', $contrato->client_id) }}">
@@ -70,9 +71,9 @@
                             </a></td>
                             <td>Consumo {{ $contrato->mes_factura }}</td>
                             <td>{{ $contrato->fecha_concatenada }}</td>
-                            <td>{{ $contrato->deudaFacturas() }}</td>
+                            <td>{{ $deudaFacturas }}</td>
                             <td>{{ $contrato->fecha_concatenada }}</td>
-                            <td>{{ $contrato->deudaFacturas() }}</td>
+                            <td>{{ $deudaFacturas }}</td>
                         </tr>
                     @endforeach
                     </tbody>
