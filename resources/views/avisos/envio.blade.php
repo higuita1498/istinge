@@ -113,7 +113,8 @@
         	        <optgroup label="{{$estado['nombre']}}">
         	            @foreach($contratos as $contrato)
         	                @if($contrato->state==$estado['state'])
-        	                    <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }}
+        	                    <option class="{{$contrato->state}}
+									grupo-{{ $contrato->grupo_corte()->id ?? 'no' }}
 									servidor-{{ $contrato->servidor()->id ?? 'no' }}
 									factura-{{ $contrato->factura_id != null ?  'si' : 'no'}}"
 									value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>
@@ -121,10 +122,7 @@
 									{{ $contrato->c_apellido2 }} - {{$contrato->c_nit}}
 									(contrato: {{ $contrato->nro }})
 								</option>
-        	                    {{-- <option class="{{$contrato->state}} grupo-{{ $contrato->grupo_corte()->id ?? 'no' }} servidor-{{ $contrato->servidor()->id ?? 'no' }}" value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>{{$contrato->c_nombre}}
-                                    {{ isset($contrato->grupo_corte()->nombre) ? " -- " .  $contrato->grupo_corte()->nombre : ''  }}
-                                    {{ isset($contrato->servidor()->nombre) ? " -- " .  $contrato->servidor()->nombre : ''  }}
-                                </option> --}}
+
         	                @endif
         	            @endforeach
         	        </optgroup>

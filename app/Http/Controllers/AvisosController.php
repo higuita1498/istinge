@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use stdClass;
-use Auth;
 use DB;
 use App\Empresa;
 use Carbon\Carbon;
@@ -22,6 +21,7 @@ use App\Mikrotik;
 use App\GrupoCorte;
 use App\Instance;
 use App\Services\WapiService;
+use Illuminate\Support\Facades\Auth as Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
@@ -42,7 +42,21 @@ class AvisosController extends Controller
     public function index()
     {
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
+        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ?
+        Contacto::leftJoin('factura as f','f.cliente','contactos.id')
+        ->where('f.estatus',1)
+        ->whereIn('tipo_contacto', [0,2])->where('status', 1)
+        ->where('contactos.empresa', Auth::user()->empresa)
+        ->where('oficina', Auth::user()->oficina)
+        ->orderBy('nombre', 'ASC')->get()
+        :
+        Contacto::leftJoin('factura as f','f.cliente','contactos.id')
+        ->where('f.estatus',1)
+        ->whereIn('tipo_contacto', [0,2])
+        ->where('status', 1)
+        ->where('contactos.empresa', Auth::user()->empresa)
+        ->orderBy('nombre', 'ASC')->get();
+
         return view('avisos.index', compact('clientes'));
     }
 
@@ -85,7 +99,6 @@ class AvisosController extends Controller
         $plantillas = Plantilla::where('status', 1)->where('tipo', 0)->get();
         $contratos = Contrato::select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.telefono1 as c_telefono', 'contactos.email as c_email', 'contactos.barrio as c_barrio')
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-			/* ->where('contracts.status', 1) */
             ->where('contracts.empresa', Auth::user()->empresa)
             ->whereNotNull('contactos.celular');
 
@@ -129,10 +142,35 @@ class AvisosController extends Controller
             $contratos = $contratos->where('contactos.id', $id);
         }
 
-        if(request()->vencimiento){
-            $contratos->join('factura', 'factura.contrato_id', '=', 'contracts.id')
-                      ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
-                      ->groupBy('contracts.id');
+        if(request()->vencimiento) {
+            // Construimos la primera consulta con el modelo Contrato
+            $contratos = Contrato::leftJoin('facturas_contratos as fc', 'fc.contrato_nro', 'contracts.nro')
+                ->leftJoin('factura', 'factura.id', '=', 'fc.factura_id')
+                ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
+                ->where('factura.estatus', 1)
+                ->orderBy('fc.id', 'desc')
+                ->groupBy('contracts.id');
+
+            // Verificamos si la primera consulta no retorna resultados
+            if($contratos->get()->isEmpty()) {
+
+                // Si no hay resultados, redefinimos la variable $contratos con la segunda consulta
+                $contratos = Contrato::leftJoin('factura as f', 'f.contrato_id', '=', 'contracts.id')
+                ->leftJoin('contactos', 'contactos.id', '=', 'contracts.client_id') // Asegúrate que existe la relación entre contratos y contactos
+                ->where('f.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
+                ->where('f.estatus', 1)
+                ->select('contracts.*',
+                         'contactos.id as c_id',
+                         'contactos.nombre as c_nombre',
+                         'contactos.apellido1 as c_apellido1',
+                         'contactos.apellido2 as c_apellido2',
+                         'contactos.nit as c_nit',
+                         'contactos.telefono1 as c_telefono',
+                         'contactos.email as c_email',
+                         'contactos.barrio as c_barrio')
+                ->groupBy('contracts.id')
+                ->orderBy('f.id', 'desc');
+            }
         }
 
         $contratos = $contratos->get();
@@ -195,16 +233,20 @@ class AvisosController extends Controller
         $cor = 0;
         $numeros = [];
         $bulk = '';
-        $factura = false;
+
         for ($i = 0; $i < count($request->contrato); $i++) {
             $contrato = Contrato::find($request->contrato[$i]);
 
-            if($request->isAbierta){
+            if($request->isAbierta && $request->type != 'whatsapp'){
                 $factura =  Factura::where('contrato_id')->latest()
                                              ->first();
-                }
 
-            if ($contrato || $contrato && $request->isAbierta && $factura) {
+                if($factura->estatus == 3 || $factura->estatus == 4 || $factura->estatus == 0 || $factura->estatus == 2){
+                    continue;
+                }
+            }
+
+            if ($contrato) {
                 $plantilla = Plantilla::find($request->plantilla);
 
                 if($request->type == 'whatsapp'){
