@@ -105,6 +105,28 @@
         	    </span>
         	</div>
 
+            <div class="col-md-3 form-group">
+                <label class="control-label">OPCIONES SALDO<span class="text-danger"></span></label>
+                <select name="opciones_saldo" id="opciones_saldo" class="form-control selectpicker" onchange="refreshClient()" title="Seleccione" data-live-search="true" data-size="5">
+                    <option {{old('opciones_saldo')=='mayor_a'?'selected':''}} value="mayor_a">SALDO MAYOR A</option>
+                    <option {{old('opciones_saldo')=='mayor_igual'?'selected':''}} value="mayor_igual">SALDO MAYOR O IGUAL A</option>
+                    <option {{old('opciones_saldo')=='igual_a'?'selected':''}} value="igual_a">SALDO IGUAL A</option>
+                    <option {{old('opciones_saldo')=='menor_a'?'selected':''}} value="menor_a">SALDO MENOR A</option>
+                    <option {{old('opciones_saldo')=='menor_igual'?'selected':''}} value="menor_igual">SALDO MENOR IGUAL A</option>
+                </select>
+                <span class="help-block error">
+        	        <strong>{{ $errors->first('options') }}</strong>
+        	    </span>
+            </div>
+
+            <div class="col-md-3 form-group">
+                <label class="control-label">Valor Saldo</label>
+                <input class="form-control" type="text" name="valor_saldo" id="valor_saldo"  oninput="refreshClient()">
+                <span class="help-block error">
+        	        <strong>{{ $errors->first('barrio') }}</strong>
+        	    </span>
+            </div>
+
         	<div class="col-md-3 form-group" id="seleccion_manual">
 	            <label class="control-label">Selección manual de clientes</label>
         	    <select name="contrato[]" id="contrato_sms" class="form-control selectpicker" title="Seleccione" data-live-search="true" data-size="5" required multiple data-actions-box="true" data-select-all-text="Todos" data-deselect-all-text="Ninguno">
@@ -117,7 +139,8 @@
 									grupo-{{ $contrato->grupo_corte()->id ?? 'no' }}
 									servidor-{{ $contrato->servidor()->id ?? 'no' }}
 									factura-{{ $contrato->factura_id != null ?  'si' : 'no'}}"
-									value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}>
+									value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}
+                                        data-saldo="<?php echo e($contrato->factura_total); ?>">
 									{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }}
 									{{ $contrato->c_apellido2 }} - {{$contrato->c_nit}}
 									(contrato: {{ $contrato->nro }})
@@ -249,6 +272,8 @@
 		let grupoCorte = $('#corte').val();
 		let servidor = $('#servidor').val();
 		let factAbierta = $('#isAbierta').is(":checked");
+        let tipoSaldo = $('#opciones_saldo').val();
+        let valorSaldo = parseFloat($('#valor_saldo').val());
 
 		if(estadoCliente){
 
@@ -296,6 +321,28 @@
 				options=`.factura-si`;
 			}
 		}
+
+        // Filtrar por valor de factura si se ingresa un valor en el input
+        // Si el tipo de saldo y el valor están definidos
+        if (tipoSaldo && !isNaN(valorSaldo)) {
+            options = options.filter(function() {
+                let saldo = parseFloat($(this).data('saldo'));
+                switch (tipoSaldo) {
+                    case 'mayor_a':
+                        return saldo > valorSaldo;
+                    case 'mayor_igual':
+                        return saldo >= valorSaldo;
+                    case 'igual_a':
+                        return saldo === valorSaldo;
+                    case 'menor_a':
+                        return saldo < valorSaldo;
+                    case 'menor_igual':
+                        return saldo <= valorSaldo;
+                    default:
+                        return true;
+                }
+            });
+        }
 
         if((grupoCorte || servidor) && disabledEstado == null ){
             $("#options option:selected").prop("selected", false);
