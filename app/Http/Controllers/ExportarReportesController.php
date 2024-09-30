@@ -5301,7 +5301,7 @@ class ExportarReportesController extends Controller
         $contratos = Contrato::
         join('facturas_contratos', 'contracts.nro', '=', 'facturas_contratos.contrato_nro')
         ->leftJoin('factura as fac', function ($join) {
-            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = contracts.nro ORDER BY id DESC LIMIT 1)'));
+            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = contracts.nro ORDER BY factura_id DESC LIMIT 1)'));
         })
         ->select('contracts.*','fac.codigo','fac.id as factura_id',DB::raw("DATE_FORMAT(fac.fecha, '%M') as mes_factura"),
         DB::raw("DATE_FORMAT(fac.fecha, '%Y%m%d') as fecha_concatenada"))
@@ -5321,7 +5321,7 @@ class ExportarReportesController extends Controller
         $totalIngresos = 0;
         foreach ($contratos as $contrato) {
             $cliente = $contrato->cliente();
-            $deudaFactura = $contrato->deudaFacturas();
+            $deudaFactura = $contrato->deudaFacturas($request->month, $request->year);
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0] . $i, $contrato->nro)

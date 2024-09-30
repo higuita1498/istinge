@@ -271,9 +271,10 @@ class Contrato extends Model
     }
 
     //Obtiene la deuda total de las facturas asociadas a un contrato.
-    public function deudaFacturas(){
+    public function deudaFacturas($month=null, $year=null){
 
-        $facturasAbiertas = Factura::leftJoin('items_factura as itemsf', 'itemsf.factura', 'factura.id')
+        if($month != null){
+            $facturasAbiertas = Factura::leftJoin('items_factura as itemsf', 'itemsf.factura', 'factura.id')
         ->leftJoin('facturas_contratos as fc', 'fc.factura_id', 'factura.id')
         ->leftJoin('contracts as c', 'c.nro', 'fc.contrato_nro')
         // Subconsulta para calcular el total de ingresos
@@ -288,27 +289,57 @@ class Contrato extends Model
             SUM(
                 (
                     (
-                        itemsf.precio * itemsf.cant) - ((itemsf.precio * itemsf.cant) * (itemsf.desc/100)
-                    )
+                        itemsf.precio * itemsf.cant
+                    ) - IF
+                    (itemsf.desc > 0, (itemsf.precio * itemsf.cant) * (itemsf.desc / 100),0)
+                ) * (
+                    IF(itemsf.impuesto > 0, 1 + (itemsf.impuesto / 100), 1)
                 )
-                * (1 + (ROUND(itemsf.impuesto, 2)/100))
             ) as totalFactura
         ')
         ->selectRaw('COALESCE(ingresos.totalIngreso, 0) as totalIngreso') // Usamos la subconsulta para ingresos
-        ->where(function ($query) {
-            $query->where('factura.contrato_id', $this->id)
-                  ->orWhere('fc.contrato_nro', $this->nro);
-        })
+        ->where('fc.contrato_nro', $this->nro)
+        ->where('factura.estatus', 1)
+        ->whereMonth('factura.fecha','<=', $month)->whereYear('factura.fecha','<=', $year)
+        ->groupBy('factura.id') // Agrupamos por ID de factura
+        ->get();
+        }else{
+            $facturasAbiertas = Factura::leftJoin('items_factura as itemsf', 'itemsf.factura', 'factura.id')
+        ->leftJoin('facturas_contratos as fc', 'fc.factura_id', 'factura.id')
+        ->leftJoin('contracts as c', 'c.nro', 'fc.contrato_nro')
+        // Subconsulta para calcular el total de ingresos
+        ->leftJoin($total = DB::raw("(SELECT ing_fact.factura, COALESCE(SUM(ing_fact.pago), 0) as totalIngreso
+                            FROM ingresos_factura as ing_fact
+                            LEFT JOIN ingresos as i ON i.id = ing_fact.ingreso
+                            WHERE i.estatus = 1
+                            GROUP BY ing_fact.factura) as ingresos"), 'ingresos.factura', 'factura.id')
+        ->select('factura.id')
+        // Cálculo del total de la factura
+        ->selectRaw('
+            SUM(
+                (
+                    (
+                        itemsf.precio * itemsf.cant
+                    ) - IF
+                    (itemsf.desc > 0, (itemsf.precio * itemsf.cant) * (itemsf.desc / 100),0)
+                ) * (
+                    IF(itemsf.impuesto > 0, 1 + (itemsf.impuesto / 100), 1)
+                )
+            ) as totalFactura
+        ')
+        ->selectRaw('COALESCE(ingresos.totalIngreso, 0) as totalIngreso') // Usamos la subconsulta para ingresos
+        ->where('fc.contrato_nro', $this->nro)
         ->where('factura.estatus', 1)
         ->groupBy('factura.id') // Agrupamos por ID de factura
         ->get();
+        }
 
         $totalDebe = 0;
         foreach($facturasAbiertas as $fa){
-            $totalDebe+=round($fa->totalFactura,2) - round($fa->totalIngreso,2);
+            $totalDebe+=$fa->totalFactura - $fa->totalIngreso;
         }
 
-        return round($totalDebe);
+        return $totalDebe;
     }
 
     //Metodo para consultar la factura asociada a un reporte que me obtiene una factura por contrato
