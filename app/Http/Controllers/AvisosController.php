@@ -147,8 +147,19 @@ class AvisosController extends Controller
             // Construimos la primera consulta con el modelo Contrato
             $contratos = Contrato::leftJoin('facturas_contratos as fc', 'fc.contrato_nro', 'contracts.nro')
                 ->leftJoin('factura', 'factura.id', '=', 'fc.factura_id')
+                ->leftJoin('contactos', 'contactos.id', '=', 'contracts.client_id') // Asegúrate que existe la relación entre contratos y contactos
+                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
                 ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
                 ->where('factura.estatus', 1)
+                ->select('contracts.*',
+                         'contactos.id as c_id',
+                         'contactos.nombre as c_nombre',
+                         'contactos.apellido1 as c_apellido1',
+                         'contactos.apellido2 as c_apellido2',
+                         'contactos.nit as c_nit',
+                         'contactos.telefono1 as c_telefono',
+                         'contactos.email as c_email',
+                         'contactos.barrio as c_barrio','planes_velocidad.price as factura_total')
                 ->orderBy('fc.id', 'desc')
                 ->groupBy('contracts.id');
 
