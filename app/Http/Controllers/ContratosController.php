@@ -2496,10 +2496,10 @@ class ContratosController extends Controller
             isset($servicio_otro->precio) ? $totalServicioOtro+=$servicio_otro->precio : '';
 
 
-            $sumaPlanes=(isset($plan->precio)?$plan->precio:0)+
-            (isset($servicio->precio)?$servicio->precio:0)+
-            (isset($servicio_otro->precio)?$servicio_otro->precio:0);
-            // dd($plan->precio,$servicio->precio,$servicio_otro->precio,$sumaPlanes);
+            $sumaPlanes=(isset($plan->precio)?$plan->conIva:0)+
+            (isset($servicio->precio)?$servicio->conIva:0)+
+            (isset($servicio_otro->precio)?$servicio_otro->conIva:0);
+            // dd($plan->precio,$servicio->precio,$servicio_otro->precio,$sumaPlanes,$plan->conIva);
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $contrato->nro)
