@@ -3643,11 +3643,11 @@ class ExportarReportesController extends Controller
             $this->remisiones($request);
         }else{
             $comprobacionFacturas = Factura::where('factura.empresa',Auth::user()->empresa)
-            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
+            ->join('contracts', 'factura.contrato_id', '=', 'contracts.id')
             ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion','c.barrios','c.vereda', DB::raw('c.celular as celularcliente'))
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion','c.barrios','c.vereda','contracts.address_street as address_street', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
             ->where('c.status',1);
@@ -3703,11 +3703,11 @@ class ExportarReportesController extends Controller
             }
 
             $facturas = Factura::where('factura.empresa',Auth::user()->empresa)
-            ->leftjoin('contracts', 'contracts.id', '=', 'factura.contrato_id')
+            ->join('contracts', 'factura.contrato_id', '=', 'contracts.id')
             ->leftjoin('mikrotik', 'mikrotik.id', '=', 'contracts.server_configuration_id')
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->select('factura.id', 'factura.codigo', 'factura.nro','factura.cot_nro', DB::raw('c.nombre as nombrecliente'),
-                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion', DB::raw('c.celular as celularcliente'))
+                    'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion','contracts.address_street as address_street', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
             ->where('c.status',1);
@@ -3761,7 +3761,7 @@ class ExportarReportesController extends Controller
                     ->setCellValue($letras[4].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
                     ->setCellValue($letras[5].$i, $factura->cliente()->celular)
                     ->setCellValue($letras[6].$i, $factura->cliente()->nit)
-                    ->setCellValue($letras[7].$i, $factura->cliente()->direccion)
+                    ->setCellValue($letras[7].$i, ($factura->address_street)?: $factura->cliente()->direccion)
                     ->setCellValue($letras[8].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->state=='enabled'?'Habilitado':'Deshabilitado' : '')
                     ->setCellValue($letras[9].$i, ($factura->cliente()->contrato()) ? $factura->cliente()->contrato()->grupo_corte('true') : '')
                     ->setCellValue($letras[10].$i, ($factura->cliente()->contrato()) ? ($factura->cliente()->contrato()->servidor()->nombre ?? '') : '')
