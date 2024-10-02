@@ -346,4 +346,5 @@ class Contrato extends Model
     public function facturaAsociada(){
         return Factura::find($this->factura_id);
     }
+
 }
