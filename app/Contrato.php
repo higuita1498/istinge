@@ -237,6 +237,7 @@ class Contrato extends Model
         $coleccion = new stdClass;
         $coleccion->precio = 0;
         $coleccion->nombre = "";
+        $coleccion->conIva = 0;
 
         if($name == "plan_id" && $this->plan_id != null ){
             $plan = PlanesVelocidad::Find($this->plan_id);
@@ -245,6 +246,7 @@ class Contrato extends Model
                 $item = Inventario::Find($plan->item);
                 $coleccion->precio = $item->precio;
                 $coleccion->nombre =  $plan->name;
+                $coleccion->conIva =  round($item->precio + ($item->precio*($item->impuesto/100)));
             }
 
             // return $plan->name . " - $" . number_format($item->precio, 0, ',', '.');
@@ -254,6 +256,7 @@ class Contrato extends Model
 
             $coleccion->nombre =  $item->producto;
             $coleccion->precio = $item->precio;
+            $coleccion->conIva =  round($item->precio + ($item->precio*($item->impuesto/100)));
 
             // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
         }
@@ -263,6 +266,7 @@ class Contrato extends Model
 
             $coleccion->nombre =  $item->producto;
             $coleccion->precio = $item->precio;
+            $coleccion->conIva =  round($item->precio + ($item->precio*($item->impuesto/100)));
 
             // return $item->producto . " - $" . number_format($item->precio, 0, ',', '.');
         }
