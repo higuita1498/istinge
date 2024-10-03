@@ -519,7 +519,7 @@ class FacturasController extends Controller{
              DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'),
              DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), DB::raw('c.direccion as direccioncliente'),
              'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida',
-             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian','cs.address_street as address_street',
+             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian','cs.address_street as address_street','cs.nro as contrato',
              DB::raw('v.nombre as nombrevendedor'),
              DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
              DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
@@ -2057,11 +2057,13 @@ class FacturasController extends Controller{
             // ** Obtencion de los contratos
             if(isset($factura->relationContracts) && count($factura->relationContracts) > 0){
                 $textContratos="";
+                $textDireccion="";
                 $ti = 0;
                 foreach($factura->relationContracts as $contrato){
                     if($ti == 0){
                         $ti=1;
                         $textContratos.= $contrato->nro;
+                        $textDireccion.= $contrato->address_street?:$contrato->cliente()->direccion;
                     }else{
                         $textContratos.= "-" . $contrato->nro;
                     }
@@ -2074,6 +2076,7 @@ class FacturasController extends Controller{
             $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
             $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
             $nestedData[] = $textContratos;
+            $nestedData[] = $textDireccion;
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
             if(date('Y-m-d') > $factura->vencimiento && $factura->estatus==1){
                 $nestedData[] = '<spam class="text-danger">'.date('d-m-Y', strtotime($factura->vencimiento)).'</spam>';
