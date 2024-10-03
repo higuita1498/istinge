@@ -2070,6 +2070,7 @@ class FacturasController extends Controller{
                 }
             }else{
                 $textContratos="No";
+                $textDireccion="";
             }
 
             $nestedData = array();
