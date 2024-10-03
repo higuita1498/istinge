@@ -327,6 +327,7 @@
         if (tipoSaldo && !isNaN(valorSaldo)) {
             options = options.filter(function() {
                 let saldo = parseFloat($(this).data('saldo'));
+                saldo = Math.round(saldo);
                 switch (tipoSaldo) {
                     case 'mayor_a':
                         return saldo > valorSaldo;

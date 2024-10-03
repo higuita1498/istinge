@@ -133,9 +133,10 @@ class AvisosController extends Controller
         'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1',
         'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit',
         'contactos.telefono1 as c_telefono', 'contactos.email as c_email',
-        'contactos.barrio as c_barrio','planes_velocidad.price as factura_total')
+        'contactos.barrio as c_barrio', DB::raw('COALESCE(planes_velocidad.price, 0) + COALESCE(tv.precio + (tv.precio * tv.impuesto / 100), 0) as factura_total'))
 			->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+            ->leftJoin('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+            ->leftJoin('inventario as tv', 'contracts.servicio_tv', '=', 'tv.id') // Relación con inventario (servicio de TV)
             ->where('contracts.empresa', Auth::user()->empresa)
             ->whereNotNull('contactos.celular');
 
@@ -148,7 +149,8 @@ class AvisosController extends Controller
             $contratos = Contrato::leftJoin('facturas_contratos as fc', 'fc.contrato_nro', 'contracts.nro')
                 ->leftJoin('factura', 'factura.id', '=', 'fc.factura_id')
                 ->leftJoin('contactos', 'contactos.id', '=', 'contracts.client_id') // Asegúrate que existe la relación entre contratos y contactos
-                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                ->leftJoin('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                ->leftJoin('inventario as tv', 'contracts.servicio_tv', '=', 'tv.id') // Relación con inventario (servicio de TV)
                 ->where('factura.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
                 ->where('factura.estatus', 1)
                 ->select('contracts.*',
@@ -159,7 +161,8 @@ class AvisosController extends Controller
                          'contactos.nit as c_nit',
                          'contactos.telefono1 as c_telefono',
                          'contactos.email as c_email',
-                         'contactos.barrio as c_barrio','planes_velocidad.price as factura_total')
+                         'contactos.barrio as c_barrio',
+                    DB::raw('COALESCE(planes_velocidad.price, 0) + COALESCE(tv.precio + (tv.precio * tv.impuesto / 100), 0) as factura_total'))
                 ->orderBy('fc.id', 'desc')
                 ->groupBy('contracts.id');
 
@@ -169,7 +172,8 @@ class AvisosController extends Controller
                 // Si no hay resultados, redefinimos la variable $contratos con la segunda consulta
                 $contratos = Contrato::leftJoin('factura as f', 'f.contrato_id', '=', 'contracts.id')
                 ->leftJoin('contactos', 'contactos.id', '=', 'contracts.client_id') // Asegúrate que existe la relación entre contratos y contactos
-                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                ->leftJoin('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+                ->leftJoin('inventario as tv', 'contracts.servicio_tv', '=', 'tv.id') // Relación con inventario (servicio de TV)
                 ->where('f.vencimiento', date('Y-m-d', strtotime(request()->vencimiento)))
                 ->where('f.estatus', 1)
                 ->select('contracts.*',
@@ -180,7 +184,8 @@ class AvisosController extends Controller
                          'contactos.nit as c_nit',
                          'contactos.telefono1 as c_telefono',
                          'contactos.email as c_email',
-                         'contactos.barrio as c_barrio','planes_velocidad.price as factura_total')
+                         'contactos.barrio as c_barrio',
+                    DB::raw('COALESCE(planes_velocidad.price, 0) + COALESCE(tv.precio + (tv.precio * tv.impuesto / 100), 0) as factura_total')) // Obtener el precio de planes_velocidad o de inventario
                 ->groupBy('contracts.id')
                 ->orderBy('f.id', 'desc');
             }
