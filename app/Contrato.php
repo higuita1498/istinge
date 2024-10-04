@@ -323,7 +323,7 @@ class Contrato extends Model
             SUM(
                 (
                     (
-                        itemsf.precio * itemsf.cant
+                        ROUND(itemsf.precio * itemsf.cant)
                     ) - IF
                     (itemsf.desc > 0, (itemsf.precio * itemsf.cant) * (itemsf.desc / 100),0)
                 ) * (
