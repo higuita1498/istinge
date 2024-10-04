@@ -159,7 +159,7 @@
 <!-- FIN BANNER DE VALORES -->
 
  <!-- BANNER DE VALORES -->
- @if($factura->contrato_id != null)
+ @if($factura->contratos() != false)
  <div class="card-body" style="margin-bottom:-29px;">
 <div class="row" style="box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.15);background-color: #fff; padding:0% !important;">
     <div class="stretch-card" style="border: 1px solid #fff !important;margin-left:15px;">
@@ -168,12 +168,9 @@
                 <div class="float-center">
                     <p class="mb-0 text-center">Contrato asociado</p>
                         <div class="fluid-container">
-
-                        @if($factura->contratos() != false)
                             @foreach ( $factura->contratos() as $detalleContrato )
                             <h4 class="font-weight-medium text-center mb-0">No. <a href="{{route('contratos.show',$detalleContrato->contrato_nro)}}" target="_blank">{{$detalleContrato->contrato_nro}}</a></h4>
                             @endforeach
-                        @endif
                     </div>
                 </div>
             </div>
