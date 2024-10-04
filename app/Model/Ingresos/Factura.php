@@ -235,7 +235,7 @@ class Factura extends Model
 
         if ($items) {
             foreach ($items as $item) {
-                $result = round($item->precio * $item->cant);
+                $result = $item->precio * $item->cant;
                 $totales['subtotal'] += $result;
 
                 //SACAR EL DESCUENTO
@@ -246,8 +246,8 @@ class Factura extends Model
                 }
 
                 $totales['descuento'] += $desc;
-                $result = round($result - $desc);
-                $totales['resul'] = round($totales['subtotal']) - $totales['descuento'];
+                $result = $result - $desc;
+                $totales['resul'] = $totales['subtotal'] - $totales['descuento'];
 
                 //SACAR EL IMPUESTO
 
@@ -267,7 +267,7 @@ class Factura extends Model
                 }
                 //Facturacion electronica obtenemos el TaxExclusiveAmount (total sobre el cual se calculan los ivas de los items)
                 if ($item->impuesto != null) {
-                    $totales['TaxExclusiveAmount'] += round(($item->precio * $item->cant) - $desc);
+                    $totales['TaxExclusiveAmount'] += ($item->precio * $item->cant) - $desc;
                 }
 
                 if ($item->impuesto_1 > 0) {
