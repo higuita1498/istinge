@@ -360,29 +360,31 @@ class InventarioController extends Controller{
 
     public function television_create(){
         $this->getAllPermissions(Auth::user()->id);
-        $empresa = Auth::user()->empresa;
-        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('id','>',1)->get();
-        $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
-        $categorias=Categoria::where('empresa',$empresa)->where('estatus', 1)->whereNull('asociado')->get();
+        $empresa = Auth::user()->empresa();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->where('id','>',1)->get();
+        $impuestos = Impuesto::where('empresa',$empresa->id)->orWhere('empresa', null)->where('estado', 1)->get();
+        $categorias=Categoria::where('empresa',$empresa->id)->where('estatus', 1)->whereNull('asociado')->get();
         $medidas=DB::table('medidas')->get();
-        $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
+        $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
         $unidades=DB::table('unidades_medida')->get();
         view()->share(['icon' =>'', 'title' => 'Nuevo Plan de Televisión']);
-        $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
+        $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
 
         $identificaciones=TipoIdentificacion::all();
-        $vendedores = Vendedor::where('empresa',$empresa)->where('estado', 1)->get();
-        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->get();
-        $tipos_empresa=TipoEmpresa::where('empresa',$empresa)->get();
+        $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado', 1)->get();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',$empresa->id)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
         $type = 'TV';
         //Tomar las categorias del puc que no son transaccionables.
-        $cuentas = Puc::where('empresa',$empresa)
+        $cuentas = Puc::where('empresa',$empresa->id)
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
-        $autoRetenciones = Retencion::where('empresa',$empresa)->where('estado',1)->where('modulo',2)->get();
-        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type', 'autoRetenciones'));
+        $autoRetenciones = Retencion::where('empresa',$empresa->id)->where('estado',1)->where('modulo',2)->get();
+        return view('inventario.create')->with(compact('categorias', 'unidades', 'medidas', 'impuestos', 'extras', 'empresa',
+        'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type',
+        'autoRetenciones'));
     }
 
     public function store(Request $request){
