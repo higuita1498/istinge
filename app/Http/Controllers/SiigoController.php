@@ -259,8 +259,8 @@ class SiigoController extends Controller
             ],
             "date" => $factura->fecha,
             "customer" => [
-                "person_type" => $cliente_factura->dv != null ? 'company' : 'person',
-                "id_type" => $cliente_factura->dv != null ? 13 : 31, //13 cedula 31 nit
+                "person_type" => $cliente_factura->dv != null ? 'Company' : 'Person',
+                "id_type" => $cliente_factura->dv != null ? "31" : "13", //13 cedula 31 nit
                 "identification" => $cliente_factura->nit,
                 "branch_office" => "0", //por defecto 0
                 "name" => [

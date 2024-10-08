@@ -12,7 +12,7 @@
 </div>
 
 <script type="text/javascript">
-	setTimeout(function(){ 
+	setTimeout(function(){
 		$('.alert').hide();
 		$('.active_table').attr('class', ' ');
 	}, 5000);
@@ -67,7 +67,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="form-group col-md-5">
+		<div class="form-group col-md-3">
 			<label class="control-label">Precio de Venta <span class="text-danger">*</span></label>
 			<input type="text" class="form-control " id="precio" name="precio" required="" maxlength="24" value="{{App\Funcion::precision($inventario->precio)}}" placeholder="{{Auth::user()->empresa()->moneda}}" min="0" @if($inventario->tipo_producto==1) @endif >
 			<span class="help-block error">
@@ -75,6 +75,16 @@
 			</span>
 			<span class="litte">Use el punto (.) para colocar decimales</span>
 		</div>
+
+        @if($empresa->api_key_siigo != null)
+        <div class="form-group col-md-3">
+            <label class="control-label">Código Siigo </label>
+          <input type="text" class="form-control" name="codigo_siigo" id="codigo_siigo" value="{{ $inventario->codigo_siigo }}">
+          <span class="help-block error">
+              <strong>{{ $errors->first('codigo_siigo') }}</strong>
+          </span>
+      </div>
+      @endif
 
 		<div class="form-group col-md-7 ">
 			<div class="row">
@@ -89,8 +99,8 @@
 							<tr id="tr_lista_{{($key+1)}}">
 								<td width="20%"><label class="control-label">Lista de precios <span class="text-danger">*</span></label></td>
 								<td width="30%">
-									<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="preciolista[]" id="preciolista{{($key+1)}}" onchange="change_precio_lista({{($key+1)}});" required="">							        		
-										@foreach($listas as $lista) 
+									<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="preciolista[]" id="preciolista{{($key+1)}}" onchange="change_precio_lista({{($key+1)}});" required="">
+										@foreach($listas as $lista)
 										@if($precio->lista==$lista->id) @php $tipo=$lista->tipo @endphp @endif
 										<option value="{{$lista->id}}" {{$precio->lista==$lista->id?'selected':''}}  >{{$lista->nombre()}}</option>
 										@endforeach
@@ -105,7 +115,7 @@
 
 						</tbody>
 					</table>
-				</div> 
+				</div>
 			</div>
 
 		</div>
@@ -118,7 +128,7 @@
 						<label class="control-label">Inventario <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="inventario" id="inventario"  title="Seleccione">
 							@foreach($cuentas as $cuenta)
-								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach 
+								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 1){{'selected'}}@endif @endforeach
 									value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 								</option>
 							@endforeach
@@ -131,9 +141,9 @@
 						<label class="control-label">Costo <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="costo" id="costo"  title="Seleccione">
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 2){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
-							</option>				
+							</option>
 							@endforeach
 					</select>
 					<span class="help-block error">
@@ -144,7 +154,7 @@
 						<label class="control-label">Venta <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="venta" id="venta"  title="Seleccione">
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 3){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 							</option>
 							@endforeach
@@ -157,7 +167,7 @@
 						<label class="control-label">Devolución <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="devolucion" id="devolucion"  title="Seleccione">
 							@foreach($cuentas as $cuenta)
-							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach 
+							<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 4){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}} - {{$cuenta->codigo}}
 							</option>
 							@endforeach
@@ -169,7 +179,7 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-5">
-						
+
 					</div>
 					<div class="form-group col-md-7 ">
 						<div class="row">
@@ -187,8 +197,8 @@
 										<tr id="tr_cuenta_{{($key2+1)}}">
 											<td width="20%"><label class="control-label">Cuenta contable <span class="text-danger">* {{$cuenta->nombreProductoServicio()}}</span></label></td>
 											<td width="30%">
-												<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">							        		
-													@foreach($cuentas as $c) 
+												<select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" name="cuentacontable[]" id="cuentacontable{{($key2+1)}}" required="">
+													@foreach($cuentas as $c)
 													<option value="{{$c->id}}" {{$cuenta->cuenta_id ==$c->id ? 'selected':''}}  >{{$c->nombre}} - {{$c->codigo}}</option>
 													@endforeach
 												</select>
@@ -236,7 +246,7 @@
 						<label class="control-label">Cuenta de auto retención <span class="text-danger">*</span></label>
 						<select class="form-control selectpicker" data-live-search="true" data-size="5" name="autoretencion" id="autoretencion"  title="Seleccione" required="">
 							@foreach($autoRetenciones as $cuenta)
-								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 5){{'selected'}}@endif @endforeach 
+								<option @foreach($cuentasInventario  as $ci) @if($ci->cuenta_id == $cuenta->id && $ci->tipo == 5){{'selected'}}@endif @endforeach
 								value="{{$cuenta->id}}">{{$cuenta->nombre}}</option>
 							@endforeach
 					</select>
@@ -322,7 +332,7 @@
 										<strong>{{ $errors->first('tipo_producto') }}</strong>
 									</span>
 								</div>
-								
+
 								@if(auth()->user()->empresa()->carrito == 1)
 								<div class="form-group col-md-5">
 									<label class="control-label">Asignar a una lista</label>
@@ -376,7 +386,7 @@
 											<label class="control-label">Costo unidad</label>
 											<input type="number" class="form-control" name="costo_unidad" id="precio_unid" required="" maxlength="24"  min="0" value="{{$inventario->costo_unidad}}" >
 											<span class="help-block error">
-												<strong>{{ $errors->first('nro') }}</strong> 
+												<strong>{{ $errors->first('nro') }}</strong>
 											</span>
 										</div>
 									</div>
@@ -394,13 +404,13 @@
 																@endforeach
 															</select>
 															<input type="hidden" name="idbodega{{($key)}}" value="{{$bodega->id}}">
-														</td> 
+														</td>
 														<td width="25%" class="text-center"><label class="control-label">Cantidad Inicial <span class="text-danger">*</span></label></td>
 														<td width="25%" class="monetario"><input type="number" class="form-control form-control-sm" id="bodegavalor{{($key+1)}}" name="bodegavalor[]" required="" maxlength="24" min="0" value="{{$bodega->inicial}}"></td>
 														<td width="5%">
 															@if($key>0 && $bodega->transferencias()==0)
 															<button type="button" class="btn btn-link" onclick="Eliminar('tr_bodega_{{($key+1)}}');">X</button>
-															@endif	
+															@endif
 														</td></tr>
 														@endforeach
 													</tbody>
@@ -438,7 +448,7 @@
 								<p><small>{{$campo->descripcion}}</small></p>
 							</div>
 							@if($campo->autocompletar==1)
-							@php $search[]=$campo->campo; @endphp 
+							@php $search[]=$campo->campo; @endphp
 							<input type="hidden" id="search{{$campo->campo}}" value="{{json_encode($campo->records())}}">
 							@endif
 							@endforeach
@@ -446,7 +456,7 @@
 							@if ($search) <input type="hidden" id="camposextra" value="{{json_encode($search)}}"> @endif
 						</div>
 
-	
+
 
 						<div class="pst-buttons">
 							<small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
@@ -469,13 +479,13 @@
     				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 img-obj-{{$imagen->id}}">
     			        <div class="image-thumb">
     			            <img class="img-responsive thumbnail" src="{{asset('images/Empresas/Empresa'.$inventario->empresa.'/inventario/'.$inventario->id.'/'.$imagen->imagen)}}" onerror="this.src='@if(Auth::user()->empresa()->img_default) {{asset("images/Empresas/Empresa".Auth::user()->empresa."/".Auth::user()->empresa()->img_default)}} @else {{asset('images/producto-sin-imagen.png')}} @endif'">
-    			            <div class="image-fav">    
+    			            <div class="image-fav">
     			            	<div class="image-fav-icons">
     			            		<button type="button" class="btn btn-link btn-icons" onclick="delete_img('{{$imagen->id}}');"><i class="fas fa-trash-alt"></i></button>
     			                	<a href="{{asset('images/Empresas/Empresa'.$inventario->empresa.'/inventario/'.$inventario->id.'/'.$imagen->imagen)}}" class="img-view"><i class="fas fa-eye"></i><img class="img-responsive thumbnail"  src="{{asset('images/Empresas/Empresa'.$inventario->empresa.'/inventario/'.$inventario->id.'/'.$imagen->imagen)}}"  onerror="this.src='{{asset('images/producto-sin-imagen.png')}}'" style="display:none"></a>
     			            	</div>
     			            </div>
-    			            
+
     			        </div>
     			    </div>
     			@endforeach
@@ -498,7 +508,7 @@
     </div>
 					<input type="hidden" id="json_precios" value="{{json_encode($listas)}}">
 					<input type="hidden" id="json_bodegas" value="{{json_encode($bodegas)}}">
-					<input type="hidden" id="json_cuentas" value="{{json_encode($cuentas)}}">	
+					<input type="hidden" id="json_cuentas" value="{{json_encode($cuentas)}}">
 
 @endsection
 

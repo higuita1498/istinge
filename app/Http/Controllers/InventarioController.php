@@ -330,31 +330,32 @@ class InventarioController extends Controller{
 
     public function create(){
         $this->getAllPermissions(Auth::user()->id);
-        $empresa = Auth::user()->empresa;
-        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('id','>',1)->get();
-        $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
+        $empresa = Auth::user()->empresa();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->where('id','>',1)->get();
+        $impuestos = Impuesto::where('empresa',$empresa->id)->orWhere('empresa', null)->where('estado', 1)->get();
         $medidas=DB::table('medidas')->get();
-        $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
+        $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
         $unidades=DB::table('unidades_medida')->get();
         view()->share(['icon' =>'', 'title' => 'Nuevo Producto']);
-        $extras = CamposExtra::where('empresa',$empresa)->where('status', 1)->get();
+        $extras = CamposExtra::where('empresa',$empresa->id)->where('status', 1)->get();
 
         $identificaciones=TipoIdentificacion::all();
-        $vendedores = Vendedor::where('empresa',$empresa)->where('estado', 1)->get();
-        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->get();
-        $tipos_empresa=TipoEmpresa::where('empresa',$empresa)->get();
+        $vendedores = Vendedor::where('empresa',$empresa->id)->where('estado', 1)->get();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->get();
+        $tipos_empresa=TipoEmpresa::where('empresa',$empresa->id)->get();
         $prefijos=DB::table('prefijos_telefonicos')->get();
-        // $cuentas = Puc::where('empresa',$empresa)->where('estatus',1)->get();
+        // $cuentas = Puc::where('empresa',$empresa->id)->where('estatus',1)->get();
 
         //Tomar las categorias del puc que no son transaccionables.
-        $cuentas = Puc::where('empresa',$empresa)
+        $cuentas = Puc::where('empresa',$empresa->id)
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
 
         $autoRetenciones = Retencion::where('empresa',Auth::user()->empresa)->where('estado',1)->where('modulo',2)->get();
         $type = '';
-        return view('inventario.create')->with(compact('unidades', 'medidas', 'impuestos', 'extras', 'listas', 'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type','autoRetenciones'));
+        return view('inventario.create')->with(compact('unidades', 'medidas', 'impuestos', 'extras', 'listas','empresa',
+        'bodegas','identificaciones', 'tipos_empresa', 'prefijos', 'vendedores', 'listas','cuentas', 'type','autoRetenciones'));
     }
 
     public function television_create(){
@@ -428,6 +429,7 @@ class InventarioController extends Controller{
         $inventario->lista = 0;
         $inventario->link = $request->link;
         $inventario->type_autoretencion = $request->tipo_autoretencion;
+        $inventario->codigo_siigo = isset($request->codigo_siigo) ? $request->codigo_siigo : '';
         $inventario->save();
 
         if ($request->tipo_producto==1) {
@@ -766,14 +768,14 @@ class InventarioController extends Controller{
 
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
-        $empresa = Auth::user()->empresa;
-        $listas = ListaPrecios::where('empresa',$empresa)->where('status', 1)->where('nro','>',1)->get();
-        $impuestos = Impuesto::where('empresa',$empresa)->orWhere('empresa', null)->where('estado', 1)->get();
-        $categorias=Categoria::where('empresa',$empresa)->where('estatus', 1)->whereNull('asociado')->get();
-        $bodegas = Bodega::where('empresa',$empresa)->where('status', 1)->get();
-        $inventario =Inventario::where('id',$id)->where('empresa',$empresa)->first();
+        $empresa = Auth::user()->empresa();
+        $listas = ListaPrecios::where('empresa',$empresa->id)->where('status', 1)->where('nro','>',1)->get();
+        $impuestos = Impuesto::where('empresa',$empresa->id)->orWhere('empresa', null)->where('estado', 1)->get();
+        $categorias=Categoria::where('empresa',$empresa->id)->where('estatus', 1)->whereNull('asociado')->get();
+        $bodegas = Bodega::where('empresa',$empresa->id)->where('status', 1)->get();
+        $inventario =Inventario::where('id',$id)->where('empresa',$empresa->id)->first();
         // $cuentas = ProductoServicio::where('en_uso',1)->get();
-        $cuentas = Puc::where('empresa',$empresa)
+        $cuentas = Puc::where('empresa',$empresa->id)
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
         ->get();
@@ -786,7 +788,8 @@ class InventarioController extends Controller{
             $medidas=DB::table('medidas')->get();
             $unidades=DB::table('unidades_medida')->get();
             $cuentasInventario = $inventario->cuentas();
-            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras', 'bodegas', 'listas','cuentasInventario','cuentas','autoRetenciones'));
+            return view('inventario.edit')->with(compact('categorias', 'inventario', 'medidas', 'unidades', 'impuestos', 'extras',
+             'bodegas', 'listas','cuentasInventario','cuentas','autoRetenciones','empresa'));
         }
         return redirect('empresa/inventario')->with('success', 'No existe un registro con ese id');
     }
@@ -877,6 +880,7 @@ class InventarioController extends Controller{
             $inventario->link = $request->link;
             $inventario->type = $request->type;
             $inventario->type_autoretencion = $request->tipo_autoretencion;
+            $inventario->codigo_siigo = isset($request->codigo_siigo) ? $request->codigo_siigo : '';
             $inventario->save();
 
             if ($request->tipo_producto==1) {
