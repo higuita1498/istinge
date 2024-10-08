@@ -75,9 +75,7 @@
 	  					</table>
 	  				</div>
 	  			</div>
-
 			</div>
-
 			<div class="form-group col-md-4 ">
 				<div class="row">
 				</div>
