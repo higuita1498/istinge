@@ -61,6 +61,16 @@
     @if(($tipo == 1 && isset($opciones_dian) && $opciones_dian == 1) && !isset($_SESSION['permisos']['857']))
 	    <a onclick="convertirElectronica('{{$codigo}}','{{route('facturas.convertirelectronica',$id)}}')" class="btn btn-outline-info btn-icons" title="Convertir a electrónica"><i class="fas fa-exchange-alt"></i></a>
 	@endif
+
+    @if($api_key_siigo != null)
+    <a
+    {{-- href="{{route('siigo.create_invoice',$id)}}" --}}
+    href="#"
+    onclick="showModalSiigo({{$id}},{{$codigo}},`{{$fecha}}`,`{{$nombrecliente}}`)"
+    class="btn btn-outline-info btn-icons" title="Enviar a Siigo">
+        <i class="fas fa-file-import"></i>
+    </a>
+    @endif
 @endif
 
 <script>

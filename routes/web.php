@@ -276,7 +276,6 @@ Route::group(['prefix' => 'master', 'middleware' => ['auth', 'master']], functio
         Route::post('/personalizados/{id}/borrar','PlanesController@personalizados_destroy')->name('p_personalizados.destroy');
     });
 
-
     Route::group(['prefix' => 'suscripcion'], function() {
         Route::get('listado', 'SuscripcionController@index')->name('listado.index');
         Route::get('pagos', 'SuscripcionController@indexPagos')->name('listadoPagos.index');
@@ -319,6 +318,17 @@ Route::group(['prefix' => 'tecnico', 'middleware' => ['auth']], function() {
     Route::get('/', [TecnicoController::class, 'index'])->name('tecnico.index');
     Route::post('save-location', [TecnicoController::class, 'saveLocation'])->name('tecnico.saveLocation');
     Route::get('get-location/{tecnico}', [TecnicoController::class, 'getLocation'])->name('tecnico.getLocation');
+});
+
+Route::group(['prefix' => 'Olt'], function(){
+    Route::get('unconfigured-onus','OltController@unConfiguredOnus')->name('olt.unconfigured');
+});
+
+Route::group(['prefix' => 'siigo'], function(){
+    Route::post('configuracion_siigo', 'SiigoController@configurarSiigo');
+    Route::post('create_invoice', 'SiigoController@createInvoice')->name('siigo.create_invoice');
+    Route::get('get_modal_invoice', 'SiigoController@getModalInvoice');
+    Route::get('send_invoice', 'SiigoController@sendInvoice');
 });
 
 Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {

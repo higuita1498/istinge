@@ -198,10 +198,214 @@
             </div>
         </div>
     </div>
+
+         {{-- MODAL ENVIO SIIGO --}}
+         <div class="modal fade" id="envio_siigo" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Envio a Siigo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="" style="padding: 2% 3%;" role="form"
+                        class="forms-sample" novalidate id="form" >
+
+                            {{ csrf_field() }}
+
+                            <input type="hidden" id='factura_id'>
+
+                            <div class="card mb-4 p-2">
+                                <h6 class="mb-0" id="h4-factnro"></h6>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label class="control-label">Tipo Comprobante Siigo</label>
+                                    <select class="form-control" name="tipo_comprobante_siigo" id="tipo_comprobante_siigo">
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="control-label">Fecha</label>
+                                    <input class="form-control" type="text" id="fecha_siigo" readonly>
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    <label class="control-label">Cliente</label>
+                                    <input class="form-control" type="text" id="cliente_siigo" readonly>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="control-label">Centro Costos Siigo</label>
+                                    <select class="form-control" name="centro_costos" id="centro_costos">
+
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    <label class="control-label">Tipos de Pago Siigo</label>
+                                    <select class="form-control" name="tipos_pago" id="tipos_pago">
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="control-label">Usuarios Siigo</label>
+                                    <select class="form-control" name="usuarios" id="usuarios">
+
+                                    </select>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <a href="javascript:sendInvoiceSiigo()" class="btn btn-success">Guardar</A>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- /MODAL ENVIO SIIGO --}}
+
 @endsection
 
 @section('scripts')
 <script>
+
+    function showModalSiigo(factura_id,codigo,fecha,cliente){
+
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url='/software/siigo/get_modal_invoice';
+        }else{
+            var url = '/siigo/get_modal_invoice';
+        }
+
+        $("#envio_siigo").modal('show');
+        $("#tipo_comprobante_siigo").empty();
+        $("#centro_costos").empty();
+        $("#tipos_pago").empty();
+        $("#usuarios").empty();
+
+        $.ajax({
+            url: url,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            method: 'get',
+            data: {
+                factura_id: factura_id,
+            },
+            success: function (data) {
+
+                if(data.status == 200){
+
+                    $("#fecha_siigo").val(fecha);
+                    $("#cliente_siigo").val(cliente);
+                    $("#factura_id").val(factura_id);
+
+                    $.each(data.tipos_comprobante, function(index, item) {
+
+                        $("#tipo_comprobante_siigo").append(
+                            $('<option>', {
+                                value: item.id,
+                                text: item.name + " - " + item.description
+                            })
+                        );
+
+                    });
+
+                    $.each(data.centro_costos, function(index, item) {
+
+                    $("#centro_costos").append(
+                        $('<option>', {
+                            value: item.id,
+                            text: item.name + " - " + item.description
+                        })
+                    );
+
+                    });
+
+                    $("#tipos_pago").append($('<option>', {
+                            value: 0,
+                            text: "Seleccione tipo de pago"
+                        }));
+
+                    $.each(data.tipos_pago, function(index, item) {
+                    $("#tipos_pago").append(
+                        $('<option>', {
+                            value: item.id,
+                            text: item.name
+                        })
+                    );
+                    });
+
+
+                    $("#usuarios").append($('<option>', {
+                            value: 0,
+                            text: "Seleccione un usuario"
+                        }));
+
+                    $.each(data.usuarios, function(index, item) {
+                    $("#usuarios").append(
+                        $('<option>', {
+                            value: item.id,
+                            text: item.first_name + " " + item.last_name
+                        })
+                    );
+                    });
+
+
+                    $("#h4-factnro").text("Codigo Factura: " + codigo);
+                    $("#envio_siigo").modal('show');
+                }else{
+                    alert("Ha ocurrido un error");
+                }
+            }
+        });
+    }
+
+    function sendInvoiceSiigo(){
+
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url='/software/siigo/send_invoice';
+        }else{
+            var url = '/siigo/send_invoice';
+        }
+
+        let tipo_comprobante = $("#tipo_comprobante_siigo").val();
+        let factura_id = $("#factura_id").val();
+        let tipos_pago = $("#tipos_pago").val();
+        let centro_costos = $("#centro_costos").val();
+        let usuario = $("#usuarios").val();
+
+        $.ajax({
+            url: url,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            method: 'get',
+            data: {
+                tipo_comprobante,
+                factura_id,
+                tipos_pago,
+                centro_costos,
+                usuario
+            },
+            success: function (data) {
+                console.log(data);
+            }
+        });
+
+
+    }
+
 	var tabla = $('#tabla-facturas');
 	window.addEventListener('load', function() {
 		var tabla= $('#tabla-facturas').DataTable({

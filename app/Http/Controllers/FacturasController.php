@@ -344,11 +344,13 @@ class FacturasController extends Controller{
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+            ->join('empresas as em','em.id','factura.empresa')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo', 'factura.nro','factura.dian_response',
-            'mk.nombre as servidor','cs.server_configuration_id',
+            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje',
+            'factura.codigo', 'factura.nro','factura.dian_response', 'mk.nombre as servidor',
+            'cs.server_configuration_id','em.api_key_siigo as api_key_siigo',
             DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),  DB::raw('c.direccion as direccioncliente'),
             DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'),
             DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
@@ -492,6 +494,7 @@ class FacturasController extends Controller{
     }
 
     public function facturas(Request $request){
+
         $modoLectura = auth()->user()->modo_lectura();
         $identificadorEmpresa = auth()->user()->empresa;
         $moneda = auth()->user()->empresa()->moneda;
@@ -510,11 +513,13 @@ class FacturasController extends Controller{
 
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
+            ->join('empresas as em','em.id','factura.empresa')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->join('contracts as cs', 'factura.contrato_id', '=', 'cs.id')
             ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo',
+             'em.api_key_siigo as api_key_siigo',
              'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'),
              DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'),
              DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), DB::raw('c.direccion as direccioncliente'),

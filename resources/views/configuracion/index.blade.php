@@ -189,14 +189,6 @@
 			<a id="planes_nomina" href="{{route('nomina.suscripciones')}}" class="{{$empresa->nomina ? '' : 'd-none'}}">Planes de Suscripción</a> <br>
 		</div>
 
-		@if(isset($_SESSION['permisos']['759']))
-		<div class="col-sm-3 enlaces">
-			<h4 class="card-title">Administración OLT</h4>
-			<p>Completa la información de la OLT de tu empresa.</p>
-			<a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
-		</div>
-		@endif
-
 		@if(isset($_SESSION['permisos']['762']) || isset($_SESSION['permisos']['763']) || isset($_SESSION['permisos']['764']))
 		<div class="col-sm-3 enlaces">
 			<h4 class="card-title">Integraciones de Servicios</h4>
@@ -216,6 +208,12 @@
 			@if(isset($_SESSION['permisos']['764']) && Auth::user()->nombres == 'Desarrollo')
 			<a href="#">Troncal SIP</a><br>
 			@endif
+            @if(isset($_SESSION['permisos']['759']))
+            <a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
+            @endif
+            @if(isset($_SESSION['permisos']['759']))
+            <a href="#" data-toggle="modal" data-target="#config_siigo">Configurar Siigo</a><br>
+            @endif
 		</div>
 		@endif
 
@@ -397,8 +395,8 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h4 class="modal-title">Configuración Smart OLT</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title"></h4>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="{{ route('servicio.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form" >
@@ -429,6 +427,44 @@
 		</div>
 	</div>
 	{{-- /CONFIGURACION OLT --}}
+
+    {{-- CONFIGURACION SIIGO --}}
+    <div class="modal fade" id="config_siigo" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+                    <h4 class="modal-title">Configuración Siigo</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="{{ route('servicio.store') }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form" >
+						{{ csrf_field() }}
+						<div class="row">
+                            <div class="col-md-12 form-group">
+								<label class="control-label">Usuario Siigo</label>
+								<input type="text" class="form-control"  id="usuario_siigo" name="usuario_siigo"  required="" value="{{Auth::user()->empresa()->usuario_siigo}}" maxlength="200">
+								<span class="help-block error">
+									<strong>{{ $errors->first('usuario_siigo') }}</strong>
+								</span>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="control-label">API Key</label>
+								<input type="text" class="form-control"  id="api_key_siigo" name="api_key_siigo" value="{{Auth::user()->empresa()->api_key_siigo}}"  maxlength="200">
+								<span class="help-block error">
+									<strong>{{ $errors->first('api_key_siigo') }}</strong>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<a href="javascript:configuracionSiigo()" class="btn btn-success">Guardar</A>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{-- /CONFIGURACION SIIGO --}}
 
 	{{-- CANT REGISTRO --}}
 	<div class="modal fade show" id="nro_registro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
@@ -1260,6 +1296,50 @@
 						Swal.fire({
                 		type: 'success',
                 		title: 'La configuración de la OLT ha sido registrada con éxito',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}else{
+						Swal.fire({
+                		type: 'error',
+                		title: 'Error en la conexión, revise la ApiKey',
+                		text: 'Recargando la página',
+                		showConfirmButton: false,
+                		timer: 5000
+                		})
+					}
+
+                    setTimeout(function(){
+                    	var a = document.createElement("a");
+                    	a.href = window.location.pathname;
+                    	a.click();
+                    }, 2000);
+                }
+            });
+		}
+
+        function configuracionSiigo() {
+			if (window.location.pathname.split("/")[1] === "software") {
+				var url='/software/siigo/configuracion_siigo';
+			}else{
+				var url = '/siigo/configuracion_siigo';
+			}
+
+            $.ajax({
+                url: url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                method: 'post',
+                data: {
+                	usuario_siigo: $("#usuario_siigo").val(),
+                	api_key_siigo: $("#api_key_siigo").val()
+                },
+                success: function (data) {
+                	$("#config_siigo").modal('hide');
+					if(data == 1){
+						Swal.fire({
+                		type: 'success',
+                		title: 'La configuración de Siigo ha sido registrada con éxito',
                 		text: 'Recargando la página',
                 		showConfirmButton: false,
                 		timer: 5000

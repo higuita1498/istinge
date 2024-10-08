@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Empresa; use App\Impuesto; use Carbon\Carbon; 
-use Validator; use Illuminate\Validation\Rule;  use Auth; 
+use App\Empresa; use App\Impuesto; use Carbon\Carbon;
+use Validator; use Illuminate\Validation\Rule;  use Auth;
 use Session;
 use App\Puc;
 
@@ -25,7 +25,18 @@ class ImpuestosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Nuevo Tipo de Impuesto']);
         $cuentas = Puc::cuentasTransaccionables();
-        return view('configuracion.impuestos.create',compact('cuentas'));
+
+        $empresa = Empresa::Find(1);
+        if($empresa->api_key_siigo != null){
+            $impuestos_siigo =  SiigoController::getTaxes()->getData('true');
+            $impuestos_siigo = array_filter($impuestos_siigo['taxes'], function($tax) {
+                return $tax['type'] === "IVA";
+            });
+        }else{
+            $impuestos_siigo = [];
+        }
+
+        return view('configuracion.impuestos.create',compact('cuentas','empresa','impuestos_siigo'));
     }
 
     public function store(Request $request){
@@ -43,6 +54,7 @@ class ImpuestosController extends Controller
         $impuesto->descripcion=$request->descripcion;
         $impuesto->puc_venta = $request->venta;
         $impuesto->puc_compra = $request->compra;
+        $impuesto->siigo_id = isset($request->impuesto_siigo) ? $request->impuesto_siigo : null;
         $impuesto->save();
 
         $mensaje='Se ha creado satisfactoriamente el tipo de impuesto';
@@ -53,14 +65,26 @@ class ImpuestosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $impuesto = Impuesto::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $cuentas = Puc::cuentasTransaccionables();
+
+        $empresa = Empresa::Find(1);
+        if($empresa->api_key_siigo != null){
+            $impuestos_siigo =  SiigoController::getTaxes()->getData('true');
+            $impuestos_siigo = array_filter($impuestos_siigo['taxes'], function($tax) {
+                return $tax['type'] === "IVA";
+            });
+        }else{
+            $impuestos_siigo = [];
+        }
+
         if ($impuesto) {
             view()->share(['title' => 'Modificar Tipo de Impuesto']);
-            return view('configuracion.impuestos.edit')->with(compact('impuesto','cuentas'));
+            return view('configuracion.impuestos.edit')->with(compact('impuesto','cuentas','impuestos_siigo','empresa'));
         }
         return redirect('empresa/configuracion/impuestos')->with('success', 'No existe un registro con ese id');
     }
 
     public function update(Request $request, $id){
+
         $impuesto =Impuesto::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($impuesto) {
             $request->validate([
@@ -74,6 +98,7 @@ class ImpuestosController extends Controller
             $impuesto->descripcion=$request->descripcion;
             $impuesto->puc_venta = $request->venta;
             $impuesto->puc_compra = $request->compra;
+            $impuesto->siigo_id = isset($request->impuesto_siigo) ? $request->impuesto_siigo : null;
             $impuesto->save();
 
             $mensaje='Se ha modificado satisfactoriamente el tipo de impuesto';

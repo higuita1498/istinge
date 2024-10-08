@@ -132,6 +132,31 @@
                 @endif
 
 
+                <div class="col-md-12">
+                    <div class="card-body">
+                        <div class="notice notice-info">
+                            <h4 class="float-left">OLT - ONUs</h4>
+                            <a class="btn btn-sm btn-none float-right" data-toggle="collapse" href="#welcomeAtajos" role="button" aria-expanded="false" aria-controls="welcomeAtajos" style="color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}} !important;">
+                                <i class="fas fa-angle-double-up"></i>
+                            </a>
+                            <hr class="mt-4">
+                        </div>
+                        <div class="collapse show" id="welcomeAtajos">
+                            <div class="row">
+                                <div class="col-md-4 offset-md-1">
+                                    <a href="{{ route('olt.unconfigured') }}">
+                                        <div class="card-counter primary">
+                                            <i class="fas fa-file-contract"></i>
+                                            <span class="count-numbers">11</span>
+                                            <span class="count-name">Esperando Autorizacion</span>
+                                        </div>
+                                        </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <div class="col-md-12">
                 <div class="card-body">
                     <div class="notice notice-info">

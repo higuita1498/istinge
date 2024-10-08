@@ -24,7 +24,9 @@ class Empresa extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'logo', 'nit', 'direccion', 'telefono', 'email', 'tip_iden', 'tipo_persona', 'status', 'terminos_cond', 'notas_fact', 'edo_cuenta_fact', 'moneda', 'created_at', 'updated_at', 'web', 'precision', 'sep_dec', 'carrito', 'img_default', 'rol', 'dv', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'cod_postal', 'json_test_creditnote', 'json_test_debitnote', 'json_test', 'tipo_fac', 'color', 'pageLength','logo1'
+        'nombre', 'logo', 'nit', 'direccion', 'telefono', 'email', 'tip_iden', 'tipo_persona', 'status', 'terminos_cond', 'notas_fact', 'edo_cuenta_fact', 'moneda', 'created_at', 'updated_at', 'web', 'precision', 'sep_dec',
+        'carrito', 'img_default', 'rol', 'dv', 'fk_idpais', 'fk_iddepartamento', 'fk_idmunicipio', 'cod_postal',
+        'json_test_creditnote', 'json_test_debitnote', 'json_test', 'tipo_fac', 'color', 'pageLength','logo1','api_key_siigo'
     ];
 
     public function usuario(){

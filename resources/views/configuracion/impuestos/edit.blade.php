@@ -2,7 +2,7 @@
 @section('content')
 	<form method="POST" action="{{ route('impuestos.update', $impuesto->id) }}" style="padding: 2% 3%;    " role="form" class="forms-sample" novalidate id="form-impuesto" >
   <input name="_method" type="hidden" value="PATCH">
-   {{ csrf_field() }} 
+   {{ csrf_field() }}
   <div class="row">
     <div class="col-md-3 form-group">
       <label class="control-label">Nombre <span class="text-danger">*</span></label>
@@ -22,7 +22,7 @@
       </div>
       <span class="help-block error">
         <strong>{{ $errors->first('dias') }}</strong>
-      </span> 
+      </span>
     </div>
 
 
@@ -47,9 +47,26 @@
 
   </div>
 
+  @if($empresa->api_key_siigo != null)
+  <div class="row">
+    <div class="col-md-3 form-group">
+        <label class="control-label">Impuesto en Siigo</label>
+        <select class="form-control selectpicker"  id="impuesto_siigo" name="impuesto_siigo">
+                <option value="0" disabled selected>Seleccione una opcion</option>
+            @foreach ($impuestos_siigo as $imp)
+                <option value={{ $imp['id'] }} {{ $imp['id'] == $impuesto->siigo_id ? 'selected' : '' }}>{{ $imp['name']}}</option>
+            @endforeach
+        </select>
+        <span class="help-block error">
+          <strong>{{ $errors->first('impuesto_siigo') }}</strong>
+        </span>
+      </div>
+  </div>
+  @endif
+
   <hr>
 
-  <h4>Configuración de contabilidad</h4> 
+  <h4>Configuración de contabilidad</h4>
   <div class="row">
     <div class="col-md-6 form-group">
       <label class="control-label">Cuenta contable para ventas<span class="text-danger">*</span></label>
