@@ -41,15 +41,6 @@
 				  <strong>{{ $errors->first('impuesto') }}</strong>
 			  </span>
 			</div>
-            @if($empresa->api_key_siigo != null)
-            <div class="form-group col-md-3">
-                <label class="control-label">Código Siigo </label>
-              <input type="text" class="form-control" name="codigo_siigo" id="codigo_siigo" value="{{old('codigo_siigo')}}">
-              <span class="help-block error">
-                  <strong>{{ $errors->first('codigo_siigo') }}</strong>
-              </span>
-          </div>
-          @endif
   		</div>
   		<div class="row">
 			<div class="form-group col-md-3">
@@ -60,6 +51,15 @@
 				</span>
 				<span class="litte">Use el punto (.) para colocar decimales</span>
 			</div>
+            @if($empresa->api_key_siigo != null)
+            <div class="form-group col-md-3">
+                <label class="control-label">Código Siigo </label>
+              <input type="text" class="form-control" name="codigo_siigo" id="codigo_siigo" value="{{old('codigo_siigo')}}">
+              <span class="help-block error">
+                  <strong>{{ $errors->first('codigo_siigo') }}</strong>
+              </span>
+          </div>
+          @endif
   			<div class="form-group col-md-7 ">
 	  			<div class="row">
 	  				<div class="col-md-6 monetario">
