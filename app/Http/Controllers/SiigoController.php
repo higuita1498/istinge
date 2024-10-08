@@ -241,6 +241,8 @@ class SiigoController extends Controller
         $items_factura = ItemsFactura::join('inventario','inventario.id','items_factura.producto')
         ->where('factura',$factura->id)->get();
         $empresa = Empresa::Find(1);
+        $departamento = $cliente_factura->departamento();
+        $municipio = $cliente_factura->municipio();
 
         $array_items_factura=[];
         foreach ($items_factura as $item) {
@@ -257,8 +259,45 @@ class SiigoController extends Controller
             ],
             "date" => $factura->fecha,
             "customer" => [
+                "person_type" => $cliente_factura->dv != null ? 'company' : 'person',
+                "id_type" => $cliente_factura->dv != null ? 13 : 31, //13 cedula 31 nit
                 "identification" => $cliente_factura->nit,
-                "branch_office" => "0" //por defecto 0
+                "branch_office" => "0", //por defecto 0
+                "name" => [
+                    $cliente_factura->nombre,
+                    $cliente_factura->apellido1 . " " . $cliente_factura->apellido2
+                ],
+                "address" => [
+                    "address" => $cliente_factura->direccion,
+                    "city" => [
+                        "country_code" => $cliente_factura->fk_idpais,
+                        "country_name" => "Colombia",
+                        "state_code"=> $departamento->codigo,
+                        "state_name"=> $departamento->nombre,
+                        "city_code"=> $municipio->codigo,
+                        "city_name"=> $municipio->nombre
+                    ],
+                    "postal_code" => $cliente_factura->cod_postal
+                ],
+                "phones" => [
+                    [
+                        "indicative" => "57",
+                        "number" => $cliente_factura->celular,
+                        "extension" => ""
+                    ]
+                ],
+                "contacts" => [
+                    [
+                        "first_name"=> $cliente_factura->nombre,
+                        "last_name"=> $cliente_factura->apellido1 . " " . $cliente_factura->apellido2,
+                        "email"=> $cliente_factura->email,
+                        "phone"=> [
+                        "indicative"=> "57",
+                        "number" => $cliente_factura->celular,
+                        "extension"=> ""
+                        ]
+                    ]
+                ]
             ],
             "seller" => $request->usuario,
             'items' => $array_items_factura,
@@ -284,7 +323,7 @@ class SiigoController extends Controller
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS =>$data,
         CURLOPT_HTTPHEADER => array(
             'Partner-Id: Integra',
