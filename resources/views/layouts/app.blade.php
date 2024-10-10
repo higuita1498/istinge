@@ -741,6 +741,21 @@
                 @if(isset($subseccion))
                     $("#{{$subseccion}}").addClass("active");
                 @endif
+
+                // Muestra la alerta solo si la suscripción ha caducado
+                @if(Auth::check() && Auth::user()->empresaObj && isset(Auth::user()->empresaObj->is_subscription_active) && !Auth::user()->empresaObj->is_subscription_active)
+                Swal.fire({
+                    title: 'Suscripción Expirada',
+                    text: 'Su suscripción ha expirado. Por favor, pague su mensualidad para continuar.',
+                    icon: 'warning',
+                    confirmButtonText: 'Pagar ahora',
+                    showCancelButton: true,
+                    cancelButtonText: 'Más tarde',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                });
+                @endif
             });
         </script>
 
