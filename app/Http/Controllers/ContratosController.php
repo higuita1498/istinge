@@ -3958,6 +3958,203 @@ class ContratosController extends Controller
         return redirect('empresa/contratos')->with('success', $mensaje);
     }
 
+    public function cargandoTv(Request $request){
+        $request->validate([
+            'archivo' => 'required|mimes:xlsx',
+        ],[
+            'archivo.mimes' => 'El archivo debe ser de extensión xlsx'
+        ]);
+
+        $create=0;
+        $modf=0;
+        $imagen = $request->file('archivo');
+        $nombre_imagen = 'archivo.'.$imagen->getClientOriginalExtension();
+        $path = public_path() .'/images/Empresas/Empresa'.Auth::user()->empresa;
+        $imagen->move($path,$nombre_imagen);
+        Ini_set ('max_execution_time', 500);
+        $fileWithPath=$path."/".$nombre_imagen;
+        //Identificando el tipo de archivo
+        $inputFileType = PHPExcel_IOFactory::identify($fileWithPath);
+        //Creando el lector.
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        //Cargando al lector de excel el archivo, le pasamos la ubicacion
+        $objPHPExcel = $objReader->load($fileWithPath);
+        //obtengo la hoja 0
+        $sheet = $objPHPExcel->getSheet(0);
+        //obtiene el tamaño de filas
+        $highestRow = $sheet->getHighestRow();
+        //obtiene el tamaño de columnas
+        $highestColumn = $sheet->getHighestColumn();
+
+        for ($row = 4; $row <= $highestRow; $row++){
+            $request= (object) array();
+            //obtengo el A4 desde donde empieza la data
+            $nit=$sheet->getCell("A".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+
+            $request->servicio      = $sheet->getCell("B".$row)->getValue();
+            $request->serial_onu    = $sheet->getCell("C".$row)->getValue();
+            $request->plan          = $sheet->getCell("D".$row)->getValue();
+            $request->mikrotik      = $sheet->getCell("E".$row)->getValue();
+            $request->state         = $sheet->getCell("F".$row)->getValue();
+            $request->ip            = $sheet->getCell("G".$row)->getValue();
+            $request->mac           = $sheet->getCell("H".$row)->getValue();
+            $request->conexion      = $sheet->getCell("I".$row)->getValue();
+            $request->interfaz      = $sheet->getCell("J".$row)->getValue();
+            $request->local_address = $sheet->getCell("K".$row)->getValue();
+            $request->nodo          = $sheet->getCell("L".$row)->getValue();
+            $request->ap            = $sheet->getCell("M".$row)->getValue();
+            $request->grupo_corte   = $sheet->getCell("N".$row)->getValue();
+            $request->facturacion   = $sheet->getCell("O".$row)->getValue();
+            $request->descuento     = $sheet->getCell("P".$row)->getValue();
+            $request->canal         = $sheet->getCell("Q".$row)->getValue();
+            $request->oficina       = $sheet->getCell("R".$row)->getValue();
+            $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
+            $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
+            $request->profle        = $sheet->getCell("W".$row)->getValue();
+            $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
+            $request->usuario       = $sheet->getCell("Y".$row)->getValue();
+            $request->clave         = $sheet->getCell("Z".$row)->getValue();
+
+
+            $error=(object) array();
+
+            if($nit != ""){
+                if(Contacto::where('nit', $nit)->where('status', 1)->count() == 0){
+                    $error->nit = "La identificación indicada no se encuentra registrada para ningún cliente en el sistema";
+                }
+            }
+            if (!$request->servicio) {
+                $error->servicio="El campo Servicio es obligatorio";
+            }
+
+            if($request->plan != ""){
+                if(Inventario::where('empresa', Auth::user()->empresa)->where('type', 'TV')->where('status', 1)->where("producto",$request->plan)->count() == 0){
+                    $error->plan = "La identificación indicada no se encuentra registrada para ningún cliente en el sistema";
+                }
+            }
+            if (!$request->state) {
+                $error->state = "El campo estado es obligatorio";
+            }
+
+            if (count((array) $error)>0) {
+                $fila["error"]='FILA '.$row;
+                $error=(array) $error;
+                var_dump($error);
+                var_dump($fila);
+
+                array_unshift ( $error ,$fila);
+                $result=(object) $error;
+                return back()->withErrors($result)->withInput();
+            }
+        }
+
+        for ($row = 4; $row <= $highestRow; $row++){
+            $nit = $sheet->getCell("A".$row)->getValue();
+            if (empty($nit)) {
+                break;
+            }
+            $request                = (object) array();
+            $request->servicio      = $sheet->getCell("B".$row)->getValue();
+            $request->serial_onu    = $sheet->getCell("C".$row)->getValue();
+            $request->plan          = $sheet->getCell("D".$row)->getValue();
+            $request->mikrotik      = $sheet->getCell("E".$row)->getValue();
+            $request->state         = $sheet->getCell("F".$row)->getValue();
+            $request->ip            = $sheet->getCell("G".$row)->getValue();
+            $request->mac           = $sheet->getCell("H".$row)->getValue();
+            $request->conexion      = $sheet->getCell("I".$row)->getValue();
+            $request->interfaz      = $sheet->getCell("J".$row)->getValue();
+            $request->local_address = $sheet->getCell("K".$row)->getValue();
+            $request->nodo          = $sheet->getCell("L".$row)->getValue();
+            $request->ap            = $sheet->getCell("M".$row)->getValue();
+            $request->grupo_corte   = $sheet->getCell("N".$row)->getValue();
+            $request->facturacion   = $sheet->getCell("O".$row)->getValue();
+            $request->descuento     = $sheet->getCell("P".$row)->getValue();
+            $request->canal         = $sheet->getCell("Q".$row)->getValue();
+            $request->oficina       = $sheet->getCell("R".$row)->getValue();
+            $request->tecnologia    = $sheet->getCell("S".$row)->getValue();
+            $request->created_at    = $sheet->getCell("T".$row)->getValue();
+            $request->mk            = $sheet->getCell("U".$row)->getValue();
+            $request->profile        = $sheet->getCell("W".$row)->getValue();
+            $request->local_address_pppoe = $sheet->getCell("X".$row)->getValue();
+            $request->usuario       = $sheet->getCell("Y".$row)->getValue();
+            $request->clave         = $sheet->getCell("Z".$row)->getValue();
+
+            if($request->plan != ""){
+                $plan = Inventario::where('empresa', Auth::user()->empresa)->where('type', 'TV')->where('status', 1)->where("producto",$request->plan)->first();
+                if ($plan) {
+                    $request->plan = $plan->id;
+                } else {
+                    // Manejar el caso en el que no se encuentra el plan de velocidad
+                    $error->plan = "El plan de TV " . $request->plan . " ingresado no se encuentra en nuestra base de datos";
+                }
+            }
+
+            if($request->state == 'Habilitado'){
+                $request->state = 'enabled';
+            }elseif($request->state == 'Deshabilitado'){
+                $request->state = 'disabled';
+            }
+
+            if($request->tecnologia == 'Fibra'){
+                $request->tecnologia = 1;
+            }elseif($request->tecnologia == 'Inalambrica'){
+                $request->tecnologia = 2;
+            }
+
+            $request->mk = (strtoupper($request->mk) == 'NO') ? 0 : 1;
+
+            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->select('contracts.*', 'c.id as client_id')->where('c.nit', $nit)->where('contracts.empresa', Auth::user()->empresa)->where('contracts.status', 1)->where('c.status', 1)->first();
+
+            if (!$contrato) {
+                $nro = Numeracion::where('empresa', 1)->first();
+                $nro_contrato = $nro->contrato;
+
+                while (true) {
+                    $numero = Contrato::where('nro', $nro_contrato)->count();
+                    if ($numero == 0) {
+                        break;
+                    }
+                    $nro_contrato++;
+                }
+
+                $contrato = new Contrato;
+                $contrato->empresa   = Auth::user()->empresa;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$nro_contrato;
+                $contrato->nro       = $nro_contrato;
+                $contrato->client_id = Contacto::where('nit', $nit)->where('status', 1)->first()->id;
+                $create = $create+1;
+
+                $nro->contrato = $nro_contrato + 1;
+                $nro->save();
+            }else{
+                $modf = $modf+1;
+                $contrato->servicio  = $this->normaliza($request->servicio).'-'.$contrato->nro;
+            }
+
+            $contrato->servicio_tv             = $request->plan;
+            $contrato->state                   = $request->state;
+            $contrato->serial_onu              = $request->serial_onu;
+            $contrato->created_at              = $request->created_at;
+            $contrato->tecnologia              = $request->tecnologia;
+
+            $contrato->save();
+        }
+
+        $mensaje = 'SE HA COMPLETADO EXITOSAMENTE LA CARGA DE DATOS DEL SISTEMA';
+
+        if ($create>0) {
+            $mensaje.=' CREADOS: '.$create;
+        }
+        if ($modf>0) {
+            $mensaje.=' MODIFICADOS: '.$modf;
+        }
+        return redirect('empresa/contratos')->with('success', $mensaje);
+    }
+
     public function importarMK(){
         $contratos = Contrato::
         join('planes_velocidad as p', 'p.id', '=', 'contracts.plan_id')->
