@@ -66,7 +66,7 @@
 
     @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) ||
         isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) ||
-        isset($_SESSION['permisos']['804']  || $_SESSION['permisos']['858'])
+        isset($_SESSION['permisos']['804']  || isset($_SESSION['permisos']['858']))
         )
         <li class="nav-item" id="contactos">
             <a class="nav-link" data-toggle="collapse" href="#ui-contrato" aria-expanded="false" aria-controls="ui-contrato">
