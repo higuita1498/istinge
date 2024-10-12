@@ -5,13 +5,13 @@
 	   <div class="row">
         <div class="col-md-3 form-group">
             <label class="control-label">OLT <span class="text-danger">*</span></label>
-            <select class="form-control selectpicker" data-live-search="true" data-size="5" name="olt_id" id="olt_id">
+            <select class="form-control selectpicker" data-live-search="true" data-size="5" name="user_vlan_id" id="user_vlan_id">
                 @foreach($olts as $olt)
                 <option value="{{$olt['id']}}" selected>{{ $olt['name'] }}</option>
                 @endforeach
             </select>
             <span class="help-block error">
-                <strong>{{ $errors->first('olt_id') }}</strong>
+                <strong>{{ $errors->first('user_vlan_id') }}</strong>
             </span>
         </div>
 	        <div class="col-md-3 form-group">
@@ -60,14 +60,14 @@
                       <div class="col-sm-6">
                       <div class="form-radio">
                           <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="onu_mode" id="routing" value="Routing" checked> Routing
+                          <input type="radio" class="form-check-input" name="onu_mode" id="routing" value="routing"> Routing
                           <i class="input-helper"></i><i class="input-helper"></i></label>
                       </div>
                   </div>
                   <div class="col-sm-6">
                       <div class="form-radio">
                           <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="onu_mode" id="bridging" value="Bridging"> Bridging
+                          <input type="radio" class="form-check-input" name="onu_mode" id="bridging" value="Bridging" checked> Bridging
                           <i class="input-helper"></i><i class="input-helper"></i></label>
                       </div>
                   </div>

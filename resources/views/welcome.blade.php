@@ -132,7 +132,7 @@
                 @endif
 
 
-                <div class="col-md-12">
+                {{-- <div class="col-md-12">
                     <div class="card-body">
                         <div class="notice notice-info">
                             <h4 class="float-left">OLT - ONUs</h4>
@@ -155,7 +155,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             <div class="col-md-12">
                 <div class="card-body">

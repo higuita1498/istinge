@@ -64,13 +64,30 @@
         </li>
     @endif
 
-    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) || isset($_SESSION['permisos']['804']))
-        <li class="nav-item" id="contratos">
-            <a class="nav-link"  href="{{route('contratos.index')}}" aria-controls="ui-contrato">
+    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) ||
+        isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) ||
+        isset($_SESSION['permisos']['804']  || $_SESSION['permisos']['858'])
+        )
+        <li class="nav-item" id="contactos">
+            <a class="nav-link" data-toggle="collapse" href="#ui-contrato" aria-expanded="false" aria-controls="ui-contrato">
                 <i class="menu-icon fas fa-file-contract"></i>
                 <span class="menu-title">Contratos</span>
+                <i class="menu-arrow"></i>
             </a>
-
+            <div class="collapse" id="ui-contrato">
+                <ul class="nav flex-column sub-menu">
+                    @if(isset($_SESSION['permisos']['405']) || isset($_SESSION['permisos']['410']) || isset($_SESSION['permisos']['402']) || isset($_SESSION['permisos']['411']) || isset($_SESSION['permisos']['804']))
+                        <li class="nav-item" id="clientes">
+                            <a class="nav-link" href="{{route('contratos.index')}}">Lista contratos</a>
+                        </li>
+                    @endif
+                    @if(isset($_SESSION['permisos']['858']))
+                        <li class="nav-item" id="proveedores">
+                            <a class="nav-link" href="{{ route('olt.unconfigured') }}">Onus desconfiguradas</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
         </li>
     @endif
 
