@@ -270,7 +270,7 @@ class OltController extends Controller
     }
 
     public function authorizedOnus(Request $request){
-        return $request;
+
         $empresa = Empresa::Find(Auth::user()->empresa);
 
         $curl = curl_init();
