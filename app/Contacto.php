@@ -253,6 +253,10 @@ class Contacto extends Model
         }
     }
 
+    public function etiqueta(){
+        return $this->belongsTo(Etiqueta::class);
+    }
+
     public static function departamento_static($id){
         if (DB::table('departamentos')->where('id',$id)->count() > 0) {
             return DB::table('departamentos')->where('id',$id)->first();
