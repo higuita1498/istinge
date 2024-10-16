@@ -19,6 +19,7 @@ use App\Model\Ingresos\Remision;
 use App\Model\Ingresos\ItemsRemision;
 use App\Model\Ingresos\IngresosFactura;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Session;
 use Response;
 use Carbon\Carbon;
@@ -2074,8 +2075,18 @@ class FacturasController extends Controller{
                     }
                 }
             }else{
-                $textContratos="No";
-                $textDireccion="";
+                if($factura->contrato_id != null){
+                    if($factura->contrato()){
+                        $textContratos = $factura->contrato()->nro;
+                        $textDireccion = $factura->contrato()->address_street?:$contrato->cliente()->direccion;
+                    }else{
+                        $textContratos="No";
+                        $textDireccion="";
+                    }
+                }else{
+                    $textContratos="No";
+                    $textDireccion="";
+                }
             }
 
             $nestedData = array();
