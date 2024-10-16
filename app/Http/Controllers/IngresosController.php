@@ -302,6 +302,7 @@ class IngresosController extends Controller
             }
 
             $user = Auth::user();
+            $empresa = Empresa::Find($user->empresa);
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
             if($request->realizar == 2){
             //Cuando se realiza el ingreso por categoría.
@@ -345,7 +346,7 @@ class IngresosController extends Controller
                         //Conversión de factura estandar a factura electrónica.
                         if(isset($request->tipo_electronica)){
                             //primero recuperamos
-                            $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+                            $nro=NumeracionFactura::where('empresa',$empresa->id)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
                             $inicio = $nro->inicio;
 
                             if($factura->tipo != 2 && $request->precio[$key] > 0)
@@ -503,6 +504,113 @@ class IngresosController extends Controller
                             }
 
                             $items->save();
+
+                             /* * * API MK * * */
+
+                            $contrato = Contrato::where('id',$factura->contrato_id)->first();
+                            if(!$contrato){
+                                $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
+                                if($db_contrato){
+                                    $contrato = Contrato::where('nro',$contrato->nro)->first();
+                                }
+                            }
+
+                            $cliente = $factura->cliente();
+
+                             if($contrato){
+                                 $contrato->state = "enabled";
+                                 $contrato->save();
+                             }
+                             if(!$contrato){
+                                 $contrato = Contrato::where('client_id', $cliente->id)->first();
+                                 if($contrato){
+                                     $contrato->state = "enabled";
+                                     $contrato->save();
+                                 }
+                             }
+
+                            if($contrato){
+                                $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
+
+                                if ($asignacion) {
+                                    $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
+                                    $asignacion->cuotas_pendientes = $cuotas_pendientes;
+                                    if ($cuotas_pendientes == 0) {
+                                        $asignacion->status = 1;
+                                    }
+                                    $asignacion->save();
+                                }
+
+                                if($contrato->server_configuration_id){
+                                    $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+
+                                    $API = new RouterosAPI();
+                                    $API->port = $mikrotik->puerto_api;
+
+                                    if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                                        $API->write('/ip/firewall/address-list/print', TRUE);
+                                        $ARRAYS = $API->read();
+
+                                        #ELIMINAMOS DE MOROSOS#
+                                        $API->write('/ip/firewall/address-list/print', false);
+                                        $API->write('?address='.$contrato->ip, false);
+                                        $API->write("?list=morosos",false);
+                                        $API->write('=.proplist=.id');
+                                        $ARRAYS = $API->read();
+
+                                        if(count($ARRAYS)>0){
+                                            $API->write('/ip/firewall/address-list/remove', false);
+                                            $API->write('=.id='.$ARRAYS[0]['.id']);
+                                            $READ = $API->read();
+                                        }
+                                        #ELIMINAMOS DE MOROSOS#
+
+                                        #AGREGAMOS A IP_AUTORIZADAS#
+                                        $API->comm("/ip/firewall/address-list/add", array(
+                                            "address" => $contrato->ip,
+                                            "list" => 'ips_autorizadas'
+                                            )
+                                        );
+                                        #AGREGAMOS A IP_AUTORIZADAS#
+
+                                        $API->disconnect();
+
+                                        $contrato->state = 'enabled';
+                                        $contrato->save();
+                                    }
+                                }
+                            }
+
+                            /* * * API MK * * */
+
+                            /* * * API CATV * * */
+                            if($contrato->olt_sn_mac && $empresa->adminOLT != null){
+
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => $empresa->adminOLT.'/api/onu/enable_catv/'.$contrato->olt_sn_mac,
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',
+                                    CURLOPT_HTTPHEADER => array(
+                                        'X-token: '.$empresa->smartOLT
+                                    ),
+                                    ));
+
+                                $response = curl_exec($curl);
+                                $response = json_decode($response);
+
+                                if(isset($response->status) && $response->status == true){
+                                    $contrato->state_olt_catv = 1;
+                                    $contrato->save();
+                                }
+                            }
+                            /* * * API CATV * * */
+
                         }
                     }
                 } else { //Si el tipo de ingreso es de categorias
@@ -587,74 +695,6 @@ class IngresosController extends Controller
                 if ($ingreso->tipo == 1) {
                     if($factura->estatus == 0){
                         $cliente = Contacto::where('id', $request->cliente)->first();
-                        $contrato = Contrato::where('id',$factura->contrato_id)->first();
-                        if($contrato){
-                            $contrato->state = "enabled";
-                            $contrato->save();
-                        }
-                        if(!$contrato){
-                            $contrato = Contrato::where('client_id', $cliente->id)->first();
-                            if($contrato){
-                                $contrato->state = "enabled";
-                                $contrato->save();
-                            }
-                        }
-
-                        /* * * API MK * * */
-
-                        if($contrato){
-                            $asignacion = Producto::where('contrato', $contrato->id)->where('venta', 1)->where('status', 2)->where('cuotas_pendientes', '>', 0)->get()->last();
-
-                            if ($asignacion) {
-                                $cuotas_pendientes = $asignacion->cuotas_pendientes -= 1;
-                                $asignacion->cuotas_pendientes = $cuotas_pendientes;
-                                if ($cuotas_pendientes == 0) {
-                                    $asignacion->status = 1;
-                                }
-                                $asignacion->save();
-                            }
-
-                            if($contrato->server_configuration_id){
-                                $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
-
-                                $API = new RouterosAPI();
-                                $API->port = $mikrotik->puerto_api;
-
-                                if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
-                                    $API->write('/ip/firewall/address-list/print', TRUE);
-                                    $ARRAYS = $API->read();
-
-                                    #ELIMINAMOS DE MOROSOS#
-                                    $API->write('/ip/firewall/address-list/print', false);
-                                    $API->write('?address='.$contrato->ip, false);
-                                    $API->write("?list=morosos",false);
-                                    $API->write('=.proplist=.id');
-                                    $ARRAYS = $API->read();
-
-                                    if(count($ARRAYS)>0){
-                                        $API->write('/ip/firewall/address-list/remove', false);
-                                        $API->write('=.id='.$ARRAYS[0]['.id']);
-                                        $READ = $API->read();
-                                    }
-                                    #ELIMINAMOS DE MOROSOS#
-
-                                    #AGREGAMOS A IP_AUTORIZADAS#
-                                    $API->comm("/ip/firewall/address-list/add", array(
-                                        "address" => $contrato->ip,
-                                        "list" => 'ips_autorizadas'
-                                        )
-                                    );
-                                    #AGREGAMOS A IP_AUTORIZADAS#
-
-                                    $API->disconnect();
-
-                                    $contrato->state = 'enabled';
-                                    $contrato->save();
-                                }
-                            }
-                        }
-
-                        /* * * API MK * * */
 
                         /* * * ENVÍO SMS * * */
                         $servicio = Integracion::where('empresa', Auth::user()->empresa)->where('tipo', 'SMS')->where('status', 1)->first();
