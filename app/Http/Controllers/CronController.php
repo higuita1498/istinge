@@ -2836,8 +2836,15 @@ class CronController extends Controller
                 ];
 
                 $nameEmpresa = $empresa->nombre;
+                $estadoCuenta = $factura->estadoCuenta();
+
+                $msg_deuda = "";
+                if($estadoCuenta->saldoMesAnterior > 0){
+                    $msg_deuda = "El total a deber es: " . Funcion::Parsear($estadoCuenta->total);
+                }
+
                 $total = $factura->total()->total;
-                $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el número $factura->codigo por un monto de $$total pesos.";
+                $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el número $factura->codigo por un monto de $$total pesos. " . $msg_deuda;
 
                 $body = [
                     "contact" => $contact,
