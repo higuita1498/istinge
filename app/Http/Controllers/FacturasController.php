@@ -2078,7 +2078,7 @@ class FacturasController extends Controller{
                 if($factura->contrato_id != null){
                     if($factura->contrato()){
                         $textContratos = $factura->contrato()->nro;
-                        $textDireccion = $factura->contrato()->address_street?:$contrato->cliente()->direccion;
+                        $textDireccion = $factura->contrato()->address_street?:$factura->contrato()->cliente()->direccion;
                     }else{
                         $textContratos="No";
                         $textDireccion="";
