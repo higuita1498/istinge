@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Etiqueta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
@@ -84,7 +86,8 @@ class ContratosController extends Controller
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','planestv','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales'));
+        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','planestv','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales', 'etiquetas'));
     }
 
     public function disabled(Request $request){
@@ -122,6 +125,7 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
 
         $modoLectura = auth()->user()->modo_lectura();
+        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratosql = $contratos = Contrato::query()
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
@@ -248,6 +252,13 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.tecnologia', $request->tecnologia);
                 });
             }
+
+            if($request->etiqueta_id){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.etiqueta_id', $request->etiqueta_id);
+                });
+            }
+
             if($request->facturacion){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.facturacion', $request->facturacion);
@@ -374,6 +385,9 @@ class ContratosController extends Controller
             })
             ->editColumn('nit', function (Contrato $contrato) {
                 return '('.$contrato->cliente()->tip_iden('mini').') '.$contrato->c_nit;
+            })
+            ->addColumn('etiqueta', function(Contrato $contrato)use ($etiquetas){
+                return view('contratos.etiqueta', compact('etiquetas','contrato'));
             })
             ->editColumn('telefono', function (Contrato $contrato) {
                 return $contrato->c_telefono;
@@ -4502,6 +4516,17 @@ class ContratosController extends Controller
         }
 
 
+    }
+
+    public function cambiarEtiqueta($etiqueta, $contrato){
+
+        $contrato =  Contrato::where('id', $contrato)->where('empresa', Auth::user()->empresa)->first();
+
+        $contrato->etiqueta_id = $etiqueta;
+
+        $contrato->update();
+
+        return $contrato->etiqueta;
     }
 
 }

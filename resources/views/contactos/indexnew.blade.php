@@ -126,6 +126,15 @@
 							</select>
 						</div>
 						@endif
+                        @if(isset($etiquetas))
+                            <div class="col-md-2 pl-1 pt-1">
+                                <select title="Etiqueta" class="form-control rounded selectpicker" id="etiqueta" data-size="5" data-live-search="true">
+                                    @foreach($etiquetas as $etiqueta)
+                                        <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="col-md-3 pl-1 pt-1">
                             <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
                                 <option value="opcion_1">Clientes con saldo a favor</option>
@@ -210,6 +219,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nombre = $('#nombre').val();
             data.apellido = $('#apellido').val();
+            data.etiqueta_id = $('#etiqueta').val();
             data.identificacion = $('#identificacion').val();
             data.celular = $('#telefono').val();
             data.direccion = $('#direccion').val();
@@ -243,7 +253,7 @@
         	}
         });
 
-        $('#t_contrato, #estrato, #otra_opcion').on('change',function() {
+        $('#t_contrato, #etiqueta, #estrato, #otra_opcion').on('change',function() {
         	getDataTable();
         	return false;
         });
@@ -268,6 +278,7 @@
 		$('#nombre').val('');
 		$('#apellido').val('');
 		$('#identificacion').val('');
+        $('#etiqueta').val('').selectpicker('refresh');
 		$('#telefono').val('');
 		$('#direccion').val('');
 		$('#barrio').val('');

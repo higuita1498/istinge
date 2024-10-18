@@ -202,6 +202,15 @@
                                 <option value="reconexion">Reconexión</option>
                             </select>
                         </div>
+                        @if(isset($etiquetas))
+                            <div class="col-md-3 pl-1 pt-1">
+                                <select title="Etiqueta" class="form-control rounded selectpicker" id="etiqueta" data-size="5" data-live-search="true">
+                                    @foreach($etiquetas as $etiqueta)
+                                        <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="col-md-3 pl-1 pt-1">
                             <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
                                 <option value="opcion_1">Contratos deshabilitados con última factura pagada</option>
@@ -433,6 +442,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nro = $('#nro').val();
 			data.cliente_id = $('#client_id').val();
+			data.etiqueta_id = $('#etiqueta').val();
             data.plan = $('#plan').val();
             data.plan_tv = $('#plan_tv').val();
             data.state = $('#state').val();
@@ -481,7 +491,7 @@
             }
         });
 
-        $('#client_id, #plan,#plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
+        $('#client_id, #etiqueta, #plan,#plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
             getDataTable();
             return false;
         });
@@ -532,6 +542,7 @@
 		$('#nro').val('');
         $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
+		$('#etiqueta').val('').selectpicker('refresh');
         $('#plan_tv').val('').selectpicker('refresh');
 		$('#grupo_cort').val('').selectpicker('refresh');
 		$('#state').val('').selectpicker('refresh');

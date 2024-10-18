@@ -299,6 +299,13 @@ class ContactosController extends Controller
                     $query->orWhere('vereda', 'like', "%{$request->vereda}%");
                 });
             }
+
+            if($request->etiqueta_id){
+                $contactos->where(function ($query) use ($request) {
+                    $query->orWhere('etiqueta_id', $request->etiqueta_id);
+                });
+            }
+
             if ($request->email) {
                 $contactos->where(function ($query) use ($request) {
                     $query->orWhere('email', 'like', "%{$request->email}%");
@@ -358,7 +365,6 @@ class ContactosController extends Controller
                 return "{$contacto->tip_iden('mini')} {$contacto->nit}";
             })
             ->addColumn('etiqueta', function(Contacto $contacto)use ($etiquetas){
-                Log::info($contacto->etiqueta);
                 return view('contactos.etiqueta', compact('etiquetas','contacto'));
             })
             ->editColumn('telefono1', function (Contacto $contacto) {
@@ -420,10 +426,11 @@ class ContactosController extends Controller
         $contactos = DB::table('contactos')->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')->select('contactos.*', 'municipios.nombre as nombre_municipio')->get();
         $tipo_usuario = 0;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
 
         view()->share(['invert' => true]);
 
-        return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla'));
+        return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla', 'etiquetas'));
     }
 
     public function proveedores(Request $request)

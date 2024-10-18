@@ -1343,6 +1343,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
 
 		Route::get('registro-crm/{contrato}', 'ContratosController@forzarCrm')->name('contratos.crm.forzar');
 
+        Route::get('/cambiar-etiqueta/{etiqueta}/{contrato}', 'ContratosController@cambiarEtiqueta')->name('contratos.cambiar.etiqueta');
+
 	});
 
 	Route::resource('contratos', 'ContratosController');
