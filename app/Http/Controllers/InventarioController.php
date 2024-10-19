@@ -7,6 +7,7 @@ use App\Retencion;
 use Illuminate\Http\Request;
 use App\Categoria;  use App\Impuesto;
 use App\CamposExtra;
+use App\Contrato;
 use App\Model\Inventario\Inventario;
 use App\Model\Inventario\Bodega;
 use App\Model\Inventario\ListaPrecios;
@@ -21,6 +22,10 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 use Validator;
 use App\Funcion;
+use App\GrupoCorte;
+use App\Model\Ingresos\Factura;
+use App\Model\Ingresos\ItemsFactura;
+use App\NumeracionFactura;
 use Illuminate\Validation\Rule;
 use Auth; use DB;
 include_once(app_path() .'/../public/PHPExcel/Classes/PHPExcel.php');
@@ -32,6 +37,7 @@ use PHPExcel_Shared_ZipArchive;
 use App\Puc;
 use App\ProductoServicio;
 use App\ProductoCuenta;
+use App\TerminosPago;
 
 class InventarioController extends Controller{
     public $id;
@@ -1263,6 +1269,158 @@ class InventarioController extends Controller{
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
+    }
+
+     public function importarFacturasXlsx(Request $request){
+
+        $empresa = Empresa::Find(1);
+        $imagen = $request->file('archivo');
+        $nombre_imagen = time().'archivo.'.$imagen->getClientOriginalExtension();
+        $path = public_path() .'/images/Empresas/Empresa'.$empresa->id;
+        $imagen->move($path,$nombre_imagen);
+        Ini_set ('max_execution_time', 3600);
+        $fileWithPath=$path."/".$nombre_imagen;
+        $inputFileType = PHPExcel_IOFactory::identify($fileWithPath);
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($fileWithPath);
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+        $lista = '';
+
+        //Validaciones
+        // for ($row = 4; $row <= $highestRow; $row++){
+        //     $request= (object) array();
+        //     $error= (object) array();
+        //     $nombre=$sheet->getCell("A".$row)->getValue();
+        //     if (empty($nombre)) {
+        //         break;
+        //     }
+        //     $request->ref=$sheet->getCell("B".$row)->getValue();
+        //     if (!$request->ref) {
+        //         $error->ref="El campo Referencia es obligatorio";
+        //     }else{
+        //         $cant =Inventario::where('ref', $request->ref)->where('empresa',$empresa->id)->count();
+        //         if ($cant>0) {
+        //             $error->ref='El código de referencia ya se encuentra registrado para otro producto';
+        //         }
+        //     }
+
+        //     if (count((array) $error)>0) {
+        //         $fila["error"]='FILA '.$row;
+        //         $error=(array) $error;
+        //         var_dump($error);
+        //         var_dump($fila);
+        //         array_unshift ( $error ,$fila);
+        //         $result=(object) $error;
+        //         //reenvia los errores
+        //         return back()->withErrors($result)->withInput();
+        //     }
+        // }
+
+        //importacion de items
+        for ($row = 4; $row <= $highestRow; $row++){
+
+            $nombre=$sheet->getCell("A".$row)->getValue();
+            $cedula=$sheet->getCell("B".$row)->getValue();
+            $saldo=$sheet->getCell("D".$row)->getValue();
+            $item = Inventario::where('ref','saldo-pendiente')->first();
+
+            $contacto = Contacto::where('nit',$cedula)->first();
+            if($contacto) {
+                $contrato = Contrato::where('client_id',$contacto->id)->first();
+                if($contrato){
+
+                    if($contrato->grupo_corte == ""){
+                        $contrato->grupo_corte = 15;
+                        $contrato->save();
+                    }
+                    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                    $nro = NumeracionFactura::tipoNumeracion($contrato);
+                    $date_suspension = "2024-10-06";
+                    $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
+                    $tipo = 1; //1= normal, 2=Electrónica.
+                    $electronica = Factura::booleanFacturaElectronica($contrato->client_id);
+                    $grupo_corte = GrupoCorte::where('id',$contrato->grupo_corte)->first();
+
+                    if($contrato->facturacion == 3 && !$electronica){
+                        $tipo = 1;
+                        // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                    }elseif($contrato->facturacion == 3 && $electronica){
+                        $tipo = 2;
+                    }
+
+                    $inicio = $nro->inicio;
+
+                    // Validacion para que solo asigne numero consecutivo si no existe.
+                    while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                        $nro->save();
+                        $inicio=$nro->inicio;
+                        $nro->inicio += 1;
+                    }
+
+                    $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
+                    if($num){
+                        $numero = $num->nro;
+                    }else{
+                        $numero = 0;
+                    }
+
+                    $factura = new Factura;
+                    $factura->nro           = $numero;
+                    $factura->codigo        = $nro->prefijo.$inicio;
+                    $factura->numeracion    = $nro->id;
+                    $factura->plazo         = isset($plazo->id) ? $plazo->id : '';
+                    $factura->term_cond     = $contrato->terminos_cond;
+                    $factura->facnotas      = $contrato->notas_fact;
+                    $factura->empresa       = 1;
+                    $factura->cliente       = $contrato->client_id;
+                    $factura->fecha         = "2024-09-25";
+                    $factura->tipo          = $tipo;
+                    $factura->vencimiento   = $date_suspension;
+                    $factura->suspension    = $date_suspension;
+                    $factura->pago_oportuno = $date_suspension;
+                    $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
+                    $factura->bodega        = 1;
+                    $factura->vendedor      = 1;
+                    $factura->prorrateo_aplicado = 0;
+                    $factura->facturacion_automatica = 1;
+
+                    if($contrato){
+                        $factura->contrato_id = $contrato->id;
+                    }
+
+                    $factura->save();
+
+                    $item_reg = new ItemsFactura();
+                    $item_reg->factura     = $factura->id;
+                    $item_reg->producto    = $item->id;
+                    $item_reg->ref         = $item->ref;
+                    $item_reg->precio      = $saldo;
+                    $item_reg->descripcion = $item->producto;
+                    $item_reg->id_impuesto = $item->id_impuesto;
+                    $item_reg->impuesto    = $item->impuesto;
+                    $item_reg->cant        = 1;
+                    // $item_reg->desc        = $cm->descuento;
+                    $item_reg->save();
+
+                    //guardamos en la tabla detalle para saber que esa factura tiene n contratos
+                    DB::table('facturas_contratos')->insert([
+                        'factura_id' => $factura->id,
+                        'contrato_nro' => $contrato->nro,
+                        'created_by' => 0,
+                        'client_id' => $factura->cliente,
+                        'is_cron' => 1,
+                        'created_at' => Carbon::now()
+                    ]);
+
+                    $nro->save();
+                }
+            }
+            }
+
+            return redirect('empresa/inventario/importar')->with('success', 'Se ha cargado satisfactoriamente los productos');
     }
 
     public function cargando(Request $request){
