@@ -3207,4 +3207,41 @@ class CronController extends Controller
         }
         //Fin REVISION RECONEXION GENERAL//.
     }
+
+    //Este metodo me permite validar que facturas se crearon con el mismo codigo y quedaron emitidas, la que tiene el
+    //codigo 409 es la que no quedo emitida y debe cambiar de codigo.
+    public function validarFacturasDobles(){
+
+        $fecha_inicio = "2024-04-01";
+        $fecha_fin = "2024-04-31";
+
+        // Consulta para obtener facturas con el mismo código y dian_response = 409
+        $facturas = Factura::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+        ->where('dian_response', 409)
+        ->groupBy('codigo') // Agrupamos por el atributo código
+        ->havingRaw('COUNT(codigo) > 1') // Condición para obtener facturas con el mismo código
+        ->get();
+
+        // tipo 2 numeracion dian
+        $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
+
+        foreach($facturas as $factura){
+            //Actualiza el nro de inicio para la numeracion seleccionada
+            $inicio = $nro->inicio;
+
+            // Validacion para que solo asigne numero consecutivo si no existe.
+            while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                $nro->save();
+                $inicio=$nro->inicio;
+                $nro->inicio += 1;
+            }
+
+            $factura->codigo=$nro->prefijo.$inicio;
+
+            $nro->save();
+            $factura->save();
+        }
+
+        return "correccion finalizada";
+    }
 }

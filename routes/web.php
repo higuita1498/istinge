@@ -61,6 +61,7 @@ Route::get('disabledAndCRM/{ip}','CronController@disabledAndCRM')->name('disable
 Route::get('sendInvoices/{fecha}','CronController@sendInvoices')->name('sendInvoices');
 Route::get('/enviofacturawpp','CronController@envioFacturaWpp');
 Route::get('/estatus-emision-dian','CronController@validateEmisionApi');
+Route::get('/validar-factura-doble','CronController@validarFacturasDobles');
 /*PAYU*/
 
 Route::get('/respuestapayu', 'Controller@respuestapayu')->name('respuestapayu');
