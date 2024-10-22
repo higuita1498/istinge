@@ -1429,6 +1429,13 @@ class ContratosController extends Controller
                             $queue_edit = "default-small/default-small";
                         }
 
+                        // VALIDACIÓN PARA CONTRATOS QUE TIENEN DOS COLAS (NO DEJA ACTUALIZAR POR CONFLICTOS CON EL NOMBRE)
+                        if(count($queue) > 1){
+                            $API->comm("/queue/simple/remove", array(
+                                ".id" => $queue[1][".id"]
+                            ));
+                        }
+
                         if($queue){
                             $API->comm("/queue/simple/set", array(
                                 ".id"             => $queue[0][".id"],
