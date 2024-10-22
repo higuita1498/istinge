@@ -182,7 +182,7 @@
           tabla.ajax.reload();
       }
 
-    @if(!isset($_SESSION['permisos']['858']))
+    @if(isset($_SESSION['permisos']['858']))
     window.addEventListener('load',
     function() {
 		tabla = $('#tabla-planes').DataTable({
