@@ -3216,11 +3216,27 @@ class CronController extends Controller
         $fecha_fin = "2024-04-31";
 
         // Consulta para obtener facturas con el mismo código y dian_response = 409
-        $facturas = Factura::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+         return $noObtener = Factura::
+        where('fecha', '>=',$fecha_inicio)
+        ->where('fecha', '<=',$fecha_fin)
         ->where('dian_response', 409)
         ->groupBy('codigo') // Agrupamos por el atributo código
         ->havingRaw('COUNT(codigo) > 1') // Condición para obtener facturas con el mismo código
-        ->get();
+        ->pluck('codigo');
+
+
+        // Obtener los códigos duplicados sin filtrar por dian_response
+        $duplicatedCodes = Factura::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->groupBy('codigo')
+            ->havingRaw('COUNT(codigo) > 1')
+            ->pluck('codigo');
+
+        // Obtener las facturas que tienen el dian_response = 409 y cuyo código esté en los duplicados
+        $facturas = Factura::whereIn('codigo', $duplicatedCodes)
+            ->whereNotIn('codigo',$noObtener)
+            ->where('dian_response', 409)
+            ->whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->get();
 
         // tipo 2 numeracion dian
         $nro=NumeracionFactura::where('empresa',1)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
@@ -3237,6 +3253,7 @@ class CronController extends Controller
             }
 
             $factura->codigo=$nro->prefijo.$inicio;
+            $factura->emitida = 0;
 
             $nro->save();
             $factura->save();
