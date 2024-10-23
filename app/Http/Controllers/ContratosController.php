@@ -1429,16 +1429,14 @@ class ContratosController extends Controller
                             $queue_edit = "default-small/default-small";
                         }
 
-                        // VALIDACIÓN PARA CONTRATOS QUE TIENEN DOS COLAS (NO DEJA ACTUALIZAR POR CONFLICTOS CON EL NOMBRE)
-                        if(count($queue) > 1){
+                        // Eliminar todas las colas asociadas a la IP
+                        foreach ($queue as $q) {
                             $API->comm("/queue/simple/remove", array(
-                                ".id" => $queue[1][".id"]
+                                ".id" => $q['.id']
                             ));
                         }
 
-                        if($queue){
-                            $API->comm("/queue/simple/set", array(
-                                ".id"             => $queue[0][".id"],
+                        $response = $API->comm("/queue/simple/add", array(
                                 "name"            => $this->normaliza($servicio).'-'.$request->nro,
                                 "target"          => $request->ip,
                                 "max-limit"       => $plan->upload.'/'.$plan->download,
@@ -1448,22 +1446,8 @@ class ContratosController extends Controller
                                 "priority"        => $priority,
                                 "limit-at"        => $limit_at,
                                 "queue"           => $queue_edit
-                                )
-                            );
-                        }else{
-                            $API->comm("/queue/simple/add", array(
-                                "name"            => $this->normaliza($servicio).'-'.$request->nro,
-                                "target"          => $request->ip,
-                                "max-limit"       => $plan->upload.'/'.$plan->download,
-                                "burst-limit"     => $burst_limit,
-                                "burst-threshold" => $burst_threshold,
-                                "burst-time"      => $burst_time,
-                                "priority"        => $priority,
-                                "limit-at"        => $limit_at,
-                                "queue"           => $queue_edit
-                                )
-                            );
-                        }
+                            )
+                        );
                     }
 
                     /*VLAN*/
