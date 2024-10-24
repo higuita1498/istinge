@@ -88,6 +88,9 @@
                             <input type="text" class="form-control" id="nro" name="nro" placeholder="Nro">
                         </div>
                         <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" class="form-control" id="sn" name="sn" placeholder="SN">
+                        </div>
+                        <div class="col-md-2 pl-1 pt-1">
                             <input type="text" class="form-control" id="linea" name="linea" placeholder="linea">
                         </div>
                         <div class="col-md-2 pl-1 pt-1">
@@ -441,6 +444,7 @@
 
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nro = $('#nro').val();
+            data.sn = $('#sn').val();
 			data.cliente_id = $('#client_id').val();
 			data.etiqueta_id = $('#etiqueta').val();
             data.plan = $('#plan').val();
@@ -484,7 +488,7 @@
             }
         });
 
-        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
+        $('#nro, #sn, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;

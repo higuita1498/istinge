@@ -299,6 +299,11 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
                 });
             }
+            if($request->sn){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contracts.olt_sn_mac', 'like', "%{$request->sn}%");
+                });
+            }
             if($request->observaciones){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.observaciones', 'like', "%{$request->observaciones}%");
@@ -394,6 +399,9 @@ class ContratosController extends Controller
             })
             ->editColumn('email', function (Contrato $contrato) {
                 return $contrato->c_email;
+            })
+            ->editColumn('sn', function (Contrato $contrato) {
+                return $contrato->olt_sn_mac?:'';
             })
             ->editColumn('barrio', function (Contrato $contrato) {
                 return $contrato->c_barrio;
