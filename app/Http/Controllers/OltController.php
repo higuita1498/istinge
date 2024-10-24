@@ -8,21 +8,53 @@ use Illuminate\Support\Facades\Auth;
 
 class OltController extends Controller
 {
-    public function unConfiguredOnus_view(){
+    public function unConfiguredOnus_view(Request $request){
 
         $this->getAllPermissions(Auth::user()->id);
 
         view()->share(['title' => 'Olt - Onu Unconfigured', 'icon' => '', 'seccion'=>'']);
 
-        $response = $this->unconfiguredOnus();
+        // ****** Get olts ****** //
+        $olts = $this->getOlts();
+        if(!isset($request->olt)){
+            $olt_default = null;
+        }else{
+            $olt_default = $request->olt;
+        }
+        if(isset($olts['response'])){
+            $olts = $olts['response'];
+            if($olt_default == null){$olt_default = $olts[0]['id'];}
+        }else{
+            $olts = [];
+        }
+
+        if($olt_default != null){
+            $vlan = $this->get_VLAN($olt_default);
+            if(isset($vlan['response'])){
+                $vlan = $vlan['response'];
+                // Usamos usort para ordenar el array según la clave 'vlan'
+                usort($vlan, function ($a, $b) {
+                    return (int)$a['vlan'] - (int)$b['vlan'];
+                });
+            }else{
+                $vlan = [];
+            }
+        }else{
+            $vlan = [];
+        }
+        // ****** Get olts ****** //
+
+        // ****** Get onus by olt ****** //
+        $response = $this->unconfiguredOnusOlt($olt_default);
         if(isset($response['response'])){
             $onus = $response['response'];
         }
         else{
             $onus = [];
         }
+        // ****** Get onus by olt ****** //
 
-        return view('olt.unconfigured',compact('onus'));
+        return view('olt.unconfigured',compact('onus','olts','olt_default'));
     }
 
     public static function unconfiguredOnus(){
@@ -31,6 +63,31 @@ class OltController extends Controller
 
         curl_setopt_array($curl, array(
         CURLOPT_URL => $empresa->adminOLT.'/api/onu/unconfigured_onus',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+            'X-Token: ' . $empresa->smartOLT
+        ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response = json_decode($response,true);
+
+        return $response;
+    }
+
+    public static function unconfiguredOnusOlt($olt){
+        $empresa = Empresa::Find(Auth::user()->empresa);
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $empresa->adminOLT.'/api/onu/unconfigured_onus_for_olt/'.$olt,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -213,18 +270,18 @@ class OltController extends Controller
         }
 
         $olts = $this->getOlts();
-        $olt_defualt = null;
+        $olt_default = $request->olt_id;
         if(isset($olts['response'])){
             $olts = $olts['response'];
-            $olt_defualt = $olts[0]['id'];
         }else{
             $olts = [];
         }
 
-        if($olt_defualt != null){
-            $vlan = $this->get_VLAN($olt_defualt);
+        if($olt_default != null){
+            $vlan = $this->get_VLAN($olt_default);
             if(isset($vlan['response'])){
                 $vlan = $vlan['response'];
+
                 // Usamos usort para ordenar el array según la clave 'vlan'
                 usort($vlan, function ($a, $b) {
                     return (int)$a['vlan'] - (int)$b['vlan'];
@@ -266,7 +323,7 @@ class OltController extends Controller
         }
 
         return view('olt.form-authorized-onu',compact('request','onu_types','olts','vlan','zones',
-        'olt_defualt','default_zone','odbList','speedProfiles'));
+        'olt_default','default_zone','odbList','speedProfiles'));
     }
 
     public function authorizedOnus(Request $request){

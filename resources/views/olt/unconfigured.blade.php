@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('boton')
+<a href="javascript:abrirFiltrador()" class="btn btn-info btn-sm my-1" id="boton-filtrar"><i class="fas fa-search"></i>Filtrar</a>
+@endsection
+
 @section('content')
     @if(Session::has('success'))
         <div class="alert alert-success">
@@ -65,6 +69,28 @@
         </div>
     @endif
 
+    <form id="form-dinamic-action" method="GET">
+        <div class="container-fluid mb-3" id="form-filter">
+            <fieldset>
+                <legend>Filtro de Búsqueda</legend>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body py-3" style="background: #f9f9f9;">
+                        <div class="row">
+                            <div class="col-md-4 pl-1 pt-1">
+                                <select title="Olt a buscar" class="form-control selectpicker" id="olt_id" name="olt_id" data-size="5" data-live-search="true" onchange="oltChange(this.value)">
+                                    @foreach($olts as $olt)
+                                        <option value="{{ $olt['id'] }}" {{ $olt['id'] == $olt_default ? 'selected' : '' }}>{{ $olt['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </form>
+
     <div class="row card-description">
         <div class="col-md-12">
             <table class="table table-striped table-hover" id="table-general">
@@ -82,6 +108,7 @@
                 </thead>
                 <tbody>
                 @for ($i=0; $i < count($onus); $i++)
+                    @if($onus[$i]['olt_id'] == $olt_default)
                     <tr id="olt_{{$i}}">
                         <td>{{ $onus[$i]['pon_type'] }}</td>
                         <td>{{ $onus[$i]['board'] }}</td>
@@ -97,6 +124,7 @@
                             @endif
                         </td>
                     </tr>
+                    @endif
                 @endfor
                 </tbody>
             </table>
@@ -118,11 +146,9 @@
             let sn = row.cells[4].innerText;
             let onuTypeName = row.cells[5].innerText;
             let status = row.cells[6].innerText;
+            let olt_id = $("#olt_id").val();
 
-            // Construir la URL con los parámetros GET
-            let url = `{{ route('olt.form-authorized-onus') }}?ponType=${encodeURIComponent(ponType)}&board=${encodeURIComponent(board)}&port=${encodeURIComponent(port)}&ponDescription=${encodeURIComponent(ponDescription)}&sn=${encodeURIComponent(sn)}&onuTypeName=${encodeURIComponent(onuTypeName)}&status=${encodeURIComponent(status)}`;
-
-            // Redirigir a la URL
+            let url = `{{ route('olt.form-authorized-onus') }}?ponType=${encodeURIComponent(ponType)}&board=${encodeURIComponent(board)}&port=${encodeURIComponent(port)}&ponDescription=${encodeURIComponent(ponDescription)}&sn=${encodeURIComponent(sn)}&onuTypeName=${encodeURIComponent(onuTypeName)}&status=${encodeURIComponent(status)}&olt_id=${olt_id}`;
             window.location.href = url;
 
         }
@@ -159,33 +185,47 @@
                     status
                 },
                 success: function (data) {
+                }
+            });
+        }
 
-					// if(data.status == '200'){
-					// 	Swal.fire({
-                	// 	type: 'success',
-                	// 	title: 'La ONU ha sido autorizada correctamente.',
-                	// 	text: 'Recargando la página',
-                	// 	showConfirmButton: false,
-                	// 	timer: 5000
-                	// 	})
-					// }else{
-					// 	Swal.fire({
-                	// 	type: 'error',
-                	// 	title: 'La ONU no pudo ser autorizada.',
-                	// 	text: 'Recargando la página',
-                	// 	showConfirmButton: false,
-                	// 	timer: 5000
-                	// 	})
-					// }
+        function abrirFiltrador() {
+            if ($('#form-filter').hasClass('d-none')) {
+                $('#boton-filtrar').html('<i class="fas fa-times"></i> Cerrar');
+                $('#form-filter').removeClass('d-none');
+            } else {
+                $('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+                cerrarFiltrador();
+            }
+        }
 
-                    // setTimeout(function(){
-                    // 	var a = document.createElement("a");
-                    // 	a.href = window.location.pathname;
-                    // 	a.click();
-                    // }, 2000);
+        function cerrarFiltrador() {
+            $('#nro').val('');
+            $('#client_id').val('').selectpicker('refresh');
+            $('#plan').val('').selectpicker('refresh');
+
+            $('#form-filter').addClass('d-none');
+            $('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
+
+        }
+
+        function oltChange(id){
+
+            Swal.fire({
+                title: 'Cargando...',
+                text: 'Por favor espera mientras se procesa la solicitud.',
+                type: 'info',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading(); // Muestra el preloader de carga
                 }
             });
 
+            let url = `{{ route('olt.unconfigured') }}?olt=${id}`;
+            window.location.href = url;
+
         }
+
     </script>
 @endsection

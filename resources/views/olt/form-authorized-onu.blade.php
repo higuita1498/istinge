@@ -5,15 +5,18 @@
 	   <div class="row">
         <div class="col-md-3 form-group">
             <label class="control-label">OLT <span class="text-danger">*</span></label>
-            <select class="form-control selectpicker" data-live-search="true" data-size="5" name="olt_id" id="olt_id">
-                @foreach($olts as $olt)
-                <option value="{{$olt['id']}}" selected>{{ $olt['name'] }}</option>
-                @endforeach
-            </select>
+            <select class="form-control selectpicker" data-live-search="true" data-size="5" name="olt_id_disabled" id="olt_id" disabled>
+				@foreach($olts as $olt)
+					<option value="{{$olt['id']}}" {{ $olt_default == $olt['id'] ? 'selected' : '' }}>{{ $olt['name'] }}</option>
+				@endforeach
+			</select>
+
+			<input type="hidden" name="olt_id" value="{{ $olt_default }}">
             <span class="help-block error">
                 <strong>{{ $errors->first('olt_id') }}</strong>
             </span>
         </div>
+
 	        <div class="col-md-3 form-group">
 	            <label class="control-label">Pon Type <span class="text-danger">*</span></label>
 	            <input type="text" class="form-control" name="pon_type" id="pon_type" value="{{$request->ponType}}" readonly>
@@ -77,7 +80,7 @@
 	            <label class="control-label">User VLAN-ID <span class="text-danger">*</span></label>
 	            <select class="form-control selectpicker" data-live-search="true" data-size="5" name="user_vlan_id" id="user_vlan_id">
                     @foreach($vlan as $vl)
-                    <option value="{{$vl['id']}}">{{ $vl['vlan'] }} {{ $vl['description'] != "" ? " - " . $vl['description'] : '' }}</option>
+                    <option value="{{$vl['vlan']}}">{{ $vl['vlan'] }} {{ $vl['description'] != "" ? " - " . $vl['description'] : '' }}</option>
                     @endforeach
                 </select>
 	            <span class="help-block error">
