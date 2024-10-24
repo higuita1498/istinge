@@ -220,6 +220,15 @@
                             </select>
                         </div>
 
+                        <div class="col-md-3 pl-1 pt-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtro_facturas" name="filtro_facturas">
+                                <label class="form-check-label" for="filtro_facturas">
+                                    Más de dos facturas
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="col-md-8 pl-1 pt-1">
                             <div class="row">
                                 <div class="col-md-4 pr-1">
@@ -445,6 +454,7 @@
         tabla.on('preXhr.dt', function(e, settings, data) {
             data.nro = $('#nro').val();
             data.sn = $('#sn').val();
+            data.filtro_facturas = $('#filtro_facturas').is(':checked')
 			data.cliente_id = $('#client_id').val();
 			data.etiqueta_id = $('#etiqueta').val();
             data.plan = $('#plan').val();
@@ -493,6 +503,10 @@
                 getDataTable();
                 return false;
             }
+        });
+
+        $('#filtro_facturas').on('click', function(e) {
+            getDataTable();
         });
 
         $('#client_id, #etiqueta, #plan,#plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
@@ -544,6 +558,7 @@
 
 	function cerrarFiltrador() {
 		$('#nro').val('');
+		$('#filtro_facturas').prop('checked', false);
         $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
 		$('#etiqueta').val('').selectpicker('refresh');

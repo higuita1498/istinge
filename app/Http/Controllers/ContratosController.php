@@ -123,7 +123,6 @@ class ContratosController extends Controller
     }
 
     public function contratos(Request $request, $nodo){
-
         $modoLectura = auth()->user()->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratosql = $contratos = Contrato::query()
@@ -131,8 +130,7 @@ class ContratosController extends Controller
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
              'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
              'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
-              'contactos.celular as c_celular','contactos.fk_idmunicipio',
-               'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp',
+              'contactos.celular as c_celular','contactos.fk_idmunicipio', 'contactos.firma_isp',
                'contactos.estrato as c_estrato',
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
@@ -152,6 +150,19 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.plan_id', $request->plan);
                 });
             }
+            Log::info($request->filtro_facturas);
+            // Aplica el filtro de facturas si el usuario lo selecciona
+            if ($request->filtro_facturas === "true") {
+                Log::info("entra");
+                $contratos->join('factura', function($join) {
+                    $join->on('factura.contrato_id', '=', 'contracts.id')
+                        ->where('factura.estatus', '=', 1);
+                })
+                    ->groupBy('contracts.id')
+                    ->havingRaw('COUNT(factura.id) > 1'); // Filtra los que deben más de dos facturas
+
+            }
+
             if($request->ip){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.ip', 'like', "%{$request->ip}%");
