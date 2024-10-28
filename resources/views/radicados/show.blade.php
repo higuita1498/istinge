@@ -179,6 +179,10 @@
     						<th>Cliente</th>
     						<td><a href="{{ route('contactos.show', $radicado->cliente)}}">{{$radicado->nombre}}</a></td>
     					</tr>
+                        <tr>
+                            <th>Nit</th>
+                            <td><a href="{{ route('contactos.show', $radicado->cliente)}}">{{$radicado->cliente()->nit}}</a></td>
+                        </tr>
     					<tr>
     						<th>N° Telefónico</th>
     						<td>{{$radicado->telefono}}</td>

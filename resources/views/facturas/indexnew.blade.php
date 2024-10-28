@@ -165,6 +165,7 @@
                     @if(!isset($_SESSION['permisos']['857']))
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="javascript:void(0)" id="btn_emitir"><i class="fas fa-server"></i> Convertir a facturas electrónicas en Lote</a>
+                        <a class="dropdown-item" href="javascript:void(0)" id="btn_imp_fac"><i class="fas fa-file-excel"></i> Imprimir facturas</a>
                     </div>
                     @endif
 
@@ -515,68 +516,118 @@
 
 			if(table.rows('.selected').data().length >= 0){
 				$("#btn_emitir").removeClass('disabled d-none');
+				$("#btn_imp_fac").removeClass('disabled d-none');
 			}else{
 				$("#btn_emitir").addClass('disabled d-none');
+				$("#btn_imp_fac").addClass('disabled d-none');
 			}
         });
 
 		$('#btn_emitir').on('click', function(e) {
-		var table = $('#tabla-facturas').DataTable();
-		var nro = table.rows('.selected').data().length;
+            var table = $('#tabla-facturas').DataTable();
+            var nro = table.rows('.selected').data().length;
 
-		if(nro <= 0){
-			swal({
-				title: 'ERROR',
-				html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
-				type: 'error',
-			});
-			return false;
-		}
+            if(nro <= 0){
+                swal({
+                    title: 'ERROR',
+                    html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
+                    type: 'error',
+                });
+                return false;
+            }
 
-		var facturas = [];
-		for (i = 0; i < nro; i++) {
-			facturas.push(table.rows('.selected').data()[i]['id']);
-		}
+            var facturas = [];
+            for (i = 0; i < nro; i++) {
+                facturas.push(table.rows('.selected').data()[i]['id']);
+            }
 
-		swal({
-			title: '¿Desea convertir '+nro+' facturas estandar a facturas electrónicas?',
-			text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
-			type: 'question',
-			showCancelButton: true,
-			confirmButtonColor: '#00ce68',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Aceptar',
-			cancelButtonText: 'Cancelar',
-		}).then((result) => {
-			if (result.value) {
-				cargando(true);
+            swal({
+                title: '¿Desea convertir '+nro+' facturas estandar a facturas electrónicas?',
+                text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ce68',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.value) {
+                    cargando(true);
 
-				if (window.location.pathname.split("/")[1] === "software") {
-					var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
-				}else{
-					var url = `/empresa/facturas/conversionmasiva/`+facturas;
-				}
+                    if (window.location.pathname.split("/")[1] === "software") {
+                        var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
+                    }else{
+                        var url = `/empresa/facturas/conversionmasiva/`+facturas;
+                    }
 
-				$.ajax({
-					url: url,
-					method: 'GET',
-					headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-					success: function(data) {
-						cargando(false);
-						swal({
-							title: 'PROCESO REALIZADO',
-							html: data.text,
-							type: 'success',
-							showConfirmButton: true,
-							confirmButtonColor: '#1A59A1',
-							confirmButtonText: 'ACEPTAR',
-						});
-						getDataTable();
-					}
-				})
-			}
-		})
-	});
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        success: function(data) {
+                            cargando(false);
+                            swal({
+                                title: 'PROCESO REALIZADO',
+                                html: data.text,
+                                type: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#1A59A1',
+                                confirmButtonText: 'ACEPTAR',
+                            });
+                            getDataTable();
+                        }
+                    })
+                }
+            })
+	    });
+        $('#btn_imp_fac').on('click', function(e) {
+            var table = $('#tabla-facturas').DataTable();
+            var nro = table.rows('.selected').data().length;
+
+            if(nro <= 0){
+                swal({
+                    title: 'ERROR',
+                    html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
+                    type: 'error',
+                });
+                return false;
+            }
+
+            var facturas = [];
+            for (i = 0; i < nro; i++) {
+                facturas.push(table.rows('.selected').data()[i]['id']);
+            }
+
+            swal({
+                title: '¿Desea imprimir '+nro+' facturas?',
+                text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ce68',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.value) {
+                    cargando(true);
+
+                    const baseUrl = "{{ url('empresa/facturas/impresionmasiva') }}";
+                    const url = `${baseUrl}/${facturas.join(',')}`;
+                    window.open(url, '_blank');
+
+                    cargando(false);
+
+                    swal({
+                        title: 'PROCESO REALIZADO',
+                        html: 'Las facturas están siendo generadas en una nueva pestaña.',
+                        type: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#1A59A1',
+                        confirmButtonText: 'ACEPTAR',
+                    });
+                }
+            })
+        });
 	});
 
 	function getDataTable() {
