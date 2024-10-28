@@ -167,6 +167,10 @@
                             <td style="padding-left: 9px;">{{$radicado->nombre}}</td>
                         </tr>
                         <tr>
+                            <th style="text-align: left; padding-left: 9px;">Nit</th>
+                            <td style="padding-left: 9px;">{{$radicado->cliente()->nit}}</td>
+                        </tr>
+                        <tr>
                             <th style="text-align: left; padding-left: 9px;">Nro. Telefónico</th>
                             <td style="padding-left: 9px;">{{$radicado->telefono}}</td>
                         </tr>
