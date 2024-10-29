@@ -300,7 +300,11 @@
     @foreach($facturas as $key => $factura)
         <div class="divheader-pr">
             <div style="width: 30%; display: inline-block; vertical-align: top; text-align: center; height:100px !important;  margin-top: 2%; overflow:hidden; text-align:center;">
-                <img src="{{ asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo) }}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+                @if(env('APP_ENV')=='local')
+                    <img src="{{ public_path('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo) }}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+                @else
+                    <img src="{{ asset('images/Empresas/Empresa'.$empresa->id.'/'.$empresa->logo) }}" alt="" style="max-width: 100%; max-height:100px; object-fit:contain; text-align:left;">
+                @endif
             </div>
             <div style="width: 40%; text-align: center; display: inline-block;  height:auto; margin-right:45px;margin-top: .5%;">
                 <br><br>
@@ -317,7 +321,11 @@
             <div style="width: 21%; display: inline-block; text-align: left; vertical-align: top;margin-top: 2%;">
                 <table style="border:none;width:100%;height:auto;">
                     <tr>
-                        <img class="imgwifi" src="{{asset('images/wifi.png')}}" alt="">
+                        @if(env('APP_ENV')=='local')
+                            <img class="imgwifi" src="{{public_path('images/wifi.png')}}" alt="">
+                        @else
+                            <img class="imgwifi" src="{{asset('images/wifi.png')}}" alt="">
+                        @endif
                     </tr>
                 </table>
             </div>
@@ -408,7 +416,7 @@
                 <tr>
                     <td style="width:14%;border:none;">
                         <div style="background-color:{{$empresa->color}};text-align:center;border-radius:5px;height:16px;padding:5px;text-align:left;color:#fff;">
-                            DATOS FACTURA
+                            DETALLES
                         </div>
                     </td>
                     <td style="width:27%;border:none;padding-left:30%;">
@@ -416,11 +424,11 @@
                             @if($factura->emitida == 1)
                                 FACTURA ELECTRONICA DE VENTA
                             @else
-                                FACTURA DE VENTA
+                                ESTADO DE CUENTA
                             @endif
                         </div>
                     </td>
-                    <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
+                    <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{substr($factura->codigo,2)}}</td>
                 </tr>
                 </tbody>
             </table>
