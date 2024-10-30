@@ -520,7 +520,7 @@ class FacturasController extends Controller{
             ->leftJoin('mikrotik as mk', 'mk.id', '=', 'cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->leftJoin(
-                DB::raw('(SELECT factura_id, contrato_nro FROM facturas_contratos GROUP BY factura_id ORDER BY id ASC) as fc'),
+                DB::raw('(SELECT fc.factura_id, fc.contrato_nro FROM facturas_contratos as fc WHERE fc.id = (SELECT MIN(id) FROM facturas_contratos WHERE factura_id = fc.factura_id)) as fc'),
                 'factura.id', '=', 'fc.factura_id'
             ) // Subconsulta para tomar el primer registro en facturas_contratos
             ->select(
