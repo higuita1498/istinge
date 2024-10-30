@@ -103,8 +103,9 @@ class Factura extends Model
         else return false;
     }
 
-    public function relationContracts(){
-        return $this->belongsToMany('App\Contrato','facturas_contratos','factura_id','contrato_nro');
+    public function relationContracts()
+    {
+        return $this->belongsToMany('App\Contrato', 'facturas_contratos', 'factura_id', 'contrato_nro', 'id', 'nro');
     }
 
     public function contratoAsociado(){
