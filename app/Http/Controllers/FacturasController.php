@@ -514,22 +514,62 @@ class FacturasController extends Controller{
 
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->join('empresas as em','em.id','factura.empresa')
+            ->join('empresas as em', 'em.id', '=', 'factura.empresa')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
             ->join('contracts as cs', 'factura.contrato_id', '=', 'cs.id')
-            ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
+            ->leftJoin('mikrotik as mk', 'mk.id', '=', 'cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje', 'factura.codigo',
-             'em.api_key_siigo as api_key_siigo',
-             'factura.nro', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'),
-             DB::raw('c.apellido2 as ape2cliente'), DB::raw('c.email as emailcliente'),
-             DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), DB::raw('c.direccion as direccioncliente'),
-             'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida',
-             'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian','cs.address_street as address_street','cs.nro as contrato',
-             DB::raw('v.nombre as nombrevendedor'),
-             DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-             DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-             DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+            ->leftJoin(
+                DB::raw('(SELECT factura_id, contrato_nro FROM facturas_contratos GROUP BY factura_id ORDER BY id ASC) as fc'),
+                'factura.id', '=', 'fc.factura_id'
+            ) // Subconsulta para tomar el primer registro en facturas_contratos
+            ->select(
+                'factura.tipo',
+                'factura.promesa_pago',
+                'factura.id',
+                'factura.correo',
+                'factura.mensaje',
+                'factura.codigo',
+                'em.api_key_siigo as api_key_siigo',
+                'factura.nro',
+                DB::raw('c.nombre as nombrecliente'),
+                DB::raw('c.apellido1 as ape1cliente'),
+                DB::raw('c.apellido2 as ape2cliente'),
+                DB::raw('c.email as emailcliente'),
+                DB::raw('c.celular as celularcliente'),
+                DB::raw('c.nit as nitcliente'),
+                DB::raw('c.direccion as direccioncliente'),
+                'factura.cliente',
+                'factura.fecha',
+                'factura.vencimiento',
+                'factura.estatus',
+                'factura.vendedor',
+                'factura.emitida',
+                'mk.nombre as servidor',
+                'cs.server_configuration_id',
+                'cs.opciones_dian',
+                'cs.address_street as address_street',
+                DB::raw('
+            CASE
+                WHEN fc.contrato_nro IS NOT NULL THEN fc.contrato_nro
+                ELSE cs.nro
+            END as contrato' // Prioridad a contrato_nro de facturas_contratos
+                ),
+                DB::raw('v.nombre as nombrevendedor'),
+                DB::raw('
+            SUM((if.cant * if.precio) - (if.precio * (if(if.desc, if.desc, 0) / 100) * if.cant) + (if.precio - (if.precio * (if(if.desc, if.desc, 0) / 100))) * (if.impuesto / 100) * if.cant) as total
+        '),
+                DB::raw('
+            ((SELECT SUM(pago) FROM ingresos_factura WHERE factura = factura.id) +
+            (SELECT IF(SUM(valor), SUM(valor), 0) FROM ingresos_retenciones WHERE factura = factura.id)) as pagado
+        '),
+                DB::raw('
+            (SUM((if.cant * if.precio) - (if.precio * (if(if.desc, if.desc, 0) / 100) * if.cant) + (if.precio - (if.precio * (if(if.desc, if.desc, 0) / 100)) * (if.impuesto / 100) * if.cant)) -
+            ((SELECT SUM(pago) FROM ingresos_factura WHERE factura = factura.id) +
+            (SELECT IF(SUM(valor), SUM(valor), 0) FROM ingresos_retenciones WHERE factura = factura.id)) -
+            (SELECT IF(SUM(pago), SUM(pago), 0) FROM notas_factura WHERE factura = factura.id)) as porpagar
+        ')
+            )
             ->groupBy('factura.id');
 
         if ($request->filtro == true) {
