@@ -194,7 +194,7 @@ class CronController extends Controller
                            ){
 
                             if(!$fac || isset($fac) && $fecha != $fac->fecha){
-                                $numero=round($numero)+1;
+                                $numero=round(floatval($numero));+1;
 
                                 //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
                                 $nro = NumeracionFactura::tipoNumeracion($contrato);
