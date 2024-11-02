@@ -882,16 +882,40 @@ public function forma_pago()
 
         /*>>>>>>>>>>>>>>>>>>>>>>>>>> Saldo mes Anterior <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-        //traemos todas las facturas que el vencimiento haya pasado la fecha actual.
-        $facturasVencidas = Factura::where('cliente',$this->cliente)
-        ->where('vencimiento','<=',$fechaActual)
-        ->where('id','!=',$this->id)
-        ->where('estatus','=',1)
+        // Convertir la fecha en un objeto Carbon
+        $fechaFacturaActual = Carbon::parse($this->fecha); // Convierte la fecha a un objeto Carbon
+
+        $mesFacturaActual = $fechaFacturaActual->month;
+        $anioFacturaActual = $fechaFacturaActual->year;
+
+        // Consultar las facturas abiertas de meses pasados
+        $facturasVencidas = Factura::where('cliente', $this->cliente)
+            ->where(function ($query) use ($mesFacturaActual, $anioFacturaActual, $fechaFacturaActual) {
+                $query->where('vencimiento', '<=', $fechaFacturaActual)
+                ->OrwhereYear('fecha', '<', $anioFacturaActual)
+                    ->orWhere(function ($subQuery) use ($mesFacturaActual, $anioFacturaActual) {
+                        $subQuery->whereYear('fecha', '=', $anioFacturaActual)
+                                ->whereMonth('fecha', '<', $mesFacturaActual);
+                    });
+        })
+        ->where('id', '!=', $this->id)
+        ->where('estatus', '=', 1)
         ->get();
 
-        //sumamos todo lo que deba el cliente despues de la fecha de vencimiento
+        $contrato_factura_actual = DB::table('facturas_contratos')->where('factura_id',$this->id)->first();
+
         foreach($facturasVencidas as $vencida){
-            $saldoMesAnterior+=$vencida->porpagar();
+            //** Validacion para nada mas sumar las facturas del mismo contrato
+            if($contrato_factura_actual){
+              $contrato_otra_factura =   DB::table('facturas_contratos')->where('factura_id',$vencida->id)->first();
+              if($contrato_otra_factura){
+                  if($contrato_otra_factura->contrato_nro == $contrato_factura_actual->contrato_nro){
+                      $saldoMesAnterior+=$vencida->porpagar();
+                  }
+              }
+            }else{
+                $saldoMesAnterior+=$vencida->porpagar();
+            }
         }
 
         $estadoCuenta['saldoMesAnterior'] = $saldoMesAnterior;
