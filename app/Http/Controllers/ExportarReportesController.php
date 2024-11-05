@@ -3584,7 +3584,7 @@ class ExportarReportesController extends Controller
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, date('d-m-Y', strtotime($movimiento->fecha)))
-                ->setCellValue($letras[1].$i, $movimiento->id_modulo)
+                ->setCellValue($letras[1].$i, $movimiento->show_modulo()!=null?$movimiento->show_modulo()->nro:$movimiento->id_modulo)
                 ->setCellValue($letras[2].$i, $nombres)
                 ->setCellValue($letras[3].$i, $identificacion)
                 ->setCellValue($letras[4].$i, $movNombre)
