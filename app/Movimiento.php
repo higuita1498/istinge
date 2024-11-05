@@ -48,6 +48,21 @@ class Movimiento extends Model
         }
     }
 
+    public function show_modulo(){
+
+        if ($this->modulo==1) {
+            return Ingreso::find($this->id_modulo);
+        }
+        else if ($this->modulo==2) {
+            return  IngresoR::find($this->id_modulo);
+        }
+        else if ($this->modulo==3) {
+            return Gastos::find($this->id_modulo);
+        }
+
+        return  null;
+    }
+
     public function conciliado(){
         return $this->conciliado==0?'No':'Si';
     }

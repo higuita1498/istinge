@@ -103,7 +103,7 @@
                         <td><a href="{{$movimiento->show_url()}}">{{date('d-m-Y', strtotime($movimiento->fecha))}}</a></td>
                         <td>
                             <a href="{{$movimiento->show_url()}}">
-                                {{$movimiento->id_modulo}}
+                                {{$movimiento->show_modulo()!=null?$movimiento->show_modulo()->nro:$movimiento->id_modulo}}
                             </a>
                         </td>
                         <td>
@@ -117,7 +117,7 @@
                             {{ $movimiento->padre() ? $movimiento->padre()->created_by()->nombres : ''}}
                             @endif
                         </td>
-                        
+
                         <td>
                             {{$movimiento->banco()->nombre}}
                         </td>
