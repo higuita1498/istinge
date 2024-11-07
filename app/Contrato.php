@@ -355,4 +355,14 @@ class Contrato extends Model
         return Factura::find($this->factura_id);
     }
 
+    public function facturasDirectas()
+    {
+        return $this->hasMany(Factura::class, 'cliente', 'client_id');
+    }
+    // Relación many-to-many a través de la tabla intermedia `facturas_contratos`
+    public function facturas()
+    {
+        return $this->belongsToMany(Factura::class, 'facturas_contratos', 'contrato_nro', 'factura_id', 'nro', 'id');
+    }
+
 }

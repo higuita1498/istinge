@@ -144,16 +144,27 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.client_id', $request->cliente_id);
                 });
             }
+            if ($request->sin_facturas_check && $request->fecha_sin_facturas) {
+                $fechaFiltro = Carbon::parse($request->fecha_sin_facturas)->format('Y-m-d');
+                $inicioDia = Carbon::parse($fechaFiltro)->startOfDay();
+                $finDia = Carbon::parse($fechaFiltro)->endOfDay();
+                // Excluir contratos que tengan facturas en la relación many-to-many (facturas_contratos) en el rango de fecha
+                $contratos->whereDoesntHave('facturas', function ($query) use ($inicioDia, $finDia) {
+                    $query->whereBetween('facturas_contratos.created_at', [$inicioDia, $finDia]);
+                });
+                // Excluir contratos que tengan facturas directamente en la tabla factura en el rango de fecha
+                $contratos->whereDoesntHave('facturasDirectas', function ($query) use ($inicioDia, $finDia) {
+                    $query->whereBetween('factura.created_at', [$inicioDia, $finDia]);
+                });
+            }
             if($request->plan){
 
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.plan_id', $request->plan);
                 });
             }
-            Log::info($request->filtro_facturas);
             // Aplica el filtro de facturas si el usuario lo selecciona
             if ($request->filtro_facturas === "true") {
-                Log::info("entra");
                 $contratos->join('factura', function($join) {
                     $join->on('factura.contrato_id', '=', 'contracts.id')
                         ->where('factura.estatus', '=', 1);

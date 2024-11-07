@@ -242,6 +242,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-8 pl-1 pt-1">
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <input type="text" class="form-control" id="fecha_sin_facturas" name="fecha_sin_facturas" placeholder="Fecha de filtro sin facturas">
+                                </div>
+                                <div class="col-md-4 pl-1">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="sin_facturas_check" name="sin_facturas_check">
+                                        <label class="form-check-label" for="sin_facturas_check">Contratos sin facturas</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -387,6 +400,13 @@
                 return $('#fecha-corte').val();
             }
         });
+        $('#fecha_sin_facturas').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            locale: 'es-es',
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+        });
         $('#servidor').change(function(){
             getPlanes($("#servidor").val());
         });
@@ -483,6 +503,8 @@
             data.tipo_contrato = $("#tipo_contrato").val();
             data.otra_opcion = $("#otra_opcion").val();
             data.fecha_corte = $("#fecha-corte").val();
+            data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
+            data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
             data.filtro = true;
         });
 
@@ -495,6 +517,13 @@
             if(e.which == 13) {
                 getDataTable();
                 return false;
+            }
+        });
+
+        $('#sin_facturas_check, #fecha_sin_facturas').on('change', function() {
+            // Verificar que el check esté marcado y que haya una fecha seleccionada
+            if ($('#sin_facturas_check').is(':checked') && $('#fecha_sin_facturas').val()) {
+                getDataTable(); // Actualiza la tabla cuando se cumplen ambas condiciones
             }
         });
 
@@ -583,6 +612,7 @@
         $("#facturacion_s").val('').selectpicker('refresh');
         $("#desde").val('');
         $("#hasta").val('');
+        $("#fecha_sin_facturas").val('');
         $("#fecha-corte").val('');
         $("#tipo_contrato").val('').selectpicker('refresh');
         $("#otra_opcion").val('').selectpicker('refresh');
