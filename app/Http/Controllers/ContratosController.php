@@ -150,11 +150,11 @@ class ContratosController extends Controller
                 $finDia = Carbon::parse($fechaFiltro)->endOfDay();
                 // Excluir contratos que tengan facturas en la relación many-to-many (facturas_contratos) en el rango de fecha
                 $contratos->whereDoesntHave('facturas', function ($query) use ($inicioDia, $finDia) {
-                    $query->whereBetween('facturas_contratos.created_at', [$inicioDia, $finDia]);
+                    $query->whereBetween('factura.fecha', [$inicioDia, $finDia]);
                 });
                 // Excluir contratos que tengan facturas directamente en la tabla factura en el rango de fecha
                 $contratos->whereDoesntHave('facturasDirectas', function ($query) use ($inicioDia, $finDia) {
-                    $query->whereBetween('factura.created_at', [$inicioDia, $finDia]);
+                    $query->whereBetween('factura.fecha', [$inicioDia, $finDia]);
                 });
             }
             if($request->plan){
