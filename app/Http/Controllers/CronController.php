@@ -156,7 +156,6 @@ class CronController extends Controller
                 $m = Carbon::now()->format('m');
                 $ds = substr(str_repeat(0, 2).$grupo_corte->fecha_suspension, - 2);
                 $da = Carbon::now()->format('d')*1;
-                $da = 14;
 
                  if($da > $grupo_corte->fecha_suspension && $m!=12){
                     $m=$m+1;
