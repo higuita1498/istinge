@@ -512,7 +512,6 @@
 		    							<th>Factura</th>
 		    							<th>Cliente</th>
 		    							<th>Contrato(s)</th>
-		    							<th>Dirección</th>
 		    							<th>Creación</th>
 		    							<th>Vencimiento</th>
 		    							<th>Total</th>
