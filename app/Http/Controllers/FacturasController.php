@@ -513,6 +513,7 @@ class FacturasController extends Controller{
         $facturas = Factura::query()
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+            ->join('empresas as em','em.id','factura.empresa')
             ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
             ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
@@ -522,6 +523,7 @@ class FacturasController extends Controller{
              DB::raw('c.celular as celularcliente'), DB::raw('c.nit as nitcliente'), DB::raw('c.direccion as direccioncliente'),
              'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida',
              'mk.nombre as servidor','cs.server_configuration_id','cs.opciones_dian',
+             'em.api_key_siigo as api_key_siigo',
              DB::raw('v.nombre as nombrevendedor'),
              DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
              DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
