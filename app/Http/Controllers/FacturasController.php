@@ -2105,7 +2105,10 @@ class FacturasController extends Controller{
             $textDireccion = "";
             foreach($contratos as $c){
                 $textContratos.=  "|" .$c->contrato_nro . "|";
-                $textDireccion = $factura->contrato()->address_street?:$factura->contrato()->cliente()->direccion;
+                $con = Contrato::where("nro",$c->contrato_nro)->first();
+                $textDireccion .="|";
+                $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                $textDireccion .="|";
             }
 
 
