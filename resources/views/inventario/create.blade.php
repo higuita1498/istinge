@@ -288,7 +288,9 @@
 	  			<label class="control-label">Tipo <span class="text-danger">*</span></label>
 	  			<select class="form-control selectpicker" name="type" id="type" required="" title="Seleccione" data-live-search="true" data-size="5">
 	  			    <option value="MATERIAL">MATERIAL</option>
-	  			    <option value="MODEMS">MODEMS</option>
+	  			    <option value="MODEMS">EQUIPOS</option>
+	  			    <option value="MODEMS">HERRAMIENTA</option>
+	  			    <option value="MODEMS">OFICINA</option>
 	  			    @if($type == 'TV')
 	  			    <option value="TV" {{ $type == 'TV' ? 'selected' : '' }}>TV</option>
 	  			    @endif
