@@ -515,7 +515,7 @@ class FacturasController extends Controller{
             ->join('contactos as c', 'factura.cliente', '=', 'c.id')
             ->join('empresas as em', 'em.id', '=', 'factura.empresa')
             ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->join('contracts as cs', 'factura.contrato_id', '=', 'cs.id')
+            ->leftJoin('contracts as cs', 'factura.contrato_id', '=', 'cs.id')
             ->leftJoin('mikrotik as mk', 'mk.id', '=', 'cs.server_configuration_id')
             ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
             ->leftJoin(
