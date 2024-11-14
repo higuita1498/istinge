@@ -2102,8 +2102,10 @@ class FacturasController extends Controller{
             // ** Obtencion de los contratos
             $contratos = DB::table('facturas_contratos as fc')->where('fc.factura_id',$factura->id)->get();
             $textContratos = "";
+            $textDireccion = "";
             foreach($contratos as $c){
                 $textContratos.=  "|" .$c->contrato_nro . "|";
+                $textDireccion = $factura->contrato()->address_street?:$factura->contrato()->cliente()->direccion;
             }
 
 
@@ -2111,6 +2113,7 @@ class FacturasController extends Controller{
             $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
             $nestedData[] = '<a href="'.route('contactos.show',$factura->cliente).'" target="_blank">'.$factura->nombrecliente.' '.$factura->ape1cliente.' '.$factura->ape2cliente.'</a>';
             $nestedData[] = $textContratos;
+            $nestedData[] = $textDireccion;
             $nestedData[] = date('d-m-Y', strtotime($factura->fecha));
             if(date('Y-m-d') > $factura->vencimiento && $factura->estatus==1){
                 $nestedData[] = '<spam class="text-danger">'.date('d-m-Y', strtotime($factura->vencimiento)).'</spam>';
