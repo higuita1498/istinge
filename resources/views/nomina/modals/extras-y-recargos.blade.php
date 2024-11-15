@@ -10,13 +10,13 @@
             <div class="modal-body" id="extras-recargo-nomina-{{$nominaPeriodo->id}}">
                 <div class="container-fluid">
                     <ul class="nav nav-tabs nav-fill mb-3" id="ex1-{{$nominaPeriodo->id}}" role="tablist">
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link active" id="ex2-tab-1-n{{$nominaPeriodo->id}}" data-toggle="tab" href="#ex2-tabs-1-n{{$nominaPeriodo->id}}" role="tab" aria-controls="ex2-tabs-1-n{{$nominaPeriodo->id}}" aria-selected="true">Horas extras</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link" id="ex2-tab-2-n{{$nominaPeriodo->id}}" data-toggle="tab" href="#ex2-tabs-2-n{{$nominaPeriodo->id}}" role="tab" aria-controls="ex2-tabs-2-n{{$nominaPeriodo->id}}" aria-selected="false">Recargos</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link" id="ex2-tab-3-n{{$nominaPeriodo->id}}" data-toggle="tab" href="#ex2-tabs-3-n{{$nominaPeriodo->id}}" role="tab" aria-controls="ex2-tabs-3-n{{$nominaPeriodo->id}}" aria-selected="false">Otros conceptos</a>
                         </li>
                     </ul>
@@ -148,7 +148,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-light" data-dismiss="modal" id="cancelarModal">Cerrar</button>
-                <a href="javascript:extrasUpdate()" class="btn btn-success">Guardar</a>
+                <a href="javascript:extrasUpdate({{ auth()->user()->empresaObj->valor_jornada_semanal }})" class="btn btn-success">Guardar</a>
             </div>
         </div>
     </div>
@@ -157,9 +157,20 @@
 @if($loop->iteration == 1)
 <script>
     var idNomina = 0;
+    var vJornadaSemana = 7.66;
 
-    function extrasUpdate() {
+
+    function setValorJornadaSemana(value){
+        vJornadaSemana = value;
+    }
+
+    function extrasUpdate(vjs = null) {
         cargando(true);
+
+        if(vjs){
+            setValorJornadaSemana(vjs);
+        }
+
         editId = idNomina;
         resultTotal = updateTotal(editId);
         $('#valor_calculado_extras').val(resultTotal);
@@ -205,7 +216,7 @@
                 nHora = 0;
             }
 
-            return ((salarioBase * valorHora * nHora) / (30 * 8));
+            return ((salarioBase * valorHora * nHora) / (30 * vJornadaSemana));
         };
         var result = 0;
 
@@ -251,14 +262,7 @@
 
     function editHoras(id) {
         cargando(true);
-
-        if (window.location.pathname.split("/")[1] === "software") {
-			var url='/software/empresa';
-        }else{
-            var url = '/empresa';
-        }
-
-        var url = url+'/nomina/liquidar-nomina/' + id + '/edit';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {

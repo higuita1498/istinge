@@ -330,54 +330,95 @@
                     </ul>
                 </nav>
                 <!-- partial -->
-                <div class="main-panel">
-                    <div class="content-wrapper">
+                <div class="main-panel body-oscuro" @if (isset($requestBack)) style="width:100%" @endif>
+                    <div class="content-wrapper body-oscuro2"">
                         <div class="grid-margin stretch-card">
-                            <div class="card">
-                                <div class="body-card">
-                                    <div class="row " style="padding: 2%;">
+                            <div class="card top-radius body-oscuro">
+                                <div class="body-card body-oscuro">
+                                    <div class="row xp7jhwk" style="padding: 2%;">
                                         @php
-                                            $col_md1=8;
-                                            $col_md2=4;
-                                            if(isset($invert)){ $col_md1=4; $col_md2=8; }
-                                            if(isset($middel)){ $col_md1=6; $col_md2=6; }
-                                            if(isset($precice)){ $col_md1=5; $col_md2=7; }
-                                            if(isset($minus_dere)){ $col_md1=2; $col_md2=10; }
-                                            if(isset($minus_izq)){ $col_md1=10; $col_md2=2; }
-                                            if(isset($full)){ $col_md1=12; $col_md2=0; }
-                                            if(isset($invertfalse)){ $col_md1=8; $col_md2=4; }
+                                            $col_md1 = 7;
+                                            $col_md2 = 5;
+                                            if (isset($invert)) {
+                                                $col_md1 = 4;
+                                                $col_md2 = 8;
+                                            }
+                                            if (isset($middel)) {
+                                                $col_md1 = 6;
+                                                $col_md2 = 6;
+                                            }
+                                            if (isset($precice)) {
+                                                $col_md1 = 5;
+                                                $col_md2 = 7;
+                                            }
+                                            if (isset($minus_dere)) {
+                                                $col_md1 = 2;
+                                                $col_md2 = 10;
+                                            }
+
                                         @endphp
-                                        <div class="col-md-{{$col_md1}}" style="text-align: left;">
-                                            <h1 id="titulo"><i class="{{$icon}}"></i> {{isset($title_sub)?$title_sub:$title}}</h1>
+                                        <div class="col-md-{{ $col_md1 }} p-md-0 p-4">
+                                            <h3 id="titulo" class="body-oscuro"><i
+                                                    class="{{ $icon }}"></i>
+                                                {{ isset($title_sub) ? $title_sub : $title }}</h3>
                                         </div>
-                                        <div class="col-md-{{$col_md2}}" style="text-align: right;">
+                                        @if (isset($subtitleR))
+                                            <h3 style="text-align: right" class="w-100">
+                                                {{ $subtitleR ? $subtitleR : '' }}</h3>
+                                        @endif
+                                        @if (isset($cancelEditCot))
+                                            <a href="{{ $cancelEditCot }}"
+                                                style="position:absolute; right:3px; top:3px; padding:5px">
+                                                <h3 style="text-align: right" class="w-100"
+                                                    style="color:red; font-size:33px;">X</h3>
+                                            </a>
+                                        @endif
+                                        <div class="col-md-{{ $col_md2 }}" style="text-align: right;">
                                             @yield('boton')
                                         </div>
                                     </div>
-                                    <!-- msj cconfirmacion CRM -->
-                                    @if(Session::has('novence'))
-                                        <div class="alert alert-warning alert-dismissible fade show" role="alert" style="background-color:#FFFC33;">
-                                            <strong>{{Session::get('novence')}}</strong>
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endif
-                                    <!-- fin msj-->
+
                                     <!-- Funcion para generar el imprimir -->
-                                    @if(Session::has('print'))
-                                        @if(Session::get('print'))
-                                            <input type="hidden" id="imprimir" value="{{route('facturas.imprimir', Session::get('print'))}}">
+                                    @if (Session::has('print'))
+                                        @if (Session::get('print'))
+                                            <input type="hidden" id="imprimir"
+                                                value="{{ route('facturas.imprimir', Session::get('print')) }}">
                                         @endif
                                     @endif
 
-                                    @yield('content')
+                                    @if (Session::has('print_pos'))
+                                        @if (Session::get('print_pos'))
+                                            <input type="hidden" id="imprimir"
+                                                value="{{ route('facturas.tirilla', ['id' => Session::get('print_pos'), 'name' => "Factura No. Session::get('print_pos')"]) }}">
+                                        @endif
+                                    @endif
+
+
+                                    @if (Session::has('cannot-access-module'))
+                                        <div class="alert alert-danger">
+                                            {{ Session::get('cannot-access-module') }}
+                                        </div>
+
+                                        <script type="text/javascript">
+                                            setTimeout(function() {
+                                                $('.alert').hide();
+                                                $('.active_table').attr('class', ' ');
+                                            }, 5000);
+                                        </script>
+                                    @endif
+
+                                    <main id="app">
+                                        @yield('content')
+                                    </main>
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
                     <!-- Modal Small-->
-                    <div class="modal fade" id="modal-small" tabindex="-1" role="dialog" aria-labelledby="modal-small-CenterTitle" aria-hidden="true">
+                    <div class="modal fade" id="modal-small" tabindex="-1" role="dialog"
+                        aria-labelledby="modal-small-CenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content" id="modal-small-div">
                                 <div class="modal-header">
@@ -390,14 +431,17 @@
                                     ...
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Cerrar</button>
                                     <button type="button" class="btn btn-primary">Save changes</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -410,130 +454,29 @@
                                     ...
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Cerrar</button>
                                     <button type="button" class="btn btn-primary">Save changes</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- NOTIFICACIONES -->
-                    <input type="hidden" name="nro_notificacionesP" id="nro_notificacionesP" value="0">
-                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
-                        <source src="{{asset('images/alerta.mp3')}}">
-                    </audio>
-                    <div class="modal fade" id="modalNotificacionP" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header p-0">
-                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" id="modal-bodyP">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NOTIFICACIONES -->
-                    <input type="hidden" name="nro_notificacionesW" id="nro_notificacionesW" value="0">
-                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
-                        <source src="{{asset('images/alerta.mp3')}}">
-                    </audio>
-                    <div class="modal fade" id="modalNotificacionW" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header p-0">
-                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" id="modal-bodyW">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NOTIFICACIONES -->
-                    <input type="hidden" name="nro_notificacionesR" id="nro_notificacionesR" value="0">
-                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
-                        <source src="{{asset('images/alerta.mp3')}}">
-                    </audio>
-                    <div class="modal fade" id="modalNotificacionR" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header p-0">
-                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" id="modal-bodyR">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NOTIFICACIONES -->
-                    <input type="hidden" name="nro_notificacionesT" id="nro_notificacionesT" value="0">
-                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
-                        <source src="{{asset('images/alerta.mp3')}}">
-                    </audio>
-                    <div class="modal fade" id="modalNotificacionT" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header p-0">
-                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" id="modal-bodyT">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NOTIFICACIONES -->
-                    <input type="hidden" name="nro_notificaciones" id="nro_notificaciones" value="0">
-                    <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
-                        <source src="{{asset('images/alerta.mp3')}}">
-                    </audio>
-                    <div class="modal fade" id="modalNotificacion" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header p-0">
-                                    <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" id="modal-bodyc">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <input type="hidden" id="pageLength" value="{{Auth::user()->rol > 1 ? Auth::user()->empresa()->pageLength : '25'}}">
-
+                    <!-- content-wrapper ends -->
+                    <!-- partial:partials/_footer.html -->
                     <footer class="footer">
                         <div class="container-fluid clearfix">
-                            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">
-                                Todos los Derechos Reservados © @if(Auth::user()->rol > 1) {{ Auth::user()->empresa()->nombre }} @endif<a href="#" target="_blank"></a>
-                            </span>
-                            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
-                                Realizado por: <a href="https://networkingenieria.com/" target="_blank">Network Ingeniería S.A.S</a> <i class="mdi mdi-heart text-danger"></i>
+                            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Todos los
+                                derechos reservados {{ config('app.name') }}.
+                                <a href="http://www.bootstrapdash.com/" target="_blank"></a></span>
+                            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Realizado por:
+                                Gestoru.
+
+                                {{-- <i class="mdi mdi-heart text-danger"></i> --}}
                             </span>
                         </div>
                     </footer>
+                    <!-- partial -->
                 </div>
                 <div class="whatsapp text-left">
                     <a href="https://api.whatsapp.com/send?phone=+573053652834&text=Hola Integra Colombia, necesito soporte para la empresa {{Auth::user()->rol > 1 ? Auth::user()->empresa()->nombre:''}}" target="_blank" title="Soporte vía Whatsapp">

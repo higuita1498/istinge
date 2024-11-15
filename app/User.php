@@ -334,4 +334,10 @@ class User extends Authenticatable
         return $cuentas;
     }
 
+    public function modo_lecturaNomina()
+    {
+        return false;
+    }
+
+
 }

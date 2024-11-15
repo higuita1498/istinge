@@ -524,6 +524,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 
 	//NOMINA
     Route::group(['namespace' => 'Nomina', 'prefix' => 'nomina', 'middleware' => ['nomina']], function () {
+        Route::get('get-costos-periodo/{year}/{periodo}/{tipo}', 'NominaController@getCostoPeriodo')->name('nomina.get.costo.periodo');
 
         Route::get('/agrupadas/{periodo?}/{year?}/{tipo?}', 'NominaController@nominasAgrupadas')->name('nomina.agrupadas');
         Route::get('/individuales/{periodo?}/{year?}/{tipo?}', 'NominaController@nominasIndividuales')->name('nomina.individuales');

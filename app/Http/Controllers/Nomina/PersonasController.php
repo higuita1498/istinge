@@ -29,10 +29,6 @@ class PersonasController extends Controller
     {
         $this->middleware('nomina');
         $this->middleware('payrollReadingMode')->only('create', 'edit', 'update', 'destroy', 'store');
-
-        $this->middleware('can_access_to_page:170')->only('create');
-        $this->middleware('can_access_to_page:171')->only('edit');
-        $this->middleware('can_access_to_page:174')->only('show');
     }
 
     /**
@@ -146,15 +142,9 @@ class PersonasController extends Controller
         $termino_contratos = DB::table('ne_termino_contrato')->get();
         $salario_bases = DB::table('ne_salario_base')->get();
 
-        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-            ->select('tips_modulo_usuario.*')
-            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-            ->where('permisos_modulo.nombre_modulo', 'Nomina')
-            ->where('fk_idusuario', $usuario->id)
-            ->get();
 
 
-        return view('nomina.personas.index', ['guiasVistas' => $guiasVistas])->with(compact(
+        return view('nomina.personas.index')->with(compact(
             'personas',
             'cantidad',
             'request',

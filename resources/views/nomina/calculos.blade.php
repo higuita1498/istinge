@@ -115,13 +115,13 @@
 <div class="row card-description mb-0">
     <div class="col-md-12 mb-0">
         <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
-            <li class="nav-item" role="presentation">
+            <li class="nav-item " role="presentation">
                 <a class="nav-link active" id="ex3-tab-1" data-toggle="tab" href="#ex3-tabs-1" role="tab" aria-controls="ex3-tabs-1" aria-selected="true">Detalles de la colilla</a>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item " role="presentation">
                 <a class="nav-link" id="ex3-tab-2" data-toggle="tab" href="#ex3-tabs-2" role="tab" aria-controls="ex3-tabs-2" aria-selected="false">Seguridad social y parafiscales</a>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item " role="presentation">
                 <a class="nav-link" id="ex3-tab-3" data-toggle="tab" href="#ex3-tabs-3" role="tab" aria-controls="ex3-tabs-3" aria-selected="false">Provisión prestaciones sociales</a>
             </li>
         </ul>

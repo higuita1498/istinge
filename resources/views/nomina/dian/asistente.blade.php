@@ -545,13 +545,6 @@
     function formHabilitación(tipo) {
         var settestid = $("#test_id").val();
 
-
-        if (window.location.pathname.split("/")[1] === "software") {
-            var url='/software/empresa';
-        }else{
-            var url = '/empresa';
-        }
-
         $(document).ajaxStart(function() {
 
             const Toast = Swal.mixin({
@@ -573,7 +566,7 @@
         });
 
         $.ajax({
-            url: url + '/nominadian/proceso-habilitacion',
+            url: '/empresa/nominadian/proceso-habilitacion',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

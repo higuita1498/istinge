@@ -332,7 +332,7 @@
             <div class="col-6">
                 <a href="javascript:editTotal();"><i class="fas fa-edit"></i></a>
                 <p style="text-align: right; border-top: 1px solid #000;" id="r-total">173.105</p>
-                <input type="number" style="display:none" name="total" id="total" />
+                <input type="number" style="float:right" name="total" id="total" />
             </div>
 
         </div>

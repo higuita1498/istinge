@@ -198,7 +198,7 @@
     }
 </style>
 
-<section class="pricing py-5">
+<section class="pricing py-5 degrade-oscuro">
     <div class="container">
         <div class="row mb-5">
             <div class="col-md-8 offset-md-2">

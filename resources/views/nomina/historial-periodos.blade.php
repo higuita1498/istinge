@@ -14,7 +14,7 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card border-0">
+        <div class="card border-0 body-oscuro">
             <div class="card-body border-0">
                 <p class="card-text" style="font-size:15px">Podrás visualizar el historial de las nóminas que has liquidado en los diferentes periodos.</p>
             </div>
@@ -44,14 +44,14 @@
                     <tbody>
                         @foreach($historial as $historia)
                         <tr>
-                            <td>{{date("d",strtotime($historia->fecha_desde))}} - {{date("d",strtotime($historia->fecha_hasta))}} {{date("M",strtotime($historia->fecha_desde)) }} {{date("Y",strtotime($historia->fecha_desde)) }}</td>  
+                            <td>{{date("d",strtotime($historia->fecha_desde))}} - {{date("d",strtotime($historia->fecha_hasta))}} {{date("M",strtotime($historia->fecha_desde)) }} {{date("Y",strtotime($historia->fecha_desde)) }}</td>
                             {{-- <td>{{date("d",strtotime($historia->fecha_desde)) - date("d",strtotime($historia->fecha_hasta)) date("M",strtotime($historia->fecha_desde))}}</td>   --}}
-                            <td>{{$historia->numeroNominas}}</td>  
-                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->pagoEmpleado)}}</td>  
-                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->otrosPagos)}}</td>  
-                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->prestacionValor)}}</td>  
-                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->costo_total)}}</td>  
-                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->deduccPrestRet)}}</td>  
+                            <td>{{$historia->numeroNominas}}</td>
+                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->pagoEmpleado)}}</td>
+                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->otrosPagos)}}</td>
+                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->prestacionValor)}}</td>
+                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->costo_total)}}</td>
+                            <td>{{Auth::user()->empresaObj->moneda}}{{App\Funcion::Parsear($historia->deduccPrestRet)}}</td>
                         </tr>
                         @endforeach
                     </tbody>

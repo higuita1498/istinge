@@ -52,12 +52,14 @@
         }
         */
 
+        .dropdown-menu.show {
+            width: fit-content !important;
+        }
+
     </style>
 @endsection
 
 @section('content')
-
-    {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([2,3,4])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
 
     @include('partials.nomina.periods')
 
@@ -83,7 +85,7 @@
         <div class="col-4">
             <div class="btn-group dropdown">
                 @if($nomina->persona)
-                
+
                    <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
                     Prestaciones sociales
                 </a>
@@ -95,10 +97,10 @@
                     <br>
                     <a href="{{ route('nomina.prestacion-social.intereses-cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo,  'persona' => $nomina->persona->id, 'ajuste' => true, 'editNomina' => $nomina->id]) }}" style="text-decoration: underline;">- Intereses a las Cesantias</a>
                 </div>
-                
-                
+
+
                     @else
-                
+
                 <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
                     Prestaciones sociales
                 </a>
@@ -122,7 +124,7 @@
             <div class="row card-description">
                 <div class="col-md-12">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link active" id="empleados-tab" data-toggle="tab" href="#empleados" role="tab"
                                aria-controls="empleados" aria-selected="true">{{ $tipoContrato }}</a>
                         </li>

@@ -18,8 +18,6 @@ class NominaPrestacionSocialController extends Controller
 
     public function __construct()
     {
-        $this->middleware('can_access_to_page:161')->only('imprimir');
-        $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
     }
 
     public function prima(Request $request)

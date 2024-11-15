@@ -64,7 +64,6 @@
 
 @section('content')
 
-{{-- @include('nomina.tips.serie-base', ['pasos' => \collect([17, 18])->diff(auth()->user()->guiasVistas()->keyBy('nro_tip')->keys())->all()]) --}}
 
 
 <div class="row">
@@ -121,12 +120,12 @@
     <div class="col-6">
         <div class="card shadow-sm border-0 bg-light h-100 w-100">
             <div class="card-body p-2">
-                <h5 class="card-title text-center" id="colillas-pago">Colillas de pago</h5>
+                <h5 class="card-title text-center body-oscuro" id="colillas-pago">Colillas de pago</h5>
 
                 <ul style="list-style: none;">
-                    <li><a href="{{ route('nomina.agrupadas', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="fas fa-grip-vertical"></i> <span>Agrupadas</span></li> </a>
-                    <li><a href="{{ route('nomina.individuales', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="far fa-user"></i> <span>Individuales</span></li> </a>
-                    <li><a href="{{ route('liquidar-nomina.correo', ['periodo' => $request->periodo, 'year' => $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-envelope"></i> <span>Notificar pago via email</span></li> </a>
+                    <li><a class="body-oscuro" href="{{ route('nomina.agrupadas', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="fas fa-grip-vertical"></i> <span>Agrupadas</span></li> </a>
+                    <li><a class="body-oscuro" href="{{ route('nomina.individuales', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}" target="_blank"> <i class="far fa-user"></i> <span>Individuales</span></li> </a>
+                    <li><a class="body-oscuro" href="{{ route('liquidar-nomina.correo', ['periodo' => $request->periodo, 'year' => $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-envelope"></i> <span>Notificar pago via email</span></li> </a>
                 </ul>
             </div>
         </div>
@@ -135,11 +134,11 @@
     <div class="col-6">
         <div class="card shadow-sm border-0 bg-light h-100 w-100">
             <div class="card-body p-2">
-                <h5 class="card-title text-center" id="g-reportes">Reportes</h5>
+                <h5 class="card-title text-center body-oscuro" id="g-reportes">Reportes</h5>
                 <ul style="list-style: none;">
-                    <li><a href="{{ route('nomina.resumenExcel', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-file-alt"></i> <span>Resumen nomina</span></li> </a>
-                    <li><a href="{{ route('nomina.exportar', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-calendar"></i> <span>Reporte novedades</span></li> </a>
-                    {{-- <li><a href="#"> <i class="far fa-window-maximize"></i> <span>Interfaz contable</span></li> </a> --}}
+                    <li><a class="body-oscuro" href="{{ route('nomina.resumenExcel', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-file-alt"></i> <span>Resumen nomina</span></li> </a>
+                    <li><a class="body-oscuro" href="{{ route('nomina.exportar', ['periodo' => $request->periodo, 'year'=> $request->year, 'tipo' => $tipo]) }}"> <i class="far fa-calendar"></i> <span>Reporte novedades</span></li> </a>
+                    {{-- <li><a class="body-oscuro" href="#"> <i class="far fa-window-maximize"></i> <span>Interfaz contable</span></li> </a> --}}
                 </ul>
             </div>
         </div>
@@ -148,11 +147,11 @@
     <!-- <div class="col-4">
         <div class="card w-100">
             {{-- <div class="card-body p-2 border-right border-top">
-                <h5 class="card-title">Pagos</h5>
+                <h5 class="card-title body-oscuro">Pagos</h5>
                 <ul style="list-style: none;">
-                    <li><a href="#"> <i class="far fa-file"></i> <span>Pagar seguridad social</span></li> </a>
-                    <li><a href="#"> <i class="fas fa-file"></i> <span>Archivo pago seguridad social</span></li> </a>
-                    <li><a href="#"> <i class="fas fa-university"></i> <span>Archivo pago en banco</span></li> </a>
+                    <li><a class="body-oscuro" href="#"> <i class="far fa-file"></i> <span>Pagar seguridad social</span></li> </a>
+                    <li><a class="body-oscuro" href="#"> <i class="fas fa-file"></i> <span>Archivo pago seguridad social</span></li> </a>
+                    <li><a class="body-oscuro" href="#"> <i class="fas fa-university"></i> <span>Archivo pago en banco</span></li> </a>
                 </ul>
             </div> --}}
         </div>

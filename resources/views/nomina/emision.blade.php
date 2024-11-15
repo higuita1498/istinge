@@ -2,145 +2,151 @@
 
 
 @section('style')
-<style>
-    .form-control.form-control-sm {
-        padding: 0px;
-    }
+    <style>
+        .form-control.form-control-sm {
+            padding: 0px;
+        }
 
-    .color {
-        color: #022454;
-        background: #e9ecef;
-        font-weight: bold;
-        padding: 5px;
-        border-radius: 5px;
-        border: solid 1px #dbdbdb;
-        background-color: rgb(229, 229, 229) !important;
-    }
+        .color {
+            color: #022454;
+            background: #e9ecef;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 5px;
+            border: solid 1px #dbdbdb;
+            background-color: rgb(229, 229, 229) !important;
+        }
 
-    .color:hover {
-        border: solid 1px #022454;
-    }
+        .color:hover {
+            border: solid 1px #022454;
+        }
 
-    .w-77 {
-        width: 77% !important;
-    }
+        .w-77 {
+            width: 77% !important;
+        }
 
-    .notice {
-        padding: 15px;
-        background-color: #fff;
-        /*border-left: 6px solid #7f7f84;*/
-        margin-bottom: 10px;
-        -webkit-box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
-        -moz-box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
-        box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
-        min-height: 135px;
-    }
+        .notice {
+            padding: 15px;
+            background-color: #fff;
+            /*border-left: 6px solid #7f7f84;*/
+            margin-bottom: 10px;
+            -webkit-box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
+            -moz-box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
+            box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
+            min-height: 135px;
+        }
 
-    .notice-sm {
-        padding: 10px;
-        font-size: 80%;
-    }
+        .notice-sm {
+            padding: 10px;
+            font-size: 80%;
+        }
 
-    .notice-lg {
-        padding: 35px;
-        font-size: large;
-    }
-
-
-    .notice-success>strong {
-        color: #80D651;
-    }
-
-    .notice-info>strong {
-        color: #45ABCD;
-    }
+        .notice-lg {
+            padding: 35px;
+            font-size: large;
+        }
 
 
+        .notice-success>strong {
+            color: #80D651;
+        }
 
-    .notice-warning>strong {
-        color: #FEAF20;
-    }
+        .notice-info>strong {
+            color: #45ABCD;
+        }
 
 
 
-    .notice-danger>strong {
-        color: #d73814;
-    }
+        .notice-warning>strong {
+            color: #FEAF20;
+        }
 
-    .disabled {
-        cursor: default;
-    }
 
-    .disabled>i {
-        color: #d5cdcd !important;
-    }
 
-    .enabled {
-        pointer-events: default;
-        cursor: pointer;
-    }
-</style>
+        .notice-danger>strong {
+            color: #d73814;
+        }
+
+        .disabled {
+            cursor: default;
+        }
+
+        .disabled>i {
+            color: #d5cdcd !important;
+        }
+
+        .enabled {
+            pointer-events: default;
+            cursor: pointer;
+        }
+    </style>
 @endsection
 
 @section('content')
 
-<div class="container-fluid">
-    
-     @if (session()->has('error'))
-    <div class="row">
-        <div class="col-12">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session()->pull('error') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
-    
+    <div class="container-fluid">
 
-    @if($modoLectura->success)
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    @endif
-
-    {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([2,3,4])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
-
-    @if (session()->has('success'))
-    <div class="row">
-        <div class="col-12">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session()->pull('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    @if (isset($errors) && $errors->any())
-    <div class="row">
-        <div class="col-12">
-            <ul class="list-unstyled">
-                @foreach ($errors->all() as $error)
-                <li>
+        @if (session()->has('error'))
+            <div class="row">
+                <div class="col-12">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ $error }}
+                        {{ session()->pull('error') }}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                </li>
-                @endforeach
-            </ul>
+                </div>
+            </div>
+        @endif
+
+
+    @section('boton')
+        @if(auth()->user()->modo_lecturaNomina())
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes
+                    <a class="text-black" href="{{ route('clientplans.index') }}"> <b>Click Aquí.</b></a></a>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @else
+            <a href="javascript:emisionMasiva()" class="btn btn-primary btn-sm btn-gris"><i class="fas fa-plus"></i>
+                Emisión masiva</a>
+        @endif
+    @endsection
+
+    @include('nomina.includes.emision-masiva')
+
+    @if (session()->has('success'))
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session()->pull('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+    @endif
+
+    @if (isset($errors) && $errors->any())
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-unstyled">
+                    @foreach ($errors->all() as $error)
+                        <li>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ $error }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
     @endif
 
     <div class="row">
@@ -148,17 +154,19 @@
             <div class="notice pt-5 pl-4">
                 <strong>Proceso de la emisión</strong>
                 <br>
-                Se han emitido <span id="cantidad-emitida">{{ $emitidas }}</span> de <span id="empleados">{{ $personas }}</span> nóminas
+                Se han emitido <span id="cantidad-emitida">{{ $emitidas }}</span> de <span
+                    id="empleados">{{ $personas }}</span> nóminas
             </div>
         </div>
         <div class="col-12 col-md-6">
             <div class="notice pt-4">
-                <strong>Mes <span class="float-right">{{ ucfirst($date->monthName).' '.$date->format('Y') }}</span></strong>
+                <strong>Mes <span
+                        class="float-right">{{ ucfirst($date->monthName) . ' ' . $date->format('Y') }}</span></strong>
                 <hr>
-                @if($isFinalizado)
-                <strong>Estado <span class="float-right text-success">Finalizado</span></strong>
+                @if ($isFinalizado)
+                    <strong>Estado <span class="float-right text-success">Finalizado</span></strong>
                 @else
-                <strong>Estado <span class="float-right text-danger">En Proceso</span></strong>
+                    <strong>Estado <span class="float-right text-danger">En Proceso</span></strong>
                 @endif
             </div>
         </div>
@@ -168,27 +176,30 @@
         <div class="col notice">
             Aceptadas
             <br>
-            <span style="font-size: 1.4em;" class="text-success font-weight-bold">{{$estadosNomina->aceptadas}}</span>
+            <span style="font-size: 1.4em;" class="text-success font-weight-bold">{{ $estadosNomina->aceptadas }}</span>
         </div>
         <div class="col notice">
             Rechazadas
             <br>
-            <span style="font-size: 1.4em;" class="text-danger font-weight-bold">{{$estadosNomina->rechazadas}}</span>
+            <span style="font-size: 1.4em;" class="text-danger font-weight-bold">{{ $estadosNomina->rechazadas }}</span>
         </div>
         <div class="col notice">
             Ingresos
             <br>
-            <span style="font-size: 1.4em;" class="font-weight-bold">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($devengadosTotal) }}</span>
+            <span style="font-size: 1.4em;" class="font-weight-bold">{{ Auth::user()->empresaObj->moneda }}
+                {{ App\Funcion::Parsear($devengadosTotal) }}</span>
         </div>
         <div class="col notice">
             Deducciones
             <br>
-            <span style="font-size: 1.4em;" class="font-weight-bold">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($deduccionesTotal) }}</span>
+            <span style="font-size: 1.4em;" class="font-weight-bold">{{ Auth::user()->empresaObj->moneda }}
+                {{ App\Funcion::Parsear($deduccionesTotal) }}</span>
         </div>
         <div class="col notice">
             Total Pago
             <br>
-            <span style="font-size: 1.4em;" class="font-weight-bold">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($ingresosTotal) }}</span>
+            <span style="font-size: 1.4em;" class="font-weight-bold">{{ Auth::user()->empresaObj->moneda }}
+                {{ App\Funcion::Parsear($ingresosTotal) }}</span>
         </div>
     </div>
 
@@ -200,24 +211,27 @@
                 <div class="col-md-12">
 
                     <div class="tab-content fact-table" id="myTabContent">
-                        <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
-                            <input type="hidden" id="url-show-empleados" value="{{route('bancos.cliente.movimientos.cuenta', 1)}}">
+                        <div class="tab-pane fade show active" id="empleados" role="tabpanel"
+                            aria-labelledby="empleados-tab">
+                            <input type="hidden" id="url-show-empleados"
+                                value="{{ route('bancos.cliente.movimientos.cuenta', 1) }}">
 
-                            @if(Session::has('success'))
-                            <div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
-                                {{Session::get('success')}}
-                            </div>
-                            <script type="text/javascript">
-                                setTimeout(function() {
-                                    $('.alert').hide();
-                                    $('.active_table').attr('class', ' ');
-                                }, 5000);
-                            </script>
+                            @if (Session::has('success'))
+                                <div class="alert alert-success" style="margin-left: 2%;margin-right: 2%;">
+                                    {{ Session::get('success') }}
+                                </div>
+                                <script type="text/javascript">
+                                    setTimeout(function() {
+                                        $('.alert').hide();
+                                        $('.active_table').attr('class', ' ');
+                                    }, 5000);
+                                </script>
                             @endif
 
 
                             <div class="table-responsive">
-                                <table class="table table-light table-striped table-hover" id="table-show-empleados" style="width: 100%; border: 1px solid #e9ecef;">
+                                <table class="table table-light table-striped table-hover" id="table-show-empleados"
+                                    style="width: 100%; border: 1px solid #e9ecef;">
                                     <thead class="thead-light">
                                         <tr>
                                             <th class="font-weight-bold align-middle">CODIGO</th>
@@ -231,102 +245,136 @@
                                     <tbody class="paul">
                                         @php $i = 0; @endphp
                                         @foreach ($detalles as $detalle)
-                                        <tr style="{{$detalle['emitida'] == 6 ? 'pointer-events:none;background-color:#cccccc7a;' : ''}}">
-                                            <td>
-                                                <a href="{{route('personas.show', $detalles[$i]['idpersona'])}}">
-                                                    {{ $detalles[$i]['codigo_dian_eliminado'] ? $detalles[$i]['codigo_dian_eliminado'] : $detalles[$i]['codigo_dian'] }}
-                                                </a>
-                                            </td>
-                                            <td><a href="{{route('personas.show', $detalles[$i]['idpersona'])}}">{{ $detalles[$i]['persona'] }}</a></td>
-                                            <td>{{ $detalles[$i]['identificacion'] }}</td>
-                                            <td>{{ Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($detalles[$i]['total']) }}</td>
-                                            <td>
-                                                <span class="text-{{ $detalles[$i]['text'] }}">{{$detalles[$i]['emitida'] == 4 ? 'Ajuste de nómina ' : ''}} {{ $detalles[$i]['estado'] }}</span>
-                                            </td>
-                                            <td class="text-center">
-                                                @if(isset($_SESSION['permisos']['166']))
-                                                <a href="{{route('nomina.calculosCompleto',$detalles[$i]['idnomina'])}}"><i class="far fa-eye color"></i>
-                                                </a>
-                                                @endif
-                                                {{--<a href="{{ route('nomina.liquidar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year']]) }}" title="Editar Nómina"><i class="far fa-edit color"></i></a>--}}
+                                            <tr
+                                                style="{{ $detalle['emitida'] == 6 ? 'pointer-events:none;background-color:#cccccc7a;' : '' }}">
+                                                <td>
+                                                    <a href="{{ route('personas.show', $detalles[$i]['idpersona']) }}">
+                                                        {{ $detalles[$i]['codigo_dian_eliminado'] ? $detalles[$i]['codigo_dian_eliminado'] : $detalles[$i]['codigo_dian'] }}
+                                                    </a>
+                                                </td>
+                                                <td><a
+                                                        href="{{ route('personas.show', $detalles[$i]['idpersona']) }}">{{ $detalles[$i]['persona'] }}</a>
+                                                </td>
+                                                <td>{{ $detalles[$i]['identificacion'] }}</td>
+                                                <td>{{ Auth::user()->empresaObj->moneda }}
+                                                    {{ App\Funcion::Parsear($detalles[$i]['total']) }}</td>
+                                                <td>
+                                                    <span
+                                                        class="text-{{ $detalles[$i]['text'] }}">{{ $detalles[$i]['emitida'] == 4 ? 'Ajuste de nómina ' : '' }}
+                                                        {{ $detalles[$i]['estado'] }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (isset($_SESSION['permisos']['166']))
+                                                        <a
+                                                            href="{{ route('nomina.calculosCompleto', $detalles[$i]['idnomina']) }}"><i
+                                                                class="far fa-eye color"></i>
+                                                        </a>
+                                                    @endif
+                                                    {{-- <a href="{{ route('nomina.liquidar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year']]) }}" title="Editar Nómina"><i class="far fa-edit color"></i></a> --}}
 
-                                                @if((isset($_SESSION['permisos']['169']) || isset($_SESSION['permisos']['792'])  ||  isset($_SESSION['permisos']['790'])) && !$modoLectura->success)
-                                                    @if($detalles[$i]['estado'] != 'Emitida')
-                                                        @if($detalles[$i]['tipo'] == 2)
-                                                            <a href="{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], 'persona' => $detalles[$i]['idpersona'], 'editNomina' => $detalles[$i]['idnomina'] ]) }}"><i class="far fa-edit color"></i></a>
+                                                    @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina())
+                                                        @if ($detalles[$i]['estado'] != 'Emitida' && $detalles[$i]['estado'] != 'Ajuste emitido')
+                                                            @if ($detalles[$i]['tipo'] == 2)
+                                                                <a
+                                                                    href="{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], 'persona' => $detalles[$i]['idpersona'], 'editNomina' => $detalles[$i]['idnomina']]) }}"><i
+                                                                        class="far fa-edit color"></i></a>
+                                                            @else
+                                                                <a class="disabled"
+                                                                    title="Solo se puede editar nominas que ya hayan sido emitidas"><i
+                                                                        class="far fa-edit color"></i></a>
+                                                            @endif
                                                         @else
-                                                            <a class="disabled" title="Solo se puede editar nominas que ya hayan sido emitidas"><i class="far fa-edit color"></i></a>
+                                                            @if ($detalles[$i]['estado'] != 'Ajuste emitido')
+                                                                <a href="#"
+                                                                    onclick="confirmarAjusteNomina(`{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year' => $detalles[$i]['year'], $detalles[$i]['idpersona']]) }}`)"
+                                                                    title="Ajustar nomina"><i
+                                                                        class="far fa-edit color"></i></a>
+                                                            @else
+                                                                <a class="disabled"
+                                                                    title="Solo se puede editar nominas que ya hayan sido emitidas"><i
+                                                                        class="far fa-edit color"></i></a>
+                                                            @endif
                                                         @endif
-                                                    @else
-                                                        <a href="#" onclick="confirmarAjusteNomina(`{{ route('nomina.ajustar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year'], $detalles[$i]['idpersona']]) }}`)" title="Ajustar nomina"><i class="far fa-edit color"></i></a>
                                                     @endif
-                                                @endif
 
-                                               {{-- @if(isset($_SESSION['permisos']['166'])) --}} 
-                                                <a title="Imprimir nomina" href="{{ route('nominaCompleta.pdf', $detalles[$i]['idnomina']) }}" target="_blank"><i class="far fa-file-pdf color"></i></a>
-                                               {{-- @endif --}}
-
-
-                                                @if((isset($_SESSION['permisos']['167']) || isset($_SESSION['permisos']['792'])) && !$modoLectura->success)
-                                                 @if (!$empresa->nomina_dian)
-                                                    @if($detalles[$i]['emitida'] == 4)
-                                                    <a href="#" title="Emitir Ajuste de Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',2)">
-                                                        <i class="far fa-paper-plane color"></i>
-                                                    </a>
-                                                    @else
-                                                    <a href="#" title="Emitir Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',1)">
-                                                        <i class="far fa-paper-plane color"></i>
-                                                    </a>
+                                                    @if (isset($_SESSION['permisos']['166']))
+                                                        <a title="Imprimir nomina"
+                                                            href="{{ route('nominaCompleta.pdf', $detalles[$i]['idnomina']) }}"
+                                                            target="_blank"><i class="far fa-file-pdf color"></i></a>
                                                     @endif
-                                                @elseif($detalles[$i]['estado'] == 'No emitida' || $detalles[$i]['estado'] == 'Ajuste sin emitir' || $detalles[$i]['estado'] == 'Rechazada')
-                                                    @if($detalles[$i]['emitida'] == 4)
-                                                    <a href="#" title="Emitir Ajuste de Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',2)">
-                                                        <i class="far fa-paper-plane color"></i>
-                                                    </a>
-                                                    @else
-                                                    <a href="#" title="Emitir Nómina" onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',1)">
-                                                        <i class="far fa-paper-plane color"></i>
-                                                    </a>
+
+
+                                                    @if (isset($_SESSION['permisos']['167']) && !auth()->user()->modo_lecturaNomina())
+                                                        @if (!$empresa->nomina_dian)
+                                                            @if ($detalles[$i]['emitida'] == 4)
+                                                                <a href="#" title="Emitir Ajuste de Nómina"
+                                                                    onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',2)">
+                                                                    <i class="far fa-paper-plane color"></i>
+                                                                </a>
+                                                            @else
+                                                                <a href="#" title="Emitir Nómina"
+                                                                    onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',1)">
+                                                                    <i class="far fa-paper-plane color"></i>
+                                                                </a>
+                                                            @endif
+                                                        @elseif(
+                                                            $detalles[$i]['estado'] == 'No emitida' ||
+                                                                $detalles[$i]['estado'] == 'Ajuste sin emitir' ||
+                                                                $detalles[$i]['estado'] == 'Rechazada')
+                                                            @if ($detalles[$i]['emitida'] == 4)
+                                                                <a href="#" title="Emitir Ajuste de Nómina"
+                                                                    onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',2)">
+                                                                    <i class="far fa-paper-plane color"></i>
+                                                                </a>
+                                                            @else
+                                                                <a href="#" title="Emitir Nómina"
+                                                                    onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',1)">
+                                                                    <i class="far fa-paper-plane color"></i>
+                                                                </a>
+                                                            @endif
+                                                        @elseif($detalle['emitida'] == 1)
+                                                            <a href="{{ route('nomina.xml', $detalle['idnomina']) }}"
+                                                                title="Descargar XML de la nómina">
+                                                                <i class="far fa-file-code color"></i>
+                                                            </a>
+                                                        @else
+                                                            <a class="disabled"
+                                                                title="Solo se puede editar nominas que ya hayan sido emitidas">
+                                                                <i class="far fa-paper-plane color"></i>
+                                                            </a>
+                                                        @endif
                                                     @endif
-                                
-                                                @elseif($detalle['emitida'] == 1)
-                                                <a href="{{ route('nomina.xml', $detalle['idnomina']) }}" title="Descargar XML de la nómina">
-                                                    <i class="far fa-file-code color"></i>
-                                                </a>
-                                                @else
-                                                <a class="disabled" title="Solo se puede editar nominas que ya hayan sido emitidas">
-                                                    <i class="far fa-paper-plane color"></i>
-                                                </a>
-                                                @endif
-                                                @endif
 
-                                                @if(isset($_SESSION['permisos']['169']) && !$modoLectura->success)
-                                                <a class="btn-comentario" href="#" title="Agregar observación" data-route="{{ route('nomina.traer.observacion') }}" data-nomina="{{$detalles[$i]['idnomina']}}">
-                                                    <i class="far fa-comment color"></i>
-                                                </a>
-                                                @endif
-
-                                                <a href="{{ route('emitir-nomina.email', $detalles[$i]['idnomina']) }}" title="Enviar nómina al correo">
-                                                    <i class="fas fa-envelope-open-text color"></i>
-                                                </a>
-
-                                                @if(isset($_SESSION['permisos']['159']))
-                                                    @if($detalles[$i]['estado'] == 'Emitida')
-                                                
-                                                        <a title="Eliminar nomina dian"
-                                                        onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{route('nomina-dian.emitir', [$periodo,$year])}}', '{{$codigo = ''}}',3)">
-                                                            <i class="far fa-times color"></i>
-                                                        </a>
-                                                    @else
-                                                        <a class="disabled" title="Eliminar">
-                                                            <i class="far fa-times color"></i>
+                                                    @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina())
+                                                        <a class="btn-comentario" href="#"
+                                                            title="Agregar observación"
+                                                            data-route="{{ route('nomina.traer.observacion') }}"
+                                                            data-nomina="{{ $detalles[$i]['idnomina'] }}">
+                                                            <i class="far fa-comment color"></i>
                                                         </a>
                                                     @endif
-                                                @endif
-                                            </td>
-                                        </tr>
 
-                                        @php $i++; @endphp
+                                                    <a href="{{ route('emitir-nomina.email', $detalles[$i]['idnomina']) }}"
+                                                        title="Enviar nómina al correo">
+                                                        <i class="fas fa-envelope-open-text color"></i>
+                                                    </a>
+
+                                                    @if (isset($_SESSION['permisos']['159']))
+                                                        @if ($detalles[$i]['estado'] == 'Emitida')
+                                                            <a title="Eliminar nomina dian"
+                                                                onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',3)">
+                                                                <i class="far fa-times color"></i>
+                                                            </a>
+                                                        @else
+                                                            <a class="disabled" title="Eliminar">
+                                                                <i class="far fa-times color"></i>
+                                                            </a>
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+
+                                            @php $i++; @endphp
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -336,10 +384,12 @@
 
                             </div>
                             <div class="text-right mt-5">
-                                @if (!$modoLectura->success)
-                                <a href="{{ route('nomina.liquidar', ['periodo' => $periodo, 'year' => $year]) }}" role="button" class="btn btn-success">Editar nominas</a>
+                                @if (!auth()->user()->modo_lecturaNomina())
+                                    <a href="{{ route('nomina.liquidar', ['periodo' => $periodo, 'year' => $year]) }}"
+                                        role="button" class="btn btn-success">Editar nominas</a>
                                 @else
-                                <a href="#" role="button" class="btn btn-success disabled">Editar nominas</a>
+                                    <a href="#" role="button" class="btn btn-success disabled">Editar
+                                        nominas</a>
                                 @endif
                             </div>
                         </div>
@@ -353,7 +403,7 @@
 @endsection
 
 @section('scripts')
-<script src="{{asset('lowerScripts/nomina/nomina.js')}}"></script>
+<script src="{{ asset('lowerScripts/nomina/nomina.js') }}"></script>
 <script>
     $(document).ready(function() {
 
@@ -411,6 +461,10 @@
             "order": [
                 [0, "desc"]
             ],
+            "select": {
+                "style": 'multi'
+            }
+
         });
     });
 

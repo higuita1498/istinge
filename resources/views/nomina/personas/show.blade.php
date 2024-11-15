@@ -113,23 +113,24 @@
 @endif
 
 <div class="row card-description" id="detalles">
-	@if($modoLectura->success)
-	<div class="alert alert-warning alert-dismissible fade show" role="alert">
-		<a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
+    @if(auth()->user()->modo_lecturaNomina())
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes
+            <a class="text-black" href="{{ route('clientplans.index') }}"> <b>Click Aquí.</b></a></a>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
 	@endif
 	<div class="col-md-8">
 		<div class="card-persona">
-			<div class="card-header">
+			<div class="card-header body-oscuro">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="text-left">Datos Básicos</div>
 					</div>
 					<div class="col-md-6">
-						@if (!$modoLectura->success)
+						@if (!auth()->user()->modo_lecturaNomina())
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
 						@endif
 					</div>
@@ -189,13 +190,13 @@
 			</div>
 		</div>
 		<div class="card-persona mt-4">
-			<div class="card-header">
+			<div class="card-header body-oscuro">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="text-left">Datos Puesto de Trabajo</div>
 					</div>
 					<div class="col-md-6">
-						@if (!$modoLectura->success)
+						@if (!auth()->user()->modo_lecturaNomina())
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
 						@endif
 					</div>
@@ -225,13 +226,13 @@
 			</div>
 		</div>
 		<div class="card-persona mt-4">
-			<div class="card-header">
+			<div class="card-header body-oscuro">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="text-left">Datos Personales</div>
 					</div>
 					<div class="col-md-6">
-						@if (!$modoLectura->success)
+						@if (!auth()->user()->modo_lecturaNomina())
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
 						@endif
 					</div>
@@ -257,13 +258,13 @@
 			</div>
 		</div>
 		<div class="card-persona mt-4">
-			<div class="card-header">
+			<div class="card-header body-oscuro">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="text-left">Datos de Pago</div>
 					</div>
 					<div class="col-md-6">
-						@if (!$modoLectura->success)
+						@if (!auth()->user()->modo_lecturaNomina())
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
 						@endif
 					</div>
@@ -306,7 +307,7 @@
 			</ul>
 		</div>
 		<div class="card-persona mt-4">
-			<div class="card-header">
+			<div class="card-header body-oscuro">
 				<div class="row">
 					<div class="col-md-4">
 						<div class="text-left">Salario</div>
@@ -315,7 +316,7 @@
 						<div class="text-left">{{ $moneda }} {{ App\Funcion::Parsear($persona->valor) }}</div>
 					</div>
 					<div class="col-md-4">
-						@if (!$modoLectura->success)
+						@if (!auth()->user()->modo_lecturaNomina())
 						<div class="text-right"><a href="{{route('personas.edit', $persona->id)}}" class=""><i class="fas fa-edit"></i> Editar</a></div>
 						@endif
 					</div>
@@ -339,10 +340,10 @@
 						LIQUIDACION
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-						<li><a class="dropdown-item" href="{{ route('nomina.liquidar.destroy', $ultimaLiquidacion) }}">Eliminar liquidacion</a></li>
-						<li><a class="dropdown-item" href="{{ route('nomina.liquidar.edit', $ultimaLiquidacion) }}">Editar liquidacion</a></li>
-						<li><a class="dropdown-item" href="{{ route('nomina.imprimir.comprobanteLiquidacion', $ultimaLiquidacion) }}">Imprimir liquidacion</a></li>
-						<li><a class="dropdown-item" href="{{ route('nomina.imprimir.comprobanteLiquidacion', ['idContrato' => $ultimaLiquidacion, 'nomina' => 'si']) }}">Imprimir con nomina</a></li>
+						<li><a class="body-oscuro" class="dropdown-item" href="{{ route('nomina.liquidar.destroy', $ultimaLiquidacion) }}">Eliminar liquidacion</a></li>
+						<li><a class="body-oscuro" class="dropdown-item" href="{{ route('nomina.liquidar.edit', $ultimaLiquidacion) }}">Editar liquidacion</a></li>
+						<li><a class="body-oscuro" class="dropdown-item" href="{{ route('nomina.imprimir.comprobanteLiquidacion', $ultimaLiquidacion) }}">Imprimir liquidacion</a></li>
+						<li><a class="body-oscuro" class="dropdown-item" href="{{ route('nomina.imprimir.comprobanteLiquidacion', ['idContrato' => $ultimaLiquidacion, 'nomina' => 'si']) }}">Imprimir con nomina</a></li>
 					</ul>
 				</div>
 				@endif
@@ -402,10 +403,10 @@
 		<div class="row card-description">
 			<div class="col-md-12">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="nav-item" role="presentation">
+					<li class="nav-item " role="presentation">
 						<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Nóminas Electrónicas</a>
 					</li>
-					<li class="nav-item" role="presentation">
+					<li class="nav-item " role="presentation">
 						<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Historial de pagos</a>
 					</li>
 				</ul>

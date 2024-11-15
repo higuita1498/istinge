@@ -25,7 +25,7 @@
     }, 5000);
 </script>
 @endif
-{{-- @include('nomina.tips.serie-base', ['pasos' => \collect([8])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
+
 <div class="paper p-0">
 
     <form method="POST" action="{{route('nomina.preferecia-pago.store')}}" style="padding: 2% 3%;" role="form" class="forms-sample" id="idpreferencia">
@@ -164,13 +164,13 @@
     });
 
     function cambioFrecuencia(){
-        
-    
+
+
         preferencia_escogida = $("#frecuencia_pago").val();
         preferencia = $("#preferenciahidden").val();
 
        // $("#idpreferencia").submit();
-        
+
         if(preferencia != preferencia_escogida){
 
             Swal.fire({

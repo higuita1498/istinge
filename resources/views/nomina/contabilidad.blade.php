@@ -14,7 +14,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <h3 class="">Centros de Costos - PUC</h3>
                     <p class="card-text" style="font-size:15px">Estas serán las cuentas bajo las cuales comenzarán todos los conceptos contables que se exporten para cargar al software contable. La cuenta contable de cada persona cambiará de acuerdo a su Centro de Costos. Si deseas cambiar a una persona de centro de costos, deberás editarlo en sus "datos básicos".</p>
@@ -25,9 +25,10 @@
 
     <div class="row mt-4 mb-5">
         <div class="col-md-12">
-            @if($modoLectura->success)
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
+            @if(auth()->user()->modo_lecturaNomina())
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes
+                    <a class="text-black" href="{{ route('clientplans.index') }}"> <b>Click Aquí.</b></a></a>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -69,7 +70,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <h3 class="">Cuentas Contables
                     </h3>
@@ -83,7 +84,7 @@
         </div>
 
         <div class="col-12 d-none">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <p class="card-text">¿Cómo deseas configurar las contrapartidas de subsidio de transporte, otros ingresos, horas extras y recargos?
                     </p>
@@ -110,16 +111,16 @@
         </div>
 
         <div class="col-12">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <div class="accordion" id="accordionExample">
                         @php $cont = 0; @endphp
                         @foreach($cats_general as $cat_general)
                         @php $cont++ @endphp
                         <div class="card">
-                            <div class="card-header" id="headingOne">
+                            <div class="card-header body-oscuro" id="headingOne">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left collapsed font-weight-bold" style="color: grey;" type="button" data-toggle="collapse" data-target="#collapse{{ $cont }}" aria-expanded="false" aria-controls="collapse{{ $cont }}">
+                                    <button class="btn btn-link body-oscuro btn-block text-left collapsed font-weight-bold " style="color: grey;" type="button" data-toggle="collapse" data-target="#collapse{{ $cont }}" aria-expanded="false" aria-controls="collapse{{ $cont }}">
                                         {{ $cat_general->nombre }}
                                     </button>
                                 </h2>
@@ -163,7 +164,7 @@
     </div>
 
     <div class="row">
-        <div class="card border-0">
+        <div class="card border-0 body-oscuro">
             <div class="card-body border-0">
                 <h3 class="">Instituciones de Seguridad Social</h3>
                 <p class="card-text" style="font-size:15px">Aquí podrás modificar la cuenta contable de Salud, Pensión,
@@ -174,7 +175,7 @@
             </div>
         </div>
         <div class="col-12 d-none">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <p class="card-text">¿Cómo deseas causar los conceptos de Seguridad Social?</p>
 
@@ -206,14 +207,14 @@
         </div>
 
         <div class="col-12">
-            <div class="card border-0">
+            <div class="card border-0 body-oscuro">
                 <div class="card-body border-0">
                     <div class="accordion" id="accordionExample2">
 
                         <div class="card">
-                            <div class="card-header" id="headingFour">
+                            <div class="card-header body-oscuro" id="headingFour">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left collapsed font-weight-bold" style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <button class="btn btn-link body-oscuro btn-block text-left collapsed font-weight-bold " style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                                         Eps
                                     </button>
                                 </h2>
@@ -240,9 +241,9 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header" id="headingFive">
+                            <div class="card-header body-oscuro" id="headingFive">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left collapsed font-weight-bold" style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    <button class="btn btn-link body-oscuro btn-block text-left collapsed font-weight-bold " style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                         Fondos de pensiones
                                     </button>
                                 </h2>
@@ -269,9 +270,9 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header" id="headingSix">
+                            <div class="card-header body-oscuro" id="headingSix">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left collapsed font-weight-bold" style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                    <button class="btn btn-link body-oscuro btn-block text-left collapsed font-weight-bold " style="color: grey;" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                                         ARL y caja de compensación
                                     </button>
                                 </h2>

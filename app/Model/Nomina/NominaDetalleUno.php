@@ -87,11 +87,24 @@ class NominaDetalleUno extends Model
     public function horas()
     {
         if ($this->fecha_inicio) {
+            /* logica obsoleta ni valida meses con 31 dias, ni valida festivos, 
+            NO DEBERIA LLAMARSE HORAS SI HABLAMOS DE DIAS.
+            */
+            /*
             $fechaEmision = Carbon::parse($this->fecha_inicio);
             $fechaExpiracion = Carbon::parse($this->fecha_fin);
             $dias = $fechaExpiracion->diffInDays($fechaEmision);
             $dias++;
             return $dias;
+            */
+
+            $fechaEmision = Carbon::parse($this->fecha_inicio);
+            $fechaExpiracion = Carbon::parse($this->fecha_fin);
+            $detalle = clone $this;
+
+            return (NominaPeriodos::diffDaysAbsolute($fechaEmision, $fechaExpiracion, ($detalle->nombre == 'VACACIONES' ? true : false)) + ($detalle->nombre == 'VACACIONES' ? 0 : 1));                
+
+
         } else {
             return 0;
         }

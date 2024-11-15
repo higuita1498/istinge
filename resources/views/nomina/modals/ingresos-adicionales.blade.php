@@ -1,3 +1,12 @@
+<style>
+    .menu-ing__select {
+        .dropdown-menu{
+            min-width: fit-content !important;
+            overflow-y: auto;
+        }
+    }
+</style>
+
 <div class="modal fade bd-example" id="ingresos-adicionales-1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -9,13 +18,13 @@
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs nav-fill mb-3" id="ex1" role="tablist">
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link active" id="ex5-tab-1" data-toggle="tab" href="#ex5-tabs-1" role="tab" aria-controls="ex5-tabs-1" aria-selected="true">Constitutivos de salario</a>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link" id="ex5-tab-2" data-toggle="tab" href="#ex5-tabs-2" role="tab" aria-controls="ex5-tabs-2" aria-selected="false">No Constitutivos de salario</a>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link" id="ex5-tab-3" data-toggle="tab" href="#ex5-tabs-3" role="tab" aria-controls="ex5-tabs-3" aria-selected="false">Aux. Conectividad</a>
                     </li>
                 </ul>
@@ -137,13 +146,7 @@
 <script>
     function editAdicionales(id) {
         // cargando(true);
-        if (window.location.pathname.split("/")[1] === "software") {
-			var url='/software/empresa';
-        }else{
-            var url = '/empresa';
-        }
-
-        var url = url + '/nomina/liquidar-nomina/' + id + '/edit_adicionales';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit_adicionales';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {
@@ -190,7 +193,7 @@
                     $.each(cat1, function(key, value) {
                         $select.append('<option value=' + value.id + '>' + value.nombre + '</option>');
                     });
-                
+
                     $select.selectpicker('refresh');
                     $select.val(resul.constitutivos[i]['fk_categoria']);
                     $select.trigger('change');
@@ -221,7 +224,7 @@
                     $select.selectpicker('refresh');
                 }
             }
-            $('#div_no_constitutivos').append(`<div class="row mt-2 w-100 ml-2" id="1"><div class="col-6"><select class="form-control form-control-sm selectpicker" name="no_constitutivos_id[]" id="no_constitutivo_1" title="Selecciona un concepto" data-live-search="true" data-size="5"></select></div><div class="col-4"><input class="form-control" name="no_constitutivos_valor[]" min="0"  onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" type="number" style="width: 100%"></div><div class="col-2"></div>`);
+            $('#div_no_constitutivos').append(`<div class="row mt-2 w-100 ml-2" id="1"><div class="col-6 menu-ing__select"><select class="form-control form-control-sm selectpicker" name="no_constitutivos_id[]" id="no_constitutivo_1" title="Selecciona un concepto" data-live-search="true" data-size="5"></select></div><div class="col-4"><input class="form-control" name="no_constitutivos_valor[]" min="0"  onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" type="number" style="width: 100%"></div><div class="col-2"></div>`);
             var $select = $('#no_constitutivo_1');
             $.each(cat2, function(key, value) {
                 $select.append('<option value=' + value.id + '>' + value.nombre + '</option>');

@@ -50,13 +50,6 @@ class NominaController extends Controller
     {
         $this->middleware('nomina');
         $this->middleware('payrollReadingMode')->only('store_nomina', 'liquidar');
-        $this->middleware('can_access_to_page:157')->only('emitir');
-        $this->middleware('can_access_to_page:158')->only('liquidar');
-        $this->middleware('can_access_to_page:164')->only('informeNovedades');
-        $this->middleware('can_access_to_page:166')->only('calculosCompleto', 'generarPDFNominaCompleta');
-        $this->middleware('can_access_to_page:169')->only('ajustar');
-        $this->middleware('can_access_to_page:167')->only('emitirJson');
-        $this->middleware('can_access_to_page:168')->only('estadoEliminado');
         $this->nominaDianController = $nominaDianController;
     }
 
@@ -96,14 +89,6 @@ class NominaController extends Controller
         // if($fechaActual->year != $year){
         //     return back();
         // }
-
-        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-            ->select('tips_modulo_usuario.*')
-            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-            ->where('permisos_modulo.nombre_modulo', 'Nomina')
-            ->where('fk_idusuario',  $usuario->id)
-            ->get();
-
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
         quincenales <<< */
@@ -270,14 +255,11 @@ class NominaController extends Controller
             }
         })->values();
 
-        $guiasVistas = Auth::user()->guiasVistas();
-
         $diasferiados = Nomina::getFeriados();
 
         return view(
             'nomina.liquidar',
             [
-                'guiasVistas' => $guiasVistas,
                 'nominas' => $nominas,
                 'moneda' =>  $usuario->empresaObj->moneda,
                 'categorias1' => $categorias1,
@@ -433,14 +415,6 @@ class NominaController extends Controller
         $tipoPeriodo = $tipo;
 
         $empresa = Auth::user()->empresa;
-
-        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-            ->select('tips_modulo_usuario.*')
-            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-            ->where('permisos_modulo.nombre_modulo', 'Nomina')
-            ->where('fk_idusuario', Auth::user()->id)
-            ->get();
-
 
         $variosPeriodos = Nomina::where('year', $year)
             ->where('periodo', $periodo)
@@ -615,7 +589,6 @@ class NominaController extends Controller
         return view(
             'nomina.ajustar',
             [
-                'guiasVistas' => $guiasVistas,
                 'nomina' => $nomina,
                 'moneda' => Auth::user()->empresaObj->moneda,
                 'categorias1' => $categorias1,
@@ -647,14 +620,6 @@ class NominaController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $tipoPeriodo = $tipo;
         $empresa = Auth::user()->empresa;
-
-        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-            ->select('tips_modulo_usuario.*')
-            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-            ->where('permisos_modulo.nombre_modulo', 'Nomina')
-            ->where('fk_idusuario', Auth::user()->id)
-            ->get();
-
 
         $variosPeriodos = Nomina::where('year', $year)
             ->where('periodo', $periodo)
@@ -741,7 +706,6 @@ class NominaController extends Controller
         return view(
             'nomina.ajustar',
             [
-                'guiasVistas' => $guiasVistas,
                 'nomina' => $nomina,
                 'moneda' => Auth::user()->empresaObj->moneda,
                 'categorias1' => $categorias1,
@@ -2530,9 +2494,8 @@ class NominaController extends Controller
         $bancos = DB::table('ne_bancos')->get();
         $preferencia = NominaPreferenciaPago::where('empresa', auth()->user()->empresa)->first();
         $aseguradoras = DB::table('ne_arl')->get();
-        $guiasVistas = Auth::user()->guiasVistas();
 
-        return view('nomina.preferencias-pago', compact('mediosPago', 'bancos', 'preferencia', 'aseguradoras', 'guiasVistas'));
+        return view('nomina.preferencias-pago', compact('mediosPago', 'bancos', 'preferencia', 'aseguradoras'));
     }
 
     /**

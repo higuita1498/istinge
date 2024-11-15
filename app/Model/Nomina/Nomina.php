@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use App\Traits\Funciones;
 use GuzzleHttp\Client;
 use Auth;
-// use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Nomina extends Model
 {
@@ -48,6 +48,12 @@ class Nomina extends Model
     ];
 
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
+
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'fk_idempresa');
@@ -59,8 +65,9 @@ class Nomina extends Model
         return $this->belongsTo(Persona::class, 'fk_idpersona');
     }
 
-    public static function monthName($date){
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+    public static function monthName($date)
+    {
+        $meses = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
         return  $mes = $meses[($date->format('n')) - 1];
     }
 
@@ -71,7 +78,7 @@ class Nomina extends Model
 
     public function numeracionfactura()
     {
-        return $this->belongsTo(NumeracionFactura::class, 'fk_idnumeracion')->where('nomina',1);
+        return $this->belongsTo(NumeracionFactura::class, 'fk_idnumeracion')->where('nomina', 1);
     }
 
     public function periodo()
@@ -87,15 +94,13 @@ class Nomina extends Model
      */
     public function empleados()
     {
-        return Nomina::join('ne_personas as p','p.id','=','ne_nomina.fk_idpersona')
-        ->where('periodo',$this->periodo)
-        ->where('fk_idempresa', $this->fk_idempresa)
-        ->where('p.status',1)
-        ->whereIn('emitida', [1, 5, 6])
-        ->whereNotIn('emitida', [4,7])
-        ->orWhere('periodo',$this->periodo)
-        ->where('fk_idempresa', $this->fk_idempresa)
-        ->count();
+        return Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->where('fk_idempresa', $this->fk_idempresa)
+            //->orWhere('periodo',$this->periodo)
+            ->where('fk_idempresa', $this->fk_idempresa)
+            ->count();
     }
 
     /**
@@ -109,35 +114,52 @@ class Nomina extends Model
         $empresa = auth()->user()->empresa;
 
 
-        $arrayEstados['aceptadas'] = Nomina::
-        join('ne_personas as p','p.id','=','ne_nomina.fk_idpersona')
-        // ->where('p.status',1)
-        ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
-        ->where('periodo', $this->periodo)
-        ->where('year', $this->year)
-        ->whereIn('emitida', [1, 5, 6])
-        ->count();
+        $arrayEstados['aceptadas'] = Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            // ->where('p.status',1)
+            ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->whereIn('emitida', [1, 3, 5, 6])
+            ->count();
 
-        $arrayEstados['enEspera'] = Nomina::
-        join('ne_personas as p','p.id','=','ne_nomina.fk_idpersona')
-        ->where('p.status',1)
-        ->where('fk_idempresa', $empresa)
-        ->where('estado_nomina', 1)
-        ->where('periodo', $this->periodo)
-        ->where('year', $this->year)
-        ->whereIn('emitida', [2, 4])
-        ->count();
+        $arrayEstados['enEspera'] = Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            // ->where('p.status',1)
+            ->where('fk_idempresa', $empresa)
+            ->where('estado_nomina', 1)
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->whereIn('emitida', [2, 4])
+            ->count();
 
-        $arrayEstados['rechazadas'] = Nomina::
-        join('ne_personas as p','p.id','=','ne_nomina.fk_idpersona')
-        ->where('p.status',1)
-        ->where('fk_idempresa', $empresa)
-        ->where('estado_nomina', 1)
-        ->where('periodo', $this->periodo)
-        ->where('year', $this->year)
-        ->where('cune', 409)
-        ->whereNotIn('emitida', [1, 5])
-        ->count();
+        $arrayEstados['rechazadas'] = Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            // ->where('p.status',1)
+            ->where('fk_idempresa', $empresa)
+            ->where('estado_nomina', 1)
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->where('cune', 409)
+            ->whereNotIn('emitida', [1, 3, 5, 6])
+            ->count();
+
+        $arrayEstados['total'] =  Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            // ->where('p.status',1)
+            ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->count();
+
+        $totalActivos =  Nomina::join('ne_personas as p', 'p.id', '=', 'ne_nomina.fk_idpersona')
+            ->where('p.status', 1)
+            ->where('fk_idempresa', $empresa)->where('estado_nomina', 1)
+            ->where('periodo', $this->periodo)
+            ->where('year', $this->year)
+            ->count();
+
+        $arrayEstados['estado'] = "En Proceso";
+
+        if (($arrayEstados['total']) == $arrayEstados['aceptadas']) {
+            $arrayEstados['estado'] = "Finalizado";
+        }
 
         return (object) $arrayEstados;
     }
@@ -166,9 +188,9 @@ class Nomina extends Model
     {
 
         if ($class) {
-             if ($this->cune == 409 && $this->emitida != 1 && $this->emitida != 5) {
+            if ($this->cune == 409 && $this->emitida != 1 && $this->emitida != 5) {
                 return 'danger';
-            } 
+            }
             if ($this->emitida == 2 || $this->emitida == 0) {
                 return 'danger';
             } else if ($this->emitida == 3) {
@@ -181,9 +203,9 @@ class Nomina extends Model
                 return 'success';
             } else if ($this->emitida == 6) {
                 return 'success';
-            }  else if ($this->emitida == 7) {
+            } else if ($this->emitida == 7) {
                 return 'danger';
-            }else {
+            } else {
                 return 'dark';
             }
         } else {
@@ -213,59 +235,57 @@ class Nomina extends Model
         }
     }
 
-    public function validarRechazada(){
+    public function validarRechazada()
+    {
         $curl = curl_init();
 
         $nitEmpleador = auth()->user()->empresaObj->nit;
         $numeroNomina = $this->codigo_dian;
-    
+
         curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://apine.efacturacadena.com/v1/ne/consulta/documentos?empleadorNit={$nitEmpleador}&numeroNomina={$numeroNomina}&tipoXml=102",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-        CURLOPT_HTTPHEADER => array(
-            'nominaAuthorizationToken: 42e5b496-d882-4041-97ec-e3e91750805f990ef12f-36ff-454b-b020-fb19e953c37397478011-edaf-4f66-9945-81b691a718b118213614-da33-4e7b-9c22-ce78e0d55cf0',
-            'nitAlianza: 1128464945'
-        ),
+            CURLOPT_URL => "https://apine.efacturacadena.com/v1/ne/consulta/documentos?empleadorNit={$nitEmpleador}&numeroNomina={$numeroNomina}&tipoXml=102",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'nominaAuthorizationToken: 42e5b496-d882-4041-97ec-e3e91750805f990ef12f-36ff-454b-b020-fb19e953c37397478011-edaf-4f66-9945-81b691a718b118213614-da33-4e7b-9c22-ce78e0d55cf0',
+                'nitAlianza: 1128464945'
+            ),
         ));
 
         $response = curl_exec($curl);
-       
-        if($response){
-            
+
+        if ($response) {
+
             $response = json_decode($response);
-                if(is_object($response)){
-                    if($response->statusCode == 200 || $response->statusCode == 409){
-                        if($response->statusCodeDIAN == "RDI" || $response->statusCode == 409){
-                            foreach($response->errorMessage as $err){
-                                if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
-                                        $this->emitida = 1;
-                                        $this->update();
-                                        return true;
+            if (is_object($response)) {
+                if ($response->statusCode == 200 || $response->statusCode == 409) {
+                    if ($response->statusCodeDIAN == "RDI" || $response->statusCode == 409) {
+                        foreach ($response->errorMessage as $err) {
+                            if ($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.') {
+                                $this->emitida = 1;
+                                $this->update();
+                                return true;
+                            }
+                        }
+                        if (isset($response->warnings)) {
+                            foreach ($response->warnings as $err) {
+                                if ($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.') {
+                                    $this->emitida = 1;
+                                    $this->update();
+                                    return true;
                                 }
                             }
-                            if(isset($response->warnings)){
-                                    foreach($response->warnings as $err){
-                                    if($err == 'Regla: 90, Rechazo: Documento procesado anteriormente.'){
-                                            $this->emitida = 1;
-                                            $this->update();
-                                            return true;
-                                    }
-                                }
-                            }
-                            
                         }
                     }
-                   
                 }
-            
+            }
         }
-       
+
         return false;
     }
 
@@ -421,79 +441,124 @@ class Nomina extends Model
         }
     }
 
-    public function diasHabilesEmision() {
 
-        $diasferiados = array();
+    public static function getFeriados(){
 
         $diasferiados = [
-                         '2022-01-10','2022-03-21','2022-04-14','2022-04-15','2022-05-01','2022-05-17',
-                         '2022-06-20','2022-06-27','2022-07-04','2022-07-20','2022-08-07','2022-08-15',
-                         '2022-10-17','2022-11-07','2022-11-14','2022-12-08','2022-12-25',
-                         '2023-01-01','2023-01-09','2023-03-20','2023-04-06','2023-04-07','2023-05-01',
-                         '2023-05-22','2023-06-12','2023-06-19','2023-07-03','2023-07-20','2023-08-07',
-                         '2023-08-21','2023-10-16','2023-11-06','2023-11-13','2023-12-08','2023-12-25'
+            '2022-01-10', '2022-03-21', '2022-04-14', '2022-04-15', '2022-05-01', '2022-05-17',
+            '2022-06-20', '2022-06-27', '2022-07-04', '2022-07-20', '2022-08-07', '2022-08-15',
+            '2022-10-17', '2022-11-07', '2022-11-14', '2022-12-08', '2022-12-25',
+            '2023-01-01', '2023-01-09', '2023-03-20', '2023-04-06', '2023-04-07', '2023-05-01',
+            '2023-05-22', '2023-06-12', '2023-06-19', '2023-07-03', '2023-07-20', '2023-08-07',
+            '2023-08-21', '2023-10-16', '2023-11-06', '2023-11-13', '2023-12-08', '2023-12-25',
+            '2024-01-01', // Año Nuevo
+            '2024-01-08', // Día de los Reyes Magos
+            '2024-03-25', // Día de San José
+            '2024-03-28', // Jueves Santo
+            '2024-03-29', // Viernes Santo
+            '2024-05-01', // Día del Trabajo
+            '2024-05-13', // Ascensión del Señor
+            '2024-06-03', // Corphus Christi
+            '2024-06-10', // Sagrado Corazón de Jesús
+            '2024-07-01', // San Pedro y San Pablo
+            '2024-07-20', // Día de la Independencia
+            '2024-08-07', // Batalla de Boyacá
+            '2024-08-19', // La Asunción de la Virgen
+            '2024-10-14', // Día de la Raza
+            '2024-11-04', // Todos los Santos
+            '2024-11-11', // Independencia de Cartagena
+            '2024-12-08', // Día de la Inmaculada Concepción
+            '2024-12-25', // Día de Navidad
+
+            '2025-01-01', // Año Nuevo
+            '2025-01-06', // Día de los Reyes Magos
+            '2025-03-24', // Día de San José
+            '2025-04-17', // Jueves Santo
+            '2025-04-18', // Viernes Santo
+            '2025-05-01', // Día del Trabajo
+            '2025-06-02', // Ascensión del Señor
+            '2025-06-23', // Corphus Christi
+            '2025-06-30', // Sagrado Corazón de Jesús
+            '2025-06-30', // San Pedro y San Pablo
+            '2025-07-20', // Día de la Independencia
+            '2025-08-07', // Batalla de Boyacá
+            '2025-08-18', // La Asunción de la Virgen
+            '2025-10-13', // Día de la Raza
+            '2025-11-03', // Todos los Santos
+            '2025-11-17', // Independencia de Cartagena
+            '2025-12-08', // Día de la Inmaculada Concepción
+            '2025-12-25', // Día de Navidad
         ];
-        
+
+        return $diasferiados;
+    }
+
+    public function diasHabilesEmision()
+    {
+
+        $diasferiados = self::getFeriados();
+
         $fechaActual = Carbon::now();
         $yearActual = date("Y", strtotime($fechaActual));
         $mesActual = date("m", strtotime($fechaActual));
 
-        
-         /*>>> Acomodamos los topes posibles de emisión de nominas a la Dian <<<*/
-         $fechaInicioHabil = $yearActual . "-" . $mesActual . "-1";
-         $fechaFinMesHabil = $yearActual . "-" . $mesActual . "-25";
-        
+
+        /*>>> Acomodamos los topes posibles de emisión de nominas a la Dian <<<*/
+        $fechaInicioHabil = $yearActual . "-" . $mesActual . "-1";
+        $fechaFinMesHabil = $yearActual . "-" . $mesActual . "-25";
+
         // Convirtiendo en timestamp las fechas
         $fechainicio = strtotime($fechaInicioHabil);
         $fechafin = strtotime($fechaFinMesHabil);
 
         // Incremento en 1 dia
-        $diainc = 24*60*60;
-       
+        $diainc = 24 * 60 * 60;
+
         // Arreglo de dias habiles, inicianlizacion
-        $diashabiles = array();    
-       
+        $diashabiles = array();
+
         // Se recorre desde la fecha de inicio a la fecha fin, incrementando en 1 dia
-        $contDias=$diaTope=0;
+        $contDias = $diaTope = 0;
         for ($midia = $fechainicio; $midia <= $fechafin; $midia += $diainc) {
-                // Si el dia indicado, no es sabado o domingo es habil
-                if (!in_array(date('N', $midia), array(6,7))) { // DOC: http://www.php.net/manual/es/function.date.php
-                        // Si no es un dia feriado entonces es habil
-                        if (!in_array(date('Y-m-d', $midia), $diasferiados)) {
-                                array_push($diashabiles, date('Y-m-d', $midia));
-                                $contDias++;
-                                if($contDias==11){
-                                    $diaTope = $contDias;
-                                }
-                        }
+            // Si el dia indicado, no es sabado o domingo es habil
+            if (!in_array(date('N', $midia), array(6, 7))) { // DOC: http://www.php.net/manual/es/function.date.php
+                // Si no es un dia feriado entonces es habil
+                if (!in_array(date('Y-m-d', $midia), $diasferiados)) {
+                    array_push($diashabiles, date('Y-m-d', $midia));
+                    $contDias++;
+                    if ($contDias == 11) {
+                        $diaTope = $contDias;
+                    }
                 }
+            }
         }
 
         $fechaDesdePermiso = $diashabiles[0];
-        $fechaHastaPermiso = $diashabiles[$diaTope-1];
-        
+        $fechaHastaPermiso = $diashabiles[$diaTope - 1];
+
         if ($fechaActual >= $fechaDesdePermiso && $fechaActual <= $fechaHastaPermiso) {
             return true;
         } else {
             return false;
         }
-       
+
         return $diashabiles;
     }
 
 
 
-    public function liquidacionComprobante(){
-       $comprobante = ComprobanteLiquidacion::select('ne_comprobante_liquidacion.*')
-                                ->join('ne_contratos_persona', 'ne_contratos_persona.fk_idcomprobante_liquidacion', '=', 'ne_comprobante_liquidacion.id')
-                                ->where('fecha_terminacion', '>=', $this->year.'-'.$this->periodo.'-01')
-                                ->where('fecha_terminacion', '<=', $this->year.'-'.$this->periodo.'-31')
-                                ->where('ne_contratos_persona.fk_idpersona', $this->fk_idpersona)
-                                ->latest()
-                                ->first();
+    public function liquidacionComprobante()
+    {
+        $first_day = $this->year . '-' . sprintf('%02d', $this->periodo) . '-01';
+        $last_day = date('Y-m-t', strtotime($first_day));
+        $comprobante = ComprobanteLiquidacion::select('ne_comprobante_liquidacion.*')
+            ->join('ne_contratos_persona', 'ne_contratos_persona.fk_idcomprobante_liquidacion', '=', 'ne_comprobante_liquidacion.id')
+            ->where('fecha_terminacion', '>=', $first_day)
+            ->where('fecha_terminacion', '<=', $last_day)
+            ->where('ne_contratos_persona.fk_idpersona', $this->fk_idpersona)
+            ->latest()
+            ->first();
 
         return $comprobante;
     }
-
-
 }

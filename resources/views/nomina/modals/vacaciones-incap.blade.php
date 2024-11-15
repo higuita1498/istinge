@@ -18,13 +18,13 @@
                     </div>
 
                     <ul class="nav nav-tabs nav-fill mb-3 px-0" id="ex1" role="tablist">
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link active" id="ex3-tab-1" data-toggle="tab" href="#ex3-tabs-1" role="tab" aria-controls="ex3-tabs-1" aria-selected="true">Vacaciones</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link" id="ex3-tab-2" data-toggle="tab" href="#ex3-tabs-2" role="tab" aria-controls="ex3-tabs-2" aria-selected="false">Incapacidades</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item " role="presentation">
                             <a class="nav-link" id="ex3-tab-3" data-toggle="tab" href="#ex3-tabs-3" role="tab" aria-controls="ex3-tabs-3" aria-selected="false">Licencias</a>
                         </li>
                     </ul>
@@ -173,6 +173,8 @@
     </div>
 </div>
 
+<input type="hidden" id="dias-feriados" value="{{ json_encode($diasferiados) }}">
+
 <script>
     function vacacionesUpdate() {
         idNomina = $('#edit_vacaciones_id').val();
@@ -254,16 +256,23 @@
         let diasLicR = 0;
         let diasLicNoR = 0;
 
+        const diasFeriadosInput = document.getElementById('dias-feriados').value;
+        var diasFeriados = JSON.parse(diasFeriadosInput).map(dia => {
+                                const [year, month, day] = dia.split('-');
+                                return new Date(year, month - 1, day); 
+                            });
+     
         $('#vacations .row-dates-v').each(function(index) {
-            let desde = new Date($(this).find('.desde').val() + 'T00:00:00');
-            let hasta = new Date($(this).find('.hasta').val() + 'T00:00:00');
-            hasta.setDate(hasta.getDate() + 1);
+            
+                const fechaInicio = new Date($(this).find('.desde').val() + 'T00:00:00');
+                const fechaFin = new Date($(this).find('.hasta').val() + 'T00:00:00');
 
-            var Difference_In_Time = hasta.getTime() - desde.getTime();
-            var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-            if (Number.isInteger(Difference_In_Days)) {
-                diasV += Difference_In_Days;
-            }
+                for (let fecha = new Date(fechaInicio); fecha <= fechaFin; fecha.setDate(fecha.getDate() + 1)) {
+                    if (!esFeriado(fecha, diasFeriados)) {
+                        diasV++;
+                    }
+                }
+
         });
 
 
@@ -353,16 +362,18 @@
         $('#subsidio-transporte').val(subsidioTrans);
     }
 
+    function esFeriado(fecha, feriados) {
+           
+            return feriados.some(feriado => 
+                feriado.getDate() == fecha.getDate() && 
+                feriado.getMonth() == fecha.getMonth() && 
+                feriado.getFullYear() == fecha.getFullYear()
+            );
+    }
+
     function editVacaciones(id) {
         cargando(true);
-
-        if (window.location.pathname.split("/")[1] === "software") {
-			var url='/software/empresa';
-        }else{
-            var url = '/empresa';
-        }
-
-        var url = url + '/nomina/liquidar-nomina/' + id + '/edit_vacaciones';
+        var url = '/empresa/nomina/liquidar-nomina/' + id + '/edit_vacaciones';
         var _token = $('meta[name="csrf-token"]').attr('content');
         var i = id;
         $.post(url, {

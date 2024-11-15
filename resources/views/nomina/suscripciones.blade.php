@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('boton')
-<a href="{{ route('nomina.planes') }}" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Pago</a>
+<a href="{{ route('nomina.planes') }}" target="_blank" class="btn btn-primary btn-sm btn-gris"><i class="fas fa-plus"></i> Nuevo Pago</a>
 @endsection
 
 @section('content')

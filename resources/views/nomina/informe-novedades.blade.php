@@ -7,7 +7,7 @@
         }
 
         .my-table-css{
-            color: inherit; 
+            color: inherit;
             width: calc(185.2px);
             box-sizing: border-box;
             font-size: inherit;
@@ -48,19 +48,19 @@
     <div class="row p-4 mt-2">
         <div class="col-12">
             <ul class="nav nav-tabs" id="myTab" role="tablist" style="font-size: 12px">
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link active" id="vac-inc-lic-tab" data-toggle="tab" href="#vac-inc-lic" role="tab" aria-controls="Vacac. Incap. y Licen" aria-selected="true">Vacac. Incap. y Licen.</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link" id="ext-rec-tab" data-toggle="tab" href="#ext-rec" role="tab" aria-controls="Extras y Recargos" aria-selected="false">Extras y Recargos</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link" id="ingresos-c-tab" data-toggle="tab" href="#ingresos-c" role="tab" aria-controls="Ingresos Constitutivos" aria-selected="false">Ingresos Constitutivos</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link" id="ingresos-no-c-tab" data-toggle="tab" href="#ingresos-no-c" role="tab" aria-controls="Ingresos No Constitutivos" aria-selected="false">Ingresos No Constitutivos</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link" id="deducciones-tab" data-toggle="tab" href="#deducciones" role="tab" aria-controls="Deducciones" aria-selected="false">Deducciones</a>
                 </li>
             </ul>

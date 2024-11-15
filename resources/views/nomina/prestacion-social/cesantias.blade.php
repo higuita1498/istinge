@@ -36,7 +36,7 @@
 <div class="row">
     <div class="col-12">
         @if($request->ajuste)
-        <a href="{{ route('nomina.ajustar', ['periodo' => $request->periodo, 'year' => $request->year, 'persona' => $request->persona, 'tipo' => 2, 'editNomina' => $request->editNomina]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
+        <a href="{{ route('nomina.ajustar', ['periodo' => $request->periodo, 'year' => $request->year, 'persona' => $request->persona, 'tipo' => 1, 'editNomina' => $request->editNomina]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
         @else
         <a href="{{ route('nomina.liquidar', ['periodo' => $periodo, 'year' => $year]) }}" style="margin-left:10px"> <i class="fas fa-chevron-left"></i> Regresar a editar nomina </a>
         @endif
@@ -64,7 +64,7 @@
     <div class="col-3 text-center">
         <a href="javascript:liquidarValorPagar()" style="text-decoration: underline;"> Liquidar valor a pagar </a>
     </div>
-    
+
      <div class="col-3 col text-center">
             @if($request->presente != 'si')
             <a href="{{$request->fullUrl() . '&presente=si'}}" style="text-decoration: underline;"> Liquidar el presente año </a>
@@ -155,7 +155,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row mt-2">
+                                                <div class="row mt-2 body-oscuro">
 
                                                     <div class="col-12">
                                                         <div class="row">
@@ -196,7 +196,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row mt-2">
+                                                <div class="row mt-2 body-oscuro">
 
                                                     <div class="col-12">
                                                         <div class="row">

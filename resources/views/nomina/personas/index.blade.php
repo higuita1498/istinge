@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
 @section('boton')
-@if($modoLectura->success)
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
+@if(auth()->user()->modo_lecturaNomina())
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes
+        <a class="text-black" href="{{ route('clientplans.index') }}"> <b>Click Aquí.</b></a></a>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 @else
-@if(isset($_SESSION['permisos']['170']) || isset($_SESSION['permisos']['783']))
-<a id="crear-persona-empleado" href="{{route('personas.create')}}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nueva Persona</a>
-@endif
+{{-- @if(isset($_SESSION['permisos']['170'])) --}}
+<a id="crear-persona-empleado" href="{{route('personas.create')}}" class="btn btn-primary btn-sm btn-gris"><i class="fas fa-plus"></i> Nueva Persona</a>
+{{-- @endif --}}
 @endif
 @endsection
 
@@ -62,7 +63,6 @@
     <strong>Total de personas: {{ $cantidad }}</strong>
 </span>
 
-{{-- @include('nomina.tips.serie-base', ['pasos' => \collect([5])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
 
 <div class="row card-description">
     <div class="col-md-12 table-responsive">
@@ -133,7 +133,7 @@
             </div>
         </form>
 
-        <table class="table table-striped table-hover w-100 @if(env('APP_ENTORNO')==2 && auth()->user()->empresa == 160) mytable @endif" id="table-facturas">
+        <table class="table table-striped table-hover w-100 body-oscuro @if(env('APP_ENTORNO')==2 && auth()->user()->empresa == 77777) mytable @endif" id="table-facturas">
             <thead class="thead-dark">
                 <tr>
                     <th>Nombre</th>
@@ -164,16 +164,16 @@
                         @endif
                     </td>
                     <td>
-                        @if(isset($_SESSION['permisos']['785']))
+                        {{-- @if(isset($_SESSION['permisos']['174'])) --}}
                         <a href="{{route('personas.show', $persona->id)}}" class="btn btn-outline-info btn-icons" title="Ver Detalles"><i class="far fa-eye"></i>
                         </a>
-                        @endif
-                        @if($modoLectura->success)
+                        {{-- @endif --}}
+                        @if(auth()->user()->modo_lecturaNomina())
                         @else
-                        @if(isset($_SESSION['permisos']['784']))
+                        {{-- @if(isset($_SESSION['permisos']['171'])) --}}
                         <a href="{{route('personas.edit', $persona->id)}}" class="btn btn-outline-primary btn-icons" title="Editar Persona"><i class="fas fa-edit"></i></a>
-                        @endif
-                        @if(isset($_SESSION['permisos']['784']))
+                        {{-- @endif --}}
+                        {{-- @if(isset($_SESSION['permisos']['172'])) --}}
                         @if(!$persona->uso())
                         <form action="{{ route('personas.destroy',$persona->id) }}" method="post" class="delete_form" style="margin:  0;display: inline-block;" id="eliminar-persona-{{$persona->id}}">
                             @csrf
@@ -182,9 +182,9 @@
                         <button class="btn btn-outline-danger btn-icons" title="Eliminar" onclick="confirmar('eliminar-persona-{{$persona->id}}', '¿Está seguro que deseas eliminar a la persona?', 'Se borrara de forma permanente');">
                             <i class="fas fa-times"></i></button>
                         @endif
+                        {{-- @endif --}}
                         @endif
-                        @endif
-                        @if(isset($_SESSION['permisos']['787']) && !$persona->is_liquidado)
+                        {{-- @if(isset($_SESSION['permisos']['173']) && !$persona->is_liquidado) --}}
                         <form action="{{ route('personas.act_des',$persona->id) }}" method="POST" class="delete_form" style="margin:  0;display: inline-block;" id="act_desc-{{$persona->id}}">
                             @csrf
                         </form>
@@ -195,7 +195,7 @@
                         <button type="button" class="btn btn-outline-success negative_paging btn-icons" type="submit" title="Habilitar" onclick="confirmar('act_desc-{{$persona->id}}', '¿Estas seguro que deseas habilitar esta persona?', 'Aparecera para seleccionar en la creación de nomina');">
                             <i class="fas fa-power-off"></i></button>
                         @endif
-                        @endif
+                        {{-- @endif --}}
                     </td>
                 </tr>
                 @endforeach

@@ -62,16 +62,15 @@
 @section('content')
 
 <div class="container-fluid">
-    @if ($modoLectura->success)
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <a>{{ $modoLectura->message }}, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes <a class="text-black" href="{{route('nomina.planes')}}"> <b>Click Aquí.</b></a></a>
+    @if(auth()->user()->modo_lecturaNomina())
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <a>Estas en modo lectura, si deseas seguir disfrutando de nuestros servicios adquiere alguno de nuestros planes
+            <a class="text-black" href="{{ route('clientplans.index') }}"> <b>Click Aquí.</b></a></a>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     @endif
-
-    {{-- @include('nomina.tips.serie-base', ['pasos' => \collect([2,3,4, 10, 11, 12, 13, 14, 15])->diff($guiasVistas->keyBy('nro_tip')->keys())->all()]) --}}
 
     @if (session()->has('success'))
     <div class="row">
@@ -162,7 +161,7 @@
                                     <h5> pago a personas </h5>
                                 </div>
                                 <div class="col-12">
-                                    <span style="text-align: right">$<span id="pago-empleados">{{ $costoPeriodo->pagoEmpleados }}</span></span>
+                                    <span style="text-align: right">$<span id="pago-empleados">{{ $costoPeriodo->pagoEmpleados ?? 'cargando...' }}</span></span>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +182,7 @@
                                     <h5> costo empresa </h5>
                                 </div>
                                 <div class="col-12">
-                                    <span style="text-align: right">$<span id="costo-empresa">{{ $costoPeriodo->costoEmpresa }}</span></span>
+                                    <span style="text-align: right">$<span id="costo-empresa">{{ $costoPeriodo->costoEmpresa ?? 'cargando...' }}</span></span>
                                 </div>
                             </div>
                         </div>
@@ -196,12 +195,12 @@
 
 
     <div class="row text-center pt-2">
-        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
+        {{-- @if(isset($_SESSION['permisos']['163'])) --}}
         <div class="col-4">
             <a href="{{ route('nomina.resumenExcel', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Resumen nómina</a>
         </div>
         {{-- @endif --}}
-        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
+        {{-- @if(isset($_SESSION['permisos']['164'])) --}}
         <div class="col-4">
             <a target="_blank" href="{{ route('nomina.novedades', ['periodo' => $periodo, 'year'=> $year, 'tipo' => $tipo]) }}" style="text-decoration: underline;">Reporte novedades</a>
         </div>
@@ -211,19 +210,19 @@
             <a href="#" style="text-decoration: underline;">Cargar novedades</a>
         </div>
         --}}
-        {{-- @if(isset($_SESSION['permisos']['161'])) --}}
+        {{-- @if(isset($_SESSION['permisos']['165'])) --}}
         <div class="col-4">
             <div class="btn-group dropdown">
-                <a style="text-decoration:underline" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
+                <a style="text-decoration:underline; color: #41a17f !important" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btn-prestaciones-sociales">
                     Prestaciones sociales
                 </a>
                 <div class="dropdown-menu px-3">
                     <div class="dropdown-divider"></div>
-                    <a href="{{ route('nomina.prestacion-social', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Prima de servicios</a>
+                    <a href="{{ route('nomina.prestacion-social', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline; color: #41a17f !important">- Prima de servicios</a>
                     <br>
-                    <a href="{{ route('nomina.prestacion-social.cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Cesantias</a>
+                    <a href="{{ route('nomina.prestacion-social.cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline; color: #41a17f !important">- Cesantias</a>
                     <br>
-                    <a href="{{ route('nomina.prestacion-social.intereses-cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline;">- Intereses a las Cesantias</a>
+                    <a href="{{ route('nomina.prestacion-social.intereses-cesantias', ['year' => $year, 'periodo' => $periodo, 'rango' => str_replace(' ', '', $mensajePeriodo), 'tipo' => $tipo]) }}" style="text-decoration: underline; color: #41a17f !important">- Intereses a las Cesantias</a>
                 </div>
             </div>
         </div>
@@ -236,22 +235,22 @@
             <div class="row card-description">
                 <div class="col-12 col-md-12">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link active" id="empleados-tab" data-toggle="tab" href="#empleados" role="tab" aria-controls="empleados" aria-selected="true">Empleados ({{ count($empleados) }})</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link" id="contratados-tab" data-toggle="tab" href="#contratados" role="tab" aria-controls="contratados" aria-selected="true">Contratados ({{ count($contratados) }}
                                 )</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link" id="estudiantes-tab" data-toggle="tab" href="#estudiantes" role="tab" aria-controls="estudiantes" aria-selected="false">Estudiantes ({{ count($estudiantes) }}
                                 )</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link" id="aprendices-tab" data-toggle="tab" href="#aprendices" role="tab" aria-controls="aprendices" aria-selected="false">Aprendices ({{ count($aprendices) }}
                                 )</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a class="nav-link" id="pensionados-tab" data-toggle="tab" href="#pensionados" role="tab" aria-controls="pensionados" aria-selected="false">Pensionados ({{ count($pensionados) }}
                                 )</a>
                         </li>
@@ -291,29 +290,29 @@
                                             </td>
                                             <td>
                                                 <span id="extras{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->extras() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editHoras('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="vacaciones{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->vacaciones() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editVacaciones('{{ $nominaPeriodo->id }}');"></i> @if($nomina->persona->subsidio)
                                                 <input type="hidden" name="dias_trabajados" id="dias-trabajados-{{$nominaPeriodo->id}}" value="{{$nominaPeriodo->diasTrabajados()}}"> @endif
                                                 <input type="hidden" id="dias-pagos" name="dias_pagos" value="{{$nominaPeriodo->diasTrabajados()}}">
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="ingresos{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->ingresos()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editAdicionales('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="deducciones{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->deducciones()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
-                                                @if (!$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
+                                                @if (!auth()->user()->modo_lecturaNomina())
                                                 <i class="far fa-edit color" onclick="editDeducciones('{{ $nominaPeriodo->id }}');"></i>
                                                 @endif
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
 
                                             <td>
@@ -321,20 +320,20 @@
                                             </td>
                                             <td>
                                                 {{-- @if(isset($_SESSION['permisos']['160'])) --}}
-                                                @if (!$modoLectura->success)
+                                                @if (!auth()->user()->modo_lecturaNomina())
                                                 <a id="a-ob-nomina-{{$nominaPeriodo->id}}" href="javascript:modificarNota('{{ $nominaPeriodo->observaciones }}', '{{ $nominaPeriodo->id}}', 'a-ob-nomina-{{$nominaPeriodo->id}}')">
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
-                                                {{-- @endif --}}
                                                 @endif
+                                                {{-- @endif --}}
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}" title="Ver calculos"><i class="far fa-eye color"></i></a>
                                                 {{-- @endif --}}
-                                                @if($nomina->prestacionesSociales->count() == 0 || 1 == 1)
+                                                @if($nomina->prestacionesSociales->count() == 0)
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
-                                                {{-- <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank" title="Ver colilla de pago"><i class="far fa-file color"></i></a> --}}
+                                                <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank" title="Ver colilla de pago"><i class="far fa-file color"></i></a>
                                                 {{-- @endif --}}
-                                                {{-- @else --}}
+                                                @else
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="#" data-toggle="modal" data-target="#modal-imprimir-{{ $nominaPeriodo->id }}"><i class="far fa-file color"></i></a>
                                                 {{-- @endif --}}
@@ -450,38 +449,38 @@
                                             </td>
                                             <td>
                                                 <span id="extras{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->extras() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editHoras('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
 
                                             <td>
                                                 <span id="vacaciones{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->vacaciones() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editVacaciones('{{ $nominaPeriodo->id }}');"></i> @if($nomina->persona->subsidio)
                                                 <input type="hidden" name="dias_trabajados" id="dias-trabajados-{{$nominaPeriodo->id}}" value="{{$nominaPeriodo->diasTrabajados()}}"> @endif
                                                 <input type="hidden" id="dias-pagos" name="dias_pagos" value="{{$nominaPeriodo->diasTrabajados()}}">
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="ingresos{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->ingresos()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editAdicionales('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="deducciones{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->deducciones()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editDeducciones('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="pago-nomina-format-{{$nominaPeriodo->id}}">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($nominaPeriodo->valor_total ? $nominaPeriodo->valor_total : 0) }} </span><input type="hidden" id="pago-nomina-{{$nomina->id}}" value="{{$nominaPeriodo->pago_empleado ? $nominaPeriodo->pago_empleado : $nominaPeriodo->valor_total}}">
                                             </td>
                                             <td>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <a id="a-ob-nomina-{{$nominaPeriodo->id}}" href="javascript:modificarNota('{{ $nominaPeriodo->observaciones }}', '{{ $nominaPeriodo->id}}', 'a-ob-nomina-{{$nominaPeriodo->id}}')">
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
-                                                @endif
+                                                {{-- @endif --}}
                                                 {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}">
                                                     <i class="far fa-eye color"></i>
@@ -552,8 +551,8 @@
                                                     </div>
                                                 </div>
 
-                                                @endif
                                                 {{-- @endif --}}
+                                                @endif
                                                 {{-- <i class="far fa-paper-plane color"></i>--}}
                                             </td>
                                             @include('nomina.modals.extras-y-recargos')
@@ -598,43 +597,43 @@
                                             </td>
                                             <td>
                                                 <span id="extras{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->extras() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editHoras('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
 
                                             <td>
                                                 <span id="vacaciones{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->vacaciones() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editVacaciones('{{ $nominaPeriodo->id }}');"></i> @if($nomina->persona->subsidio)
                                                 <input type="hidden" name="dias_trabajados" id="dias-trabajados-{{$nominaPeriodo->id}}" value="{{$nominaPeriodo->diasTrabajados()}}"> @endif
                                                 <input type="hidden" id="dias-pagos" name="dias_pagos" value="{{$nominaPeriodo->diasTrabajados()}}">
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
 
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="ingresos{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->ingresos()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editAdicionales('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="deducciones{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->deducciones()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editDeducciones('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="pago-nomina-format-{{$nominaPeriodo->id}}">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($nominaPeriodo->valor_total ? $nominaPeriodo->valor_total : 0) }} </span><input type="hidden" id="pago-nomina-{{$nomina->id}}" value="{{$nominaPeriodo->pago_empleado ? $nominaPeriodo->pago_empleado : $nominaPeriodo->valor_total}}">
                                             </td>
                                             <td>
-                                                @if(isset($_SESSION['permisos']['161']) && !$modoLectura->success)
+                                                {{-- @if(isset($_SESSION['permisos']['161']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <a id="a-ob-nomina-{{$nominaPeriodo->id}}" href="javascript:modificarNota('{{ $nominaPeriodo->observaciones }}', '{{ $nominaPeriodo->id}}', 'a-ob-nomina-{{$nominaPeriodo->id}}')">
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}"><i class="far fa-eye color"></i></a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 @if($nomina->prestacionesSociales->count() == 0)
                                                 <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank"><i class="far fa-file color"></i></a> @else
                                                 <a href="#" data-toggle="modal" data-target="#modal-imprimir-{{ $nominaPeriodo->id }}"><i class="far fa-file color"></i></a>
@@ -695,7 +694,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @endif
+                                                {{-- @endif --}}
                                                 @endif
                                                 {{-- <i class="far fa-paper-plane color"></i>--}}
                                             </td>
@@ -741,16 +740,16 @@
                                             </td>
                                             <td>
                                                 <span id="extras{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->extras() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editHoras('{{ $nominaPeriodo->id }}');" />
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="vacaciones{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->vacaciones() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editVacaciones('{{ $nominaPeriodo->id }}');">
                                                 </i>
-                                                @endif
+                                                {{-- @endif --}}
                                                 @if($nomina->persona->subsidio)
                                                 <input type="hidden" name="dias_trabajados" id="dias-trabajados-{{$nominaPeriodo->id}}" value="{{$nominaPeriodo->diasTrabajados()}}">
                                                 @endif
@@ -759,29 +758,29 @@
                                             <td>
                                                 {{Auth::user()->empresaObj->moneda}}
                                                 <span id="ingresos{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->ingresos()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editAdicionales('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="deducciones{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->deducciones()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editDeducciones('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="pago-nomina-format-{{$nominaPeriodo->id}}">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($nominaPeriodo->valor_total ? $nominaPeriodo->valor_total : 0) }} </span><input type="hidden" id="pago-nomina-{{$nomina->id}}" value="{{$nominaPeriodo->pago_empleado ? $nominaPeriodo->pago_empleado : $nominaPeriodo->valor_total}}">
                                             </td>
                                             <td>
-                                                @if(isset($_SESSION['permisos']['161']) && !$modoLectura->success)
+                                                {{-- @if(isset($_SESSION['permisos']['161']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <a id="a-ob-nomina-{{$nominaPeriodo->id}}" href="javascript:modificarNota('{{ $nominaPeriodo->observaciones }}', '{{ $nominaPeriodo->id}}', 'a-ob-nomina-{{$nominaPeriodo->id}}')">
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}"><i class="far fa-eye color"></i>
                                                 </a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 @if($nomina->prestacionesSociales->count() == 0)
                                                 <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank"><i class="far fa-file color"></i></a> @else
                                                 <a href="#" data-toggle="modal" data-target="#modal-imprimir-{{ $nominaPeriodo->id }}"><i class="far fa-file color"></i></a>
@@ -844,7 +843,7 @@
                                                 </div>
 
                                                 @endif
-                                                @endif
+                                                {{-- @endif --}}
                                                 {{-- <i class="far fa-paper-plane color"></i>--}}
                                             </td>
                                             @include('nomina.modals.extras-y-recargos')
@@ -889,43 +888,43 @@
                                             </td>
                                             <td>
                                                 <span id="extras{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->extras() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editHoras('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="vacaciones{{ $nominaPeriodo->id }}">{{ $nominaPeriodo->vacaciones() }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editVacaciones('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
 
                                                 @if($nomina->persona->subsidio)
                                                 <input type="hidden" name="dias_trabajados" id="dias-trabajados-{{$nominaPeriodo->id}}" value="{{$nominaPeriodo->diasTrabajados()}}"> @endif
                                                 <input type="hidden" id="dias-pagos" name="dias_pagos" value="{{$nominaPeriodo->diasTrabajados()}}">
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="ingresos{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->ingresos()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editAdicionales('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>{{Auth::user()->empresaObj->moneda}} <span id="deducciones{{ $nominaPeriodo->id }}">{{ App\Funcion::Parsear($nominaPeriodo->deducciones()) }}</span>
-                                                @if($nomina && !$modoLectura->success)
+                                                {{-- @if($nomina && isset($_SESSION['permisos']['160']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <i class="far fa-edit color" onclick="editDeducciones('{{ $nominaPeriodo->id }}');"></i>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                             <td>
                                                 <span id="pago-nomina-format-{{$nominaPeriodo->id}}">{{Auth::user()->empresaObj->moneda}} {{ App\Funcion::Parsear($nominaPeriodo->valor_total ? $nominaPeriodo->valor_total : 0) }} </span><input type="hidden" id="pago-nomina-{{$nomina->id}}" value="{{$nominaPeriodo->pago_empleado ? $nominaPeriodo->pago_empleado : $nominaPeriodo->valor_total}}">
                                             </td>
                                             <td>
-                                                @if(isset($_SESSION['permisos']['161']) && !$modoLectura->success)
+                                                {{-- @if(isset($_SESSION['permisos']['161']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                 <a id="a-ob-nomina-{{$nominaPeriodo->id}}" href="javascript:modificarNota('{{ $nominaPeriodo->observaciones }}', '{{ $nominaPeriodo->id}}', 'a-ob-nomina-{{$nominaPeriodo->id}}')">
                                                     <i class="far fa-folder-open color"></i>
                                                 </a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 <a href="{{route('nomina.calculos',[$nominaPeriodo->id, 'periodo' => $mensajePeriodo])}}"><i class="far fa-eye color"></i></a>
-                                                @endif
-                                                @if(isset($_SESSION['permisos']['161']))
+                                                {{-- @endif --}}
+                                                {{-- @if(isset($_SESSION['permisos']['161'])) --}}
                                                 @if($nomina->prestacionesSociales->count() == 0)
                                                 <a href="{{ route('nomina.pdf', $nominaPeriodo->id)}}" target="_blank"><i class="far fa-file color"></i></a> @else
                                                 <a href="#" data-toggle="modal" data-target="#modal-imprimir-{{ $nominaPeriodo->id }}"><i class="far fa-file color"></i></a>
@@ -989,7 +988,7 @@
                                                 </div>
 
                                                 @endif
-                                                @endif
+                                                {{-- @endif --}}
                                                 {{-- <i class="far fa-paper-plane color"></i>--}}
                                             </td>
                                             @include('nomina.modals.extras-y-recargos')
@@ -1018,32 +1017,32 @@
 
         <div class="col-6 col-md-3">
             <b style="font-size:12px">TOTAL PAGO A PERSONAS</b><br>
-            <span>$ <span id="total-pago-personas">{{ $costoPeriodo->pagoEmpleados }}</span> </span>
+            <span>$ <span id="total-pago-personas">{{ $costoPeriodo->pagoEmpleados ?? 'cargando...' }}</span> </span>
         </div>
 
-        @if(isset($_SESSION['permisos']['162']))
+        {{-- @if(isset($_SESSION['permisos']['162'])) --}}
         <div class="col-6 col-md-3" id="btn-confirmar-nomina">
-            @if (!$modoLectura->success)
+            @if (!auth()->user()->modo_lecturaNomina())
             <a href="{{ route('nomina.confirmar', ['year' => $year, 'periodo' => $periodo, 'periodo_quincenal' => request()->periodo_quincenal]) }}" role="button" class="btn btn-success">Liquidar nomina</a>
             @else
             <a href="#" role="button" class="btn btn-success disabled">Liquidar nomina</a>
             @endif
         </div>
-        @endif
+        {{-- @endif --}}
 
-        @if(isset($_SESSION['permisos']['157']))
+        {{-- @if(isset($_SESSION['permisos']['157'])) --}}
         <div class="col-6 col-md-3" id="btn-confirmar-nomina">
-            @if (!$modoLectura->success)
+            @if (!auth()->user()->modo_lecturaNomina())
             <a href="{{ route('nomina-dian.emitir', ['periodo' => $periodo, 'year' => $year]) }}" role="button" class="btn btn-primary">Módulo de emitir nomina</a>
             @else
             <a href="#" role="button" class="btn btn-primary disabled">Módulo de emitir nomina</a>
             @endif
         </div>
-        @endif
+        {{-- @endif --}}
     </div>
 
     {{-- MODAL VACACIONES, INCAPACIDADES Y LICENCIAS --}}
-    @include('nomina.modals.vacaciones-incap')
+    @include('nomina.modals.vacaciones-incap', ['diasferiados' => $diasferiados])
 
     {{-- MODAL INGRESOS --}}
     @include('nomina.modals.ingresos-adicionales')
@@ -1062,6 +1061,18 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+
+        $.get('{{ route("nomina.get.costo.periodo", [$year, $periodo, $tipo]) }}', function(response){
+
+            let data = response.data;
+
+           $('#pago-empleados').text(data.pagoEmpleados);
+           $('#costo-empresa').text(data.costoEmpresa);
+           $('#total-pago-personas').text(data.pagoEmpleados);
+
+        });
+
+
         $('.datepicker').each(function() {
             $(this).datepicker('destroy');
             $(this).attr('type', 'date');
@@ -1146,13 +1157,7 @@
         var periodo = '{{$periodo}}';
         var type = $("#periodo_quincenal").val();
         // alert(periodo + " - " + periodo + " - " + type);
-
         var url = '/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
-
-        if(window.location.pathname.split("/")[1] === "software"){
-            var url = '/software/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
-        }
-
         $('#form-buscarnomina').attr('action', url);
         $('#form-buscarnomina').submit();
     }

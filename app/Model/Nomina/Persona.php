@@ -8,14 +8,14 @@ use DB;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\NominaTerminoContrato;
 use App\Traits\Funciones;
-// use Spatie\Activitylog\Traits\LogsActivity;
 use Carbon\Carbon;
+use Spatie\Activitylog\LogOptions;
 
 class Persona extends Model
 {
     use Funciones;
 
-    
+
     protected $table = "ne_personas";
 
     protected $appends = ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'];
@@ -58,7 +58,13 @@ class Persona extends Model
         'is_liquidado'
 
     ];
-    
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
+
+
     public function getValorAttribute($value)
     {
         $valor = doubleval($value);
@@ -81,9 +87,16 @@ class Persona extends Model
         }
 
 
-        $identi = TipoIdentificacion::where('id', $this->fk_tipo_documento)->first()->identificacion;
-        $identi = explode('(', $identi)[1];
-        $identi = explode(')', $identi)[0];
+        $identi = TipoIdentificacion::where('id', $this->fk_tipo_documento)->first()->identificacion ?? '';
+        if($identi){
+            $exp = explode('(', $identi);
+            if(isset($exp[1])){
+                $identi = explode('(', $identi)[1];
+            }
+            if(isset($exp[0])){
+                $identi = explode(')', $identi)[0];
+            }
+        }
         return $identi;
     }
 
@@ -292,7 +305,7 @@ class Persona extends Model
 
         $year = date("Y", strtotime(Carbon::now()));
         $mes  = date("m", strtotime(Carbon::now()));
-        
+
         $periodoActual = Nomina::where('fk_idempresa', $this->fk_empresa)
             ->where('year', $year)
             ->where('periodo',$mes)
@@ -307,7 +320,7 @@ class Persona extends Model
             foreach($periodoActual->nominaperiodos as $nominaPeriodo){
                 $nominaPeriodo->editValorTotal();
             }
-        } 
+        }
     }
 
 }

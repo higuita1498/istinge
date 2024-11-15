@@ -9,13 +9,13 @@
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs nav-fill mb-3" id="ex4" role="tablist">
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link active" id="ex4-tab-1" data-toggle="tab" href="#ex4-tabs-1" role="tab" aria-controls="ex4-tabs-1" aria-selected="true">Deducciones</a>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link" id="ex4-tab-2" data-toggle="tab" href="#ex4-tabs-2" role="tab" aria-controls="ex4-tabs-2" aria-selected="false">Préstamos</a>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item " role="presentation">
                         <a class="nav-link" id="ex4-tab-3" data-toggle="tab" href="#ex4-tabs-3" role="tab" aria-controls="ex4-tabs-3" aria-selected="false">Retefuente</a>
                     </li>
                 </ul>
@@ -98,7 +98,7 @@
                                     <input class="form-control" type="number" style="width: 100%" name="retefuente_valor" id="retefuente_valor" min="0"  onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46">
                                     <input class="form-control" type="hidden" style="width: 100%" name="retefuente_ids" id="retefuente_ids">
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -120,12 +120,7 @@
 
         function editDeducciones(id){
             cargando(true);
-            if (window.location.pathname.split("/")[1] === "software") {
-			var url='/software/empresa';
-            }else{
-            var url = '/empresa';
-            }
-            var url = url+'/nomina/liquidar-nomina/'+id+'/edit_deducciones';
+            var url = '/empresa/nomina/liquidar-nomina/'+id+'/edit_deducciones';
             var _token = $('meta[name="csrf-token"]').attr('content');
             var i = id;
             $.post(url, {
