@@ -27,10 +27,9 @@ class ContabilidadController extends Controller
         $ccostos = CentroCostos::where('fk_idempresa',1)->get();
 
         $cats_general = CategoriaGeneral::all();
-        $modoLectura = (object) $usuario->modoLecturaNomina();
 
 
-        return view('nomina.contabilidad', compact('ccostos', 'cats_general', 'modoLectura'));
+        return view('nomina.contabilidad', compact('ccostos', 'cats_general'));
     }
 
     public function store_ccosto(Request $request)

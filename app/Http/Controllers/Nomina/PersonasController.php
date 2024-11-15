@@ -28,11 +28,11 @@ class PersonasController extends Controller
     public function __construct()
     {
         $this->middleware('nomina');
-        // $this->middleware('payrollReadingMode')->only('create', 'edit', 'update', 'destroy', 'store');
+        $this->middleware('payrollReadingMode')->only('create', 'edit', 'update', 'destroy', 'store');
 
-        // $this->middleware('can_access_to_page:170')->only('create');
-        // $this->middleware('can_access_to_page:171')->only('edit');
-        // $this->middleware('can_access_to_page:174')->only('show');
+        $this->middleware('can_access_to_page:170')->only('create');
+        $this->middleware('can_access_to_page:171')->only('edit');
+        $this->middleware('can_access_to_page:174')->only('show');
     }
 
     /**
@@ -125,7 +125,7 @@ class PersonasController extends Controller
          /*>>> Script de creación de centros de costos <<<*/
         //  $empresas = Empresa::all();
         //  $centros = DB::Table('ne_centro_costos')->where('fk_idempresa',1)->get();
-        
+
         //  foreach($empresas as $empresa){
         //     foreach($centros as $centro){
         //         DB::table('ne_centro_costos')->insert([
@@ -136,7 +136,7 @@ class PersonasController extends Controller
         //         ]);
         //     }
         //  }
-         
+
 
         $personas = $personas->where('fk_empresa', $usuario->empresa);
         $cantidad = $personas->OrderBy($orderby, $order)->count();
@@ -146,16 +146,13 @@ class PersonasController extends Controller
         $termino_contratos = DB::table('ne_termino_contrato')->get();
         $salario_bases = DB::table('ne_salario_base')->get();
 
-        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-        //     ->select('tips_modulo_usuario.*')
-        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
-        //     ->where('fk_idusuario', $usuario->id)
-        //     ->get();
+        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+            ->select('tips_modulo_usuario.*')
+            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+            ->where('permisos_modulo.nombre_modulo', 'Nomina')
+            ->where('fk_idusuario', $usuario->id)
+            ->get();
 
-        $guiasVistas = [];
-
-        $modoLectura = (object) $usuario->modoLecturaNomina();
 
         return view('nomina.personas.index', ['guiasVistas' => $guiasVistas])->with(compact(
             'personas',
@@ -166,7 +163,6 @@ class PersonasController extends Controller
             'sedes',
             'termino_contratos',
             'salario_bases',
-            'modoLectura'
         ));
     }
 
@@ -313,8 +309,8 @@ class PersonasController extends Controller
             $persona->dias_descanso = $dias_descanso;
             $persona->fk_iddepartamento = $request->departamento;
             $persona->fk_idmunicipio = $request->municipio;
-            
-       
+
+
 
             /* >>> DATOS PAGO <<< */
 
@@ -420,7 +416,7 @@ class PersonasController extends Controller
     public function update($id, Request $request)
     {
         $persona = Persona::where('id', $id)->where('fk_empresa', Auth::user()->empresa)->first();
-    
+
         if ($persona) {
             $request->validate([
                 'nombre' => 'required',
@@ -515,7 +511,7 @@ class PersonasController extends Controller
                     date('n', strtotime($persona->fecha_contratacion)),
                     $tipoContrato
                 );
-                
+
                 /* >>> Si depsués de haber generado la nomina de cada persona no queda ninguna  Nomina creada se revalida <<<*/
                 $validateNomina = Nomina::where('periodo',  date('n', strtotime($persona->fecha_contratacion)))->where(
                     'year',
@@ -523,21 +519,21 @@ class PersonasController extends Controller
                 )->where('fk_idempresa', Auth::user()->empresa)
                 ->where('fk_idpersona', $persona->id)
                 ->first();
-                
+
                 if (!$validateNomina) {
                     return redirect('empresa/nomina/personas')->with('danger', 'ERROR: ocurrio un error al generar la nomina');
                 }
             }
-            
+
             /* >>> Si se cambia el valor de pago y la ultima nomina no ha sido emitida <<< */
             if($persona->valor != $valorNuevoPago = (float) str_replace('.', '', $request->valor)){
 
                 $nomina = Nomina::where('fk_idpersona', $persona->id)->orderBy('year','desc')->orderBy('periodo','desc')->first();
-                
+
                 if($nomina){
                     if($nomina->emitida != 1 || $nomina->emitida != 3 || $nomina->emitida != 5){
                         $mensaje2= " y la nómina del año " . $nomina->year . " del mes " . $nomina->periodo;
-                        foreach ($nomina->nominaperiodos as $nominaPeriodo) {      
+                        foreach ($nomina->nominaperiodos as $nominaPeriodo) {
                             $nominaPeriodo->pago_empleado = $valorNuevoPago;
                             $nominaPeriodo->save();
                             $nominaPeriodo->editValorTotal();
@@ -548,8 +544,8 @@ class PersonasController extends Controller
 
             $persona->valor = $valorNuevoPago;
             $persona->save();
-            
-            if ($fechaContratacionInicial != $persona->fecha_contratacion) {   
+
+            if ($fechaContratacionInicial != $persona->fecha_contratacion) {
                 /* >>> REFRESCAR PERIODO NUEVO <<< */
                 $yearPeriodo = date('Y', strtotime($persona->fecha_contratacion));
                 $mesPeriodo = date('n', strtotime($persona->fecha_contratacion));
@@ -561,7 +557,7 @@ class PersonasController extends Controller
                         $nominaPeriodo->editValorTotal();
                         // }
                     }
-    
+
                     if ($nomina) {
                         foreach (optional($nomina)->nominaperiodos as $nominaPeriodo) {
                             // if($nominaPeriodo->is_liquidado == false){
@@ -569,15 +565,15 @@ class PersonasController extends Controller
                             // }
                         }
                     }
-    
-    
+
+
                     /* >>> REFRESCAR PERIODO ANTERIOR <<< */
                     $yearPeriodo = date('Y', strtotime($fechaContratacionInicial));
                     $mesPeriodo = date('n', strtotime($fechaContratacionInicial));
-    
-    
+
+
                     $nomina = Nomina::where('year', $yearPeriodo)->where('periodo', $mesPeriodo)->where('fk_idpersona', $persona->id)->first();
-    
+
                     if ($nomina) {
                         foreach (optional($nomina)->nominaperiodos as $nominaPeriodo) {
                             //  if($nominaPeriodo->is_liquidado == false){ Así esté liquidado debe calcular el nuevo valor
@@ -585,17 +581,17 @@ class PersonasController extends Controller
                             //  }
                         }
                     }
-                } 
+                }
             }
-            
+
             /* >>> Manera de crear una nomina de nuevo de una persona (mientras tanto por código) <<< */
             // $tipoContrato = NominaTipoContrato::find($persona->fk_tipo_contrato);
             // $this->nominaPersona($persona, false, false, $tipoContrato);
             $mensaje = 'Se ha actualizado satisfactoriamente la persona';
             if(isset($mensaje2)){
-            $mensaje = 'Se ha actualizado satisfactoriamente la persona' . $mensaje2;    
+            $mensaje = 'Se ha actualizado satisfactoriamente la persona' . $mensaje2;
             }
-            
+
             return redirect('empresa/nomina/personas')->with('success', $mensaje)->with('persona_id', $persona->id);
         }
         return redirect('empresa/nomina/personas')->with('danger', 'ERROR: No existe un registro con ese ID');
@@ -680,11 +676,9 @@ class PersonasController extends Controller
                 }
             }
 
-            $modoLectura = (object) $usuario->modoLecturaNomina();
-
-            return view('nomina.personas.show', compact('persona', 'detalles', 'vacAcumuladas', 'nominas', 'moneda', 'modoLectura', 'vacPendientes'));
+            return view('nomina.personas.show', compact('persona', 'detalles', 'vacAcumuladas', 'nominas', 'moneda', 'vacPendientes'));
         } catch (\Throwable $th) {
-            return redirect()->route('personas.index')->with('danger', 'No se ha encontrado una persona con ese identificador');
+            return redirect()->route('personas.index')->with('danger', 'No se ha encontrado una persona con ese identificador ' . $th);
         }
     }
 
@@ -887,7 +881,7 @@ class PersonasController extends Controller
         if (!$year) {
             $year = date("Y", strtotime(Carbon::now()));
         }
-        
+
         /* >>> Sino hay periodo es por que no estamos usando la funcion "generar nueva nómina" y podriamos estar creando una persona <<< */
         if (!$periodo) {
             $periodoActual = Nomina::where('fk_idempresa', $empresa)
@@ -911,7 +905,7 @@ class PersonasController extends Controller
             $fechaActualNomina = Carbon::parse($yearCopy . "-" . $periodo . "-01");
             $fechaActualNomina = date("y-m",strtotime($fechaActualNomina));
         }
-        
+
         $nro = Nomina::where('fk_idempresa', $empresa)->where(
             'periodo',
             ($periodo) ? $periodo : date("m", strtotime(Carbon::now()))
@@ -921,11 +915,11 @@ class PersonasController extends Controller
         Validamos si la persona puede estar dentro del mes que se está generando ya que pudo ser contratado
         ejm: en julio y se esta generando una nomina de un mes pasado, entonces no se deberia generar una nomina para esa persona
         <<< */
-        $fechaContratacion = date('y-m',strtotime($persona->fecha_contratacion)); 
-        
+        $fechaContratacion = date('y-m',strtotime($persona->fecha_contratacion));
+
         $mesContratacion = date('m', strtotime($persona->fecha_contratacion));
         $periodoGeneradoNomina = $periodoGenerado = ($periodo) ? $periodo : date("m", strtotime(Carbon::now()));
-        
+
 
         if ($fechaContratacion <= $fechaActualNomina) {
 
@@ -1364,10 +1358,10 @@ class PersonasController extends Controller
 
         if ($totalNomina->count() > 0) {
             foreach($totalNomina as $t){
-                
+
                 $periodoN = NominaPeriodos::find($t->id);
                 $periodoN->editValorTotal();
-                
+
                 if(strtotime($comprobanteLiquidacion->fecha_terminacion) < strtotime($periodoN->fecha_desde)){
                     NominaCuentasGeneralDetalle::where('fk_nominaperiodo', $periodoN->id)->delete();
                     NominaDetalleUno::where('fk_nominaperiodo', $periodoN->id)->delete();

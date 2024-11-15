@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Nomina;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Auth;
+use DB;
 use App\Model\Nomina\NominaPrestacionSocial;
 use App\Model\Nomina\Nomina;
 use App\Model\Nomina\Persona;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Validator;
-use Illuminate\Support\Facades\Auth as Auth;
 
 class NominaPrestacionSocialController extends Controller
 {
@@ -17,8 +18,8 @@ class NominaPrestacionSocialController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('can_access_to_page:161')->only('imprimir');
-        // $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
+        $this->middleware('can_access_to_page:161')->only('imprimir');
+        $this->middleware('can_access_to_page:165')->only('prima', 'cesantias', 'interesesCesantias');
     }
 
     public function prima(Request $request)
@@ -167,16 +168,9 @@ class NominaPrestacionSocialController extends Controller
         $tipo = $request->tipo;
         $subYear = 1;
 
-        if(!Nomina::where('fk_idempresa', Auth::user()->empresa)
-        ->where('ne_nomina.year', $year - $subYear)->first()){
+        if($request->presente == 'si'){
             $subYear = 0;
         }
-        else{
-            if($request->presente == 'si'){
-                $subYear = 0;
-            }
-        }
-
 
         $nominas = Nomina::with('nominaperiodos')
             ->where('ne_nomina.year', $year - $subYear)
@@ -225,7 +219,8 @@ class NominaPrestacionSocialController extends Controller
                                                 ->where('ne_nomina.periodo', $periodo)
                                                 ->where('fk_idempresa', Auth::user()->empresa)
                                                 ->where('fk_idpersona', $persona->id)
-                                                ->latest()
+                                                ->orderBy('ne_nomina.estado_nomina', 'desc')
+                                                ->orderBy('ne_nomina.created_at', 'desc')
                                                 ->first();
         }
 
@@ -295,14 +290,8 @@ class NominaPrestacionSocialController extends Controller
         $tipo = $request->tipo;
         $subYear = 1;
 
-        if(!Nomina::where('fk_idempresa', Auth::user()->empresa)
-        ->where('ne_nomina.year', $year - $subYear)->first()){
+        if($request->presente == 'si'){
             $subYear = 0;
-        }
-        else{
-            if($request->presente == 'si'){
-                $subYear = 0;
-            }
         }
 
         $nominas = Nomina::with('nominaperiodos')
@@ -356,7 +345,8 @@ class NominaPrestacionSocialController extends Controller
                                                 ->where('ne_nomina.periodo', $periodo)
                                                 ->where('fk_idempresa', Auth::user()->empresa)
                                                 ->where('fk_idpersona', $persona->id)
-                                                ->latest()
+                                                ->orderBy('ne_nomina.estado_nomina', 'desc')
+                                                ->orderBy('ne_nomina.created_at', 'desc')
                                                 ->first();
         }
 

@@ -201,7 +201,7 @@ class NominaDianController extends Controller
                     "PrimerNombre" => $empresa->nombre,
                     "OtrosNombres" => $empresa->nombre,
                     "NIT" => $empresa->nit,
-                    "DV" => $empresa->dv,
+                    "DV" => "" . $empresa->dv . "",
                     "Pais" => "CO",
                     "DepartamentoEstado" => "05",
                     "MunicipioCiudad" => "05001",
@@ -588,7 +588,7 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
+     *
      * Primer metodo que se llama a l aohra de emitir una nómina a la dian, retorna alguna validación faltante
      * antes de que la información viaje a la dian.
      *
@@ -609,8 +609,47 @@ class NominaDianController extends Controller
      */
     public function emitirJson($nominaId,$tipo)
     {
+
         $nomina = Nomina::findOrFail($nominaId);
-        
+
+        if(!$nomina){
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => false,
+                    'status' => 200,
+                    'ref' => '#',
+                    'mesagge' => 'No existe la nomina',
+                    'data' => []
+                ]);
+            }
+        }
+
+        if($nomina->emitida == 1){
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => true,
+                    'status' => 200,
+                    'ref' => '',
+                    'mesagge' => 'Nomina emitida',
+                    'data' => []
+                ]);
+            }
+
+        }
+
+
+        if($nomina->emitida == 4){
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => true,
+                    'status' => 200,
+                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                    'mesagge' => 'El ajuste de nomina, debe emitirse individualmente',
+                    'data' => []
+                ]);
+            }
+        }
+
         //validacion para no emitir varis eventos en un mismo lapso de tiempo (4 minuto).
         $ultimaModificacion = Carbon::parse($nomina->updated_at);
         $horaMinActual = Carbon::now();
@@ -621,10 +660,34 @@ class NominaDianController extends Controller
         $rechazada = json_decode($nomina->json_dian);
 
         $numeracionFactura = $this->obtenerNumeracion($nomina,$tipo);
+        //dd($numeracionFactura );
 
         if (!$numeracionFactura) {
+
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => false,
+                    'status' => 200,
+                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                    'mesagge' => "nomina {$nomina->codigo_dian} vencida",
+                    'data' => ['code-error' => "nomina-vencida"]
+                ]);
+            }
+
             return "nomina-vencida";
         } elseif ($numeracionFactura->inicio == $numeracionFactura->final) {
+
+
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => false,
+                    'status' => 200,
+                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                    'mesagge' => "nomina {$nomina->codigo_dian} consecutivo limite",
+                    'data' => ['code-error' => 'nomina-consecutivo-limite']
+                ]);
+            }
+
             return 'nomina-consecutivo-limite';
         }
 
@@ -636,9 +699,22 @@ class NominaDianController extends Controller
         }
 
         $json = "";
-        $jsonEdit = $this->nominaElectronica($nomina);
 
-        /* validar y descargar xml rapido desde aqui 
+        try {
+            $jsonEdit = $this->nominaElectronica($nomina);
+        } catch (\Throwable $e) {
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => false,
+                    'status' => 200,
+                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                    'mesagge' => "Error al emitir la nomina {$nomina->codigo_dian}",
+                    'data' => ['error' => $e->getMessage()]
+                ]);
+            }
+        }
+
+        /* validar y descargar xml rapido desde aqui
         if(auth()->user()->empresa == 21){
             dd($this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, 'NE7'));
         }
@@ -646,13 +722,26 @@ class NominaDianController extends Controller
 
         if ($nomina->estado() == 'Rechazada' && $nomina->codigo_dian) {
 
-            
+
             if($nomina->codigo_dian == null && $nomina->tipo != 2 || $nomina->tipo == 3){
             $nomina->codigo_dian = $numeracionFactura->prefijo . $numeracionFactura->inicio;
             $nomina->save();
-            }   
+            }
 
-            $validateProcesado = $this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, $nomina->codigo_dian);
+            try {
+                $validateProcesado = $this->nominaService->electronicPayrollStatus(auth()->user()->empresaObj->nit, $nomina->codigo_dian);
+            } catch(\Throwable $e){
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "Error al activar el servicio de emiciones de nomina",
+                        'data' => ['error' => $e->getMessage()]
+                    ]);
+                }
+            }
+
 
             if (is_object($validateProcesado)) {
                 if (isset($validateProcesado->statusCodeDIAN) && $validateProcesado->statusCodeDIAN == 'APR') {
@@ -661,6 +750,18 @@ class NominaDianController extends Controller
 
 
                         if ($validateProcesado->statusDescription == 'Procesado Correctamente.') {
+
+
+                            if(request()->ajax() || request()->lote){
+                                return response()->json([
+                                    'success' => true,
+                                    'status' => 200,
+                                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                                    'mesagge' => "Nomina {$nomina->codigo_dian} emitida correctamente",
+                                    'data' => []
+                                ]);
+                            }
+
                             $nomina->emitida = 1;
                             $nomina->update();
                             return '';
@@ -687,6 +788,17 @@ class NominaDianController extends Controller
             if ($repetidaDian) {
                 $nomina->codigo_dian = null;
                 $nomina->update();
+
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "la nomina con codigo {$nomina->codigo_dian} esta repetido",
+                        'data' => ['code-error' => 'codigo-repetido']
+                    ]);
+                }
+
                 return 'codigo-repetido';
             }
         }
@@ -714,7 +826,7 @@ class NominaDianController extends Controller
             $tipoXML = 103;
         }
         $SoftwarePin = 75315;
-        $TipAmb = 1;
+        $TipAmb = config('app.ambiente_nomina');
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
 
@@ -787,10 +899,35 @@ class NominaDianController extends Controller
 
             $numeracionEliminar = NumeracionFactura::where('tipo_nomina', 3)->where('empresa', $nomina->fk_idempresa)->where('preferida', 1)->first();
             if (!$numeracionEliminar) {
+
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "la nomina con codigo {$nomina->codigo_dian} Debe escoger una numeración de tipo eliminar.",
+                        'data' => ['code-error' => 'tipo-eliminar']
+                    ]);
+                }
+
                 return redirect()->back()->with('error', 'Debe escoger una numeración de tipo eliminar.');
             }
 
-            $json = $this->nominaAjusteTipoEliminar($nomina, $numeracionEliminar, $cuneHasheado);
+
+            try {
+                $json = $this->nominaAjusteTipoEliminar($nomina, $numeracionEliminar, $cuneHasheado);
+            } catch (\Throwable $e) {
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "la nomina con codigo {$nomina->codigo_dian} no se pudo eliminar.",
+                        'data' => ['code-error' => 'tipo-eliminar', 'error' => $e->getMessage()]
+                    ]);
+                }
+            }
+
 
             // Return solamente para mirar el json.
             // return $json;
@@ -798,7 +935,19 @@ class NominaDianController extends Controller
 
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
-        $response = $this->enviarJsonDianApi($json,1);
+        try {
+            $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
+        } catch (\Throwable $e) {
+            if(request()->ajax() || request()->lote){
+                return response()->json([
+                    'success' => false,
+                    'status' => 200,
+                    'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                    'mesagge' => "Fallo el envio a la dian",
+                    'data' => ['code-error' => '', 'error' => $e->getMessage()]
+                ]);
+            }
+        }
         // $response['statusCode'] = 200;
 
 
@@ -860,6 +1009,17 @@ class NominaDianController extends Controller
             }
         } else {
             if ($response['message'] == 'Too Many Requests') {
+
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "Se han recibido muchas solicitudes de este emisor, reintentar mas tarde",
+                        'data' => ['code-error' => 'mucha-solicitud']
+                    ]);
+                }
+
                 return 'mucha-solicitud';
             }
         }
@@ -872,6 +1032,15 @@ class NominaDianController extends Controller
         if ($nomina->estado() == 'Rechazada') {
             if ($nomina->validarRechazada() == true) {
                 /* mensaje personalizado */
+                if(request()->ajax() || request()->lote){
+                    return response()->json([
+                        'success' => false,
+                        'status' => 200,
+                        'ref' => $nomina->codigo_dian ? $nomina->codigo_dian : $nomina->persona->nombre(),
+                        'mesagge' => "la nomina con codigo {$nomina->codigo_dian} ha sido rechazada por la Dian",
+                        'data' => ['code-error' => '']
+                    ]);
+                }
                 return '';
             }
         }
@@ -889,7 +1058,7 @@ class NominaDianController extends Controller
     {
 
         $currentDate = date('Y-m-d');
-        
+
         if($tipo == 3){
                return NumeracionFactura::where('nomina', 1)
                 ->orderByDesc('id')
@@ -898,7 +1067,7 @@ class NominaDianController extends Controller
                 ->where('empresa', auth()->user()->empresa)
                 ->first();
         }
-        
+
         else if ($nomina->tipo == 2) {
             return NumeracionFactura::where('nomina', 1)
                 ->orderByDesc('id')
@@ -908,12 +1077,24 @@ class NominaDianController extends Controller
                 ->first();
         }
 
-        return NumeracionFactura::where('nomina', 1)
-            ->orderByDesc('id')
-            ->where('preferida', 1)
-            ->where('tipo_nomina', 1)
-            ->where('empresa', auth()->user()->empresa)
-            ->first();
+        $num = NumeracionFactura::where('nomina', 1)
+                                ->orderByDesc('id')
+                                ->where('preferida', 1)
+                                ->where('tipo_nomina', 1)
+                                ->where('empresa', auth()->user()->empresa)
+                                ->first();
+        if(!$num){
+            $ultimaNominaEmitida = Nomina::where('emitida', 1)->where('tipo', 1)->where('fk_idempresa', auth()->user()->empresa)->orderByDesc('id')->first();
+            if($ultimaNominaEmitida){
+                $num = NumeracionFactura::where('id', $ultimaNominaEmitida->fk_idnumeracion)->where('estado', 1)->first();
+                $num->preferida = 1;
+                $num->update();
+            }
+        }
+
+
+        return $num;
+
     }
 
     /**
@@ -926,107 +1107,140 @@ class NominaDianController extends Controller
 
         $total_sueldo = 0;
         $TiempoLaborado = 0;
-        foreach ($nomina->nominaperiodos as $nominaPeriodo) {
-            $total_sueldo += $nominaPeriodo->valor_total;
-            $TiempoLaborado += $nominaPeriodo->diasTrabajados();
-            $date = Carbon::parse($nominaPeriodo->fecha_hasta)->locale('es');
+
+
+        try {
+            foreach ($nomina->nominaperiodos as $nominaPeriodo) {
+                $total_sueldo += $nominaPeriodo->valor_total;
+                $TiempoLaborado += $nominaPeriodo->diasTrabajados();
+                $date = Carbon::parse($nominaPeriodo->fecha_hasta)->locale('es');
+            }
+        } catch(Exception $e){
+            $mensajePersonalizado = "Error en los calculos del periodo, refresque la nomina y complete las novedades";
+            throw new Exception($mensajePersonalizado, $e->getCode(), $e);
         }
+
+
 
         $empresa = Auth::user()->empresa();
         $usuario = $empresa->usuario();
-        $metodo  = $nomina->persona->metodo_pago_codigo();
+
+        try {
+            $metodo  = $nomina->persona->metodo_pago_codigo();
+        } catch(Exception $e){
+            $mensajePersonalizado = "Existe un error con el metodo de pago del cliente";
+            throw new Exception($mensajePersonalizado, $e->getCode(), $e);
+        }
 
 
-        $json = array(
-            "Periodo" => [
-                "FechaIngreso" => $nomina->persona->fecha_contratacion,
-                "FechaLiquidacionInicio" => $date->startOfMonth()->format('Y-m-d'),
-                "FechaLiquidacionFin" => $date->endOfMonth()->format('Y-m-d'),
-                "TiempoLaborado" => "$TiempoLaborado",
-                "FechaGen" => date('Y-m-d')
-            ],
-            "NumeroSecuenciaXML" => [
-                "CodigoTrabajador" => "10001",
-                "Prefijo" => "C",
-                "Consecutivo" => "100001",
-                "Numero" => "C100001"
-            ],
-            "LugarGeneracionXML" => [
-                "Pais" => "CO",
-                "DepartamentoEstado" => $nomina->persona->departamento()->codigo,
-                "MunicipioCiudad" => $nomina->persona->municipio()->codigo_completo,
-                "Idioma" => "es"
-            ],
-            "CodigoQR" => "",
-            "InformacionGeneral" => [
-                "Version" => "V1.0: Documento Soporte de Pago de Nómina Electrónica",
-                "Ambiente" => "1",
-                "TipoXML" => $nomina->emitida == 4 ? "103" : "102",
-                "FechaGen" => date('Y-m-d'),
-                "HoraGen" => date('H:i:sP'),
-                "PeriodoNomina" => "4",
-                "TipoMoneda" => "COP"
-            ],
-            "Empleador" => [
-                "RazonSocial" => $empresa->nombre,
-                "PrimerApellido" => " ",
-                "SegundoApellido" => " ",
-                "PrimerNombre" => " ",
-                "OtrosNombres" => " ",
-                "NIT" => $empresa->nit,
-                "DV" => isset($empresa->dv) ? $empresa->dv : " ",
-                "Pais" => $empresa->fk_idpais,
-                "DepartamentoEstado" => $empresa->departamento()->codigo,
-                "MunicipioCiudad" => $empresa->municipio()->codigo_completo,
-                "Direccion" => $empresa->direccion
-            ],
-            "Trabajador" => [
-                "TipoTrabajador" => $nomina->persona->nomina_tipo_contrato->codigo,
-                "SubTipoTrabajador" => ($nomina->persona->nomina_tipo_contrato->id == 17 ? "01" : "00"),
-                "AltoRiesgoPension" => "false",
-                "TipoDocumento" => $nomina->persona->tipo_documento('codigo'),
-                "NumeroDocumento" => $nomina->persona->nro_documento,
-                "PrimerApellido" => $nomina->persona->primer_apellido,
-                "SegundoApellido" => $nomina->persona->segundo_apellido,
-                "PrimerNombre" => $nomina->persona->primer_nombre,
-                "OtrosNombres" => $nomina->persona->segundo_nombre,
-                "LugarTrabajoPais" => $empresa->fk_idpais,
-                "LugarTrabajoDepartamentoEstado" => $empresa->departamento()->codigo,
-                "LugarTrabajoMunicipioCiudad" => $empresa->municipio()->codigo_completo,
-                "LugarTrabajoDireccion" => $empresa->direccion,
-                "SalarioIntegral" => "false",
-                "TipoContrato" => $nomina->persona->terminoContrato->codigo,
-                "Sueldo" => number_format($total_sueldo, 2, '.', ''),
-                "CodigoTrabajador" => "10001"
-            ],
-            "Pago" => [
-                "Forma" => "1",
-                "Metodo" => $metodo,
-                "Banco" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->banco(),
-                "TipoCuenta" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->tipo_cuenta(),
-                "NumeroCuenta" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->nro_cuenta
-            ],
-            "FechasPagos" => [
-                "FechaPago" => [
-                    Carbon::now()->endOfMonth()->format('Y-m-d')
+        try {
+
+            $json = array(
+                "Periodo" => [
+                    "FechaIngreso" => $nomina->persona->fecha_contratacion,
+                    "FechaLiquidacionInicio" => $date->startOfMonth()->format('Y-m-d'),
+                    "FechaLiquidacionFin" => $date->endOfMonth()->format('Y-m-d'),
+                    "TiempoLaborado" => "$TiempoLaborado",
+                    "FechaGen" => date('Y-m-d')
                 ],
-            ],
-            "Devengados" => [], //END DEVENGADOS
+                "NumeroSecuenciaXML" => [
+                    "CodigoTrabajador" => "10001",
+                    "Prefijo" => "C",
+                    "Consecutivo" => "100001",
+                    "Numero" => "C100001"
+                ],
+                "LugarGeneracionXML" => [
+                    "Pais" => "CO",
+                    "DepartamentoEstado" => $nomina->persona->departamento()->codigo,
+                    "MunicipioCiudad" => $nomina->persona->municipio()->codigo_completo,
+                    "Idioma" => "es"
+                ],
+                "CodigoQR" => "",
+                "InformacionGeneral" => [
+                    "Version" => "V1.0: Documento Soporte de Pago de Nómina Electrónica",
+                    "Ambiente" => config('app.ambiente_nomina'),
+                    "TipoXML" => $nomina->emitida == 4 ? "103" : "102",
+                    "FechaGen" => date('Y-m-d'),
+                    "HoraGen" => date('H:i:sP'),
+                    "PeriodoNomina" => "4",
+                    "TipoMoneda" => "COP"
+                ],
+                "Empleador" => [
+                    "RazonSocial" => $empresa->nombre,
+                    "PrimerApellido" => " ",
+                    "SegundoApellido" => " ",
+                    "PrimerNombre" => " ",
+                    "OtrosNombres" => " ",
+                    "NIT" => $empresa->nit,
+                    "DV" => isset($empresa->dv) ? "" . $empresa->dv . "" : " ",
+                    "Pais" => $empresa->fk_idpais,
+                    "DepartamentoEstado" => $empresa->departamento()->codigo,
+                    "MunicipioCiudad" => $empresa->municipio()->codigo_completo,
+                    "Direccion" => $empresa->direccion
+                ],
+                "Trabajador" => [
+                    "TipoTrabajador" => $nomina->persona->nomina_tipo_contrato->codigo,
+                    "SubTipoTrabajador" => ($nomina->persona->nomina_tipo_contrato->id == 17 ? "01" : "00"),
+                    "AltoRiesgoPension" => "false",
+                    "TipoDocumento" => "" . $nomina->persona->tipo_documento('codigo') . "",
+                    "NumeroDocumento" => $nomina->persona->nro_documento,
+                    "PrimerApellido" => $nomina->persona->primer_apellido,
+                    "SegundoApellido" => $nomina->persona->segundo_apellido,
+                    "PrimerNombre" => $nomina->persona->primer_nombre,
+                    "OtrosNombres" => $nomina->persona->segundo_nombre,
+                    "LugarTrabajoPais" => $empresa->fk_idpais,
+                    "LugarTrabajoDepartamentoEstado" => $empresa->departamento()->codigo,
+                    "LugarTrabajoMunicipioCiudad" => $empresa->municipio()->codigo_completo,
+                    "LugarTrabajoDireccion" => $empresa->direccion,
+                    "SalarioIntegral" => "false",
+                    "TipoContrato" => "".$nomina->persona->terminoContrato->codigo . "",
+                    "Sueldo" => number_format($total_sueldo, 2, '.', ''),
+                    "CodigoTrabajador" => "10001"
+                ],
+                "Pago" => [
+                    "Forma" => "1",
+                    "Metodo" => $metodo,
+                    "Banco" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->banco(),
+                    "TipoCuenta" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->tipo_cuenta(),
+                    "NumeroCuenta" => ($nomina->persona->fk_metodo_pago == 1) ? " " : $nomina->persona->nro_cuenta
+                ],
+                "FechasPagos" => [
+                    "FechaPago" => [
+                        Carbon::now()->endOfMonth()->format('Y-m-d')
+                    ],
+                ],
+                "Devengados" => [], //END DEVENGADOS
 
-            "Deducciones" => [],
-            "Redondeo" => "00.00",
-            "DevengadosTotal" => "00.00",
-            "DeduccionesTotal" => "00.00",
-            "ComprobanteTotal" => "00.00"
-        );
+                "Deducciones" => [],
+                "Redondeo" => "00.00",
+                "DevengadosTotal" => "00.00",
+                "DeduccionesTotal" => "00.00",
+                "ComprobanteTotal" => "00.00"
+            );
+
+        } catch(Exception $e){
+            $mensajePersonalizado = "Informacion incompleta del empleador o del empleado, revisar los campos obligatorios";
+            throw new Exception($mensajePersonalizado, $e->getCode(), $e);
+        }
 
 
-        $json["Devengados"] = $this->estructuraJsonDevengados($nomina->id);
-        $json["Deducciones"] = $this->estructuraJsonDeducciones($nomina->id);
+        try {
+            $json["Devengados"] = $this->estructuraJsonDevengados($nomina->id);
+            $json["Deducciones"] = $this->estructuraJsonDeducciones($nomina->id);
+        } catch(Exception $e){
+            $mensajePersonalizado = "Error al calcular los devengados y las deducciones del periodo";
+            throw new Exception($mensajePersonalizado, $e->getCode(), $e);
+        }
 
 
-        $devengadosTotal = $this->sumaDevengadosTotal($json['Devengados']);
-        $deduccionesTotal = $this->sumaDeducionesTotal($json['Deducciones']);
+        try {
+            $devengadosTotal = $this->sumaDevengadosTotal($json['Devengados']);
+            $deduccionesTotal = $this->sumaDeducionesTotal($json['Deducciones']);
+        } catch(Exception $e){
+            $mensajePersonalizado = "Error al sumar y unir los devengados o deducciones del periodo";
+            throw new Exception($mensajePersonalizado, $e->getCode(), $e);
+        }
+
 
         $json['DevengadosTotal'] = number_format($devengadosTotal, 2, '.', '');
         $json['DeduccionesTotal'] = number_format($deduccionesTotal, 2, '.', '');
@@ -1078,7 +1292,7 @@ class NominaDianController extends Controller
                 ],
                 "InformacionGeneral" => [
                     "Version" => "V1.0: Nota de Ajuste de Documento Soporte de Pago de Nómina Electrónica",
-                    "Ambiente" => "1",
+                    "Ambiente" => config('app.ambiente_nomina'),
                     "TipoXML" => "103",
                     "CUNE" => $cuneEliminar,
                     "EncripCUNE" => "CUNE-SHA384",
@@ -1093,7 +1307,7 @@ class NominaDianController extends Controller
                     "PrimerNombre" => $empresa->nombre,
                     "OtrosNombres" => " ",
                     "NIT" => $empresa->nit,
-                    "DV" => $empresa->dv,
+                    "DV" => "" . $empresa->dv . "",
                     "Pais" => $empresa->fk_idpais,
                     "DepartamentoEstado" => $empresa->departamento()->codigo,
                     "MunicipioCiudad" => $empresa->municipio()->codigo_completo,
@@ -1115,14 +1329,12 @@ class NominaDianController extends Controller
         $this->getAllPermissions($usuario->id);
         $empresa = auth()->user()->empresaObj;
 
-        // $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
-        //     ->select('tips_modulo_usuario.*')
-        //     ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
-        //     ->where('permisos_modulo.nombre_modulo', 'Nomina')
-        //     ->where('fk_idusuario', $usuario->id)
-        //     ->get();
-
-        $guiasVistas = [];
+        $guiasVistas = DB::connection('mysql')->table('tips_modulo_usuario')
+            ->select('tips_modulo_usuario.*')
+            ->join('permisos_modulo', 'permisos_modulo.id', '=', 'tips_modulo_usuario.fk_idpermiso_modulo')
+            ->where('permisos_modulo.nombre_modulo', 'Nomina')
+            ->where('fk_idusuario', $usuario->id)
+            ->get();
 
 
         /* >>> si la primer nomina recuperada en el get tiene 2 periodos si o si todas las nominas traidas de ese año y periodo deben ser
@@ -1152,7 +1364,7 @@ class NominaDianController extends Controller
                     $query->orWhere('periodo', $tipoA);
                     $query->orWhere('periodo', $tipoB);
                 }
-            ])
+            , 'prestacionesSociales', 'persona'])
             ->where('ne_nomina.year', $year)
             ->where('ne_nomina.periodo', $periodo)
             ->where('ne_nomina.fk_idempresa', $usuario->empresa)
@@ -1168,7 +1380,7 @@ class NominaDianController extends Controller
         $deduccionesTotalV = 0;
         $totalPagoV = 0;
 
-        $costoPeriodo = self::costoPeriodo($tipo, $idNominas);
+        $costoPeriodo = 0 ;//self::costoPeriodo($tipo, $idNominas);
 
         $preferencia = NominaPreferenciaPago::where('empresa', $usuario->empresa)->first();
 
@@ -1180,11 +1392,13 @@ class NominaDianController extends Controller
         $swUnaVez = 0;
         $emitidas = 0;
         $personas = 0;
-
         $pagoTotal = 0;
         $totalDeducciones = 0;
 
+
+
         foreach ($nominas as $nomina) {
+            /*
 
             $jsonDevengados = $this->estructuraJsonDevengados($nomina->id);
             $devengadosTotal = $this->sumaDevengadosTotal($jsonDevengados);
@@ -1192,6 +1406,8 @@ class NominaDianController extends Controller
             $jsonDeducciones = $this->estructuraJsonDeducciones($nomina->id);
             $deduccionesTotal = $this->sumaDeducionesTotal($jsonDeducciones);
             $deduccionesTotalV += $deduccionesTotal;
+
+
 
             $totalPago = $devengadosTotal - $deduccionesTotal;
             $totalPagoV += $totalPago;
@@ -1202,10 +1418,17 @@ class NominaDianController extends Controller
             $deducciones = 0;
             $total = 0;
             $estado = '';
+
+            */
+
+            $total = 0;
+
             $prestacionesSociales = $nomina->prestacionesSociales;
 
             foreach ($nomina->nominaperiodos as $nominaPeriodo) {
                 $total += $nominaPeriodo->valor_total;
+                $totalPagoV += $nominaPeriodo->valor_total;
+                $devengadosTotalV += $nominaPeriodo->valor_total;
             }
 
             if ($nomina->liquidacionComprobante()) {
@@ -1214,9 +1437,11 @@ class NominaDianController extends Controller
 
             foreach ($prestacionesSociales as $p) {
                 $total += $p->valor_pagar;
-                $totalPagoV += $p->valor_pagar;
-                $devengadosTotalV += $p->valor_pagar;
+                //$totalPagoV += $p->valor_pagar;
+                //$devengadosTotalV += $p->valor_pagar;
+                $deduccionesTotalV += $p->valor_pagar;
             }
+
 
             //suma de totales a pagar
             $pagoTotal += $total;
@@ -1249,6 +1474,8 @@ class NominaDianController extends Controller
             $swUnaVez = 1;
         }
 
+        $totalPagoV = $totalPagoV + $deduccionesTotalV;
+
         $i = 0;
 
 
@@ -1276,8 +1503,6 @@ class NominaDianController extends Controller
             $isFinalizado = false;
         }
 
-        $modoLectura = (object) $usuario->modoLecturaNomina();
-
         view()->share([
             'seccion' => 'nomina',
             'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
@@ -1304,7 +1529,6 @@ class NominaDianController extends Controller
                 'emitidas' => $emitidas,
                 'personas' => $personas,
                 'isFinalizado' => $isFinalizado,
-                'modoLectura' => $modoLectura,
                 'empresa' => $empresa
             ]
         );
@@ -1372,63 +1596,63 @@ class NominaDianController extends Controller
             "HEDs" => [
                 "HED" => [
                     [
-                        "Cantidad" => strval($heds['numero_horas']),
+                        "Cantidad" => $heds ? strval($heds['numero_horas']) : '0',
                         "Porcentaje" => "25.00",
-                        "Pago" => number_format($heds['valor_categoria'], 2, '.', '')
+                        "Pago" => $heds ? number_format($heds['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HENs" => [
                 "HEN" => [
                     [
-                        "Cantidad" => strval($hens['numero_horas']),
+                        "Cantidad" => $hens ? strval($hens['numero_horas']) : '0',
                         "Porcentaje" => "75.00",
-                        "Pago" => number_format($hens['valor_categoria'], 2, '.', '')
+                        "Pago" => $hens ?  number_format($hens['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HRNs" => [
                 "HRN" => [
                     [
-                        "Cantidad" => strval($hrns['numero_horas']),
+                        "Cantidad" => $hrns ? strval($hrns['numero_horas']) : '0',
                         "Porcentaje" => "35.00",
-                        "Pago" => number_format($hrns['valor_categoria'], 2, '.', '')
+                        "Pago" => $hrns ? number_format($hrns['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HEDDFs" => [
                 "HEDDF" => [
                     [
-                        "Cantidad" => strval($heddfs['numero_horas']),
+                        "Cantidad" => $heddfs ? strval($heddfs['numero_horas']) : '0',
                         "Porcentaje" => "100.00",
-                        "Pago" => number_format($heddfs['valor_categoria'], 2, '.', '')
+                        "Pago" => $heddfs ? number_format($heddfs['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HRDDFs" => [
                 "HRDDF" => [
                     [
-                        "Cantidad" => strval($hrddfs['numero_horas']),
+                        "Cantidad" => $hrddfs ? strval($hrddfs['numero_horas']) : '0',
                         "Porcentaje" => "75.00",
-                        "Pago" => number_format($hrddfs['valor_categoria'], 2, '.', '')
+                        "Pago" => $hrddfs ? number_format($hrddfs['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HENDFs" => [
                 "HENDF" => [
                     [
-                        "Cantidad" => strval($hendfs['numero_horas']),
+                        "Cantidad" => $hendfs ? strval($hendfs['numero_horas']) : '0',
                         "Porcentaje" => "150.00",
-                        "Pago" => number_format($hendfs['valor_categoria'], 2, '.', '')
+                        "Pago" => $hendfs ? number_format($hendfs['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
             "HRNDFs" => [
                 "HRNDF" => [
                     [
-                        "Cantidad" => strval($hrndfs['numero_horas']),
+                        "Cantidad" => $hrndfs ? strval($hrndfs['numero_horas']) : '0',
                         "Porcentaje" => "110.00",
-                        "Pago" => number_format($hrndfs['valor_categoria'], 2, '.', '')
+                        "Pago" => $hrndfs ? number_format($hrndfs['valor_categoria'], 2, '.', '') : '0'
                     ]
                 ]
             ],
@@ -1481,6 +1705,13 @@ class NominaDianController extends Controller
             "Reintegro" => "00.00",
         ];
 
+        //Aprendiz del sena su sueldo debe ir en el ApoyoSost
+        if($nomina->persona->fk_tipo_contrato == 6){
+            $jsonPart2['ApoyoSost'] = number_format($totalidad['pago']['salario'], 2, '.', '');
+
+            $json['Basico']['SueldoTrabajado'] = "0.00";
+        }
+
         $json = array_merge($json, $jsonPart2);
 
         foreach ($vacacionesMes as $key => $value) {
@@ -1494,6 +1725,12 @@ class NominaDianController extends Controller
 
         if ($vacacionesCompensadas) {
             foreach ($vacacionesCompensadas as $key => $value) {
+
+                //validacion para no dividir por cero
+                if($totalidad['pago']['salario'] == 0){
+                   $totalidad['pago']['salario'] = 1;
+                }
+
                 $dias = round(($totalidad['diasTrabajados']['total'] * $value->valor_categoria) / $totalidad['pago']['salario'], 0);
                 $json['Vacaciones']['VacacionesCompensadas'][$key] = [
                     "Cantidad" => "" . $dias . "",
@@ -1505,7 +1742,7 @@ class NominaDianController extends Controller
 
         if ($primas) {
             $json["Primas"] = [
-                "Cantidad" => $primas->dias_trabajados,
+                "Cantidad" => "" . $primas->dias_trabajados . "",
                 "Pago" => number_format($primas->valor_pagar, 2, '.', ''),
                 "PagoNS" => "00.00",
 
@@ -1730,6 +1967,11 @@ class NominaDianController extends Controller
             }
         }
 
+        //Aprendiz del sena su sueldo debe ir en el ApoyoSost
+        if(isset($devengados['ApoyoSost'])){
+            $total += $devengados['ApoyoSost'];
+        }
+
         // if(floatval($devengados['BonifRetiro']) > 0){
         //     $total+=$devengados['BonifRetiro'];
         // }
@@ -1888,7 +2130,7 @@ class NominaDianController extends Controller
         return $deduccionesTotal;
     }
 
-    public static function costoPeriodo($tipo, $nominas = [])
+    public static function costoPeriodo($tipo, $nominas = [], $json = true)
     {
         if (!$nominas) {
 
@@ -1924,7 +2166,7 @@ class NominaDianController extends Controller
 
         $costo->costoEmpresa = Funcion::parsear($costo->costoEmpresa);
 
-        if (request()->ajax()) {
+        if (request()->ajax() && $json) {
             return response()->json(['costo' => $costo]);
         } else {
             return $costo;
@@ -1952,7 +2194,8 @@ class NominaDianController extends Controller
                 'total' => 0,
                 'extrasOrdinariasRecargos' => 0,
                 'vacaciones' => 0,
-                'ingresosAdicionales' => 0
+                'ingresosAdicionales' => 0,
+                'deducido' => 0,
             ],
             'diasTrabajados' => ['diasPeriodo' => 0, 'total' => 0],
             'salarioSubsidio' => ['salario' => 0, 'subsidioTransporte' => 0, 'total' => 0],
@@ -1984,11 +2227,14 @@ class NominaDianController extends Controller
             'deducciones' => ['total' => 0]
         ];
 
+        $year = null;
+
         foreach ($nominas as $nomina) {
 
             $resumenT = $nomina->resumenTotal();
 
             $totalidad['pago']['salario'] += $resumenT['pagoContratado']['total'];
+            $totalidad['pago']['deducido'] += $resumenT['pagoContratado']['deducido'];
             $totalidad['pago']['subsidioDeTransporte'] += $resumenT['pago']['subsidioDeTransporte'];
             $totalidad['pago']['retencionesDeducciones'] += $resumenT['pago']['retencionesDeducciones'];
             $totalidad['pago']['total'] += $resumenT['pago']['total'];
@@ -2038,7 +2284,9 @@ class NominaDianController extends Controller
             //$totalidad[$i] = $nomina->resumenTotal();
             $persona = $nomina->nomina->persona;
             $periodo = $nomina->nomina->periodo;
+            if(!$year){
             $year = $nomina->nomina->year;
+            }
             $i++;
         }
 
@@ -2055,7 +2303,7 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
+     *
      * Obtenemos el total detallado de horas extras de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2089,7 +2337,7 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
+     *
      * Obtenemos los detalles por defecto de las VACACIONES de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2115,8 +2363,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos las incapacidades del mes para la construcción principamente del 
+     *
+     * Obtenemos las incapacidades del mes para la construcción principamente del
      * json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2151,8 +2399,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos las licencias de maternidad y paternidad  del mes para la construcción principamente 
+     *
+     * Obtenemos las licencias de maternidad y paternidad  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2173,8 +2421,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos las bonificaciones  del mes para la construcción principamente 
+     *
+     * Obtenemos las bonificaciones  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2199,8 +2447,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos el auxilio del mes para la construcción principamente 
+     *
+     * Obtenemos el auxilio del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2216,8 +2464,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos los otros conceptos  del mes para la construcción principamente 
+     *
+     * Obtenemos los otros conceptos  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2237,8 +2485,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos las comisiones  del mes para la construcción principamente 
+     *
+     * Obtenemos las comisiones  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2255,8 +2503,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos las oras deducciones  del mes para la construcción principamente 
+     *
+     * Obtenemos las oras deducciones  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2278,8 +2526,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos la retencion en la fuente  del mes para la construcción principamente 
+     *
+     * Obtenemos la retencion en la fuente  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2296,8 +2544,8 @@ class NominaDianController extends Controller
     }
 
     /**
-     * 
-     * Obtenemos los anticipos  del mes para la construcción principamente 
+     *
+     * Obtenemos los anticipos  del mes para la construcción principamente
      * del json de devengados de la nomina enviada por parámetro.
      *
      * @return collect
@@ -2318,7 +2566,7 @@ class NominaDianController extends Controller
      * Tipo 1 = Entorno de producción
      * Tipo 2 = Entorno de pruebas
      * Tipo 3 = Entorno de habilitación.
-     * 
+     *
      * @return respuesta de la dian
      */
     public function enviarJsonDianApi($json, $tipo = 2)
