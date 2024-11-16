@@ -3778,8 +3778,15 @@ class FacturasController extends Controller{
         ];
 
         $nameEmpresa = auth()->user()->empresa()->nombre;
+        $estadoCuenta = $factura->estadoCuenta();
+
+        $msg_deuda = "";
         $total = $factura->total()->total;
-        $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el numero $factura->codigo por un monto de $$total pesos.";
+        if($estadoCuenta->saldoMesAnterior > 0){
+            $msg_deuda = "El total a deber es: " . Funcion::Parsear($estadoCuenta->saldoMesAnterior + $total);
+        }
+
+        $message = "$nameEmpresa Le informa que su factura ha sido generada bajo el número $factura->codigo por un monto de $$total pesos. " . $msg_deuda;
 
         $body = [
             "contact" => $contact,
