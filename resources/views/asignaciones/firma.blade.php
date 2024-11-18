@@ -28,10 +28,6 @@
         @csrf
 
         {{-- Imprime o debuggea las variables --}}
-
-             <div>
-                 <embed src="{{ $empresa->dominio }}/software/empresa/asignaciones/{{ $contacto->id }}/imprimir/firma" type="application/pdf" width="100%" height="800px" style="margin-bottom:50px;"/>
-            </div>
             <center>
             Por favor, actualice su firma digital en el siguiente recuadro.
             <div id="signature-pad" class="jay-signature-pad">
@@ -56,6 +52,7 @@
         <div class="row">
             <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
                 <button type="submit" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success d-none">Guardar</button>
+                <a href="{{ route('asignaciones.imprimir_firmar',  $contacto->id) }}" class="btn btn-primary" target="_blank">Imprimir Contrato</a>
                 <button class="btn btn-success" onclick="btn_signature()">Guardar</button>
             </div>
         </div>
