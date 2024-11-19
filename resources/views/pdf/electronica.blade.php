@@ -16,7 +16,7 @@
             position: fixed; top: 25%;
             width: 100%; text-align:
             center; opacity: .6;
-            transform: rotate(-30deg);T
+            transform: rotate(-30deg);
             transform-origin: 50% 50%;
             z-index: 1000;
             font-size: 130px;
