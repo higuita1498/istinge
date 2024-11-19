@@ -117,8 +117,8 @@
 						<div class="col-md-2 pl-1 pt-1">
 							<select title="Emisión" class="form-control rounded selectpicker" id="emision">
 								<option value="1">Emitida</option>
-								<option value="0">No emitida</option> 	
-								<option value="2">Error emisión</option> 	
+								<option value="0">No emitida</option>
+								<option value="2">Error emisión</option>
 							</select>
 						</div>
 						<div class="col-md-2 pl-1 pt-1 d-none">
@@ -176,7 +176,7 @@
 			</table>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="promesaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -307,63 +307,76 @@
         });
 
         $('#btn_emitir').on('click', function(e) {
-			var table = $('#tabla-facturas').DataTable();
-			var nro = table.rows('.selected').data().length;
+            var table = $('#tabla-facturas').DataTable();
+            var nro = table.rows('.selected').data().length;
 
-			if(nro <= 0){
-				swal({
-					title: 'ERROR',
-					html: 'Para ejecutar esta acción, debe al menos seleccionar una factura electrónica',
-					type: 'error',
-				});
-				return false;
-			}
+            if (nro <= 0) {
+                swal({
+                    title: 'ERROR',
+                    html: 'Para ejecutar esta acción, debe al menos seleccionar una factura electrónica',
+                    type: 'error',
+                });
+                return false;
+            }
 
-			var facturas = [];
-			for (i = 0; i < nro; i++) {
-				facturas.push(table.rows('.selected').data()[i]['id']);
-			}
+            var facturas = [];
+            for (i = 0; i < nro; i++) {
+                facturas.push(table.rows('.selected').data()[i]['id']);
+            }
 
-			swal({
-	            title: '¿Desea realizar la emisión de '+nro+' facturas electrónicas?',
-	            text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
-	            type: 'question',
-	            showCancelButton: true,
-	            confirmButtonColor: '#00ce68',
-	            cancelButtonColor: '#d33',
-	            confirmButtonText: 'Aceptar',
-	            cancelButtonText: 'Cancelar',
-	        }).then((result) => {
-	            if (result.value) {
-	                cargando(true);
+            swal({
+                title: '¿Desea realizar la emisión de ' + nro + ' facturas electrónicas?',
+                text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ce68',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.value) {
+                    cargando(true);
 
-	                if (window.location.pathname.split("/")[1] === "software") {
-	                    var url = `/software/empresa/facturas/emisionmasivaxml/`+facturas;
-	                }else{
-	                    var url = `/empresa/facturas/emisionmasivaxml/`+facturas;
-	                }
+                    var url = window.location.pathname.split("/")[1] === "software" ?
+                        `/software/empresa/facturas/emisionmasivaxml/` + facturas :
+                        `/empresa/facturas/emisionmasivaxml/` + facturas;
 
-	                $.ajax({
-	                    url: url,
-	                    method: 'GET',
-	                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-	                    success: function(data) {
-	                        cargando(false);
-	                        swal({
-	                            title: 'PROCESO REALIZADO',
-	                            html: data.text,
-	                            type: 'success',
-	                            showConfirmButton: true,
-	                            confirmButtonColor: '#1A59A1',
-	                            confirmButtonText: 'ACEPTAR',
-	                        });
-	                        getDataTable();
-	                    }
-	                })
-	            }
-	        })
-			console.log(facturas);
-		});
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        success: function(data) {
+                            cargando(false);
+                            swal({
+                                title: 'PROCESO REALIZADO',
+                                html: data.text,
+                                type: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#1A59A1',
+                                confirmButtonText: 'ACEPTAR',
+                            });
+                            getDataTable();
+                        },
+                        error: function(xhr) {
+                            cargando(false);
+                            if (xhr.status === 500) {
+                                swal({
+                                    title: 'INFO',
+                                    html: 'Se han emitido algunas facturas, vuelve a emitir otro lote si quedan facturas pendientes.',
+                                    type: 'info',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'Recargar Página',
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            console.log(facturas);
+        });
 	});
 
 	function getDataTable() {
@@ -402,5 +415,5 @@
 		$("#estado").selectpicker('refresh');
         window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=2';
 	}
-</script> 
+</script>
 @endsection

@@ -264,15 +264,15 @@
                                                         {{ $detalles[$i]['estado'] }}</span>
                                                 </td>
                                                 <td class="text-center">
-                                                    @if (isset($_SESSION['permisos']['166']))
+                                                    {{-- @if (isset($_SESSION['permisos']['166'])) --}}
                                                         <a
                                                             href="{{ route('nomina.calculosCompleto', $detalles[$i]['idnomina']) }}"><i
                                                                 class="far fa-eye color"></i>
                                                         </a>
-                                                    @endif
+                                                    {{-- @endif --}}
                                                     {{-- <a href="{{ route('nomina.liquidar', ['periodo' => $detalles[$i]['periodo'], 'year'=> $detalles[$i]['year']]) }}" title="Editar Nómina"><i class="far fa-edit color"></i></a> --}}
 
-                                                    @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina())
+                                                    {{-- @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                         @if ($detalles[$i]['estado'] != 'Emitida' && $detalles[$i]['estado'] != 'Ajuste emitido')
                                                             @if ($detalles[$i]['tipo'] == 2)
                                                                 <a
@@ -295,16 +295,16 @@
                                                                         class="far fa-edit color"></i></a>
                                                             @endif
                                                         @endif
-                                                    @endif
+                                                    {{-- @endif --}}
 
-                                                    @if (isset($_SESSION['permisos']['166']))
+                                                    {{-- @if (isset($_SESSION['permisos']['166'])) --}}
                                                         <a title="Imprimir nomina"
                                                             href="{{ route('nominaCompleta.pdf', $detalles[$i]['idnomina']) }}"
                                                             target="_blank"><i class="far fa-file-pdf color"></i></a>
-                                                    @endif
+                                                    {{-- @endif --}}
 
 
-                                                    @if (isset($_SESSION['permisos']['167']) && !auth()->user()->modo_lecturaNomina())
+                                                    {{-- @if (isset($_SESSION['permisos']['167']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                         @if (!$empresa->nomina_dian)
                                                             @if ($detalles[$i]['emitida'] == 4)
                                                                 <a href="#" title="Emitir Ajuste de Nómina"
@@ -343,23 +343,23 @@
                                                                 <i class="far fa-paper-plane color"></i>
                                                             </a>
                                                         @endif
-                                                    @endif
+                                                    {{-- @endif --}}
 
-                                                    @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina())
+                                                    {{-- @if (isset($_SESSION['permisos']['169']) && !auth()->user()->modo_lecturaNomina()) --}}
                                                         <a class="btn-comentario" href="#"
                                                             title="Agregar observación"
                                                             data-route="{{ route('nomina.traer.observacion') }}"
                                                             data-nomina="{{ $detalles[$i]['idnomina'] }}">
                                                             <i class="far fa-comment color"></i>
                                                         </a>
-                                                    @endif
+                                                    {{-- @endif --}}
 
                                                     <a href="{{ route('emitir-nomina.email', $detalles[$i]['idnomina']) }}"
                                                         title="Enviar nómina al correo">
                                                         <i class="fas fa-envelope-open-text color"></i>
                                                     </a>
 
-                                                    @if (isset($_SESSION['permisos']['159']))
+                                                    {{-- @if (isset($_SESSION['permisos']['159'])) --}}
                                                         @if ($detalles[$i]['estado'] == 'Emitida')
                                                             <a title="Eliminar nomina dian"
                                                                 onclick="validateDianNomina({{ $detalles[$i]['idnomina'] }}, '{{ route('nomina-dian.emitir', [$periodo, $year]) }}', '{{ $codigo = '' }}',3)">
@@ -370,7 +370,7 @@
                                                                 <i class="far fa-times color"></i>
                                                             </a>
                                                         @endif
-                                                    @endif
+                                                    {{-- @endif --}}
                                                 </td>
                                             </tr>
 

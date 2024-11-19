@@ -527,10 +527,10 @@
             var table = $('#tabla-facturas').DataTable();
             var nro = table.rows('.selected').data().length;
 
-            if(nro <= 0){
+            if (nro <= 0) {
                 swal({
                     title: 'ERROR',
-                    html: 'Para ejecutar esta acción, debe al menos seleccionar una factura.',
+                    html: 'Para ejecutar esta acción, debe al menos seleccionar una factura electrónica',
                     type: 'error',
                 });
                 return false;
@@ -542,7 +542,7 @@
             }
 
             swal({
-                title: '¿Desea convertir '+nro+' facturas estandar a facturas electrónicas?',
+                title: '¿Desea realizar la emisión de ' + nro + ' facturas electrónicas?',
                 text: 'Esto puede demorar unos minutos. Al Aceptar, no podrá cancelar el proceso',
                 type: 'question',
                 showCancelButton: true,
@@ -554,11 +554,9 @@
                 if (result.value) {
                     cargando(true);
 
-                    if (window.location.pathname.split("/")[1] === "software") {
-                        var url = `/software/empresa/facturas/conversionmasiva/`+facturas;
-                    }else{
-                        var url = `/empresa/facturas/conversionmasiva/`+facturas;
-                    }
+                    var url = window.location.pathname.split("/")[1] === "software" ?
+                        `/software/empresa/facturas/emisionmasivaxml/` + facturas :
+                        `/empresa/facturas/emisionmasivaxml/` + facturas;
 
                     $.ajax({
                         url: url,
@@ -575,11 +573,28 @@
                                 confirmButtonText: 'ACEPTAR',
                             });
                             getDataTable();
+                        },
+                        error: function(xhr) {
+                            cargando(false);
+                            if (xhr.status === 500) {
+                                swal({
+                                    title: 'INFO',
+                                    html: 'Se han emitido algunas facturas, vuelve a emitir otro lote si quedan facturas pendientes.',
+                                    type: 'info',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: 'Recargar Página',
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
                         }
-                    })
+                    });
                 }
-            })
-	    });
+            });
+            console.log(facturas);
+        });
+
         $('#btn_imp_fac').on('click', function(e) {
             var table = $('#tabla-facturas').DataTable();
             var nro = table.rows('.selected').data().length;

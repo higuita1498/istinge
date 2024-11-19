@@ -545,7 +545,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         )->name('nomina.estado_eliminado');
 
         Route::get('/traer-observacion', 'NominaController@traerObservacion')->name('nomina.traer.observacion');
-        Route::get('/emitir-nomina/email/{nomina}', 'NominaController@correoEmicionNomina')->name('emitir-nomina.email');
+        Route::get('/emitir-nomina/email/{nomina?}', 'NominaController@correoEmicionNomina')->name('emitir-nomina.email');
 
 
         Route::get('/confirmar-nomina', 'NominaController@confirmar')->name('nomina.confirmar');
@@ -722,7 +722,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
         Route::get('/emitir-nomina/{periodo?}/{year?}/{persona?}', 'NominaDianController@emitir')->name('nomina-dian.emitir');
         Route::get('/validatedian', 'NominaDianController@validate_dian');
         Route::get('/emitirjson/{nominaId}', 'NominaDianController@emitirJson');
-        Route::get('/nomina-json/{nomina}', 'NominaDianController@emitirJson')->name('nomina.json');
+        Route::get('/nomina-json/{nomina?}', 'NominaDianController@emitirJson')->name('nomina.json');
         Route::get('/nomina-emitida/xml/{nomina}', 'NominaDianController@xmlNominaEmitida')->name('nomina.xml');
     });
 

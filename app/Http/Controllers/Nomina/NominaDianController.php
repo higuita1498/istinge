@@ -1501,7 +1501,6 @@ class NominaDianController extends Controller
             'icon' => 'fas fa-sitemap'
         ]);
 
-
         return view(
             'nomina.emision',
             [
