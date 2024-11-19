@@ -466,13 +466,22 @@
       @if($contrato)
         @if($contrato->cliente()->boton_emision == 1)
       <div class="row form-inline fact-table" id="form-ingresos-electronica">
-        <div class="col-md-6">
-          <div class="alert alert-warning" role="alert">
-            Se tendrán en cuenta todas las facturas que les asocie un pago.
-            <a><i data-tippy-content="Las facturas que ya sean electrónicas, podrá hacer uso de la funcion 'convertir a electrónica y emitir'.
-              Si por lo contrario selecciona la opcion 'convertir a electrónica' no tendrá ningun efecto sobre las que ya son electrónicas." class="icono far fa-question-circle"></i></a>
+          <div class="col-md-3">
+              <div class="form-radio">
+                  <label class="form-check-label" style="font-size: 13px;">
+                      <input type="radio" class="form-check-input" name="tipo_electronica" value="3">Crear próxima factura
+                      <i class="input-helper"></i>
+                  </label>
+              </div>
           </div>
-        </div>
+          <div class="col-md-3">
+              <div class="form-radio">
+                  <label class="form-check-label" style="font-size: 13px;">
+                      <input type="radio" class="form-check-input" name="tipo_electronica" value="4">Prorratear
+                      <i class="input-helper"></i>
+                  </label>
+              </div>
+          </div>
         <div class="col-md-3">
           <div class="form-radio">
             <label class="form-check-label" style="font-size: 13px;">
@@ -489,7 +498,24 @@
             </label>
           </div>
         </div>
+          <div class="col-md-3">
+              <div class="form-radio">
+                  <label class="form-check-label" style="font-size: 13px;">
+                      <input type="radio" class="form-check-input" name="tipo_electronica" value="5">No crear siguiente mes
+                      <i class="input-helper"></i>
+                  </label>
+              </div>
+          </div>
       </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="alert alert-warning" role="alert">
+                        Se tendrán en cuenta todas las facturas que les asocie un pago.
+                        <a><i data-tippy-content="Las facturas que ya sean electrónicas, podrá hacer uso de la funcion 'convertir a electrónica y emitir'.
+                        Si por lo contrario selecciona la opcion 'convertir a electrónica' no tendrá ningun efecto sobre las que ya son electrónicas." class="icono far fa-question-circle"></i></a>
+                    </div>
+                </div>
+            </div>
         @endif
       @endif
 
