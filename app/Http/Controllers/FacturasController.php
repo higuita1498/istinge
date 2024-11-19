@@ -2103,17 +2103,27 @@ class FacturasController extends Controller{
             $contratos = DB::table('facturas_contratos as fc')->where('fc.factura_id',$factura->id)->get();
             $textContratos = "";
             $textDireccion = "";
-            foreach($contratos as $c){
-                $textContratos.=  "|" .$c->contrato_nro . "|";
-                $con = Contrato::where("nro",$c->contrato_nro)->first();
 
-                if($con){
-                    $textDireccion .="|";
-                    $textDireccion .=$con->address_street?:$con->cliente()->direccion;
-                    $textDireccion .="|";
+            if(count($contratos) > 0){
+                foreach($contratos as $c){
+                    $textContratos.=  "|" .$c->contrato_nro . "|";
+                    $con = Contrato::where("nro",$c->contrato_nro)->first();
+
+                    if($con){
+                        $textDireccion .="|";
+                        $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                        $textDireccion .="|";
+                    }
                 }
-            }
+            }else{
+                $con = $factura->contract();
 
+                $textContratos.=  "|" .$con->contrato_nro . "|";
+
+                $textDireccion .="|";
+                $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                $textDireccion .="|";
+            }
 
             $nestedData = array();
             $nestedData[] = '<a href="'.route('facturas.show',$factura->id).'">'.$factura->codigo.'</a>';
