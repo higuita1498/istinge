@@ -2116,13 +2116,15 @@ class FacturasController extends Controller{
                     }
                 }
             }else{
-                $con = $factura->contract();
+                $con = Contrato::find($factura->contrato_id);
 
-                $textContratos.=  "|" .$con->nro . "|";
+                if ($con){
+                    $textContratos.=  "|" .$con->nro . "|";
 
-                $textDireccion .="|";
-                $textDireccion .=$con->address_street?:$con->cliente()->direccion;
-                $textDireccion .="|";
+                    $textDireccion .="|";
+                    $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                    $textDireccion .="|";
+                }
             }
 
             $nestedData = array();
