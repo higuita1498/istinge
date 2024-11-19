@@ -2107,7 +2107,11 @@ class FacturasController extends Controller{
                 $textContratos.=  "|" .$c->contrato_nro . "|";
                 $con = Contrato::where("nro",$c->contrato_nro)->first();
                 $textDireccion .="|";
-                $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                if($con){
+                    $textDireccion .=$con->address_street?:$con->cliente()->direccion;
+                }else{
+                    $textDireccion .= $con->cliente()->direccion;
+                }
                 $textDireccion .="|";
             }
 
