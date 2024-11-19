@@ -47,7 +47,7 @@
                         @if($factura->estatus==1)
                             <a href="{{route('ingresos.create_id', ['cliente'=>$factura->cliente()->id, 'factura'=>$factura->id])}}" class="btn btn-outline-primary btn-sm" title="Agregar Pago"><i class="fas fa-plus"></i> Agregar Pago</a>
                         @endif
-                        @if($factura->emitida != 1)
+                        @if($factura->emitida != 1 && isset($_SESSION['permisos']['43']))
                             <a class="btn btn-outline-primary btn-sm" href="{{route('facturas.edit',$factura->id)}}" target="_blank"><i class="fas fa-edit"></i> Editar</a>
                         @endif
                         @if(Auth::user()->empresa()->estado_dian != 1)

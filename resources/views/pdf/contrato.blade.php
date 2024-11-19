@@ -648,4 +648,24 @@
             </tbody>
         </table>
     </div>
+    @if($contact->documento)
+        @php
+            $path = public_path('adjuntos/documentos/' . $contact->documento);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_exists($path) ? base64_encode(file_get_contents($path)) : null;
+        @endphp
+
+        @if($data)
+            <div style="page-break-before: always;">
+                <h3 style="text-align: center;">Documento del Contacto</h3>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="data:image/{{ $type }};base64,{{ $data }}"
+                         alt="Documento del Contacto"
+                         style="max-width: 100%; max-height: 700px; width: auto; height: auto;">
+                </div>
+            </div>
+        @else
+            <p>No se pudo cargar el documento.</p>
+        @endif
+    @endif
 @endsection
