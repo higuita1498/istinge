@@ -2118,7 +2118,7 @@ class FacturasController extends Controller{
             }else{
                 $con = $factura->contract();
 
-                $textContratos.=  "|" .$con->contrato_nro . "|";
+                $textContratos.=  "|" .$con->nro . "|";
 
                 $textDireccion .="|";
                 $textDireccion .=$con->address_street?:$con->cliente()->direccion;
