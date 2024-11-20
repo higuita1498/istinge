@@ -260,21 +260,19 @@
         var diasFeriados = JSON.parse(diasFeriadosInput).map(dia => {
                                 const [year, month, day] = dia.split('-');
                                 return new Date(year, month - 1, day);
-                            });
-
-        $('#vacations .row-dates-v').each(function(index) {
-
-                const fechaInicio = new Date($(this).find('.desde').val() + 'T00:00:00');
-                const fechaFin = new Date($(this).find('.hasta').val() + 'T00:00:00');
-
-                for (let fecha = new Date(fechaInicio); fecha <= fechaFin; fecha.setDate(fecha.getDate() + 1)) {
-                    if (!esFeriado(fecha, diasFeriados)) {
-                        diasV++;
-                    }
-                }
-
         });
 
+        $('#vacations .row-dates-v').each(function(index) {
+            const fechaInicio = new Date($(this).find('.desde').val() + 'T00:00:00');
+            const fechaFin = new Date($(this).find('.hasta').val() + 'T00:00:00');
+
+            for (let fecha = new Date(fechaInicio); fecha <= fechaFin; fecha.setDate(fecha.getDate() + 1)) {
+                // Verifica si no es día 31 y si no es feriado
+                if (fecha.getDate() !== 31 && !esFeriado(fecha, diasFeriados)) {
+                    diasV++;
+                }
+            }
+        });
 
         $('#incapacidades .row-dates-inc.general').each(function(index) {
             let desde = new Date($(this).find('.desde').val() + 'T00:00:00');

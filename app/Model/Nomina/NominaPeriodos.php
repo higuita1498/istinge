@@ -266,7 +266,7 @@ class NominaPeriodos extends Model
      *
      * return json
      */
-    public function editValorTotal($calculosFijos = []){
+    public function editValorTotal($calculosFijos = [], $no_edit_calculos_fijos = true){
 
         $ibcSeguridadSocial = collect([]);
 
@@ -400,26 +400,28 @@ class NominaPeriodos extends Model
         $subtotal += floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
 
 
-        foreach($calculosFijos as $key => $calculoFijo){
+        if($no_edit_calculos_fijos == true){
+            foreach($calculosFijos as $key => $calculoFijo){
 
-            /* >>> Si no hay dias trabajados entonces este se convierte en 0 días <<< */
-            if(!isset($calculoFijo->dias_trabajados)){
-                $calculoFijo->dias_trabajados = 0;
+                /* >>> Si no hay dias trabajados entonces este se convierte en 0 días <<< */
+                if(!isset($calculoFijo->dias_trabajados)){
+                    $calculoFijo->dias_trabajados = 0;
+                }
+
+                /* >>> Si ya existe un calculo fijo para cierto periodo entonces lo actualizamos, de lo contrario se crea <<< */
+                     NominaCalculoFijo::updateOrCreate([
+                        'tipo' => $key,
+                        'fk_nominaperiodo' => $this->id,
+                    ], [
+                        'tipo' => $key,
+                        'valor' => $calculoFijo->valor,
+                        'simbolo' => $calculoFijo->simbolo,
+                        'dias_pagos' => $calculoFijo->dias_trabajados,
+                        'fk_nominaperiodo' => $this->id,
+                        'updated_at' => now(),
+                    ]);
+
             }
-
-            /* >>> Si ya existe un calculo fijo para cierto periodo entonces lo actualizamos, de lo contrario se crea <<< */
-                 NominaCalculoFijo::updateOrCreate([
-                                        'tipo' => $key,
-                                        'fk_nominaperiodo' => $this->id,
-                                    ], [
-                                        'tipo' => $key,
-                                        'valor' => $calculoFijo->valor,
-                                        'simbolo' => $calculoFijo->simbolo,
-                                        'dias_pagos' => $calculoFijo->dias_trabajados,
-                                        'fk_nominaperiodo' => $this->id,
-                                        'updated_at' => now(),
-                                    ]);
-
         }
 
         /* >>> Asignamos la data actualizada a la variable calculosFijosCollect <<< */
@@ -656,6 +658,7 @@ class NominaPeriodos extends Model
             ->sum('valor_categoria') ?? 0
         );
         $totalidad['pago']['vacaciones'] = $totalidad['ibcSeguridadSocial']['vacaciones'];
+
         //$totalidad['pago']['ingresosAdicionales'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 3)->whereNotIn('fk_nomina_cuenta_tipo', [8, 9])->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $totalidad['pago']['ingresosAdicionales'] = floatval(
             $nominaDetalleUno
@@ -774,6 +777,51 @@ class NominaPeriodos extends Model
 
         return (object)$rangoFinales;
 
+    }
+
+    public function updateCalculosNomina(){
+
+        $calculos_nomina_periodo = $this->resumenTotal();
+        if($calculos_nomina_periodo['diasTrabajados']['total'] == 0){
+
+            $empresa = Auth::user()->empresa;
+
+            $nomina_calculos_fijos = NominaCalculoFijo::where('fk_nominaperiodo',$this->id)
+            ->where('tipo','reten_salud')
+            ->orWhere('fk_nominaperiodo',$this->id)
+            ->where('tipo','reten_pension')
+            ->get();
+
+            $retenSalud = NominaConfiguracionCalculos::where('fk_idempresa', $empresa)->where('nro', 2)->first();
+            $retenPension = NominaConfiguracionCalculos::where('fk_idempresa', $empresa)->where('nro', 3)->first();
+
+            foreach($nomina_calculos_fijos as $salud_pension){
+
+                $reten_salud_new = new NominaCalculoFijo();
+                if($salud_pension->tipo == "reten_salud"){
+                    $valor_new = ($calculos_nomina_periodo['pago']['vacaciones']) * $retenSalud->porcDecimal();
+                }
+
+                else if($salud_pension->tipo == "reten_pension"){
+                    $valor_new = ($calculos_nomina_periodo['pago']['vacaciones']) * $retenPension->porcDecimal();
+                }
+
+                $update =  NominaCalculoFijo::updateOrCreate([
+                    'tipo' => $salud_pension->tipo,
+                    'fk_nominaperiodo' => $salud_pension->fk_nominaperiodo,
+                ], [
+                    'tipo' => $salud_pension->tipo,
+                    'valor' => $valor_new,
+                    'simbolo' => $salud_pension->simbolo,
+                    'dias_pagos' => $salud_pension->dias_pagos,
+                    'fk_nominaperiodo' => $salud_pension->fk_nominaperiodo,
+                    'updated_at' => now(),
+                ]);
+
+            }
+            return $calculos_nomina_periodo['pago']['total'];
+            // - $calculos_nomina_periodo['pago']['retencionesDeducciones'];
+        }
     }
 
 

@@ -29,6 +29,7 @@ use stdClass;
 use App\SuscripcionPagoNomina;
 use App\Model\Nomina\NominaCalculoFijo;
 use App\Model\Nomina\NominaConfiguracionCalculos;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Mail;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
@@ -2003,60 +2004,14 @@ class NominaController extends Controller
             }
         }
 
-        /**
-         * Si la suma de las vacaciones es 15 dias y el total de dias trabajados de la persona ahora es 0
-         * entonces la salud y pension se debe calcular sobre el total de vacaciones.
+         /**
+         * Si la suma de las vacaciones es 16 dias y el total de dias trabajados de la persona ahora es 0
+         * entonces la salud y pension se debe calcular sobre el total de vacaciones por el dia de más.
          * **/
-        if($dias == 15){
-
+        if($dias >= 16){
             $nomina_periodo = NominaPeriodos::Find($nomina->fk_nominaperiodo);
-            $calculos_nomina_periodo = $nomina_periodo->resumenTotal();
-            if($nomina_periodo && $calculos_nomina_periodo['diasTrabajados']['total'] == 0){
-
-                $empresa = Auth::user()->empresa;
-
-                $nomina_calculos_fijos = NominaCalculoFijo::where('fk_nominaperiodo',$nomina_periodo->id)
-                ->where('tipo','reten_salud')
-                ->orWhere('fk_nominaperiodo',$nomina_periodo->id)
-                ->where('tipo','reten_pension')
-                ->get();
-
-                $retenSalud = NominaConfiguracionCalculos::where('fk_idempresa', $empresa)->where('nro', 2)->first();
-                $retenPension = NominaConfiguracionCalculos::where('fk_idempresa', $empresa)->where('nro', 3)->first();
-
-                NominaCalculoFijo::where('fk_nominaperiodo',$nomina_periodo->id)
-                ->where('tipo','reten_salud')
-                ->orWhere('fk_nominaperiodo',$nomina_periodo->id)
-                ->where('tipo','reten_pension')->delete();
-
-                foreach($nomina_calculos_fijos as $salud_pension){
-                    if($salud_pension->tipo == "reten_salud"){
-                        $salud_valor = ($calculos_nomina_periodo['pago']['vacaciones']) * $retenSalud->porcDecimal();
-                        $reten_salud_new = new NominaCalculoFijo();
-                        $reten_salud_new->tipo =$salud_pension->tipo;
-                        $reten_salud_new->valor =$salud_valor;
-                        $reten_salud_new->simbolo =$salud_pension->simbolo;
-                        $reten_salud_new->dias_pagos =$salud_pension->dias_pagos;
-                        $reten_salud_new->fk_nominaperiodo =$salud_pension->fk_nominaperiodo;
-                        $reten_salud_new->save();
-                    }
-
-                    else if($salud_pension->tipo == "reten_pension"){
-                        $pension_valor = ($calculos_nomina_periodo['pago']['vacaciones']) * $retenPension->porcDecimal();
-                        $reten_salud_new = new NominaCalculoFijo();
-                        $reten_salud_new->tipo =$salud_pension->tipo;
-                        $reten_salud_new->valor =$pension_valor;
-                        $reten_salud_new->simbolo =$salud_pension->simbolo;
-                        $reten_salud_new->dias_pagos =$salud_pension->dias_pagos;
-                        $reten_salud_new->fk_nominaperiodo =$salud_pension->fk_nominaperiodo;
-                        $reten_salud_new->save();
-                    }
-
-                }
-
-            }
+            $valor_pago_vacaciones = $nomina_periodo->updateCalculosNomina();
         }
-
 
         $calculosFijos = [
             'subsidio_transporte' => (object)[
@@ -2065,14 +2020,18 @@ class NominaController extends Controller
             ]
         ];
         $nominaPeriodo = NominaPeriodos::find($request->id);
+        if($dias >= 16){
+            $nominaPeriodo->editValorTotal($calculosFijos,false);
+        }else{
+            $nominaPeriodo->editValorTotal($calculosFijos);
+        }
 
-        $nominaPeriodo->editValorTotal($calculosFijos);
 
         if ($nominaPeriodo) {
             $arrayPost['status'] = 'OK';
             $arrayPost['id'] = $request->id;
             $arrayPost['horas'] = $dias;
-            $arrayPost['valor_total'] = Funcion::precision($nominaPeriodo->valor_total);
+            $arrayPost['valor_total'] = isset($valor_pago_vacaciones) ? $valor_pago_vacaciones : Funcion::precision($nominaPeriodo->valor_total);
             return json_encode($arrayPost);
         } else {
             $arrayPost['status'] = 'error';

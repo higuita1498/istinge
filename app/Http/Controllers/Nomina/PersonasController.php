@@ -1188,10 +1188,7 @@ class PersonasController extends Controller
         } //* validacion de mescontrtacion > periodo generado *//
         // DB::commit();
         return "";
-        //   }catch (\Throwable $th) {
-        //         DB::rollback();
-        //         return $th->getMessage();
-        //     }
+
     }
 
     public function act_desc($idPersona)
