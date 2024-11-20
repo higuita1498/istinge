@@ -150,38 +150,38 @@ class NominaPeriodos extends Model
      * @var array
      */
     public function diasTrabajados(){
-        
-       
+
+
         if(!is_object($this->fecha_desde)){
             $inicio = new Carbon($this->fecha_desde);
         }else{
             $inicio = $this->fecha_desde;
         }
-        
-        
+
+
         if(!is_object($this->fecha_hasta)){
              $hasta = new Carbon($this->fecha_hasta);
         }else{
              $hasta = $this->fecha_hasta;
         }
-        
+
 
         if(!($persona = $this->persona)){
             $persona = $this->nomina->persona;
         }
-        
+
         $diasRestados = 0;
-        
+
         if($hasta->format('m') != '02'){
                  if($hasta->format('d') >= 27 && $hasta->format('d') < 30){
                     $hasta->day = 30;
                 }
-        
+
                 if($hasta->format('d') >= 31){
                         $hasta->day = 30;
                 }
         }
-        
+
         $fechaContratacion = new Carbon($persona->fecha_contratacion);
 
         $diasRestados = 0;
@@ -196,39 +196,36 @@ class NominaPeriodos extends Model
                 }
             }
         }
-        
-        
-        
-        
+
         //CONTRATOS ANTERIORES O LIQUIDADOS EL ONTRATO ACTUAL DE LA PERSONA NO SE LISTA ACÀ
         if($persona->contratos->count() > 0){
             foreach($persona->contratos as $co){
                 $fechaTerminacion = $co->comprobanteLiquidacion->fecha_terminacion;
                 $fechaTerminacion = new Carbon($fechaTerminacion);
-                
+
                 if($inicio->format('y') == $fechaTerminacion->format('y')){
                     if($inicio->format('m') == $fechaTerminacion->format('m')){
                         if(intval($fechaTerminacion->format('d')) <= intval($hasta->format('d'))){
                                 if($fechaContratacion->format('y') == $fechaTerminacion->format('y')){
                                     if($fechaContratacion->format('m') == $fechaTerminacion->format('m')){
-                                        
+
                                         //AQUI ENTRA CUANDO SE ECHO EL MISMO MES EL MISMO AÑO Y SE CONTRATO EL MISMO MES Y EL MISMO AÑO
                                         //NO SE HACE NADA PORQUE LOS ANTERIORES CONTRATOS SE LIQUIDAN JUNTO AL COMPROBANTE DE LIQUIDACION POR ENDE NO SE TOMAN EN CUENTA EN ESTE PERIODO.
                                         if($fechaTerminacion->format('d') >= 1){
                                             if($persona->is_liquidado){
-                                                
+
                                                 $diasRestados = 0;
-                                                
-                                                $diasRestados += $inicio->diffInDays($fechaContratacion);  
+
+                                                $diasRestados += $inicio->diffInDays($fechaContratacion);
 
                                                 $diasRestados += $fechaTerminacion->diffInDays($hasta);
                                             }
-                                            
-                                            
-                                          
-                                             // 
+
+
+
+                                             //
                                         }
-                                        
+
                                         //continua por que no es igual el año de contratacion y terminqcion y no es igual el mes de contratcion y liquidacion
                                         continue;
                                     }
@@ -241,10 +238,10 @@ class NominaPeriodos extends Model
                         }
                     }
                 }
-                
+
             }
         }
-      
+
          /* >>>
         Segun la teoria, al empleado se le paga siempre sobre 15 días si el pago es quincenal o sobre 30 días
         así el mes tenga 28,29,30 o 31 días.
@@ -351,11 +348,11 @@ class NominaPeriodos extends Model
         $persona = $this->nomina->persona;
 
         /* >>> Cálculo de retencion en salud y pensión <<< */
-        
+
         if($persona->fk_salario_base == 2){
             $calculosFijos['reten_salud'] = (object)['valor' => (($subtotal * (70 / 100)) * $retenSalud->porcDecimal()), 'simbolo' => '-'];
             $calculosFijos['reten_pension'] = (object)['valor' => (($subtotal * (70 / 100)) * $retenPension->porcDecimal()), 'simbolo' => '-'];
-            
+
             /* provisional
             if($this->pago_empleado >= 4000000 && $this->pago_empleado <= 16000000){
                  $calculosFijos['reten_pension_solidaria'] = (object)['valor' => (($subtotal * (70 / 100)) * (1/100)), 'simbolo' => '-'];
@@ -366,7 +363,7 @@ class NominaPeriodos extends Model
                 $calculosFijos['reten_salud'] = (object)['valor' => ((25000000) * $retenSalud->porcDecimal()), 'simbolo' => '-'];
                 $calculosFijos['reten_pension'] = (object)['valor' => ((25000000) * $retenPension->porcDecimal()), 'simbolo' => '-'];
             }
-            
+
         }elseif($persona->fk_tipo_contrato == 4 || $persona->fk_tipo_contrato == 6){
             $calculosFijos['reten_salud'] = (object)['valor' => (0), 'simbolo' => '-'];
             $calculosFijos['reten_pension'] = (object)['valor' => (0), 'simbolo' => '-'];
@@ -382,7 +379,10 @@ class NominaPeriodos extends Model
 
         /* >>> Cálculo de dias trabajados  <<< */
         $calculosFijos['dias_trabajados'] =  (object)['valor' => ($this->diasTrabajados() - array_sum($this->diasAusenteDetalle())), 'simbolo' => '#'];
-        
+
+        if($calculosFijos['dias_trabajados']->valor < 0){
+            $calculosFijos['dias_trabajados']->valor = 0;
+        }
         /* >>>
         Validamos si no viene ya un array con calculos fijos con subsidio de transporte, actualmente se ejecuta desde
         update_vacaciones en NominaController, de lo contrario hacemos el calculo del subisdio de transporte
@@ -493,7 +493,7 @@ class NominaPeriodos extends Model
 
     if(!$isFeriados){
        return $start->diffInDays($end);
-    }    
+    }
 
     $businessDays = 0;
 
@@ -551,7 +551,6 @@ class NominaPeriodos extends Model
         $incapacidades = $nominaDetalleUno->where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 5);
         $diasIncapacitado = 0;
         $diasValidosTrabajados = $totalidad['diasTrabajados']['diasPeriodo'];
-        
 
         foreach($incapacidades as $incapacidad){
             $fechaInicio = new Carbon($incapacidad->fecha_inicio);
@@ -575,6 +574,10 @@ class NominaPeriodos extends Model
         $totalidad['pagoContratado']['deducido'] = $totalidad['pagoContratado']['total'];
         $totalidad['diasTrabajados']['ausencia'] = $this->diasAusenteDetalle();
         $totalidad['diasTrabajados']['total'] = $totalidad['diasTrabajados']['diasPeriodo'] - array_sum($totalidad['diasTrabajados']['ausencia']);
+        if($totalidad['diasTrabajados']['total'] < 0){
+            $totalidad['diasTrabajados']['total'] = 0;
+        }
+
         $totalidad['ibcSeguridadSocial']['licencias'] = 0;
         $totalidad['pago']['licencias'] = 0;
         $licencias = $nominaDetalleUno->where('fk_nomina_cuenta', 2)->where('fk_nomina_cuenta_tipo', 6)->whereNotNull('fecha_inicio');
@@ -594,9 +597,13 @@ class NominaPeriodos extends Model
                 $totalidad['pagoContratado']['deducido'] -= $licencia->valor_categoria;
             }
         }
+        $totalDeducidoMenosVacaciones = $totalidad['pagoContratado']['deducido'] - $totalidad['ibcSeguridadSocial']['vacaciones'];
+        if($totalDeducidoMenosVacaciones < 0){
+            $totalDeducidoMenosVacaciones = 0;
+        }
 
-        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + ($totalidad['pagoContratado']['deducido'] - $totalidad['ibcSeguridadSocial']['vacaciones']) + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
-
+        $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + $totalDeducidoMenosVacaciones + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
+        // dd($totalidad['pago']['licencias'],$totalidad['ibcSeguridadSocial']['vacaciones'],($totalidad['pagoContratado']['deducido'] - $totalidad['ibcSeguridadSocial']['vacaciones']),$totalidad['ibcSeguridadSocial']['ingresosyExtras']);
         $totalidad['retenciones']['salud'] = floatval($calculosFijosCollect->where('tipo', 'reten_salud')->first()->valor ?? 0);
         $totalidad['retenciones']['pension'] = floatval($calculosFijosCollect->where('tipo', 'reten_pension')->first()->valor ?? 0);
         $totalidad['retenciones']['total'] += $totalidad['retenciones']['salud'] + $totalidad['retenciones']['pension'];
@@ -622,10 +629,10 @@ class NominaPeriodos extends Model
                 $totalidad['retenciones']['porcentajePension'] = 0;
 
             }
-        
+
         }
-        
-        
+
+
         /*>>> Valor neto pago empleado <<<*/
         //$subtotal += floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $subtotal += floatval($nominaDetalleUno->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->sum('valor_categoria') ?? 0);
@@ -634,9 +641,14 @@ class NominaPeriodos extends Model
         //$subtotal -= $deducciones = $totalidad['deducciones']['total'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 4)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $subtotal -= $deducciones = $totalidad['deducciones']['total'] = floatval($nominaDetalleUno->where('fk_nomina_cuenta', 4)->sum('valor_categoria') ?? 0);
         //$subtotal -= $totalidad['ibcSeguridadSocial']['vacaciones'];
-        
+
         $totalidad['pago']['total'] = $subtotal;
         $totalidad['pago']['salario'] = $totalidad['ibcSeguridadSocial']['salario'];
+
+        if($totalidad['pago']['salario'] < 0){
+            $totalidad['pago']['salario'] = 0;
+        }
+
        // $totalidad['pago']['extrasOrdinariasRecargos'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 1)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $totalidad['pago']['extrasOrdinariasRecargos'] = floatval(
         $nominaDetalleUno
@@ -651,9 +663,9 @@ class NominaPeriodos extends Model
                 ->whereNotIn('fk_nomina_cuenta_tipo', [8, 9])
                 ->sum('valor_categoria') ?? 0
         );
+
         $totalidad['pago']['subsidioDeTransporte'] = floatval($calculosFijosCollect->where('tipo', 'subsidio_transporte')->first()->valor ?? 0);
         $totalidad['pago']['retencionesDeducciones'] = $totalidad['retenciones']['total'] + $deducciones;
-
 
         $porcentajeRiesgo = 0.00522;
 
@@ -683,23 +695,58 @@ class NominaPeriodos extends Model
         return $totalidad;
     }
 
-    public function diasAusenteDetalle(){
-        $detalles = NominaDetalleUno::where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 2)->get();
+    public function diasAusenteDetalle()
+    {
+        $detalles = NominaDetalleUno::where('fk_nominaperiodo', $this->id)
+            ->where('fk_nomina_cuenta', 2)
+            ->get();
         $dias = [];
+
         foreach ($detalles as $detalle) {
             if ($detalle->fecha_inicio) {
-                if(!$detalle->nombre){
+                if (!$detalle->nombre) {
                     $detalle->nombre = 'sin definir';
                 }
+
                 $fechaEmision = Carbon::parse($detalle->fecha_inicio);
                 $fechaExpiracion = Carbon::parse($detalle->fecha_fin);
-                if(!isset($dias[$detalle->nombre])){
+
+                if (!isset($dias[$detalle->nombre])) {
                     $dias[$detalle->nombre] = 0;
                 }
-                $dias[$detalle->nombre] += (self::diffDaysAbsolute($fechaEmision, $fechaExpiracion, ($detalle->nombre == 'VACACIONES' ? true : false)) + ($detalle->nombre == 'VACACIONES' ? 0 : 1));
+
+                // Ajuste para excluir el día 31 del cálculo
+                $diasCalculados = $this->diffDaysExcluding31($fechaEmision, $fechaExpiracion);
+
+                // Suma los días calculados
+                $dias[$detalle->nombre] += $diasCalculados;
+
+                // Si no son vacaciones, suma 1 día adicional
+                if ($detalle->nombre !== 'VACACIONES') {
+                    $dias[$detalle->nombre] += 1;
+                }
             }
         }
+
         return $dias;
+    }
+
+    /**
+     * Calcula los días entre dos fechas excluyendo el día 31 de cualquier mes.
+    */
+    public static function diffDaysExcluding31(Carbon $start, Carbon $end)
+    {
+        $currentDate = $start->copy();
+        $totalDays = 0;
+
+        while ($currentDate->lessThanOrEqualTo($end)) {
+            if ($currentDate->day !== 31) {
+                $totalDays++;
+            }
+            $currentDate->addDay();
+        }
+
+        return $totalDays;
     }
 
     /**

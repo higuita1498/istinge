@@ -178,7 +178,7 @@
 <script>
     function vacacionesUpdate() {
         idNomina = $('#edit_vacaciones_id').val();
-        cargando(true);
+        // cargando(true);
         updateTotalVacaciones(idNomina);
         let data = {
             id: $('#edit_vacaciones_id').val(),
@@ -259,11 +259,11 @@
         const diasFeriadosInput = document.getElementById('dias-feriados').value;
         var diasFeriados = JSON.parse(diasFeriadosInput).map(dia => {
                                 const [year, month, day] = dia.split('-');
-                                return new Date(year, month - 1, day); 
+                                return new Date(year, month - 1, day);
                             });
-     
+
         $('#vacations .row-dates-v').each(function(index) {
-            
+
                 const fechaInicio = new Date($(this).find('.desde').val() + 'T00:00:00');
                 const fechaFin = new Date($(this).find('.hasta').val() + 'T00:00:00');
 
@@ -363,10 +363,10 @@
     }
 
     function esFeriado(fecha, feriados) {
-           
-            return feriados.some(feriado => 
-                feriado.getDate() == fecha.getDate() && 
-                feriado.getMonth() == fecha.getMonth() && 
+
+            return feriados.some(feriado =>
+                feriado.getDate() == fecha.getDate() &&
+                feriado.getMonth() == fecha.getMonth() &&
                 feriado.getFullYear() == fecha.getFullYear()
             );
     }
