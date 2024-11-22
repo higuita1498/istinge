@@ -158,7 +158,7 @@
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control datepicker"  id="fecha" value="{{date('d-m-Y')}}" name="fecha" disabled=""  >
+          <input type="text" class="form-control" value="{{date('d-m-Y')}}" name="fecha" disabled=""  >
         </div>
       </div>
 
