@@ -511,7 +511,7 @@ class IngresosController extends Controller
                             if(!$contrato){
                                 $db_contrato = DB::table('facturas_contratos')->where('factura_id',$factura->id)->first();
                                 if($db_contrato){
-                                    $contrato = Contrato::where('nro',$contrato->nro)->first();
+                                    $contrato = Contrato::where('nro',$db_contrato->contrato_nro)->first();
                                 }
                             }
 

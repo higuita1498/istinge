@@ -2004,6 +2004,8 @@ class NominaController extends Controller
             }
         }
 
+
+
          /**
          * Si la suma de las vacaciones es 16 dias y el total de dias trabajados de la persona ahora es 0
          * entonces la salud y pension se debe calcular sobre el total de vacaciones por el dia de más.
@@ -2017,14 +2019,16 @@ class NominaController extends Controller
             'subsidio_transporte' => (object)[
                 'valor' => $request->subsidio_transporte,
                 'simbolo' => '+'
-            ]
-        ];
+                ]
+            ];
         $nominaPeriodo = NominaPeriodos::find($request->id);
+
         if($dias >= 16){
-            $nominaPeriodo->editValorTotal($calculosFijos,false);
+            // $nominaPeriodo->editValorTotal($calculosFijos,false);
         }else{
             $nominaPeriodo->editValorTotal($calculosFijos);
         }
+
 
 
         if ($nominaPeriodo) {

@@ -609,7 +609,6 @@ class NominaDianController extends Controller
      */
     public function emitirJson($nominaId,$tipo)
     {
-
         $nomina = Nomina::findOrFail($nominaId);
 
         if(!$nomina){
@@ -826,7 +825,7 @@ class NominaDianController extends Controller
             $tipoXML = 103;
         }
         $SoftwarePin = 75315;
-        $TipAmb = config('app.ambiente_nomina');
+        $TipAmb = 2;
         $cune = $NumNE . $FecNE . $HorNE . $ValDev . $ValDed . $ValTolNE . $NitNE . $DocEmp . $SoftwarePin . $TipAmb;
         $cuneHasheado = hash('sha384', $cune);
 
@@ -936,7 +935,9 @@ class NominaDianController extends Controller
         /*>>> ----------------------------------------------------------------- <<<*/
         /*>>> EMPEZAMOS A MANDAR LOS DATOS A LA DIAN POR MEDIO DEL JSON <<<*/
         try {
-            $response = $this->enviarJsonDianApi($json, config('app.ambiente_nomina'));
+            // return $json;÷]
+            $response = $this->enviarJsonDianApi($json, 1);
+            // dd($response);
         } catch (\Throwable $e) {
             if(request()->ajax() || request()->lote){
                 return response()->json([
@@ -1102,7 +1103,7 @@ class NominaDianController extends Controller
      *
      * @return json
      */
-    public function nominaElectronica(Nomina $nomina)
+        public function nominaElectronica(Nomina $nomina)
     {
 
         $total_sueldo = 0;
@@ -1158,7 +1159,7 @@ class NominaDianController extends Controller
                 "CodigoQR" => "",
                 "InformacionGeneral" => [
                     "Version" => "V1.0: Documento Soporte de Pago de Nómina Electrónica",
-                    "Ambiente" => config('app.ambiente_nomina'),
+                    "Ambiente" => "1",
                     "TipoXML" => $nomina->emitida == 4 ? "103" : "102",
                     "FechaGen" => date('Y-m-d'),
                     "HoraGen" => date('H:i:sP'),
@@ -1292,7 +1293,7 @@ class NominaDianController extends Controller
                 ],
                 "InformacionGeneral" => [
                     "Version" => "V1.0: Nota de Ajuste de Documento Soporte de Pago de Nómina Electrónica",
-                    "Ambiente" => config('app.ambiente_nomina'),
+                    "Ambiente" => "2",
                     "TipoXML" => "103",
                     "CUNE" => $cuneEliminar,
                     "EncripCUNE" => "CUNE-SHA384",
@@ -1500,6 +1501,7 @@ class NominaDianController extends Controller
             'title' => 'Emitir Nómina | ' . ucfirst($date->monthName) . ' ' . $date->format('Y'),
             'icon' => 'fas fa-sitemap'
         ]);
+
 
         return view(
             'nomina.emision',
