@@ -345,7 +345,7 @@ class ContratosController extends Controller
             }
         }
 
-        $contratos->where('contracts.status', 1)->where('contracts.empresa', Auth::user()->empresa);
+        $contratos->where('contracts.empresa', Auth::user()->empresa);
         $nodo = explode("-", $nodo);
 
         if ($nodo[0] == 'n') {
