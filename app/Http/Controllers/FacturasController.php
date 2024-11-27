@@ -538,6 +538,9 @@ class FacturasController extends Controller{
             'cs.address_street as address_street',
             'c.email as emailcliente',
             'c.celular as celularcliente',
+            'c.nombre as nombrecliente',
+            'c.apellido1 as ape1cliente',
+            'c.apellido2 as ape2cliente',
             'factura.tipo',
             'factura.cliente',
             'factura.emitida',
@@ -547,8 +550,9 @@ class FacturasController extends Controller{
             'factura.mensaje',
             'factura.estatus',
             'factura.codigo',
+            'factura.fecha',
+            'factura.vencimiento',
             'em.api_key_siigo as api_key_siigo',
-            DB::raw('c.nombre as nombrecliente'),
             DB::raw('v.nombre as nombrevendedor'),
               DB::raw('
             SUM((if.cant * if.precio) - (if.precio * (if(if.desc, if.desc, 0) / 100) * if.cant) + (if.precio - (if.precio * (if(if.desc, if.desc, 0) / 100))) * (if.impuesto / 100) * if.cant) as total
