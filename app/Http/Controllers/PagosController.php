@@ -126,12 +126,12 @@ class PagosController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $busqueda = false;
         $gastos = Gastos::where('empresa',Auth::user()->empresa);
-        
+
         if($request->search_code){
             $busqueda = true;
             $gastos->where('nro', $request->input('search_code'));
         }
-        
+
         if($request->search_client){
             $busqueda = true;
             $contactos = Contacto::where('nombre','like', "$request->search_client%")->get();
@@ -141,28 +141,28 @@ class PagosController extends Controller
             }
             $gastos->whereIn('beneficiario', $contactosArry);
         }
-        
+
         if($request->search_date){
             $busqueda = true;
             $gastos->where('fecha', date('Y-m-d', strtotime($request->search_date)));
         }
-        
+
         if($request->search_status){
             $busqueda = true;
             $gastos->whereIn('estatus', $request->search_status);
         }
-        
+
         $gastos = $gastos->OrderBy('nro', 'DESC')->paginate(25);
         return view('pagos.index')->with(compact('gastos' ,'busqueda', 'request' ));
     }
-    
+
     public function create($cliente=false, $factura=false, $banco=false){
         $this->getAllPermissions(Auth::user()->id);
         if ($cliente && !$factura) {
             $banco=$cliente;
             $cliente=false;
         }
-        
+
         view()->share(['icon' =>'', 'title' => 'Nuevo Gasto']);
         $bancos = Banco::where('empresa',Auth::user()->empresa)->get();
         $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
@@ -172,7 +172,7 @@ class PagosController extends Controller
          ->whereRaw('length(codigo) > 6')
          ->get();
         $impuestos = Impuesto::where('empresa',Auth::user()->empresa)->orWhere('empresa', null)->Where('estado', 1)->get();
-        
+
         //Datos necesarios para hacer funcionar la ventana modal
         $identificaciones=TipoIdentificacion::all();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado', 1)->get();
@@ -188,18 +188,18 @@ class PagosController extends Controller
 
         return view('pagos.create')->with(compact('clientes', 'categorias', 'cliente', 'factura', 'bancos', 'metodos_pago', 'impuestos', 'retenciones', 'banco', 'identificaciones', 'vendedores', 'listas', 'tipos_empresa','prefijos','anticipos','formas'));
     }
-    
+
     public function pendiente($proveedor, $id=false){
         $this->getAllPermissions(Auth::user()->id);
         $facturas=FacturaProveedores::where('proveedor', $proveedor)->where('empresa',Auth::user()->empresa)->where('tipo',1)->where('estatus', 1)->orderBy('created_at','asc')->get();
         $total=FacturaProveedores::where('proveedor', $proveedor)->where('empresa',Auth::user()->empresa)->where('tipo',1)->where('estatus', 1)->count();
         return view('pagos.pendiente')->with(compact('facturas', 'id', 'total'));
     }
-    
+
     public function store(Request $request){
 
         if($request->realizar == 2){
-            
+
             $this->storePagoPucCategoria($request);
 
             $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
@@ -225,11 +225,15 @@ class PagosController extends Controller
                     }
                 }
             }
-            
+
             $request->validate([
                 'cuenta' => 'required|numeric'
             ]);
-            
+
+            if(!isset($request->factura_pendiente)){
+                 return redirect()->back()->with('error', "Debe seleccionar una factura de proveedor para pagar");
+            }
+
             if (Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()) {
                 $nroGasto = Gastos::where('empresa', Auth::user()->empresa)->orderby('created_at', 'DESC')->take(1)->first()->nro + 1;
             } else {
@@ -250,7 +254,7 @@ class PagosController extends Controller
             $gasto->valor_anticipo = $request->saldofavor > 0 ? $request->saldofavor : '';
             $gasto->created_by    = Auth::user()->id;
             $gasto->save();
-            
+
             //Registrar los pagos por factura
             if ($gasto->tipo==1) {
                 foreach ($request->factura_pendiente as $key => $value) {
@@ -259,8 +263,8 @@ class PagosController extends Controller
                         $factura = FacturaProveedores::find($request->factura_pendiente[$key]);
 
                         /*
-                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos 
-                        sobre el total de la factura por que el resto es saldo a favor. 
+                        Validacion cuando se recibe un valor mayor a la factura. entonces guardamos
+                        sobre el total de la factura por que el resto es saldo a favor.
                         */
                         if($factura->total()->total < $request->precio[$key]){
                             $precio=$this->precision($factura->total()->total);
@@ -346,10 +350,10 @@ class PagosController extends Controller
                 $gasto->puc_banco = $request->forma_pago;
                 $gasto->anticipo = $request->anticipo_factura;
 
-                PucMovimiento::gasto($gasto,1,1);    
+                PucMovimiento::gasto($gasto,1,1);
             }else{
                 $gasto->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
-                PucMovimiento::gasto($gasto,1,2);   
+                PucMovimiento::gasto($gasto,1,2);
             }
 
             //Pagos
@@ -395,14 +399,14 @@ class PagosController extends Controller
 
         $contacto = Contacto::find($request->beneficiario);
         $contacto->saldo_favor2+=$request->valor_recibido;
-        $contacto->save(); 
+        $contacto->save();
 
         //pagos
         $this->up_transaccion(3, $gasto->id, $gasto->cuenta, $gasto->beneficiario, 2, $gasto->pago(), $gasto->fecha, $gasto->descripcion);
 
         //mandamos por parametro el gasto y el 1 (guardar)
-        PucMovimiento::gasto($gasto,1);        
-    } 
+        PucMovimiento::gasto($gasto,1);
+    }
 
     public function showMovimiento($id){
         $this->getAllPermissions(Auth::user()->id);
@@ -418,7 +422,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pasgos')->with('success', 'No existe un registro con ese id');
     }
-  
+
     public function show($id){
         $this->getAllPermissions(Auth::user()->id);
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
@@ -440,7 +444,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function ingpendiente($proveedor, $id=false){
         $this->getAllPermissions(Auth::user()->id);
         $facturas=FacturaProveedores::where('proveedor', $proveedor)->where('empresa',Auth::user()->empresa)->where('tipo',1)->where('estatus', 1)->get();
@@ -462,7 +466,7 @@ class PagosController extends Controller
         }
         return view('pagos.edit_pendiente')->with(compact('facturas', 'id', 'items', 'gasto', 'retencioness'));
     }
-    
+
     public function edit($id){
         $this->getAllPermissions(Auth::user()->id);
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
@@ -470,7 +474,7 @@ class PagosController extends Controller
             if ($gasto->tipo==3) {
                 return redirect('empresa/pagos')->with('success', 'No puede editar un pago de nota de crédito');
             }
-            
+
             $bancos = Banco::where('empresa',Auth::user()->empresa)->get();
             $clientes = Contacto::where('empresa',Auth::user()->empresa)->whereIn('tipo_contacto',[1,2])->get();
             $metodos_pago =DB::table('metodos_pago')->get();
@@ -482,7 +486,7 @@ class PagosController extends Controller
             $items= $retencionesIngreso=array();
             $items = GastosFactura::where('gasto',$gasto->id)->get();
             $retencionesGasto = GastosRetenciones::where('gasto',$gasto->id)->get();
-            
+
             if ($gasto->tipo==2) {
                 $items = GastosCategoria::where('gasto',$gasto->id)->get();
             }
@@ -490,7 +494,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function update($id, Request $request){
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($gasto) {
@@ -506,7 +510,7 @@ class PagosController extends Controller
             $gasto->observaciones=mb_strtolower($request->observaciones);
             $gasto->updated_by = Auth::user()->id;
             $gasto->save();
-            
+
             if ($gasto->tipo!=$request->tipo) {
                 if ($gasto->tipo==1) {
                     GastosFactura::where('gasto', $gasto->id)->delete();
@@ -514,7 +518,7 @@ class PagosController extends Controller
                     GastosCategoria::where('gasto', $gasto->id)->delete();
                 }
             }
-            
+
             //Registrar los pagos por factura
             if ($gasto->tipo==1) {
                 $inner=array();
@@ -546,7 +550,7 @@ class PagosController extends Controller
                                 $items = new GastosRetenciones;
                                 $items->factura=$factura->id;
                                 $items->gasto=$gasto->id;
-                                
+
                                 $cat='fact'.$factura->id."_".($key2+1);
                                 if($request->$cat){ //Consultar que exista el id de ese item
                                     $item = GastosRetenciones::where('id', $request->$cat)->where('factura', $factura->id)->where('gasto', $gasto->id)->first();
@@ -566,7 +570,7 @@ class PagosController extends Controller
                     }else{//Borro las retenciones en general
                         DB::table('gastos_retenciones')->where('factura', $factura->id)->where('gasto', $gasto->id)->delete();
                     }
-                    
+
                     //Cambiar el estatus factura
                     if ($this->precision($factura->porpagar())<=0) {
                         $factura->estatus=0;
@@ -639,7 +643,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function imprimir($id){
         view()->share(['title' => 'Imprimir Pagos']);
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
@@ -658,14 +662,14 @@ class PagosController extends Controller
                 $itemscount=GastosCategoria::where('gasto',$gasto->id)->count();
                 $items = GastosCategoria::where('gasto',$gasto->id)->get();
             }
-            
+
             $retenciones = GastosRetenciones::where('gasto',$gasto->id)->get();
             $pdf = PDF::loadView('pdf.pago', compact('gasto', 'items', 'retenciones', 'itemscount'));
             return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf',]);
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function enviar($id){
         view()->share(['title' => 'Enviar Pagos']);
         $emails=array();
@@ -684,7 +688,7 @@ class PagosController extends Controller
             if (!$emails || count($emails)==0) {
                 return redirect('empresa/pagos/'.$gasto->id)->with('error', 'El Beneficiario ni sus contactos asociados tienen correo registrado');
             }
-            
+
             $titulo='Pago a factura de proveedor';
             $items=GastosFactura::where('gasto',$gasto->id)->get();
             $itemscount=1;
@@ -696,7 +700,7 @@ class PagosController extends Controller
                 $itemscount=GastosCategoria::where('gasto',$gasto->id)->count();
                 $items = GastosCategoria::where('gasto',$gasto->id)->get();
             }
-            
+
             $retenciones = GastosRetenciones::where('gasto',$gasto->id)->get();
             $pdf = PDF::loadView('pdf.pago', compact('gasto', 'items', 'retenciones', 'itemscount'))->stream();
             $host = ServidorCorreo::where('estado', 1)->where('empresa', Auth::user()->empresa)->first();
@@ -726,7 +730,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function anular($id){
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($gasto) {
@@ -737,7 +741,7 @@ class PagosController extends Controller
             if ($gasto->tipo==4) {
                 return redirect('empresa/pagos')->with('success', 'No puede editar una transferencia');
             }
-            
+
             if ($gasto->estatus==1) {
                 $gasto->estatus=2;
                 $gasto->save();
@@ -763,7 +767,7 @@ class PagosController extends Controller
                 $this->change_out_in(3, $gasto->id, 2);
                 $mensaje='Se ha abierto satisfactoriamente el pago';
             }
-            
+
             if ($gasto->tipo==2) {
                 $items=GastosFactura::where('gasto',$gasto->id)->get();
                 foreach ($items as $factura) {
@@ -777,7 +781,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     public function destroy($id){
         $gasto = Gastos::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         if ($gasto) {
@@ -816,7 +820,7 @@ class PagosController extends Controller
                 $movimiento = Movimiento::where('empresa', Auth()->user()->empresa)->where('id_modulo',$gasto->nro)->first();
                 $movimiento->delete();
             }
-            
+
             DB::table('gastos_retenciones')->where('gasto', $gasto->id)->delete();
             $gasto->delete();
             $mensaje='Se ha eliminado satisfactoriamente el pago';
@@ -824,7 +828,7 @@ class PagosController extends Controller
         }
         return redirect('empresa/pagos')->with('success', 'No existe un registro con ese id');
     }
-    
+
     private function cambiarStatus($id){
         $facturap = FacturaProveedores::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $facturap->estatus = 1;
@@ -843,7 +847,7 @@ class PagosController extends Controller
         }else{
             $pagos = [];
         }
-     
+
 
         return response()->json($pagos);
     }

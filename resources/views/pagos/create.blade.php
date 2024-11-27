@@ -1,27 +1,38 @@
 @extends('layouts.app')
-@section('content')  
+@section('content')
   @if(Session::has('success'))
     <div class="alert alert-success" >
       {{Session::get('success')}}
     </div>
 
     <script type="text/javascript">
-      setTimeout(function(){ 
+      setTimeout(function(){
           $('.alert').hide();
           $('.active_table').attr('class', ' ');
       }, 5000);
     </script>
+  @endif
 
+  @if(Session::has('error'))
+		<div class="alert alert-danger" >
+			{{Session::get('error')}}
+		</div>
 
-  @endif 
-  
+		<script type="text/javascript">
+			setTimeout(function(){
+			    $('.alert').hide();
+			    $('.active_table').attr('class', ' ');
+			}, 8000);
+		</script>
+	@endif
+
   @if(Session::has('success-newcontact'))
 <div class="alert alert-success" style="text-align: center;">
   {{Session::get('success-newcontact')}}
 </div>
 
 <script type="text/javascript">
-  setTimeout(function(){ 
+  setTimeout(function(){
     $('.alert').hide();
     $('.active_table').attr('class', ' ');
   }, 5000);
@@ -51,12 +62,12 @@
                     </a>
                 </p>
             </div>
-            
+
           <span class="help-block error">
                 <strong>{{ $errors->first('cliente') }}</strong>
           </span>
-        </div>    
- 
+        </div>
+
         <div class="form-group row">
           <label class="col-sm-4 col-form-label">Cuenta <span class="text-danger">*</span><a><i data-tippy-content="Crea tus cuentas haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
           <div class="col-sm-8">
@@ -77,7 +88,7 @@
                   <strong>{{ $errors->first('cuenta') }}</strong>
             </span>
           </div>
-      </div> 
+      </div>
       <div class="form-group row">
           <label class="col-sm-4 col-form-label">Método de pago </label>
           <div class="col-sm-8">
@@ -87,11 +98,11 @@
                 @endforeach
             </select>
           </div>
-          
+
         <span class="help-block error">
               <strong>{{ $errors->first('metodo_pago') }}</strong>
         </span>
-      </div> 
+      </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Realizar un</label>
         <div class="col-sm-8">
@@ -100,7 +111,7 @@
               <option value="2" >Anticipo</option>
           </select>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
@@ -115,11 +126,11 @@
             @endforeach
           </select>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('realizar') }}</strong>
       </span>
-    </div> 
+    </div>
   </div>
     <div class="form-group row cls-realizar d-none" >
       <div class="form-group row ">
@@ -131,12 +142,12 @@
          @endforeach
        </select>
      </div>
-     
+
    <span class="help-block error">
          <strong>{{ $errors->first('puc_banco') }}</strong>
    </span>
       </div>
-    </div> 
+    </div>
       <div class="form-group row cls-realizar d-none" >
         <div class="form-group row ">
       <label class="col-sm-4 col-form-label">Cuenta del anticipo <span class="text-danger">*</span></label>
@@ -147,7 +158,7 @@
           @endforeach
         </select>
       </div>
-      
+
     <span class="help-block error">
           <strong>{{ $errors->first('anticipo') }}</strong>
     </span>
@@ -159,12 +170,12 @@
         <div class="col-sm-8">
           <input type="number" class="form-control" name="valor_recibido" id="valor_recibido" required>
         </div>
-        
+
       <span class="help-block error">
             <strong>{{ $errors->first('valor_recibido') }}</strong>
       </span>
       </div>
-    </div>  
+    </div>
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
@@ -192,7 +203,7 @@
         <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
       </div>
 
-  
+
 
       </div>
 
@@ -238,11 +249,11 @@
                   <th width="10%">Total</th>
                   <th width="2%"></th>
                 </tr>
-              </thead> 
+              </thead>
               <tbody>
                 <tr id="1">
                   <td  class="no-padding">
-                      <div class="resp-item">                        
+                      <div class="resp-item">
                     <select class="form-control form-control-sm selectpicker no-padding"  title="Seleccione" data-live-search="true" data-size="5" name="categoria[]" id="categoria1" required="" onchange="enabled(1);" >
                       @foreach($categorias as $categoria)
                               <option {{old('categoria')==$categoria->id?'selected':''}} value="{{$categoria->id}}" {{$categoria->estatus==0?'disabled':''}}>{{$categoria->nombre}} - {{$categoria->codigo}}</option>
@@ -265,14 +276,14 @@
                   <td width="5%">
                     <input type="number" class="form-control form-control-sm" id="cant_categoria1" name="cant_categoria[]" placeholder="Cantidad" onchange="total_linea(1);" min="1" required="" disabled="">
                   </td>
-                  <td  style="padding-top: 1% !important;">     
+                  <td  style="padding-top: 1% !important;">
                   <div class="resp-observaciones">
                     <textarea  class="form-control form-control-sm" id="descripcion_categoria1" name="descripcion_categoria[]" placeholder="Observaciones" disabled=""></textarea>
                   </div>
                   </td>
                   <td>
                       <div class="resp-total">
-                    <input type="text" class="form-control form-control-sm text-right" id="total_categoria1" value="0.00" disabled="">  
+                    <input type="text" class="form-control form-control-sm text-right" id="total_categoria1" value="0.00" disabled="">
                     </div>
                   </td>
                 <td><button type="button" class="btn btn-outline-secondary btn-icons" onclick="Eliminar(1);">X</button></td>
@@ -316,10 +327,10 @@
             </tr>
           </table>
         </div>
-        </div> 
+        </div>
       </div>
       </div>
-    </div>      
+    </div>
     <hr>
 
     <div class="row">
@@ -328,13 +339,13 @@
               <div class="form-group">
             <label class="col-form-label">Donde ingresa el dinero <span class="text-danger">*</span></label>
 
-          
+
               <select class="form-control selectpicker" name="puc_banco" id="puc_banco" title="Seleccione" data-live-search="true" data-size="5" required>
                 @foreach($formas as $f)
                   <option value="{{$f->id}}" >{{$f->nombre}} - {{$f->codigo}}</option>
                 @endforeach
               </select>
-            
+
           <span class="help-block error">
                 <strong>{{ $errors->first('puc_banco') }}</strong>
           </span>
@@ -356,12 +367,12 @@
                     <strong>{{ $errors->first('anticipo_factura') }}</strong>
               </span>
             </div>
-        </div> 
+        </div>
       </div>
     </div>
 
     <div class="row" >
-      
+
       <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 
         <a href="{{route('pagos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
