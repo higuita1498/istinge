@@ -341,22 +341,82 @@ class FacturasController extends Controller{
             }
         }
 
+        //Consulta vieja
+        // $facturas = Factura::query()
+        //     ->join('contactos as c', 'factura.cliente', '=', 'c.id')
+        //     ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+        //     ->join('empresas as em','em.id','factura.empresa')
+        //     ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
+        //     ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
+        //     ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+        //     ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje',
+        //     'factura.codigo', 'factura.nro','factura.dian_response', 'mk.nombre as servidor',
+        //     'cs.server_configuration_id','em.api_key_siigo as api_key_siigo',
+        //     DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),  DB::raw('c.direccion as direccioncliente'),
+        //     DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'),
+        //     DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
+        //     DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
+        //     DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
+        //     ->groupBy('factura.id');
+
+        //consulta nueva
         $facturas = Factura::query()
-            ->join('contactos as c', 'factura.cliente', '=', 'c.id')
-            ->join('items_factura as if', 'factura.id', '=', 'if.factura')
-            ->join('empresas as em','em.id','factura.empresa')
-            ->leftJoin('contracts as cs', 'c.id', '=', 'cs.client_id')
-            ->leftJoin('mikrotik as mk','mk.id','=','cs.server_configuration_id')
-            ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
-            ->select('factura.tipo','factura.promesa_pago','factura.id', 'factura.correo', 'factura.mensaje',
-            'factura.codigo', 'factura.nro','factura.dian_response', 'mk.nombre as servidor',
-            'cs.server_configuration_id','em.api_key_siigo as api_key_siigo',
-            DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'),  DB::raw('c.direccion as direccioncliente'),
-            DB::raw('c.email as emailcliente'), DB::raw('c.celular as celularcliente'),
-            DB::raw('c.nit as nitcliente'), 'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.vendedor','factura.emitida', DB::raw('v.nombre as nombrevendedor'),DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
-            DB::raw('((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) as pagado'),
-            DB::raw('(SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant) + (if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) - ((Select SUM(pago) from ingresos_factura where factura=factura.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where factura=factura.id)) - (Select if(SUM(pago), SUM(pago), 0) from notas_factura where factura=factura.id)) as porpagar'))
-            ->groupBy('factura.id');
+        ->join('contactos as c', 'factura.cliente', '=', 'c.id')
+        ->join('empresas as em', 'em.id', '=', 'factura.empresa')
+        ->join('items_factura as if', 'factura.id', '=', 'if.factura')
+        ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+        ->leftJoin(
+            DB::raw('
+                (SELECT factura_id, contrato_nro
+                 FROM (
+                     SELECT fc.factura_id, fc.contrato_nro, ROW_NUMBER() OVER (PARTITION BY fc.factura_id ORDER BY fc.id ASC) AS rn
+                     FROM facturas_contratos fc
+                 ) ranked
+                 WHERE ranked.rn = 1
+                ) as fc
+            '),
+            'factura.id', '=', 'fc.factura_id'
+        )
+        ->leftJoin('contracts as cs', 'cs.nro', '=', 'fc.contrato_nro')
+        ->leftJoin('mikrotik as mk', 'mk.id', '=', 'cs.server_configuration_id')
+        ->select(
+            'mk.nombre as servidor',
+            'cs.server_configuration_id',
+            'cs.opciones_dian',
+            'cs.address_street as address_street',
+            'c.email as emailcliente',
+            'c.celular as celularcliente',
+            'c.nombre as nombrecliente',
+            'c.apellido1 as ape1cliente',
+            'c.apellido2 as ape2cliente',
+            'factura.tipo',
+            'factura.cliente',
+            'factura.emitida',
+            'factura.promesa_pago',
+            'factura.id',
+            'factura.correo',
+            'factura.mensaje',
+            'factura.estatus',
+            'factura.codigo',
+            'factura.fecha',
+            'factura.vencimiento',
+            'em.api_key_siigo as api_key_siigo',
+            DB::raw('v.nombre as nombrevendedor'),
+              DB::raw('
+            SUM((if.cant * if.precio) - (if.precio * (if(if.desc, if.desc, 0) / 100) * if.cant) + (if.precio - (if.precio * (if(if.desc, if.desc, 0) / 100))) * (if.impuesto / 100) * if.cant) as total
+        '),
+                DB::raw('
+            ((SELECT SUM(pago) FROM ingresos_factura WHERE factura = factura.id) +
+            (SELECT IF(SUM(valor), SUM(valor), 0) FROM ingresos_retenciones WHERE factura = factura.id)) as pagado
+        '),
+                DB::raw('
+            (SUM((if.cant * if.precio) - (if.precio * (if(if.desc, if.desc, 0) / 100) * if.cant) + (if.precio - (if.precio * (if(if.desc, if.desc, 0) / 100)) * (if.impuesto / 100) * if.cant)) -
+            ((SELECT SUM(pago) FROM ingresos_factura WHERE factura = factura.id) +
+            (SELECT IF(SUM(valor), SUM(valor), 0) FROM ingresos_retenciones WHERE factura = factura.id)) -
+            (SELECT IF(SUM(pago), SUM(pago), 0) FROM notas_factura WHERE factura = factura.id)) as porpagar
+        ')
+        )
+        ->groupBy('factura.id');
 
         if ($request->filtro == true) {
 
