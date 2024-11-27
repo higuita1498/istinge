@@ -230,7 +230,7 @@ class PagosController extends Controller
                 'cuenta' => 'required|numeric'
             ]);
 
-            if(!isset($request->factura_pendiente)){
+            if(!isset($request->factura_pendiente) && $request->tipo == 1){
                  return redirect()->back()->with('error', "Debe seleccionar una factura de proveedor para pagar");
             }
 
