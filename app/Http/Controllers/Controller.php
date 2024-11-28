@@ -218,6 +218,11 @@ class Controller extends BaseController
 
         if ($regis) {
             $movimiento=$regis;
+
+            if($modulo == 1){
+                $movimiento->saldo = 0;
+            }
+
             $movimiento->estatus=$estatus;
             $movimiento->save();
         }
