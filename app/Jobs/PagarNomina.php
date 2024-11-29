@@ -6,11 +6,12 @@ use App\Mail\NominaPagada;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Mail\Mailable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class PagarNomina implements ShouldQueue
+class PagarNomina  extends Mailable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -53,9 +54,8 @@ class PagarNomina implements ShouldQueue
         $subject = "Tu pago de nómina ha sido confirmado en {$empresa->nombre}";
 
         foreach ($this->nominas as $i => $nomina) {
-
-            // Mail::to($correoPersonas[$i])
-                ->queue(new NominaPagada($subject, $nomina, $empresa, $this->pdfs[$i], $personas[$i]));
+            Mail::to($correoPersonas[$i])
+            ->send(new NominaPagada($subject, $nomina, $empresa, $this->pdfs[$i], $personas[$i]));
         }
     }
 }

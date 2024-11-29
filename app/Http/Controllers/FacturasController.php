@@ -2334,6 +2334,12 @@ class FacturasController extends Controller{
     public function xmlFacturaVenta($id){
         $FacturaVenta = Factura::find($id);
 
+        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)->where('id', '!=', $FacturaVenta->id)->count();
+
+        if($ValidateInvoices > 0){
+            return back()->with('error', 'El código ' . $FacturaVenta->codigo . ' ya se encuentra en otra(s) factura(s).');
+        }
+
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
@@ -3685,6 +3691,13 @@ class FacturasController extends Controller{
     public function xmlFacturaVentaMasivo($id)
     {
         $FacturaVenta = Factura::find($id);
+
+        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)->where('id', '!=', $FacturaVenta->id)->count();
+
+        if($ValidateInvoices > 0){
+            return back()->with('error', 'El código ' . $FacturaVenta->codigo . ' ya se encuentra en otra(s) factura(s).');
+        }
+
 
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
