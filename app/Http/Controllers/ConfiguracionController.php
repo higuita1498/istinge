@@ -1060,7 +1060,7 @@ class ConfiguracionController extends Controller
                     $validos[] = ([
                         "statusCode" => $res['statusCode'],
                         "trackId" => isset($res['trackId']) ? $res['trackId'] : '',
-                        "uuid" => $res['uuid'],
+                        "uuid" => isset($res['uuid']) ? $res['uuid'] : '',
                         "statusMessage" => $res['statusMessage'],
                         "statusDescription" => $res['statusDescription'],
                         "warnings" => $res['warnings']

@@ -4062,6 +4062,9 @@ class FacturasController extends Controller{
         $nro=NumeracionFactura::where('empresa',Auth::user()->empresa)->where('preferida',1)->where('estado',1)->where('tipo',2)->first();
 
         //Actualiza el nro de inicio para la numeracion seleccionada
+        if(!$nro){
+            return back()->with('danger', 'No se encontró una numeración para facturas DIAN preferida.');
+        }
         $inicio = $nro->inicio;
         $nro->inicio += 1;
         $nro->save();
