@@ -165,10 +165,8 @@ class CronController extends Controller
                     if($da > $grupo_corte->fecha_suspension){
                         if(Carbon::now()->format('m') != 11){
                             $m = 01;
+                            $y = $y+1;
                         }
-                    }
-                    if(Carbon::now()->format('m') != 11){
-                    $y = $y+1;
                     }
                 }
                 $date_suspension = $y . "-" . $m . "-" . $ds;
