@@ -599,6 +599,7 @@ class FacturasController extends Controller{
             'cs.address_street as direccion',
             'cs.nro as contrato',
             'c.email as emailcliente',
+            'c.nit as nitcliente',
             'c.celular as celularcliente',
             'c.nombre as nombrecliente',
             'c.apellido1 as ape1cliente',
