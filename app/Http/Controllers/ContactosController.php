@@ -526,7 +526,7 @@ class ContactosController extends Controller
             }
 
             $user_app = DB::table('usuarios_app')->where('id_cliente', $contacto->id)->where('status', 1)->first();
-            $contratos = Contrato::where('client_id', $contacto->id)->where('status', 1)->get();
+            $contratos = Contrato::where('client_id', $contacto->id)->get();
 
             return view('contactos.show')->with(compact('contacto', 'id', 'user_app', 'contratos'));
         }
