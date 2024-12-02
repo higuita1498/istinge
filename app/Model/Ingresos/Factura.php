@@ -86,6 +86,12 @@ class Factura extends Model
     }
 
     public function plazos(){
+
+        if($this->plazo == ""){
+            $this->plazo = 30;
+            $this->save();
+        }
+
         return TerminosPago::where('id',$this->plazo)->first();
    }
 
