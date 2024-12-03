@@ -155,10 +155,13 @@
       </span>
       </div>
     </div>
+    @php
+        $isEnabled = isset($_SESSION['permisos']['344']);
+    @endphp
       <div class="form-group row">
         <label class="col-sm-4 col-form-label">Fecha</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" value="{{date('d-m-Y')}}" name="fecha" disabled=""  >
+          <input type="text" class="form-control {{ $isEnabled ? 'fecha' : '' }}" value="{{date('Y-m-d')}}" name="fecha" {{ $isEnabled ? '' : 'disabled' }} >
         </div>
       </div>
 
@@ -563,6 +566,11 @@
     //validacion
     let cliente = $("#clienteseleccionado").val();
     let saldoFavor = $("#saldofavorcliente").val();
+  $('.fecha').datepicker({
+      locale: 'es-es',
+      uiLibrary: 'bootstrap4',
+      format: 'yyyy-mm-dd' ,
+  });
     if(cliente && saldoFavor > 0){
         $("#divusarsaldo").removeClass('d-none');
         $("#saldo123").removeClass('d-none');
