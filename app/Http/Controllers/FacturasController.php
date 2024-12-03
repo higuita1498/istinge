@@ -3528,6 +3528,60 @@ class FacturasController extends Controller{
         }
     }
 
+    public function ImprimirMultiple($facturas, $tipo='original', $especialFe = false){
+        /**
+         * * toma en cuenta que para ver los mismos
+         * * datos debemos hacer la misma consulta
+         **/
+        $empresa = Auth::user()->empresaObj;
+        $facturas_id = explode(",", $facturas);
+        $items = [];
+        $facturas = [];
+        $itemscount = [];
+        $tipo = [];
+        $retenciones = [];
+        $resolucion = [];
+        $ingreso = [];
+        foreach ($facturas_id as $factura_id){
+            $factura_obj = ($especialFe) ? Factura::where('nonkey', $factura_id)->first() : Factura::where('empresa',$empresa->id)->where('id', $factura_id)->first();
+            $facturas[$factura_id] = $factura_obj;
+            if($factura_obj->tipo == 1){
+                view()->share(['title' => 'Imprimir Factura']);
+                if ($tipo<>'original') {
+                    $tipo[$factura_id]='Copia Factura de Venta';
+                }else{
+                    $tipo[$factura_id]='Factura de Venta Original';
+                }
+            }elseif($factura_obj->tipo == 3){
+                view()->share(['title' => 'Imprimir Cuenta de Cobro']);
+                if ($tipo<>'original') {
+                    $tipo[$factura_id]='Cuenta de Cobro Copia';
+                }else{
+                    $tipo[$factura_id]='Cuenta de Cobro Original';
+                }
+            }
+            $resolucion[$factura_id] = ($especialFe) ? NumeracionFactura::where('empresa', $factura_obj->empresa)->latest()->first() : NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
+            if ($factura_obj) {
+                $items[$factura_id] = ItemsFactura::where('factura',$factura_obj->id)->get();
+                $itemscount[$factura_id]=ItemsFactura::where('factura',$factura_obj->id)->count();
+                $retenciones[$factura_id] = FacturaRetencion::where('factura', $factura_obj->id)->get();
+                $ingreso[$factura_id] = IngresosFactura::where('factura',$factura_obj->id)->first();
+            }
+        }
+        if(!Auth::user())
+        {
+            $empresa = Empresa::Find(1);
+        }else{
+            $empresa = Auth::user()->empresa();
+        }
+        if($empresa->formato_impresion == 1){
+            $pdf = PDF::loadView('pdf.factura_multiple', compact('items', 'facturas', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso','empresa'));
+        }else{
+            $pdf = PDF::loadView('pdf.factura', compact('items', 'facturas', 'itemscount', 'tipo', 'retenciones','resolucion','ingreso'));
+        }
+        return  response ($pdf->stream())->withHeaders(['Content-Type' =>'application/pdf']);
+    }
+
     public function exportData(){
         $facturas =  Factura::join('contactos as c','c.id','factura.cliente')
         ->join('items_factura as if','if.factura','=','factura.id')
