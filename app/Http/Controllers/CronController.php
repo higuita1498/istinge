@@ -2781,6 +2781,43 @@ class CronController extends Controller
         // return "ok productos actualizados" . $cont;
         //END SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
 
+        /// ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
+        $contratos = Contrato::where('status',1)->get();
+        $eli = 0;
+        foreach($contratos as $contrato){
+
+            $mes = 12;
+            $year = 2024;
+
+
+            $facturas = Factura::where('cliente',$contrato->client_id)
+             ->whereYear('factura.fecha', $year) // Filtrar por el año
+            ->whereMonth('factura.fecha', $mes) // Filtrar por el mes
+            ->get();
+
+                if($facturas->count() > 1){
+                    foreach($facturas as $f){
+
+                        // if(DB::table('facturas_contratos as fc')->where('factura_id',$f->id)->count() == 0){
+                                // $eliminadas = 0;
+                                if($f->pagado() == 0){
+
+                                $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+                                    DB::table('crm')->where('factura',$f->id)->delete();
+                                        $eli++;
+                                        $f->delete();
+                                }
+                        // }
+                    }
+                }
+
+                // return "ok";
+        }
+
+        return "se eliminaron " . $eli;
+
+        /// FIN ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
+
     }
 
     public function envioFacturaWpp(WapiService $wapiService){
