@@ -5315,13 +5315,60 @@ class ExportarReportesController extends Controller
             $contratos=$contratos->whereMonth('fac.fecha','=', $request->month)->whereYear('fac.fecha','=', $request->year);
         }
 
+
         $contratos = $contratos->get();
+        // Obtener los números de contrato desde la colección
+        $numerosContratos = $contratos->pluck('nro');
+        $month = $request->month;
+        $year = $request->year;
+
+        // Realizar una consulta para obtener las deudas totales de todos los contratos
+        $deudas = Factura::leftJoin('items_factura as itemsf', 'itemsf.factura', 'factura.id')
+            ->leftJoin('facturas_contratos as fc', 'fc.factura_id', 'factura.id')
+            ->leftJoin('contracts as c', 'c.nro', 'fc.contrato_nro')
+            // Subconsulta para calcular el total de ingresos
+            ->leftJoin(
+                DB::raw("(SELECT ing_fact.factura, COALESCE(SUM(ing_fact.pago), 0) as totalIngreso
+                          FROM ingresos_factura as ing_fact
+                          LEFT JOIN ingresos as i ON i.id = ing_fact.ingreso
+                          WHERE i.estatus = 1
+                          GROUP BY ing_fact.factura) as ingresos"),
+                'ingresos.factura',
+                'factura.id'
+            )
+            ->select('fc.contrato_nro')
+            ->selectRaw('
+                SUM(
+                    (
+                        (
+                            ROUND(itemsf.precio * itemsf.cant)
+                        ) - IF
+                        (itemsf.desc > 0, (itemsf.precio * itemsf.cant) * (itemsf.desc / 100),0)
+                    ) * (
+                        IF(itemsf.impuesto > 0, 1 + (itemsf.impuesto / 100), 1)
+                    )
+                ) as totalFactura
+            ')
+            ->selectRaw('COALESCE(SUM(ingresos.totalIngreso), 0) as totalIngreso') // Total de ingresos por contrato
+            ->whereIn('fc.contrato_nro', $numerosContratos) // Filtrar por contratos específicos
+            ->where('factura.estatus', 1) // Facturas activas
+            ->when($month && $year, function($query) use ($month, $year) {
+                $query->whereMonth('factura.fecha', '<=', $month)
+                      ->whereYear('factura.fecha', '<=', $year);
+            })
+            ->groupBy('fc.contrato_nro') // Agrupar por contrato
+            ->get();
+
+            // Convertir los resultados en un array con la deuda por contrato
+            $deudaTotalPorContrato = $deudas->mapWithKeys(function ($deuda) {
+                return [$deuda->contrato_nro => $deuda->totalFactura - $deuda->totalIngreso];
+            });
 
         $empresa = Empresa::find(Auth::user()->empresa);
         $totalIngresos = 0;
         foreach ($contratos as $contrato) {
             $cliente = $contrato->cliente();
-            $deudaFactura = $contrato->deudaFacturas($request->month, $request->year);
+            $deudaFactura = $deudaTotalPorContrato[$contrato->nro] ?? 0;
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0] . $i, $contrato->nro)
