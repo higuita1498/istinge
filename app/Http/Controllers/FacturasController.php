@@ -747,6 +747,11 @@ class FacturasController extends Controller{
                     $query->orWhere('c.fk_idmunicipio', $request->municipio);
                 });
             }
+            if ($request->barrio) {
+                $facturas->where(function ($query) use ($request) {
+                    $query->orWhereRaw('LOWER(c.barrio) = ?', [strtolower($request->barrio)]);
+                });
+            }
         }
 
         if(auth()->user()->rol == 8){

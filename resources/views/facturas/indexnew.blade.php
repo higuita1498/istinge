@@ -104,6 +104,9 @@
 								@endforeach
 							</select>
 						</div>
+                        <div class="col-md-2 pl-1 pt-1">
+                            <input type="text" placeholder="Barrio" id="barrio" name="barrio" class="form-control rounded barrio" autocomplete="off">
+                        </div>
 						<div class="col-md-2 pl-1 pt-1">
 							<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
 						</div>
@@ -465,6 +468,7 @@
 			data.cliente = $('#cliente').val();
 			data.municipio = $('#municipio').val();
 			data.vendedor = $('#vendedor').val();
+			data.barrio = $('#barrio').val();
 			data.creacion = $('#creacion').val();
 			data.vencimiento = $('#vencimiento').val();
 			data.comparador = $('#comparador').val();
@@ -486,7 +490,7 @@
 			}
 		});
 
-		$('#codigo').on('keyup',function(e) {
+		$('#codigo, #barrio').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
@@ -666,6 +670,7 @@
 		$('#municipio').val('').selectpicker('refresh');
 		$('#vendedor').val('').selectpicker('refresh');
 		$('#creacion').val('');
+		$('#barrio').val('');
 		$('#vencimiento').val('');
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
