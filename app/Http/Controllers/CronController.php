@@ -184,7 +184,14 @@ class CronController extends Controller
                     ->orderBy('factura.fecha', 'desc')
                     ->first();
 
-                    if(!isset($ultimaFactura->fecha) || isset($ultimaFactura->fecha) && $ultimaFactura->fecha != $fecha)
+                    $mesUltimaFactura = false;
+                    if($ultimaFactura){
+                        $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->fecha));
+                        $mesActualFactura = date('Y-m',strtotime($fecha));
+                    }
+
+                    if(!isset($ultimaFactura->fecha) || isset($ultimaFactura->fecha)
+                        && $mesActualFactura != $mesUltimaFactura)
                     {
 
                     ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
@@ -211,7 +218,7 @@ class CronController extends Controller
                                 if(is_null($nro)){
                                 }else{ //aca empieza la verdadera creacion de la factura despues de pasar las validaciones.
 
-                                    $hoy = Carbon::now()->toDateString();
+                                    $hoy = $fecha;
 
                                     if(!DB::table('facturas_contratos')
                                     ->whereDate('created_at',$hoy)
@@ -585,6 +592,11 @@ class CronController extends Controller
 
             $factura->estatus = 0;
             $factura->save();
+
+            //Descontamos el saldo a favor del cliente
+            $contacto = Contacto::Find($factura->cliente);
+            $contacto->saldo_favor-=$precio;
+            $contacto->save();
 
             //No vamos a regisrtrar por el momento un movimiento del puc ya que no sabemos esta informacion.
             // $ingreso->puc_banco = $request->forma_pago; //cuenta de forma de pago genérico del ingreso. (en memoria)
@@ -2707,6 +2719,14 @@ class CronController extends Controller
             DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
             $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
         DB::table('crm')->where('factura',$f->id)->delete();
+
+            //Si queremos eliminar ingresos tambien:
+            $if = DB::table('ingresos_factura')->where('factura',$f->id)->first();
+            if($if){
+                DB::table('ingresos')->where('id',$if->ingreso)->delete();
+                DB::table('ingresos_factura')->where('factura',$f->id)->delete();
+            }
+            //Si queremos eliminar ingresos tambien
             $eliminadas++;
             $f->delete();
             }
