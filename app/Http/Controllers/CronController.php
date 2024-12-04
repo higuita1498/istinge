@@ -631,8 +631,11 @@ class CronController extends Controller
 
             //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
             $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
-                join('facturas_contratos as fcs','fcs.factura_id','=','f.id')->
-                join('contracts as cs','cs.nro','=','fcs.contrato_nro')->
+                leftJoin('facturas_contratos as fcs', 'fcs.factura_id', '=', 'f.id')
+                ->leftJoin('contracts as cs', function ($join) {
+                    $join->on('cs.nro', '=', 'fcs.contrato_nro')
+                         ->orOn('cs.id', '=', 'f.contrato_id');
+                })->
                 select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
