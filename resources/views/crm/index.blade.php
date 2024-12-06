@@ -181,6 +181,9 @@
                                             @endforeach
                 						</select>
                     				</div>
+                                    <div class="col-md-2 pl-1 pt-1">
+                                        <input type="number" class="form-control" placeholder="Numero de facturas" id="n_facturas" value="" name="n_facturas">
+                                    </div>
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_factura" value="" name="fecha_factura" required="">
 									</div>
@@ -653,6 +656,7 @@
             data.grupo_corte = $('#grupo_corteA').val();
             data.servidor = $('#servidor').val();
 			data.fecha_factura =  $('#fecha_factura').val();
+			data.n_facturas =  $('#n_facturas').val();
 			data.updated_at =  $('#updated_at').val();
             data.filtro = true;
         });
@@ -871,6 +875,7 @@
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		$('#fecha_factura').val('');
+		$('#n_facturas').val('');
 		$('#updated_at').val('');
 		getDataTable();
 	}

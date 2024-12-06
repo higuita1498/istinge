@@ -160,6 +160,11 @@ class CRMController extends Controller
                     $query->orWhere('crm.servidor', $request->servidor);
                 });
             }
+
+            // Filtro para facAbiertas
+            if ($request->n_facturas) {
+                $contratos->having('facAbiertas', '=', $request->n_facturas);
+            }
         }
 
         if($tipo == 1){
