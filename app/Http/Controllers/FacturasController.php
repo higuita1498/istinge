@@ -2343,14 +2343,35 @@ class FacturasController extends Controller{
     public function xmlFacturaVenta($id){
         $FacturaVenta = Factura::find($id);
 
-        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)->where('id', '!=', $FacturaVenta->id)->count();
-
-        if($ValidateInvoices > 0){
-            return back()->with('error', 'El código ' . $FacturaVenta->codigo . ' ya se encuentra en otra(s) factura(s).');
-        }
-
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
+        }
+
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->
+        where('num_equivalente', 0)->
+        where('nomina',0)->where('tipo',2)->
+        where('preferida', 1)->first();
+
+        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)
+        ->where('id', '!=', $FacturaVenta->id)
+        ->count();
+
+        $empresaId = auth()->user()->empresa;
+
+        if($ValidateInvoices > 0){
+            while(Factura::where('empresa', $empresaId)->
+            where('codigo', $FacturaVenta->codigo)->
+            where('id', '!=', $FacturaVenta->id)->count() > 0){
+
+                $FacturaVenta->codigo = $ResolucionNumeracion->prefijo . $ResolucionNumeracion->inicio;
+                $FacturaVenta->save();
+
+                $ResolucionNumeracion->inicio++;
+                $ResolucionNumeracion->save();
+
+                $ResolucionNumeracion->fresh();
+                $FacturaVenta->fresh();
+            }
         }
 
         $FacturaVenta->emitida = $FacturaVenta->emitida;
@@ -2381,8 +2402,6 @@ class FacturasController extends Controller{
             }
 
         }
-
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
 
         $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
@@ -3754,22 +3773,39 @@ class FacturasController extends Controller{
     public function xmlFacturaVentaMasivo($id)
     {
         $FacturaVenta = Factura::find($id);
-
-        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)->where('id', '!=', $FacturaVenta->id)->count();
-
-        if($ValidateInvoices > 0){
-            return back()->with('error', 'El código ' . $FacturaVenta->codigo . ' ya se encuentra en otra(s) factura(s).');
-        }
-
-
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
 
+        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->
+        where('num_equivalente', 0)->
+        where('nomina',0)->where('tipo',2)->
+        where('preferida', 1)->first();
+
+        $ValidateInvoices = Factura::where('empresa', auth()->user()->empresa)->where('codigo', $FacturaVenta->codigo)
+        ->where('id', '!=', $FacturaVenta->id)
+        ->count();
+
+        $empresaId = auth()->user()->empresa;
+
+        if($ValidateInvoices > 0){
+            while(Factura::where('empresa', $empresaId)->
+            where('codigo', $FacturaVenta->codigo)->
+            where('id', '!=', $FacturaVenta->id)->count() > 0){
+
+                $FacturaVenta->codigo = $ResolucionNumeracion->prefijo . $ResolucionNumeracion->inicio;
+                $FacturaVenta->save();
+
+                $ResolucionNumeracion->inicio++;
+                $ResolucionNumeracion->save();
+
+                $ResolucionNumeracion->fresh();
+                $FacturaVenta->fresh();
+            }
+        }
+
         $FacturaVenta->emitida = $FacturaVenta->emitida;
         $FacturaVenta->save();
-
-        $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->where('num_equivalente', 0)->where('tipo',2)->where('preferida', 1)->first();
 
         $infoEmpresa = Auth::user()->empresaObj;
         $data['Empresa'] = $infoEmpresa->toArray();
