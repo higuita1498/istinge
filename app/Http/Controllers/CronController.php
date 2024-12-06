@@ -147,7 +147,7 @@ class CronController extends Controller
                     $m=$m+1;
                 }
 
-                if($m == 12){
+                if($m == 12 && $grupo_corte->fecha_factura > $grupo_corte->fecha_pago){
                     $y = $y+1;
                     $m = 01;
                 }
