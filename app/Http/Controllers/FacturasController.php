@@ -604,6 +604,7 @@ class FacturasController extends Controller{
             'c.nombre as nombrecliente',
             'c.apellido1 as ape1cliente',
             'c.apellido2 as ape2cliente',
+            DB::raw('c.direccion as direccioncliente'),
             'factura.tipo',
             'factura.cliente',
             'factura.emitida',
