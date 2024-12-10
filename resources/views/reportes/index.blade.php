@@ -21,6 +21,7 @@
                     <li><a href="{{route('reportes.facturasEstandar')}}">Reporte de Facturas Estándar</a></li>
                     <li><a href="{{route('reportes.notasCredito')}}">Reporte de Notas de Crédito</a></li>
                     <li><a href="{{route('reportes.transacciones')}}" >Reporte de Transacciones</a></li>
+                    <li><a href="{{route('reportes.saldosFavor')}}" >Reporte de Saldos a favor</a></li>
                     <li><a href="{{route('reportes.cajas')}}" >Reporte de Cajas</a></li>
                     <li><a href="{{route('reportes.instalacion')}}" >Reporte de Contratos con Instalación</a></li>
                     <li><a href="{{route('reportes.radicados')}}" >Reporte de Radicados</a></li>

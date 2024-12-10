@@ -2662,6 +2662,26 @@ class ReportesController extends Controller
         return view('reportes.facturasEstandar.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example','grupos_corte'));
     }
 
+    public function saldosFavor(Request $request){
+        $this->getAllPermissions(Auth::user()->id);
+        $total = 0;
+
+        $saldos_favor = Contacto::where("saldo_favor",">",0);
+
+
+
+        $saldos_favor= $saldos_favor->OrderBy("nit", "asc")->get();
+
+        foreach ($saldos_favor as $saldo){
+            $total += $saldo->saldo_favor;
+        }
+
+        $saldos_favor = $this->paginate($saldos_favor, 15, $request->page, $request);
+
+        return view('reportes.saldofavor.index')->with(compact('saldos_favor',
+            'total'));
+    }
+
     public function notasCredito(Request $request){
         $this->getAllPermissions(Auth::user()->id);
         DB::enableQueryLog();

@@ -502,6 +502,100 @@ class ExportarReportesController extends Controller
         exit;
     }
 
+    public function saldosFavor(Request $request){
+        //Acá se obtiene la información a impimir
+        DB::enableQueryLog();
+
+
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte Saldos a Favor";
+
+        $titulosColumnas = array('Documento', 'Cliente', 'Saldo a Favor');
+        $letras= array('A', 'B', 'C',);
+        $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
+        ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
+        ->setTitle("Reporte de Facturas Estandar")
+            ->setSubject("Reporte de Facturas Estandar")
+            ->setDescription("Reporte de Facturas Estandar")
+            ->setKeywords("Reporte de Facturas Estandar")
+            ->setCategory("Reporte excel"); //Categorias
+        // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->mergeCells('A1:C1');
+        // Se agregan los titulos del reporte
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1',$tituloReporte);
+        $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        ));
+        $objPHPExcel->getActiveSheet()->getStyle('A1:C1')->applyFromArray($estilo);
+        $estilo =array('fill' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'd08f50')));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:C3')->applyFromArray($estilo);
+
+
+        for ($i=0; $i <count($titulosColumnas) ; $i++) {
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
+        }
+
+        $saldos_favor = Contacto::where("saldo_favor",">",0);
+
+
+        $saldos_favor= $saldos_favor->OrderBy("nit", "asc")->get();
+
+
+        // Aquí se escribe en el archivo
+        $i=4;
+        $total = 0;
+        $moneda = Auth::user()->empresa()->moneda;
+        foreach ($saldos_favor as $saldo) {
+            $total += $saldo->saldo_favor;
+            array('Documento', 'Cliente', 'Saldo a Favor');
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue($letras[0].$i, $saldo->nit)
+                ->setCellValue($letras[1].$i, $saldo->nombre.' '.$saldo->apellidos())
+                ->setCellValue($letras[2].$i, $saldo->saldo_favor);
+            $i++;
+        }
+
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue($letras[1].$i, "TOTAL: ")
+            ->setCellValue($letras[2].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
+
+        $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
+        $objPHPExcel->getActiveSheet()->getStyle('A3:C'.$i)->applyFromArray($estilo);
+
+
+        for($i = 'A'; $i <= $letras[2]; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        // Se asigna el nombre a la hoja
+        $objPHPExcel->getActiveSheet()->setTitle('Facturas Estandar');
+
+        // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Inmovilizar paneles
+        $objPHPExcel->getActiveSheet(0)->freezePane('A2');
+        $objPHPExcel->getActiveSheet(0)->freezePaneByColumnAndRow(0,4);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header("Pragma: no-cache");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte_Facturas_Estandar.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
 	public function ventas(Request $request){
         //Acá se obtiene la información a impimir
         DB::enableQueryLog();
