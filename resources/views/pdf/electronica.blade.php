@@ -969,7 +969,7 @@
             @endif
         </div>
         <div style="width: 40%; display: inline-block; text-align:left;">
-            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/logo_integra.png)}}">
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/logo_integra.png')}}">
         </div>
     </div>
 @endsection
