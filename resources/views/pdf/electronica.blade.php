@@ -427,7 +427,7 @@
                         @endif
                     </div>
                 </td>
-                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. #{{$factura->codigo}}</td>
+                <td style="border:1px solid {{$empresa->color}};text-align:center;border-radius:5px;width:18%;">No. {{$factura->codigo}}</td>
                 </tr>
             </tbody>
         </table>
@@ -967,6 +967,9 @@
             @if(isset($codqr))
             <img style="width:75%; height:auto; position:absolute; bottom:20px" src="https://gestoru.com/images/cadena_oficial.png">
             @endif
+        </div>
+        <div style="width: 40%; display: inline-block; text-align:left;">
+            <img style="width:75%; height:auto; position:absolute; bottom:20px" src="{{asset('images/logo_integra.png)}}">
         </div>
     </div>
 @endsection
