@@ -117,7 +117,7 @@
 						@if($ingreso->adjunto_pago)
 						<tr>
 							<th>Soporte de Pago</th>
-							<td><a href="{{asset('../adjuntos/documentos/'.$ingreso->adjunto_pago)}}" target="_blank">Ver Archivo</a></td>
+							<td><a href="{{asset('./adjuntos/documentos/'.$ingreso->adjunto_pago)}}" target="_blank">Ver Archivo</a></td>
 						</tr>
 						@endif
 						@if($ingreso->created_by)
