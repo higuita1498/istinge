@@ -786,8 +786,6 @@
                               </span>
                           </div>
 
-
-
                             <div class="col-md-4 form-group">
                                 <div @if($contrato->tipo_nosuspension == 0) class="cls-nosuspension d-none" @endif>
                                 <label class="control-label">Fecha desde no suspensión</label>
@@ -801,6 +799,30 @@
                                     <input type="date" class="form-control"  id="fecha_hasta_nosuspension" value="{{$contrato->fecha_hasta_nosuspension}}" name="fecha_hasta_nosuspension">
                                 </div>
                             </div>
+
+                            <div class="form-group col-md-4">
+                                <label class="control-label">¿Crear factura el primer mes del contrato?  <a><i data-tippy-content="Elige si deseas que se genere factura al usuario el primer mes con el contrato" class="icono far fa-question-circle"></i></a></label>
+                              <div class="row">
+                                  <div class="col-sm-6">
+                                  <div class="form-radio">
+                                      <label class="form-check-label">
+                                      <input type="radio" class="form-check-input" name="tipo_suspension_no" id="tipo_suspension_no1" value="1" {{$contrato->fact_primer_mes == 1 ? 'checked' : ''}}> Si
+                                      <i class="input-helper"></i><i class="input-helper"></i></label>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6">
+                                  <div class="form-radio">
+                                      <label class="form-check-label">
+                                      <input type="radio" class="form-check-input" name="tipo_suspension_no" id="tipo_suspension_no2" value="0" {{$contrato->fact_primer_mes == 0 ? 'checked' : ''}}> No
+                                      <i class="input-helper"></i><i class="input-helper"></i></label>
+                                  </div>
+                              </div>
+                              </div>
+                              <span class="help-block error">
+                                  <strong></strong>
+                              </span>
+                            </div>
+
 
                             <div class="form-group col-md-12">
                                 <label class="control-label">Observaciones</label>
