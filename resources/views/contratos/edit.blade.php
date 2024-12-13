@@ -806,14 +806,14 @@
                                   <div class="col-sm-6">
                                   <div class="form-radio">
                                       <label class="form-check-label">
-                                      <input type="radio" class="form-check-input" name="tipo_suspension_no" id="tipo_suspension_no1" value="1" {{$contrato->fact_primer_mes == 1 ? 'checked' : ''}}> Si
+                                      <input type="radio" class="form-check-input" name="fact_primer_mes" value="1" {{$contrato->fact_primer_mes == 1 ? 'checked' : ''}}> Si
                                       <i class="input-helper"></i><i class="input-helper"></i></label>
                                   </div>
                               </div>
                               <div class="col-sm-6">
                                   <div class="form-radio">
                                       <label class="form-check-label">
-                                      <input type="radio" class="form-check-input" name="tipo_suspension_no" id="tipo_suspension_no2" value="0" {{$contrato->fact_primer_mes == 0 ? 'checked' : ''}}> No
+                                      <input type="radio" class="form-check-input" name="fact_primer_mes" value="0" {{$contrato->fact_primer_mes == 0 ? 'checked' : ''}}> No
                                       <i class="input-helper"></i><i class="input-helper"></i></label>
                                   </div>
                               </div>

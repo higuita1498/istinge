@@ -118,14 +118,14 @@ class CronController extends Controller
                 ->select('contracts.id', 'contracts.iva_factura', 'contracts.public_id', 'c.id as cliente',
                 'contracts.state', 'contracts.fecha_corte', 'contracts.fecha_suspension', 'contracts.facturacion',
                 'contracts.plan_id', 'contracts.descuento', 'c.nombre', 'c.nit', 'c.celular', 'c.telefono1',
-                'c.saldo_favor',
+                'c.saldo_favor','contracts.created_at','contracts.fact_primer_mes',
                 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv', 'contracts.factura_individual','contracts.nro')
                 ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
                 // whereIn('contracts.id',[1944])->
                 // where('c.saldo_favor','>',80000)->//rc
                 where('contracts.state','enabled')
-                // ->limit(1)->skip(7)
+                // ->limit(2)
                 ->get();
 
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
@@ -177,6 +177,29 @@ class CronController extends Controller
                 //Fin calculo fecha suspension
 
                 foreach ($contratos as $contrato) {
+
+                    //validacion primer factura del contrato
+                    $creacion_contrato = Carbon::parse($contrato->created_at);
+                    $dia_creacion_contrato = $creacion_contrato->day;
+                    $dia_creacion_factura = $grupo_corte->fecha_factura;
+
+                    // Determinar el mes y año para la primera factura
+                    if ($dia_creacion_contrato <= $dia_creacion_factura) {
+                        // Si el contrato se creó antes o el mismo día del corte, la factura es en el mismo mes
+                        $primer_fecha_factura = $creacion_contrato->copy()->day($dia_creacion_factura);
+                        $primer_fecha_factura = Carbon::parse($primer_fecha_factura)->format("Y-m-d");
+                    } else {
+                        // Si el contrato se creó después del corte, la factura es en el siguiente mes
+                        $primer_fecha_factura = $creacion_contrato->copy()->addMonth()->day($dia_creacion_factura);
+                        $primer_fecha_factura = Carbon::parse($primer_fecha_factura)->format("Y-m-d");
+                    }
+
+                    if(isset($primer_fecha_factura) &&
+                    Carbon::parse($fecha)->format("Y-m-d") == $primer_fecha_factura &&
+                    $contrato->fact_primer_mes == 0){
+                        continue;
+                    }
+                    //Fin validacion primer factura del contrato
 
                     $ultimaFactura = DB::table('facturas_contratos')
                     ->join('factura', 'facturas_contratos.factura_id', '=', 'factura.id')
