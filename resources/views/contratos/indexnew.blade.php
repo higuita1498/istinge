@@ -207,7 +207,7 @@
                         </div>
                         @if(isset($etiquetas))
                             <div class="col-md-3 pl-1 pt-1">
-                                <select title="Etiqueta" class="form-control rounded selectpicker" id="etiqueta" data-size="5" data-live-search="true">
+                                <select title="Etiqueta" class="form-control rounded selectpicker" name="etiqueta" id="etiqueta" data-size="5" data-live-search="true">
                                     @foreach($etiquetas as $etiqueta)
                                         <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
                                     @endforeach
