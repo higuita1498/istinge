@@ -2515,6 +2515,11 @@ class ContratosController extends Controller
                 $query->orWhere('contracts.nro', 'like', "%{$request->nro}%");
             });
         }
+        if($request->etiqueta != null){
+            $contratos->where(function ($query) use ($request) {
+                $query->orWhere('contracts.etiqueta_id', $request->etiqueta);
+            });
+        }
 
         $contratos = $contratos->where('contracts.status', 1)->get();
 
