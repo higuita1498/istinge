@@ -81,7 +81,7 @@
 			}, 10000);
 		</script>
 	@endif
-	
+
 	@if(Session::has('danger'))
 		<div class="alert alert-danger" >
 			{{Session::get('danger')}}
@@ -94,7 +94,7 @@
 			}, 5000);
 		</script>
 	@endif
-	
+
 	<div class="row card-description">
 		@if($contrato->ip && $contrato->plan_id)
 		<div class="col-md-12">
@@ -391,6 +391,10 @@
 							</td>
 						</tr>
 						@endif
+                        <tr>
+							<th>Contrato Registrado el</th>
+							<td>{{date('d-m-Y g:i:s A', strtotime($contrato->created_at))}}</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

@@ -2831,42 +2831,66 @@ class CronController extends Controller
         // return "ok productos actualizados" . $cont;
         //END SOPORTE AGREGAR ITEMS A FACTURAS SIN ITEMS MASIVAMENTE  POR UN GRUPO DE CORTE//
 
-        /// ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
-        $contratos = Contrato::where('status',1)->get();
-        $eli = 0;
-        foreach($contratos as $contrato){
+       /// ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
+       return;
+       $contratos = Contrato::where('status',1)->get();
+       $eli = 0;
+       foreach($contratos as $contrato){
 
-            $mes = 12;
-            $year = 2024;
+           $mes = 12;
+           $year = 2024;
+           $dia = 16;
+
+           $query_facturas = Factura::leftJoin('facturas_contratos as fc','fc.factura_id','factura.id')
+            ->leftJoin('contracts as cs', function ($join) {
+                   $join->on('cs.nro', '=', 'fc.contrato_nro')
+                        ->orOn('cs.id', '=', 'factura.contrato_id');
+               })
+           ->where('fc.contrato_nro',$contrato->nro)
+           ->whereYear('factura.fecha', $year)
+           ->whereMonth('factura.fecha', $mes)
+           ->whereDay('factura.fecha', $dia)
+           ->orWhere('factura.contrato_id',$contrato->id)
+           ->whereYear('factura.fecha', $year)
+           ->whereMonth('factura.fecha', $mes)
+           ->whereDay('factura.fecha', $dia)
+           ->select('factura.*')
+           ->groupBy('factura.codigo');
 
 
-            $facturas = Factura::where('cliente',$contrato->client_id)
-             ->whereYear('factura.fecha', $year) // Filtrar por el año
-            ->whereMonth('factura.fecha', $mes) // Filtrar por el mes
-            ->get();
+           $facturas = $query_facturas->get();
 
-                if($facturas->count() > 1){
-                    foreach($facturas as $f){
+               if($facturas->count() > 1){
 
-                        // if(DB::table('facturas_contratos as fc')->where('factura_id',$f->id)->count() == 0){
-                                // $eliminadas = 0;
-                                if($f->pagado() == 0){
+                   foreach($facturas as $f){
 
-                                $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
-                                    DB::table('crm')->where('factura',$f->id)->delete();
-                                        $eli++;
-                                        $f->delete();
-                                }
-                        // }
-                    }
-                }
+                       if($f->pagado() == 0){
 
-                // return "ok";
-        }
+                       $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+                       DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
+                           DB::table('crm')->where('factura',$f->id)->delete();
+                               $eli++;
+                               $f->delete();
+                       }else{
+                           $facturas = $query_facturas->get();
 
-        return "se eliminaron " . $eli;
+                               if($facturas->count() > 1){
+                                   DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
+                                    $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+                                   DB::table('crm')->where('factura',$f->id)->delete();
+                                           $eli++;
+                                           $f->delete();
+                               }
+                       }
+                   }
+               }
 
-        /// FIN ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
+               // return "ok";
+       }
+
+       return "se eliminaron " . $eli;
+
+       /// FIN ELIMINAR FACTURAS REPETIDAS EN UN MISMO MES PARA UN MISMO CONTRATO QUE NO ESTEN PAGAS ///
 
     }
 

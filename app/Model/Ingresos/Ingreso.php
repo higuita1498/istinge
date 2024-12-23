@@ -76,7 +76,9 @@ class Ingreso extends Model
             $ingresos=IngresosFactura::where('ingreso', $this->id)->get();
             $Factura='';
             foreach ($ingresos as $ingreso) {
+                if($ingreso->factura()){
                 $Factura.=" ".$ingreso->factura()->codigo.",";
+                }
             }
             return $pdf.'Factura de Venta:'.substr($Factura, 0, -1);
         }
