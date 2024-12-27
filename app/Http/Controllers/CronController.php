@@ -95,6 +95,8 @@ class CronController extends Controller
     public static function CrearFactura(){
 
         ini_set('max_execution_time', 500);
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
+
         $empresa = Empresa::find(1);
 
         if($empresa->factura_auto == 1){
@@ -428,7 +430,25 @@ class CronController extends Controller
                                             $bulksms = ''.trim($fullname).'. '.$empresa->nombre.' le informa que su factura de servicio de internet. Tiene como fecha de vencimiento: '.$date->format('d-m-Y').' Total a pagar '.$factura->totalAPI($empresa->id)->total;
                                             $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                                         }else{
-                                            $bulksms = 'Hola, '.$empresa->nombre.' le informa que su factura de internet ha sido generada. '.$empresa->slogan;
+                                            // Array con los nombres de los meses en español
+                                            $meses = [
+                                                1 => 'enero',
+                                                2 => 'febrero',
+                                                3 => 'marzo',
+                                                4 => 'abril',
+                                                5 => 'mayo',
+                                                6 => 'junio',
+                                                7 => 'julio',
+                                                8 => 'agosto',
+                                                9 => 'septiembre',
+                                                10 => 'octubre',
+                                                11 => 'noviembre',
+                                                12 => 'diciembre',
+                                            ];
+                                            $numeroMes = date('n', strtotime($factura->fecha));
+                                            $mes = ucfirst($meses[$numeroMes]);
+
+                                            $bulksms = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de ' .$factura->total()->total .  ' en el contrato nro ' . $contrato->nro;
                                             $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                                         }
 
