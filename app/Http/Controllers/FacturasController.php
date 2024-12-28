@@ -3118,6 +3118,8 @@ class FacturasController extends Controller{
         $contrato = $factura->contratos()->first();
         if($contrato){
             $mensaje = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de $' .$factura->parsear($factura->total()->total) .  ' en el contrato nro ' . $contrato->nro;
+        }else{
+            $mensaje = $empresa->nombre." Le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
         }
 
         $numero = str_replace('+','',$factura->cliente()->celular);
