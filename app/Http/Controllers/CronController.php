@@ -448,7 +448,7 @@ class CronController extends Controller
                                             $numeroMes = date('n', strtotime($factura->fecha));
                                             $mes = ucfirst($meses[$numeroMes]);
 
-                                            $bulksms = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de ' .$factura->total()->total .  ' en el contrato nro ' . $contrato->nro;
+                                            $bulksms = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de ' .$factura->total()->total .  ' en el contrato nro ' . $contrato->nro . ' . Cuenta para pago en Coopenessa convenio Telepon ' . $contrato->contrato_nro;
                                             $bulk .= '{"numero": "57'.$numero.'", "sms": "'.$bulksms.'"},';
                                         }
 

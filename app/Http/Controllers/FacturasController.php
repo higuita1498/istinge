@@ -3116,7 +3116,7 @@ class FacturasController extends Controller{
         $contrato = null;
 
         $contrato = $factura->contratos()->first();
-        if($contrato){
+        if($contrato && $empresa->nit == "901346829"){
             $mensaje = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de $' .$factura->parsear($factura->total()->total) .  ' en el contrato nro ' . $contrato->contrato_nro . ' . Cuenta para pago en Coopenessa convenio Telepon ' . $contrato->contrato_nro;
         }else{
             $mensaje = $empresa->nombre." Le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
