@@ -3094,7 +3094,31 @@ class FacturasController extends Controller{
 
         $factura = Factura::find($id);
         $hora = date('G');
-        $mensaje = $empresa->nombre." Le informa que su factura ha sido generada bajo el Nro. ".$factura->codigo.", por un monto de $".$factura->parsear($factura->total()->total);
+
+         // Array con los nombres de los meses en español
+         $meses = [
+            1 => 'enero',
+            2 => 'febrero',
+            3 => 'marzo',
+            4 => 'abril',
+            5 => 'mayo',
+            6 => 'junio',
+            7 => 'julio',
+            8 => 'agosto',
+            9 => 'septiembre',
+            10 => 'octubre',
+            11 => 'noviembre',
+            12 => 'diciembre',
+        ];
+        $numeroMes = date('n', strtotime($factura->fecha));
+        $mes = ucfirst($meses[$numeroMes]);
+
+        $contrato = null;
+
+        $contrato = $factura->contratos()->first();
+        if($contrato){
+            $mensaje = $empresa->nombre.' informa, su factura del mes de ' .$mes.  ' fue generada por un total de $' .$factura->parsear($factura->total()->total) .  ' en el contrato nro ' . $contrato->nro;
+        }
 
         $numero = str_replace('+','',$factura->cliente()->celular);
         $numero = str_replace(' ','',$numero);
