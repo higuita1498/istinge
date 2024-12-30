@@ -94,12 +94,14 @@
 								@endforeach
 							</select>
 						</div>
-						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Creación" id="creacion" name="creacion" class="form-control rounded creacion" autocomplete="off">
-						</div>
-						<div class="col-md-2 pl-1 pt-1">
-							<input type="text" placeholder="Vencimiento" id="vencimiento" name="vencimiento" class="form-control rounded vencimiento" autocomplete="off">
-						</div>
+                        <div class="col-md-2 pl-1 pt-1 position-relative">
+                            <input type="date" id="creacion" name="creacion" class="form-control rounded" autocomplete="off">
+                            <label for="creacion" class="placeholder">Creación</label>
+                        </div>
+                        <div class="col-md-2 pl-1 pt-1 position-relative">
+                            <input type="date" id="vencimiento" name="vencimiento" class="form-control rounded" autocomplete="off">
+                            <label for="vencimiento" class="placeholder">Vencimiento</label>
+                        </div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select title="Servidor" class="form-control rounded selectpicker" id="servidor">
 								@foreach ($servidores as $servidor)
@@ -190,6 +192,26 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('style')
+<style>
+    .placeholder {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+        transition: all 0.2s ease-in-out;
+    }
+    input:focus + .placeholder,
+    input:not(:placeholder-shown) + .placeholder {
+        top: 5px;
+        font-size: 12px;
+        color: #495057;
+    }
+</style>
 @endsection
 
 @section('scripts')
