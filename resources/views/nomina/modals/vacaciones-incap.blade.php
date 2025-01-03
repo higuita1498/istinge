@@ -338,7 +338,19 @@
 
 
             if (tipo == 'general') {
-                return (salarioPromedio * dias / 30) * (66.67 / 100);
+                const salarioPromedioDiario = salarioPromedio / 30; // Calcula el salario promedio diario
+                const valorIncapacidadDiaria = salarioPromedioDiario * (66.67 / 100); // Calcula el 66.67% del salario diario
+
+                // Salario mínimo diario legal vigente
+                const salarioMinimoDiario = 1300000 / 30; // Puedes ajustar el salario mínimo mensual aquí
+
+                // Ajustar al salario mínimo diario legal vigente si aplica
+                const valorDiarioAjustado = Math.max(valorIncapacidadDiaria, salarioMinimoDiario);
+
+                // Calcular el total de la incapacidad
+                const totalIncapacidad = valorDiarioAjustado * dias;
+
+                return totalIncapacidad;
             } else {
                 return (salarioPromedio * dias / 30);
             }

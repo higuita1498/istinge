@@ -300,17 +300,23 @@ class NominaPeriodos extends Model
             (si no tiene dias incapacitados no hay nada en fecha inicio y fecha fin)
             (se le suma +1 para que cuente el mismo dia que se incapacitó)
         <<< */
+
+        //nuevo 2024 sunmamos la incapcidad general para calcular el ibc porcentajes y total
+        $incapacidad_general = 0;
         foreach($incapacidades as $incapacidad){
             $fechaInicio = new Carbon($incapacidad->fecha_inicio);
             $fechaFin = new Carbon($incapacidad->fecha_fin);
 
             $diasIncapacitado += self::diffDaysAbsolute($fechaInicio, $fechaFin);
+
+            if($incapacidad->nombre == "INCAPACIDAD GENERAL"){
+                $incapacidad_general+=$incapacidad->valor_categoria;
+            }
         }
 
         if($diasIncapacitado){
             $diasIncapacitado++;
         }
-
 
         if($ibcSeguridadSocial['incapacidades'] > 0){
             $diasValidosTrabajados = $this->diasTrabajados() - $diasIncapacitado;
@@ -338,7 +344,8 @@ class NominaPeriodos extends Model
         }
 
         /* >>> Cálculo final del ibc seguridad social <<< */
-        $ibcSeguridadSocial['total'] = $subtotal = $licenciaPaga + $ibcSeguridadSocial['vacaciones'] + ($ibcSeguridadSocial['salario'] - $ibcSeguridadSocial['vacaciones']) + $ibcSeguridadSocial['ingresosyExtras'];
+        $ibcSeguridadSocial['total'] = $subtotal = $licenciaPaga + $ibcSeguridadSocial['vacaciones'] + ($ibcSeguridadSocial['salario'] - $ibcSeguridadSocial['vacaciones']) +
+        $ibcSeguridadSocial['ingresosyExtras'] + $incapacidad_general;
 
         /* >>> Obtenemos los valores de salud y pension configurados desde el modulo de calculos fijos. <<< */
         $empresa = Auth::user()->empresa;
@@ -566,8 +573,9 @@ class NominaPeriodos extends Model
 
         if($totalidad['ibcSeguridadSocial']['incapacidades'] > 0){
             $diasValidosTrabajados = $totalidad['diasTrabajados']['diasPeriodo'] - $diasIncapacitado;
+            // dd($totalidad['ibcSeguridadSocial']['salario'],$this->pago_empleado * ($totalidad['diasTrabajados']['diasPeriodo'] - $diasValidosTrabajados) / 30);
             $totalidad['ibcSeguridadSocial']['salario'] -= $this->pago_empleado * ($totalidad['diasTrabajados']['diasPeriodo'] - $diasValidosTrabajados) / 30;
-            $totalidad['ibcSeguridadSocial']['vacaciones'] += $totalidad['ibcSeguridadSocial']['incapacidades'];
+            // $totalidad['ibcSeguridadSocial']['vacaciones'] += $totalidad['ibcSeguridadSocial']['incapacidades'];
         }
 
         $totalidad['ibcSeguridadSocial']['salarioParcial'] = $diasValidosTrabajados * $totalidad['salarioSubsidio']['valorDia'];
@@ -605,8 +613,9 @@ class NominaPeriodos extends Model
         }
 
         $totalidad['ibcSeguridadSocial']['total'] = $subtotal = $totalidad['pago']['licencias'] + $totalidad['ibcSeguridadSocial']['vacaciones'] + $totalDeducidoMenosVacaciones + $totalidad['ibcSeguridadSocial']['ingresosyExtras'];
-        // dd($totalidad['pago']['licencias'],$totalidad['ibcSeguridadSocial']['vacaciones'],($totalidad['pagoContratado']['deducido'] - $totalidad['ibcSeguridadSocial']['vacaciones']),$totalidad['ibcSeguridadSocial']['ingresosyExtras']);
+
         $totalidad['retenciones']['salud'] = floatval($calculosFijosCollect->where('tipo', 'reten_salud')->first()->valor ?? 0);
+
         $totalidad['retenciones']['pension'] = floatval($calculosFijosCollect->where('tipo', 'reten_pension')->first()->valor ?? 0);
         $totalidad['retenciones']['total'] += $totalidad['retenciones']['salud'] + $totalidad['retenciones']['pension'];
 
@@ -618,6 +627,7 @@ class NominaPeriodos extends Model
             if($totalidad['ibcSeguridadSocial']['total']){
 
                 if($this->nomina->persona->fk_salario_base == 2){
+
                     $totalidad['retenciones']['porcentajeSalud'] =  round($retencionesSalud * 100 / ($totalidad['ibcSeguridadSocial']['total'] * (70 / 100)));
                     $totalidad['retenciones']['porcentajePension'] =  round($retencionesPension * 100 / ($totalidad['ibcSeguridadSocial']['total'] * (70 / 100)));
                 }else{
@@ -631,21 +641,25 @@ class NominaPeriodos extends Model
                 $totalidad['retenciones']['porcentajePension'] = 0;
 
             }
-
         }
 
-
         /*>>> Valor neto pago empleado <<<*/
-        //$subtotal += floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $subtotal += floatval($nominaDetalleUno->where('fk_nomina_cuenta', 3)->where('fk_nomina_cuenta_tipo', 8)->sum('valor_categoria') ?? 0);
         $subtotal += $calculosFijosCollect->where('simbolo', '+')->sum('valor');
         $subtotal -= $calculosFijosCollect->where('simbolo', '-')->sum('valor');
-        //$subtotal -= $deducciones = $totalidad['deducciones']['total'] = floatval(NominaDetalleUno::select(DB::raw("SUM(valor_categoria) as valor_total"))->where('fk_nominaperiodo', $this->id)->where('fk_nomina_cuenta', 4)->groupBy('fk_nominaperiodo')->first()->valor_total ?? 0);
         $subtotal -= $deducciones = $totalidad['deducciones']['total'] = floatval($nominaDetalleUno->where('fk_nomina_cuenta', 4)->sum('valor_categoria') ?? 0);
-        //$subtotal -= $totalidad['ibcSeguridadSocial']['vacaciones'];
 
-        $totalidad['pago']['total'] = $subtotal;
         $totalidad['pago']['salario'] = $totalidad['ibcSeguridadSocial']['salario'];
+
+        $totalidad['ibcSeguridadSocial']['total_ibcseguridad_social'] = $totalidad['ibcSeguridadSocial']['vacaciones'] +
+        $totalidad['ibcSeguridadSocial']['ingresosyExtras'] + $totalidad['ibcSeguridadSocial']['incapacidades'] +
+        $totalidad['ibcSeguridadSocial']['licencias'];
+
+        // dd($totalidad);
+        $totalidad['pago']['total'] = $totalidad['pago']['salario']  +
+        $totalidad['salarioSubsidio']['subsidioTransporte'] +
+        $totalidad['ibcSeguridadSocial']['total_ibcseguridad_social'] -
+        $totalidad['retenciones']['total'];
 
         if($totalidad['pago']['salario'] < 0){
             $totalidad['pago']['salario'] = 0;
@@ -724,10 +738,10 @@ class NominaPeriodos extends Model
                 // Suma los días calculados
                 $dias[$detalle->nombre] += $diasCalculados;
 
-                // Si no son vacaciones, suma 1 día adicional
-                if ($detalle->nombre !== 'VACACIONES') {
-                    $dias[$detalle->nombre] += 1;
-                }
+                // // Si no son vacaciones, suma 1 día adicional
+                // if ($detalle->nombre !== 'VACACIONES') {
+                //     $dias[$detalle->nombre] += 1;
+                // }
             }
         }
 
@@ -823,6 +837,5 @@ class NominaPeriodos extends Model
             // - $calculos_nomina_periodo['pago']['retencionesDeducciones'];
         }
     }
-
 
 }

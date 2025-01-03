@@ -913,9 +913,15 @@ public function forma_pago()
         foreach($facturasVencidas as $vencida){
             //** Validacion para nada mas sumar las facturas del mismo contrato
             if($contrato_factura_actual){
+
               $contrato_otra_factura =   DB::table('facturas_contratos')->where('factura_id',$vencida->id)->first();
               if($contrato_otra_factura){
                   if($contrato_otra_factura->contrato_nro == $contrato_factura_actual->contrato_nro){
+                      $saldoMesAnterior+=$vencida->porpagar();
+                  }
+              }elseif($vencida->contrato_id != null){
+                  $contrato_otra_factura = Contrato::Find($vencida->contrato_id);
+                  if($contrato_otra_factura->nro == $contrato_factura_actual->contrato_nro){
                       $saldoMesAnterior+=$vencida->porpagar();
                   }
               }
@@ -1250,7 +1256,7 @@ public function forma_pago()
     }
 
     public function periodoCobradoTexto($tirilla=false){
-
+        Carbon::setLocale('es');
         $grupo = Contrato::join('grupos_corte as gc', 'gc.id', '=', 'contracts.grupo_corte')->
         where('contracts.id',$this->contrato_id)
         ->select('gc.*')->first();
@@ -1358,8 +1364,8 @@ public function forma_pago()
             //se comenta por que etsaba creando conflicto
 
             /* Validacion de mes anticipado o mes vencido */
-            $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
-            $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();
+            $finCorte = Carbon::parse($finCorte)->translatedFormat('d F Y'); // Ejemplo: 02 enero 2025
+            $inicioCorte = Carbon::parse($inicioCorte)->translatedFormat('d F Y');
 
             $mensaje = ($tirilla) ? $inicioCorte." - ".$finCorte : "Periodo cobrado del " . $inicioCorte . " Al " . $finCorte;
 
@@ -1553,6 +1559,7 @@ public function forma_pago()
             }else{
                 //Si no se trata de la primer factura del contrato entonces hacemos el calculo con el grupo de corte normal (periodo completo)
                 $diasCobrados = $fechaInicio->diffInDays($fechaFin);
+                $diasCobrados++;
                 if($diasCobrados == 0){return 30;}
                 if($diasCobrados >= 27){$diasCobrados=30;}
                 $diasCobrados=$diasCobrados;

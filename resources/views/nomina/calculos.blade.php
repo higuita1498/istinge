@@ -158,11 +158,8 @@
                                     </tr>
                                     <tr>
                                         <td>Vacaciones, Incapacidades y Licencias</td>
-                                        @if(isset($totalidad['pago']['licencias']))
-                                        <td>{{$moneda}} {{$nomina::parsear($totalidad['pago']['vacaciones'] + $totalidad['pago']['licencias'])}}</td>
-                                        @else
-                                        <td>{{$moneda}} {{$nomina::parsear($totalidad['pago']['vacaciones'])}}</td>
-                                        @endif
+
+                                        <td>{{$moneda}} {{$nomina::parsear($totalidad['ibcSeguridadSocial']['total_ibcseguridad_social'])}}</td>
                                     </tr>
                                     <tr>
                                         <td>Ingresos adicionales</td>
@@ -263,7 +260,7 @@
                                     </tr>
                                     <tr>
                                         <td>Vacaciones, Incapacidades y Licencias</td>
-                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['vacaciones'] + (isset($totalidad['pago']['licencias']) ? $totalidad['pago']['licencias'] : 0)) }}</td>
+                                        <td>$ {{ $nomina::parsear($totalidad['ibcSeguridadSocial']['total_ibcseguridad_social'] + (isset($totalidad['pago']['licencias']) ? $totalidad['pago']['licencias'] : 0)) }}</td>
                                     </tr>
                                     <tr style="background: #E0E0E0; font-weight: bold;">
                                         <td>IBC Seguridad Social</td>
