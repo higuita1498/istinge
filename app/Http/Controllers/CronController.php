@@ -206,12 +206,13 @@ class CronController extends Controller
                     $ultimaFactura = DB::table('facturas_contratos')
                     ->join('factura', 'facturas_contratos.factura_id', '=', 'factura.id')
                     ->where('facturas_contratos.contrato_nro', $contrato->nro)
+                    ->select('factura.*')
                     ->orderBy('factura.fecha', 'desc')
                     ->first();
 
                     $mesUltimaFactura = false;
                     if($ultimaFactura){
-                        $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->fecha));
+                        $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->created_at));
                         $mesActualFactura = date('Y-m',strtotime($fecha));
                     }
 
@@ -2666,115 +2667,75 @@ class CronController extends Controller
 
     public function deleteFactura(){
 
-         //Envio de facturas solo por correo por fecha unica.
+        //Envio de facturas solo por correo por fecha unica.
         //  $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2)."15", - 2);
         //  $this->sendInvoices($fechaInvoice);
         //  return "ok";
 
 
         // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
-
-        $contratos = DB::table('contracts as cont')
-        ->where('state', 'disabled')
-        ->join('facturas_contratos', 'cont.nro', '=', 'facturas_contratos.contrato_nro')
-        ->leftJoin('factura as fac', function ($join) {
-            $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = cont.nro ORDER BY id DESC LIMIT 1)'));
-        })
-        ->where(function ($query) {
-            $query->whereNull('fac.estatus')->orWhere('fac.estatus', 0);
-        })
-        ->select('cont.*')
-        ->distinct()
-        ->get();
-
-        $contratos = Contrato::where('state','disabled')->get();
-        $i = 0;
-        foreach($contratos as $contrato){
-
-            $facturaContratos = DB::table('facturas_contratos')
-                ->where('contrato_nro',$contrato->nro)->orderBy('id','DESC')->first();
-
-            if($facturaContratos){
-                $ultFactura = Factura::Find($facturaContratos->factura_id);
-                if($ultFactura->estatus == 0){
-                    $i = $i+1;
-                    echo $contrato->nro . "<br>";
-                    // return $contrato;
-                    // return $ultFactura;
-                }
-            }
-
-
-        }
-
-        return "Deshabilitaods mal hay: " . $i;
-        // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
-
-        //--------- enviar facturas por wpp segun una fecha ------- ///
-
-            return $facturas = Factura::
-            join('contracts as c','c.id','=','factura.contrato_id')
-            ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-12-30")
-            ->where('factura.created_at','lIKE',"%2024-01-02%")
-            ->where('c.grupo_corte',1)
-            // ->where('factura.whatsapp',0)
-            ->select('factura.*')
-            ->get();
-
-        // --------- fin enviar fcturas por wpp segun fecha ---------- //
-
-
-
-        //facturas creadas automaticamente cancelamos sus contratos o eliminamos
-        // $facturas = Factura::
-        // join('contracts as c','c.id','=','factura.contrato_id')
-        // ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2023-05-02")
-        // ->where('c.grupo_corte',2)
-        // ->select('factura.*')
+        // $contratos = DB::table('contracts as cont')
+        // ->where('state', 'disabled')
+        // ->join('facturas_contratos', 'cont.nro', '=', 'facturas_contratos.contrato_nro')
+        // ->leftJoin('factura as fac', function ($join) {
+        //     $join->on('fac.id', '=', DB::raw('(SELECT factura_id FROM facturas_contratos WHERE facturas_contratos.contrato_nro = cont.nro ORDER BY id DESC LIMIT 1)'));
+        // })
+        // ->where(function ($query) {
+        //     $query->whereNull('fac.estatus')->orWhere('fac.estatus', 0);
+        // })
+        // ->select('cont.*')
+        // ->distinct()
         // ->get();
 
-        //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
-        // $contratos = Contrato::where('grupo_corte',1)->where('state','disabled')->where('updated_at','>=','2022-10-06 00:00:00')->where('updated_at','<=','2022-10-06 06:00:00')->get();
+        // $contratos = Contrato::where('state','disabled')->get();
         // $i = 0;
         // foreach($contratos as $contrato){
-        //         $contrato->state = "enabled";
-        //         $contrato->status = 1;
-        //         $contrato->save();
-        //         $i++;
-        // }
-        // return "Se habilitaron " . $i . " contratos";
-        //HABILITAR CONTRATOS DESHABILITADOS ERRONEAMENTE//
 
-        // //habilitar contratos por factura
-        // foreach($facturas as $factura){
-        //     $contrato = Contrato::where('id',$factura->contrato_id)->first();
-        //     if($contrato){
-        //         $contrato->state = "enabled";
-        //         $contrato->status = 1;
-        //         $contrato->save();
+        //     $facturaContratos = DB::table('facturas_contratos')
+        //         ->where('contrato_nro',$contrato->nro)->orderBy('id','DESC')->first();
+
+        //     if($facturaContratos){
+        //         $ultFactura = Factura::Find($facturaContratos->factura_id);
+        //         if($ultFactura->estatus == 0){
+        //             $i = $i+1;
+        //             echo $contrato->nro . "<br>";
+        //             // return $contrato;
+        //             // return $ultFactura;
+        //         }
         //     }
-
         // }
+        // return "Deshabilitaods mal hay: " . $i;
+        // SCRIPT PARA VER CONTRATOS DESHABILUTADOS CON SU ULTIMA FACTURA CERRADA //
 
-        // return "ok contratos habilitados";
+        //--------- Obtener facturas relacionadas con constratos de la manera nueva o antigua por varias validaciones ------- ///
+        return $facturas = Factura::leftJoin('facturas_contratos as fc','fc.factura_id','factura.id')
+        ->leftJoin('contracts as cs', function ($join) {
+            $join->on('cs.nro', '=', 'fc.contrato_nro')
+                    ->orOn('cs.id', '=', 'factura.contrato_id');
+        })
+        ->where('factura.estatus',2)
+        ->where('factura.observaciones','LIKE','%Facturación Automática -%')->where('factura.fecha',"2024-12-01")
+        //   ->where('cs.grupo_corte',2)
+        ->select('factura.id')
+        ->get();
 
         $eliminadas = 0;
         foreach($facturas as $f){
 
             if($f->pagado() == 0){
-            DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
-            $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
-        DB::table('crm')->where('factura',$f->id)->delete();
+                DB::table('facturas_contratos')->where('factura_id',$f->id)->delete();
+                $itemsFactura = ItemsFactura::where('factura',$f->id)->delete();
+                DB::table('crm')->where('factura',$f->id)->delete();
 
-            //Si queremos eliminar ingresos tambien:
-            $if = DB::table('ingresos_factura')->where('factura',$f->id)->first();
-            if($if){
-                DB::table('ingresos')->where('id',$if->ingreso)->delete();
-                DB::table('ingresos_factura')->where('factura',$f->id)->delete();
-            }
-            //Si queremos eliminar ingresos tambien
-            $eliminadas++;
-            $f->delete();
+                //Si queremos eliminar ingresos tambien si no comentar linea:
+                // $if = DB::table('ingresos_factura')->where('factura',$f->id)->first();
+                // if($if){
+                //     DB::table('ingresos')->where('id',$if->ingreso)->delete();
+                //     DB::table('ingresos_factura')->where('factura',$f->id)->delete();
+                // }
+
+                $eliminadas++;
+                $f->delete();
             }
         }
 
