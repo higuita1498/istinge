@@ -462,6 +462,111 @@
                         </div>
                     </div>
 
+                     <!-- NOTIFICACIONES -->
+                     <input type="hidden" name="nro_notificacionesP" id="nro_notificacionesP" value="0">
+                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                         <source src="{{asset('images/alerta.mp3')}}">
+                     </audio>
+                     <div class="modal fade" id="modalNotificacionP" role="dialog">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header p-0">
+                                     <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body" id="modal-bodyP">
+
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- NOTIFICACIONES -->
+                     <input type="hidden" name="nro_notificacionesW" id="nro_notificacionesW" value="0">
+                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                         <source src="{{asset('images/alerta.mp3')}}">
+                     </audio>
+                     <div class="modal fade" id="modalNotificacionW" role="dialog">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header p-0">
+                                     <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body" id="modal-bodyW">
+
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- NOTIFICACIONES -->
+                     <input type="hidden" name="nro_notificacionesR" id="nro_notificacionesR" value="0">
+                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                         <source src="{{asset('images/alerta.mp3')}}">
+                     </audio>
+                     <div class="modal fade" id="modalNotificacionR" role="dialog">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header p-0">
+                                     <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body" id="modal-bodyR">
+
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- NOTIFICACIONES -->
+                     <input type="hidden" name="nro_notificacionesT" id="nro_notificacionesT" value="0">
+                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                         <source src="{{asset('images/alerta.mp3')}}">
+                     </audio>
+                     <div class="modal fade" id="modalNotificacionT" role="dialog">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header p-0">
+                                     <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body" id="modal-bodyT">
+
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- NOTIFICACIONES -->
+                     <input type="hidden" name="nro_notificaciones" id="nro_notificaciones" value="0">
+                     <audio id="play_notificacion" preload="auto" tabindex="0" controls="" class="d-none">
+                         <source src="{{asset('images/alerta.mp3')}}">
+                     </audio>
+                     <div class="modal fade" id="modalNotificacion" role="dialog">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header p-0">
+                                     <center><img src="{{asset('images/Empresas/Empresa1/logo.png')}}" style="width:15%" class="m-2"></center>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: -10px;">
+                                         <span aria-hidden="true">&times;</span>
+                                     </button>
+                                 </div>
+                                 <div class="modal-body" id="modal-bodyc">
+
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
                     <!-- content-wrapper ends -->
                     <!-- partial:partials/_footer.html -->
                     <footer class="footer">
