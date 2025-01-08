@@ -322,9 +322,16 @@ Route::group(['prefix' => 'tecnico', 'middleware' => ['auth']], function() {
 });
 
 Route::group(['prefix' => 'Olt'], function(){
-    Route::get('unconfigured-onus','OltController@unConfiguredOnus_view')->name('olt.unconfigured');
+    Route::get('unconfigured-onus/{olt?}','OltController@unConfiguredOnus_view')->name('olt.unconfigured');
     Route::post('authorized-onus','OltController@authorizedOnus')->name('olt.authorized-onus');
     Route::get('form-authorized-onu','OltController@formAuthorizeOnu')->name('olt.form-authorized-onus');
+    Route::post('move-onu','OltController@moveOnu')->name('olt.move-onu');
+    Route::post('resync-config-onu','OltController@resyncConfig')->name('olt.resync-config');
+    Route::post('reboot-onu','OltController@rebootOnuResponse')->name('olt.reboot-onu');
+    Route::post('restore-factory','OltController@restoreFactoryResponse')->name('olt.restore-factory');
+    Route::post('disable-onu','OltController@disableOnuResponse')->name('olt.disable-onu');
+    Route::post('delete-onu','OltController@deleteOnuResponse')->name('olt.delete-onu');
+    Route::get('view-onu/{sn?}','OltController@viewOnu')->name('olt.view-onu');
 });
 
 Route::group(['prefix' => 'siigo'], function(){
