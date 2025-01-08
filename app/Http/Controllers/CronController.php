@@ -690,7 +690,7 @@ class CronController extends Controller
                 where('cs.server_configuration_id','!=',null)-> //se comenta por que tambien se peuden canclear planes de tv que no estan con servidor
                 whereDate('f.vencimiento', '<=', now())->
                 orderBy('f.id', 'desc')->
-                take(20)->
+                take(40)->
                 get();
 
         }else{

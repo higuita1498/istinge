@@ -2752,6 +2752,10 @@ class NominaController extends Controller
             $totalidad['ibcSeguridadSocial']['salarioParcial'] += $nomina->resumenTotal()['ibcSeguridadSocial']['salarioParcial'];
             $totalidad['ibcSeguridadSocial']['licencias'] += $nomina->resumenTotal()['ibcSeguridadSocial']['licencias'];
 
+            $totalidad['ibcSeguridadSocial']['total_ibcseguridad_social'] = $totalidad['ibcSeguridadSocial']['vacaciones'] +
+            $totalidad['ibcSeguridadSocial']['ingresosyExtras'] + $totalidad['ibcSeguridadSocial']['incapacidades'] +
+            $totalidad['ibcSeguridadSocial']['licencias'];
+
             $totalidad['retenciones']['salud'] += $nomina->resumenTotal()['retenciones']['salud'];
             $totalidad['retenciones']['pension'] += $nomina->resumenTotal()['retenciones']['pension'];
             $totalidad['retenciones']['total'] += $nomina->resumenTotal()['retenciones']['total'];

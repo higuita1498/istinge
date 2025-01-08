@@ -1309,7 +1309,7 @@ public function forma_pago()
                 $diaInicioCorte = $diaValidar;
             }
 
-            if($grupo->fecha_corte > $diaFinValidar){
+            if($grupo->fecha_corte > $diaFinValidar && $diaFinValidar != 28){//hacemos una excepcion con el mes de febrero
                  $diaFinCorte = $diaFinValidar;
             }
 
