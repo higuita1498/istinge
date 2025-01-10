@@ -115,6 +115,23 @@
 				<strong>{{ $errors->first('barrio') }}</strong>
 			</span>
 		</div>
+        <div class="col-md-3 form-group">
+            <label class="control-label">Barrio <span class="text-danger">*</span></label>
+                 <select class="form-control selectpicker" id="barrio_id" name="barrio_id" title="seleccione el barrio"  data-size="5" data-live-search="true">
+                @foreach($barrios as $barrio)
+                <option value="{{$barrio->id}}" {{ $barrio->id == $contacto->barrio_id ? 'selected' : '' }}>{{$barrio->nombre}}</option>
+                @endforeach
+
+            </select>
+              <p class="text-left nomargin">
+                            <a href="" data-toggle="modal" data-target="#modalbarrio" class="modalTr" tr="1">
+                                <i class="fas fa-plus"></i> Nuevo barrio
+                            </a>
+                          </p>
+              <span class="help-block error">
+                <strong>{{ $errors->first('barrio_id') }}</strong>
+              </span>
+        </div>
 		@if($contacto->fk_idmunicipio == null && $contacto->ciudad != "")
 		<div class="form-group col-md-3">
 			<label class="control-label">Ciudad (antes)</label>
@@ -322,6 +339,42 @@
   		</div>
 
 	  </form>
+      {{-- Modal barrio  --}}
+  <div class="modal fade" id="modalbarrio" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <input type="hidden" id="trFila" value="0">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Nuevo Barrio</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                    <label class="control-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control"  id="nombre_barrio" name="nombre_barrio"  required="" value="{{old('nombre')}}" maxlength="200" autocomplete='off'>
+                    <span class="help-block error">
+                        <strong>{{ $errors->first('nombre_barrio') }}</strong>
+                    </span>
+                    </div>
+
+                </div>
+                <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
+                <hr>
+                    <div class="row" >
+                    <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
+
+                    <button type="submit" id="submitcheck" onclick="nameBarrio()" value="barrio" class="btn btn-success">Guardar</button>
+                    </div>
+                    </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{{--/Modal Barrio  --}}
 @endsection
 
 @section('scripts')
@@ -337,5 +390,53 @@
                     searchDV($("#tip_iden").val());
                 }
             });
+
+        function nameBarrio() {
+        let barrio = $("#nombre_barrio").val();
+
+        if (window.location.pathname.split("/")[1] === "software") {
+            var url = '/software/empresa/contactos/asociarbarrio'
+        } else {
+            var url = '/empresa/contactos/asociarbarrio'
+        }
+
+        if (barrio != "") {
+        $.ajax({
+                url: url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                method: 'POST',
+                data: { nombre: barrio },
+                success: function(campo) {
+
+                    $('#modalbarrio').modal('hide');
+
+                    if (campo.id == "") {
+
+                        Swal.fire({
+                            position: 'top-center',
+                            type: 'error',
+                            title: 'Campo ' + campo.nombre + ' ya ha sido creado',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
+                    } else {
+
+                        Swal.fire({
+                            position: 'top-center',
+                            type: 'success',
+                            title: 'Campo ' + campo.nombre + ' guardado correctamente',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
+
+                        $("#barrio_id").append('<option value=' + campo.id + ' selected>' + campo.nombre + '</option>');
+                        $("#barrio_id").selectpicker('refresh');
+                    }
+                }
+            });
+        } else {
+            alert("ingrese un nombre válido.")
+        }
+    }
 	</script>
 @endsection

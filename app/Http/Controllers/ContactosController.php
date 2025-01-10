@@ -51,184 +51,14 @@ class ContactosController extends Controller
 
     public function index(Request $request)
     {
-        // return 'ok';
         $this->getAllPermissions(Auth::user()->id);
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
-
+        $barrios = DB::table('barrios')->where('status',1)->get();
         view()->share(['invert' => true]);
 
-        return view('contactos.indexnew');
+        return view('contactos.indexnew',compact('barrios'));
     }
 
-    /*public function contactos(Request $request, $tipo_usuario)
-    {
-        $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
-        $modoLectura = auth()->user()->modo_lectura();
-        $contactos = Contacto::query();
-
-
-        if ($request->filtro == true) {
-            if ($request->identificacion) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('nit', 'like', "%{$request->identificacion}%");
-                });
-            }
-            if ($request->nombre) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('nombre', 'like', "%{$request->nombre}%");
-                });
-            }
-            if ($request->municipio) {
-
-                $contactos->where(function ($query) use ($municipio) {
-                    $query->orWhere('fk_idmunicipio', 'like', "%{$municipio->id}%");
-                });
-            }
-            if ($request->apellido) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('apellido1', 'like', "%{$request->apellido}%");
-                    $query->orWhere('apellido2', 'like', "%{$request->apellido}%");
-                    $query->orWhere('nombre', 'like', "%{$request->apellido}%");
-                });
-            }
-            if ($request->celular) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('celular', 'like', "%{$request->celular}%");
-                });
-            }
-            if ($request->direccion) {
-
-                $direccion = $request->direccion;
-                $direccion = explode(' ', $direccion);
-                $direccion = array_reverse($direccion);
-
-                foreach ($direccion as $dir) {
-                    $dir = strtolower($dir);
-                    $dir = str_replace('#', '', $dir);
-                    //$dir = str_replace("-","",$dir);
-                    //$dir = str_replace("/","",$dir);
-
-                    $contactos->where(function ($query) use ($dir) {
-                        $query->orWhere('direccion', 'like', "%{$dir}%");
-                    });
-                }
-
-                /*
-                $contactos->where(function ($query) use ($request) {
-                   // $query->orWhere('direccion', 'like', "%{$request->direccion}%");
-                });
-                */
-           /* }
-            if ($request->barrio) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('barrio', 'like', "%{$request->barrio}%");
-                });
-            }
-            if ($request->vereda) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('vereda', 'like', "%{$request->vereda}%");
-                });
-            }
-            if ($request->email) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('email', 'like', "%{$request->email}%");
-                });
-            }
-            if ($request->serial_onu) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('serial_onu', 'like', "%{$request->serial_onu}%");
-                });
-            }
-            if ($request->estrato) {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('estrato', 'like', "%{$request->estrato}%");
-                });
-            }
-            if ($request->otra_opcion && $request->otra_opcion == "opcion_1") {
-                $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('saldo_favor', '>', 0);
-                });
-            }
-            if ($request->t_contrato == 1) {
-                $contactos->whereNotExists(function ($query) {
-                    $query->select(DB::raw(1))
-                        ->from('contracts')
-                        ->whereRaw('contactos.id = contracts.client_id');
-                });
-            } elseif ($request->t_contrato == 2) {
-                $contactos->whereExists(function ($query) {
-                    $query->select(DB::raw(1))
-                        ->from('contracts')
-                        ->whereRaw('contactos.id = contracts.client_id');
-                });
-            }
-        }
-
-        $contactos->where('contactos.empresa', auth()->user()->empresa);
-        $contactos->whereIn('tipo_contacto', [$tipo_usuario, 2]);
-        $contactos->where('contactos.status', 1);
-
-
-
-        // if (Auth::user()->empresa()->oficina) {
-        //     if (auth()->user()->oficina) {
-        //         $contactos->where('contactos.oficina', auth()->user()->oficina);
-        //     }
-        // }
-
-        return datatables()->eloquent($contactos)
-             ->editColumn('serial_onu', function (Contacto $contacto) {
-
-                 return $contacto->serial_onu;
-             })
-            ->editColumn('nombre', function (Contacto $contacto) {
-                return '<a href='.route('contactos.show', $contacto->id).">{$contacto->nombre} {$contacto->apellidos()}</div></a>";
-            })
-            ->editColumn('nit', function (Contacto $contacto) {
-                return "{$contacto->tip_iden('mini')} {$contacto->nit}";
-            })
-            ->editColumn('telefono1', function (Contacto $contacto) {
-                return $contacto->celular ? $contacto->celular : $contacto->telefono1;
-            })
-            ->editColumn('email', function (Contacto $contacto) {
-                return $contacto->email;
-            })
-            ->editColumn('direccion', function (Contacto $contacto) {
-                return $contacto->direccion;
-            })
-            ->editColumn('barrio', function (Contacto $contacto) {
-                return $contacto->barrio;
-            })
-            ->editColumn('vereda', function (Contacto $contacto) {
-                return $contacto->vereda;
-            })
-            ->editColumn('contrato', function (Contacto $contacto) {
-                return $contacto->contract();
-            })
-            ->editColumn('fecha_contrato', function (Contacto $contacto) {
-                return ($contacto->fecha_contrato) ? date('d-m-Y g:i:s A', strtotime($contacto->fecha_contrato)) : '- - - -';
-            })
-            ->editColumn('fk_idmunicipio', function (Contacto $contacto) {
-                return $contacto->municipio()->nombre;
-            })
-            ->editColumn('radicado', function (Contacto $contacto) {
-                return $contacto->radicados();
-            })
-            ->editColumn('ip', function (Contacto $contacto) {
-                if ($contacto->contract('true') != 'N/A') {
-                    $puerto = $contacto->contrato()->puerto ? ':'.$contacto->contrato()->puerto->nombre : '';
-                }
-
-                return ($contacto->contract('true') == 'N/A') ? 'N/A' : '<a href="http://'.$contacto->contract('true').''.$puerto.'" target="_blank">'.$contacto->contract('true').''.$puerto.' <i class="fas fa-external-link-alt"></i></a>';
-            })
-            ->editColumn('estrato', function (Contacto $contacto) {
-                return ($contacto->estrato) ? $contacto->estrato : 'N/A';
-            })
-
-            ->addColumn('acciones', $modoLectura ? '' : 'contactos.acciones-contactos')
-            ->rawColumns(['acciones', 'nombre', 'contrato', 'ip'])
-            ->toJson();
-    }*/
     public function contactos(Request $request, $tipo_usuario)
     {
         $municipio = DB::table('municipios')->select('id')->where('nombre', '=', $request->municipio)->first();
@@ -291,7 +121,7 @@ class ContactosController extends Controller
             }
             if ($request->barrio) {
                 $contactos->where(function ($query) use ($request) {
-                    $query->orWhere('barrio', 'like', "%{$request->barrio}%");
+                    $query->orWhere('barrio_id',$request->barrio);
                 });
             }
             if ($request->vereda) {
@@ -345,14 +175,6 @@ class ContactosController extends Controller
         $contactos->whereIn('tipo_contacto', [$tipo_usuario, 2]);
         $contactos->where('contactos.status', 1);
 
-
-
-        // if (Auth::user()->empresa()->oficina) {
-        //     if (auth()->user()->oficina) {
-        //         $contactos->where('contactos.oficina', auth()->user()->oficina);
-        //     }
-        // }
-
         return datatables()->eloquent($contactos)
              ->editColumn('serial_onu', function (Contacto $contacto) {
 
@@ -377,7 +199,7 @@ class ContactosController extends Controller
                 return $contacto->direccion;
             })
             ->editColumn('barrio', function (Contacto $contacto) {
-                return $contacto->barrio;
+                return $contacto->barrio()->nombre;
             })
             ->editColumn('vereda', function (Contacto $contacto) {
                 return $contacto->vereda;
@@ -427,10 +249,11 @@ class ContactosController extends Controller
         $tipo_usuario = 0;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
+        $barrios = DB::table('barrios')->where('status',1)->get();
 
         view()->share(['invert' => true]);
 
-        return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla', 'etiquetas'));
+        return view('contactos.indexnew')->with(compact('contactos', 'totalContactos', 'tipo_usuario', 'tabla', 'etiquetas','barrios'));
     }
 
     public function proveedores(Request $request)
@@ -447,9 +270,11 @@ class ContactosController extends Controller
         $totalContactos = Contacto::where('empresa', Auth::user()->empresa)->count();
         $tipo_usuario = 1;
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 1)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        $barrios = DB::table('barrios')->where('status',1)->get();
         view()->share(['invert' => true]);
 
-        return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa', 'totalContactos', 'tipo_usuario', 'tabla'));
+        return view('contactos.indexnew')->with(compact('contactos', 'tipo', 'request', 'busqueda', 'tipos_empresa',
+        'totalContactos', 'tipo_usuario', 'tabla','barrios'));
     }
 
     public function busqueda($request, $tipo = false)
@@ -536,16 +361,31 @@ class ContactosController extends Controller
 
     public function create()
     {
-
         $this->getAllPermissions(Auth::user()->id);
         $identificaciones = TipoIdentificacion::all();
         $paises = DB::table('pais')->where('codigo', 'CO')->get();
         $departamentos = DB::table('departamentos')->get();
         $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
-
+        $barrios = DB::table('barrios')->where('status',1)->get();
         view()->share(['icon' => '', 'title' => 'Nuevo Contacto', 'subseccion' => 'clientes', 'middel' => true]);
 
-        return view('contactos.create')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas'));
+        return view('contactos.create')->with(compact('identificaciones', 'paises', 'departamentos', 'oficinas','barrios'));
+    }
+
+    public function asociarBarrio(Request $request){
+        $name = $request->nombre;
+        $id = "";
+        $user = Auth::user()->id;
+
+        if(!DB::table('barrios')->where('nombre',strtolower($name))->first()){
+
+            $id = DB::table('barrios')->insertGetId([
+                'nombre' => strtolower($name),
+                'created_by' => $user
+            ]);
+        }
+
+        return response()->json(['nombre' => $request->nombre, 'id' => $id]);
     }
 
     public function createp()
@@ -622,7 +462,7 @@ class ContactosController extends Controller
         $contacto->apellido1 = $request->apellido1;
         $contacto->apellido2 = $request->apellido2;
         $contacto->ciudad = ucwords(mb_strtolower($request->ciudad));
-        $contacto->barrio = $request->barrio;
+        $contacto->barrio_id = $request->barrio_id;
         $contacto->vereda = $request->vereda;
         $contacto->direccion = $request->direccion;
         $contacto->email = mb_strtolower($request->email);
@@ -761,6 +601,7 @@ class ContactosController extends Controller
             $listas = ListaPrecios::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
             $tipos_empresa = TipoEmpresa::where('empresa', Auth::user()->empresa)->get();
             $oficinas = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Oficina::where('id', Auth::user()->oficina)->get() : Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
+            $barrios = DB::table('barrios')->where('status',1)->get();
 
             session(['url_search' => url()->previous()]);
 
@@ -770,7 +611,8 @@ class ContactosController extends Controller
                 view()->share(['title' => 'Editar: '.$contacto->nombre.' '.$contacto->apellidos(), 'subseccion' => 'proveedores', 'middel' => true, 'icon' => '']);
             }
 
-            return view('contactos.edit')->with(compact('contacto', 'identificaciones', 'paises', 'departamentos', 'vendedores', 'listas', 'tipos_empresa', 'oficinas'));
+            return view('contactos.edit')->with(compact('contacto', 'identificaciones', 'paises', 'departamentos',
+             'vendedores', 'listas', 'tipos_empresa', 'oficinas','barrios'));
         }
 
         return redirect('empresa/contactos')->with('danger', 'CLIENTE NO ENCONTRADO, INTENTE NUEVAMENTE');
@@ -804,7 +646,7 @@ class ContactosController extends Controller
             $contacto->nombre = $request->nombre;
             $contacto->apellido1 = $request->apellido1;
             $contacto->apellido2 = $request->apellido2;
-            $contacto->barrio = $request->barrio;
+            $contacto->barrio_id = $request->barrio_id;
             $contacto->vereda = $request->vereda;
             $contacto->direccion = $request->direccion;
             $contacto->email = mb_strtolower($request->email);

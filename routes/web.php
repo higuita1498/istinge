@@ -365,6 +365,8 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/editsaldo/{contactoid}', 'ContactosController@editSaldo');
 		Route::get('/historialsaldo/{contactoid}', 'ContactosController@historialSaldo');
 		Route::post('/storesaldo', 'ContactosController@storeSaldo');
+		Route::post('/asociarbarrio', 'ContactosController@asociarBarrio');
+
 	});
 	Route::resource('contactos', 'ContactosController');
 

@@ -104,7 +104,12 @@
 							<input type="text" placeholder="Corregimiento/Vereda" id="vereda" class="form-control rounded">
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
-							<input type="text" placeholder="Barrio" id="barrio" class="form-control rounded">
+                            <select title="Barrio" class="form-control rounded selectpicker" id="barrio" data-size="5" data-live-search="true">
+                                @foreach($barrios as $barrio)
+                                <option value="{{ $barrio->id }}">{{ $barrio->nombre }}</option>
+                                @endforeach
+							</select>
+							{{-- <input type="text" placeholder="Barrio" id="barrio" class="form-control rounded"> --}}
 						</div>
 						<div class="col-md-3 pl-1 pt-1">
 							<input type="text" placeholder="Municipio" id="municipio" class="form-control rounded">
@@ -253,7 +258,7 @@
         	}
         });
 
-        $('#t_contrato, #etiqueta, #estrato, #otra_opcion').on('change',function() {
+        $('#t_contrato, #etiqueta, #estrato, #otra_opcion, #barrio').on('change',function() {
         	getDataTable();
         	return false;
         });
