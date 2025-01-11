@@ -424,8 +424,9 @@
 
     window.addEventListener('load',
     function() {
+
         if (tienePermiso860) {
-		tabla = $('#tabla-contratos').DataTable({
+            tabla = $('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
@@ -476,44 +477,41 @@
             @endif
 		});
 
-        tabla.on('preXhr.dt', function(e, settings, data) {
-            data.nro = $('#nro').val();
-            data.sn = $('#sn').val();
-            data.filtro_facturas = $('#filtro_facturas').is(':checked')
-			data.cliente_id = $('#client_id').val();
-			data.etiqueta_id = $('#etiqueta').val();
-            data.plan = $('#plan').val();
-            data.plan_tv = $('#plan_tv').val();
-            data.state = $('#state').val();
-			data.grupo_corte = $('#grupo_cort').val();
-			data.ip = $('#ip').val();
-			data.mac = $('#mac').val();
-            data.linea = $('#linea').val();
-            data.conexion = $("#conexion_s").val();
-            data.server_configuration_id = $("#server_configuration_id_s").val();
-            data.interfaz = $("#interfaz_s").val();
-            data.nodo = $("#nodo_s").val();
-            data.ap = $("#ap_s").val();
-            data.c_barrio = $("#barrio").val();
-            data.c_direccion = $("#direccion").val();
-            data.c_direccion_precisa = $("#direccion_precisa").val();
-            data.c_celular = $("#celular").val();
-            data.c_email = $("#email").val();
-            data.vendedor = $("#vendedor").val();
-            data.canal = $("#canal").val();
-            data.tecnologia = $("#tecnologia_s").val();
-            data.facturacion = $("#facturacion_s").val();
-            data.desde = $("#desde").val();
-            data.hasta = $("#hasta").val();
-            data.tipo_contrato = $("#tipo_contrato").val();
-            data.otra_opcion = $("#otra_opcion").val();
-            data.fecha_corte = $("#fecha-corte").val();
-            data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
-            data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
-            data.filtro = true;
-        });
-        isDataTableInitialized = true;
-    }
+            tabla.on('preXhr.dt', function(e, settings, data) {
+                data.nro = $('#nro').val();
+                data.cliente_id = $('#client_id').val();
+                data.etiqueta_id = $('#etiqueta').val();
+                data.plan = $('#plan').val();
+                data.plan_tv = $('#plan_tv').val();
+                data.state = $('#state').val();
+                data.grupo_corte = $('#grupo_cort').val();
+                data.ip = $('#ip').val();
+                data.mac = $('#mac').val();
+                data.conexion = $("#conexion_s").val();
+                data.server_configuration_id = $("#server_configuration_id_s").val();
+                data.interfaz = $("#interfaz_s").val();
+                data.nodo = $("#nodo_s").val();
+                data.ap = $("#ap_s").val();
+                data.c_barrio = $("#barrio").val();
+                data.c_direccion = $("#direccion").val();
+                data.c_direccion_precisa = $("#direccion_precisa").val();
+                data.c_celular = $("#celular").val();
+                data.c_email = $("#email").val();
+                data.vendedor = $("#vendedor").val();
+                data.canal = $("#canal").val();
+                data.tecnologia = $("#tecnologia_s").val();
+                data.facturacion = $("#facturacion_s").val();
+                data.desde = $("#desde").val();
+                data.hasta = $("#hasta").val();
+                data.tipo_contrato = $("#tipo_contrato").val();
+                data.otra_opcion = $("#otra_opcion").val();
+                data.fecha_corte = $("#fecha-corte").val();
+                data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
+                data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
+                data.filtro = true;
+            });
+            isDataTableInitialized = true;
+        }
 
         $('#filtrar').on('click', function(e) {
 			getDataTable();
@@ -534,18 +532,14 @@
             }
         });
 
-        $('#nro, #sn, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
             }
         });
 
-        $('#filtro_facturas').on('click', function(e) {
-            getDataTable();
-        });
-
-        $('#client_id, #etiqueta, #plan,#plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
+        $('#client_id, #etiqueta, #plan, #plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
             getDataTable();
             return false;
         });
@@ -581,10 +575,10 @@
     function getDataTable() {
     if (isDataTableInitialized) {
         tabla.ajax.reload();  // Recarga solo si ya se ha inicializado
-        }else{
-        tablaValidateData();
-        }
+    }else{
+    tablaValidateData();
     }
+}
 
 	function abrirFiltrador() {
 		if ($('#form-filter').hasClass('d-none')) {
@@ -598,16 +592,14 @@
 
 	function cerrarFiltrador() {
 		$('#nro').val('');
-		$('#filtro_facturas').prop('checked', false);
+        $('#etiqueta').val('').selectpicker('refresh');
         $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
-		$('#etiqueta').val('').selectpicker('refresh');
         $('#plan_tv').val('').selectpicker('refresh');
 		$('#grupo_cort').val('').selectpicker('refresh');
 		$('#state').val('').selectpicker('refresh');
 		$('#ip').val('');
 		$('#mac').val('');
-        $('#linea').val('');
         $("#conexion_s").val('').selectpicker('refresh');
         $("#server_configuration_id_s").val('').selectpicker('refresh');
         $("#interfaz_s").val('').selectpicker('refresh');
@@ -634,7 +626,7 @@
 	}
 
 	function exportar() {
-	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&linea='+$('#linea').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val();
 	}
 
     function states(state){
@@ -1023,9 +1015,8 @@
                 data.filtro = true;
             });
         isDataTableInitialized = true;  // Marca como inicializado
-        }
     }
+}
 
 </script>
-
 @endsection
