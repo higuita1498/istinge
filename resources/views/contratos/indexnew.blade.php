@@ -425,7 +425,7 @@
     window.addEventListener('load',
     function() {
         if (tienePermiso860) {
-		var tabla = $('#tabla-contratos').DataTable({
+		tabla = $('#tabla-contratos').DataTable({
 			responsive: true,
 			serverSide: true,
 			processing: true,
