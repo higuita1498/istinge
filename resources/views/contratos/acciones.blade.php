@@ -44,4 +44,16 @@
 onclick="confirmar('cambiar-statecatv{{$id}}',
 '¿Está seguro que desea cambiar el estado del catv a {{$state_olt_catv == true ? 'deshabilitado?' : 'habilitado?'}}',
 'Se actualizará su estado');"><i class="fas fa-tv"></i></a>
+
+@if(isset($_SESSION['permisos']['859']))
+<a class="btn btn-icons btn-outline-primary" title="ver configuracion olt" href="{{ route('olt.view-onu',$olt_sn_mac) }}">
+    <i class="fas fa-wrench"></i>
+</a>
+@endif
+@endif
+
+@if($serial_onu != null && isset($_SESSION['permisos']['859']))
+<a class="btn btn-icons btn-outline-primary" title="ver configuracion olt" href="{{ route('olt.view-onu',$serial_onu) }}">
+    <i class="fas fa-wrench"></i>
+</a>
 @endif
