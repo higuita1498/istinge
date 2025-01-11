@@ -123,6 +123,8 @@ class ContratosController extends Controller
     }
 
     public function contratos(Request $request, $nodo){
+
+        $this->getAllPermissions(Auth::user()->id);
         $modoLectura = auth()->user()->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratosql = $contratos = Contrato::query()
