@@ -843,6 +843,29 @@ public function forma_pago()
         return $list;
     }
 
+    public function planInternet(){
+        $if = $this->itemsFactura;
+        foreach($if as $i){
+            $inv = Inventario::Find($i->producto);
+            if($inv->type == 'PLAN'){
+                return ["producto" => $inv->producto, "iva" => $i->impuesto, "precio" => $i->precio, 'cant' => $i->cant];
+            }
+        }
+        return false;
+    }
+
+    public function planTV(){
+        $if = $this->itemsFactura;
+        foreach($if as $i){
+            $inv = Inventario::Find($i->producto);
+            if($inv->type == 'TV'){
+                return ["producto" => $inv->producto, "iva" => $i->impuesto, "precio" => $i->precio, 'cant' => $i->cant];
+            }
+        }
+        return false;
+    }
+
+
     public function getTypeNameAttribute()
     {
         switch ($this->tipo){
