@@ -299,7 +299,12 @@ class ExportarReportesController extends Controller
 
             if($contrato){
                 foreach($contrato as $c){
-                    $contrato = Contrato::where('nro',$c->contrato_nro)->first()->state;
+                    $contrato = Contrato::where('nro',$c->contrato_nro)->first();
+                    if($contrato){
+                        $contrato = $contrato->state;
+                    }else{
+                        $contrato = "N/A";
+                    }
                 }
             }else{
                 $contrato = "N/A";
