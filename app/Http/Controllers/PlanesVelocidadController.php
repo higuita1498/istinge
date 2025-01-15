@@ -211,7 +211,7 @@ class PlanesVelocidadController extends Controller
             $inventario                = new Inventario;
             $inventario->empresa       = Auth::user()->empresa;
             $inventario->producto      = strtoupper($request->name);
-            $inventario->ref           = strtoupper($request->name);
+            $inventario->ref           = strtoupper($request->ref);
             $inventario->precio        = $this->precision($request->price);
 
             $inventario->id_impuesto   = ($request->tipo_plan == 2) ? 1 : 2;
@@ -423,6 +423,7 @@ class PlanesVelocidadController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $empresa = Auth::user()->empresa;
         $plan = PlanesVelocidad::where('id', $id)->where('empresa', Auth::user()->empresa)->first();
+        $plan->ref = Inventario::Find($plan->item)->ref;
         $cuentas = Puc::where('empresa',$empresa)
         ->where('estatus',1)
         ->whereRaw('length(codigo) > 6')
@@ -491,7 +492,7 @@ class PlanesVelocidadController extends Controller
 
             $inventario              = Inventario::find($plan->item);
             $inventario->producto    = strtoupper($request->name);
-            $inventario->ref         = strtoupper($request->name);
+            $inventario->ref         = strtoupper($request->ref);
             $inventario->precio      = $this->precision($request->price);
             $inventario->id_impuesto = ($request->tipo_plan == 2) ? 1 : 2;
             $inventario->impuesto    = ($request->tipo_plan == 2) ? 19 : 0;

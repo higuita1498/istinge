@@ -56,7 +56,7 @@
 	            <a class="nav-link" id="pills-contabilidad-tab" data-toggle="pill" href="#pills-contabilidad" role="tab" aria-controls="pills-contabilidad" aria-selected="false">Contabilidad</a>
 	        </li>
 	    </ul>
-	    
+
 	    <div class="tab-content" id="pills-tabContent">
 	        <div class="tab-pane fade show active" id="pills-basica" role="tabpanel" aria-labelledby="pills-basica-tab">
 	            <div class="row">
@@ -76,6 +76,13 @@
         	            <input type="text" class="form-control"  id="name" name="name"  required="" value="{{old('name')}}" maxlength="200">
         	            <span class="help-block error">
         	                <strong>{{ $errors->first('name') }}</strong>
+        	            </span>
+        	        </div>
+                    <div class="col-md-3 form-group">
+        	            <label class="control-label">Referencia <span class="text-danger">*</span></label>
+        	            <input type="text" class="form-control"  id="ref" name="ref"  required="" value="{{old('ref')}}" maxlength="200">
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('ref') }}</strong>
         	            </span>
         	        </div>
         	        <div class="col-md-3 form-group">
@@ -353,10 +360,10 @@
 						</span>
 					</div>
 					</div>
-	
+
 					<div class="row">
 					<div class="form-group col-md-5">
-							
+
 					</div>
 						<div class="form-group col-md-7 ">
 							<div class="row">
@@ -372,10 +379,10 @@
 									</table>
 								</div>
 							</div>
-		
+
 					</div>
 					</div>
-	
+
 					<div class="row">
 					<div class="form-group col-md-4">
 						<label class="control-label">¿Producto con auto retención?</label>
@@ -418,11 +425,11 @@
 				</div>
 	        </div>
 	    </div>
-	    
+
 	   <small>Los campos marcados con <span class="text-danger">*</span> son obligatorios</small>
-	   
+
 	   <hr>
-	   
+
 	   <div class="row" >
 	       <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
 	           <a href="{{route('planes-velocidad.index')}}" class="btn btn-outline-secondary">Cancelar</a>

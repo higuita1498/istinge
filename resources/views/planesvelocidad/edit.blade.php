@@ -80,6 +80,13 @@
         	                <strong>{{ $errors->first('name') }}</strong>
         	            </span>
         	        </div>
+                    <div class="col-md-3 form-group">
+        	            <label class="control-label">Referencia <span class="text-danger">*</span></label>
+        	            <input type="text" class="form-control"  id="ref" name="ref"  required="" value="{{$plan->ref}}" maxlength="200">
+        	            <span class="help-block error">
+        	                <strong>{{ $errors->first('ref') }}</strong>
+        	            </span>
+        	        </div>
         	        <div class="col-md-3 form-group">
         	            <label class="control-label">Precio <span class="text-danger">*</span></label>
         	            <div class="input-group mb-2">
