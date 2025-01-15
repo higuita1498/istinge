@@ -131,13 +131,14 @@ class ContratosController extends Controller
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
              'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
-             'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
+             'contactos.email as c_email', 'contactos.barrio_id as c_barrio', 'contactos.direccion',
               'contactos.celular as c_celular','contactos.fk_idmunicipio', 'contactos.firma_isp',
-               'contactos.estrato as c_estrato',
+               'contactos.estrato as c_estrato','barrio.nombre as barrio_nombre',
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id');
+            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id');
 
         if ($request->filtro == true) {
 
@@ -393,11 +394,12 @@ class ContratosController extends Controller
              'contactos.email as c_email', 'contactos.barrio as c_barrio', 'contactos.direccion',
               'contactos.celular as c_celular','contactos.fk_idmunicipio',
                'contactos.email as c_email', 'contactos.id as c_id', 'contactos.firma_isp',
-               'contactos.estrato as c_estrato',
+               'contactos.estrato as c_estrato','barrio.nombre as barrio_nombre',
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
             ->whereIn('contracts.id',$arrayContratos);
         }
 
@@ -428,7 +430,7 @@ class ContratosController extends Controller
                 return $contrato->olt_sn_mac?:'';
             })
             ->editColumn('barrio', function (Contrato $contrato) {
-                return $contrato->c_barrio;
+                return $contrato->barrio_nombre;
             })
             ->editColumn('fk_idmunicipio', function (Contrato $contrato) {
                 return $contrato->nombre_municipio;

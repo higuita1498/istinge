@@ -1286,10 +1286,10 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 	Route::get("Documentacion",function(){
 		$title="Documentacion";
 	return view("documentacion.index",compact('title'));
-})->name("documentacion");
+ })->name("documentacion");
 
 	//Ruta tablero de google
-Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.index');
+ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.index');
 
     //RADICADOS
         Route::group(['prefix' => 'radicados'], function() {
@@ -1595,6 +1595,8 @@ Route::get('/GoogleAnalytics', 'GoogleAnalyticsController@index')->name('Google.
             Route::get('contratos', 'AuditoriaController@contratos')->name('auditoria.contratos');
         });
         Route::resource('auditoria', 'AuditoriaController');
+        Route::resource('barrios','BarriosController');
+        Route::post('/delete-barrio/{id}','BarriosController@delete');
 });
 
 

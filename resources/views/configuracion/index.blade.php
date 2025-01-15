@@ -95,6 +95,7 @@
 			<h4 class="card-title">Contactos</h4>
 			<p>Registra aqui referencias para tus contactos.</p>
 			<a href="{{route('tiposempresa.index')}}">Tipos de Contactos</a> <br>
+			<a href="{{route('barrios.index')}}">Barrios</a> <br>
 		</div>
 
         {{-- Agregando campos adicionales a contactos --}}
