@@ -20,6 +20,6 @@ class Barrios extends Model
     ];
 
     public function nroClientes(){
-        return DB::table('contactos')->where('barrio_id',$this->id)->sum('barrio_id');
+        return DB::table('contactos')->where('barrio_id',$this->id)->count();
     }
 }
