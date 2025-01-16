@@ -237,7 +237,7 @@
             $select.selectpicker('refresh');
 
             //CONECTIVIDAD
-            if (resul.conectividad.length > 0) {
+            if (resul.conectividad && resul.conectividad.length > 0) {
                 $('#auxiliar_ids').val(resul.conectividad[0]['id']);
                 var $select = $('#auxiliar_id');
                 $select.val(resul.conectividad[0]['fk_categoria']);
