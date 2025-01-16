@@ -215,7 +215,7 @@
             $select.selectpicker('refresh');
 
             //NO CONSTITUTIVOS
-            if (resul.no_constitutivos.length > 0) {
+            if (resul.no_constitutivos && resul.no_constitutivos.length > 0) {
                 for (var i = 0; i < resul.no_constitutivos.length; i++) {
                     $('#div_no_constitutivos').append(`<div class="row mt-2 w-100 ml-2" id="` + resul.no_constitutivos[i]['id'] + `"><div class="col-6"><select class="form-control form-control-sm selectpicker" name="no_constitutivos_id[]" id="no_constitutivo_` + resul.no_constitutivos[i]['id'] + `" title="Selecciona un concepto" data-live-search="true" data-size="5"></select></div><div class="col-4"><input class="form-control" name="no_constitutivos_valor[]" min="0"  onkeypress="return event.charCode >= 48 && event.charCode <=57 || event.charCode==46" type="number" style="width: 100%" value="` + resul.no_constitutivos[i]['valor_categoria'] + `"><input class="form-control" name="no_constitutivos_ids[]" type="hidden" value="` + resul.no_constitutivos[i]['id'] + `"></div><div class="col-2"><button class="btn btn-outline-danger btn-icons mt-1" onclick="destroyAdicionales(` + resul.no_constitutivos[i]['id'] + `)"><i class="fas fa-trash" title="Eliminar"></i></button></div>`);
                     var $select = $('#no_constitutivo_' + resul.no_constitutivos[i]['id']);
