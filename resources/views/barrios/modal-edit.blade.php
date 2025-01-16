@@ -1,3 +1,0 @@
-     {{-- Modal barrio  --}}
-
-    {{--/Modal Barrio  --}}

@@ -268,7 +268,9 @@
 
             for (let fecha = new Date(fechaInicio); fecha <= fechaFin; fecha.setDate(fecha.getDate() + 1)) {
                 // Verifica si no es día 31 y si no es feriado
-                if (fecha.getDate() !== 31 && !esFeriado(fecha, diasFeriados)) {
+                //comentamos la linea de esFeriado, otros softwares no dan la opcion de confugurar y cuentan si o si el dia feriado como vacacion
+                //&& !esFeriado(fecha, diasFeriados)
+                if (fecha.getDate() !== 31) {
                     diasV++;
                 }
             }
