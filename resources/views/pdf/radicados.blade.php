@@ -183,7 +183,7 @@
                             <th style="text-align: left; padding-left: 9px;">Barrio</th>
                             <td style="padding-left: 9px;">{{$radicado->barrio}}</td>
                         </tr>
-                        @elseif($radicado->cliente()->barrio())
+                        @elseif($radicado->cliente()->barrio()->nombre)
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Barrio</th>
                             <td style="padding-left: 9px;">{{$radicado->cliente()->barrio()}}</td>
