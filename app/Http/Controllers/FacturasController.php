@@ -1414,7 +1414,11 @@ class FacturasController extends Controller{
                 $factura->tipo_operacion = $request->tipo_operacion;
                 $factura->ordencompra    = $request->ordencompra;
                 $factura->periodo_facturacion = $request->periodo_facturacion;
-                $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
+                if($request->plazo != "n"){
+                    $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
+                }else{
+                    $factura->pago_oportuno =$factura->vencimiento;
+                }
                 $factura->save();
 
 

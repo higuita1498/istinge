@@ -220,13 +220,13 @@
     <div>
         <table border="0" class="titulo">
             <tr>
-                <th width="80%" style="height: 30px;" class="left padding-left">Items</th>
+                <th width="80%" style="height: 30px;" class="left padding-left">Conceptos aplicables</th>
                 <th width="20%" style="height: 30px;">Valor</th>
             </tr>
             <tr>
-                <td width="80%" style="height: 20px;" class="padding-left">Salario</td>
+                <td width="80%" style="height: 20px;" class="padding-left">Salario {{$persona->fk_tipo_contrato == 6 ? 'Apoyo Sostenible' : ''}} por dias laborados</td>
                 <td width="20%" style="height: 20px;"
-                    class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['pagoContratado']['deducido'])}}</td>
+                    class="center">{{$user->empresaObj->moneda}} {{App\Funcion::Parsear($totalidad['pago']['salario'])}}</td>
             </tr>
             <tr>
                 <td width="80%" style="height: 20px;" class="padding-left">Subsidio de transporte</td>
@@ -287,8 +287,8 @@
                 @endif
 
             @endif
-            
-            
+
+
             @foreach($nominaPeriodo->nominaDetallesUno as $categoria)
                         @if($categoria->fk_nomina_cuenta == 2 && $categoria->fecha_inicio)
                             @if(!($categoria->is_remunerado()))
@@ -301,12 +301,16 @@
                            @endif
                         @endif
             @endforeach
-            
-            
-            <tr>
-                <th width="80%" style="height: 30px;" class="left padding-left">Total neto a pagar al empleado</th>
+
+
+
+        </table>
+        <br>
+        <table border="0" class="titulo">
+            <tr style="font-size:16px">
+                <th width="80%" style="height: 30px;" class="left padding-left">Pago neto del empleado</th>
                 <th width="20%" style="height: 30px;"
-                    class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($totalidad['pago']['total'] + ($adicionales)) }}</th>
+                    class="center">{{$user->empresaObj->moneda}} {{ App\Funcion::Parsear($totalidad['pago']['total'] + $adicionales) }}</th>
             </tr>
         </table>
     </div>
@@ -491,7 +495,7 @@
             </div>
         </div>
     </div>
-    
+
         <div style="width: 100%;height:auto;">
         <div style="width: 50%; display: inline-block; text-align:left;">
             @if(isset($codqr))
