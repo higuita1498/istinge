@@ -297,5 +297,25 @@
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
 	}
+
+    function createCrm($id){
+
+        var url = `{{ route('cliente.create_crm', ':id') }}`.replace(':id', $id);
+
+        Swal.fire({
+			title: "Crear CRM",
+			text: "Se creara un registro en el crm para este cliente",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			cancelButtonText: 'Cancelar',
+			confirmButtonText: 'Crear CRM',
+		}).then((result) => {
+			if (result.value) {
+                window.location.href = url;
+            }
+        })
+    }
 </script>
 @endsection

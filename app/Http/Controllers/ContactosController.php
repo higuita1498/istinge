@@ -1581,4 +1581,30 @@ class ContactosController extends Controller
 
         return $contacto->etiqueta;
     }
+
+    //Genera un registro en el crm por el cliente escogido
+    public function createCrm($id){
+
+        $contacto = Contacto::Find($id);
+        $ultimaFactura = Factura::where('estatus','<>',2)->where('cliente',$contacto->id)->orderBy('id','desc')->first();
+        $contrato = Contrato::where('client_id',$contacto->id)->first();
+
+        if($ultimaFactura && $contrato){
+
+            $crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
+            $crm = new CRM();
+            $crm->cliente = $contacto->id;
+            $crm->factura = $ultimaFactura->id;
+            $crm->estado = 0;
+            $crm->servidor = isset($contrato->server_configuration_id) ? $contrato->server_configuration_id : '';
+            $crm->grupo_corte = isset($contrato->grupo_corte) ? $contrato->grupo_corte : '';
+            $crm->save();
+
+        }else{
+            return redirect()->back()->with('danger','El contacto no tiene contrato o facturas asociadas.');
+        }
+
+        return redirect()->back()->with('success','Se ha generado un registro crm correctamente.');
+
+    }
 }

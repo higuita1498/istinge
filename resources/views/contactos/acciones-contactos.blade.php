@@ -30,4 +30,5 @@
 @endif
 
 <a href="{{route('factura.create.cliente', $id)}}" class="btn btn-outline-warning btn-icons" title="Crear una factura" target="_blank"><i class="fas fa-file-invoice-dollar"></i></a>
-<a href="{{route('cliente.cambiares',$id)}}" class="btn btn-outline-primary btn-icons" title="redireccionar a CRM"><i class="fas fa-file-contract"></i></a>
+{{-- <a href="{{route('cliente.cambiares',$id)}}" class="btn btn-outline-primary btn-icons" title="redireccionar a CRM"><i class="fas fa-file-contract"></i></a> --}}
+<a href="#"  onclick="event.preventDefault(); createCrm({{$id}})" class="btn btn-outline-primary btn-icons" title="Crear CRM"><i class="fas fa-table"></i></a>
