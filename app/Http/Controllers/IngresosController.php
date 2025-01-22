@@ -872,7 +872,7 @@ class IngresosController extends Controller
                             $mensaje = str_replace('{{ $name }}', ucfirst($cliente->nombre), $mensaje);
                             $mensaje = str_replace('{{ $factura->codigo }}', $ingreso->nro, $mensaje);
                         }else{
-                            $mensaje = Auth::user()->empresa()->nombre.", le informa que su recibo de caja ha sido generado bajo el Nro. ".$ingreso->nro;
+                            $mensaje = Auth::user()->empresa()->nombre.", le informa que su soporte de pago ha sido generado bajo el Nro. ".$ingreso->nro;
                         }
 
                         $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
@@ -1084,7 +1084,7 @@ class IngresosController extends Controller
 
             $nameEmpresa = auth()->user()->empresa()->nombre;
             $total = $ingreso->total()->total;
-            $message = "$nameEmpresa Le informa que su recibo de caja ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
+            $message = "$nameEmpresa Le informa que su soporte de pago ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
 
             $body = [
                 "contact" => $contact,
