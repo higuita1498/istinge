@@ -373,7 +373,7 @@
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">DIRECCION</th>
-                <td colspan="">{{isset($factura->contract()->address_street) ? $factura->contract()->address_street : $factura->cliente()->direccion}}</td>
+                <td colspan="">{{isset($factura->cliente()->direccion) ? $factura->cliente()->direccion : $factura->contract()->address_street }}</td>
             </tr>
             <tr>
                 <th class="right smalltd" width="10%">BARRIO</th>
