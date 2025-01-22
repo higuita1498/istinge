@@ -481,6 +481,7 @@
                 data.nro = $('#nro').val();
                 data.cliente_id = $('#client_id').val();
                 data.etiqueta_id = $('#etiqueta').val();
+                data.linea = $('#linea').val();
                 data.plan = $('#plan').val();
                 data.plan_tv = $('#plan_tv').val();
                 data.state = $('#state').val();
@@ -532,7 +533,7 @@
             }
         });
 
-        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
@@ -592,6 +593,7 @@
 
 	function cerrarFiltrador() {
 		$('#nro').val('');
+		$('#linea').val('');
         $('#etiqueta').val('').selectpicker('refresh');
         $('#client_id').val('').selectpicker('refresh');
 		$('#plan').val('').selectpicker('refresh');
@@ -984,6 +986,7 @@
 
         tabla.on('preXhr.dt', function(e, settings, data) {
                 data.nro = $('#nro').val();
+                data.linea = $('#linea').val();
                 data.cliente_id = $('#client_id').val();
                 data.plan = $('#plan').val();
                 data.plan_tv = $('#plan_tv').val();
