@@ -875,6 +875,7 @@ class IngresosController extends Controller
                             $mensaje = Auth::user()->empresa()->nombre.", le informa que su soporte de pago ha sido generado bajo el Nro. ".$ingreso->nro;
                         }
 
+
                         $retenciones = IngresosRetenciones::where('ingreso',$ingreso->id)->get();
                         $resolucion = NumeracionFactura::where('empresa', $empresa->id)
                         ->where('num_equivalente', 0)->where('nomina',0)->where('tipo',2)->where('preferida', 1)->first();
@@ -1084,13 +1085,14 @@ class IngresosController extends Controller
 
             $nameEmpresa = auth()->user()->empresa()->nombre;
             $total = $ingreso->total()->total;
-            $message = "$nameEmpresa Le informa que su soporte de pago ha sido generada bajo el numero $ingreso->nro por un monto de $$total pesos.";
+            $message = "$nameEmpresa Le informa que su soporte de pago ha sido generado bajo el numero $ingreso->nro por un monto de $$total pesos.";
 
             $body = [
                 "contact" => $contact,
                 "body" => $message,
                 "file" => $file
             ];
+
 
             $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
             if(isset($response->statusCode)) {
