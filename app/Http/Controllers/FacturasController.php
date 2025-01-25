@@ -2348,6 +2348,22 @@ class FacturasController extends Controller{
         $FacturaVenta = Factura::find($id);
         $FacturaVenta->fecha = Carbon::now()->format('Y-m-d');
 
+        //Validacion de dia 00 en vencimiento
+        if (substr($FacturaVenta->vencimiento, -2) == '00') {
+            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->vencimiento = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
+        //Validacion de dia 00 en suspension
+        if (substr($FacturaVenta->suspension, -2) == '00') {
+            $anoMes = substr($FacturaVenta->suspension, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->suspension = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
@@ -2696,8 +2712,13 @@ class FacturasController extends Controller{
             config(['mail'=>$new]);
         }
 
-        self::sendMail('emails.email', compact('factura', 'total', 'cliente', 'empresa'), compact('pdf', 'emails', 'ruta_xmlresponse', 'FacturaVenta', 'nombreArchivoZip', 'tituloCorreo', 'empresa'), function ($message) use ($pdf, $emails, $ruta_xmlresponse, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
-            $message->attach($nombreArchivoZip, ['as' => $nombreArchivoZip, 'mime' => 'application/octet-stream', 'Content-Transfer-Encoding' => 'Binary']);
+        $rutaZip = public_path($nombreArchivoZip);
+
+        self::sendMail('emails.email', compact('factura', 'total', 'cliente', 'empresa'), compact('pdf', 'emails', 'ruta_xmlresponse', 'FacturaVenta', 'nombreArchivoZip', 'tituloCorreo', 'empresa'), function ($message) use ($pdf, $emails, $rutaZip, $FacturaVenta, $nombreArchivoZip, $tituloCorreo, $empresa) {
+            $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+            if(file_exists($rutaZip)){
+                    $message->attach($rutaZip, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+            }
             $message->from('info@networksoft.online', Auth::user()->empresaObj->nombre);
             $message->to($emails)->subject($tituloCorreo);
         });
@@ -3804,6 +3825,23 @@ class FacturasController extends Controller{
     public function xmlFacturaVentaMasivo($id)
     {
         $FacturaVenta = Factura::find($id);
+
+        //Validacion de dia 00 en vencimiento
+        if (substr($FacturaVenta->vencimiento, -2) == '00') {
+            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->vencimiento = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
+        //Validacion de dia 00 en suspension
+        if (substr($FacturaVenta->suspension, -2) == '00') {
+            $anoMes = substr($FacturaVenta->suspension, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->suspension = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
