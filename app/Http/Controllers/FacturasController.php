@@ -1426,6 +1426,7 @@ class FacturasController extends Controller{
                 $contratoAntiguo = DB::table('facturas_contratos')->where('factura_id',$id)->where('contrato_nro',$request->contratos)->first();
                 //Si no hay contrato antiguo es por que seleccionaron un nuevo contrato y toca elminar las relaciones existentes.
                 if(!$contratoAntiguo){
+                    if(isset($request->contratos_json) && $request->contratos_json ==null)
                     DB::table('facturas_contratos')->where('factura_id',$id)->delete();
                 }
 
@@ -2347,22 +2348,6 @@ class FacturasController extends Controller{
     public function xmlFacturaVenta($id){
         $FacturaVenta = Factura::find($id);
         $FacturaVenta->fecha = Carbon::now()->format('Y-m-d');
-
-        //Validacion de dia 00 en vencimiento
-        if (substr($FacturaVenta->vencimiento, -2) == '00') {
-            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
-            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
-            $FacturaVenta->vencimiento = $fecha->toDateString();
-            $FacturaVenta->save();
-        }
-
-        //Validacion de dia 00 en suspension
-        if (substr($FacturaVenta->suspension, -2) == '00') {
-            $anoMes = substr($FacturaVenta->suspension, 0, 7);
-            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
-            $FacturaVenta->suspension = $fecha->toDateString();
-            $FacturaVenta->save();
-        }
 
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
@@ -3825,23 +3810,6 @@ class FacturasController extends Controller{
     public function xmlFacturaVentaMasivo($id)
     {
         $FacturaVenta = Factura::find($id);
-
-        //Validacion de dia 00 en vencimiento
-        if (substr($FacturaVenta->vencimiento, -2) == '00') {
-            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
-            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
-            $FacturaVenta->vencimiento = $fecha->toDateString();
-            $FacturaVenta->save();
-        }
-
-        //Validacion de dia 00 en suspension
-        if (substr($FacturaVenta->suspension, -2) == '00') {
-            $anoMes = substr($FacturaVenta->suspension, 0, 7);
-            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
-            $FacturaVenta->suspension = $fecha->toDateString();
-            $FacturaVenta->save();
-        }
-
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
