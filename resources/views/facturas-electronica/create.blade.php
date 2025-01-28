@@ -103,7 +103,7 @@
             <div class="input-group">
                 <select class="form-control selectpicker" name="contratos_json" id="contratos_json"
                 title="Seleccione un contrato" plac data-live-search="true" data-size="5"
-                onchange="rowItemsContrato(this.value)"
+                onchange="rowItemsContrato(this.value), opcionFacturaMes(this.value)"
                 >
 
                 </select>
@@ -147,6 +147,21 @@
                   </select>
               </div>
           </div>
+
+            <div class="form-group row d-none" id='div-fact-mes'>
+            <label class="col-sm-4 col-form-label">Factura del mes?
+                <span class="text-danger">*</span>
+                <a><i data-tippy-content="Si quieres que la factura pertenezca a la del mes para que NO se cree automaticamente una nueva en el mes elige si"
+                        class="icono far fa-question-circle"></i></a>
+            </label>
+            <div class="col-sm-8">
+                <select name="factura_mes_manual" id="factura_mes_manual" class="form-control selectpicker" title="Seleccione" data-live-search="false" data-size="5" required>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            </div>
+
         <div class="form-group row">
           <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
         </div>
@@ -567,28 +582,11 @@
       </div>
   </div>
   {{--/Modal Nuevo producto  --}}
-@endsection
-
-@section('scripts')
 
     <script>
-        $(document).ready(function() {
-
-
-       /*
-            $.ajax({
-                url: '{{url('empresa/facturas/productos')}}',
-                type: 'get',
-                dataType: 'json',
-                success: function(data){
-                    $(data).each(function(i, v){ // indice, valor
-                        $('.items_inv').append('<option value="' + v.id + '">' + v.id + '</option>');
-                    })
-
-                }
-
-        });*/
-
-        });
+    function opcionFacturaMes(id){
+        $("#div-fact-mes").removeClass("d-none");
+    }
     </script>
+
 @endsection

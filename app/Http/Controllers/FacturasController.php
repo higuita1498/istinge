@@ -1152,6 +1152,7 @@ class FacturasController extends Controller{
         $factura->periodo_facturacion = $request->periodo_facturacion;
         $factura->created_by = $user->id;
         $factura->ordenservicio = $request->ordenservicio;
+        $factura->factura_mes_manual = isset($request->factura_mes_manual) ? $request->factura_mes_manual : 0;
 
         if($contrato){
             $factura->contrato_id = $contrato->id;
@@ -1414,6 +1415,8 @@ class FacturasController extends Controller{
                 $factura->tipo_operacion = $request->tipo_operacion;
                 $factura->ordencompra    = $request->ordencompra;
                 $factura->periodo_facturacion = $request->periodo_facturacion;
+                $factura->factura_mes_manual = isset($request->factura_mes_manual) ? $request->factura_mes_manual : 0;
+
                 if($request->plazo != "n"){
                     $factura->pago_oportuno = date('Y-m-d', strtotime("+".($request->plazo-1)." days", strtotime($request->fecha)));
                 }else{

@@ -124,10 +124,9 @@ class CronController extends Controller
                 'e.terminos_cond', 'e.notas_fact', 'contracts.servicio_tv', 'contracts.factura_individual','contracts.nro')
                 ->where('contracts.grupo_corte',$grupo_corte->id)->
                 where('contracts.status',1)->
-                // whereIn('contracts.id',[1944])->
+                // whereIn('contracts.client_id',[645])->
                 // where('c.saldo_favor','>',80000)->//rc
                 where('contracts.state','enabled')
-                // ->limit(2)
                 ->get();
 
                 $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
@@ -199,7 +198,7 @@ class CronController extends Controller
                     if(isset($primer_fecha_factura) &&
                     Carbon::parse($fecha)->format("Y-m-d") == $primer_fecha_factura &&
                     $contrato->fact_primer_mes == 0){
-                        continue;
+                        continue; //este continue salta la actual iteracion
                     }
                     //Fin validacion primer factura del contrato
 
@@ -211,100 +210,112 @@ class CronController extends Controller
                     ->first();
 
                     $mesUltimaFactura = false;
+                    $mesActualFactura = date('Y-m',strtotime($fecha));
+
                     if($ultimaFactura){
-                        $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->created_at));
-                        $mesActualFactura = date('Y-m',strtotime($fecha));
+
+                        //Validamos que solo vamos a evaluar por created_at a las f. electronicas, por que las pudieron emitir despues.
+                        if($ultimaFactura->tipo == 2){
+                            $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->created_at));
+                        }else{
+                            $mesUltimaFactura = date('Y-m',strtotime($ultimaFactura->fecha));
+                        }
+
+                        //Validacion nueva: mirar si la ultima factura generada tiene la opcion de factura del mes actual.
+                        if($mesActualFactura == $mesUltimaFactura){
+                            if($ultimaFactura->factura_mes_manual == 1){
+                                continue; //salte esta iteracion entonces por que es la factura del mes manual.
+                            }
+                        }
                     }
 
-                    if(!isset($ultimaFactura->fecha) || isset($ultimaFactura->fecha)
-                        && $mesActualFactura != $mesUltimaFactura)
+                    if($mesActualFactura != $mesUltimaFactura)
                     {
+                        ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
+                        if(isset($ultimaFactura->fecha)){
+                            $fac = $ultimaFactura;
+                        }else{$fac=false;}
 
-                    ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
-                    if(isset($ultimaFactura->fecha)){
-                        $fac = $ultimaFactura;
-                    }else{$fac=false;}
+                        //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
+                        if(isset($fac->estatus) || !$fac || $empresa->cron_fact_abiertas == 1){
 
-                    //Primer filtro de la validación, que la factura esté cerrada o que no exista una factura.
-                    if(isset($fac->estatus) || !$fac || $empresa->cron_fact_abiertas == 1){
+                            //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
+                            if(isset($fac->vencimiento) && $fac->vencimiento > $fecha ||
+                            isset($fac->estatus) && $fac->estatus == 0 || !$fac ||
+                            isset($fac->estatus) && $fac->estatus == 2 ||
+                            $empresa->cron_fact_abiertas == 1
+                            ){
 
-                        //Segundo filtro, que la fecha de vencimiento de la factura abierta sea mayor a la fecha actual
-                        if(isset($fac->vencimiento) && $fac->vencimiento > $fecha ||
-                           isset($fac->estatus) && $fac->estatus == 0 || !$fac ||
-                           isset($fac->estatus) && $fac->estatus == 2 ||
-                           $empresa->cron_fact_abiertas == 1
-                           ){
+                                if(!$fac || isset($fac) && $fecha != $fac->fecha){
+                                    $numero=round(floatval($numero));+1;
 
-                            if(!$fac || isset($fac) && $fecha != $fac->fecha){
-                                $numero=round(floatval($numero));+1;
+                                    //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+                                    $nro = NumeracionFactura::tipoNumeracion($contrato);
 
-                                //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
-                                $nro = NumeracionFactura::tipoNumeracion($contrato);
-
-                                if(is_null($nro)){
-                                }else{ //aca empieza la verdadera creacion de la factura despues de pasar las validaciones.
+                                    if(is_null($nro)){
+                                    }else{ //aca empieza la verdadera creacion de la factura despues de pasar las validaciones.
 
                                     $hoy = $fecha;
 
                                     if(!DB::table('facturas_contratos')
                                     ->whereDate('created_at',$hoy)
                                     ->where('contrato_nro',$contrato->nro)->where('is_cron',1)->first())
-                                {
+                                    {
 
-                                if($contrato->fecha_suspension){
-                                        $fecha_suspension = $contrato->fecha_suspension;
-                                }else{
-                                        $fecha_suspension = $grupo_corte->fecha_suspension;
-                                }
+                                        if($contrato->fecha_suspension){
+                                                $fecha_suspension = $contrato->fecha_suspension;
+                                        }else{
+                                                $fecha_suspension = $grupo_corte->fecha_suspension;
+                                        }
 
-                                $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
-                                $tipo = 1; //1= normal, 2=Electrónica.
-                                $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
+                                        $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
+                                        $tipo = 1; //1= normal, 2=Electrónica.
+                                        $electronica = Factura::booleanFacturaElectronica($contrato->cliente);
 
-                                if($contrato->facturacion == 3 && !$electronica){
-                                    $tipo = 1;
-                                    // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
-                                }elseif($contrato->facturacion == 3 && $electronica){
-                                    $tipo = 2;
-                                }
+                                        if($contrato->facturacion == 3 && !$electronica){
+                                            $tipo = 1;
+                                            // return redirect('empresa/facturas')->with('success', "La Factura Electrónica no pudo ser creada por que no ha pasado el tiempo suficiente desde la ultima factura");
+                                        }elseif($contrato->facturacion == 3 && $electronica){
+                                            $tipo = 2;
+                                        }
 
-                                $inicio = $nro->inicio;
+                                        $inicio = $nro->inicio;
 
-                                // Validacion para que solo asigne numero consecutivo si no existe.
-                                while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
-                                    $nro = $nro->fresh();
-                                    $inicio=$nro->inicio;
-                                    $nro->inicio += 1;
-                                    $nro->save();
-                                }
+                                        // Validacion para que solo asigne numero consecutivo si no existe.
+                                        while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+                                            $nro = $nro->fresh();
+                                            $inicio=$nro->inicio;
+                                            $nro->inicio += 1;
+                                            $nro->save();
+                                        }
 
-                                $factura = new Factura;
-                                $factura->nro           = $numero;
-                                $factura->codigo        = $nro->prefijo.$inicio;
-                                $factura->numeracion    = $nro->id;
-                                $factura->plazo         = isset($plazo->id) ? $plazo->id : '';
-                                $factura->term_cond     = $contrato->terminos_cond;
-                                $factura->facnotas      = $contrato->notas_fact;
-                                $factura->empresa       = 1;
-                                $factura->cliente       = $contrato->cliente;
-                                $factura->fecha         = $fecha;
-                                $factura->tipo          = $tipo;
-                                $factura->vencimiento   = $date_suspension;
-                                $factura->suspension    = $date_suspension;
-                                $factura->pago_oportuno = $date_pagooportuno;
-                                $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
-                                $factura->bodega        = 1;
-                                $factura->vendedor      = 1;
-                                $factura->prorrateo_aplicado = 0;
-                                $factura->facturacion_automatica = 1;
+                                        $factura = new Factura;
+                                        $factura->nro           = $numero;
+                                        $factura->codigo        = $nro->prefijo.$inicio;
+                                        $factura->numeracion    = $nro->id;
+                                        $factura->plazo         = isset($plazo->id) ? $plazo->id : '';
+                                        $factura->term_cond     = $contrato->terminos_cond;
+                                        $factura->facnotas      = $contrato->notas_fact;
+                                        $factura->empresa       = 1;
+                                        $factura->cliente       = $contrato->cliente;
+                                        $factura->fecha         = $fecha;
+                                        $factura->tipo          = $tipo;
+                                        $factura->vencimiento   = $date_suspension;
+                                        $factura->suspension    = $date_suspension;
+                                        $factura->pago_oportuno = $date_pagooportuno;
+                                        $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
+                                        $factura->bodega        = 1;
+                                        $factura->vendedor      = 1;
+                                        $factura->prorrateo_aplicado = 0;
+                                        $factura->facturacion_automatica = 1;
 
-                                if($contrato){
-                                    $factura->contrato_id = $contrato->id;
-                                }
+                                        if($contrato){
+                                            $factura->contrato_id = $contrato->id;
+                                        }
 
-                                    //validacion extra antes de guardar que no haya ningun mismo codigo.
-                                    if(Factura::where('codigo',$factura->codigo)->count() <= 1){
-                                        $factura->save();
+                                        //validacion extra antes de guardar que no haya ningun mismo codigo.
+                                        if(Factura::where('codigo',$factura->codigo)->count() <= 1){
+                                            $factura->save();
 
                                         // *** Actualizacion importante contratos multiples en una sola factura **** //
                                         if($contrato->factura_individual == 0){

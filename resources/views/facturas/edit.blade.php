@@ -63,7 +63,7 @@
                 <div class="input-group">
                     <select class="form-control selectpicker" name="contratos_json" id="contratos_json"
                     title="Seleccione un contrato" data-live-search="true" data-size="5"
-                    onchange="rowItemsContrato(this.value)"
+                    onchange="rowItemsContrato(this.value), opcionFacturaMes(this.value)"
                     >
                         @foreach($contratos as $co)
                             <option value="{{$co->id}}" {{isset($contratosFacturas) && $contratosFacturas->contrato_nro==$co->nro?'selected':''}}
@@ -91,6 +91,21 @@
                     <input type="text" class="form-control" readonly="" id="telefono" value="">
                 </div>
             </div>
+
+            <div class="form-group row @if($factura->factura_mes_manual == null) { 'd-none' } @endif" id='div-fact-mes'>
+                <label class="col-sm-4 col-form-label">Factura del mes?
+                    <span class="text-danger">*</span>
+                    <a><i data-tippy-content="Si quieres que la factura pertenezca a la del mes para que NO se cree automaticamente una nueva en el mes elige si"
+                            class="icono far fa-question-circle"></i></a>
+                </label>
+                <div class="col-sm-8">
+                    <select name="factura_mes_manual" id="factura_mes_manual" class="form-control selectpicker" title="Seleccione" data-live-search="false" data-size="5" required>
+                        <option value="1" {{ $factura->factura_mes_manual == 1 ? 'selected' : '' }}>Si</option>
+                        <option value="0" {{ $factura->factura_mes_manual == 0 ? 'selected' : '' }}>No</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group row">
                 <p class="col-sm-4 " style="background: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};border-radius: 20px;color: #fff;padding: 1%;text-align: center;"><a onclick="toggediv('masopciones');">Más opciones</a></p>
             </div>
@@ -545,5 +560,11 @@
       </div>
   </div>
   <!--  -->
+
+  <script>
+    function opcionFacturaMes(id){
+        $("#div-fact-mes").removeClass("d-none");
+    }
+    </script>
 
 @endsection

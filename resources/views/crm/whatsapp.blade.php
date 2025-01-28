@@ -93,6 +93,9 @@
     </style>
 @endsection
 
+@section('boton')
+<a href="{{route('borrar-cache')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Borrar Caché</a>
+@endsection
 @section('content')
     <div class="whatsapp_main--container">
         @if (!$instance)

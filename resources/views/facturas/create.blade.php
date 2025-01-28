@@ -102,7 +102,7 @@
             <div class="input-group">
                 <select class="form-control selectpicker" name="contratos_json" id="contratos_json" required=""
                 title="Seleccione un contrato" plac data-live-search="true" data-size="5"
-                onchange="rowItemsContrato(this.value)"
+                onchange="rowItemsContrato(this.value),opcionFacturaMes(this.value)"
                 >
 
                 </select>
@@ -146,6 +146,20 @@
                   </select>
               </div>
           </div>
+
+          <div class="form-group row d-none" id='div-fact-mes'>
+            <label class="col-sm-4 col-form-label">Factura del mes?
+                <span class="text-danger">*</span>
+                <a><i data-tippy-content="Si quieres que la factura pertenezca a la del mes para que NO se cree automaticamente una nueva en el mes elige si"
+                        class="icono far fa-question-circle"></i></a>
+            </label>
+            <div class="col-sm-8">
+                <select name="factura_mes_manual" id="factura_mes_manual" class="form-control selectpicker" title="Seleccione" data-live-search="false" data-size="5" required>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            </div>
             {{-- <div class="form-group row">
               <label class="col-sm-4 col-form-label">Forma de Pago <a><i data-tippy-content="Elige a que cuenta ira enlazado el movimiento contable" class="icono far fa-question-circle"></i></a></label>
               <div class="col-sm-8">
@@ -572,6 +586,12 @@
       </div>
   </div>
   {{--/Modal Nuevo producto  --}}
+
+  <script>
+    function opcionFacturaMes(id){
+        $("#div-fact-mes").removeClass("d-none");
+    }
+    </script>
 
 @endsection
 
