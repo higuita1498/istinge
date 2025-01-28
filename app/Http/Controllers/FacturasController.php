@@ -2361,6 +2361,22 @@ class FacturasController extends Controller{
             return redirect('/empresa/facturas/facturas_electronica')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
         }
 
+        //Validacion de dia 00 en vencimiento
+        if (substr($FacturaVenta->vencimiento, -2) == '00') {
+            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->vencimiento = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
+        //Validacion de dia 00 en suspension
+        if (substr($FacturaVenta->suspension, -2) == '00') {
+            $anoMes = substr($FacturaVenta->suspension, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->suspension = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
         $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->
         where('num_equivalente', 0)->
         where('nomina',0)->where('tipo',2)->
@@ -3820,6 +3836,22 @@ class FacturasController extends Controller{
         $FacturaVenta = Factura::find($id);
         if (!$FacturaVenta) {
             return redirect('/empresa/facturas')->with('error', "No se ha encontrado la factura de venta, comuniquese con soporte.");
+        }
+
+        //Validacion de dia 00 en vencimiento
+        if (substr($FacturaVenta->vencimiento, -2) == '00') {
+            $anoMes = substr($FacturaVenta->vencimiento, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->vencimiento = $fecha->toDateString();
+            $FacturaVenta->save();
+        }
+
+        //Validacion de dia 00 en suspension
+        if (substr($FacturaVenta->suspension, -2) == '00') {
+            $anoMes = substr($FacturaVenta->suspension, 0, 7);
+            $fecha = Carbon::createFromFormat('Y-m', $anoMes)->endOfMonth();
+            $FacturaVenta->suspension = $fecha->toDateString();
+            $FacturaVenta->save();
         }
 
         $ResolucionNumeracion = NumeracionFactura::where('empresa', Auth::user()->empresa)->
