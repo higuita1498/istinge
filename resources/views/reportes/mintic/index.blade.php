@@ -16,7 +16,7 @@
                             $cantidadAnios = 20; // Cantidad de años hacia atrás desde el año actual
                         @endphp
                         @for ($i = $anioActual; $i >= $anioActual - $cantidadAnios; $i--)
-                            <option value="{{$i}}">{{$i}}</option>
+                        <option value="{{$i}}" {{$request->anio == $i ? 'selected' : ''}}>{{$i}}</option>
                         @endfor
                     </select>
                 </div>
@@ -25,10 +25,10 @@
                 <div class="row">
                     <label>Seleccione el Trimestre <span class="text-danger">*</span></label>
                     <select class="form-control" id="trimestre" name="trimestre" required="">
-                        <option value="1">Trimestre 1</option>
-                        <option value="2">Trimestre 2</option>
-                        <option value="3">Trimestre 3</option>
-                        <option value="4">Trimestre 4</option>
+                        <option value="1" {{$request->trimestre == 1 ? 'selected' : ''}}>Trimestre 1</option>
+                        <option value="2" {{$request->trimestre == 2 ? 'selected' : ''}}>Trimestre 2</option>
+                        <option value="3" {{$request->trimestre == 3 ? 'selected' : ''}}>Trimestre 3</option>
+                        <option value="4" {{$request->trimestre == 4 ? 'selected' : ''}}>Trimestre 4</option>
                     </select>
                 </div>
             </div>

@@ -2870,6 +2870,27 @@ class ReportesController extends Controller
             $anioActual = $request->input('anio');
             $trimestreActual = $request->input('trimestre');
 
+            switch ($trimestreActual) {
+                case 1:
+                    $inicioTrimestre = Carbon::create(date('Y'), 1, 1)->startOfDay()->toDateString();
+                    $finTrimestre = Carbon::create(date('Y'), 3, 31)->endOfDay()->toDateString();
+                    break;
+                case 2:
+                    $inicioTrimestre = Carbon::create(date('Y'), 4, 1)->startOfDay()->toDateString();
+                    $finTrimestre = Carbon::create(date('Y'), 6, 30)->endOfDay()->toDateString();
+                    break;
+                case 3:
+                    $inicioTrimestre = Carbon::create(date('Y'), 7, 1)->startOfDay()->toDateString();
+                    $finTrimestre = Carbon::create(date('Y'), 9, 30)->endOfDay()->toDateString();
+                    break;
+                case 4:
+                    $inicioTrimestre = Carbon::create(date('Y'), 10, 1)->startOfDay()->toDateString();
+                    $finTrimestre = Carbon::create(date('Y'), 12, 31)->endOfDay()->toDateString();
+                    break;
+                default:
+                    throw new Exception("Trimestre inválido. Debe ser un número entre 1 y 4.");
+            }
+
             // Obtener la fecha de inicio del trimestre actual
             $inicioTrimestre = Carbon::now()->startOfQuarter()->toDateString();
 
@@ -2878,14 +2899,23 @@ class ReportesController extends Controller
 
             // Obtener los contratos del año y trimestre especificados
             $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
-                                ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
-                                ->whereYear('contracts.created_at', $anioActual)
-                                ->whereBetween('contracts.created_at', [$inicioTrimestre, $finTrimestre])
-                                ->paginate(25);
+            ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+            ->leftJoin(DB::raw('(SELECT plan_id, COUNT(id) as cantidad_suscriptores FROM contracts GROUP BY plan_id) as plan_counts'),
+                    'contracts.plan_id', '=', 'plan_counts.plan_id')
+            ->whereYear('contracts.created_at', $anioActual)
+            ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+            ->select(
+                'contracts.*',
+                'planes_velocidad.name as name',
+                'planes_velocidad.price as price',
+                'plan_counts.cantidad_suscriptores'
+            )
+            ->paginate(25);
 
             // Retornar los contratos y el trimestre como JSON
             return view('reportes.mintic.index')
             ->with('contratos', $contratos)
+            ->with('request',$request)
             ->with('trimestre', $trimestreActual);
     }
 
