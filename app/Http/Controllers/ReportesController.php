@@ -2867,6 +2867,7 @@ class ReportesController extends Controller
 
     public function reporte_1_2_mostrar(Request $request) {
 
+        $this->getAllPermissions(Auth::user()->id);
           // Obtener el año y el trimestre de la solicitud
           if(!$request->input('anio')){
             $trimestreActual = Carbon::now()->quarter;
