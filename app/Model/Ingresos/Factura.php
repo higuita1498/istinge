@@ -1701,6 +1701,7 @@ public function forma_pago()
             $contrato = new stdClass;
             $contrato->contrato_permanencia =false;
             $contrato->server_configuration_id =false;
+            $contrato->address_street = "";
             return $contrato;
         };
     }
