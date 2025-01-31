@@ -2117,13 +2117,30 @@ class ReportesController extends Controller
         // Obtener la fecha de fin del trimestre actual
         $finTrimestre = Carbon::now()->endOfQuarter()->toDateString();
 
+
         // Obtener los contratos del trimestre actual
+        // $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
+        // ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+        // ->whereYear('contracts.created_at', $anioActual)
+        // ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+        // ->paginate(25);
+
         $contratos = Contrato::join('contactos', 'contracts.client_id', '=', 'contactos.id')
         ->join('planes_velocidad', 'contracts.plan_id', '=', 'planes_velocidad.id')
+        ->leftJoin(DB::raw('(SELECT plan_id, COUNT(id) as cantidad_suscriptores FROM contracts GROUP BY plan_id) as plan_counts'),
+                   'contracts.plan_id', '=', 'plan_counts.plan_id')
         ->whereYear('contracts.created_at', $anioActual)
         ->whereRaw('DATE(contracts.created_at) BETWEEN ? AND ?', [$inicioTrimestre, $finTrimestre])
+        ->select(
+            'contracts.*',
+            'planes_velocidad.name as name',
+            'planes_velocidad.price as price',
+            'plan_counts.cantidad_suscriptores'
+        )
         ->paginate(25);
 
+
+        // return $contratos;
             return view('reportes.mintic.index')
                 ->with('contratos', $contratos)
                 ->with('trimestre', $trimestreActual);
@@ -2216,8 +2233,6 @@ class ReportesController extends Controller
             return view('reportes.facturasImpagas.index')->with(compact('facturas', 'numeraciones', 'subtotal', 'total', 'request', 'example', 'mikrotiks', 'gruposCorte'));
 
         }
-
-
     }
 
     public function radicados(Request $request) {

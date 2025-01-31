@@ -95,7 +95,7 @@
                         <td>{{ $contrato->id_segmento_planes ?? '0' }}</td>
                         <td>{{ $contrato->cantidad_suscriptores ?? '0' }}</td>
                         <td>{{ $contrato->name ?? '0' }}</td>
-                        <td>{{ $contrato->price ?? '0' }}</td>
+                        <td>{{ $contrato->iva_factura ? (0.19 * $contrato->price) : 0 }}</td>
                         <td>{{ $contrato->price?? '0' }}</td>
                         <td>{{ $contrato->id_modalidad_plan ?? '0' }}</td>
                         <td>{{ $contrato->created_at ?? '0' }}</td>

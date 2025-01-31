@@ -271,12 +271,12 @@ class AvisosController extends Controller
 
                     $wapiService = new WapiService();
                     $instance = Instance::where('company_id', $empresa->id)->first();
-                    if(is_null($instance) || empty($instance)){
-                        Log::error('Instancia no está creada.');
+                     if(is_null($instance) || empty($instance)){
+                        return back()->with('danger','Instancia no está creada');
                         return;
                     }
                     if($instance->status !== "PAIRED") {
-                        Log::error('La instancia de whatsapp no está conectada, por favor conectese a whatsapp y vuelva a intentarlo.');
+                        return back()->with('danger','La instancia de whatsapp no está conectada, por favor conectese a whatsapp y vuelva a intentarlo.');
                         return;
                     }
                     $contacto = $contrato->cliente();
