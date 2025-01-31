@@ -2866,9 +2866,18 @@ class ReportesController extends Controller
     }
 
     public function reporte_1_2_mostrar(Request $request) {
+
           // Obtener el año y el trimestre de la solicitud
+          if(!$request->input('anio')){
+            $trimestreActual = Carbon::now()->quarter;
+            // Obtener el año actual
+            $anioActual = Carbon::now()->year;
+
+        }else{
+            // Obtener el año y el trimestre de la solicitud
             $anioActual = $request->input('anio');
             $trimestreActual = $request->input('trimestre');
+        }
 
             switch ($trimestreActual) {
                 case 1:

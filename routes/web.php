@@ -1235,7 +1235,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/reportecontactos', 'ReportesController@getReporteContactos')->name('reportes.contactos');
 		Route::get('/cajas', 'ReportesController@cajas')->name('reportes.cajas');
 		Route::get('/instalacion', 'ReportesController@instalacion')->name('reportes.instalacion');
-        Route::get('/reporte/1/2', 'ReportesController@reporte_1_2')->name('reportes.mintic.1.2');
+        Route::get('/reporte/1/2', 'ReportesController@reporte_1_2_mostrar')->name('reportes.mintic.1.2');
 		Route::get('/facturas-impagas', 'ReportesController@facturasImpagas')->name('reportes.facturasImpagas');
 		Route::get('/radicados', 'ReportesController@radicados')->name('reportes.radicados');
 		Route::get('/recargas', 'ReportesController@recargas')->name('reportes.recargas');
