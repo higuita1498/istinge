@@ -944,8 +944,10 @@ public function forma_pago()
                   }
               }elseif($vencida->contrato_id != null){
                   $contrato_otra_factura = Contrato::Find($vencida->contrato_id);
-                  if($contrato_otra_factura->nro == $contrato_factura_actual->contrato_nro){
-                      $saldoMesAnterior+=$vencida->porpagar();
+                  if($contrato_otra_factura){
+                    if($contrato_otra_factura->nro == $contrato_factura_actual->contrato_nro){
+                        $saldoMesAnterior+=$vencida->porpagar();
+                    }
                   }
               }
             }else{
