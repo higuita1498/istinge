@@ -607,8 +607,8 @@
 
     <div class="nota-content">
         <p>
-            RECUERDA EN CASO DE NO PAGO OPORTUNO SE GENERA COBRO POR RECONEXION EN TU PROXIMA FACTURA
-            SEGÚN LOS SERVICIOS QUE TENGAS CONTRATADOS.
+            {{ $factura->facnotas != "" ? $factura->facnotas : "RECUERDA EN CASO DE NO PAGO OPORTUNO SE GENERA COBRO POR RECONEXION EN TU PROXIMA FACTURA
+            SEGÚN LOS SERVICIOS QUE TENGAS CONTRATADOS."}}
         </p>
     </div>
 
