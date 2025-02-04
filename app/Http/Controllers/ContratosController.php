@@ -168,15 +168,13 @@ class ContratosController extends Controller
             }
             // Aplica el filtro de facturas si el usuario lo selecciona
             if ($request->filtro_facturas === "true") {
-                $contratos->join('factura', function($join) {
-                    $join->on('factura.contrato_id', '=', 'contracts.id')
-                        ->where('factura.estatus', '=', 1);
-                })
-                    ->groupBy('contracts.id')
-                    ->havingRaw('COUNT(factura.id) > 1'); // Filtra los que deben más de dos facturas
-
+                $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+                  ->join('factura as f', 'fc.factura_id', '=', 'f.id')
+                  ->where('f.estatus', '=', 1)
+                  ->where('f.vencimiento','<',Carbon::now()->format('Y-m-d'))
+                  ->groupBy('contracts.id')
+                  ->havingRaw('COUNT(f.id) > 1');
             }
-
             if($request->ip){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.ip', 'like', "%{$request->ip}%");
