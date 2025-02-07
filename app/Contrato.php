@@ -62,7 +62,7 @@ class Contrato extends Model
 	    $plan->producto = "N/A";
 	    $plan->name = "N/A";
 
-        if(Inventario::find($this->servicio_tv)){
+        if(Inventario::find($this->servicio_tv) && $tv){
             return $tv = Inventario::find($this->servicio_tv);
         }
 
