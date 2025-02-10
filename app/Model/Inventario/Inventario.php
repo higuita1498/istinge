@@ -2,35 +2,36 @@
 
 namespace App\Model\Inventario;
 
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 use App\Funcion; use App\Impuesto;
 use App\Categoria;
 use App\ProductoCuenta;
-use Auth;  use App\NotaCredito; 
-use App\Model\Ingresos\ItemsFactura;  
+use Auth;  use App\NotaCredito;
+use App\Model\Ingresos\ItemsFactura;
 use App\Model\Ingresos\Factura;
-use App\Model\Ingresos\ItemsNotaCredito; 
-use App\Model\Ingresos\ItemsRemision; 
+use App\Model\Ingresos\ItemsNotaCredito;
+use App\Model\Ingresos\ItemsRemision;
 use App\Model\Ingresos\Remision;
-use App\Model\Ingresos\Cotizacion; 
+use App\Model\Ingresos\Cotizacion;
 use App\Model\Inventario\ProductosBodega;
 use App\Model\Inventario\ProductosTransferencia;
-use App\Model\Inventario\ListaPrecios; 
-use App\Model\Inventario\AjusteInventario; 
+use App\Model\Inventario\ListaPrecios;
+use App\Model\Inventario\AjusteInventario;
 use App\Model\Gastos\ItemsFacturaProv;
-use DB; 
+use DB;
 class Inventario extends Model
 {
     protected $table = "inventario";
     protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [
         'empresa', 'producto', 'ref', 'precio', 'descripcion', 'impuesto', 'id_impuesto', 'imagen', 'nro', 'categoria',
-        'inicial', 'unidad', 'status',  'created_at', 'updated_at', 'tipo_producto', 'publico', 'costo_unidad', 'lista', 'link', 'type'
+        'inicial', 'unidad', 'status',  'created_at', 'updated_at', 'tipo_producto', 'publico', 'costo_unidad', 'lista', 'link', 'type',
+        'siigo_id',
     ];
     public function status(){
       return $this->status==1?'Activo':'Inactivo';
@@ -46,7 +47,7 @@ class Inventario extends Model
           return 'Ninguno';
         }
         return $this->impuesto."%";
-      } 
+      }
 
       return Impuesto::find($this->id_impuesto);
     }
@@ -54,7 +55,7 @@ class Inventario extends Model
     public function categoria(){
       if ($this->categoria) {
       return Categoria::where('id',$this->categoria)->first()->nombre;
-      }  
+      }
     }
 
     public function unidad($tipo=false){
@@ -70,7 +71,7 @@ class Inventario extends Model
         return DB::table('unidades_medida')->where('id',$this->unidad)->first()->unidad;
     }
 
-    public function uso(){ 
+    public function uso(){
         return ItemsFactura::where('producto',$this->id)->count()+ItemsNotaCredito::where('producto',$this->id)->count()+ItemsRemision::where('producto',$this->id)->count()+DB::table('imagenesxinventario')->where('producto', $this->id)->count()+ProductosPrecios::where('empresa', Auth::user()->empresa)->where('producto', $this->id)->count()+ProductosTransferencia::where('producto', $this->id)->count()+AjusteInventario::where('producto', $this->id)->count() + ProductosTransferencia::where('producto', $this->id)->count() + ItemsFacturaProv::where('producto', $this->id)->count();
     }
 
@@ -104,12 +105,12 @@ class Inventario extends Model
     }
 
     public function imagenes(){
-      return DB::table('imagenesxinventario')->where('producto', $this->id)->orderBy('id', 'desc')->get(); 
+      return DB::table('imagenesxinventario')->where('producto', $this->id)->orderBy('id', 'desc')->get();
     }
 
   public function notas_credito($count=false){
-    
-   $nota=DB::table('items_notas')->where('producto', $this->id)->groupBy('nota')->select('nota'); 
+
+   $nota=DB::table('items_notas')->where('producto', $this->id)->groupBy('nota')->select('nota');
     if ($count) {
       return $nota->count();
     }
@@ -125,7 +126,7 @@ class Inventario extends Model
 
 
   public function cotizaciones($count=false){
-    $facturas=DB::table('items_factura')->where('producto', $this->id)->where('tipo_inventario', 1)->groupBy('factura')->select('factura'); 
+    $facturas=DB::table('items_factura')->where('producto', $this->id)->where('tipo_inventario', 1)->groupBy('factura')->select('factura');
     if ($count) {
       return $facturas->count();
     }
@@ -138,7 +139,7 @@ class Inventario extends Model
   }
 
   public function remisiones($count=false){
-    $remisiones=DB::table('items_remision')->where('producto', $this->id)->groupBy('remision')->select('remision'); 
+    $remisiones=DB::table('items_remision')->where('producto', $this->id)->groupBy('remision')->select('remision');
     if ($count) {
       return $remisiones->count();
     }
@@ -150,7 +151,7 @@ class Inventario extends Model
     return Remision::whereIn('id', $id)->orderBy('id', 'desc')->get();
   }
 
-  
+
 
   public function bodegas(){
     return ProductosBodega::where('empresa', Auth::user()->empresa)->where('producto', $this->id)->get();
