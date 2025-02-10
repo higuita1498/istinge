@@ -212,9 +212,6 @@
             @if(isset($_SESSION['permisos']['759']))
             <a href="#" data-toggle="modal" data-target="#config_olt">Configurar OLT</a><br>
             @endif
-            @if(isset($_SESSION['permisos']['759']))
-            <a href="#" data-toggle="modal" data-target="#config_siigo">Configurar Siigo</a><br>
-            @endif
 		</div>
 		@endif
 
@@ -261,6 +258,17 @@
 			<h4 class="card-title">Limpieza del Sistema</h4>
 			<p>Limpia los archivos temporales y caché del sistema.</p>
 			<a href="javascript:limpiarCache()">Limpiar caché</a><br>
+		</div>
+
+        <div class="col-sm-3 enlaces">
+			<h4 class="card-title">Configuración Siigo</h4>
+			<p>Conecta y mapea la información básica para siigo.</p>
+            @if(isset($_SESSION['permisos']['759']))
+            <a href="#" data-toggle="modal" data-target="#config_siigo">Conexión Siigo</a><br>
+            <a href="{{ route('siigo.mapeo_impuestos') }}">Impuestos - Retenciones</a><br>
+            <a href="{{ route('siigo.mapeo_vendedores') }}">Vendedores</a><br>
+            <a href="{{ route('siigo.mapeo_productos') }}">Productos</a><br>
+            @endif
 		</div>
 	</div>
 

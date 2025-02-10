@@ -358,6 +358,13 @@ Route::group(['prefix' => 'siigo'], function(){
     Route::post('create_invoice', 'SiigoController@createInvoice')->name('siigo.create_invoice');
     Route::get('get_modal_invoice', 'SiigoController@getModalInvoice');
     Route::get('send_invoice', 'SiigoController@sendInvoice');
+    Route::get('mapeo-impuestos', 'SiigoController@mapeoImpuestos')->name('siigo.mapeo_impuestos');
+    Route::get('mapeo-retenciones', 'SiigoController@mapeoRetenciones')->name('siigo.mapeo_retenciones');
+    Route::post('save-impuestos-siigo', 'SiigoController@storeImpuestos')->name('siigo.save_impuestos');
+    Route::get('mapeo-vendedores', 'SiigoController@mapeoVendedores')->name('siigo.mapeo_vendedores');
+    Route::post('save-vendedores-siigo', 'SiigoController@storeVendedores')->name('siigo.save_vendedores');
+    Route::get('mapeo-productos', 'SiigoController@mapeoProductos')->name('siigo.mapeo_productos');
+    Route::post('save-productos-siigo', 'SiigoController@storeProductos')->name('siigo.save_productos');
 });
 
 Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {

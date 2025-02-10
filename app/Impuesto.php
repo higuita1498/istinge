@@ -16,13 +16,13 @@ class Impuesto extends Model
      * @var array
      */
     protected $fillable = [
-         'nombre', 'porcentaje', 'tipo', 'descripcion', 'empresa', 'estado'
+         'nombre', 'porcentaje', 'tipo', 'descripcion', 'empresa', 'estado','siigo_id'
     ];
 
     public function usado()
     {
         return ItemsFactura::where('id_impuesto',$this->id)->count()+Inventario::where('id_impuesto',$this->id)->count();
-        
+
     }
 
     public function tipo()
@@ -48,5 +48,5 @@ class Impuesto extends Model
         return Puc::find($this->puc_compra);
     }
 
-    
+
 }
