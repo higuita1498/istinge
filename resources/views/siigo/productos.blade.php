@@ -13,7 +13,7 @@
         </script>
     @endif
 
-    <form method="POST" action="{{ route('siigo.save_vendedores') }}" style="padding: 2% 3%;    " role="form"
+    <form method="POST" action="{{ route('siigo.save_productos') }}" style="padding: 2% 3%;    " role="form"
         class="forms-sample" novalidate id="form-termino">
         {{ csrf_field() }}
 
