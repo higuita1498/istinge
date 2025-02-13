@@ -31,7 +31,8 @@ class Contacto extends Model
      */
     protected $fillable = [
         'empresa', 'nombre', 'apellido1', 'apellido2', 'nit', 'tip_iden', 'tipo_contacto', 'tipo_empresa', 'direccion', 'saldo_favor', 'ciudad', 'telefono1', 'telefono2', 'fax', 'celular', 'estrato', 'observaciones', 'email', 'status', 'created_at', 'updated_at' , 'vendedor', 'lista_precio','dv',
-        'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD', 'fecha_contrato', 'referencia_asignacion','boton_emision','monitoreo','refiere','combo_int_tv','referencia_1','referencia_2','cierra_venta','usuario_wifi','contrasena_wifi','ip_receptora','puerto_receptor'
+        'tipo_persona','responsableiva','plan','contrato', 'serial_onu', 'imgA', 'imgB', 'imgC', 'imgD', 'fecha_contrato', 'referencia_asignacion','boton_emision','monitoreo','refiere','combo_int_tv','referencia_1','referencia_2','cierra_venta',
+        'usuario_wifi','contrasena_wifi','ip_receptora','puerto_receptor','ppt'
     ];
 
     protected $appends = ['usado', 'contract', 'details'];

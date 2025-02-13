@@ -294,8 +294,8 @@ class IngresosController extends Controller
                     $ultimoEnvio = Session::get('ultimo_envio');
                     $tiempoTranscurrido = Carbon::now()->diffInSeconds($ultimoEnvio);
 
-                    if ($tiempoTranscurrido < 10) {
-                        return redirect('empresa/ingresos')->with('danger', 'Por favor, espera al menos 10 segundos antes de registrar otro ingreso.');
+                    if ($tiempoTranscurrido < 15) {
+                        return redirect('empresa/ingresos')->with('danger', 'Por favor, espera al menos 15 segundos antes de registrar otro ingreso.');
                     }
                 }
                 Session::put('ultimo_envio', Carbon::now());
