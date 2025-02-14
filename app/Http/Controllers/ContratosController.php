@@ -1170,7 +1170,8 @@ class ContratosController extends Controller
             $nro->contrato = $nro_contrato + 1;
             $nro->save();
 
-            return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
+            return redirect('empresa/asignaciones/create')->with('cliente_id',$contrato->client_id)->with('success','SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
+            // return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
         }
 
         ## Otro tipo de servicio ingresa tenga o no tenga mk ##

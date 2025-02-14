@@ -59,7 +59,10 @@
                 <div class="input-group">
                     <select class="form-control selectpicker" name="id" id="idCliente" required="" title="Seleccione" data-live-search="true" data-size="5" >
                         @foreach($clientes as $cliente)
-                        <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}>{{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
+                        <option value="{{$cliente->id}}" {{$cliente->id == $idCliente ? 'selected' : '' }}
+                            {{ Session::has('cliente_id') && $cliente->id == Session::get('cliente_id') ? 'selected' : '' }}
+                            >
+                            {{$cliente->nombre}} {{$cliente->apellido1}} {{$cliente->apellido2}} - {{$cliente->nit}}</option>
                         @endforeach
                     </select>
                 </div>

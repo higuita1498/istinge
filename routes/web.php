@@ -1336,6 +1336,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
             Route::get('/{radicados}/{state}/state_lote', 'RadicadosController@state_lote')->name('radicados.state_lote');
             Route::get('/{radicados}/destroy_lote', 'RadicadosController@destroy_lote')->name('radicados.destroy_lote');
             Route::get('{id}/log', 'RadicadosController@log')->name('radicados.log');
+            Route::post('/asignacion-tecnico', 'RadicadosController@asignacionTecnico')->name('radicados.asignaciontecnico');
         });
 		Route::resource('radicados', 'RadicadosController');
 
