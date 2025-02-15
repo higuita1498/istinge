@@ -2527,7 +2527,8 @@ class ContratosController extends Controller
             });
         }
 
-        $contratos = $contratos->where('contracts.status', 1)->get();
+        // $contratos = $contratos->where('contracts.status', 1)->get();
+        $contratos = $contratos->get();
 
         $totalPlan = 0;
         $totalServicio = 0;
