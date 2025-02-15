@@ -2395,11 +2395,11 @@ class ContratosController extends Controller
                 'contactos.estrato as c_estrato',
                 'contactos.fk_idmunicipio as c_municipio',
                 'municipios.nombre as c_nombre_municipio',
-                'e.nombre as c_etiqueta',
+                'e.nombre as c_etiqueta'
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
-            ->join('etiquetas as e', 'e.id', '=', 'contracts.etiqueta_id')
+            ->leftJoin('etiquetas as e', 'e.id', '=', 'contracts.etiqueta_id')
             ->where('contracts.empresa', Auth::user()->empresa)
             ;
 
