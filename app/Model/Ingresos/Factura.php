@@ -44,7 +44,8 @@ class Factura extends Model
         'estatus', 'notas', 'plazo', 'created_at', 'updated_at', 'term_cond',
         'facnotas' , 'lista_precios', 'bodega','emitida','dian_response',
         'nonkey', 'statusdian', 'observacionesdian', 'modificado','fecha_expedicion',
-        'tipo_fac','tipo_operacion', 'promesa_pago', 'contrato_id', 'created_by','prorrateo_aplicado','facturacion_automatica','ordenservicio'
+        'tipo_fac','tipo_operacion', 'promesa_pago', 'contrato_id', 'created_by','prorrateo_aplicado',
+        'facturacion_automatica','ordenservicio', 'periodo_cobrado_text'
     ];
 
     protected $appends = ['session'];

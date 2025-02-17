@@ -198,6 +198,16 @@
                             <textarea  class="form-control form-control-sm min_max_100" name="observaciones">{{$factura->observaciones}}</textarea>
                         </div>
                     </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4  col-form-label">Periodo Cobrado
+                          <a><i data-tippy-content="Si no quieres que aparezca el periodo cobrado por defecto del sistema en la factura, agrega tu periodo cobrado textualmente" class="icono far fa-question-circle"></i></a>
+                        </label>
+                      <div class="col-sm-8">
+                          <textarea  class="form-control form-control-sm min_max_100" rows="2" name="periodo_cobrado_text">{{$factura->periodo_cobrado_text}}</textarea>
+                      </div>
+                  </div>
+
                 </div>
                 <div class="col-md-4 offset-md-3">
                     <div class="form-group row">
