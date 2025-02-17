@@ -2076,7 +2076,7 @@ class FacturasController extends Controller{
             7=>'factura.estatus',
             8=>'acciones'
         );
-        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')->select('factura.*', DB::raw('c.nombre as nombrecliente'), FacadesDB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',1);
+        $facturas=Factura::join('contactos as c', 'factura.cliente', '=', 'c.id')->select('factura.*', DB::raw('c.nombre as nombrecliente'), DB::raw('c.apellido1 as ape1cliente'), DB::raw('c.apellido2 as ape2cliente'))->where('factura.empresa',Auth::user()->empresa)->where('factura.tipo',1);
 
         $facturas=$facturas->whereRaw('factura.id in (Select distinct(factura) from items_factura where producto='.$producto.' and tipo_inventario=1)');
 
