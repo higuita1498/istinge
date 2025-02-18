@@ -43,7 +43,7 @@
         {
             text-align: left;
         }
-        
+
 
         .titulo{
             width: 100%;
@@ -52,11 +52,11 @@
             overflow: hidden;
         }
         td {
-          border: 1px  solid #9e9b9b; 
+          border: 1px  solid #9e9b9b;
         }
 
         th {
-          border: 1px  solid #ccc; 
+          border: 1px  solid #ccc;
         }
         .desgloce{
             width: 100%;
@@ -70,7 +70,7 @@
             border-left: 2px solid #fff;
             border-top: 2px solid #fff;
             border-bottom: 2px solid #fff;
-            border-right: 2px solid #ccc;     
+            border-right: 2px solid #ccc;
         }
         .foot td{
             padding-top: 3px;
@@ -97,7 +97,7 @@
             padding-left: 1%;
         }
         .text-center{
-            text-align: center !important; 
+            text-align: center !important;
         }
 
     </style>
@@ -110,11 +110,11 @@
             <h4>{{Auth::user()->empresa()->nombre}}</h4>
             <p style="line-height: 12px;">{{Auth::user()->empresa()->tip_iden('mini')}} {{Auth::user()->empresa()->nit}} @if(Auth::user()->empresa()->dv != null || Auth::user()->empresa()->dv === 0) - {{Auth::user()->empresa()->dv}} @endif<br>
                 {{Auth::user()->empresa()->direccion}} <br>
-                {{Auth::user()->empresa()->telefono}} 
+                {{Auth::user()->empresa()->telefono}}
                 @if(Auth::user()->empresa()->web)
-                    <br>{{Auth::user()->empresa()->web}} 
+                    <br>{{Auth::user()->empresa()->web}}
                 @endif
-                <br> <a href="mailto:{{Auth::user()->empresa()->email}}" target="_top">{{Auth::user()->empresa()->email}}</a> 
+                <br> <a href="mailto:{{Auth::user()->empresa()->email}}" target="_top">{{Auth::user()->empresa()->email}}</a>
             </p>
 
         </div>
@@ -122,14 +122,14 @@
     margin-top: 2%;">
             <p class="medium text-center">Cotización</p>
             <h4 class=" text-center">No. #{{$factura->cot_nro}}</h4>
-            
+
         </div>
     </div>
     <div style="">
         <table border="1" class="titulo">
             <tr>
                 <th width="10%" class="right smalltd">SEÑOR(ES)</th>
-                <td colspan="3" style="border-top: 2px solid #ccc;">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</td>
+                <td colspan="3" style="border-top: 2px solid #ccc;">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos ?? ''}}</td>
                 <th width="22%" class="center" style="font-size: 8px"><b>FECHA DE EXPEDICIÓN (DD/MM/AA)</b></th>
             </tr>
             <tr>
@@ -140,7 +140,7 @@
             <tr>
                 <th class="right smalltd">CIUDAD</th>
                 <td colspan="3">@if($factura->cliente){{$factura->cliente()->ciudad}}@endif</td>
-                <th class="center" style="font-size: 8px"><b>FECHA DE VENCIMIENTO (DD/MM/AA)</b></th> 
+                <th class="center" style="font-size: 8px"><b>FECHA DE VENCIMIENTO (DD/MM/AA)</b></th>
             </tr>
             <tr>
                 <th class="right smalltd">TELÉFONO</th>
@@ -226,7 +226,7 @@
                         @endif
                     @endforeach
                 @endif
-                
+
                 <tr class="foot">
                     <td colspan="4"> </td>
                     <th class="right padding-right">Total</th>
@@ -250,7 +250,7 @@
         </div>
     </div>
 
-    
-     
+
+
 
 @endsection

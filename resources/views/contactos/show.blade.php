@@ -231,10 +231,10 @@
 							<td>{{$contacto->vereda}}</td>
 						</tr>
 						@endif
-						@if($contacto->barrio)
+						@if($contacto->barrio_id)
 						<tr>
 							<th width="20%">Barrio</th>
-							<td>{{$contacto->barrio}}</td>
+							<td>{{$contacto->barrio()->nombre}}</td>
 						</tr>
 						@endif
 						@if($contacto->email)
