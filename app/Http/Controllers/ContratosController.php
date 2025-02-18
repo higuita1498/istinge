@@ -344,6 +344,13 @@ class ContratosController extends Controller
                     $query->orWhere('contracts.linea', 'like', "%{$request->linea}%");
                 });
             }
+
+            if($request->otra_opcion && $request->otra_opcion == "opcion_2"){
+                $contratos->where(function ($query) {
+                    $query->whereNotNull('contracts.descuento')
+                          ->orWhereNotNull('contracts.descuento_pesos');
+                });
+            }
         }
 
         $contratos->where('contracts.empresa', Auth::user()->empresa);
