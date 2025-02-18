@@ -314,14 +314,14 @@
     					@if ($radicado->reporte)
     						<tr>
     							<th>Reporte del Técnico</th>
-                                <td>@php echo($radicado->reporte); @endphp</td>
+                                <td style="white-space: normal;word-wrap: break-word;max-width: 400px;">@php echo($radicado->reporte); @endphp</td>
     						</tr>
     					@endif
     					@if ($radicado->firma)
     						<tr>
     							<th>Firma Cliente</th>
     							<td>
-    								<img src="data:image/png;base64,{{substr($radicado->firma,1)}}" class="img-fluid" style="width: 100%;height: auto;">
+    								<img src="data:image/png;base64,{{substr($radicado->firma,1)}}" class="img-fluid" style="width: 25%;height: auto;">
     	                        </td>
     						</tr>
     					@endif

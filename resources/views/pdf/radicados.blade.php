@@ -376,7 +376,7 @@
             </div>
             <div style="display: inline-block; width: 45%;">
                 @if($radicado->firma)
-                <img src="data:image/png;base64,{{substr($radicado->firma,1)}}" class="img-fluid w-50" style="width: 90%">
+                <img src="data:image/png;base64,{{substr($radicado->firma,1)}}" class="" style="width:50%">
                 @endif
                 <p class="small" style="border-top: 1px solid #000;"> ACEPTADA, FIRMA Y/O SELLO Y FECHA</p>
             </div>
