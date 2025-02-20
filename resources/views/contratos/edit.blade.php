@@ -552,6 +552,10 @@
                                   <strong></strong>
                               </span>
                           </div>
+
+                          <div class="form-group col-md-4">
+                          <button type="button" onclick="refreshDataInternet()" class="btn btn-danger">Resetear información de internet</button>
+                          </div>
                         </div>
                     </div>
                     @if(count($servicios)>0)
@@ -1062,6 +1066,21 @@
             $('.cls-nosuspension').removeClass('d-none');
         }
     });
+
+    function refreshDataInternet(){
+
+        $('#tecnologia').val('').selectpicker('refresh');
+        $('#ap').val('').selectpicker('refresh');
+        $('#ip').val("");
+        $('#mac_address').val("");
+        $('#serial_onu').val("");
+        $('#local_address').val(null).trigger('change');
+        $('#server_configuration_id').val(null).trigger('change');
+        $('#plan_id').val(null).trigger('change');
+        $('#conexion').val(null).trigger('change');
+        $('#puerto_conexion').val(null).trigger('change');
+
+    }
 
     </script>
 @endsection
