@@ -2101,102 +2101,84 @@ if ($mikrotik) {
     }
 
 
-    public static function sendMail($vista, $data, $usedData, $fn){
-
+    public static function sendMail($vista, $data, $usedData, $fn)
+    {
         $html = '';
         $adjuntos = [];
 
-        if($vista){
+        if ($vista) {
             $html = view($vista, $data)->render();
         }
 
-        /*
-        $reflection = new \ReflectionFunction($fn);
-        $message = new \stdClass();
-        $data = $reflection->invoke($message);
-        */
+        $titulo = $usedData['tituloCorreo'] ?? 'Comunicado ' . auth()->user()->empresa()->nombre;
+        $emails = $usedData['emails'] ?? $usedData['email'] ?? null;
+        $nombreCliente = $data['cliente'] ?? 'Usuario';
 
-
-        if(isset($usedData['tituloCorreo'])){
-            $titulo = $usedData['tituloCorreo'];
-        }else{
-            $titulo = 'Comunicado ' . auth()->user()->empresa()->nombre;
-        }
-
-
-        if(isset($usedData['emails'])){
-            $emails = $usedData['emails'];
-        }else if(isset($usedData['email'])){
-            $emails = $usedData['email'];
-        }else{
-            $emails = null;
-        }
-
-        if(isset($data['cliente'])){
-            $nombreCliente = $data['cliente'];
-        }else{
-            $nombreCliente = 'Usuario';
-        }
-
-        if(isset($usedData['pdf'])){
-            /*
-            if($usedData['pdf'] && str_contains($usedData['pdf'], 'pdf')){
-                if(file_exists($url = config('app.url') . '/' . $usedData['pdf'])){
-                    $adjuntos[] = ['url' => $url, 'name' => 'file.pdf' ];
-                }
-            }
-            */
-
-            $adjuntos[] = ['name' => 'document.pdf', 'content' => chunk_split(base64_encode($usedData['pdf']))];
-        }
-
-        if(isset($usedData['xmlPath'])){
-            /*
-            if($usedData['xmlPath'] && str_contains($usedData['xmlPath'], 'xml')){
-                if(file_exists($url = config('app.url') . '/' . $usedData['xmlPath'])){
-                    $adjuntos[] = ['url' => $url, 'name' => 'xml.xml'];
-                }
-            }
-            */
-
-            if(file_exists($usedData['xmlPath'])){
-                $url = config('app.url') . '/' . $usedData['xmlPath'];
-
-                $file = null;
-
-                try {
-                    $file = file_get_contents($url);
-                } catch (\Throwable $t) {
-                    $file = null;
-                }
-
-                if($file){
-                    $adjuntos[] = ['name' => 'xml.xml', 'content' => chunk_split(base64_encode($file))];
-                }
-            }
-        }
-
-        if(!is_array($emails)){
+        if (!is_array($emails)) {
             $emails = [$emails];
         }
 
+        $enviaSoloZip = false;
+
+        // Adjuntar el ZIP si existe y activar la bandera para enviar solo ZIP
+        if (isset($usedData['nombreArchivoZip']) && file_exists($usedData['nombreArchivoZip'])) {
+            $zipContent = file_get_contents($usedData['nombreArchivoZip']);
+            if ($zipContent !== false) {
+                $adjuntos = [ // Se sobreescribe el array para enviar solo el ZIP
+                    [
+                        'name' => $usedData['nombreArchivoZip'],
+                        'content' => base64_encode($zipContent)
+                    ]
+                ];
+                $enviaSoloZip = true; // Activar bandera
+            }
+        }
+
+        // Si NO hay ZIP, entonces adjuntar los otros archivos
+        if (!$enviaSoloZip) {
+            // Adjuntar el PDF si está presente
+            if (isset($usedData['pdf'])) {
+                $adjuntos[] = [
+                    'name' => 'document.pdf',
+                    'content' => base64_encode($usedData['pdf'])
+                ];
+            }
+
+            // Adjuntar el XML si existe
+            if (isset($usedData['ruta_xmlresponse']) && file_exists($usedData['ruta_xmlresponse'])) {
+                $xmlContent = file_get_contents($usedData['ruta_xmlresponse']);
+                if ($xmlContent !== false) {
+                    $adjuntos[] = [
+                        'name' => basename($usedData['ruta_xmlresponse']),
+                        'content' => base64_encode($xmlContent)
+                    ];
+                }
+            }
+        }
 
         try {
+            // Envío con SendInBlue (si se usa un servicio externo)
             self::sendInBlue($html, $titulo, $emails, $nombreCliente, $adjuntos);
         } catch (\Throwable $t) {
-        // exception is raised and it'll be handled here
-        // $e->getMessage() contains the error message
+            // dd("Error en SendInBlue:", $t->getMessage());
         }
-
 
         try {
-            Mail::send($vista, $data, $fn);
-        } catch (\Throwable $t) {
-        // exception is raised and it'll be handled here
-        // $e->getMessage() contains the error message
-        }
+            // Envío con Mail::raw() para evitar problemas con proc_open()
+            Mail::raw('Adjunto el archivo solicitado.', function ($message) use ($emails, $titulo, $adjuntos) {
+                $message->to($emails)
+                        ->subject($titulo);
 
+                // Adjuntar archivos correctamente
+                foreach ($adjuntos as $adjunto) {
+                    $message->attachData(base64_decode($adjunto['content']), $adjunto['name']);
+                }
+            });
+        } catch (\Throwable $t) {
+            // dd("Error en envío de correo:", $t->getMessage());
+        }
     }
+
 
     public function getPdfFactura($id)
     {
