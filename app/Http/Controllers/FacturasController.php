@@ -1887,7 +1887,7 @@ class FacturasController extends Controller{
             $itemscount=ItemsFactura::where('factura',$factura->id)->count();
             $retenciones = FacturaRetencion::where('factura', $factura->id)->get();
             //return view('pdf.factura')->with(compact('items', 'factura', 'itemscount'));
-            $resolucion = NumeracionFactura::where('empresa',$empresa->id)->latest()->first();
+            $resolucion = NumeracionFactura::where('id',$factura->numeracion)->first();
             $ingreso = IngresosFactura::where('factura',$factura->id)->first();
             //---------------------------------------------//
             if($factura->emitida == 1){
@@ -1900,9 +1900,9 @@ class FacturasController extends Controller{
 
                 $CUFEvr = $factura->info_cufe($factura->id, $impTotal);
                 $infoEmpresa = $empresa;
-                $data['Empresa'] = $infoEmpresa->toArray();
+                $dataFactura['Empresa'] = $infoEmpresa->toArray();
                 $infoCliente = Contacto::find($factura->cliente);
-                $data['Cliente'] = $infoCliente->toArray();
+                $dataFactura['Cliente'] = $infoCliente->toArray();
                 /*..............................
                 Construcción del código qr a la factura
                 ................................*/
@@ -1914,8 +1914,8 @@ class FacturasController extends Controller{
                 }
 
                 $codqr = "NumFac:" . $factura->codigo . "\n" .
-                "NitFac:"  . $data['Empresa']['nit']   . "\n" .
-                "DocAdq:" .  $data['Cliente']['nit'] . "\n" .
+                "NitFac:"  . $dataFactura['Empresa']['nit']   . "\n" .
+                "DocAdq:" .  $dataFactura['Cliente']['nit'] . "\n" .
                 "FecFac:" . Carbon::parse($factura->created_at)->format('Y-m-d') .  "\n" .
                 "HoraFactura" . Carbon::parse($factura->created_at)->format('H:i:s').'-05:00' . "\n" .
                 "ValorFactura:" .  number_format($factura->total()->subtotal, 2, '.', '') . "\n" .
@@ -1976,22 +1976,31 @@ class FacturasController extends Controller{
             }
 
 
-            self::sendMail('emails.email', compact('factura', 'total', 'cliente'), compact('pdf', 'emails', 'tituloCorreo', 'xmlPath'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
-                $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
-                if(file_exists($xmlPath)){
-                    $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+            if($factura->emitida == 1){
+                $statusJson = $this->validateStatusDian(auth()->user()->empresaObj->nit, $factura->codigo, "01", $resolucion->prefijo);
+                $statusJson = json_decode($statusJson, true);
+
+                if ($statusJson["statusCode"] == 200) {
+                    $this->generateXmlPdfEmail($statusJson['document'], $factura, $emails, $dataFactura, $CUFEvr, $items, $resolucion, $tituloCorreo);
                 }
-                $message->to($emails)->subject($tituloCorreo);
-            });
-        }
-        //$factura->correo = 1;
-        $factura->observaciones = ' | Factura Enviada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
-        $factura->save();
-        if ($redireccionar) {
+            }else{
+                   self::sendMail('emails.email', compact('factura', 'total', 'cliente'), compact('pdf', 'emails', 'tituloCorreo', 'xmlPath'), function($message) use ($pdf, $emails,$tituloCorreo,$xmlPath){
+                    $message->attachData($pdf, 'factura.pdf', ['mime' => 'application/pdf']);
+                    if(file_exists($xmlPath)){
+                        $message->attach($xmlPath, ['as' => 'factura.xml', 'mime' => 'text/plain']);
+                    }
+                    $message->to($emails)->subject($tituloCorreo);
+                });
+            }
+
+            //$factura->correo = 1;
+            $factura->observaciones = ' | Factura Enviada por: '.Auth::user()->nombres.' el '.date('d-m-Y g:i:s A');
+            $factura->save();
+            if ($redireccionar) {
             return redirect('empresa/facturas/'.$factura->id)->with('success', 'Se ha enviado satisfactoriamente la factura por correo electrónico');
             //return back()->with('success', 'Se ha enviado satisfactoriamente la factura por correo electrónico');
+            }
         }
-        return "Enviado";
     }
 
     public function cliente_factura_json($cliente, $cerradas=false){
