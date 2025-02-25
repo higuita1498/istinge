@@ -284,7 +284,6 @@ class FacturasController extends Controller{
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
-
         return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
     }
 
@@ -315,6 +314,17 @@ class FacturasController extends Controller{
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
+
+        $numeracionActual = NumeracionFactura::
+        where('nomina',0)->where('num_equivalente',0)
+        ->where('preferida',1)
+        ->where('estado',1)
+        ->where('tipo',2)
+        ->first();
+
+        // if(!$numeracionActual){
+
+        // }
 
         view()->share(['title' => 'Facturas de Venta Electrónica', 'subseccion' => 'venta-electronica']);
         return view('facturas-electronica.index', compact('clientes', 'municipios', 'tabla','servidores'));
@@ -417,7 +427,9 @@ class FacturasController extends Controller{
             (SELECT IF(SUM(pago), SUM(pago), 0) FROM notas_factura WHERE factura = factura.id)) as porpagar
         ')
         )
-        ->groupBy('factura.id');
+        ->selectRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) as codigo_numerico")
+        ->groupBy('factura.id')
+        ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
         if ($request->filtro == true) {
 
