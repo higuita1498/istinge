@@ -431,6 +431,8 @@ class FacturasController extends Controller{
         ->groupBy('factura.id')
         ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
+
+
         if ($request->filtro == true) {
 
             if($request->codigo){
