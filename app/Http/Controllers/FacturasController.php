@@ -431,8 +431,6 @@ class FacturasController extends Controller{
         ->groupBy('factura.id')
         ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
-
-
         if ($request->filtro == true) {
 
             if($request->codigo){
@@ -646,7 +644,9 @@ class FacturasController extends Controller{
             (SELECT IF(SUM(pago), SUM(pago), 0) FROM notas_factura WHERE factura = factura.id)) as porpagar
         ')
         )
-        ->groupBy('factura.id');
+        ->selectRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) as codigo_numerico")
+        ->groupBy('factura.id')
+        ->orderByRaw("CAST(REGEXP_REPLACE(factura.codigo, '[^0-9]', '') AS UNSIGNED) DESC");
 
         // Consulta vieja.
         // $facturas = Factura::query()
