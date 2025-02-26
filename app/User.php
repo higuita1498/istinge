@@ -221,7 +221,10 @@ class User extends Authenticatable
                 return 'text-info';
             }
         }else{
-            return Roles::find($this->rol)->rol;
+            if($this->rol){
+                return Roles::find($this->rol)->rol;
+            }
+            else return "N/A";
         }
     }
 
