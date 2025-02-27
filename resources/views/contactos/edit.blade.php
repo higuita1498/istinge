@@ -108,13 +108,7 @@
 				<strong>{{ $errors->first('vereda') }}</strong>
 			</span>
 		</div>
-		<div class="form-group col-md-3 {{$contacto->tipo_contacto==0?'':'d-none'}} ">
-			<label class="control-label">Barrio</label>
-			<input type="text" class="form-control" id="barrio" name="barrio" maxlength="200"  value="{{$contacto->barrio}}">
-			<span class="help-block error">
-				<strong>{{ $errors->first('barrio') }}</strong>
-			</span>
-		</div>
+
         <div class="col-md-3 form-group">
             <label class="control-label">Barrio <span class="text-danger">*</span></label>
                  <select class="form-control selectpicker" id="barrio_id" name="barrio_id" title="seleccione el barrio"  data-size="5" data-live-search="true">
