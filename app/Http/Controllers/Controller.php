@@ -1090,26 +1090,17 @@ class Controller extends BaseController
 
     public function consultar_invoice($identificacion){
         $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-        join('factura as f','f.cliente','c.id')->
-        join('items_factura as if','f.id','if.factura')->
-        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as price'))->
+        leftJoin('factura as f','f.cliente','c.id')->
+        leftJoin('items_factura as if','f.id','if.factura')->
+        select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte',
+        'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1',
+        'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden',
+        DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as price'))->
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
-        groupBy('f.id', 'contracts.id')->
-        get();
-
-        if (count($contrato) == 1){
-            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
-            join('factura as f','f.cliente','c.id')->
-            join('items_factura as if','f.id','if.factura')->
-            select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte', 'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1', 'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden', DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as price'))->
-            where('c.nit', $identificacion)->
-            where('f.estatus',1)->
-            where('contracts.status',1)->
-            groupBy('f.id', 'contracts.id')->
-            get()->last();
-        }
+        groupBy('factura')->
+        get()->last();
 
         if(is_null($contrato)){
             $contrato = Contacto::join('factura as f','f.cliente','contactos.id')->
