@@ -23,7 +23,7 @@ class RolesController extends Controller
         //
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Tipos Usuarios', 'icon' =>'']);
-        $roles = Roles::where('id_empresa', Auth::user()->empresa)->whereNotIn('id',[1,2])->get();
+        $roles = Roles::where('id_empresa', Auth::user()->empresa)->whereNotIn('id',[1,2,3])->get();
 
         return view('configuracion.tipousuario.index')->with(compact('roles'));
     }
