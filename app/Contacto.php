@@ -387,6 +387,9 @@ class Contacto extends Model
         $barrio->nombre = "N/A";
         if($this->barrio_id){
             $barrio = DB::table("barrios")->where('id',$this->barrio_id)->first();
+            if(!$barrio){
+                $barrio->nombre = "N/A";
+            }
         }
 
         return $barrio;
