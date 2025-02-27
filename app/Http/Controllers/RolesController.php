@@ -23,7 +23,7 @@ class RolesController extends Controller
         //
         $this->getAllPermissions(Auth::user()->id);
         view()->share(['title' => 'Tipos Usuarios', 'icon' =>'']);
-        $roles = Roles::where('id_empresa', Auth::user()->empresa)->whereNotIn('id',[1,2,3,8])->get();
+        $roles = Roles::where('id_empresa', Auth::user()->empresa)->whereNotIn('id',[1,2])->get();
 
         return view('configuracion.tipousuario.index')->with(compact('roles'));
     }
@@ -53,25 +53,25 @@ class RolesController extends Controller
         $this->getAllPermissions(Auth::user()->id);
         $request->validate([
           'rol' => 'required'
-        ]); 
+        ]);
         $nroCorrelativo = Roles::where('id_empresa', Auth::user()->empresa)->get()->last();
-        
-     
-        
+
+
+
         if(!$nroCorrelativo){
             $nro = 1;
         }else{
             $nro = $nroCorrelativo->nro+1;
         }
-        
+
         $rol = new Roles();
         $rol->nro = $nro;
         $rol->rol = $request->rol;
         $rol->id_empresa = Auth::user()->empresa;
         $rol->save();
-    
+
     return redirect('empresa/configuracion/roles')->with('success', 'Se ha creado el tipo de usuario satisfactoriamente.');
-        
+
     }
 
     /**
@@ -110,15 +110,15 @@ class RolesController extends Controller
     {
         $request->validate([
           'rol' => 'required'
-        ]); 
-        
+        ]);
+
          $rol = Roles::find($id);
-        
+
          if($rol){
             $rol->rol = $request->rol;
             $rol->save();
          }
-         
+
      return redirect('empresa/configuracion/roles')->with('success', 'Se ha modificado el tipo de usuario satisfactoriamente.');
     }
 
@@ -132,11 +132,11 @@ class RolesController extends Controller
     {
         //
     }
-    
+
     public function eliminar(Request $request)
     {
-        $rol = Roles::where('id_empresa',Auth::user()->empresa)->where('id', $request->idRol)->first(); 
-        
+        $rol = Roles::where('id_empresa',Auth::user()->empresa)->where('id', $request->idRol)->first();
+
         if($rol){
             $rol->delete();
             $arrayPost['status'] = 'ok';
