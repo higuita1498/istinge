@@ -2681,6 +2681,65 @@ class CronController extends Controller
 
     public function deleteFactura(){
 
+    return $contratos = Contrato::join('facturas_contratos as fc','fc.contrato_nro','contracts.nro')
+        ->join('factura as f','f.id','fc.factura_id')
+        ->where('f.fecha', '2025-02-01')
+        ->where('f.vencimiento', '>', date('Y-m-d'))
+        ->where('contracts.state', 'disabled')
+        ->select('contracts.*')
+        ->get();
+
+
+    //Habilitando contratos masivamente segun unas especificaciones
+    foreach($contratos as $contrato){
+        if($contrato->state != 'enabled'){
+
+        if(isset($contrato->server_configuration_id)){
+
+            $mikrotik = Mikrotik::where('id', $contrato->server_configuration_id)->first();
+            $API = new RouterosAPI();
+            $API->port = $mikrotik->puerto_api;
+
+            if ($API->connect($mikrotik->ip,$mikrotik->usuario,$mikrotik->clave)) {
+                $API->write('/ip/firewall/address-list/print', TRUE);
+                $ARRAYS = $API->read();
+
+
+            #ELIMINAMOS DE MOROSOS#
+            $API->write('/ip/firewall/address-list/print', false);
+            $API->write('?address='.$contrato->ip, false);
+            $API->write("?list=morosos",false);
+            $API->write('=.proplist=.id');
+            $ARRAYS = $API->read();
+
+            if(count($ARRAYS)>0){
+                $API->write('/ip/firewall/address-list/remove', false);
+                $API->write('=.id='.$ARRAYS[0]['.id']);
+                $READ = $API->read();
+            }
+            #ELIMINAMOS DE MOROSOS#
+
+            #AGREGAMOS A IP_AUTORIZADAS#
+            $API->comm("/ip/firewall/address-list/add", array(
+                "address" => $contrato->ip,
+                "list" => 'ips_autorizadas'
+                )
+            );
+            #AGREGAMOS A IP_AUTORIZADAS#
+
+            $contrato->state = 'enabled';
+
+            $contrato->update();
+            $API->disconnect();
+            }
+        }
+    }
+    }
+
+    return "okok";
+    //Script para habilitar contratos por mk tambien segun unas especificaciones
+
+
         //Envio de facturas solo por correo por fecha unica.
         //  $fechaInvoice = Carbon::now()->format('Y-m').'-'.substr(str_repeat(0, 2)."15", - 2);
         //  $this->sendInvoices($fechaInvoice);
