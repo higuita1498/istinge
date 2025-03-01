@@ -1788,6 +1788,15 @@ class ContratosController extends Controller
                 $contrato->ip_receptora            = $request->ip_receptora;
                 $contrato->puerto_receptor         = $request->puerto_receptor;
 
+                //campos al quitar una mikrotik
+                $contrato->server_configuration_id = isset($request->server_configuration_id) ? $request->server_configuration_id : null;
+                $contrato->plan_id = isset($request->plan_id) ? $request->plan_id : null;
+                $contrato->conexion = isset($request->conexion) ? $request->conexion : null;
+                $contrato->local_address = isset($request->local_address) ? $request->local_address : null;
+                $contrato->ip = isset($request->ip) ? $request->ip : null;
+                $contrato->tecnologia = isset($request->tecnologia) ? $request->tecnologia : null;
+                $contrato->mac_address = isset($request->mac_address) ? $request->mac_address : null;
+
                 if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
 
                     $contrato->olt_sn_mac          = $request->olt_sn_mac;
