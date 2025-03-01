@@ -1162,7 +1162,7 @@
         var type = $("#periodo_quincenal").val();
 
         if (window.location.pathname.split("/")[1] === "software") {
-            var url = '/empresa/software/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
+            var url = '/software/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
 
         }else{
             var url = '/empresa/nomina/liquidar-nomina/' + periodo + '/' + year + '/' + true + '/' + type;
