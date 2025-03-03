@@ -105,7 +105,11 @@
 							</select>
 						</div>
                         <div class="col-md-2 pl-1 pt-1">
-                            <input type="text" placeholder="Barrio" id="barrio" name="barrio" class="form-control rounded barrio" autocomplete="off">
+                            <select title="barrio" class="form-control rounded selectpicker" id="barrio" data-size="5" data-live-search="true">
+								@foreach ($barrios as $barrio)
+									<option value="{{ $barrio->id}}">{{ $barrio->nombre}}</option>
+								@endforeach
+							</select>
                         </div>
                         <div class="col-md-2 pl-1 pt-1 position-relative">
                             <input type="date" id="creacion" name="creacion" class="form-control rounded" autocomplete="off">
@@ -138,7 +142,7 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 pl-1 pt-1 text-center">
-							<a href="javascript:limpiarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
+							<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
 							<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
 							<a href="javascript:exportar()" class="btn btn-icons mr-1 btn-outline-success rounded btn-sm p-1" title="Exportar"><i class="fas fa-file-excel"></i></a>
 						</div>
@@ -512,14 +516,14 @@
 			}
 		});
 
-		$('#codigo, #barrio').on('keyup',function(e) {
+		$('#codigo').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
             }
         });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento').on('change',function() {
+        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento', '#barrio').on('change',function() {
             getDataTable();
             return false;
         });
@@ -690,9 +694,9 @@
 		$('#corte').val('').selectpicker('refresh');
 		$('#cliente').val('').selectpicker('refresh');
 		$('#municipio').val('').selectpicker('refresh');
+		$('#barrio').val('').selectpicker('refresh');
 		$('#vendedor').val('').selectpicker('refresh');
 		$('#creacion').val('');
-		$('#barrio').val('');
 		$('#vencimiento').val('');
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
@@ -705,7 +709,7 @@
 
 	function exportar() {
 		$("#estado").selectpicker('refresh');
-        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
+        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&barrio='+$('#barrio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
 	}
 
 	@if($tipo)

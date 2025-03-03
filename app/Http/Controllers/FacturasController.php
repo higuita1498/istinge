@@ -284,7 +284,8 @@ class FacturasController extends Controller{
         ->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores'));
+        $barrios = DB::table('barrios')->orderBy('nombre', 'asc')->get();
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios','servidores','barrios'));
     }
 
     public function indexNew(Request $request, $tipo){
@@ -298,8 +299,9 @@ class FacturasController extends Controller{
         $servidores = Mikrotik::where('empresa', $empresaActual)->get();
         $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 4)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
         $municipios = DB::table('municipios')->orderBy('nombre', 'asc')->get();
+        $barrios = DB::table('barrios')->orderBy('nombre', 'asc')->get();
 
-        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores'));
+        return view('facturas.indexnew', compact('clientes','tipo','tabla','municipios', 'servidores','barrios'));
     }
 
     /*
@@ -764,7 +766,7 @@ class FacturasController extends Controller{
             }
             if ($request->barrio) {
                 $facturas->where(function ($query) use ($request) {
-                    $query->orWhereRaw('LOWER(c.barrio) = ?', [strtolower($request->barrio)]);
+                    $query->orWhere('c.barrio_id', $request->barrio);
                 });
             }
         }

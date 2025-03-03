@@ -378,7 +378,7 @@
                 </tr>
                 <tr>
                     <th class="right smalltd" width="10%">BARRIO</th>
-                    <td colspan="">{{isset($factura->contract()->barrio) ? $factura->contract()->barrio : $factura->cliente()->barrio}}</td>
+                    <td colspan="">{{isset($factura->contacto()->barrio_id != null) ? $factura->contacto()->barrio()->nombre : $factura->cliente()->barrio}}</td>
                 </tr>
                 <tr>
                     <th class="right smalltd">CIUDAD/DEP</th>
