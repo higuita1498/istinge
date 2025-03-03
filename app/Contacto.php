@@ -389,6 +389,9 @@ class Contacto extends Model
                 $barrio = new StdClass();
                 $barrio->nombre = "N/A";
             }
+        }else{
+            $barrio = new StdClass();
+            $barrio->nombre = "N/A";
         }
 
         return $barrio;
