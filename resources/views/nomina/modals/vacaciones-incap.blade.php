@@ -344,7 +344,7 @@
                 const valorIncapacidadDiaria = salarioPromedioDiario * (66.67 / 100); // Calcula el 66.67% del salario diario
 
                 // Salario mínimo diario legal vigente
-                const salarioMinimoDiario = 1300000 / 30; // Puedes ajustar el salario mínimo mensual aquí
+                const salarioMinimoDiario = 1423500 / 30; // Puedes ajustar el salario mínimo mensual aquí
 
                 // Ajustar al salario mínimo diario legal vigente si aplica
                 const valorDiarioAjustado = Math.max(valorIncapacidadDiaria, salarioMinimoDiario);

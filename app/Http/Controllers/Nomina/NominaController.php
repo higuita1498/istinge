@@ -1989,28 +1989,30 @@ class NominaController extends Controller
             'fk_nomina_cuenta_tipo',
             [4, 5, 6]
         )->get();
+        $diasV = 0;
         $dias = 0;
         foreach ($detalles as $detalle) {
+
             if ($detalle->fecha_inicio) {
                 $fechaEmision = Carbon::parse($detalle->fecha_inicio);
                 $fechaExpiracion = Carbon::parse($detalle->fecha_fin);
 
-                // Calcula los días entre las fechas excluyendo el día 31
-                $dias += NominaPeriodos::diffDaysExcluding31($fechaEmision, $fechaExpiracion)
-                    + ($detalle->nombre == 'VACACIONES' ? 0 : 1);
+                if($detalle->nombre == "VACACIONES"){
+                    // Calcula los días entre las fechas excluyendo el día 31
+                    $diasV += NominaPeriodos::diffDaysExcluding31($fechaEmision, $fechaExpiracion)
+                        + ($detalle->nombre == 'VACACIONES' ? 0 : 1);
+                }
 
                 // Suma los días compensados en dinero
                 $dias += $detalle->dias_compensados_dinero;
             }
         }
 
-
-
          /**
          * Si la suma de las vacaciones es 16 dias y el total de dias trabajados de la persona ahora es 0
          * entonces la salud y pension se debe calcular sobre el total de vacaciones por el dia de más.
          * **/
-        if($dias >= 16){
+        if($diasV >= 16){
             $nomina_periodo = NominaPeriodos::Find($nomina->fk_nominaperiodo);
             $valor_pago_vacaciones = $nomina_periodo->updateCalculosNomina();
         }
@@ -2019,17 +2021,17 @@ class NominaController extends Controller
             'subsidio_transporte' => (object)[
                 'valor' => $request->subsidio_transporte,
                 'simbolo' => '+'
-                ]
-            ];
+            ]
+        ];
         $nominaPeriodo = NominaPeriodos::find($request->id);
 
-        if($dias >= 16){
+        if($diasV >= 16){
             // $nominaPeriodo->editValorTotal($calculosFijos,false);
         }else{
             $nominaPeriodo->editValorTotal($calculosFijos);
         }
 
-
+        $dias = $dias + $diasV;
 
         if ($nominaPeriodo) {
             $arrayPost['status'] = 'OK';
