@@ -232,7 +232,10 @@ class CronController extends Controller
                         }
                     }
 
-                    if($mesActualFactura != $mesUltimaFactura)
+                    /* ** Validacion: si la actual es dif a la ultima fac pasa o sino
+                    si son iguales y no tiene fact manual == 1(la ultima) y es manual y no automatica pasa */
+                    if($mesActualFactura != $mesUltimaFactura ||
+                       $mesActualFactura == $mesUltimaFactura && $ultimaFactura->factura_mes_manual == 0 && $ultimaFactura->facturacion_automatica == 0)
                     {
                         ## Verificamos que el cliente no posea la ultima factura automática abierta, de tenerla no se le genera la nueva factura
                         if(isset($ultimaFactura->fecha)){
