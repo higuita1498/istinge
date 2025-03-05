@@ -73,7 +73,7 @@ class HomeController extends Controller
         $radicados_solventado = Radicado::whereIn('estatus',[1,3])->where('empresa', Auth::user()->empresa)->count();
 
         $contra_ena = Contrato::where('state','enabled')->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
-        $contra_disa = Contrato::where('state','disabled')->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
+        $contra_disa = Contrato::where('state','disabled')->where('status', [0,1])->where('empresa', Auth::user()->empresa)->count();
         $contra_factura = Contrato::whereIn('fecha_corte',[15,30])->where('status', 1)->where('empresa', Auth::user()->empresa)->count();
 
         $factura = Factura::whereIn('estatus',[1,0])->where('lectura',1)->where('empresa', Auth::user()->empresa)->count();

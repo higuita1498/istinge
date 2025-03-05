@@ -137,7 +137,7 @@ class ContratosController extends Controller
                DB::raw('(select fecha from ingresos where ingresos.cliente = contracts.client_id and ingresos.tipo = 1 LIMIT 1) AS pago'))
             ->selectRaw('INET_ATON(contracts.ip) as ipformat')
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->leftJoin('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id');
 
         if ($request->filtro == true) {
@@ -192,7 +192,8 @@ class ContratosController extends Controller
             }
             if($request->state){
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.state', $request->state);
+                    $query->orWhere('contracts.state', $request->state)
+                    ->whereIn('contracts.status',[0,1]);
                 });
             }
             if($request->conexion){
@@ -2414,7 +2415,7 @@ class ContratosController extends Controller
                 'e.nombre as c_etiqueta'
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
-            ->join('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
+            ->leftJoin('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->leftJoin('etiquetas as e', 'e.id', '=', 'contracts.etiqueta_id')
             ->where('contracts.empresa', Auth::user()->empresa)
             ;
@@ -2447,7 +2448,8 @@ class ContratosController extends Controller
         }
         if($request->state != null){
             $contratos->where(function ($query) use ($request) {
-                $query->orWhere('contracts.state', $request->state);
+                $query->orWhere('contracts.state', $request->state)
+                ->whereIn('contracts.status', [0,1]);
             });
         }
         if($request->conexion_s != null){
