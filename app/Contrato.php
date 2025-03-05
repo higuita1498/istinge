@@ -35,7 +35,8 @@ class Contrato extends Model
         'nro', 'plan_id', 'client_id', 'server_configuration_id', 'state', 'ip', 'fecha_corte', 'fecha_suspension',
         'usuario', 'password', 'interfaz', 'conexion', 'status', 'id_vlan', 'name_vlan', 'grupo_corte', 'created_at',
         'updated_at', 'puerto_conexion', 'factura_individual', 'contrato_permanencia', 'contrato_permanencia_meses',
-        'costo_reconexion', 'tipo_contrato', 'observaciones','tipo_nosuspension','fecha_hasta_nosuspension','fecha_desde_nosuspension','serial_moden','tipo_moden'
+        'costo_reconexion', 'tipo_contrato', 'observaciones','tipo_nosuspension','fecha_hasta_nosuspension','fecha_desde_nosuspension',
+        'serial_moden','tipo_moden','descuento_pesos'
     ];
 
     protected $appends = ['status'];
