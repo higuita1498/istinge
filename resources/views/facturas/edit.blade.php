@@ -105,6 +105,20 @@
                 </div>
             </div>
 
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Vendedor</label>
+                <div class="col-sm-8">
+                    <select name="vendedor" id="vendedor" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
+                        @foreach($vendedores as $vendedor)
+                            <option value="{{$vendedor->id}}" {{$factura->vendedor==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <span class="help-block error">
+                      <strong>{{ $errors->first('vendedor') }}</strong>
+                </span>
+            </div>
+
             <div class="form-group row @if($factura->factura_mes_manual == null) { 'd-none' } @endif" id='div-fact-mes'>
                 <label class="col-sm-4 col-form-label">Factura del mes?
                     <span class="text-danger">*</span>
@@ -209,20 +223,9 @@
                   </div>
 
                 </div>
-                <div class="col-md-4 offset-md-3">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Vendedor</label>
-                        <div class="col-sm-8">
-                            <select name="vendedor" id="vendedor" class="form-control selectpicker " title="Seleccione" data-live-search="true" data-size="5" required>
-                                @foreach($vendedores as $vendedor)
-                                    <option value="{{$vendedor->id}}" {{$factura->vendedor==$vendedor->id?'selected':''}}>{{$vendedor->nombre}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <span class="help-block error">
-          	                <strong>{{ $errors->first('vendedor') }}</strong>
-                        </span>
-                    </div>
+
+                <div class="col-md-5 offset-md-2">
+
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
                         <div class="col-sm-8">
@@ -232,6 +235,7 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Lista de Precios</label>
                         <div class="col-sm-8">

@@ -137,15 +137,6 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
-              <div class="col-sm-8">
-                  <select name="periodo_cobrado" id="periodo_cobrado" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
-                      <option value="1" {{$empresa->periodo_cobrado==1 ? 'selected' : ''}}>Mes anticipado</option>
-                      <option value="2" {{$empresa->periodo_cobrado==2 ? 'selected' : ''}}>Mes vencido</option>
-                  </select>
-              </div>
-          </div>
 
           <div class="form-group row d-none" id='div-fact-mes'>
             <label class="col-sm-4 col-form-label">Factura del mes?
@@ -269,7 +260,18 @@
 			</div>
 
 
-            <div class="col-md-4 offset-md-3">
+            <div class="col-md-5 offset-md-2">
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Periodo a cobrar</label>
+                    <div class="col-sm-8">
+                        <select name="periodo_cobrado" id="periodo_cobrado" class="form-control selectpicker " title="Seleccione" data-live-search="false" data-size="5" required>
+                            <option value="1" {{$empresa->periodo_cobrado==1 ? 'selected' : ''}}>Mes anticipado</option>
+                            <option value="2" {{$empresa->periodo_cobrado==2 ? 'selected' : ''}}>Mes vencido</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Lista de Precios <a><i data-tippy-content="Lista de precios asociada a la factura de venta, puedes agregar nuevas listas de precio haciendo <a href='#'>clíck aquí</a>" class="icono far fa-question-circle"></i></a></label>
                 <div class="col-sm-8">
