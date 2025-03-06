@@ -471,8 +471,10 @@
 
         <div class="nota-content">
             <p>
-                Estimado Cliente, paga oportunamente y evita la suspensión del servicio, cobro de reconexión e intereses demora. El incumplimiento en los pagos genera reportes a
-                Centrales de Riesgo como moroso. Una vez realices tu pago, este se aplicará a más tardar el siguiente día hábil. Si ya realizaste el pago, haz caso omiso.
+                Realice sus pagos en oficina principal cr 8b cl 72b-86 (7 de agosto) soporte técnico 3006972186
+                (daños y cambio de clave) Quejas y reclamos 3008786129. Usuarios Principal enviar comprobante
+                electrónico a 324 3975299. Bancolombia Convenio 10685 - Nombre convenio: Redes Tv SAT SAS referencia Cédula.
+                 Usuarios Nueva Floresta enviar comprobante electrónico a 317 3633194.
             </p>
         </div>
 
