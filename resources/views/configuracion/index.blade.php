@@ -11,6 +11,21 @@
             padding-bottom: 1px;
             /* Espacio entre el enlace y la línea */
         }
+
+        .configuracion > div {
+            border: 2px solid #022454;
+            border-radius: 5px;
+            padding: 9px;
+        }
+
+        .configuracion > div a::before {
+            content: "\f0da"; /* Código del icono (ejemplo: flecha derecha) */
+            font-family: "Font Awesome 5 Free"; /* O "Font Awesome 6 Free" si usas FA6 */
+            font-weight: 900; /* Para usar los iconos sólidos */
+            margin-right: 8px; /* Espacio entre el icono y el texto */
+            color: #022454; /* Color del icono */
+        }
+
     </style>
     <div class="row card-description">
         <div class="col-sm-4" style="text-align: center;">
@@ -107,7 +122,9 @@
                 <input type="hidden" id="efectyid" value="{{ Auth::user()->empresa()->efecty }}">
                 <a href="javascript:facturacionSmsAutomatica()">{{ Auth::user()->empresa()->factura_sms_auto == 0 ? 'Habilitar' : 'Deshabilitar' }}
                     SMS automaticos</a><br>
-                <input type="hidden" id="facturaSmsAuto" value="{{ Auth::user()->empresa()->factura_sms_auto }}">
+                    <a href="javascript:periodoTirilla()">{{ Auth::user()->empresa()->periodo_tirilla == 0 ? 'Habilitar' : 'Deshabilitar' }}
+                        periodo en tirilla</a><br>
+                <input type="hidden" id="periodoTirilla" value="{{ Auth::user()->empresa()->periodo_tirilla }}">
             </div>
 
             <div class="col-sm-3 enlaces">
@@ -317,29 +334,6 @@
             @endif
         </div>
     </div>
-
-    {{-- <div class="row card-description configuracion">
-		<div class="col-sm-3">
-			<h4 class="card-title">Campos Extras Inventario</h4>
-			<p>Configura las campos adicionales para el módulo de inventario.</p>
-			<a href="{{route('personalizar_inventario.index')}}">Campos</a> <br>
-		</div>
-		<div class="col-sm-3">
-			<h4 class="card-title">Planes</h4>
-			<p>Elige el plan que quieres tener y configura cómo quieres pagarlo.</p>
-			<a href="{{route('listadoPagos.index')}}">Pagos de Suscripcion</a> <br>
-            @if ($personalPlan)
-                <a href="{{route('planes.personalizado')}}">Plan personalizado</a> <br>
-            @endif
-			<a href="{{route('PlanesPagina.index')}}">Planes</a> <br>
-			<a href="{{route('PlanesPagina.index')}}">Metodos de pago</a> <br>
-		</div>
-				<div class="col-sm-3">
-			<h4 class="card-title">Categorias</h4>
-			<p>Organice a su medida el plan único de cuentas.</p>
-			<a href="{{route('categorias.index')}}">Gestionar Categorias</a> <br>
-		</div>
-	</div> --}}
 
     {{-- MÓDULOS --}}
     <div class="modal fade" id="config_modulos" role="dialog">
@@ -1336,6 +1330,71 @@
                                 Swal.fire({
                                     type: 'success',
                                     title: 'Envio de sms automaticos deshabilitada',
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                })
+                                $("#facturaAuto").val(0);
+                            }
+                            setTimeout(function() {
+                                var a = document.createElement("a");
+                                a.href = window.location.pathname;
+                                a.click();
+                            }, 1000);
+                        }
+                    });
+
+                }
+            })
+        }
+
+        function periodoTirilla() {
+            if (window.location.pathname.split("/")[1] === "software") {
+                var url = '/software/configuracion_periodo_tirilla';
+            } else {
+                var url = '/configuracion_periodo_tirilla';
+            }
+
+            if ($("#periodoTirilla").val() == 0) {
+                $titleswal = "¿Desea habilitar el campo periodo la tirilla??";
+            }
+
+            if ($("#periodoTirilla").val() == 1) {
+                $titleswal = "¿Desea deshabilitar el campo periodo en la tirilla?";
+            }
+
+            Swal.fire({
+                title: $titleswal,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Aceptar',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: url,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        method: 'post',
+                        data: {
+                            status: $("#periodoTirilla").val()
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            if (data == 1) {
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'Periodo en la tirilla habilitado',
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                })
+                                $("#facturaAuto").val(1);
+                            } else {
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'Periodo en la tirilla deshabilitado',
                                     showConfirmButton: false,
                                     timer: 5000
                                 })

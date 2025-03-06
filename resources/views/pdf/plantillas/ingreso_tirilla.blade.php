@@ -144,7 +144,9 @@
         Fecha del Pago: {{ date('d/m/Y', strtotime($ingreso->fecha)) }}<br>
         Cuenta: {{ $ingreso->cuenta()->nombre }}<br>
         Método de Pago: {{ $ingreso->metodo_pago() }}<br>
+        @if(isset(Auth::user()->empresa()->periodo_tirilla) && Auth::user()->empresa()->periodo_tirilla == 1)
         Periodo: {{$ingreso->ingresofactura()->factura()->periodoCobradoTexto()}}<br>
+        @endif
         @if($ingreso->notas) Notas: {{ $ingreso->notas }} @endif
     </div>
 
