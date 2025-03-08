@@ -1,7 +1,9 @@
 <?php
 
 use App\Contacto;
+use App\Contrato;
 use App\Empresa;
+use App\Http\Controllers\ContratosController;
 use App\Model\Ingresos\Factura;
 use App\Model\Ingresos\FacturaRetencion;
 use App\Model\Ingresos\ItemsFactura;
@@ -10,6 +12,7 @@ use App\NumeracionFactura;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -219,3 +222,13 @@ Route::get('NotaCreditoElectronica/{id}', function ($id) {
  });
 
 
+Route::get('deudacontrato/{contro_nro}', function ($contro_nro) {
+    $contrato = Contrato::where('nro' , $contro_nro)->first();
+    if($contrato){
+        $deuda = "$" . App\Funcion::Parsear($contrato->deudaFacturas());
+
+        return response()->json(['data' => $deuda, 'status' => 200]);
+    }else{
+        return response()->json(['status' => 400, 'message' => 'No se encontraron datos']);
+    }
+});
