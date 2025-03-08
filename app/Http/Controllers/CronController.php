@@ -42,6 +42,7 @@ use App\Model\Gastos\NotaDedito;
 use App\Model\Ingresos\NotaCredito;
 use App\Model\Nomina\Nomina;
 use App\Movimiento;
+use App\MovimientoLOG;
 use App\Services\WapiService;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\DB;
@@ -897,6 +898,15 @@ class CronController extends Controller
                                 $contrato->state = 'disabled';
                                 $contrato->observaciones = $contrato->observaciones. " - Contrato deshabilitado automaticamente";
                                 $contrato->save();
+
+                                $descripcion = '<i class="fas fa-check text-success"></i> <b>Cambio de Status</b> de habilitado a deshabilitado por cronjob<br>';
+                                $movimiento = new MovimientoLOG();
+                                $movimiento->contrato    = $contrato->id;
+                                $movimiento->modulo      = 5;
+                                $movimiento->descripcion = $descripcion;
+                                $movimiento->created_by  = 1;
+                                $movimiento->empresa     = $contrato->empresa;
+                                $movimiento->save();
                             }
                         }
                         }
