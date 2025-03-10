@@ -592,6 +592,7 @@ class FacturasController extends Controller{
         ->join('empresas as em', 'em.id', '=', 'factura.empresa')
         ->join('items_factura as if', 'factura.id', '=', 'if.factura')
         ->leftJoin('vendedores as v', 'factura.vendedor', '=', 'v.id')
+        ->leftJoin('barrios as barrio','barrio.id','c.barrio_id')
         ->leftJoin(
             DB::raw('
                 (SELECT factura_id, contrato_nro
@@ -607,6 +608,7 @@ class FacturasController extends Controller{
         ->leftJoin('contracts as cs', 'cs.nro', '=', 'fc.contrato_nro')
         ->leftJoin('mikrotik as mk', 'mk.id', '=', 'cs.server_configuration_id')
         ->select(
+            'barrio.nombre as barrio',
             'mk.nombre as servidor',
             'cs.server_configuration_id',
             'cs.opciones_dian',
