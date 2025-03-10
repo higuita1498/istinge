@@ -1094,13 +1094,14 @@ class Controller extends BaseController
         leftJoin('items_factura as if','f.id','if.factura')->
         select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte',
         'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1',
-        'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden',
-        DB::raw('SUM((if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as price'))->
+        'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden', 'f.id as facturaId')->
         where('c.nit', $identificacion)->
         where('f.estatus',1)->
         where('contracts.status',1)->
-        groupBy('factura')->
-        get()->last();
+        groupBy('f.id')->
+        get();
+
+
 
         if(is_null($contrato)){
             $contrato = Contacto::join('factura as f','f.cliente','contactos.id')->
@@ -1110,6 +1111,24 @@ class Controller extends BaseController
             where('f.estatus',1)->
             groupBy('f.id')->
             get()->last();
+        }else{
+            $price = 0;
+            foreach($contrato as $contrato){
+                $price+= Factura::Find($contrato->facturaId)->porpagar();
+            }
+
+            $contrato = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
+                leftJoin('factura as f','f.cliente','c.id')->
+                leftJoin('items_factura as if','f.id','if.factura')->
+                select('contracts.id', 'contracts.public_id', 'contracts.state',  'contracts.fecha_corte',
+                'contracts.fecha_suspension', 'c.nombre', 'c.apellido1', 'c.apellido2', 'c.nit', 'c.celular', 'c.telefono1',
+                'c.email', 'f.fecha as emision', 'f.vencimiento', 'f.codigo as factura', 'if.impuesto', 'c.direccion', 'c.tip_iden', 'f.id as facturaId')->
+                where('c.nit', $identificacion)->
+                where('f.estatus',1)->
+                where('contracts.status',1)->
+                groupBy('f.id')->
+                get()->last();
+            $contrato->price = $price;
         }
 
         $pasarelas = DB::table('integracion')->where('web', 1)->where('tipo', 'PASARELA')->where('status', 1)->get();
