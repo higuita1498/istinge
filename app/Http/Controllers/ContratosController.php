@@ -2412,11 +2412,13 @@ class ContratosController extends Controller
                 'contactos.estrato as c_estrato',
                 'contactos.fk_idmunicipio as c_municipio',
                 'municipios.nombre as c_nombre_municipio',
-                'e.nombre as c_etiqueta'
+                'e.nombre as c_etiqueta',
+                'barrio.nombre as nombre_barrio'
             )
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->leftJoin('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->leftJoin('etiquetas as e', 'e.id', '=', 'contracts.etiqueta_id')
+            ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
             ->where('contracts.empresa', Auth::user()->empresa)
             ;
 
@@ -2575,7 +2577,7 @@ class ContratosController extends Controller
                 ->setCellValue($letras[3].$i, $contrato->c_celular)
                 ->setCellValue($letras[4].$i, $contrato->c_email)
                 ->setCellValue($letras[5].$i, $contrato->c_direccion)
-                ->setCellValue($letras[6].$i, $contrato->c_barrio)
+                ->setCellValue($letras[6].$i, $contrato->nombre_barrio)
                 ->setCellValue($letras[7].$i, $contrato->c_vereda)
                 ->setCellValue($letras[8].$i, $contrato->c_estrato)
                 ->setCellValue($letras[9].$i, ($contrato->servicio_tv) ? $contrato->plan(true)->producto : '')
