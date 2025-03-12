@@ -524,7 +524,7 @@ class FacturasController extends Controller{
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
         })
         ->editColumn('direccion', function (Factura $factura) {
-            return  $factura->direccioncliente;
+            return  ($factura->direccion)?$factura->direccion:$factura->direccioncliente;
         })
         ->editColumn('fecha', function (Factura $factura) {
             return date('d-m-Y', strtotime($factura->fecha));
@@ -803,7 +803,7 @@ class FacturasController extends Controller{
             return  $factura->cliente ? "<a href=" . route('contactos.show', $factura->cliente) . ">{$factura->nombrecliente} {$factura->ape1cliente} {$factura->ape2cliente}</a>" : "";
         })
         ->editColumn('direccion', function (Factura $factura) {
-            return  ($factura->address_street)?$factura->address_street:$factura->direccioncliente;
+            return  ($factura->direccion)?$factura->direccion:$factura->direccioncliente;
         })
         ->editColumn('fecha', function (Factura $factura) {
             return date('d-m-Y', strtotime($factura->fecha));
