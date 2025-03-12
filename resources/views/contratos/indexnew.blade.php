@@ -105,8 +105,13 @@
                         <div class="col-md-2 pl-1 pt-1">
         					<input type="text" class="form-control" id="direccion_precisa" name="direccion_precisa" placeholder="Dirección exacta">
         				</div>
-        				<div class="col-md-2 pl-1 pt-1">
-        					<input type="text" class="form-control" id="barrio" name="barrio" placeholder="Barrio">
+
+                        <div class="col-md-2 pl-1 pt-1">
+        					<select title="Barrio" class="form-control selectpicker" id="barrio" name="barrio" data-size="5" data-live-search="true">
+        						@foreach ($barrios as $barrio)
+        						<option value="{{ $barrio->id }}">{{ $barrio->nombre }}</option>
+        						@endforeach
+        					</select>
         				</div>
                         <div class="col-md-2 pl-1 pt-1">
                             <input type="text" class="form-control" id="ip" name="ip" placeholder="Dirección IP">
@@ -542,14 +547,14 @@
             }
         });
 
-        $('#nro, #celular, #email, #direccion, #barrio, #ip, #mac, #linea').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #ip, #mac, #linea').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
             }
         });
 
-        $('#client_id, #etiqueta, #plan, #plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
+        $('#client_id, #etiqueta, #plan, #barrio, #plan_tv, #state, #grupo_cort, #conexion_s, #server_configuration_id_s, #nodo_s, #ap_s, #vendedor, #canal, #tecnologia_s, #facturacion_s, #desde, #hasta, #tipo_contrato, #otra_opcion').on('change',function() {
             getDataTable();
             return false;
         });
@@ -616,7 +621,7 @@
         $("#interfaz_s").val('').selectpicker('refresh');
         $("#nodo_s").val('').selectpicker('refresh');
         $("#ap_s").val('').selectpicker('refresh');
-        $('#barrio').val('');
+        $("#barrio").val('').selectpicker('refresh');
         $('#direccion').val('');
         $('#celular').val('');
         $('#email').val('');
@@ -631,7 +636,6 @@
         $("#tipo_contrato").val('').selectpicker('refresh');
         $("#otra_opcion").val('').selectpicker('refresh');
         $("#filtro_facturas").prop("checked", false);
-
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();

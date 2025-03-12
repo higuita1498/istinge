@@ -22,6 +22,7 @@ use App\Contrato;
 use App\Servicio;
 use App\User;
 use App\AP;
+use App\Barrios;
 use App\Contacto;
 use App\TipoIdentificacion;
 use App\Vendedor;
@@ -87,7 +88,8 @@ class ContratosController extends Controller
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','planestv','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales', 'etiquetas'));
+        $barrios = Barrios::where('status','1')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','planestv','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales', 'etiquetas','barrios'));
     }
 
     public function disabled(Request $request){
@@ -248,7 +250,7 @@ class ContratosController extends Controller
             }
             if($request->c_barrio){
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contactos.barrio', 'like', "%{$request->c_barrio}%");
+                    $query->orWhere('contactos.barrio_id',$request->c_barrio);
                 });
             }
             if($request->c_celular){
