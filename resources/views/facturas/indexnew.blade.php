@@ -523,7 +523,7 @@
             }
         });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento', '#barrio').on('change',function() {
+        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #barrio').on('change',function() {
             getDataTable();
             return false;
         });
