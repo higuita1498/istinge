@@ -778,7 +778,7 @@ class IngresosController extends Controller
 
                 if(auth()->user()->rol == 8){
                     $user = User::find(auth()->user()->id);
-                    $user->ganancia += 900;
+                    $user->ganancia += 1000;
                     $user->saldo -= $monto_pagar;
                     $user->save();
                 }
