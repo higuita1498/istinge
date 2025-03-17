@@ -3597,7 +3597,7 @@ class ExportarReportesController extends Controller
             $caja = 'DE_CAJAS';
         }
 
-        $titulosColumnas = array('Fecha', 'Comprobante', 'Contacto','Identificacion','Realizado por','Cuenta', 'Concepto', 'Estado', 'Observaciones','notas','Salida', 'Entrada');
+        $titulosColumnas = array('Fecha', 'Comprobante','Barrio','Contacto','Identificacion','Realizado por','Cuenta', 'Concepto', 'Estado', 'Observaciones','notas','total factura','Salida', 'Entrada');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -3608,17 +3608,17 @@ class ExportarReportesController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:L1');
+            ->mergeCells('A1:N1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:L1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:L3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
 
@@ -3633,16 +3633,18 @@ class ExportarReportesController extends Controller
 
         if(!isset($request->servidor) ||  $request->servidor == 0){
         $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
-            ->where('fecha', '>=', $dates['inicio'])
-            ->where('fecha', '<=', $dates['fin'])
+            ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
+            ->leftjoin('factura as f','f.id','if.factura')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'),'f.id as facturaId')
+            ->where('movimientos.fecha', '>=', $dates['inicio'])
+            ->where('movimientos.fecha', '<=', $dates['fin'])
             ->where('movimientos.empresa',Auth::user()->empresa);
         }else{
             $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
             ->leftjoin('factura as f','f.id','if.factura')
             ->leftjoin('contracts as co','co.id','f.contrato_id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'))
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'), 'factura.id as facturaId')
             ->where('movimientos.fecha', '>=', $dates['inicio'])
             ->where('movimientos.fecha', '<=', $dates['fin'])
             ->where('movimientos.modulo',1)
@@ -3691,8 +3693,9 @@ class ExportarReportesController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:L3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:N3')->applyFromArray($estilo);
 
+        $sumaTotalFactura = 0;
         foreach ($movimientos as $movimiento) {
             $identificacion = '';
 
@@ -3712,25 +3715,35 @@ class ExportarReportesController extends Controller
                 }
             }
 
+
+            $totalFactura = 0;
+            if($movimiento->facturaId != null){
+            $totalFactura = Factura::Find($movimiento->facturaId)->total()->total;
+            $sumaTotalFactura+=$totalFactura;
+            }
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, date('d-m-Y', strtotime($movimiento->fecha)))
                 ->setCellValue($letras[1].$i, $movimiento->show_modulo()!=null?$movimiento->show_modulo()->nro:$movimiento->id_modulo)
-                ->setCellValue($letras[2].$i, $nombres)
-                ->setCellValue($letras[3].$i, $identificacion)
-                ->setCellValue($letras[4].$i, $movNombre)
-                ->setCellValue($letras[5].$i, $movimiento->banco()->nombre)
-                ->setCellValue($letras[6].$i, $movimiento->categoria())
-                ->setCellValue($letras[7].$i, $movimiento->estatus())
-                ->setCellValue($letras[8].$i, $movimiento->observaciones())
-                ->setCellValue($letras[9].$i, $movimiento->notas())
-                ->setCellValue($letras[10].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==2?$movimiento->saldo:0))
-                ->setCellValue($letras[11].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==1?$movimiento->saldo:0));
+                ->setCellValue($letras[2].$i, $movimiento->cliente()->barrio()->nombre)
+                ->setCellValue($letras[3].$i, $nombres)
+                ->setCellValue($letras[4].$i, $identificacion)
+                ->setCellValue($letras[5].$i, $movNombre)
+                ->setCellValue($letras[6].$i, $movimiento->banco()->nombre)
+                ->setCellValue($letras[7].$i, $movimiento->categoria())
+                ->setCellValue($letras[8].$i, $movimiento->estatus())
+                ->setCellValue($letras[9].$i, $movimiento->observaciones())
+                ->setCellValue($letras[10].$i, $movimiento->notas())
+                ->setCellValue($letras[11].$i, $totalFactura)
+                ->setCellValue($letras[12].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==2?$movimiento->saldo:0))
+                ->setCellValue($letras[13].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($movimiento->tipo==1?$movimiento->saldo:0));
             $i++;
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[9].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['salida']))
-            ->setCellValue($letras[10].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['entrada']));
+            ->setCellValue($letras[11].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($sumaTotalFactura))
+            ->setCellValue($letras[12].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['salida']))
+            ->setCellValue($letras[13].$i, Auth::user()->empresa()->moneda.' '.Funcion::Parsear($totales['entrada']));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -3738,7 +3751,7 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:L'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:N'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){
