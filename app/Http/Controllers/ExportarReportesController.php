@@ -3638,7 +3638,8 @@ class ExportarReportesController extends Controller
             ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'),'f.id as facturaId')
             ->where('movimientos.fecha', '>=', $dates['inicio'])
             ->where('movimientos.fecha', '<=', $dates['fin'])
-            ->where('movimientos.empresa',Auth::user()->empresa);
+            ->where('movimientos.empresa',Auth::user()->empresa)
+            ->groupBy('movimientos.id');
         }else{
             $movimientos= Movimiento::leftjoin('contactos as c', 'movimientos.contacto', '=', 'c.id')
             ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
