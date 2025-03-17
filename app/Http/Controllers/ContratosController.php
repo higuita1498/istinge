@@ -2490,7 +2490,7 @@ class ContratosController extends Controller
         }
         if($request->barrio != null){
             $contratos->where(function ($query) use ($request) {
-                $query->orWhere('contactos.barrio', 'like', "%{$request->barrio}%");
+                $query->orWhere('contactos.barrio_id', 'like', "%{$request->barrio}%");
             });
         }
         if($request->celular != null){

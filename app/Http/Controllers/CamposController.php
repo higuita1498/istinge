@@ -26,7 +26,7 @@ class CamposController extends Controller{
     public function organizar($id){
         $this->getAllPermissions(Auth::user()->id);
 
-        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->select('campos.*')->where('campos_usuarios.id_modulo', $id)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        $visibles = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->select('campos.*')->where('campos_usuarios.id_modulo', $id)->where('campos_usuarios.id_usuario', Auth::user()->id)->orderBy('campos_usuarios.orden', 'ASC')->get();
 
         $ocultos = Campos::where('campos.modulo', $id)
            ->whereNotExists(function ($query) {
@@ -36,6 +36,22 @@ class CamposController extends Controller{
                      ->whereColumn('campos_usuarios.id_campo', 'campos.id');
            })
            ->get();
+
+        $porAsignar = Campos::where('modulo', 2)->where('estado',1)
+        ->get();
+
+        foreach($porAsignar as $pa){
+            if(!DB::table('campos_usuarios')->where('id_modulo',$pa->modulo)->where('id_usuario',Auth::user()->id)->first()){
+                 DB::table('campos_usuarios')->insert([
+                    'id_modulo'  => $pa->modulo,
+                    'id_campo'   => $pa->id,
+                    'id_usuario' => Auth::user()->id,
+                    'orden'      => 0,  // Valor por defecto; ajústalo según tu lógica
+                    'estado'     => 0   // Asumimos que se agrega como activo
+                 ]);
+            }
+        }
+
            $visiblesFin = '';
            if(isset($visibles[0])){
                $visiblesFin = $visibles[0]->modulo();

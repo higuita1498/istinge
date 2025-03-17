@@ -493,6 +493,7 @@
                 data.state = $('#state').val();
                 data.grupo_corte = $('#grupo_cort').val();
                 data.ip = $('#ip').val();
+                data.sn = $('#sn').val();
                 data.mac = $('#mac').val();
                 data.conexion = $("#conexion_s").val();
                 data.server_configuration_id = $("#server_configuration_id_s").val();
@@ -547,7 +548,7 @@
             }
         });
 
-        $('#nro, #celular, #email, #direccion, #ip, #mac, #linea').on('keyup',function(e) {
+        $('#nro, #celular, #email, #direccion, #ip, #mac, #linea, #sn').on('keyup',function(e) {
             if(e.which > 32 || e.which == 8) {
                 getDataTable();
                 return false;
@@ -615,6 +616,7 @@
 		$('#grupo_cort').val('').selectpicker('refresh');
 		$('#state').val('').selectpicker('refresh');
 		$('#ip').val('');
+		$('#sn').val('');
 		$('#mac').val('');
         $("#conexion_s").val('').selectpicker('refresh');
         $("#server_configuration_id_s").val('').selectpicker('refresh');
@@ -642,7 +644,7 @@
 	}
 
 	function exportar() {
-	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val();
+	    window.location.href = window.location.pathname+'/exportar?celular='+$('#celular').val()+'&email='+$('#email').val()+'&direccion='+$('#direccion').val()+'&barrio='+$('#barrio').val()+'&ip='+$('#ip').val()+'&mac='+$('#mac').val()+'&client_id='+$('#client_id').val()+'&plan='+$('#plan').val()+'&plan_tv='+$('#plan_tv').val()+'&state='+$('#state').val()+'&grupo_cort='+$('#grupo_cort').val()+'&conexion_s='+$('#conexion_s').val()+'&server_configuration_id_s='+$('#server_configuration_id_s').val()+'&nodo_s='+$('#nodo_s').val()+'&ap_s='+$('#ap_s').val()+'&vendedor='+$('#vendedor').val()+'&canal='+$('#canal').val()+'&tecnologia_s='+$('#tecnologia_s').val()+'&facturacion_s='+$('#facturacion_s').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&tipo_contrato='+$('#tipo_contrato').val()+'&nro='+$('#nro').val()+'&sn='+$('#sn').val();
 	}
 
     function states(state){
@@ -1007,6 +1009,7 @@
                 data.state = $('#state').val();
                 data.grupo_corte = $('#grupo_cort').val();
                 data.ip = $('#ip').val();
+                data.sn = $('#sn').val();
                 data.mac = $('#mac').val();
                 data.conexion = $("#conexion_s").val();
                 data.server_configuration_id = $("#server_configuration_id_s").val();
