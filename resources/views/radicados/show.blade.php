@@ -196,6 +196,11 @@
                             <th>Barrio</th>
                             <td>{{$radicado->barrio}}</td>
                         </tr>
+                        @else
+                        <tr>
+                            <th>Barrio</th>
+                            <td>{{$radicado->cliente()->barrio()->nombre}}</td>
+                        </tr>
                         @endif
                         <tr>
                             <th>Dirección</th>
