@@ -8,17 +8,10 @@
             <div class="form-group col-md-2">
                 <label>Caja</label>
                 <select class="form-control selectpicker" name="caja" id="caja" title="Seleccione" data-live-search="true" data-size="6">
-{{-- php $tipos_cuentas=\App\Banco::tipos();@endphp
-                    @foreach($tipos_cuentas as $tipo_cuenta)
-                        <optgroup label="{{$tipo_cuenta['nombre']}}"> --}}
-                            @foreach($cajas as $cuenta)
-                                {{-- @if($cuenta->tipo_cta==$tipo_cuenta['nro']) --}}
-                                    <option value="{{$cuenta->id}}" {{$request->caja==$cuenta->id?'selected':''}}>{{$cuenta->nombre}}</option>
-                                {{-- @endif --}}
-                            @endforeach
-                        {{-- </optgroup>
-                    @endforeach --}}
-                </select>
+        		    	@foreach($cajas as $caja)
+        		    		<option value="{{$caja->id}}" {{$caja->id==$request->caja?'selected':''}}>{{$caja->nombre}}</option>
+        		    	@endforeach
+        		</select>
             </div>
             <div class="form-group col-md-2">
                 <label>Servidor</label>
@@ -103,7 +96,7 @@
                         <td><a href="{{$movimiento->show_url()}}">{{date('d-m-Y', strtotime($movimiento->fecha))}}</a></td>
                         <td>
                             <a href="{{$movimiento->show_url()}}">
-                                {{$movimiento->show_modulo()!=null?$movimiento->show_modulo()->nro:$movimiento->id_modulo}}
+                                {{$movimiento->id_modulo}}
                             </a>
                         </td>
                         <td>
@@ -151,7 +144,7 @@
                 </tfoot>
                 </table>
                 <div class="text-right">
-                    {{$movimientos->links()}}
+                    {!! $movimientos->render() !!}
                 </div>
 
             </div>
