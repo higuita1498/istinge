@@ -107,6 +107,7 @@ class ReportesController extends Controller
                 ->where('factura.empresa',Auth::user()->empresa)
                 ->where('factura.estatus',0)
                 ->groupBy('factura.id');
+
             $example = $facturas->get()->last();
 
             $dates = $this->setDateRequest($request);
@@ -282,113 +283,63 @@ class ReportesController extends Controller
 
     public function ventasItem(Request $request)
     {
+
         $this->getAllPermissions(Auth::user()->id);
-
-        //Si no hay fecha establecida dentro de la url se establece desde el 1 al 30/31 del mes actual
-        if (!$request->fecha) {
-            $month = date('m');
-            $year = date('Y');
-            $day = date("d", mktime(0,0,0, $month+1, 0, $year));
-            $fin= date('Y-m-d', mktime(0,0,0, $month, $day, $year));
-            $request->hasta=date('d-m-Y', mktime(0,0,0, $month, $day, $year));
-            $month = date('m');
-            $year = date('Y');
-            $inicio=  date('Y-m-d', mktime(0,0,0, $month, 1, $year));
-            $request->fecha=date('d-m-Y', mktime(0,0,0, $month, 1, $year));
+        $productos = Inventario::all();
+        view()->share(['seccion' => 'reportes', 'title' => 'Reporte de Ventas por item', 'icon' =>'fas fa-chart-line']);
+        $campos=array( '','nombrecliente', 'factura.fecha', 'factura.vencimiento', 'nro', 'nro', 'nro', 'nro');
+        if (!$request->orderby) {
+            $request->orderby=1; $request->order=1;
         }
-        else{
+        $orderby=$campos[$request->orderby];
+        $order=$request->order==1?'DESC':'ASC';
+        $empresaId = Auth::user()->empresa;
 
-            if($request->input('fechas') != 8 || (!$request->has('fechas'))){
-                $inicio = date('Y-m-d', strtotime($request->fecha));
-                $fin    = date('Y-m-d', strtotime($request->hasta));
-            }else{
-                $inicio = Carbon::now()->subYear('4')->format('Y-m-d');
-                $fin    = Carbon::now()->format('Y-m-d');
-            }
+        $items = Factura::join('items_factura as if','if.factura','factura.id')
+        ->join('inventario as i','i.id','if.producto')
+        ->where('factura.empresa',$empresaId)
+        ->where('factura.estatus','<>',2) //no anuladas
+        ->whereIn('factura.tipo', [1,2])
+        ->select('i.id', 'i.ref', 'if.precio', 'i.producto', 'if.cant', 'if.impuesto',
+        'factura.codigo', 'factura.id as facturaId')
+        ->groupBy('factura.id');
 
-
+        $dates = $this->setDateRequest($request);
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $items=$items->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
-
-        $user = Auth::user()->empresa;
-        //Se cuenta cuantas veces se repiten las facturas con un mismo producto
-        $sqlRepeticiones =
-            "SELECT id, producto FROM items_factura WHERE items_factura.factura IN
-	            (
-		            SELECT id FROM factura
-			            WHERE factura.fecha >= '$inicio'
-				            AND factura.fecha <= '$fin'
-				            AND factura.empresa = '$user'
-				            AND factura.tipo != 2
-	            )";
-
-        $repeticones = DB::select($sqlRepeticiones);
-        $totales = array();
-        foreach ($repeticones as $repeticone){
-
-            $item = ItemsFactura::where('id', $repeticone->id)->first();
-
-            if(!isset($totales[$repeticone->producto])){
-                $totales[$repeticone->producto]['rep'] = 1;
-                $totales[$repeticone->producto]['subtotal'] = $item->total();
-                $totales[$repeticone->producto]['total'] = $item->totalImp();
-                echo $item->porcentaje;
-
-            }else{
-                $totales[$repeticone->producto]['rep']+= 1;
-                $totales[$repeticone->producto]['subtotal'] += $item->total();
-                $totales[$repeticone->producto]['total'] += $item->totalImp();
-            }
+        if($request->input('item')){
+            $items=$items->where('i.id',$request->item);
         }
 
+        if($request->orderby == 4 || $request->orderby == 5  || $request->orderby == 6 || $request->orderby == 7 ){
+            switch ($request->orderby){
+                case 4:
+                    $facturas = $request->order  ? $items->sortBy('subtotal') : $items = $items->sortByDesc('subtotal');
+                    break;
+                    case 5:
+                        $items = $request->order ? $items->sortBy('iva') : $items = $items->sortByDesc('iva');
+                        break;
+                        case 6:
+                            $items = $request->order ? $items->sortBy('retenido') : $items = $items->sortByDesc('retenido');
+                            break;
+                            case 7:
+                                $items = $request->order ? $items->sortBy('total') : $items = $items->sortByDesc('total');
+                                break;
+                            }
+                        }
 
-        //Subconsulta para obtener todos los productos según su item factura
-        $productos = DB::table('inventario')
-            ->select('id', 'producto', 'ref', 'precio', DB::raw('precio+(precio*(impuesto/100)) as total'))
-            ->whereIn('id', function ($query) use ($inicio, $fin, $user){
-                $query->select('producto')
-                    ->from(with(new ItemsFactura)->getTable())
-                    ->whereIn('factura', function ($sql) use ($inicio, $fin, $user){
-                        $sql->select('id')
-                            ->from(with(new Factura)->getTable())
-                            ->where('fecha', ">=", $inicio)
-                            ->where('fecha', "<=", $fin)
-                            ->where('empresa', $user)
-                            ->where('tipo','!=', 2);
-                    });
-            })->paginate(50)
-            ->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha,
-                'hasta'=>$request->hasta]);
-        //Subconsulta para determinar todos los precios de los productos
-        $productosTotal = DB::table('inventario')
-            ->select('precio', DB::raw('precio+(precio*(impuesto/100)) as total'))
-            ->whereIn('id', function ($query) use ($inicio, $fin, $user){
-                $query->select('producto')
-                    ->from(with(new ItemsFactura)->getTable())
-                    ->whereIn('factura', function ($sql) use ($inicio, $fin, $user){
-                        $sql->select('id')
-                            ->from(with(new Factura)->getTable())
-                            ->where('fecha', ">=", $inicio)
-                            ->where('fecha', "<=", $fin)
-                            ->where('empresa', $user)
-                            ->where('tipo', '<>', 2);
-                    });
-            })->get();
-        $example = Factura::where('empresa', Auth::user()->empresa)->get()->last();
-        //Se agregan las veces que se repiten los productos listados en el array actual
-        $i = 0;
-        $total = 0;
-        $subtotal = 0;
-        foreach ( $productos as $producto ){
-            $producto->rep = $totales[$producto->id]['rep'];
-            $producto->precio = $totales[$producto->id]['subtotal'];
-            $producto->total = $totales[$producto->id]['total'];
-        }
-        foreach ($productosTotal as $productoTotal){
-            $total      += $productoTotal->total;
-            $subtotal   += $productoTotal->precio;
+        $items = $items->get();
+        $totalFacturado = 0;
+        foreach($items as $it){
+            $despuesIva = $it->cant * $it->precio +
+            (($it->cant * $it->precio) * $it->impuesto) / 100;
+            $it->despuesIva = $despuesIva;
+            $totalFacturado+=$despuesIva;
         }
 
-        return view('reportes.ventasItem.index')->with(compact('productos', 'subtotal', 'total', 'request', 'example'));
+        $items = $this->paginate($items, 15, $request->page, $request);
+        return view('reportes.ventasItem.index')->with(compact('items', 'totalFacturado','request', 'productos'));
 
     }
 

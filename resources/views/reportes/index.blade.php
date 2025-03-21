@@ -43,30 +43,48 @@
 
                     </ul>
                 </div>
-                </div>
-
-        <div class="col-md-5 offset-md-1 reportes">
-            <h3><i class="fas fa-store-alt"></i> Puntos de Ventas</h3>
-            <ul class="list-report">
-                @if(auth()->user()->rol <> 8)
-                <li><a href="{{route('reportes.recargas')}}" >Reporte de Recargas</a></li>
-                <li><a href="{{route('reportes.puntoVenta')}}" >Reporte de Puntos de Ventas (Ganancias)</a></li>
-                <li><a href="{{route('reportes.puntoVentaRecaudo')}}" >Reporte de Puntos de Ventas (Recaudos)</a></li>
-                @endif
-            </ul>
         </div>
+
+        <div class="row">
+            <div class="col-md-5 offset-md-1 reportes">
+                <h3><i class="fas fa-store-alt"></i> Puntos de Ventas</h3>
+                <ul class="list-report">
+                    @if(auth()->user()->rol <> 8)
+                    <li><a href="{{route('reportes.recargas')}}" >Reporte de Recargas</a></li>
+                    <li><a href="{{route('reportes.puntoVenta')}}" >Reporte de Puntos de Ventas (Ganancias)</a></li>
+                    <li><a href="{{route('reportes.puntoVentaRecaudo')}}" >Reporte de Puntos de Ventas (Recaudos)</a></li>
+                    @endif
+                </ul>
+            </div>
+
+            <div class="col-md-5 offset-md-1 reportes">
+                <h3><i class="fa fa-gavel" aria-hidden="true"></i> VENTAS Y COMPRAS</h3>
+                <ul class="list-report">
+                    <li><a href="{{route('reportes.ventasItem')}}">Ventas por item</a></li>
+                    <li><a href="{{route('reportes.mintic.1.2')}}">Remisiones</a></li>
+                    <li><a href="{{route('reportes.mintic.1.2')}}">Compras</a></li>
+                </ul>
+            </div>
+        </div>
+
 
         <div class="row">
             <div class="col-md-5 offset-md-1 reportes">
                 <h3><i class="fas fa-chart-line"></i> Contables</h3>
                 <ul class="list-report">
                     <li><a href="{{route('reportes.balance')}}">Reporte de Balances</a></li>
+                    <li><a href="#">Reporte exógena principal</a></li>
+                    <li><a href="#">Reporte de terceros</a></li>
+                    <li><a href="#">Reportes de balances por terceros</a></li>
+                    <li><a href="#">Estados financieros </a></li>
+                    <li><a href="#">Libros auxiliares</a></li>
                 </ul>
             </div>
 
         </div>
 
     </div>
+
     <div class="col-md-5 offset-md-1 reportes">
         <div class="col-md- offset-md-1 reportes">
             <h3><i class="fa fa-gavel" aria-hidden="true"></i> REPORTES PASARELA DE PAGO</h3>

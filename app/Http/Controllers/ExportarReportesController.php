@@ -212,7 +212,7 @@ class ExportarReportesController extends Controller
         $dates = $this->setDateRequest($request);
         $comprobacionFacturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
         if($comprobacionFacturas->count() >2100){
-            return $this->bigVentas($request);
+            // return $this->bigVentas($request);
         }
 
 
@@ -401,7 +401,7 @@ class ExportarReportesController extends Controller
         $dates = $this->setDateRequest($request);
         $comprobacionFacturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
         if($comprobacionFacturas->count() >2100){
-            return $this->bigVentas($request);
+            // return $this->bigVentas($request);
         }
 
         $objPHPExcel = new PHPExcel();
@@ -667,7 +667,7 @@ class ExportarReportesController extends Controller
             }
 
             if($comprobacionFacturas->count() >2100){
-                return $this->bigVentas($request);
+                // return $this->bigVentas($request);
             }
 
 
@@ -1197,148 +1197,88 @@ class ExportarReportesController extends Controller
     }
 
     public function ventasItem(Request $request){
-        $objPHPExcel = new PHPExcel();
         if($request->input('fechas') == 8){
             $tituloReporte = "Reporte de Ventas de ítem";
         }else{
             $tituloReporte = "Reporte de Ventas de ítem desde ".$request->fecha." hasta ".$request->hasta;
         }
 
-        $titulosColumnas = array('Ítem', 'Referencia', 'Numero de ítems', 'Antes de Impuestos', 'Despues de Impuestos');
+        $order=$request->order==1?'DESC':'ASC';
+        $empresaId = Auth::user()->empresa;
+
+        $items = Factura::join('items_factura as if','if.factura','factura.id')
+        ->join('inventario as i','i.id','if.producto')
+        ->where('factura.empresa',$empresaId)
+        ->where('factura.estatus','<>',2) //no anuladas
+        ->whereIn('factura.tipo', [1,2])
+        ->select('i.id', 'i.ref', 'if.precio', 'i.producto', 'if.cant', 'if.impuesto',
+        'factura.codigo', 'factura.id as facturaId')
+        ->groupBy('factura.id');
+
+        //Filtros por fechas y demas.
+        $dates = $this->setDateRequest($request);
+        if($request->input('fechas') != 8 || (!$request->has('fechas'))){
+            $items=$items->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
+        }
+        if($request->input('item')){
+            $items=$items->where('i.id',$request->item);
+        }
+
+        $items = $items->get();
+        $totalFacturado = 0;
+        foreach($items as $it){
+            $despuesIva = $it->cant * $it->precio +
+            (($it->cant * $it->precio) * $it->impuesto) / 100;
+            $it->despuesIva = $despuesIva;
+            $totalFacturado+=$despuesIva;
+        }
+
+        $titulosColumnas = array('Ítem', 'Referencia', 'Factura Relacionada', 'Valor item', 'Antes de Impuestos','Despues de Impuestos');
+        $objPHPExcel = new PHPExcel();
+        $tituloReporte = "Reporte de ventas por item ".$request->fecha." hasta ".$request->hasta;
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
-        ->setTitle("Reporte Excel Ventas De Item") // Titulo
-        ->setSubject("Reporte Excel Ventas De Item") //Asunto
-        ->setDescription("Reporte de Ventas de Item") //Descripci���n
-        ->setKeywords("reporte Ventas de ítem") //Etiquetas
-        ->setCategory("Reporte excel de ítem"); //Categorias
+        ->setTitle("Reporte de ventas por item")
+        ->setSubject("Reporte de ventas por item")
+        ->setDescription("Reporte de ventas por item")
+        ->setKeywords("Reporte de ventas por item")
+        ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:D1');
+            ->mergeCells('A1:F1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:D1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:E3')->applyFromArray($estilo);
-
+        $objPHPExcel->getActiveSheet()->getStyle('A3:F3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
-
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
-        }
-
-        //Acá se obtiene la información a impimir
-
-        //Si no hay fecha establecida dentro de la url se establece desde el 1 al 30/31 del mes actual
-        if (!$request->fecha) {
-            $month = date('m');
-            $year = date('Y');
-            $day = date("d", mktime(0,0,0, $month+1, 0, $year));
-            $fin= date('Y-m-d', mktime(0,0,0, $month, $day, $year));
-            $request->hasta=date('d-m-Y', mktime(0,0,0, $month, $day, $year));
-            $month = date('m');
-            $year = date('Y');
-            $inicio=  date('Y-m-d', mktime(0,0,0, $month, 1, $year));
-            $request->fecha=date('d-m-Y', mktime(0,0,0, $month, 1, $year));
-        }
-        else{
-            if($request->input('fechas') != 8 || (!$request->has('fechas'))){
-                $inicio = date('Y-m-d', strtotime($request->fecha));
-                $fin    = date('Y-m-d', strtotime($request->hasta));
-            }else{
-                $inicio = Carbon::now()->subYear('4')->format('Y-m-d');
-                $fin    = Carbon::now()->format('Y-m-d');
-            }
-
-        }
-        $user = Auth::user()->empresa;
-        //Se cuenta cuantas veces se repiten las facturas con un mismo producto
-        $sqlRepeticiones =
-            "SELECT SUM(cant) as rep, producto FROM items_factura WHERE items_factura.factura IN
-	            (
-		            SELECT id FROM factura
-			            WHERE factura.fecha >= '$inicio'
-				            AND factura.fecha <= '$fin'
-				            AND factura.empresa = '$user'
-				            AND factura.tipo != 2
-			                ORDER BY factura.id DESC
-	            )
-            GROUP BY (producto)";
-
-        $repeticones = DB::select($sqlRepeticiones);
-        //dd($repeticones);
-        //Subconsulta para obtener todos los productos según su item factura
-        $productos = DB::table('inventario')
-            ->select('id', 'producto', 'ref', 'precio', DB::raw('precio+(precio*(impuesto/100)) as total'))
-            ->whereIn('id', function ($query) use ($inicio, $fin, $user){
-                $query->select('producto')
-                    ->from(with(new ItemsFactura)->getTable())
-                    ->whereIn('factura', function ($sql) use ($inicio, $fin, $user){
-                        $sql->select('id')
-                            ->from(with(new Factura)->getTable())
-                            ->where('fecha', ">=", $inicio)
-                            ->where('fecha', "<=", $fin)
-                            ->where('empresa', $user)
-                            ->where('tipo','!=', 2);
-                    });
-            })->get();
-
-        //Subconsulta para determinar todos los precios de los productos
-        $productosTotal = DB::table('inventario')
-            ->select('precio', DB::raw('precio+(precio*(impuesto/100)) as total'))
-            ->whereIn('id', function ($query) use ($inicio, $fin, $user){
-                $query->select('producto')
-                    ->from(with(new ItemsFactura)->getTable())
-                    ->whereIn('factura', function ($sql) use ($inicio, $fin, $user){
-                        $sql->select('id')
-                            ->from(with(new Factura)->getTable())
-                            ->where('fecha', ">=", $inicio)
-                            ->where('fecha', "<=", $fin)
-                            ->where('empresa', $user)
-                            ->where('tipo', 1);
-                    });
-            })->get();
-
-        //Se agregan las veces que se repiten y se determina el gran total
-        $total = 0;
-        $subtotal = 0;
-        foreach ( $productos as $key => $producto ){
-
-
-            $producto->rep = $repeticones[$i]->rep;
-            $producto->precio = $producto->precio * $producto->rep;
-            $producto->total = $producto->total * $producto->rep;
-            $total += $producto->total;
-            $subtotal += $producto->precio;
-        }
-        foreach ($productosTotal as $productoTotal){
-            $total      += $productoTotal->total;
-            $subtotal   += $productoTotal->precio;
         }
 
         // Aquí se escribe en el archivo
         $i=4;
+        $empresaObj = Auth::user()->empresaObj;
 
-        foreach ($productos as $producto) {
+        foreach ($items as $producto) {
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $producto->producto)
                 ->setCellValue($letras[1].$i, $producto->ref)
-                ->setCellValue($letras[2].$i, $producto->rep)
-                ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($producto->precio))
-                ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($producto->total));
+                ->setCellValue($letras[2].$i, $producto->codigo)
+                ->setCellValue($letras[3].$i, $empresaObj->moneda." ".Funcion::Parsear($producto->precio))
+                ->setCellValue($letras[4].$i, $empresaObj->moneda." ".Funcion::Parsear($producto->cant * $producto->precio))
+                ->setCellValue($letras[5].$i, $empresaObj->moneda." ".Funcion::Parsear($producto->despuesIva));
             $i++;
         }
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[2].$i, "TOTAL: ")
-            ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($subtotal))
-            ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda. " ".Funcion::Parsear($total));
-
+            ->setCellValue($letras[4].$i, "TOTAL: ")
+            ->setCellValue($letras[5].$i, $empresaObj->moneda." ".Funcion::Parsear($totalFacturado));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -1346,7 +1286,8 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:E'.$i)->applyFromArray($estilo);
+
+        $objPHPExcel->getActiveSheet()->getStyle('A3:F'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){
@@ -3645,7 +3586,7 @@ class ExportarReportesController extends Controller
             ->leftjoin('ingresos_factura as if','if.ingreso','movimientos.id_modulo')
             ->leftjoin('factura as f','f.id','if.factura')
             ->leftjoin('contracts as co','co.id','f.contrato_id')
-            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'), 'factura.id as facturaId')
+            ->select('movimientos.*', DB::raw('if(movimientos.contacto,c.nombre,"") as nombrecliente'), 'f.id as facturaId')
             ->where('movimientos.fecha', '>=', $dates['inicio'])
             ->where('movimientos.fecha', '<=', $dates['fin'])
             ->where('movimientos.modulo',1)
