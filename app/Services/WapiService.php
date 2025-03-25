@@ -34,7 +34,7 @@ class WapiService
     {
         return $this->makeRequest(
             "GET",
-            $this->baseUri . "/instance/" . $uuid,
+            $this->baseUri . "/api/v1/channel/wbot/" . $uuid,
             [],
             [],
             $this->headers,
@@ -42,12 +42,11 @@ class WapiService
         );
     }
 
-    public function initSession(string $uuid, string $apiKey)
+    public function initSession(string $uuid)
     {
-        $this->headers['Authorization'] = 'Bearer ' . $apiKey;
         return $this->makeRequest(
             "POST",
-            $this->baseUri . "/session/" . $uuid,
+            $this->baseUri . "/api/v1/start-session/" . $uuid,
             [],
             [],
             $this->headers,
@@ -57,10 +56,9 @@ class WapiService
 
     public function sendMessageMedia(string $uuid, string $apiKey, array $body)
     {
-        $this->headers['Authorization'] = 'Bearer ' . $apiKey;
         return $this->makeRequest(
             "POST",
-            $this->baseUri . "/message/send/" . $uuid,
+            $this->baseUri . "/api/v1/send/" . $uuid,
             [],
             $body,
             $this->headers,
