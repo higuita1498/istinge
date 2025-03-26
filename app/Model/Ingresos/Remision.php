@@ -188,7 +188,6 @@ class Remision extends Model
             if($count != $k){$separator=" - ";}
             $text.= $item->producto . $separator;
         }
-
         return $text;
     }
 
