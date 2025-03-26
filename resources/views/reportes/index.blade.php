@@ -61,8 +61,8 @@
                 <h3><i class="fa fa-gavel" aria-hidden="true"></i> VENTAS Y COMPRAS</h3>
                 <ul class="list-report">
                     <li><a href="{{route('reportes.ventasItem')}}">Ventas por item</a></li>
-                    <li><a href="{{route('reportes.mintic.1.2')}}">Remisiones</a></li>
-                    <li><a href="{{route('reportes.mintic.1.2')}}">Compras</a></li>
+                    <li><a href="{{route('reportes.remisiones')}}">Remisiones</a></li>
+                    <li><a href="{{route('reportes.compras')}}">Compras</a></li>
                 </ul>
             </div>
         </div>

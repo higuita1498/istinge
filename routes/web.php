@@ -1226,6 +1226,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/comprasProveedor', 'ReportesController@comprasProveedor')->name('reportes.comprasProveedor');
 		Route::get('/ventasCliente', 'ReportesController@ventasCliente')->name('reportes.ventasCliente');
 		Route::get('/remisionesCliente', 'ReportesController@remisionesCliente')->name('reportes.remisionesCliente');
+		Route::get('/remisiones', 'ReportesController@remisiones')->name('reportes.remisiones');
 		Route::get('/cuentasCobrar', 'ReportesController@cuentasCobrar')->name('reportes.cuentasCobrar');
 		Route::get('/cuentasPagar', 'ReportesController@cuentasPagar')->name('reportes.cuentasPagar');
 		Route::get('/compras', 'ReportesController@compras')->name('reportes.compras');

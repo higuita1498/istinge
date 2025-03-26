@@ -204,10 +204,9 @@ class ReportesController extends Controller
 
     }
 
-    private function remisiones(&$request)
+    public function remisiones(Request $request)
     {
         $this->getAllPermissions(Auth::user()->id);
-        $numeraciones=NumeracionFactura::where('empresa',Auth::user()->empresa)->get();
         $dates = $this->setDateRequest($request);
         view()->share(['seccion' => 'reportes', 'title' => '', 'icon' =>'']);
 
@@ -245,7 +244,7 @@ class ReportesController extends Controller
 
         $totales = $this->totalRemisiones($dates);
 
-        return view('reportes.ventas.indexRemisiones')->with(compact('facturas', 'numeraciones', 'request', 'example'))
+        return view('reportes.ventas.indexRemisiones')->with(compact('facturas', 'request', 'example'))
             ->with('total', $totales['total'])
             ->with('subtotal', $totales['subtotal']);
 

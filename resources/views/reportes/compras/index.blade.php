@@ -13,7 +13,6 @@
 		<input type="hidden" name="order" id="order" value="0">
 		<input type="hidden" id="form" value="form-table-facturasp">
 	</form>
-	<div class="row card-description">
         <form action="" id="form-reporte">
             <div class="row card-description">
                 <div class="form-group col-md-2">
@@ -51,14 +50,14 @@
 
                     </div>
                 </div>
-                <div class="form-group col-md-4" style="    padding-top: 2%;">
-                    <button type="button" id="generar" class="btn btn-outline-secondary">Generar Reporte</button>
-                    <button type="button" id="exportar" class="btn btn-outline-secondary">Exportar a Excel</button>
+                <div class="form-group col-md-4" style=" padding-top: 24px;">
+                    <button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
+                    <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
                 </div>
-            </div>
+        </div>
         </form>
-		<div class="col-md-12">
-			<table class="table table-striped table-hover table-responsive" id="table-compras2">
+		<div class="col-md-12 table-responsive">
+			<table class="table table-striped table-hover" id="table-compras2">
 			<thead class="thead-dark">
 				<tr>
                     <th>Nro </th>
@@ -71,7 +70,7 @@
                     <th>Retencion  </th>
                     <th>Total</th>
                     <th>Acciones</th>
-	          </tr>                              
+	          </tr>
 			</thead>
 			<tbody >
 				@foreach($facturas as $factura)
@@ -102,7 +101,6 @@
             </tfoot>
 		</table>
 		</div>
-	</div>
     <input type="hidden" id="urlgenerar" value="{{route('reportes.compras')}}">
     <input type="hidden" id="urlexportar" value="{{route('exportar.compras')}}">
 @endsection

@@ -13,16 +13,12 @@
 
 
         <div class="row card-description">
-            <div class="form-group col-md-2">
+            {{-- <div class="form-group col-md-2">
                 <label>Numeración</label>
                 <select class="form-control selectpicker" name="nro">
-                    <option value="0">Todas</option>
-                    @foreach($numeraciones as $nro)
-                        <option value="{{$nro->id}}" {{$nro->id==$request->nro?'selected':''}}>{{$nro->nombre}}</option>
-                    @endforeach
                     <option value="remisiones" selected="selected">REMISIONES</option>
                 </select>
-            </div>
+            </div> --}}
             <div class="form-group col-md-2">
                 <label></label>
                 <select class="form-control selectpicker" name="fechas" id="fechas">
@@ -58,10 +54,10 @@
 
                 </div>
             </div>
-            <div class="form-group col-md-4" style="    padding-top: 2%;">
-                <button type="button" id="generar" class="btn btn-outline-secondary">Generar Reporte</button>
-                <button type="button" id="exportar" class="btn btn-outline-secondary">Exportar a Excel</button>
-            </div>
+            <div class="form-group col-md-4" style=" padding-top: 24px;">
+                <button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
+                <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
+              </div>
         </div>
         <div class="row card-description">
             <div class="col-md-12 table-responsive">
@@ -70,7 +66,7 @@
                     <tr>
                         <th>Número</th>
                         <th>Cliente</th>
-                        <th>Creación</th>
+                        <th>Fecha</th>
                         <th>Antes de Impuestos</th>
                         <th>Después de Impuestos</th>
                     </tr>
