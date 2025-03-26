@@ -465,7 +465,7 @@ class FacturaProveedores extends Model
 
     public function itemsFacturaText()
     {
-        $items = ItemsFacturaProv::join('inventario as i','i.id','items_factura_proveedor.producto')->where('remision',$this->id)->get();
+        $items = ItemsFacturaProv::join('inventario as i','i.id','items_factura_proveedor.producto')->where('factura',$this->id)->get();
         $text = "";
         $count = $items->count();
         $k = 0;
