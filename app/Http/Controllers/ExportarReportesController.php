@@ -938,13 +938,13 @@ class ExportarReportesController extends Controller
 
     }
 
-    private function remisiones($request)
+    public function remisiones(Request $request)
     {
 
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Ventas-Remisiones desde ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Numero', 'Cliente', 'Creacion', 'Antes de Impuestos', 'Despues de Impuestos');
+        $titulosColumnas = array('Numero', 'Cliente', 'Fecha', 'Item(s)', 'Antes de Impuestos','Despues de Impuestos');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -991,8 +991,10 @@ class ExportarReportesController extends Controller
                 DB::raw('((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) as pagado'),
                 DB::raw('(SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -  ((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) )    as porpagar'))
-            ->whereIn('estatus', [0, 1])
-            ->where('remisiones.empresa',Auth::user()->empresa);
+            ->where('remisiones.empresa',Auth::user()->empresa)
+            ->where('fecha','>=', $dates['inicio'])
+            ->where('fecha','<=', $dates['fin'])
+            ->whereIn('estatus', [0, 1]);
 
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
@@ -1008,14 +1010,15 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[0].$i, $factura->nro)
                 ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
                 ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($factura->fecha)))
-                ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
-                ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
+                ->setCellValue($letras[3].$i, $factura->itemsRemisionText())
+                ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
+                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
             $i++;
         }
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[2].$i, "TOTAL: ")
-            ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totales['subtotal']))
-            ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda. " ".Funcion::Parsear($totales['total']));
+            ->setCellValue($letras[3].$i, "TOTAL: ")
+            ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totales['subtotal']))
+            ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda. " ".Funcion::Parsear($totales['total']));
 
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),

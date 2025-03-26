@@ -67,6 +67,7 @@
                         <th>Número</th>
                         <th>Cliente</th>
                         <th>Fecha</th>
+                        <th>Item(s)</th>
                         <th>Antes de Impuestos</th>
                         <th>Después de Impuestos</th>
                     </tr>
@@ -78,13 +79,14 @@
                             <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->nro}}</a> </td>
                             <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
                             <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
+                            <td>{{$factura->itemsRemisionText()}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subsub)}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
                         </tr>
                     @endforeach
                     </tbody>
                     <tfoot class="thead-dark">
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <th  class="text-right">Total</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($subtotal)}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($total)}}</th>
@@ -98,6 +100,6 @@
             </div>
         </div>
     </form>
-    <input type="hidden" id="urlgenerar" value="{{route('reportes.ventas')}}">
-    <input type="hidden" id="urlexportar" value="{{route('exportar.ventas')}}">
+    <input type="hidden" id="urlgenerar" value="{{route('reportes.remisiones')}}">
+    <input type="hidden" id="urlexportar" value="{{route('exportar.remisiones')}}">
 @endsection

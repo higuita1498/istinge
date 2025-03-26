@@ -5,10 +5,10 @@ namespace App\Model\Ingresos;
 use Illuminate\Database\Eloquent\Model;
 use App\Contacto; use App\Impuesto;
 use App\Vendedor;
-use App\Model\Ingresos\ItemsRemision; 
-use App\Model\Inventario\ListaPrecios; 
-use App\Model\Inventario\Bodega; 
-use Auth; 
+use App\Model\Ingresos\ItemsRemision;
+use App\Model\Inventario\ListaPrecios;
+use App\Model\Inventario\Bodega;
+use Auth;
 use DB;
 
 class Remision extends Model
@@ -21,7 +21,7 @@ class Remision extends Model
      * @var array
      */
     protected $fillable = [
-        'nro', 'empresa', 'vendedor', 'documento', 'cliente', 'fecha', 'vencimiento', 'observaciones', 'estatus', 'notas', 'lista_precios', 'bodega', 'created_at', 'updated_at', 'lista_precios', 'bodega' 
+        'nro', 'empresa', 'vendedor', 'documento', 'cliente', 'fecha', 'vencimiento', 'observaciones', 'estatus', 'notas', 'lista_precios', 'bodega', 'created_at', 'updated_at', 'lista_precios', 'bodega'
     ];
 
     protected $appends = ['session'];
@@ -46,11 +46,11 @@ class Remision extends Model
     public function parsear($valor){
         return number_format($valor, auth()->user()->empresa()->precision, auth()->user()->empresa()->sep_dec, (auth()->user()->empresa()->sep_dec == '.' ? ',' : '.'));
     }
- 
+
     public function cliente(){
          return Contacto::where('id',$this->cliente)->first();
     }
-    public function estatus($class=false, $index=false){           
+    public function estatus($class=false, $index=false){
 
         if ($index) {
             if ($this->estatus==2) {
@@ -75,7 +75,7 @@ class Remision extends Model
         }
         else{
             return $this->estatus==1?'Abierta':'Cerrada';
-        } 
+        }
     }
 
     public function total(){
@@ -139,7 +139,7 @@ class Remision extends Model
      public function porpagar(){
         return ($this->estatus == 2) ? 0 : $this->total()->total - $this->pagado();
     }
-    
+
     public function pagos($cont=false){
         if ($cont) {
             return IngresosRemision::where('remision',$this->id)->count();
@@ -158,7 +158,7 @@ class Remision extends Model
         if (!$bodega) { return ''; }
         return $bodega->bodega;
     }
-    
+
     public function getDateAttribute()
     {
         return [
@@ -170,5 +170,26 @@ class Remision extends Model
                 ->last()->fecha
         ];
     }
- 
+
+    public function itemsRemision()
+    {
+        return $this->hasMany(ItemsRemision::class,'remision','id');
+    }
+
+    public function itemsRemisionText()
+    {
+        $items = ItemsRemision::join('inventario as i','i.id','items_remision.producto')->where('remision',$this->id)->get();
+        $text = "";
+        $count = $items->count();
+        $k = 0;
+        $separator = "";
+        foreach($items as $item){
+            $k=$k+1;
+            if($count != $k){$separator=" - ";}
+            $text.= $item->producto . $separator;
+        }
+
+        return $text;
+    }
+
 }

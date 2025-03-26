@@ -1276,6 +1276,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/ventasItem', 'ExportarReportesController@ventasItem')->name('exportar.ventasItem');
 		Route::get('/ventasCliente', 'ExportarReportesController@ventasCliente')->name('exportar.ventasCliente');
 		Route::get('/remisionesCliente', 'ExportarReportesController@remisionesCliente')->name('exportar.remisionesCliente');
+		Route::get('/remisiones', 'ExportarReportesController@remisiones')->name('exportar.remisiones');
 		Route::get('/cuentasCobrar', 'ExportarReportesController@cuentasCobrar')->name('exportar.cuentasCobrar');
 		Route::get('/cuentasPagar', 'ExportarReportesController@cuentasPagar')->name('exportar.cuentasPagar');
 		Route::get('/compras', 'ExportarReportesController@compras')->name('exportar.compras');
