@@ -451,6 +451,10 @@ class ExportarReportesController extends Controller
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
 
+        if($request->input('barrio')){
+            $facturas=$facturas->where('c.barrio_id',$request->barrio);
+        }
+
         $ides=array();
         $factures=$facturas->get();
         $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -502,8 +506,8 @@ class ExportarReportesController extends Controller
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[14].$i, "TOTAL: ")
-            ->setCellValue($letras[15].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
+            ->setCellValue($letras[15].$i, "TOTAL: ")
+            ->setCellValue($letras[16].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(

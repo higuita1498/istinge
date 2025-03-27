@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Categoria;
 use App\Banco;
+use App\Barrios;
 use App\Contacto;
 use App\GrupoCorte;
 use App\Model\Gastos\FacturaProveedores;
@@ -2590,6 +2591,11 @@ class ReportesController extends Controller
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
+
+        if($request->input('barrio')){
+            $facturas=$facturas->where('c.barrio_id',$request->barrio);
+        }
+
         $ides=array();
         $facturas=$facturas->OrderBy($orderby, $order)->get();
 
@@ -2628,7 +2634,9 @@ class ReportesController extends Controller
             $total=$this->precision((float)$subtotal+$result->impuesto);
         }
         $grupos_corte = GrupoCorte::where('status',1)->get();
-        return view('reportes.facturasEstandar.index')->with(compact('facturas', 'subtotal', 'total', 'request', 'example','grupos_corte'));
+        $barrios = Barrios::where('status',1)->get();
+        return view('reportes.facturasEstandar.index')->with(compact('barrios','facturas', 'subtotal', 'total',
+        'request', 'example','grupos_corte'));
     }
 
     public function saldosFavor(Request $request){
