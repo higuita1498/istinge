@@ -91,7 +91,7 @@ Route::get('getGraph', 'Controller@getGraph');
 Route::get('/change_pass/{nombre}/{identificacion}', 'Controller@change_pass');
 Route::get('/show_contract/{id}', 'Controller@show_contract');
 Route::get('/radicados/{codigo}/{identificacion}', 'Controller@consultar')->name('radicados.consulta');
-Route::get('/factura/{identificacion}', 'Controller@consultar_invoice')->name('invoice.show');
+Route::get('/factura/{identificacion}/{facturaid?}', 'Controller@consultar_invoice')->name('invoice.show');
 
 /*DATATABLE ORACLE*/
 Route::get('contratos/{nodo?}', 'ContratosController@contratos');
