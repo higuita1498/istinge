@@ -668,4 +668,71 @@
             <p>No se pudo cargar el documento.</p>
         @endif
     @endif
+
+    {{-- Adjunto A --}}
+    @if($contract->adjunto_a)
+        @php
+            $path = public_path('adjuntos/documentos/' . $contract->adjunto_a);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_exists($path) ? base64_encode(file_get_contents($path)) : null;
+        @endphp
+
+        @if($data)
+            <div style="page-break-before: always;">
+                <h3 style="text-align: center;">{{ $contract->referencia_a }}</h3>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="data:image/{{ $type }};base64,{{ $data }}"
+                         alt="Documento del Contacto"
+                         style="max-width: 100%; max-height: 700px; width: auto; height: auto;">
+                </div>
+            </div>
+        @else
+            <p>No se pudo cargar el documento.</p>
+        @endif
+    @endif
+
+    {{-- Adjunto B --}}
+    @if($contract->adjunto_b)
+        @php
+            $path = public_path('adjuntos/documentos/' . $contract->adjunto_b);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_exists($path) ? base64_encode(file_get_contents($path)) : null;
+        @endphp
+
+        @if($data)
+            <div style="page-break-before: always;">
+                <h3 style="text-align: center;">{{ $contract->referencia_b }}</h3>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="data:image/{{ $type }};base64,{{ $data }}"
+                         alt="Documento del Contacto"
+                         style="max-width: 100%; max-height: 700px; width: auto; height: auto;">
+                </div>
+            </div>
+        @else
+            <p>No se pudo cargar el documento.</p>
+        @endif
+    @endif
+
+     {{-- Adjunto C --}}
+     @if($contract->adjunto_c)
+     @php
+         $path = public_path('adjuntos/documentos/' . $contract->adjunto_c);
+         $type = pathinfo($path, PATHINFO_EXTENSION);
+         $data = file_exists($path) ? base64_encode(file_get_contents($path)) : null;
+     @endphp
+
+     @if($data)
+         <div style="page-break-before: always;">
+             <h3 style="text-align: center;">{{ $contract->referencia_c }}</h3>
+             <div style="text-align: center; margin-top: 20px;">
+                 <img src="data:image/{{ $type }};base64,{{ $data }}"
+                      alt="Documento del Contacto"
+                      style="max-width: 100%; max-height: 700px; width: auto; height: auto;">
+             </div>
+         </div>
+     @else
+         <p>No se pudo cargar el documento.</p>
+     @endif
+ @endif
+
 @endsection

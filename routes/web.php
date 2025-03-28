@@ -91,7 +91,7 @@ Route::get('getGraph', 'Controller@getGraph');
 Route::get('/change_pass/{nombre}/{identificacion}', 'Controller@change_pass');
 Route::get('/show_contract/{id}', 'Controller@show_contract');
 Route::get('/radicados/{codigo}/{identificacion}', 'Controller@consultar')->name('radicados.consulta');
-Route::get('/factura/{identificacion}', 'Controller@consultar_invoice')->name('invoice.show');
+Route::get('/factura/{identificacion}/{facturaid?}', 'Controller@consultar_invoice')->name('invoice.show');
 
 /*DATATABLE ORACLE*/
 Route::get('contratos/{nodo?}', 'ContratosController@contratos');
@@ -1226,6 +1226,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/comprasProveedor', 'ReportesController@comprasProveedor')->name('reportes.comprasProveedor');
 		Route::get('/ventasCliente', 'ReportesController@ventasCliente')->name('reportes.ventasCliente');
 		Route::get('/remisionesCliente', 'ReportesController@remisionesCliente')->name('reportes.remisionesCliente');
+		Route::get('/remisiones', 'ReportesController@remisiones')->name('reportes.remisiones');
 		Route::get('/cuentasCobrar', 'ReportesController@cuentasCobrar')->name('reportes.cuentasCobrar');
 		Route::get('/cuentasPagar', 'ReportesController@cuentasPagar')->name('reportes.cuentasPagar');
 		Route::get('/compras', 'ReportesController@compras')->name('reportes.compras');
@@ -1275,6 +1276,7 @@ Route::group(['prefix' => 'empresa', 'middleware' => ['auth']], function() {
 		Route::get('/ventasItem', 'ExportarReportesController@ventasItem')->name('exportar.ventasItem');
 		Route::get('/ventasCliente', 'ExportarReportesController@ventasCliente')->name('exportar.ventasCliente');
 		Route::get('/remisionesCliente', 'ExportarReportesController@remisionesCliente')->name('exportar.remisionesCliente');
+		Route::get('/remisiones', 'ExportarReportesController@remisiones')->name('exportar.remisiones');
 		Route::get('/cuentasCobrar', 'ExportarReportesController@cuentasCobrar')->name('exportar.cuentasCobrar');
 		Route::get('/cuentasPagar', 'ExportarReportesController@cuentasPagar')->name('exportar.cuentasPagar');
 		Route::get('/compras', 'ExportarReportesController@compras')->name('exportar.compras');

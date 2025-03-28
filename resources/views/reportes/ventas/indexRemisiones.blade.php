@@ -13,16 +13,12 @@
 
 
         <div class="row card-description">
-            <div class="form-group col-md-2">
+            {{-- <div class="form-group col-md-2">
                 <label>Numeración</label>
                 <select class="form-control selectpicker" name="nro">
-                    <option value="0">Todas</option>
-                    @foreach($numeraciones as $nro)
-                        <option value="{{$nro->id}}" {{$nro->id==$request->nro?'selected':''}}>{{$nro->nombre}}</option>
-                    @endforeach
                     <option value="remisiones" selected="selected">REMISIONES</option>
                 </select>
-            </div>
+            </div> --}}
             <div class="form-group col-md-2">
                 <label></label>
                 <select class="form-control selectpicker" name="fechas" id="fechas">
@@ -58,10 +54,10 @@
 
                 </div>
             </div>
-            <div class="form-group col-md-4" style="    padding-top: 2%;">
-                <button type="button" id="generar" class="btn btn-outline-secondary">Generar Reporte</button>
-                <button type="button" id="exportar" class="btn btn-outline-secondary">Exportar a Excel</button>
-            </div>
+            <div class="form-group col-md-4" style=" padding-top: 24px;">
+                <button type="button" id="generar" class="btn btn-outline-primary">Generar Reporte</button>
+                <button type="button" id="exportar" class="btn btn-outline-success">Exportar a Excel</button>
+              </div>
         </div>
         <div class="row card-description">
             <div class="col-md-12 table-responsive">
@@ -70,7 +66,8 @@
                     <tr>
                         <th>Número</th>
                         <th>Cliente</th>
-                        <th>Creación</th>
+                        <th>Fecha</th>
+                        <th>Item(s)</th>
                         <th>Antes de Impuestos</th>
                         <th>Después de Impuestos</th>
                     </tr>
@@ -82,13 +79,14 @@
                             <td><a href="{{route('facturas.show',$factura->id)}}" target="_blank">{{$factura->nro}}</a> </td>
                             <td><a href="{{route('contactos.show',$factura->cliente()->id)}}" target="_blank">{{$factura->cliente()->nombre}} {{$factura->cliente()->apellidos()}}</a></td>
                             <td>{{date('d-m-Y', strtotime($factura->fecha))}}</td>
+                            <td>{{$factura->itemsRemisionText()}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->subsub)}}</td>
                             <td>{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear($factura->total()->total)}}</td>
                         </tr>
                     @endforeach
                     </tbody>
                     <tfoot class="thead-dark">
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                     <th  class="text-right">Total</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($subtotal)}}</th>
                     <th>{{Auth::user()->empresa()->moneda}} {{App\Funcion::Parsear($total)}}</th>
@@ -102,6 +100,6 @@
             </div>
         </div>
     </form>
-    <input type="hidden" id="urlgenerar" value="{{route('reportes.ventas')}}">
-    <input type="hidden" id="urlexportar" value="{{route('exportar.ventas')}}">
+    <input type="hidden" id="urlgenerar" value="{{route('reportes.remisiones')}}">
+    <input type="hidden" id="urlexportar" value="{{route('exportar.remisiones')}}">
 @endsection

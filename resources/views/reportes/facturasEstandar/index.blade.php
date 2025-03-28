@@ -26,20 +26,19 @@
 		    	<optgroup label="Manual">
 				    <option value="7">Manual</option>
 			  	</optgroup>
-               {{-- <optgroup label="Todas">
-                    <option value="8">Todas</option>
-                </optgroup> --}}
 		    </select>
 	  	</div>
+
           <div class="form-group col-md-2">
-		    {{-- <label>Grupo corte</label>
-		    <select class="form-control selectpicker" name="tipo">
-                @foreach($grupos_cosrte as $grupo)
-		    	<option value="{{$grupo->id}}" {{1==$request->tipo?'selected':''}}>{{$grupo->nombre}}</option>
+		    <label>Barrio</label>
+		    <select class="form-control selectpicker" name="barrio" data-size="5" data-live-search="true">
+                @foreach($barrios as $barrio)
+		    	<option value="{{$barrio->id}}" {{$request->barrio == $barrio->id?'selected':''}}>{{$barrio->nombre}}</option>
                 @endforeach
-		    	<option value="0" {{0==$request->tipo?'selected':''}}>Todos</option>
-		    </select> --}}
+		    	<option value="0" {{0==$request->barrio?'selected':''}}>Todos</option>
+		    </select>
 	  	</div>
+
 	  	<div class="form-group col-md-4">
 			<div class="row">
 				<div class="col-md-6">

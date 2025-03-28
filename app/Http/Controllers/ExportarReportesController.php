@@ -451,6 +451,10 @@ class ExportarReportesController extends Controller
             $facturas=$facturas->where('factura.fecha','>=', $dates['inicio'])->where('factura.fecha','<=', $dates['fin']);
         }
 
+        if($request->input('barrio')){
+            $facturas=$facturas->where('c.barrio_id',$request->barrio);
+        }
+
         $ides=array();
         $factures=$facturas->get();
         $facturas=$facturas->OrderBy('factura.id', 'DESC')->paginate(1000000)->appends(['fechas'=>$request->fechas, 'nro'=>$request->nro, 'fecha'=>$request->fecha, 'hasta'=>$request->hasta]);
@@ -502,8 +506,8 @@ class ExportarReportesController extends Controller
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[14].$i, "TOTAL: ")
-            ->setCellValue($letras[15].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
+            ->setCellValue($letras[15].$i, "TOTAL: ")
+            ->setCellValue($letras[16].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($total));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -938,13 +942,13 @@ class ExportarReportesController extends Controller
 
     }
 
-    private function remisiones($request)
+    public function remisiones(Request $request)
     {
 
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de Ventas-Remisiones desde ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Numero', 'Cliente', 'Creacion', 'Antes de Impuestos', 'Despues de Impuestos');
+        $titulosColumnas = array('Numero', 'Cliente', 'Fecha', 'Item(s)', 'observaciones', 'Antes de Impuestos','Despues de Impuestos');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
         ->setLastModifiedBy("Sistema") //Ultimo usuario que lo modific���
@@ -955,17 +959,17 @@ class ExportarReportesController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:E1');
+            ->mergeCells('A1:G1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:D1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:E3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:G3')->applyFromArray($estilo);
 
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -985,14 +989,16 @@ class ExportarReportesController extends Controller
         $facturas=Remision::join('contactos as c', 'remisiones.cliente', '=', 'c.id')
             ->join('items_remision as if', 'remisiones.id', '=', 'if.remision')
             ->select('remisiones.id', 'remisiones.nro', DB::raw('c.nombre as nombrecliente'), 'remisiones.cliente',
-                'remisiones.fecha', 'remisiones.vencimiento', 'remisiones.estatus',
+                'remisiones.fecha', 'remisiones.vencimiento', 'remisiones.estatus','remisiones.observaciones',
                 DB::raw('SUM(
       (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) as total'),
                 DB::raw('((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) as pagado'),
                 DB::raw('(SUM(
           (if.cant*if.precio)-(if.precio*(if(if.desc,if.desc,0)/100)*if.cant)+(if.precio-(if.precio*(if(if.desc,if.desc,0)/100)))*(if.impuesto/100)*if.cant) -  ((Select SUM(pago) from ingresosr_remisiones where remision=remisiones.id) + (Select if(SUM(valor), SUM(valor), 0) from ingresos_retenciones where remision=remisiones.id)) )    as porpagar'))
-            ->whereIn('estatus', [0, 1])
-            ->where('remisiones.empresa',Auth::user()->empresa);
+            ->where('remisiones.empresa',Auth::user()->empresa)
+            ->where('fecha','>=', $dates['inicio'])
+            ->where('fecha','<=', $dates['fin'])
+            ->whereIn('estatus', [0, 1]);
 
         if($request->input('fechas') != 8 || (!$request->has('fechas'))){
             $facturas=$facturas->where('fecha','>=', $dates['inicio'])->where('fecha','<=', $dates['fin']);
@@ -1008,14 +1014,16 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[0].$i, $factura->nro)
                 ->setCellValue($letras[1].$i, $factura->cliente()->nombre.' '.$factura->cliente()->apellidos())
                 ->setCellValue($letras[2].$i, date('d-m-Y', strtotime($factura->fecha)))
-                ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
-                ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
+                ->setCellValue($letras[3].$i, $factura->itemsRemisionText())
+                ->setCellValue($letras[4].$i, $factura->observaciones)
+                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
+                ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($factura->total()->total));
             $i++;
         }
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[2].$i, "TOTAL: ")
-            ->setCellValue($letras[3].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totales['subtotal']))
-            ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda. " ".Funcion::Parsear($totales['total']));
+            ->setCellValue($letras[4].$i, "TOTAL: ")
+            ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totales['subtotal']))
+            ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda. " ".Funcion::Parsear($totales['total']));
 
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
@@ -1024,7 +1032,7 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:E'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:G'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){
@@ -2111,7 +2119,7 @@ class ExportarReportesController extends Controller
         $objPHPExcel = new PHPExcel();
         $tituloReporte = "Reporte de compras ".$request->fecha." hasta ".$request->hasta;
 
-        $titulosColumnas = array('Numero', 'Factura', 'Proveedor', 'Creacion', 'Vencimiento', 'Subtotal', 'IVA',
+        $titulosColumnas = array('Numero', 'Factura', 'Proveedor', 'item(s)','Creacion', 'Vencimiento', 'Subtotal', 'IVA',
             'Retencion', 'Total');
         $letras= array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $objPHPExcel->getProperties()->setCreator("Sistema") // Nombre del autor
@@ -2123,17 +2131,17 @@ class ExportarReportesController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah��� el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:I1');
+            ->mergeCells('A1:J1');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:J1')->applyFromArray($estilo);
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:I3')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:J3')->applyFromArray($estilo);
 
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
@@ -2183,18 +2191,19 @@ class ExportarReportesController extends Controller
                 ->setCellValue($letras[0].$i, $factura->nro)
                 ->setCellValue($letras[1].$i, $factura->codigo)
                 ->setCellValue($letras[2].$i, $factura->proveedor()->nombre)
-                ->setCellValue($letras[3].$i, date('d-m-Y', strtotime($factura->fecha_factura)))
-                ->setCellValue($letras[4].$i, date('d-m-Y', strtotime($factura->vencimiento)))
-                ->setCellValue($letras[5].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
-                ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->impuestos_totales()))
-                ->setCellValue($letras[7].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->retenido()))
-                ->setCellValue($letras[8].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->total));
+                ->setCellValue($letras[3].$i, $factura->itemsFacturaText())
+                ->setCellValue($letras[4].$i, date('d-m-Y', strtotime($factura->fecha_factura)))
+                ->setCellValue($letras[5].$i, date('d-m-Y', strtotime($factura->vencimiento)))
+                ->setCellValue($letras[6].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->subsub))
+                ->setCellValue($letras[7].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->impuestos_totales()))
+                ->setCellValue($letras[8].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->retenido()))
+                ->setCellValue($letras[9].$i, Auth::user()->empresa()->moneda ." ". Funcion::Parsear($factura->total()->total));
             $i++;
         }
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue($letras[3].$i, "TOTAL: ")
-            ->setCellValue($letras[4].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totalPagar));
+            ->setCellValue($letras[8].$i, "TOTAL: ")
+            ->setCellValue($letras[9].$i, Auth::user()->empresa()->moneda." ".Funcion::Parsear($totalPagar));
 
         $estilo =array('font'  => array('size'  => 12, 'name'  => 'Times New Roman' ),
             'borders' => array(
@@ -2202,7 +2211,7 @@ class ExportarReportesController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:I'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:J'.$i)->applyFromArray($estilo);
 
 
         for($i = 'A'; $i <= $letras[20]; $i++){

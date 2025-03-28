@@ -14,6 +14,7 @@ use App\Model\Gastos\Ordenes_Compra;
 use App\Model\Gastos\NotaDeditoFactura;
 use Carbon\Carbon;
 use App\FormaPago;
+use App\Model\Ingresos\ItemsFactura;
 use App\Puc;
 use DB;
 use App\Vendedor;
@@ -460,5 +461,20 @@ class FacturaProveedores extends Model
             $total = round($total);
         }
         return $total;
+    }
+
+    public function itemsFacturaText()
+    {
+        $items = ItemsFacturaProv::join('inventario as i','i.id','items_factura_proveedor.producto')->where('factura',$this->id)->get();
+        $text = "";
+        $count = $items->count();
+        $k = 0;
+        $separator = "";
+        foreach($items as $item){
+            $k=$k+1;
+            if($count != $k){$separator=" - ";}
+            $text.= $item->producto . $separator;
+        }
+        return $text;
     }
 }
