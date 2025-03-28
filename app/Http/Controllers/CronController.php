@@ -969,7 +969,7 @@ class CronController extends Controller
                 where('f.estatus',1)->
                 whereIn('f.tipo', [1,2])->
                 where('contactos.status',1)->
-                where('cs.state','enabled')->
+                // where('cs.state','enabled')-> esto es un estado que funciona para internet, no para tv
                 whereIn('cs.grupo_corte',$grupos_corte_array)->
                 where('cs.fecha_suspension', null)->
                 where('cs.state_olt_catv',true)->
