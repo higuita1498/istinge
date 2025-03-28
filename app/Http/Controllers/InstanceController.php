@@ -56,11 +56,11 @@ class InstanceController extends Controller
         try {
 
             $instance = Instance::create([
-                'uuid' => $responseInstance->channelId,
+                'uuid' => $responseInstance->uuid,
                 'company_id' => auth()->user()->empresa,
                 'addr' => $addr,
-                'api_key' => $responseInstance->channelId,
-                'uuid_whatsapp' => $responseInstance->uuid,
+                'api_key' => $responseInstance->apiKey,
+                'uuid_whatsapp' => $responseInstance->uuidWhatsapp,
                 'status' => $responseInstance->status
             ]);
             return back()->with([
@@ -169,7 +169,7 @@ class InstanceController extends Controller
             ]);
         }
 
-        $session = $wapiService->initSession($instance->uuid);
+        $session = $wapiService->initSession($instance->uuid_whatsapp, $instance->api_key);
         $session = json_decode($session);
         if($session->status === 'error') {
             return response()->json([

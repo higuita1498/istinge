@@ -125,7 +125,7 @@
         @endif
 
         @if($instance)
-            <input type="hidden" name="instance-key" id="instance-key" value="{{ env("WAPI_TOKEN") }}">
+            <input type="hidden" name="instance-key" id="instance-key" value="{{ $instance->api_key }}">
         @endif
 
         @if ($instance && !$instance->isPaired())
@@ -191,8 +191,6 @@
             }
             setLoading(getQr);
             const response = await fetch("/software/empresa/instances");
-            console.log(response);
-
             const instance = await response.json();
 
             if (instance.id) {
@@ -234,17 +232,15 @@
             }
         });
 
-        socket.on("session:update", (arg) => {
+        socket.on("whatsappSession", (arg) => {
             const {
-                wbot
+                session
             } = arg;
-            console.log(arg);
-
-            if (wbot.status == "QRCODE") {
+            if (session.status == "QRCODE") {
                 document.getElementById("qrcode").innerHTML = "";
 
                 new QRCode(document.getElementById("qrcode"), {
-                    text: wbot.qrCode,
+                    text: session.qrcode,
                     colorDark: "#052e16",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
@@ -252,8 +248,8 @@
                 return;
             }
 
-            if (wbot.status == "PAIRED") {
-                fetch(`/software/empresa/instances/${wbot.channelId}`, {
+            if (session.status == "PAIRED") {
+                fetch(`/software/empresa/instances/${session.instanceId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

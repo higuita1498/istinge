@@ -4121,8 +4121,8 @@ class FacturasController extends Controller{
         }
 
         $file = [
-            "mimeType" => "@file/pdf",
-            "file" => $facturabase64,
+            "mime" => "@file/pdf",
+            "data" => $facturabase64,
         ];
 
         $contact = [
@@ -4143,8 +4143,8 @@ class FacturasController extends Controller{
 
         $body = [
             "contact" => $contact,
-            "message" => $message,
-            "media" => $file
+            "body" => $message,
+            "file" => $file
         ];
 
         $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
