@@ -152,6 +152,7 @@ class GruposCorteController extends Controller
         $grupo->fecha_suspension = $request->fecha_suspension;
         $grupo->hora_suspension  = $request->hora_suspension;
         $grupo->hora_suspension_limit = $hora_suspension_limit;
+        $grupo->prorroga_tv = $request->prorroga_tv;
         $grupo->status           = $request->status;
         $grupo->created_by       = Auth::user()->id;
         $grupo->empresa          = Auth::user()->empresa;
