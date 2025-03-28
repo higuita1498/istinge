@@ -130,6 +130,7 @@ class GruposCorteController extends Controller
         $grupo->hora_suspension_limit = $hora_suspension_limit;
         $grupo->hora_creacion_factura = $request->hora_creacion_factura;
         $grupo->status = $request->status;
+        $grupo->prorroga_tv = $request->prorroga_tv;
         $grupo->created_by = Auth::user()->id;
         $grupo->empresa = Auth::user()->empresa;
         $grupo->save();
@@ -236,8 +237,9 @@ class GruposCorteController extends Controller
             $grupo->hora_suspension  = $request->hora_suspension;
             $grupo->hora_suspension_limit = $hora_suspension_limit;
             $grupo->hora_creacion_factura = $request->hora_creacion_factura;
-            $grupo->status           = $request->status;
-            $grupo->updated_by       = Auth::user()->id;
+            $grupo->status                = $request->status;
+            $grupo->prorroga_tv           = $request->prorroga_tv;
+            $grupo->updated_by            = Auth::user()->id;
             $grupo->save();
 
             $mensaje='SE HA MODIFICADO SATISFACTORIAMENTE EL GRUPO DE CORTE';

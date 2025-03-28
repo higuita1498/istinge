@@ -962,22 +962,32 @@ class CronController extends Controller
                 array_push($grupos_corte_array,$grupo->id);
             }
 
-            //Estamos tomando la ultima factura siempre del cliente con el orderby y el groupby, despues analizamos si esta ultima ya vencio
-            $contactos = Contacto::join('factura as f','f.cliente','=','contactos.id')->
-                join('contracts as cs','cs.id','=','f.contrato_id')->
-                select('contactos.id', 'contactos.nombre', 'contactos.nit', 'f.id as factura', 'f.estatus', 'f.suspension', 'cs.state', 'f.contrato_id')->
-                where('f.estatus',1)->
-                whereIn('f.tipo', [1,2])->
-                where('contactos.status',1)->
-                // where('cs.state','enabled')-> esto es un estado que funciona para internet, no para tv
-                whereIn('cs.grupo_corte',$grupos_corte_array)->
-                where('cs.fecha_suspension', null)->
-                where('cs.state_olt_catv',true)->
-                whereDate('f.vencimiento', '<=', now())->
-                orderBy('f.id', 'desc')->
-                take(45)->
-                get();
-                $swGrupo = 1; //masivo
+            $contactos = Contacto::join('factura as f', 'f.cliente', '=', 'contactos.id')
+            ->join('contracts as cs', 'cs.id', '=', 'f.contrato_id')
+            ->join('grupos_corte as gc', 'gc.id', '=', 'cs.grupo_corte') // Unimos con grupos_corte
+            ->select(
+                'contactos.id',
+                'contactos.nombre',
+                'contactos.nit',
+                'f.id as factura',
+                'f.estatus',
+                'f.suspension',
+                'cs.state',
+                'f.contrato_id',
+                'gc.prorroga_tv', // Seleccionamos prorroga_tv
+                'gc.id as grupo_corte'
+            )
+            ->where('f.estatus', 1)
+            ->whereIn('f.tipo', [1, 2])
+            ->where('contactos.status', 1)
+            // ->where('cs.state', 'enabled') // Solo si aplica
+            ->whereIn('cs.grupo_corte', $grupos_corte_array)
+            ->where('cs.fecha_suspension', null)
+            ->where('cs.state_olt_catv', true)
+            ->whereRaw("DATE_ADD(f.vencimiento, INTERVAL gc.prorroga_tv DAY) <= NOW()") // Agregamos la prórroga a la fecha de vencimiento
+            ->orderBy('f.id', 'desc')
+            ->take(45)
+            ->get();
 
             if($contactos){
                 foreach ($contactos as $contacto) {
@@ -1010,9 +1020,9 @@ class CronController extends Controller
                         ->where('contrato_id',$factura->contrato_id)
                         ->orderBy('created_at', 'desc')
                         ->value('id');
-                }
+                    }
 
-                if($factura->id == $ultimaFacturaRegistrada){
+                    if($factura->id == $ultimaFacturaRegistrada){
 
                     //1. debemos primero mirar si los contrsatos existen en la tabla detalle, si no hacemos el proceso antiguo
                     $contratos = Contrato::whereIn('nro',$facturaContratos)->get();
@@ -1057,7 +1067,6 @@ class CronController extends Controller
                             }
                         }
                     }
-
                 }
             }
         }
