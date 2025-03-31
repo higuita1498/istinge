@@ -636,13 +636,14 @@
                               </div>
                           </div>
 
-                          <div class="col-md-4 form-group" id="dtItemHasta" style="display:none">
+                          <div class="col-md-4 form-group" id="dtItemHasta" @if($contrato->rd_item_vencimiento == 0) style="display:none" @endif>
                             <label class="control-label">Facturar ítem hasta</label>
-                            <input type="date" class="form-control"  id="dt_item_hasta" name="dt_item_hasta" required>
+                            <input type="date" class="form-control"  id="dt_item_hasta" name="dt_item_hasta" value="{{ $contrato->dt_item_hasta }}" required>
                             <span style="color: red;">
                                 <strong>{{ $errors->first('dt_item_hasta') }}</strong>
                             </span>
                         </div>
+
                         </div>
                     </div>
                     <div class="tab-pane fade" id="adjuntos" role="tabpanel" aria-labelledby="adjuntos-tab">
