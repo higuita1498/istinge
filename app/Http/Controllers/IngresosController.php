@@ -1068,7 +1068,7 @@ class IngresosController extends Controller
             }
 
             $file = [
-                "mimeType" => "@file/pdf",
+                "mimeType" => "application/pdf",
                 "file" => $pdf64,
             ];
 
