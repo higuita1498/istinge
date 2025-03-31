@@ -303,7 +303,7 @@ class AvisosController extends Controller
                         "media" => ''
                     ];
 
-                    $response = (object) $wapiService->sendMessageMedia($instance->uuid_whatsapp, $instance->api_key, $body);
+                    $response = (object) $wapiService->sendMessageMedia($instance->uuid, $instance->api_key, $body);
 
 
                 }
