@@ -613,6 +613,37 @@
                                     <strong>{{ $errors->first('servicio_otro') }}</strong>
                                 </span>
                             </div>
+
+                            <div class="form-group col-md-4">
+                                <label class="control-label">¿Agregar un tiempo de facturar el ítem?  <a><i
+                                    data-tippy-content="Si selecciona si, deberás escoger una fecha hasta la que el ítem se debe facturar en este contrato"
+                                    class="icono far fa-question-circle"></i></a></label>
+                              <div class="row">
+                                  <div class="col-sm-6">
+                                  <div class="form-radio">
+                                      <label class="form-check-label">
+                                      <input type="radio" class="form-check-input" name="rd_item_vencimiento" id="item_vencimiento1" value="1" {{$contrato->rd_item_vencimiento == 1 ? 'checked' : ''}}> Si
+                                      <i class="input-helper"></i><i class="input-helper"></i></label>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6">
+                                  <div class="form-radio">
+                                      <label class="form-check-label">
+                                      <input type="radio" class="form-check-input" name="rd_item_vencimiento" id="item_vencimiento2" value="0" {{$contrato->rd_item_vencimiento == 0 ? 'checked' : ''}}> No
+                                      <i class="input-helper"></i><i class="input-helper"></i></label>
+                                  </div>
+                              </div>
+                              </div>
+                          </div>
+
+                          <div class="col-md-4 form-group" id="dtItemHasta" @if($contrato->rd_item_vencimiento == 0) style="display:none" @endif>
+                            <label class="control-label">Facturar ítem hasta</label>
+                            <input type="date" class="form-control"  id="dt_item_hasta" name="dt_item_hasta" value="{{ $contrato->dt_item_hasta }}" required>
+                            <span style="color: red;">
+                                <strong>{{ $errors->first('dt_item_hasta') }}</strong>
+                            </span>
+                        </div>
+
                         </div>
                     </div>
                     <div class="tab-pane fade" id="adjuntos" role="tabpanel" aria-labelledby="adjuntos-tab">
@@ -988,6 +1019,20 @@
                 }else{
                     $("#div_reconexion").addClass('d-none');
                     $("#costo_reconexion").val('');
+                }
+            });
+
+            $("#item_vencimiento1").change(function(){
+                if($("#item_vencimiento1").is(':checked')){
+                    $("#dtItemHasta").show();
+                    $("#dt_item_hasta").prop('disabled', false);
+                }
+            });
+
+            $("#item_vencimiento2").change(function(){
+                if($("#item_vencimiento2").is(':checked')){
+                    $("#dtItemHasta").hide();
+                    $("#dt_item_hasta").prop('disabled', true);
                 }
             });
         });

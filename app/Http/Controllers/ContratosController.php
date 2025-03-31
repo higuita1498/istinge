@@ -901,6 +901,11 @@ class ContratosController extends Controller
                 $contrato->descuento_pesos         = $request->descuento_pesos;
                 $contrato->fact_primer_mes         = $request->fact_primer_mes;
 
+                if($request->rd_item_vencimiento){
+                    $contrato->dt_item_hasta           = $request->dt_item_hasta;
+                    $contrato->rd_item_vencimiento     = $request->rd_item_vencimiento;
+                }
+
                 if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
 
                     $contrato->olt_sn_mac          = $request->olt_sn_mac;
@@ -1207,7 +1212,7 @@ class ContratosController extends Controller
           'contracts.linea', 'contracts.descuento', 'contracts.vendedor', 'contracts.canal', 'contracts.address_street',
           'contracts.tecnologia', 'contracts.costo_reconexion', 'contracts.tipo_contrato', 'contracts.puerto_conexion',
           'contracts.observaciones','contracts.fecha_hasta_nosuspension','contracts.fecha_desde_nosuspension','contracts.tipo_nosuspension','contracts.serial_moden','contracts.tipo_moden','contracts.descuento_pesos',
-          'contracts.olt_sn_mac','contracts.state_olt_catv','contracts.fact_primer_mes')
+          'contracts.olt_sn_mac','contracts.state_olt_catv','contracts.fact_primer_mes','contracts.rd_item_vencimiento', 'contracts.dt_item_hasta')
           ->where('contracts.id', $id)->where('contracts.empresa', Auth::user()->empresa)->first();
 
 
@@ -1632,6 +1637,14 @@ class ContratosController extends Controller
                     $contrato->serial_moden            = $request->serial_moden;
                     $contrato->descuento_pesos         = $request->descuento_pesos;
                     $contrato->fact_primer_mes         = $request->fact_primer_mes;
+
+                    if($request->rd_item_vencimiento){
+                        $contrato->dt_item_hasta           = $request->dt_item_hasta;
+                        $contrato->rd_item_vencimiento     = $request->rd_item_vencimiento;
+                    }else{
+                        $contrato->rd_item_vencimiento = null;
+                        $contrato->rd_item_vencimiento     = $request->rd_item_vencimiento;
+                    }
 
                     if($request->olt_sn_mac && $empresa->adminOLT != null && isset($request->state_olt_catv)){
 
