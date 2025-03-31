@@ -23,7 +23,8 @@ class GrupoCorte extends Model
      * @var array
      */
     protected $fillable = [
-        'nombre', 'fecha_factura', 'fecha_pago', 'fecha_corte', 'fecha_suspension', 'hora_suspension', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at'
+        'nombre', 'fecha_factura', 'fecha_pago', 'fecha_corte', 'fecha_suspension',
+        'hora_suspension', 'status', 'created_by', 'updated_by', 'created_at', 'updated_at','prorroga_tv'
     ];
 
     protected $appends = ['uso', 'session'];
