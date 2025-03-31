@@ -385,22 +385,30 @@ class CronController extends Controller
 
                                             ## Se carga el item de otro tipo de servicio ##
                                             if($cm->servicio_otro){
-                                            $item = Inventario::find($cm->servicio_otro);
-                                            $item_reg = new ItemsFactura;
-                                            $item_reg->factura     = $factura->id;
-                                            $item_reg->producto    = $item->id;
-                                            $item_reg->ref         = $item->ref;
-                                            $item_reg->precio      = $item->precio;
-                                            $item_reg->descripcion = $item->producto;
-                                            $item_reg->id_impuesto = $item->id_impuesto;
-                                            $item_reg->impuesto    = $item->impuesto;
-                                            $item_reg->cant        = 1;
-                                            $item_reg->desc        = $cm->descuento;
-                                            if($cm->descuento_pesos != null && $descuentoPesos == 0){
-                                                $item_reg->precio      = $item_reg->precio - $cm->descuento_pesos;
-                                                $descuentoPesos = 1;
-                                            }
-                                            $item_reg->save();
+                                                $item = Inventario::find($cm->servicio_otro);
+                                                $item_reg = new ItemsFactura;
+                                                $item_reg->factura     = $factura->id;
+                                                $item_reg->producto    = $item->id;
+                                                $item_reg->ref         = $item->ref;
+                                                $item_reg->precio      = $item->precio;
+                                                $item_reg->descripcion = $item->producto;
+                                                $item_reg->id_impuesto = $item->id_impuesto;
+                                                $item_reg->impuesto    = $item->impuesto;
+                                                $item_reg->cant        = 1;
+                                                $item_reg->desc        = $cm->descuento;
+                                                if($cm->descuento_pesos != null && $descuentoPesos == 0){
+                                                    $item_reg->precio      = $item_reg->precio - $cm->descuento_pesos;
+                                                    $descuentoPesos = 1;
+                                                }
+
+                                                if($cm->rd_item_vencimiento == 1){
+
+                                                    if($cm->dt_item_hasta > now()){
+                                                        $item_reg->save();
+                                                    }
+                                                }else{
+                                                    $item_reg->save();
+                                                }
                                             }
 
                                             ## REGISTRAMOS EL ITEM SI TIENE PAGO PENDIENTE DE ASIGNACIÓN DE PRODUCTO
