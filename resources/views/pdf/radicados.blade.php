@@ -173,8 +173,8 @@
                         <tr>
                             <th style="text-align: left; padding-left: 9px;">Nro. Telefónico</th>
                             <td style="padding-left: 9px;">{{$radicado->telefono}}
-                                - {{ $radicado->cliente()->telefono1 }}
-                                {{ $radicado->cliente()->telefono1 }} - {{ $radicado->cliente()->celular }}
+                                 {{ $radicado->cliente()->telefono1 }}
+                                {{ $radicado->cliente()->telefono1 }}  {{ $radicado->cliente()->celular }}
                             </td>
                         </tr>
                         <tr>
