@@ -115,7 +115,6 @@ class CronController extends Controller
             $fecha = Carbon::now()->format('Y-m-d');
 
             foreach($grupos_corte as $grupo_corte){
-
                 $contratos = Contrato::join('contactos as c', 'c.id', '=', 'contracts.client_id')->
                 join('empresas as e', 'e.id', '=', 'contracts.empresa')
                 ->select('contracts.id', 'contracts.iva_factura', 'contracts.public_id', 'c.id as cliente',
@@ -161,7 +160,6 @@ class CronController extends Controller
                 $m = Carbon::now()->format('m');
                 $ds = substr(str_repeat(0, 2).$grupo_corte->fecha_suspension, - 2);
                 $da = Carbon::now()->format('d')*1;
-
                  if($da > $grupo_corte->fecha_suspension && $m!=12){
                     $m=$m+1;
                 }
