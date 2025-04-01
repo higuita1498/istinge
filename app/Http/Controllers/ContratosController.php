@@ -173,7 +173,7 @@ class ContratosController extends Controller
                 $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
                   ->join('factura as f', 'fc.factura_id', '=', 'f.id')
                   ->where('f.estatus', '=', 1)
-                  ->where('f.vencimiento','<',Carbon::now()->format('Y-m-d'))
+                  ->where('f.vencimiento','<=',Carbon::now()->format('Y-m-d'))
                   ->groupBy('contracts.id')
                   ->havingRaw('COUNT(f.id) > 1');
             }
