@@ -105,7 +105,8 @@ class ContratosController extends Controller
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales'));
+        $barrios = Barrios::where('status','1')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales','barrios'));
     }
 
     public function enabled(Request $request){
@@ -121,7 +122,8 @@ class ContratosController extends Controller
         $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
         $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
         $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales'));
+        $barrios = Barrios::where('status','1')->get();
+        return view('contratos.indexnew', compact('clientes','planes','servidores','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales','barrios'));
     }
 
     public function contratos(Request $request, $nodo){
@@ -173,7 +175,7 @@ class ContratosController extends Controller
                 $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
                   ->join('factura as f', 'fc.factura_id', '=', 'f.id')
                   ->where('f.estatus', '=', 1)
-                  ->where('f.vencimiento','<',Carbon::now()->format('Y-m-d'))
+                  ->where('f.vencimiento','<=',Carbon::now()->format('Y-m-d'))
                   ->groupBy('contracts.id')
                   ->havingRaw('COUNT(f.id) > 1');
             }
