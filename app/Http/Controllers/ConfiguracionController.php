@@ -1871,6 +1871,21 @@ class ConfiguracionController extends Controller
     }
   }
 
+  public function facturaContratoOff(Request $request)
+  {
+    $empresa = Empresa::find(auth()->user()->empresa);
+
+    if ($request->factura_contrato_off == 0) {
+      $empresa->factura_contrato_off = 1;
+      $empresa->save();
+      return 1;
+    } else {
+      $empresa->factura_contrato_off = 0;
+      $empresa->save();
+      return 0;
+    }
+  }
+
   public function reconexionGenerica(Request $request){
     $empresa = Empresa::find(auth()->user()->empresa);
 
