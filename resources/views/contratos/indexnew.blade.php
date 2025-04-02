@@ -223,6 +223,7 @@
                             <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
                                 <option value="opcion_1">Contratos deshabilitados con última factura pagada</option>
                                 <option value="opcion_2">Contratos con descuento % ó $</option>
+                                <option value="opcion_3">Dos o más facturas abiertas</option>
                             </select>
                         </div>
 
@@ -230,7 +231,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="filtro_facturas" name="filtro_facturas">
                                 <label class="form-check-label" for="filtro_facturas">
-                                    Más de dos facturas vencidas
+                                    Dos o más facturas vencidas
                                 </label>
                             </div>
                         </div>
