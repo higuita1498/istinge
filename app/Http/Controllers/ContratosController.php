@@ -170,7 +170,7 @@ class ContratosController extends Controller
                 });
             }
             // Aplica el filtro de facturas si el usuario lo selecciona
-            if ($request->filtro_facturas === "true") {
+            if ($request->otra_opcion && $request->otra_opcion == "opcion_4") {
                 $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
                   ->join('factura as f', 'fc.factura_id', '=', 'f.id')
                   ->where('f.estatus', '=', 1)
