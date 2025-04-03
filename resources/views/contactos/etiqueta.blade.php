@@ -3,7 +3,7 @@
         {{ $contacto->etiqueta ? $contacto->etiqueta->nombre : 'etiquetar' }}
     </button>
     <div class="dropdown-menu w-100" aria-labelledby="etiqueta-drop-{{$contacto->id}}" style="max-height:200px; overflow: auto">
-        <a class="dropdown-item" href="javascript:cambiarEtiqueta(0, {{ $contrato->id }})">Eliminar etiqueta</a>
+        <a class="dropdown-item" href="javascript:cambiarEtiqueta(0, {{ $contacto->id }})">Eliminar etiqueta</a>
         @foreach($etiquetas as $etiqueta)
             <a class="dropdown-item" href="javascript:cambiarEtiqueta({{ $etiqueta->id }}, {{ $contacto->id }})">{{ $etiqueta->nombre }}</a>
         @endforeach
@@ -13,7 +13,7 @@
 <script>
     function cambiarEtiqueta(etiqueta, contacto){
         $.get('{{URL::to('/')}}/empresa/contactos/cambiar-etiqueta/'+etiqueta+'/'+contacto, function(response){
-            let button = $('#etiqueta-drop-'+contrato);
+            let button = $('#etiqueta-drop-'+contacto);
 
             if (response.nombre && response.color) {
                 button.html(response.nombre);
