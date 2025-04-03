@@ -1575,10 +1575,13 @@ class ContactosController extends Controller
 
         $contacto =  Contacto::where('id', $contacto)->where('empresa', Auth::user()->empresa)->first();
 
-        $contacto->etiqueta_id = $etiqueta;
+        if($etiqueta == 0){
+            $contacto->etiqueta_id = null;
+        }else{
+            $contacto->etiqueta_id = $etiqueta;
+        }
 
         $contacto->update();
-
         return $contacto->etiqueta;
     }
 

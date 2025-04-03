@@ -223,16 +223,9 @@
                             <select title="Otras opciones" class="form-control selectpicker" id="otra_opcion" name="otra_opcion">
                                 <option value="opcion_1">Contratos deshabilitados con última factura pagada</option>
                                 <option value="opcion_2">Contratos con descuento % ó $</option>
+                                <option value="opcion_3">Dos o más facturas abiertas</option>
+                                <option value="opcion_4">Dos o más facturas vencidas</option>
                             </select>
-                        </div>
-
-                        <div class="col-md-3 pl-1 pt-1">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="filtro_facturas" name="filtro_facturas">
-                                <label class="form-check-label" for="filtro_facturas">
-                                    Más de dos facturas vencidas
-                                </label>
-                            </div>
                         </div>
 
                         <div class="col-md-8 pl-1 pt-1">
@@ -515,7 +508,6 @@
                 data.otra_opcion = $("#otra_opcion").val();
                 data.fecha_corte = $("#fecha-corte").val();
                 data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
-                data.filtro_facturas = $('#filtro_facturas').is(':checked');
                 data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
                 data.filtro = true;
             });
@@ -537,13 +529,6 @@
         $('#sin_facturas_check, #fecha_sin_facturas').on('change', function() {
             // Verificar que el check esté marcado y que haya una fecha seleccionada
             if ($('#sin_facturas_check').is(':checked') && $('#fecha_sin_facturas').val()) {
-                getDataTable(); // Actualiza la tabla cuando se cumplen ambas condiciones
-            }
-        });
-
-        $('#filtro_facturas').on('change', function() {
-            // Verificar que el check esté marcado y que haya una fecha seleccionada
-            if ($('#filtro_facturas').is(':checked')) {
                 getDataTable(); // Actualiza la tabla cuando se cumplen ambas condiciones
             }
         });
@@ -637,7 +622,6 @@
         $("#fecha-corte").val('');
         $("#tipo_contrato").val('').selectpicker('refresh');
         $("#otra_opcion").val('').selectpicker('refresh');
-        $("#filtro_facturas").prop("checked", false);
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
 		getDataTable();
@@ -1031,7 +1015,6 @@
                 data.otra_opcion = $("#otra_opcion").val();
                 data.fecha_corte = $("#fecha-corte").val();
                 data.sin_facturas_check = $('#sin_facturas_check').is(':checked');
-                data.sin_facturas_check = $('#filtro_facturas').is(':checked');
                 data.fecha_sin_facturas = $('#fecha_sin_facturas').val();
                 data.filtro = true;
             });

@@ -165,17 +165,23 @@ class ContratosController extends Controller
                 });
             }
             if($request->plan){
-
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('contracts.plan_id', $request->plan);
                 });
             }
             // Aplica el filtro de facturas si el usuario lo selecciona
-            if ($request->filtro_facturas === "true") {
+            if ($request->otra_opcion && $request->otra_opcion == "opcion_4") {
                 $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
                   ->join('factura as f', 'fc.factura_id', '=', 'f.id')
                   ->where('f.estatus', '=', 1)
                   ->where('f.vencimiento','<=',Carbon::now()->format('Y-m-d'))
+                  ->groupBy('contracts.id')
+                  ->havingRaw('COUNT(f.id) > 1');
+            }
+            if($request->otra_opcion && $request->otra_opcion == "opcion_3"){
+                $contratos->join('facturas_contratos as fc', 'fc.contrato_nro', '=', 'contracts.nro')
+                  ->join('factura as f', 'fc.factura_id', '=', 'f.id')
+                  ->where('f.estatus', '=', 1)
                   ->groupBy('contracts.id')
                   ->havingRaw('COUNT(f.id) > 1');
             }
@@ -4600,12 +4606,15 @@ class ContratosController extends Controller
     public function cambiarEtiqueta($etiqueta, $contrato){
 
         $contrato =  Contrato::where('id', $contrato)->where('empresa', Auth::user()->empresa)->first();
-
-        $contrato->etiqueta_id = $etiqueta;
+        if($etiqueta == 0){
+            $contrato->etiqueta_id = null;
+        }else{
+            $contrato->etiqueta_id = $etiqueta;
+        }
 
         $contrato->update();
-
         return $contrato->etiqueta;
+
     }
 
 }
