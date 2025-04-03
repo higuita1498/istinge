@@ -4606,12 +4606,15 @@ class ContratosController extends Controller
     public function cambiarEtiqueta($etiqueta, $contrato){
 
         $contrato =  Contrato::where('id', $contrato)->where('empresa', Auth::user()->empresa)->first();
-
-        $contrato->etiqueta_id = $etiqueta;
+        if($etiqueta == 0){
+            $contrato->etiqueta_id = null;
+        }else{
+            $contrato->etiqueta_id = $etiqueta;
+        }
 
         $contrato->update();
-
         return $contrato->etiqueta;
+
     }
 
 }

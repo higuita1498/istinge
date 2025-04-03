@@ -454,7 +454,7 @@
 
                                         if(data.contrato.tip_iden==3){ var tip_iden = 'CC'; }else if(data.contrato.tip_iden==6){ var tip_iden = 'NIT'; }
                                         var link = {
-                                            "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.contrato.factura+"&invoice=<?=$nom_empresa;?>-"+data.contrato.factura+"&url_data_return=https://"+str+"/software/api/pagos/combopay&url_client_redirect=https://"+str+"/pay.php&name="+fullname+"&document_type="+tip_iden+"&customer_phone_number="+data.contrato.celular+"&document="+data.contrato.nit+"&customer_address="+data.contrato.direccion,
+                                            "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.contrato.factura+"&invoice=<?=$nom_empresa;?>-"+data.contrato.factura+"&url_data_return=https://"+str+"/software/api/pagos/combopay&url_client_redirect=https://"+str+"/software/api/pagos/combopay&name="+fullname+"&document_type="+tip_iden+"&customer_phone_number="+data.contrato.celular+"&document="+data.contrato.nit+"&customer_address="+data.contrato.direccion,
                                             "method": "POST",
                                             "timeout": 0,
                                             "headers": {
