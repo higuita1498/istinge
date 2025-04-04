@@ -337,13 +337,11 @@ class CronController extends Controller
                                         foreach($contratos_multiples as $cm){
 
                                             $descuentoPesos = 0;
+
                                             ## Se carga el item a la factura (Plan de Internet) ##
                                             if($contrato->plan_id){
                                                 $plan = PlanesVelocidad::find($cm->plan_id);
                                                 $item = Inventario::find($plan->item);
-
-
-
                                                 $item_reg = new ItemsFactura;
                                                 $item_reg->factura     = $factura->id;
                                                 $item_reg->producto    = $item->id;
