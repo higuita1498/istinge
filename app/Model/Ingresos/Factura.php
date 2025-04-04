@@ -1497,12 +1497,6 @@ public function forma_pago()
 
         //si este caso ocurre es por que tengo que cobrar el mes pasado
 
-        // if($diaFac < $grupo->fecha_factura && $empresa->periodo_facturacion == 2){
-        //     $finCorte = Carbon::parse($finCorte)->subMonth();
-        //     $inicioCorte =  $inicioCorte->subMonth();
-        // }
-        //se comenta por que etsaba creando conflicto
-
         /* Validacion de mes anticipado o mes vencido */
         $finCorte = Carbon::parse($finCorte)->toFormattedDateString();
         $inicioCorte = Carbon::parse($inicioCorte)->toFormattedDateString();

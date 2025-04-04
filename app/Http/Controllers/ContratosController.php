@@ -49,6 +49,8 @@ use App\Oficina;
 use App\CRM;
 use App\Model\Ingresos\Factura;
 use App\Model\Ingresos\ItemsFactura;
+use App\NumeracionFactura;
+use App\TerminosPago;
 use Illuminate\Support\Facades\Auth as Auth;
 use Illuminate\Support\Facades\DB as DB;
 
@@ -1040,6 +1042,11 @@ class ContratosController extends Controller
                 $nro->contrato = $nro_contrato + 1;
                 $nro->save();
 
+                //Opcion de crear factrua con prorrateo
+                if($request->contrato_factura_pro == 1){
+                    $this->createFacturaProrrateo($contrato);
+                }
+
                 if($registro){
                     $mensaje='SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS EN EL SISTEMA Y LA MIKROTIK';
                 }else{
@@ -1193,6 +1200,11 @@ class ContratosController extends Controller
             $nro->contrato = $nro_contrato + 1;
             $nro->save();
 
+            //Opcion de crear factrua con prorrateo
+            if($request->contrato_factura_pro == 1){
+                $this->createFacturaProrrateo($contrato);
+            }
+
             return redirect('empresa/asignaciones/create')->with('cliente_id',$contrato->client_id)->with('success','SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
             // return redirect('empresa/contratos/'.$contrato->id)->with('success', 'SE HA CREADO SATISFACTORIAMENTE EL CONTRATO DE SERVICIOS');
         }
@@ -1202,6 +1214,217 @@ class ContratosController extends Controller
             $contrato->servicio_otro = $request->servicio_otro;
             $contrato->save();
         }
+    }
+
+    public function createFacturaProrrateo($contrato){
+
+        $grupo_corte = GrupoCorte::find($contrato->grupo_corte);
+        $fecha = Carbon::now()->format('Y-m-d');
+
+        if(!$grupo_corte){
+            return false;
+        }
+
+        $num = Factura::where('empresa',1)->orderby('id','asc')->get()->last();
+        if($num){
+            $numero = $num->nro;
+        }else{
+            $numero = 0;
+        }
+
+        //Calculo fecha pago oportuno.
+        $y = Carbon::now()->format('Y');
+        $m = Carbon::now()->format('m');
+        $d = substr(str_repeat(0, 2).$grupo_corte->fecha_pago, - 2);
+        if($d == 0){
+            $d = 30;
+        }
+
+        if($grupo_corte->fecha_factura > $grupo_corte->fecha_pago && $m!=12){
+            $m=$m+1;
+        }
+
+        if($m == 12 && $grupo_corte->fecha_factura > $grupo_corte->fecha_pago){
+            $y = $y+1;
+            $m = 01;
+        }
+        $date_pagooportuno = $y . "-" . $m . "-" . $d;
+        //Fin calculo fecha de pago oportuno
+
+        //calculo fecha suspension
+        $y = Carbon::now()->format('Y');
+        $m = Carbon::now()->format('m');
+        $ds = substr(str_repeat(0, 2).$grupo_corte->fecha_suspension, - 2);
+        $da = Carbon::now()->format('d')*1;
+         if($da > $grupo_corte->fecha_suspension && $m!=12){
+            $m=$m+1;
+        }
+
+        if($m == 12){
+            if($da > $grupo_corte->fecha_suspension){
+
+                if(Carbon::now()->format('m') != 11){
+                    $m = 01;
+                    $y = $y+1;
+                }
+            }
+        }
+        $date_suspension = $y . "-" . $m . "-" . $ds;
+        //Fin calculo fecha suspension
+
+        //Obtenemos el número depende del contrato que tenga asignado (con fact electrpinica o estandar).
+        $plazo=TerminosPago::where('dias', Funcion::diffDates($date_suspension, Carbon::now())+1)->first();
+        $nro = NumeracionFactura::tipoNumeracion($contrato);
+
+        $inicio = $nro->inicio;
+
+        // Validacion para que solo asigne numero consecutivo si no existe.
+        while (Factura::where('codigo',$nro->prefijo.$inicio)->first()) {
+            $nro = $nro->fresh();
+            $inicio=$nro->inicio;
+            $nro->inicio += 1;
+            $nro->save();
+        }
+
+        $electronica = Factura::booleanFacturaElectronica($contrato->client_id);
+        $tipo = 1; //1= normal, 2=Electrónica.
+        if($contrato->facturacion == 3 && !$electronica){
+            $tipo = 1;
+        }elseif($contrato->facturacion == 3 && $electronica){
+            $tipo = 2;
+        }
+
+        $factura = new Factura;
+        $factura->nro           = $numero;
+        $factura->codigo        = $nro->prefijo.$inicio;
+        $factura->numeracion    = $nro->id;
+        $factura->plazo         = isset($plazo->id) ? $plazo->id : '';
+        $factura->term_cond     = $contrato->terminos_cond;
+        $factura->facnotas      = $contrato->notas_fact;
+        $factura->empresa       = 1;
+        $factura->cliente       = $contrato->client_id;
+        $factura->fecha         = $fecha;
+        $factura->tipo          = $tipo;
+        $factura->vencimiento   = $date_suspension;
+        $factura->suspension    = $date_suspension;
+        $factura->pago_oportuno = $date_pagooportuno;
+        $factura->observaciones = 'Facturación Automática - Corte '.$grupo_corte->fecha_corte;
+        $factura->bodega        = 1;
+        $factura->vendedor      = 1;
+        $factura->prorrateo_aplicado = 0;
+        $factura->facturacion_automatica = 1;
+        $factura->contrato_id = $contrato->id;
+        $factura->save();
+
+        $descuentoPesos = 0;
+
+        ## Se carga el item a la factura (Plan de Internet) ##
+        if($contrato->plan_id){
+            $plan = PlanesVelocidad::find($contrato->plan_id);
+            $item = Inventario::find($plan->item);
+            $item_reg = new ItemsFactura;
+            $item_reg->factura     = $factura->id;
+            $item_reg->producto    = $item->id;
+            $item_reg->ref         = $item->ref;
+            $item_reg->precio      = $item->precio;
+            $item_reg->descripcion = $plan->name;
+            $item_reg->id_impuesto = $item->id_impuesto;
+            $item_reg->impuesto    = $item->impuesto;
+
+            if($contrato->iva_factura == 1){
+                $item_reg->id_impuesto = 1;
+                $item_reg->impuesto = 19;
+            }
+            $item_reg->cant        = 1;
+            $item_reg->desc        = $contrato->descuento;
+
+            if($contrato->descuento_pesos != null && $descuentoPesos == 0){
+                $item_reg->precio      = $item_reg->precio - $contrato->descuento_pesos;
+                $descuentoPesos = 1;
+            }
+            $item_reg->save();
+        }
+
+        ## Se carga el item a la factura (Plan de Televisión) ##
+        if($contrato->servicio_tv){
+            $item = Inventario::find($contrato->servicio_tv);
+            $item_reg = new ItemsFactura;
+            $item_reg->factura     = $factura->id;
+            $item_reg->producto    = $item->id;
+            $item_reg->ref         = $item->ref;
+            $item_reg->precio      = $item->precio;
+            $item_reg->descripcion = $item->producto;
+            $item_reg->id_impuesto = $item->id_impuesto;
+            $item_reg->impuesto    = $item->impuesto;
+            $item_reg->cant        = 1;
+            $item_reg->desc        = $contrato->descuento;
+            if($contrato->descuento_pesos != null && $descuentoPesos == 0){
+                $item_reg->precio      = $item_reg->precio - $contrato->descuento_pesos;
+                $descuentoPesos = 1;
+            }
+            $item_reg->save();
+        }
+
+        ## Se carga el item de otro tipo de servicio ##
+        if($contrato->servicio_otro){
+            $item = Inventario::find($contrato->servicio_otro);
+            $item_reg = new ItemsFactura;
+            $item_reg->factura     = $factura->id;
+            $item_reg->producto    = $item->id;
+            $item_reg->ref         = $item->ref;
+            $item_reg->precio      = $item->precio;
+            $item_reg->descripcion = $item->producto;
+            $item_reg->id_impuesto = $item->id_impuesto;
+            $item_reg->impuesto    = $item->impuesto;
+            $item_reg->cant        = 1;
+            $item_reg->desc        = $contrato->descuento;
+            if($contrato->descuento_pesos != null && $descuentoPesos == 0){
+                $item_reg->precio      = $item_reg->precio - $contrato->descuento_pesos;
+                $descuentoPesos = 1;
+            }
+
+            if($contrato->rd_item_vencimiento == 1){
+
+                if($contrato->dt_item_hasta > now()){
+                    $item_reg->save();
+                }
+            }else{
+                $item_reg->save();
+            }
+        }
+
+        //guardamos en la tabla detalle para saber que esa factura tiene n contratos
+        DB::table('facturas_contratos')->insert([
+            'factura_id' => $factura->id,
+            'contrato_nro' => $contrato->nro,
+            'created_by' => 0,
+            'client_id' => $factura->cliente,
+            'is_cron' => 1,
+            'created_at' => Carbon::now()
+        ]);
+
+        //>>>>Posible aplicación de Prorrateo al total<<<<//
+        $dias = $factura->diasCobradosProrrateo();
+        //si es diferente de 30 es por que se cobraron menos dias y hay prorrateo
+        if($dias != 30){
+
+            DB::table('factura')->where('id',$factura->id)->update([
+                'prorrateo_aplicado' => 1
+            ]);
+
+            //si no se nombra la variable en la primer guardada se genera una copia
+            foreach($factura->itemsFactura as $item){
+                //dividimos el precio del item en 30 para saber cuanto vamos a cobrar en total restando los dias
+                $precioItemProrrateo = round($item->precio * $dias / 30, 2);
+                DB::table('items_factura')->where('id',$item->id)->update([
+                    'precio' => $precioItemProrrateo
+                    ]);
+            }
+        }
+        //>>>>Fin posible aplicación prorrateo al total<<<<//
+
+        return true;
+
     }
 
     public function edit($id){

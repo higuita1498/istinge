@@ -22,7 +22,7 @@
   </thead>
   <tbody>
     @php $count = count($facturas); @endphp
-    
+
     @foreach($facturas as $factura)
       <tr id="{{$factura->id}}" @if($factura->nro==$id || $count == 1) class="active_table" @endif>
         <input type="hidden" id="retencion_previas_{{$factura->id}}" value="{{$factura->retenciones_previas()}}">
@@ -40,26 +40,26 @@
         </td>
         <td>
           <div id="retenciones_factura_{{$factura->id}}">
-            
+
           </div>
           <button class="btn btn-link btn-fw no-padding" type="button" onclick="crearDivRetentionFact({{$factura->id}});" style="margin-top: 1%;">Agregar Retención</button>
-        </td> 
-        <td class="monetario text-center" style="vertical-align: text-bottom;"> 
+        </td>
+        <td class="monetario text-center" style="vertical-align: text-bottom;">
           <input type="hidden" id="editmonto{{$factura->id}}" value="1">
-          <input type="number" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" maxlength="24" onchange="totales_ingreso();" onkeyup="editmonto({{$factura->id}});" min="0" value="@if($count == 1){{$factura->total()->total}}@endif">
+          <input type="number" class="form-control form-control-sm" id="precio{{$factura->id}}" name="precio[]" placeholder="Valor" maxlength="24" onchange="totales_ingreso();" onkeyup="editmonto({{$factura->id}});" min="0" value="@if($count == 1){{$factura->total()->total - $factura->pagado()}}@endif">
 
           <p id="p_error_{{$factura->id}}" class="text-danger"></p>
 
         </td>
       </tr>
-      
+
       @if($total>1)
       <tr>
         <td class="text-center font-weight-bold" colspan="3">PAGO ADICIONAL POR SERVICIO DE RECONEXIÓN</td>
         <td class="text-center">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear(10000)}}</td>
         <td class="text-center">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear(0)}}</td>
         <td class="text-center">{{Auth::user()->empresa()->moneda}}{{App\Funcion::Parsear(10000)}}</td>
-        <td></td> 
+        <td></td>
         <td class="monetario text-center" style="vertical-align: text-bottom;">
           <input type="number" class="form-control form-control-sm" max="10000" maxlength="24" min="10000" value="10000" readonly>
         </td>
@@ -93,7 +93,7 @@
               </div>
               <div class="col-md-6 d-flex justify-content-between pt-3">
                 <h5>Total:</h5>
-                <span>$</span><span id="anticipototal">0</span>  
+                <span>$</span><span id="anticipototal">0</span>
               </div>
               <div class="col-md-12">
                 <span class="text-danger" style="font-size:12px"><strong>El total de las formas de pago debe coincidir con el total neto</strong></span>
