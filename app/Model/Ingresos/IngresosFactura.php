@@ -3,11 +3,11 @@
 namespace App\Model\Ingresos;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Model\Ingresos\Factura; 
-use App\Model\Ingresos\Ingreso; 
-use App\Model\Ingresos\IngresosRetenciones; 
+use App\Model\Ingresos\Factura;
+use App\Model\Ingresos\Ingreso;
+use App\Model\Ingresos\IngresosRetenciones;
 
-class IngresosFactura extends Model 
+class IngresosFactura extends Model
 {
     protected $table = "ingresos_factura";
     protected $primaryKey = 'id';
@@ -20,22 +20,27 @@ class IngresosFactura extends Model
         'ingreso', 'factura', 'pagado', 'pago', 'created_at', 'updated_at'
     ];
 
-    
+
     public function factura(){
          return Factura::where('id',$this->factura)->first();
     }
-    
-    
+
+
     public function getPagadoAttribute()
     {
         return $this->factura()->total()->total;
     }
-    
+
 
     public function ingreso(){
         return Ingreso::where('id',$this->ingreso)->first();
     }
-    
+
+    public function ingresoRelation()
+    {
+        return $this->belongsTo(Ingreso::class, 'ingreso'); // o 'ingreso_id' si ese es el nombre real de la columna
+    }
+
     public function retencion(){
         return IngresosRetenciones::where('ingreso', $this->ingreso)->where('factura', $this->factura)->sum('valor');
     }
