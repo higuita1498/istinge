@@ -286,31 +286,36 @@ class IngresosController extends Controller
 
         try {
 
-            // ** Validar el formulario para no reenviarlo varias veces.
-                if (Ingreso::where('empresa', auth()->user()->empresa)->count() > 0) {
-               // Verificar si hay una marca de tiempo en la sesión
-                if (Session::has('ultimo_envio')) {
-
-                    $ultimoEnvio = Session::get('ultimo_envio');
-                    $tiempoTranscurrido = Carbon::now()->diffInSeconds($ultimoEnvio);
-
-                    if ($tiempoTranscurrido < 15) {
-                        return redirect('empresa/ingresos')->with('danger', 'Por favor, espera al menos 15 segundos antes de registrar otro ingreso.');
-                    }
-                }
-                Session::put('ultimo_envio', Carbon::now());
-            }
-
             $user = Auth::user();
             $empresa = Empresa::Find($user->empresa);
+
             //el tipo 2 significa que estoy realizando un ingreso para darle un anticipo a un cliente
             if($request->realizar == 2){
-            //Cuando se realiza el ingreso por categoría.
-            $this->storeIngresoPucCategoria($request);
+                //Cuando se realiza el ingreso por categoría.
+                $this->storeIngresoPucCategoria($request);
 
-            $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
-            return redirect('empresa/ingresos')->with('success', $mensaje);
-        }else{
+                $mensaje='SE HA CREADO SATISFACTORIAMENTE EL PAGO';
+                return redirect('empresa/ingresos')->with('success', $mensaje);
+
+            }else{
+
+                //Validacion
+                foreach ($request->factura_pendiente as $key => $factura_id) {
+                    $montoPago = $this->precision($request->precio[$key]);
+
+                    $pagoRepetido = IngresosFactura::where('factura', $factura_id)
+                        ->where('pagado', $montoPago)
+                        ->whereHas('ingresoRelation', function ($query) {
+                            $query->whereBetween('created_at', [now()->subSeconds(40), now()]);
+                        })
+                        ->exists();
+
+                if ($pagoRepetido) {
+                    $factura = Factura::find($factura_id);
+                    return back()->with('danger', 'Ya has registrado un pago de $' . number_format($montoPago, 0, ',', '.') . ' recientemente para la factura N° ' . $factura->codigo . '. Evita pagos duplicados.')->withInput();
+                }
+            }
+
             if(isset($request->comprobante_pago)){
                 if(Ingreso::where('comprobante_pago', $request->comprobante_pago)->count() > 0){
                     return back()->withInput()->with('danger', 'DISCULPE, EL NRO DE COMPROBANTE DE PAGO INGRESADO YA HA SIDO REGISTRADO');
@@ -973,7 +978,7 @@ class IngresosController extends Controller
 
         } catch (\Throwable $th) {
             // DB::rollBack();
-            return back()->with('error', $th->getMessage());
+            return back()->with('danger', $th->getMessage());
         }
     }
 
