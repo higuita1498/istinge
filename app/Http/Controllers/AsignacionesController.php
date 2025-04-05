@@ -1303,16 +1303,19 @@ class AsignacionesController extends Controller
             }
 
         }else{
-
-        try {
-            /** @var Contacto $contact */
-            $contact = Contacto::where('id', $id)
-                ->where('empresa', $company->id)
-                ->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
+            try {
+                /** @var Contacto $contact */
+                $contact = Contacto::where('id', $id)
+                    ->where('empresa', $company->id)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                return back()->with('danger', 'Revisa el contacto, no se encuentran los contratos relacionados');
+            }
         }
-    }
+
+        if($contact->contrato() == null){
+            return $this->imprimir_firma($id);
+        }
 
         try {
             $contract = $contact->contrato();

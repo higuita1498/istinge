@@ -258,7 +258,7 @@
     </div>
   		<div class="row cls-realizar-inv">
         <div class="col-md-12 fact-table" id="si" style="display: none;">
-          <h5>FACTURAS DE VENTA PENDIENTES...</h5>
+          <h5>FACTURAS DE VENTA PENDIENTES</h5>
           <div id="factura_pendiente"></div>
         </div>
   			<div class="col-md-12 fact-table" id="no" style="display: none;">
