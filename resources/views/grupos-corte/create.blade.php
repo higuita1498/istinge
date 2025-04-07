@@ -94,7 +94,7 @@
             <div class="col-md-3 form-group">
 	            <label class="control-label">Dias Prorroga suspensión TV <span class="text-danger">*</span></label>
                 <a><i data-tippy-content="Si agregas un dia mayor a 0 se tomará en cuenta para darle un tiempo de espera con la ultima factura vencida para suspender la televisión." class="icono far fa-question-circle"></i></a>
-                <input type="text" class="form-control"  id="prorroga_tv" name="prorroga_tv"  required="" value="{{old('prorroga_tv')}}" maxlength="200">
+                <input type="text" class="form-control"  id="prorroga_tv" name="prorroga_tv" value="{{old('prorroga_tv')}}" maxlength="200">
 	            <span class="help-block error">
 	                <strong>{{ $errors->first('status') }}</strong>
 	            </span>
