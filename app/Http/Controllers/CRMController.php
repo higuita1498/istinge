@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Barrios;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -62,7 +63,8 @@ class CRMController extends Controller
         $grupos_corte = GrupoCorte::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
         $etiquetas = Etiqueta::where('empresa_id', Auth::user()->empresa)->get();
         $ini = Carbon::create(date('Y'), date('m'), date('d'))->startOfMonth()->format('d-m-Y');
-        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte', 'etiquetas', 'ini'));
+        $barrios = Barrios::where('status',1)->get();
+        return view('crm.index')->with(compact('clientes', 'usuarios', 'servidores', 'grupos_corte', 'etiquetas', 'ini', 'barrios'));
     }
 
     public function informe(Request $request){
@@ -83,7 +85,11 @@ class CRMController extends Controller
         $modoLectura = auth()->user()->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
         $contratos = CRM::query()
-			->select('crm.*', 'factura.fecha as fecha_factura', 'contactos.nit as c_nit', 'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1', 'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo', 'factura.estatus', 'items_factura.precio', DB::raw('(select count(factura.id) from factura where factura.cliente = crm.cliente and factura.estatus = 1) AS facAbiertas'))
+			->select('crm.*', 'factura.fecha as fecha_factura', 'contactos.nit as c_nit',
+            'contactos.id as c_id', 'contactos.nombre as c_nombre', 'contactos.apellido1 as c_apellido1',
+            'contactos.apellido2 as c_apellido2', 'contactos.celular as c_celular', 'factura.codigo',
+            'factura.estatus', 'items_factura.precio', 'contactos.barrio_id',
+            DB::raw('(select count(factura.id) from factura where factura.cliente = crm.cliente and factura.estatus = 1) AS facAbiertas'))
             ->join('contactos', 'crm.cliente', '=', 'contactos.id')
             ->leftjoin('factura', 'crm.factura', '=', 'factura.id')
             ->leftjoin('items_factura', 'items_factura.factura', '=', 'factura.id')
@@ -155,6 +161,13 @@ class CRMController extends Controller
                     $query->orWhere('crm.grupo_corte', $request->grupo_corte);
                 });
             }
+
+            if($request->barrio_id){
+                $contratos->where(function ($query) use ($request) {
+                    $query->orWhere('contactos.barrio_id', $request->barrio_id);
+                });
+            }
+
             if($request->servidor){
                 $contratos->where(function ($query) use ($request) {
                     $query->orWhere('crm.servidor', $request->servidor);

@@ -52,14 +52,14 @@
     }
     .nav-pills .nav-link{
         color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
-        background-color: #f9f9f9!important;
+        background-color: #f9f9f9 !important;
         margin: 2px;
         border: 1px solid {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}};
         transition: 0.4s;
     }
     .nav-pills .nav-link:hover {
         color: #fff!important;
-        background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important;
+        /* background-color: {{Auth::user()->rol > 1 ? Auth::user()->empresa()->color:''}}!important; */
     }
 </style>
 @endsection
@@ -190,6 +190,13 @@
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_at" value="" name="updated_at" required="" title="ultima actualizacion">
 									</div>
+                                    <div class="col-md-3 pl-1 pt-1">
+                    					<select title="Barrio" class="form-control rounded selectpicker" id="barrioA" data-size="5" data-live-search="true">
+                                            @foreach ($barrios as $barrio)
+                                                <option value="{{ $barrio->id}}">{{ $barrio->nombre}}</option>
+                                            @endforeach
+                						</select>
+                    				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltrador()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrar" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -277,6 +284,15 @@
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atG" value="" name="updated_at" required="" title="ultima actualizacion">
 									</div>
+
+                                    <div class="col-md-3 pl-1 pt-1">
+                    					<select title="Barrio" class="form-control rounded selectpicker" id="barrioG" data-size="5" data-live-search="true">
+                                            @foreach ($barrios as $barrio)
+                                                <option value="{{ $barrio->id}}">{{ $barrio->nombre}}</option>
+                                            @endforeach
+                						</select>
+                    				</div>
+
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorG()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarG" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -356,6 +372,13 @@
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atR" value="" name="updated_at" required="" title="ultima actualizacion">
 									</div>
+                                    <div class="col-md-3 pl-1 pt-1">
+                    					<select title="Barrio" class="form-control rounded selectpicker" id="barrioR" data-size="5" data-live-search="true">
+                                            @foreach ($barrios as $barrio)
+                                                <option value="{{ $barrio->id}}">{{ $barrio->nombre}}</option>
+                                            @endforeach
+                						</select>
+                    				</div>
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorR()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarR" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -429,12 +452,23 @@
                                             @endforeach
                 						</select>
                     				</div>
+
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="fecha factura" id="fecha_facturaT" value="" name="fecha_factura" required="">
 									</div>
+
 									<div class="col-md-2 pl-1 pt-1">
 										<input type="text" class="form-control datepicker" placeholder="ultima actualizacion" id="updated_atT" value="" name="updated_at" required="" title="ultima actualizacion">
 									</div>
+
+                                    <div class="col-md-3 pl-1 pt-1">
+                    					<select title="Barrio" class="form-control rounded selectpicker" id="barrioT" data-size="5" data-live-search="true">
+                                            @foreach ($barrios as $barrio)
+                                                <option value="{{ $barrio->id}}">{{ $barrio->nombre}}</option>
+                                            @endforeach
+                						</select>
+                    				</div>
+
                     				<div class="col-md-1 pl-1 pt-1 text-left">
                     					<a href="javascript:cerrarFiltradorT()" class="btn btn-icons ml-1 btn-outline-danger rounded btn-sm p-1 float-right" title="Limpiar parámetros de busqueda"><i class="fas fa-times"></i></a>
                     					<a href="javascript:void(0)" id="filtrarT" class="btn btn-icons btn-outline-info rounded btn-sm p-1 float-right" title="Iniciar busqueda avanzada"><i class="fas fa-search"></i></a>
@@ -648,12 +682,12 @@
         tabla = $('#table_sin_gestionar');
 
         tabla.on('preXhr.dt', function(e, settings, data) {
-            console.log(data);
             data.cliente = $('#cliente').val();
 			data.etiqueta_id = $('#etiqueta').val();
             data.estado = $('#estado').val();
             data.created_by = $('#created_by').val();
             data.grupo_corte = $('#grupo_corteA').val();
+            data.barrio_id = $('#barrioA').val();
             data.servidor = $('#servidor').val();
 			data.fecha_factura =  $('#fecha_factura').val();
 			data.n_facturas =  $('#n_facturas').val();
@@ -709,6 +743,7 @@
 			data.etiqueta_id = $('#etiquetaG').val();
             data.estado = $('#estadoG').val();
             data.created_by = $('#created_byG').val();
+            data.barrio_id = $('#barrioG').val();
             data.grupo_corte = $('#grupo_corteG').val();
             data.servidor = $('#servidorG').val();
 			data.fecha_factura =  $('#fecha_facturaG').val();
@@ -764,6 +799,7 @@
 			data.etiqueta_id = $('#etiquetaR').val();
             data.estado = $('#estadoR').val();
             data.created_by = $('#created_byR').val();
+            data.barrio_id = $('#barrioR').val();
             data.grupo_corte = $('#grupo_corteR').val();
             data.servidor = $('#servidorR').val();
 			data.fecha_factura =  $('#fecha_facturaR').val();
@@ -819,6 +855,7 @@
 			data.etiqueta_id = $('#etiquetaT').val();
             data.estado = $('#estadoT').val();
             data.created_by = $('#created_byT').val();
+            data.barrio_id = $('#barrioT').val();
             data.grupo_corte = $('#grupo_corteT').val();
             data.servidor = $('#servidorT').val();
 			data.fecha_factura =  $('#fecha_facturaT').val();
