@@ -367,7 +367,7 @@
     <div style="">
         <table border="0" class="titulo">
             <tr>
-                <th width="23.5%" class="right smalltd">REFERENCIA DE PAGO</th>
+                <th width="23.5%" class="right smalltd">NUMERO DE FACTURA</th>
                 <td colspan="1" style="">{{$factura->codigo}}</td>
             </tr>
             <tr>
