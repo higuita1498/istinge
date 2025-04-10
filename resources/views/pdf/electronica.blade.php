@@ -436,7 +436,7 @@
     <div style="">
         <table border="0" class="titulo">
             <tr>
-                <th width="23.5%" class="right smalltd">NUMERO DE FACTURA</th>
+                <th width="23.5%" class="right smalltd">REFERENCIA DE PAGO</th>
                 <td colspan="1" style="">{{$factura->codigo}}</td>
             </tr>
             <tr>
@@ -466,18 +466,19 @@
         </table>
     </div>
 
-    <div class="margin-docpdf">
-        <div class="divheader-nota">
-            <p>NOTA</p>
+        <div class="margin-docpdf">
+        <div class="divheader-nota" style="width:20%;">
+            <p>MEDIOS DE PAGO</p>
         </div>
     </div>
 
     <div class="nota-content">
         <p>
-            Estimado Cliente, paga oportunamente y evita la suspensión del servicio, cobro de reconexión e intereses demora. El incumplimiento en los pagos genera reportes a
-            Centrales de Riesgo como moroso. Una vez realices tu pago, este se aplicará a más tardar el siguiente día hábil. Si ya realizaste el pago, haz caso omiso.
+            <b>Medios de pago:</b>
+             {{$empresa->medios_pago}}
         </p>
     </div>
+
 
     <div style="margin-top: 1%;">
     <h4 style="text-align: center">{{$factura->titulo}}
@@ -742,16 +743,16 @@
             @endif
       </div>
 
-    <div class="margin-docpdf">
-        <div class="divheader-nota" style="width:20%;">
-            <p>MEDIOS DE PAGO</p>
+          <div class="margin-docpdf">
+        <div class="divheader-nota">
+            <p>NOTA</p>
         </div>
     </div>
 
     <div class="nota-content">
         <p>
-            <b>Medios de pago:</b>
-             {{$empresa->medios_pago}}
+            Estimado Cliente, paga oportunamente y evita la suspensión del servicio, cobro de reconexión e intereses demora. El incumplimiento en los pagos genera reportes a
+            Centrales de Riesgo como moroso. Una vez realices tu pago, este se aplicará a más tardar el siguiente día hábil. Si ya realizaste el pago, haz caso omiso.
         </p>
     </div>
 
