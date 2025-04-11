@@ -306,7 +306,7 @@ class IngresosController extends Controller
                     $pagoRepetido = IngresosFactura::where('factura', $factura_id)
                         ->where('pagado', $montoPago)
                         ->whereHas('ingresoRelation', function ($query) {
-                            $query->whereBetween('created_at', [now()->subSeconds(40), now()]);
+                            $query->whereBetween('created_at', [now()->subSeconds(120), now()]);
                         })
                         ->exists();
 
