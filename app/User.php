@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Auth; use DB;
 use App\Contrato;
 use App\Oficina;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -340,6 +342,10 @@ class User extends Authenticatable
     public function modo_lecturaNomina()
     {
         return false;
+    }
+
+    public function servidores(){
+        return $this->BelongsToMany('App\Mikrotik', 'usuario_servidor', 'usuario_id', 'servidor_id');
     }
 
 
