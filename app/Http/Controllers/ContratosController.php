@@ -77,19 +77,21 @@ class ContratosController extends Controller
     public function index(Request $request){
 
         $this->getAllPermissions(Auth::user()->id);
-        $clientes = (Auth::user()->oficina && Auth::user()->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->where('oficina', Auth::user()->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', Auth::user()->empresa)->orderBy('nombre', 'ASC')->get();
-        $planes = PlanesVelocidad::where('status', 1)->where('empresa', Auth::user()->empresa)->get();
+        $user = auth()->user();
+        $userServer = $user->servidores->pluck('id')->toArray();
+        $clientes = (Auth::user()->oficina && $user->empresa()->oficina) ? Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $user->empresa)->where('oficina', $user->oficina)->orderBy('nombre', 'ASC')->get() : Contacto::whereIn('tipo_contacto', [0,2])->where('status', 1)->where('empresa', $user->empresa)->orderBy('nombre', 'ASC')->get();
+        $planes = PlanesVelocidad::where('status', 1)->where('empresa', $user->empresa)->get();
         $planestv = Inventario::where('type', 'like', '%TV%')->get();
-        $servidores = Mikrotik::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        $grupos = GrupoCorte::where('status',1)->where('empresa', Auth::user()->empresa)->get();
+        $servidores = Mikrotik::where('status',1)->where('empresa', $user->empresa)->whereIn('id',$userServer)->get();
+        $grupos = GrupoCorte::where('status',1)->where('empresa', $user->empresa)->get();
         view()->share(['title' => 'Contratos', 'invert' => true]);
         $tipo = false;
-        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 2)->where('campos_usuarios.id_usuario', Auth::user()->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
-        $nodos = Nodo::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        $aps = AP::where('status',1)->where('empresa', Auth::user()->empresa)->get();
-        $vendedores = Vendedor::where('empresa',Auth::user()->empresa)->where('estado',1)->get();
-        $canales = Canal::where('empresa',Auth::user()->empresa)->where('status', 1)->get();
-        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
+        $tabla = Campos::join('campos_usuarios', 'campos_usuarios.id_campo', '=', 'campos.id')->where('campos_usuarios.id_modulo', 2)->where('campos_usuarios.id_usuario', $user->id)->where('campos_usuarios.estado', 1)->orderBy('campos_usuarios.orden', 'ASC')->get();
+        $nodos = Nodo::where('status',1)->where('empresa', $user->empresa)->get();
+        $aps = AP::where('status',1)->where('empresa', $user->empresa)->get();
+        $vendedores = Vendedor::where('empresa',$user->empresa)->where('estado',1)->get();
+        $canales = Canal::where('empresa',$user->empresa)->where('status', 1)->get();
+        $etiquetas = Etiqueta::where('empresa_id', $user->empresa)->get();
         $barrios = Barrios::where('status','1')->get();
         return view('contratos.indexnew', compact('clientes','planes','servidores','planestv','grupos','tipo','tabla','nodos','aps', 'vendedores', 'canales', 'etiquetas','barrios'));
     }
@@ -131,8 +133,11 @@ class ContratosController extends Controller
     public function contratos(Request $request, $nodo){
 
         $this->getAllPermissions(Auth::user()->id);
-        $modoLectura = auth()->user()->modo_lectura();
-        $etiquetas = Etiqueta::where('empresa_id', auth()->user()->empresa)->get();
+        $user = auth()->user();
+        $modoLectura = $user->modo_lectura();
+        $etiquetas = Etiqueta::where('empresa_id', $user->empresa)->get();
+
+        //realizar ocnsulta de contratos.
         $contratosql = $contratos = Contrato::query()
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
@@ -383,8 +388,8 @@ class ContratosController extends Controller
         }
 
         if(Auth::user()->empresa()->oficina){
-            if(auth()->user()->oficina){
-                $contratos->where('contracts.oficina', auth()->user()->oficina);
+            if($user->oficina){
+                $contratos->where('contracts.oficina', $user->oficina);
             }
         }
 

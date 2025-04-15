@@ -72,7 +72,7 @@ Route::post('pagos/payu', 'CronController@eventosPayu');
 Route::post('pagos/epayco', 'CronController@eventosEpayco');
 
 /** EVENTOS COMBOPAY **/
-Route::get('pagos/combopay', 'CronController@eventosCombopay');
+Route::post('pagos/combopay', 'CronController@eventosCombopay');
 
 /** EVENTOS TOPPAY **/
 Route::post('pagos/toppay', 'CronController@eventosTopPay');
