@@ -1102,7 +1102,7 @@ class CronController extends Controller
 
         $empresa = Empresa::find(1);
         foreach ($contactos as $contacto) {
-            $contrato = Contrato::where('client_id', $contacto->id)->first();
+            $contrato = Contrato::where('nro', $contacto->nro)->first();
 
             //$crm = CRM::where('cliente', $contacto->id)->whereIn('estado', [0, 3])->delete();
             /*$crm = new CRM();
