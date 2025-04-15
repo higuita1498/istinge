@@ -96,6 +96,7 @@
 @section('boton')
 <a href="{{route('borrar-cache')}}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i> Borrar Caché</a>
 @endsection
+
 @section('content')
     <div class="whatsapp_main--container">
         @if (!$instance)
@@ -125,7 +126,7 @@
         @endif
 
         @if($instance)
-            <input type="hidden" name="instance-key" id="instance-key" value="{{ $instance->api_key }}">
+            <input type="hidden" name="instance-key" id="instance-key" value="{{ env("WAPI_TOKEN") }}">
         @endif
 
         @if ($instance && !$instance->isPaired())
@@ -232,15 +233,15 @@
             }
         });
 
-        socket.on("whatsappSession", (arg) => {
+        socket.on("session:update", (arg) => {
             const {
-                session
+                wbot
             } = arg;
-            if (session.status == "QRCODE") {
+            if (wbot.status == "QRCODE") {
                 document.getElementById("qrcode").innerHTML = "";
 
                 new QRCode(document.getElementById("qrcode"), {
-                    text: session.qrcode,
+                    text: wbot.qrCode,
                     colorDark: "#052e16",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
@@ -248,8 +249,8 @@
                 return;
             }
 
-            if (session.status == "PAIRED") {
-                fetch(`/software/empresa/instances/${session.instanceId}`, {
+            if (wbot.status == "PAIRED") {
+                fetch(`/software/empresa/instances/${wbot.channelId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
