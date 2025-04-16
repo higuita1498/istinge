@@ -77,14 +77,55 @@ class IngresosController extends Controller
     }
 
     public function ingresos(Request $request){
-        $this->getAllPermissions(Auth::user()->id);
-        $empresa = auth()->user()->empresa;
-        $modoLectura = auth()->user()->modo_lectura();
+
+        $user = Auth::user();
+        $this->getAllPermissions($user->id);
+        $empresa = $user->empresa;
+        $modoLectura = $user->modo_lectura();
         $ingresos = Ingreso::query()
         ->select('ingresos.*','contactos.nombre','contactos.apellido1','contactos.apellido2','bancos.nombre as banco')
         ->leftjoin('ingresos_factura as if', 'if.ingreso', '=', 'ingresos.id')
+        ->leftJoin('factura as f','f.id','=','if.factura')
+        ->leftJoin('facturas_contratos as fc','fc.factura_id','=','f.id')
+        ->leftJoin('contracts as cs1','cs1.nro','=','fc.contrato_nro')
+        ->leftJoin('contracts as cs2', 'cs2.id', '=', 'f.contrato_id')   // contrato directo en factura
         ->leftjoin('contactos', 'contactos.id', '=', 'ingresos.cliente')
-        ->join('bancos', 'bancos.id', '=', 'ingresos.cuenta');
+        ->join('bancos', 'bancos.id', '=', 'ingresos.cuenta')
+        ;
+
+        // if ($user->servidores->count() > 0) {
+        //     $servers = $user->servidores->pluck('id')->toArray();
+
+        //     $ingresos->where(function ($query) use ($servers) {
+        //         $query->where(function ($q1) use ($servers) {
+        //             // Caso 1: contratos con server del usuario (por cualquiera de los dos contratos)
+        //             $q1->where(function ($sub) use ($servers) {
+        //                 $sub->whereIn('cs1.server_configuration_id', $servers)
+        //                     ->orWhereIn('cs2.server_configuration_id', $servers);
+        //             });
+        //         })->orWhere(function ($q2) use ($servers) {
+        //             // Caso 2: contratos que no son del servidor del usuario pero tienen servicio_tv
+        //             $q2->where(function ($sub) use ($servers) {
+        //                 $sub->where(function ($inner) use ($servers) {
+        //                     $inner->whereNotIn('cs1.server_configuration_id', $servers)
+        //                           ->orWhereNull('cs1.server_configuration_id');
+        //                 })
+        //                 ->where(function ($inner2) use ($servers) {
+        //                     $inner2->whereNotIn('cs2.server_configuration_id', $servers)
+        //                            ->orWhereNull('cs2.server_configuration_id');
+        //                 });
+        //             })->where(function ($tv) {
+        //                 $tv->whereNotNull('cs1.servicio_tv')
+        //                    ->orWhereNotNull('cs2.servicio_tv');
+        //             });
+        //         })->orWhere(function ($q3) {
+        //             // Caso 3: ingresos sin contrato pero con tipo 2, 3 o 4
+        //             $q3->whereNull('fc.contrato_nro')
+        //                ->whereNull('f.contrato_id')
+        //                ->whereIn('ingresos.tipo', [2, 3, 4]);
+        //         });
+        //     });
+        // }
 
         if ($request->filtro == true) {
             if($request->numero){
