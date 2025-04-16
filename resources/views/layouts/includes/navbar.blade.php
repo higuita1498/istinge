@@ -32,6 +32,9 @@
                     @if(isset($_SESSION['permisos']['220']))
                         <a class="dropdown-item mt-2"  href="{{route('miusuario')}}">Mi perfil</a>
                     @endif
+                    <a class="dropdown-item" data-toggle="modal" data-target="#servidoresModal">
+                        Servidores
+                    </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
                     <a class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Cerrar sesión
@@ -53,12 +56,46 @@
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body" id="modal-body">
-				    
+
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
+    <div class="modal fade" id="servidoresModal" tabindex="-1" aria-labelledby="servidoresModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h5 class="modal-title" id="servidoresModalLabel">Servidores disponibles</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            @php $user = Auth::user(); @endphp
+            <div class="modal-body">
+                <p>Estos son los servidores que el usuario: <b>{{ $user->nombres }}</b> tiene acceso a la información.</p>
+              @if($user->servidores->count() > 0)
+                  <ul class="list-group">
+                      @foreach($user->servidores as $servidor)
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                              {{ $servidor->nombre ?? 'Servidor sin nombre' }}
+                              <span class="badge bg-primary rounded-pill">IP: {{ $servidor->id }}</span>
+                          </li>
+                      @endforeach
+                  </ul>
+              @else
+                  <p class="text-muted">No tienes servidores asociados actualmente.</p>
+              @endif
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
 @section('scripts')
 <script>
 	$(document).ready(function () {

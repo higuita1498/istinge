@@ -123,7 +123,7 @@ class UsuariosController extends Controller
         $usuario = User::where('empresa',Auth::user()->empresa)->where('id', $id)->first();
         $cuentas = DB::table('bancos')->where('empresa',Auth::user()->empresa)->get();
         $oficinas = Oficina::where('empresa', Auth::user()->empresa)->where('status', 1)->get();
-        $servidores = Mikrotik::where('status',1)->get();
+        $servidores = Mikrotik::whereIn('status',[0,1])->get();
         $user_server = $usuario->servidores;
         if ($usuario) {
             view()->share(['title' => 'Modificar Usuario']);

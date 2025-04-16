@@ -337,15 +337,22 @@
                     return;
                 }
 
+                let i=0;
+
                 data.contrato.forEach(contrato => {
                     console.log(contrato)
                     let contratoCard = `
-                        <div class="contrato-card" onclick="consultar('${contrato.facturaId}', '${contrato.nit}')">
+                        <div class="contrato-card" onclick="consultar('${contrato.facturaId}', '${contrato.nit}')" id="div${contrato.facturaId}">
                             <p class="numero">Factura #${contrato.factura}</p>
                             <p class="valor">$${contrato.price.toLocaleString()}</p>
                         </div>
                     `;
                     contratosContainer.append(contratoCard);
+
+                    if(i==0){
+                        document.getElementById(`div${contrato.facturaId}`).click();
+                        i++;
+                    }
                 });
             },
             error: function () {

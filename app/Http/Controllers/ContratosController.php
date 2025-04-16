@@ -137,8 +137,7 @@ class ContratosController extends Controller
         $modoLectura = $user->modo_lectura();
         $etiquetas = Etiqueta::where('empresa_id', $user->empresa)->get();
 
-        //realizar ocnsulta de contratos.
-        $contratosql = $contratos = Contrato::query()
+        $contratos = Contrato::query()
 			->select('contracts.*', 'contactos.id as c_id', 'contactos.nombre as c_nombre',
              'contactos.apellido1 as c_apellido1','municipios.nombre as nombre_municipio' ,
              'contactos.apellido2 as c_apellido2', 'contactos.nit as c_nit', 'contactos.celular as c_telefono',
@@ -150,6 +149,19 @@ class ContratosController extends Controller
             ->join('contactos', 'contracts.client_id', '=', 'contactos.id')
             ->leftJoin('municipios', 'contactos.fk_idmunicipio', '=', 'municipios.id')
             ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id');
+
+
+            if ($user->servidores->count() > 0) {
+                $servers = $user->servidores->pluck('id')->toArray();
+
+                $contratos->where(function ($query) use ($servers) {
+                    $query->whereIn('server_configuration_id', $servers)
+                          ->orWhere(function ($subQuery) use ($servers) {
+                              $subQuery->whereNotIn('server_configuration_id', $servers)
+                                       ->whereNotNull('servicio_tv');
+                          });
+                });
+            }
 
         if ($request->filtro == true) {
 

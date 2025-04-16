@@ -960,7 +960,6 @@ class CronController extends Controller
         ->where('status', 1)
         ->where('hora_suspension','<=',$horaActual)
         ->where('fecha_suspension','!=',0)
-        ->where('id',1)
         ->get();
 
         if($grupos_corte->count() > 0 && $empresa->smartOLT != null){
@@ -995,7 +994,7 @@ class CronController extends Controller
             ->where('cs.state_olt_catv', true)
             ->whereRaw("DATE_ADD(f.vencimiento, INTERVAL gc.prorroga_tv DAY) <= NOW()") // Agregamos la prórroga a la fecha de vencimiento
             ->orderBy('f.id', 'desc')
-            ->take(45)
+            ->take(50)
             ->get();
 
             if($contactos){
