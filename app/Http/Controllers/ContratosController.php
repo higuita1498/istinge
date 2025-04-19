@@ -2683,6 +2683,7 @@ class ContratosController extends Controller
             ->leftJoin('etiquetas as e', 'e.id', '=', 'contracts.etiqueta_id')
             ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
             ->where('contracts.empresa', Auth::user()->empresa)
+            ->orderBy('nro', 'desc')
             ;
 
 	    if($request->client_id != null){
