@@ -401,6 +401,12 @@
 							<th>Contrato Registrado el</th>
 							<td>{{date('d-m-Y g:i:s A', strtotime($contrato->created_at))}}</td>
 						</tr>
+                        @if($contrato->fechaDesconexion() != null)
+                        <tr>
+							<th>Fecha desconexión contrato</th>
+							<td>{{$contrato->fechaDesconexion()}}</td>
+						</tr>
+                        @endif
 					</tbody>
 				</table>
 			</div>
