@@ -126,6 +126,12 @@
 								@endforeach
 							</select>
 						</div>
+                        <div class="col-md-3 pl-1 pt-1">
+							<select title="Estado Contrato" class="form-control rounded selectpicker" id="state_contrato">
+								<option value="enabled">Habilitado</option>
+								<option value="disabled">Deshabilitado</option>
+							</select>
+						</div>
 						<div class="col-md-2 pl-1 pt-1">
 							<select title="Estado" class="form-control rounded selectpicker" id="estado">
 								<option value="1" selected="">Abiertas</option>
@@ -501,6 +507,7 @@
 			data.total = $('#total').val();
 			data.servidor = $('#servidor').val();
 			data.estado = $('#estado').val();
+			data.state_contrato = $('#state_contrato').val();
 			data.filtro = true;
 		});
 
@@ -523,7 +530,7 @@
             }
         });
 
-        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #barrio').on('change',function() {
+        $('#cliente, #municipio, #estado, #correo, #creacion, #vencimiento, #barrio, #state_contrato').on('change',function() {
             getDataTable();
             return false;
         });
@@ -701,6 +708,7 @@
 		$('#comparador').val('').selectpicker('refresh');
 		$('#total').val('');
 		$('#estado').val('').selectpicker('refresh');
+		$('#state_contrato').val('').selectpicker('refresh');
 		$('#servidor').val('').selectpicker('refresh');
 		$('#form-filter').addClass('d-none');
 		$('#boton-filtrar').html('<i class="fas fa-search"></i> Filtrar');
@@ -709,7 +717,7 @@
 
 	function exportar() {
 		$("#estado").selectpicker('refresh');
-        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&barrio='+$('#barrio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&tipo=1';
+        window.location.href = window.location.pathname+'/exportar?codigo='+$('#codigo').val()+'&cliente='+$('#cliente').val()+'&municipio='+$('#municipio').val()+'&barrio='+$('#barrio').val()+'&creacion='+$('#creacion').val()+'&vencimiento='+$('#vencimiento').val()+'&estado='+$('#estado').val()+'&state_contrato='+$('#state_contrato').val()+'&tipo=1';
 	}
 
 	@if($tipo)
