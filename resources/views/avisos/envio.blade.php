@@ -120,6 +120,14 @@
             </div>
 
             <div class="col-md-3 form-group">
+                <label class="control-label">Corregimiento / Vereda</label>
+                <input class="form-control" type="text" name="vereda" id="vereda" >
+                <span class="help-block error">
+        	        <strong>{{ $errors->first('vereda') }}</strong>
+        	    </span>
+            </div>
+
+            <div class="col-md-3 form-group">
                 <label class="control-label">Valor Saldo</label>
                 <input class="form-control" type="text" name="valor_saldo" id="valor_saldo"  oninput="refreshClient()">
                 <span class="help-block error">
@@ -138,7 +146,9 @@
         	                    <option class="{{$contrato->state}}
 									grupo-{{ $contrato->grupo_corte()->id ?? 'no' }}
 									servidor-{{ $contrato->servidor()->id ?? 'no' }}
-									factura-{{ $contrato->factura_id != null ?  'si' : 'no'}}"
+									factura-{{ $contrato->factura_id != null ?  'si' : 'no'}}
+                                    vereda-{{ $contrato->vereda != null ? $contrato->vereda : 'no' }}
+                                    "
 									value="{{$contrato->id}}" {{$contrato->client_id==$id?'selected':''}}
                                         data-saldo="<?php echo e($contrato->factura_total); ?>">
 									{{$contrato->c_nombre}} {{ $contrato->c_apellido1 }}
@@ -196,7 +206,7 @@
 			}
 		});
 
-
+        //Buscar barrio
 		$('#barrio').on('keyup',function(e) {
         	if(e.which > 32 || e.which == 8) {
         		if($('#barrio').val().length > 3){
@@ -239,6 +249,52 @@
         		return false;
         	}
         });
+
+        //Buscar vereda
+        $('#vereda').on('keyup',function(e) {
+        	if(e.which > 32 || e.which == 8) {
+        		if($('#vereda').val().length > 3){
+        			if (window.location.pathname.split("/")[1] === "software") {
+        				var url = '/software/getContractsVereda/'+$('#vereda').val();
+        			}else{
+        				var url = '/getContractsVereda/'+$('#vereda').val();
+        			}
+
+        			cargando(true);
+
+        			$.ajax({
+        				url: url,
+        				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        				method: 'get',
+        				success: function (data) {
+        					console.log(data);
+        					cargando(false);
+
+        					var $select = $('#contrato_sms');
+        					$select.empty();
+        					$.each(data.data,function(key, value){
+        						var apellidos = '';
+        						if(value.apellido1){
+        							apellidos += ' '+value.apellido1;
+        						}
+        						if(value.apellido2){
+        							apellidos += ' '+value.apellido2;
+        						}
+        						$select.append('<option value='+value.id+' class="'+value.state+'">'+value.nombre+' '+apellidos+' - '+value.nit+'</option>');
+        					});
+        					$select.selectpicker('refresh');
+							refreshClient();
+        				},
+        				error: function(data){
+        					cargando(false);
+        				}
+        			});
+        		}
+        		return false;
+        	}
+        });
+
+
     });
 
     function chequeo(){

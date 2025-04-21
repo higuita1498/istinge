@@ -148,6 +148,7 @@ Route::get('/clear', function() {
 
 Route::get('/getClienteSMS/{id}','Controller@getClienteSMS');
 Route::get('/getContractsBarrio/{barrio}','Controller@getContractsBarrio');
+Route::get('/getContractsVereda/{vereda}','Controller@getContractsVereda');
 
 Route::get('pdfmariano', 'ContactosController@pdfmariano')->name('contactos.pdfmariano');
 
