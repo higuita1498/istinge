@@ -2007,6 +2007,20 @@ if ($mikrotik) {
         ]);
     }
 
+    public function getContractsVereda($vereda){
+        $contratos = Contrato::query()
+            ->select('contracts.id', 'contracts.state', 'contactos.nombre', 'contactos.apellido1', 'contactos.apellido2', 'contactos.nit')
+            ->join('contactos', 'contracts.client_id', '=', 'contactos.id');
+
+        $contratos->where('contactos.vereda', 'like', "%{$vereda}%");
+
+        return response()->json([
+            'succes'    => true,
+            'search'    => $vereda,
+            'data'      => $contratos->orderBy('contracts.state', 'desc')->get(),
+        ]);
+    }
+
     public function radicadosBarrio(){
         $radicados = Radicado::join('contactos as c', 'c.id', '=', 'radicados.cliente')->select('c.barrio', 'radicados.id')->get();
 
