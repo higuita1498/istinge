@@ -3748,6 +3748,7 @@ class ExportarReportesController extends Controller
                     'factura.cliente', 'factura.fecha', 'factura.vencimiento', 'factura.estatus', 'factura.empresa', 'c.nit', 'c.direccion','c.barrios','c.vereda','contracts.address_street as address_street', DB::raw('c.celular as celularcliente'))
             // ->where('factura.tipo','<>',2)
             ->where('factura.estatus',1)
+            ->where('contracts.status','!=',0)
             ->where('c.status',1);
 
             if($request->servidor){
