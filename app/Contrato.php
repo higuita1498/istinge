@@ -20,6 +20,7 @@ use App\Vendedor;
 use App\Canal;
 use App\Oficina;
 use stdClass;
+use Carbon\Carbon;
 
 class Contrato extends Model
 {
@@ -376,6 +377,16 @@ class Contrato extends Model
     public function facturas()
     {
         return $this->belongsToMany(Factura::class, 'facturas_contratos', 'contrato_nro', 'factura_id', 'nro', 'id');
+    }
+
+    public function fechaDesconexion(){
+        $registro = DB::table('log_movimientos')
+            ->where('contrato', $this->nro)
+            ->whereRaw("LOWER(descripcion) LIKE '%de habilitado a deshabilitado%'")
+            ->orderBy('created_at', 'desc') // Asegúrate que 'fecha' sea la columna con la fecha de movimiento
+            ->first();
+
+        return $registro ? Carbon::parse($registro->created_at)->format('Y-m-d H:i:s') : null;
     }
 
 }

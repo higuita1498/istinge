@@ -17,6 +17,12 @@
       {{Session::get('danger')}}
     </div>
   @endif
+  <div id="preloader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; text-align:center;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:18px;">
+        <span class="spinner-border text-primary" role="status" aria-hidden="true"></span><br>
+        Enviando datos, por favor espera...
+    </div>
+  </div>
 	<form method="POST" action="{{ route('ingresos.store') }}" style="padding: 2% 3%;" role="form" class="forms-sample" id="form-ingreso" enctype="multipart/form-data">
     @if($factura)
     <input type="hidden" id="factura" value="{{$factura}}">
@@ -525,7 +531,7 @@
   		<div class="row mt-2">
         <div class="col-sm-12" style="text-align: right;  padding-top: 1%;">
           <a href="{{route('ingresos.index')}}" class="btn btn-outline-secondary">Cancelar</a>
-          <button type="button" id="submitcheck" onclick="submitLimit(this.id)" class="btn btn-success" id="button-guardar">Guardar</button>
+          <button type="button" id="submitcheck" class="btn btn-success" id="button-guardar">Guardar</button>
         </div>
   		</div>
   	</form>
@@ -583,14 +589,29 @@
         $("#form-ingresos-electronica").addClass('d-none');
       }
 
-      $("#submitcheck").click(function (e){
-         e.preventDefault();
-         var btn = document.getElementById('button-guardar');
-        setTimeout(function() { btn.setAttribute('disabled', 'disabled'); }, 1);
-        setTimeout(function() { btn.removeAttribute('disabled'); }, 15000);
-         $("#submitcheck").submit();
+      $("#submitcheck").click(function (e) {
+            e.preventDefault();
 
-      })
+            var btn = document.getElementById('button-guardar');
+            var preloader = $("#preloader");
+
+            // Mostrar el preloader
+            preloader.show();
+
+            // Deshabilitar el botón para evitar más clics
+            setTimeout(function () {
+                btn.setAttribute('disabled', 'disabled');
+            }, 1);
+
+            // Rehabilitar el botón y ocultar el preloader después de 15 segundos
+            setTimeout(function () {
+                btn.removeAttribute('disabled');
+                preloader.hide();
+            }, 45000);
+
+            // Enviar el formulario
+            $("#submitcheck").closest('form').submit();
+        });
   })
 </script>
 @endsection
