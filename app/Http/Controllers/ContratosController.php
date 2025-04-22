@@ -2684,7 +2684,7 @@ class ContratosController extends Controller
             ->leftJoin('barrios as barrio','barrio.id','contactos.barrio_id')
             ->where('contracts.empresa', Auth::user()->empresa)
             ->where('contracts.status', '!=', 0)
-            ->where('contracts.state','!=','disabled')
+            // ->where('contracts.state','!=','disabled')
             ->orderBy('nro', 'desc')
             ;
 
