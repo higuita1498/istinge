@@ -3067,9 +3067,14 @@ class CronController extends Controller
                     "mimeType" => "application/pdf",
                     "file" => $facturabase64,
                 ];
+                $celular = null;
+                $celular = $contacto->celular != null ? $contacto->celular : $contacto->telefono1;
+                if($celular == null){
+                    break;
+                }
 
                 $contact = [
-                    "phone" =>  "57" . $contacto->celular,
+                    "phone" =>  "57" . $celular,
                     "name" => $contacto->nombre . " " . $contacto->apellido1
                 ];
 
