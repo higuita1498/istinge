@@ -1871,7 +1871,6 @@ class ContratosController extends Controller
                     $contrato->descuento               = $request->descuento;
                     $contrato->vendedor                = $request->vendedor;
                     $contrato->canal                   = $request->canal;
-                    $contrato->nro                     = $request->nro;
                     $contrato->address_street          = $request->address_street;
                     $contrato->tecnologia              = $request->tecnologia;
                     $contrato->tipo_contrato           = $request->tipo_contrato;
@@ -1885,6 +1884,18 @@ class ContratosController extends Controller
                     $contrato->serial_moden            = $request->serial_moden;
                     $contrato->descuento_pesos         = $request->descuento_pesos;
                     $contrato->fact_primer_mes         = $request->fact_primer_mes;
+
+                    //Validacion para cambiar todas las facturas_contratos de nro al nuevo ingresado
+                    if($request->nro != $contrato->nro){
+
+                        $factura_contratos = DB::table('facturas_contratos')->where('contrato_nro', $contrato->nro)->get();
+                        foreach($factura_contratos as $factura_contrato){
+                            DB::table('facturas_contratos')->where('id', $factura_contrato->id)->update([
+                                'contrato_nro' => $request->nro
+                            ]);
+                        }
+                        $contrato->nro                 = $request->nro;
+                    }
 
                     if($request->rd_item_vencimiento){
                         $contrato->dt_item_hasta           = $request->dt_item_hasta;
