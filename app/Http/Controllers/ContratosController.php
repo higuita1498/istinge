@@ -2614,25 +2614,25 @@ class ContratosController extends Controller
         ->setCategory("Reporte excel"); //Categorias
         // Se combinan las celdas A1 hasta D1, para colocar ah�1�7�1�7�1�7 el titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A1:AG');
+            ->mergeCells('A1:AE3');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1',$tituloReporte);
         // Titulo del reporte
         $objPHPExcel->setActiveSheetIndex(0)
-            ->mergeCells('A2:AG');
+            ->mergeCells('A2:AE3');
         // Se agregan los titulos del reporte
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A2','Fecha '.date('d-m-Y')); // Titulo del reporte
 
         $estilo = array('font'  => array('bold'  => true, 'size'  => 12, 'name'  => 'Times New Roman' ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
         ));
-        $objPHPExcel->getActiveSheet()->getStyle('A1:AG')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:AE3')->applyFromArray($estilo);
 
         $estilo =array('fill' => array(
             'type' => PHPExcel_Style_Fill::FILL_SOLID,
             'color' => array('rgb' => 'd08f50')));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AG')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AE3')->applyFromArray($estilo);
 
         $estilo =array(
             'fill' => array(
@@ -2651,7 +2651,7 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AG')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AE3')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'3', utf8_decode($titulosColumnas[$i]));
@@ -2885,7 +2885,7 @@ class ContratosController extends Controller
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
             ), 'alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,));
-        $objPHPExcel->getActiveSheet()->getStyle('A3:AG'.$i)->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:AE3'.$i)->applyFromArray($estilo);
 
         for($i = 'A'; $i <= $letras[20]; $i++){
             $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setAutoSize(TRUE);
