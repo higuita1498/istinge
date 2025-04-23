@@ -243,7 +243,7 @@ class ContratosController extends Controller
             if($request->plan_tv){
 
                 $contratos->where(function ($query) use ($request) {
-                    $query->orWhere('contracts.servicio_tv', $request->plan_tv);
+                    $query->orWhereIn('contracts.servicio_tv', $request->plan_tv);
                 });
             }
             if($request->ap){
