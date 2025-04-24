@@ -766,9 +766,9 @@ class ExportarReportesController extends Controller
             // Aquí se escribe en el archivo
             $i=4;
 
-            $cliente = $factura->cliente();
 
             foreach ($facturas as $factura) {
+                $cliente = $factura->cliente();
                 $formaPago = $factura->cuentaPagoListIngreso();
                 $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue($letras[0].$i, $factura->codigo)
