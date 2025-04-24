@@ -3521,7 +3521,9 @@ class CronController extends Controller
 
         $fecha = Carbon::now()->format('Y-m-d');
         //ingresos asociados a facturas del dia de hoy.
-        $ingresos = Ingreso::where('fecha',$fecha)->where('tipo',1)->get();
+        $ingresos = Ingreso::where('fecha',$fecha)
+        ->where('tipo',1)->where('revalidacion_enable',0)
+        ->get();
 
         //obtenemos los contratos o el contrato que la factura tiene
         foreach($ingresos as $ingreso){
@@ -3613,6 +3615,9 @@ class CronController extends Controller
                 }
 
             }
+
+            $ingreso->revalidacion_enable = 1;
+            $ingreso->save();
         }
     }
 }
