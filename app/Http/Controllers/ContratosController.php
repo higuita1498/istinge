@@ -2663,7 +2663,7 @@ class ContratosController extends Controller
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
             )
         );
-        $objPHPExcel->getActiveSheet()->getStyle('A2:AF2')->applyFromArray($estilo);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:AH2')->applyFromArray($estilo);
 
         for ($i=0; $i <count($titulosColumnas) ; $i++) {
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($letras[$i].'2', utf8_decode($titulosColumnas[$i]));
